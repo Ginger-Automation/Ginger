@@ -23,10 +23,10 @@ namespace System.Windows.Automation
 {
     public class BasePattern
     {
-        internal AutomationElement _el;
+        internal AutomationElement_Extend _el;
         internal bool _cached;
         
-        internal BasePattern(AutomationElement el, bool cached)
+        internal BasePattern(AutomationElement_Extend el, bool cached)
         {
             Debug.Assert(el != null);
             this._el = el;

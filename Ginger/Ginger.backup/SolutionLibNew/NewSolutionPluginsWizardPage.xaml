@@ -1,0 +1,46 @@
+    <Page x:Class="GingerWPF.SolutionLib.NewSolutionPluginsWizardPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:GingerWPF.SolutionLib"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="NewSolutionPluginsWizardPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="110"/>
+            <ColumnDefinition Width="200*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="40*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <Label Content="Plugin Packages" Grid.Row="0" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
+
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
+            <CheckBox>Web - Selenium Automate browser (FireFox, Chrome, IE...)</CheckBox>
+            <CheckBox>Java - Automate Java UI/Swing Application</CheckBox>
+            <CheckBox>Unix/Linux - Console automation</CheckBox>
+            <CheckBox>MF - Automate 3270</CheckBox>
+            <CheckBox>Power Builder</CheckBox>
+
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <Label>Search online - Ginger store</Label>
+            <Button>Browser</Button>
+        </StackPanel>
+
+        <DataGrid x:Name="PluginPackagesGrid" Grid.Row="3" Grid.ColumnSpan="2" CanUserAddRows="False">
+            
+        </DataGrid>
+        
+        <Label Grid.Row="4" Grid.ColumnSpan="2">You will be able to add more later if needed</Label>
+    </Grid>
+</Page>

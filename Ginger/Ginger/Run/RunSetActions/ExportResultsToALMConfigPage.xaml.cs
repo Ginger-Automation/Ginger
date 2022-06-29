@@ -191,7 +191,7 @@ namespace Ginger.Run
                 try
                 {
                     ALMIntegration.Instance.UpdateALMType(AlmConfig.AlmType, true);
-                    ObservableList<ExternalItemFieldBase> almItemFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.ALL, null);
+                    ObservableList<ExternalItemFieldBase> almItemFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, AlmDataContractsStd.Enums.ResourceType.ALL, null);
                     ObservableList<ExternalItemFieldBase> operationItemFields = new ObservableList<ExternalItemFieldBase>();
                     foreach(ExternalItemFieldBase field in mPublishToALMConfig.AlmFields)
                     {
@@ -246,6 +246,8 @@ namespace Ginger.Run
                 return;
             }
             xExportDestinationFolder.Visibility = Visibility.Visible;
+            xExportTypeCbx.ComboBox.SelectedValue = eExportType.EntitiesAndResults;
+            xExportTypeCbx.IsEnabled = false;
         }
         private void xALMTypeCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

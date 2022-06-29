@@ -1,0 +1,90 @@
+<Page x:Class="Ginger.Drivers.DriversConfigsEditPages.SeleniumRemoteWebDriverEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="740"
+	Title="SeleniumDriverEditPage">
+
+    <TabControl x:Name="ActionTab" HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged">
+        <TabItem Header="Configuration" >
+
+        <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="140"/>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="290"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="200"/>
+            <RowDefinition Height="100"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel HorizontalAlignment="Left" Grid.Row="0" Grid.Column="0">
+
+            <Label HorizontalAlignment="Left" Style="{StaticResource @InputFieldLabelStyle}" Margin="0,10,0,0"  Content="Selenium Grid Hub:"/>
+            <Label HorizontalAlignment="Left" Style="{StaticResource @InputFieldLabelStyle}" Margin="0,20,0,0" Content="Browser Name:" />
+            <Label HorizontalAlignment="Left" Style="{StaticResource @InputFieldLabelStyle}" Margin="0,10,0,0" Content="Browser Version:"  />
+            <Label HorizontalAlignment="Left" Style="{StaticResource @InputFieldLabelStyle}" Margin="0,10,0,0" Content="Platform:"  />
+        </StackPanel>
+
+
+        <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Orientation="Vertical">
+            <TextBox x:Name="GridHostTextBox" Width="300"  HorizontalAlignment="Left"  Style="{StaticResource @TextBoxStyle}" Margin="0,12,0,0" />
+            <Label FontSize="10" HorizontalAlignment="Left" Content="(i.e.: http://10.122.113.32:4444)" />
+            <ComboBox x:Name="BrowserNameComboBox" Style="{StaticResource @InputComboBoxStyle}" Loaded="BrowserComboBox_Loaded" Margin="0,3,0,0" />
+            <TextBox x:Name="VersionTextBox" HorizontalAlignment="Left"  Style="{StaticResource @TextBoxStyle}" Width="100" Height="22" Margin="0,15,0,0"/>
+            <ComboBox x:Name="PlatformComboBox" Style="{StaticResource @InputComboBoxStyle}" Loaded="PlatformComboBox_Loaded" Margin="0,15,0,0"  />
+        </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="50"/>
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="1" HorizontalAlignment="Left"  Margin="10,10,0,0"  Foreground="#152B37">
+                            <Label.Content>
+                                <AccessText TextWrapping="NoWrap" Text="IE options – enable protected mode for all zones"/>
+                            </Label.Content>
+                            <Label.Style>
+                                <Style>
+                                    <Setter Property="Label.Visibility" Value="Hidden"></Setter>
+                                    <Style.Triggers>
+                                        <DataTrigger  
+                                            Binding="{Binding ElementName=BrowserNameComboBox, Path=SelectedItem}" Value="internet explorer">
+                                            <Setter Property="Label.Visibility" Value="Visible"></Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Label.Style>
+                        </Label>
+                    </Grid>
+                </StackPanel>
+
+        <StackPanel HorizontalAlignment="Left" Orientation="Vertical" Margin="5,5,0,0" Grid.Row="1"  Grid.ColumnSpan="2" >
+                    <Button x:Name="UserHelperHub"  Click="GetHubFilesButton_Click"  Width="230" Content="Create hub installation package" Style="{StaticResource @WindowButtonStyle}" Margin="0,0,0,0" />
+                    <Button x:Name="UserHelperNode"   Click="GetNodeFilesButton_Click"  Width="230" Content="Create node installation package" Style="{StaticResource @WindowButtonStyle}" Margin="0,10,0,0" />
+        </StackPanel>
+                <CheckBox x:Name="AllBroesers" Content="Node for all this platform's browsers" HorizontalAlignment="Left" Margin="10,75,0,0" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Top"/>
+            </Grid>
+        </TabItem>
+
+        
+        <TabItem x:Name="ConsoleTab" Header="Console" >
+            <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="500"/>
+                </Grid.RowDefinitions>
+
+                <Button x:Name="ShowconsoleButton" Grid.Row="0" Click="ShowconsoleButton_Click" Width="150" Content="Refresh Console" Style="{StaticResource @WindowButtonStyle}" Margin="0,5,0,0" HorizontalAlignment="Center"   />
+
+                <WebBrowser x:Name="browser" Grid.Row="1"></WebBrowser>
+            </Grid>
+        </TabItem>
+    </TabControl>
+</Page>
+    

@@ -1,0 +1,42 @@
+    <Page x:Class="Ginger.Variables.VariablesDependenciesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      xmlns:Ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      Height="500" Width="1000"
+	Title="ActivityActionsDependenciesPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="300*"/>
+            <RowDefinition Height="100" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="0">
+            <CheckBox x:Name="chkBoxEnableDisableDepControl" Style="{StaticResource $CeckBoxStyle}" DockPanel.Dock="Left" Margin="5,0,0,0" FontWeight="Bold" Click="chkBoxEnableDisableDepControl_Click" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <CheckBox.Content>
+                    <GingerCore:ucTextDicResource Text="Enable Items-[Variables] Dependencies Control"/>
+                </CheckBox.Content>
+            </CheckBox>
+            <Image x:Name="infoImage" Source="{StaticResource @Question_Large.png.png}" Height="16" Width="16" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="5"/>
+        </DockPanel>
+        
+        <DockPanel x:Name="DependenciesGridSection" Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="1">
+            <Ginger:ucGrid x:Name="grdDependencies" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" IsEnabled="False" DockPanel.Dock="Top" Margin="0,0,0,10">
+                <Ginger:ucGrid.Title>
+                    <GingerCore:ucTextDicResource Text="Items-[Variables] Dependencies"/>
+                </Ginger:ucGrid.Title>
+            </Ginger:ucGrid>
+        </DockPanel>
+        <DockPanel x:Name="DependenciesHelperSection" Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="2" >
+            <Label DockPanel.Dock="Top" Content="Dependencies Configuration Helper:" Style="{StaticResource @InputFieldLabelStyle}"  HorizontalAlignment="Stretch"/>
+            <ScrollViewer Background="White">
+                <TextBlock x:Name="txtBlkDependenciesHelper" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" DockPanel.Dock="Top" Background="#FFEFEFF2"></TextBlock>
+            </ScrollViewer>
+        </DockPanel>
+    </Grid>
+</Page>

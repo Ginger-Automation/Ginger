@@ -41,6 +41,9 @@ namespace Amdocs.Ginger.Common.Enums
         GingerIconWhite,
         GingerIconGray,
         GingerSplash,
+        VRT,
+        Applitools,
+        Sealights,
         #endregion
 
 
@@ -222,6 +225,7 @@ namespace Amdocs.Ginger.Common.Enums
         Camera,
         Recording,
         Wrench,
+        Settings,
         Eraser,
         Power,
         ArrowDown,

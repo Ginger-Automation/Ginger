@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using De.TorstenMandelkow.MetroChart;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.DataSource;
@@ -28,6 +27,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using FontAwesome.Sharp;
+using LiveCharts;
+using LiveCharts.Wpf;
+using LiveCharts.Defaults;
+using System.Windows.Media;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -37,6 +41,11 @@ namespace Ginger.BusinessFlowWindows
     public partial class ExecutionSummaryPage : Page
     {
         private Context mContext;
+        public SeriesCollection SeriesActivityCollection { get; set; }
+
+        public SeriesCollection SeriesActionCollection { get; set; }
+
+
 
         public ExecutionSummaryPage(Context context)
         {
@@ -51,18 +60,25 @@ namespace Ginger.BusinessFlowWindows
 
             lblElapsed.Content = "Elapsed (Seconds): " + mContext.BusinessFlow.ElapsedSecs;
             ShowPie();
+            
         }
 
+       
+        
         private void ShowPie()
         {
             int totalActivity = 0;
             int totalAction = 0;
             List<string> status;
-            if (ActivityChart.Palette == null)
-                ActivityChart.Palette = new ResourceDictionaryCollection();
-            else
-                ActivityChart.Palette.Clear();
-            List<StatItems> activityStatList = new List<StatItems>();           
+            SeriesActivityCollection = new SeriesCollection();
+            SeriesActionCollection = new SeriesCollection();
+
+            DataContext = this;
+            //if (ActivityChart.Palette == null)
+            //    ActivityChart.Palette = new ResourceDictionaryCollection();
+            //else
+            //    ActivityChart.Palette.Clear();
+            //List<StatItems> activityStatList = new List<StatItems>();           
             List<StatItem> st = mContext.BusinessFlow.GetActivitiesStats();
             foreach (var v in st)
             {
@@ -70,21 +86,22 @@ namespace Ginger.BusinessFlowWindows
                 {
                     continue;
                 }
-                activityStatList.Add(new StatItems() { Description = v.Description, Count = (int)v.Count});
-                ActivityChart.Palette.Add(GingerCore.General.SelectColor(v.Description));
+                //activityStatList.Add(new StatItems() { Description = v.Description, Count = (int)v.Count});
+                SeriesActivityCollection.Add(new PieSeries() { Title = v.Description,  LabelPosition = PieLabelPosition.InsideSlice, Foreground= new SolidColorBrush(Colors.Black), Fill= GingerCore.General.SelectColorByCollection(v.Description), Values = new ChartValues<ObservableValue> { new ObservableValue(v.Count) }, DataLabels = true });
+                //ActivityChart.Palette.Add(GingerCore.General.SelectColor(v.Description));
                 totalActivity += (int)v.Count;
             }         
            
-            ViewModel activity = new ViewModel(activityStatList);
-            ActivityChart.ChartTitle = GingerDicser.GetTermResValue(eTermResKey.Activities);
-            ActivityChart.DataContext = activity;
+            //ViewModel activity = new ViewModel(activityStatList);
+            //ActivityChart.ChartTitle = GingerDicser.GetTermResValue(eTermResKey.Activities);
+            //ActivityChart.DataContext = activity;
 
             //Action
-            if (ActionChart.Palette == null)
-                ActionChart.Palette = new ResourceDictionaryCollection();
-            else
-                ActionChart.Palette.Clear();
-            List<StatItems> actionStatList = new List<StatItems>();
+            //if (ActionChart.Palette == null)
+            //    ActionChart.Palette = new ResourceDictionaryCollection();
+            //else
+            //    ActionChart.Palette.Clear();
+            //List<StatItems> actionStatList = new List<StatItems>();
             List<StatItem> act = mContext.BusinessFlow.GetActionsStat();           
             foreach (var v in act)
             {
@@ -92,21 +109,23 @@ namespace Ginger.BusinessFlowWindows
                 {
                     continue;
                 }
-                actionStatList.Add(new StatItems() { Description = v.Description, Count =(int)v.Count});
-                ActionChart.Palette.Add(GingerCore.General.SelectColor(v.Description));
+                //actionStatList.Add(new StatItems() { Description = v.Description, Count =(int)v.Count});
+                SeriesActionCollection.Add(new PieSeries() { Title = v.Description, LabelPosition = PieLabelPosition.InsideSlice, Foreground = new SolidColorBrush(Colors.Black), Fill = GingerCore.General.SelectColorByCollection(v.Description), Values = new ChartValues<ObservableValue> { new ObservableValue(v.Count) }, DataLabels = true });
+                //ActionChart.Palette.Add(GingerCore.General.SelectColor(v.Description));
                 totalAction += (int)v.Count;
             }
-            ViewModel action = new ViewModel(actionStatList);
-            ActionChart.DataContext = action;
-            status = actionStatList.Select(b => b.Description).Concat(actionStatList.Select(c => c.Description)).Distinct().ToList();
+            //ViewModel action = new ViewModel(actionStatList);
+            //ActionChart.DataContext = action;
+            //status = actionStatList.Select(b => b.Description).Concat(actionStatList.Select(c => c.Description)).Distinct().ToList();
+            status = SeriesActionCollection.Select(b => b.Title).Concat(SeriesActionCollection.Select(c => c.Title)).Distinct().ToList();
             HideAllLegend();
             foreach (string s in status)
             {                
                 SwitchLegend(s);
             }
             {
-                stck.Children.Add(Ginger.General.makeImgFromControl(ActivityChart, totalActivity.ToString(),1));
-                stck.Children.Add(Ginger.General.makeImgFromControl(ActionChart, totalAction.ToString(),2));
+                //stck.Children.Add(Ginger.General.makeImgFromControl(ActivityChart, totalActivity.ToString(), 1));
+                //stck.Children.Add(Ginger.General.makeImgFromControl(ActionChart, totalAction.ToString(), 2));
             }
             {                
                 //App.RunsetActivityTextbox.Text = totalActivity.ToString();

@@ -266,7 +266,10 @@ namespace Ginger.Actions
                     if (ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())) != null
                         && ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())).Count() != 0)
                     {
-                        ValidationCfgComboBox.SelectedIndex = 0;
+                        if (ValidationCfgComboBox.SelectedValue != null && ValidationCfgComboBox.SelectedValue.ToString() == eDBValidationType.Insert.ToString())
+                        {
+                            ValidationCfgComboBox.SelectedIndex = 0;
+                        }
                         ValidationCfgComboBox.Items.Remove(ValidationCfgComboBox.Items.Cast<ComboEnumItem>().First(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())));
                     }
                 }
@@ -400,8 +403,9 @@ namespace Ginger.Actions
                 lblInsertJson.Visibility = Visibility.Collapsed;
                 gridInsertJson.Visibility = Visibility.Collapsed;
                 imgHelpSql.Visibility = Visibility.Collapsed;
-                xKeysStackPanel.Visibility = Visibility.Collapsed;
-                SQLUCValueExpression.ValueTextBox.Text = string.Empty;
+                xPrimaryKeyStackPanel.Visibility = Visibility.Collapsed;
+                xPartitionKeyStackPanel.Visibility = Visibility.Collapsed;
+                //SQLUCValueExpression.ValueTextBox.Text = string.Empty;
                 UpdateDbParametersHeadersGrid.Visibility = Visibility.Collapsed;
                 switch (validationType)
                 {
@@ -426,7 +430,8 @@ namespace Ginger.Actions
                             DoUpdate.Visibility = Visibility.Visible;
                             RadioButtonsSection.Visibility = Visibility.Collapsed;
                             UpdateDbParametersGrid.Visibility = Visibility.Visible;
-                            xKeysStackPanel.Visibility = Visibility.Visible;
+                            xPrimaryKeyStackPanel.Visibility = Visibility.Visible;
+                            xPartitionKeyStackPanel.Visibility = Visibility.Visible;
                             UpdateDbParametersHeadersGrid.Visibility = Visibility.Visible;
                             SetGridView();
                         }

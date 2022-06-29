@@ -1,0 +1,28 @@
+    <Page xmlns:Ginger="clr-namespace:Ginger"  x:Class="Ginger.Environments.AppDataBasesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+       xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Environment"
+      d:DesignHeight="300" d:DesignWidth="600"
+	Title="AppDataBasesWindow">
+
+    <Grid x:Name="appDataBasesWindowGrid">
+        <Ginger:ucGrid x:Name="grdAppDbs" Title="Application Data Bases" ShowRefresh="Collapsed"/>
+        <Grid.Resources>
+            <DataTemplate x:Key="TNSValueExpressionButton">
+                <Button x:Name="GridTNSVEButton" Content="..." Click="GridTNSVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+            </DataTemplate>
+            <DataTemplate x:Key="UserValueExpressionButton">
+                <Button x:Name="GridUserVEButton" Content="..." Click="GridUserVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+            </DataTemplate>
+            <DataTemplate x:Key="PswdValueExpressionButton">
+                <Button x:Name="GridPswdVEButton" Content="..." Click="GridPswdVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+            </DataTemplate>
+            <DataTemplate x:Key="ConnStrValueExpressionButton">
+                <Button x:Name="GridConnStrVEButton" Content="..." Click="GridConnStrVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+            </DataTemplate>
+        </Grid.Resources>
+    </Grid>
+</Page>

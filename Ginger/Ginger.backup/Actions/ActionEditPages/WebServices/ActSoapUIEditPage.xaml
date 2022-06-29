@@ -1,0 +1,240 @@
+﻿    <Page x:Class="Ginger.Actions.WebServices.ActSoapUIEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:Actions="clr-namespace:Ginger.Actions"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d" 
+      d:DesignHeight="650" d:DesignWidth="700"
+      Title="ActSoapUIEditPage">
+
+
+    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+
+
+        <StackPanel Orientation="Vertical">
+            <StackPanel Margin="0,10,25,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="200*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" VerticalAlignment="Center" >XML File location:</Label>
+                    <Actions:UCValueExpression  x:Name="XMLFilePathTextBox" Grid.Column="1" VerticalAlignment="Center" ToolTip="XML file full path"/>
+                    <CheckBox x:Name="DoNotImportFile" Grid.Column="1" Grid.Row="1" Content="Import XML file to Solution folder" ToolTip="If checked the selected XML will be imported to ~Documents\WebServices\SoapUI\ProjectXMLs" HorizontalAlignment="Left" Margin="0,10,0,0"/>
+                </Grid>
+            </StackPanel>
+
+            <CheckBox x:Name="IgnoreReportXMLValidation" Grid.Column="1" Grid.Row="1" Content="Ignore Report XML Validation" ToolTip="If checked Ginger will not validate the XML response, Validation can be done on the Output " HorizontalAlignment="Left" Margin="5,10,0,0"/>
+
+            <CheckBox x:Name="AddXMLTagsToOutput" Grid.Column="1" Grid.Row="1" Content="Add Respond XML Nodes to the Output Values" ToolTip="If checked Ginger will add all response XML tags to the output" HorizontalAlignment="Left" Margin="5,10,0,0"/>
+
+            <Expander x:Name="BasicExpander" Margin="0,15,0,0">
+                <Expander.Header>
+                    <Label x:Name="BasicExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
+                        <Label.Content>
+                            <GingerCore:ucTextDicResource Text="[Basic]"/>
+                        </Label.Content>
+                    </Label>
+                </Expander.Header>
+                <Expander.Content>
+
+                    <StackPanel Orientation="Vertical">
+                        
+                        <StackPanel Margin="0,0,25,0">
+
+                            <Grid >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition Width="200*"/>
+                                    <ColumnDefinition Width="22"/>
+                                    <ColumnDefinition Width="22"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0"  VerticalAlignment="Center" Margin="0,0,0,0">TestSuite:</Label>
+                                <ComboBox x:Name="TestSuiteComboBox" Grid.Column="1"  VerticalAlignment="Center"  SelectionChanged="TestSuiteComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" ToolTip="The TestSuite to run, used to narrow down the tests to run" IsEditable="true" />
+                                <Button x:Name="TestSuiteVEButton" Grid.Column="2"  VerticalAlignment="Center"  Content="..." Click="TestSuiteVEButton_Click" HorizontalAlignment="Left" Style="{StaticResource @InputButtonStyle}"  />
+                                <Button x:Name="RefreshComboBoxes" Grid.Column="3" usercontrols:ImageMaker.Content="Refresh" Width="16" VerticalAlignment="Center"  Click="RefreshComboBoxButton" HorizontalAlignment="Left" Style="{StaticResource @InputButtonStyle}"  >                                    
+                                </Button>
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10,25,0">
+                            <Grid >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition Width="200*"/>
+                                    <ColumnDefinition Width="22"/>
+                                    <ColumnDefinition Width="22"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0"  VerticalAlignment="Center">TestCase:</Label>
+                                <ComboBox x:Name="TestCaseComboBox" Grid.Column="1"  VerticalAlignment="Center" SelectionChanged="TestCaseComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" ToolTip="The TestCase to run, used to narrow down the tests to run" IsEditable="true"  />
+                                <Button x:Name="TestCaseVEButton" Grid.Column="2"  VerticalAlignment="Center" Content="..." Click="TestCaseVEButton_Click" HorizontalAlignment="Left" DockPanel.Dock="Left" Style="{StaticResource @InputButtonStyle}"/>
+                            </Grid>
+                        </StackPanel>
+                        
+                        <CheckBox x:Name="UIrelatedCheckBox" Content="Enables UI components in script" ToolTip="Required if you use the UISupport class for prompting or displaying information" HorizontalAlignment="Left" Margin="10,10,0,0"/>
+
+                        <CheckBox x:Name="TestCasePropertiesRequieredCheckBox" Grid.Column="1" Grid.Row="1" Content="Configure Properties" ToolTip="Check to define TestCase Properties" HorizontalAlignment="Left" IsEnabled="True" Checked="TextCasePropertiesRequieredTextBoxChecked" Unchecked="TextCasePropertiesRequieredTextBoxUnChecked" Margin="10,10,0,0"/>
+
+                        <Expander x:Name="SuitePropertiesExpander" Margin="15,10,0,0" Visibility="Hidden" >
+                            <Expander.Header>
+                                <Label x:Name="SuitePropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
+                                    <Label.Content>
+                                        <GingerCore:ucTextDicResource Text="[Configure Properties]"/>
+                                    </Label.Content>
+                                </Label>
+                            </Expander.Header>
+                            <Expander.Content>
+                                <StackPanel Margin="0,5,25,0">
+                                    <Actions:UCInputValuesGrid x:Name="ProjectPropertiesGrid" Margin="10,0,25,5" Visibility="Visible"/>
+                                </StackPanel>
+                            </Expander.Content>
+                        </Expander>
+                        <Expander x:Name="SuitePlaceHoldderExpander" Margin="15,10,0,0" Visibility="Hidden" >
+                            <Expander.Header>
+                                <Label x:Name="SuitePlaceHoldderExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
+                                    <Label.Content>
+                                        <GingerCore:ucTextDicResource Text="[Configure PlaceHolder]"/>
+                                    </Label.Content>
+                                </Label>
+                            </Expander.Header>
+                            <Expander.Content>
+                        <StackPanel Margin="0,5,25,0">
+                            <Actions:UCInputValuesGrid x:Name="TestSuitePlaceHolderGrid" Margin="10,0,25,5" Visibility="Visible"/>
+                        </StackPanel>
+                            </Expander.Content>
+                        </Expander>
+                       
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
+           
+            <Expander x:Name="OverridesExpander"  Margin="0,15,0,0">
+                <Expander.Header>
+                    <Label x:Name="OverridesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
+                        <Label.Content>
+                            <GingerCore:ucTextDicResource Text="[Overrides]"/>
+                        </Label.Content>
+                    </Label>
+                </Expander.Header>
+                <Expander.Content>
+                    <StackPanel Orientation="Vertical" Margin="0,0,0,0" >
+
+                        <Expander x:Name="PropertiesExpander" Margin="15,10,0,0" Visibility="Visible">
+                            <Expander.Header>
+                                <Label x:Name="PropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
+                                    <Label.Content>
+                                        <GingerCore:ucTextDicResource Text="[Override Properties]"/>
+                                    </Label.Content>
+                                </Label>
+                            </Expander.Header>
+                            <Expander.Content>
+                                <StackPanel Orientation="Vertical" Margin="10,0,25,0" >
+
+                                    <Actions:UCInputValuesGrid x:Name="SystemPropertiesVEGrid" Margin="0,10,0,0"/>
+                                    <Actions:UCInputValuesGrid x:Name="GlobalPropertiesVEGrid" Margin="0,10,0,0"/>
+                                </StackPanel>
+                            </Expander.Content>
+                        </Expander>
+
+                        <StackPanel Margin="0,10,25,0">
+                            <Grid >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition Width="200*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0"  VerticalAlignment="Center" >End Point:</Label>
+                                <Actions:UCValueExpression x:Name="EndPointTextBox" Grid.Column="1"  VerticalAlignment="Center" ToolTip="The endpoint to use when invoking test-requests, overrides the endpoint set in the project file"  />
+                               
+                            </Grid>
+                        </StackPanel>
+
+
+                        <StackPanel Margin="0,10,25,10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition Width="200*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="30"/>
+                                </Grid.RowDefinitions>
+                                <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0"  VerticalAlignment="Center">Host:Port:</Label>
+                                <Actions:UCValueExpression x:Name="HostPortTextBox" Grid.Column="1"  VerticalAlignment="Center" ToolTip="The host:port to use when invoking test-requests, overrides only the host part of the endpoint set in the project file" />
+                                <Label FontSize="10" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Content="(i.e.: http://www.webservicex.com:555)" />
+                            </Grid>
+                        </StackPanel>
+
+                        <Line Stretch="Fill" Stroke="Black" X2="1"/>
+
+                        <StackPanel Orientation="Vertical" Margin="0,0,0,0" >
+                            <StackPanel Margin="0,10,25,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="200*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0"  VerticalAlignment="Center" Margin="0,0,0,0">Username:</Label>
+                                    <Actions:UCValueExpression x:Name="UsernameTextBox" Grid.Column="1"  VerticalAlignment="Center" ToolTip="The username to use in any authentications, overrides any username set for any TestRequests"  />
+                                </Grid>
+                            </StackPanel>
+
+                            <StackPanel Margin="0,10,25,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="200*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Style="{StaticResource @InputFieldLabelStyle}"  Grid.Column="0"  VerticalAlignment="Center" Margin="0,0,0,0">Password:</Label>
+                                    <Actions:UCValueExpression x:Name="PasswordTextBox"  Grid.Column="1"  VerticalAlignment="Center" ToolTip="The password to use in any authentications, overrides any password set for any TestRequests" />
+                                </Grid>
+                            </StackPanel>
+
+                            <StackPanel Margin="0,10,25,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="200*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Style="{StaticResource @InputFieldLabelStyle}"  Grid.Column="0"  VerticalAlignment="Center">Domain:</Label>
+                                    <Actions:UCValueExpression x:Name="DomainTextBox"  Grid.Column="1"  VerticalAlignment="Center" ToolTip="The domain to use in any authentications, overrides any domain set for any TestRequests"  />
+                                </Grid>
+                            </StackPanel>
+
+                           
+
+                            <StackPanel Margin="0,10,25,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="200*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0"  VerticalAlignment="Center">WSS Password type:</Label>
+                                    <UserControlsLib:UCComboBox x:Name="PasswordWSSUCComboBox" Grid.Column="1" />
+                                </Grid>
+                            </StackPanel>
+
+
+                        </StackPanel>
+
+
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
+
+            
+
+           
+
+            <Button x:Name="OpenExecutionDirectoryButton" Click="ExecutionDirectoryButton_Click" Content="Open Execution Outputs Directory" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource @WindowButtonStyle}"/>
+        </StackPanel>
+    </Grid>
+</Page>

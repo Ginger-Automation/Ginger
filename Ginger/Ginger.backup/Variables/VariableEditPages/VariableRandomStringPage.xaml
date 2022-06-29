@@ -1,0 +1,25 @@
+    <Page x:Class="Ginger.Variables.VariableRandomStringPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="245" d:DesignWidth="300"
+	Title="VariableRandomStringPage">
+
+    <Grid>        
+        <StackPanel>
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Min Length:</Label>
+            <TextBox x:Name="txtMinValue" Style="{StaticResource @TextBoxStyle}"></TextBox>
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Max Length:</Label>
+            <TextBox x:Name="txtMaxValue" Style="{StaticResource @TextBoxStyle}"></TextBox>
+            <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
+                <CheckBox x:Name="cbDigit" Content="Digits Only (0-9)" Style="{StaticResource @InputCheckBoxStyle}" Margin="0,10,0,0"/>
+                <CheckBox x:Name="cbLower" Content="Lowercase (a-z)" Style="{StaticResource @InputCheckBoxStyle}" Margin="0,10,0,0"/>
+                <CheckBox x:Name="cbUpper" Content="Uppercase (A-Z)" Style="{StaticResource @InputCheckBoxStyle}" Margin="0,10,0,0"/>
+                <CheckBox x:Name="cbLowerCaseAndDigits" Content="Digits (0-9) and Lowercase (a-z)" Style="{StaticResource @InputCheckBoxStyle}" Margin="0,10,0,0"/>
+                <CheckBox x:Name="cbUpperCaseAndDigits" Content="Digits (0-9) and Uppercase (A-Z)" Style="{StaticResource @InputCheckBoxStyle}" Margin="0,10,0,0"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

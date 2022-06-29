@@ -1,0 +1,43 @@
+﻿<Page x:Class="Ginger.Variables.VariableNumberPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.Variables"
+      mc:Ignorable="d" 
+      d:DesignHeight="190" d:DesignWidth="300"
+      Title="VariableNumber">
+
+    <Grid>
+        <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Initial Value:</Label>
+            <TextBox x:Name="txtNumberValue"   Style="{StaticResource @TextBoxStyle}"  Margin="0,0,0,10" ToolTip="Only Numeric Value Allowed."/>
+            <Expander Margin="0,10,0,0"  Padding="10,5,10,5" Style="{StaticResource $ExpanderStyle}" IsExpanded="True">
+                <Expander.Header>
+                    <Label Content="Number Type Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                </Expander.Header>
+                <Expander.Content>
+                    <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
+                        <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
+                            <RadioButton Click="rdoInputInt_Click"  Content="Integer"  x:Name="rdoInputInt" Style="{StaticResource $InputRadioButtonStyle}" Margin="0,5,0,10"></RadioButton>
+                            <RadioButton Click="rdoInputDecimal_Click"  Content="Decimal"  x:Name="rdoInputDecimal" Style="{StaticResource $InputRadioButtonStyle}" Margin="5,5,0,10"></RadioButton>
+                        </DockPanel>
+                        <DockPanel x:Name="pnlPrecision" Visibility="Collapsed">
+                            <Label Style="{StaticResource @InputFieldLabelStyle}">Precision Value :</Label>
+                            <TextBox  x:Name="txtPrecisionValue" Style="{StaticResource @TextBoxStyle}" Margin="0,5,0,15"></TextBox>
+                        </DockPanel>
+                        <DockPanel>
+                            <Label Style="{StaticResource @InputFieldLabelStyle}">Minimum Value :</Label>
+                            <TextBox  x:Name="txtMinValue" Style="{StaticResource @TextBoxStyle}" Margin="0,0,0,10"></TextBox>
+                        </DockPanel>
+                        <DockPanel>
+                            <Label Style="{StaticResource @InputFieldLabelStyle}">Maximum Value :</Label>
+                            <TextBox  x:Name="txtMaxValue" Style="{StaticResource @TextBoxStyle}" Margin="0,0,0,10"></TextBox>
+                        </DockPanel>
+                    </StackPanel>
+                </Expander.Content>
+
+            </Expander>
+        </StackPanel>
+    </Grid>
+</Page>

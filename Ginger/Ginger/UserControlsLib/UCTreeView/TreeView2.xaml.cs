@@ -87,7 +87,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             tool.Visibility = toolVisibility;
             tool.ToolTip = toolTip;
             Image image = new Image();
-            image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + toolImage));
+            image.Source = new BitmapImage(new Uri(@"/Images/" + toolImage, UriKind.RelativeOrAbsolute));
             tool.Content = image;
             tool.Click += clickHandler;
             tool.CommandParameter = CommandParameter;
@@ -156,7 +156,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public void SetBtnImage(Button btn, string imageName)
         {
             Image image = new Image();
-            image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + imageName));
+            image.Source = new BitmapImage(new Uri(@"/Images/" + imageName, UriKind.RelativeOrAbsolute));
             btn.Content = image;
         }
 

@@ -157,7 +157,7 @@ namespace GingerCore.Drivers.Common
 
         public abstract object GetElementFromCursor();
 
-        public abstract object GetElementAtPoint(System.Windows.Point point);
+        public abstract object GetElementAtPoint(System.Drawing.Point point);
 
         public abstract Task<List<ElementInfo>> GetVisibleControls();
 
@@ -239,7 +239,7 @@ namespace GingerCore.Drivers.Common
 
         public abstract string GetElementControlType(object element);
 
-        public abstract Rect GetElementBoundingRectangle(object element);
+        public abstract System.Drawing.Rectangle GetElementBoundingRectangle(object element);
 
         public abstract int GetElementNativeWindowHandle(object element);
 
@@ -296,7 +296,7 @@ namespace GingerCore.Drivers.Common
                     return;
                 }
 
-                Rect r = new Rect();
+                System.Drawing.Rectangle r = new System.Drawing.Rectangle();
                 r = GetElementBoundingRectangle(WEI.ElementObject);
 
                 int hwnd = GetElementNativeWindowHandle(GetCurrentWindow());  // AE.Current.NativeWindowHandle;            
@@ -327,7 +327,7 @@ namespace GingerCore.Drivers.Common
         [DllImport("gdi32.dll")]
         static extern int CreateDC(string lpszDriver, string lpszDevice, string lpszOutput, IntPtr lpInitData);
 
-        public static void HighlightRect(System.Windows.Rect r, System.Windows.Forms.Screen scr, UIAElementInfo WEI)
+        public static void HighlightRect(System.Drawing.Rectangle r, System.Windows.Forms.Screen scr, UIAElementInfo WEI)
         {
             FontFamily CurrentFontFamily = null;
             for (int i = 0; i < System.Drawing.FontFamily.Families.Count(); i++)

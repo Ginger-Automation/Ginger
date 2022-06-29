@@ -20,6 +20,8 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Core;
+using Amdocs.Ginger.Repository;
+using Ginger.ConflictResolve;
 using GingerCore;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
@@ -32,7 +34,7 @@ namespace Ginger.SourceControl
 {
     public class SourceControlUI
     {
-        public static bool TestConnection(SourceControlBase SourceControl, SourceControlConnDetailsPage.eSourceControlContext context, bool ignoreSuccessMessage)
+        public static bool TestConnection(SourceControlBase SourceControl, bool ignoreSuccessMessage)
         {
             string error = string.Empty;
             bool res = false;
@@ -57,31 +59,30 @@ namespace Ginger.SourceControl
         {
             string error = string.Empty;
             List<string> conflictsPaths = new List<string>();
-            bool result = true;
-            bool conflictHandled = false;
+          
             if (!SourceControl.GetLatest(path, ref error, ref conflictsPaths))
             {
-
-                foreach (string cPath in conflictsPaths)
+                ResolveConflictWindow conflictWindow = new ResolveConflictWindow(conflictsPaths);
+                if (WorkSpace.Instance.RunningInExecutionMode == true)
                 {
-                    ResolveConflictPage resConfPage = new ResolveConflictPage(cPath);
-                    if (WorkSpace.Instance.RunningInExecutionMode == true)
-                        SourceControlIntegration.ResolveConflicts(SourceControl, cPath, eResolveConflictsSide.Server);
-                    else
-                        resConfPage.ShowAsWindow();
-                    result = resConfPage.IsResolved;
-
-                    if (!result)
+                    conflictsPaths.ForEach(path => SourceControlIntegration.ResolveConflicts(SourceControl, path, eResolveConflictsSide.Server));
+                }
+                else
+                {
+                    conflictWindow.ShowAsWindow();
+                }
+                if (!conflictWindow.IsResolved)
+                {
+                    if (!string.IsNullOrEmpty(error))
                     {
-                        Reporter.ToUser(eUserMsgKey.SourceControlGetLatestConflictHandledFailed);
+                        Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, error);
                         return false;
                     }
-                    conflictHandled = true;
-                }
-                if (!conflictHandled)
-                {
-                    Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, error);
-                    return false;
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unable to resolve conflict");
+                        return false;
+                    }
                 }
             }
             return true;
@@ -108,22 +109,22 @@ namespace Ginger.SourceControl
             switch (RIS)
             {
                 case SourceControlFileInfo.eRepositoryItemStatus.New:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@SourceControlItemAdded_10x10.png"));
+                    img = new BitmapImage(new Uri(@"/Images/" + "@SourceControlItemAdded_10x10.png", UriKind.RelativeOrAbsolute));
                     break;
                 case SourceControlFileInfo.eRepositoryItemStatus.Modified:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@SourceControlItemChange_10x10.png"));
+                    img = new BitmapImage(new Uri(@"/Images/" + "@SourceControlItemChange_10x10.png", UriKind.RelativeOrAbsolute));
                     break;
                 case SourceControlFileInfo.eRepositoryItemStatus.Deleted:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@SourceControlItemDeleted_10x10.png"));
+                    img = new BitmapImage(new Uri(@"/Images/" + "@SourceControlItemDeleted_10x10.png", UriKind.RelativeOrAbsolute));
                     break;
                 case SourceControlFileInfo.eRepositoryItemStatus.Equel:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@SourceControlItemUnchanged_10x10.png"));
+                    img = new BitmapImage(new Uri(@"/Images/" + "@SourceControlItemUnchanged_10x10.png", UriKind.RelativeOrAbsolute));
                     break;
                 case SourceControlFileInfo.eRepositoryItemStatus.LockedByAnotherUser:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Lock_Red_10x10.png"));
+                    img = new BitmapImage(new Uri(@"/Images/" + "@Lock_Red_10x10.png", UriKind.RelativeOrAbsolute));
                     break;
                 case SourceControlFileInfo.eRepositoryItemStatus.LockedByMe:
-                    img = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Lock_Yellow_10x10.png"));
+                    img = new BitmapImage(new Uri(@"/Images/" + "@Lock_Yellow_10x10.png", UriKind.RelativeOrAbsolute));
                     break;
             }
             return img;

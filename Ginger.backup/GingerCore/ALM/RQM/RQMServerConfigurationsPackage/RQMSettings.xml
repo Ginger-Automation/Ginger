@@ -1,0 +1,258 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<RQM>
+  <GeneralData>
+    <Quality-managemant-section>
+      <ServerPrefix>fa1qm1</ServerPrefix>
+      <ServerPrefix>fa2qm1</ServerPrefix>
+      <ServerPrefix>fa4qm1</ServerPrefix>
+      <ServerPrefix>fa3qm1</ServerPrefix>
+      <ServerPrefix>fa5qm1</ServerPrefix>
+      <ServerPrefix>qm</ServerPrefix>
+    </Quality-managemant-section>
+    <Requirements-section>
+      <ServerPrefix>fa1rm1</ServerPrefix>
+    </Requirements-section>
+    <ServerURL>https://sdp.web.att.com</ServerURL>
+    <Change-and-configuration-management>
+    </Change-and-configuration-management>
+    <SecurityPath>https://sdp.web.att.com:9643/jazzop/j_security_check</SecurityPath>
+    <cookieDomain>sdp.web.att.com</cookieDomain>
+    <HttpDataAccept>application/xml</HttpDataAccept>
+    <IsSSL>True</IsSSL>
+    <IsJsaServer>True</IsJsaServer>
+    <ConnectionType>RESTAPI</ConnectionType>
+    <AuthRetryCounter>2</AuthRetryCounter>
+    <Export_SettingsFile_Location>RQM_Export_Templates</Export_SettingsFile_Location>
+  </GeneralData>
+  <Monitoring>
+    <TasksPerBatch>20</TasksPerBatch>
+    <IntervalBetweenBatchesMs>1000</IntervalBetweenBatchesMs>
+    <TotalProcessDurationSec>120</TotalProcessDurationSec>
+    <ShouldStopProcess>false</ShouldStopProcess>
+    <ShouldStopProcessPassword></ShouldStopProcessPassword>
+  </Monitoring>
+  <DataBase>
+    <ConnectionString></ConnectionString>
+  </DataBase>
+  <RESTAPI>
+    <DATA>
+      <key>1</key>
+      <value>admin/projects</value>
+      <desc>Get Life Cycle Project</desc>
+    </DATA>
+    <DATA>
+      <key>2</key>
+      <value>{managePrefix}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{projectname}/{resource}/urn:com.ibm.rqm:{resource}</value>
+      <desc>Get all resources by project</desc>
+    </DATA>
+    <DATA>
+      <key>3</key>
+      <value>{managePrefix}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{projectname}/{resource}/urn:com.ibm.rqm:{resource}:{id}</value>
+      <desc>Get/Update Specific resource by id</desc>
+    </DATA>
+    <DATA>
+      <key>4</key>
+      <value>{managePrefix}/process/project-areas</value>
+      <desc>Get Project area data by management name</desc>
+    </DATA>
+    <DATA>
+      <key>5</key>
+      <value>{managePrefix}/oslc/workitems/catalog</value>
+      <desc>main catalog</desc>
+    </DATA>
+    <DATA>
+      <key>6</key>
+      <value>{managePrefix}/publish/resources?projectName={projectName}</value>
+      <desc>rm data by project</desc>
+    </DATA>
+    <DATA>
+      <key>7</key>
+      <value>{managePrefix}/publish/resources?resourceURI={uid}</value>
+      <desc>rm data by id</desc>
+    </DATA>
+    <DATA>
+      <key>8</key>
+      <value>{managePrefix}/service/com.ibm.rqm.integration.service.IIntegrationService/schema/qm.xsd</value>
+      <desc>qm schema file</desc>
+    </DATA>
+    <DATA>
+      <key>9</key>
+      <value>{managePrefix}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{projectname}/{resource}</value>
+      <desc>create a resource with http put/post</desc>
+    </DATA>
+    <DATA>
+      <key>10</key>
+      <value>{managePrefix}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{projectName}/{resource}?modifiedSince={time}</value>
+      <desc>Get resources by time - modified since.</desc>
+    </DATA>
+    <DATA>
+      <key>11</key>
+      <value>{managePrefix}/rpt/repository/foundation?fields=foundation/projectArea/(name|itemId|teamMembers/(itemId|name|itemId|userId%20)|roleAssignments)</value>
+      <desc>Get Members Per life cycle Project</desc>
+    </DATA>
+    <DATA>
+      <key>12</key>
+      <value>{managePrefix}/rpt/repository/workitem?fields=workitem/workItem[projectArea/itemId={ProjectGuid}%20and%20type/id=defect]/*/*&amp;size=1&amp;pos=250000</value>
+      <desc>Get All Defects</desc>
+    </DATA>
+    <DATA>
+      <key>13</key>
+      <value>{managePrefix}/rpt/repository/workitem?fields=workitem/workItem[itemId={id}]/auditableLinks[name={linkType}]/{subFolders}&amp;size=1&amp;pos=250000</value>
+      <desc>Get ccm auditableLink</desc>
+    </DATA>
+    <DATA>
+      <key>14</key>
+      <value>{managePrefix}/oslc/workitems/{id}/{resource}</value>
+      <desc>Get comment details of specific workitem</desc>
+    </DATA>
+    <DATA>
+      <key>15</key>
+      <value>{managePrefix}/rpt/repository/foundation?fields=projectArea/projectArea[itemId={ProjectGuid}]/(classification|archived|itemId|name|(roleAssignments/contributor/userId|itemId)|(roleAssignments/contributorRoles/name))&amp;size=1000000</value>
+      <desc>Get Members Per specific project area</desc>
+    </DATA>
+    <DATA>
+      <key>16</key>
+      <value>{managePrefix}/publish/text/*?projectURI={ProjectGuid}</value>
+      <desc>Get all requirements for a specific project area</desc>
+    </DATA>
+    <DATA>
+      <key>17</key>
+      <value>{managePrefix}/oslc_qm/contexts/{ProjectGuid}/resources/com.ibm.rqm.{resource}</value>
+      <desc>Get all objects of a given test entity</desc>
+    </DATA>
+    <DATA>
+      <key>18</key>
+      <value>{managePrefix}/service/com.ibm.team.workitem.service.process.internal.rest.IWorkItemConfigRestService/attributeTypes?projectAreaItemId={ProjectGuid}</value>
+      <desc>Get Enumeration field names and values</desc>
+    </DATA>
+    <DATA>
+      <key>19</key>
+      <value>{managePrefix}/service/com.ibm.rqm.planning.common.service.rest.IArtifactPriorityConfigRestService/artifactPriorities?projectArea={ProjectGuid}</value>
+      <desc>Get QM Enumeration priority  </desc>
+    </DATA>
+    <DATA>
+      <key>20</key>
+      <value>{managePrefix}/service/com.ibm.rqm.integration.service.IIntegrationService/process-info/{ProjectGuid}/workflowstate/com.ibm.rqm.process</value>
+      <desc>Get QM Enumeration WorkFlow</desc>
+    </DATA>
+    <DATA>
+      <key>21</key>
+      <value>{managePrefix}/service/com.ibm.rqm.execution.common.service.rest.IExecutionResultStateRestService/executionResultStatesDTO?includeHidden=false&amp;projectArea={ProjectGuid}</value>
+      <desc>Get QM Execution Status</desc>
+    </DATA>
+    <DATA>
+      <key>22</key>
+      <value>{managePrefix}/service/com.ibm.team.workitem.service.process.internal.rest.IWorkItemConfigRestService/workflows?projectAreaItemId={ProjectGuid}</value>
+      <desc>Get CCM Enumeration WorkFlow</desc>
+    </DATA>
+    <DATA>
+      <key>23</key>
+      <value>{managePrefix}/service/com.ibm.team.workitem.common.internal.rest.IWorkItemRestService/releases?projectAreaItemId={ProjectGuid}</value>
+      <desc>Get CCM Enumeration Releases</desc>
+    </DATA>
+    <DATA>
+      <key>24</key>
+      <value>{managePrefix}/service/com.ibm.rqm.integration.service.history.IHistoryRestService/changeLog?itemId={id}&amp;itemTypeName={resource}&amp;itemTypeNamespace=com.ibm.rqm.{ns}</value>
+      <desc>Get test entity history</desc>
+    </DATA>
+    <DATA>
+      <key>25</key>
+      <value>{managePrefix}/publish/resources?resourceURI={id}&amp;history=true</value>
+      <desc>Get given requirement, including history</desc>
+    </DATA>
+    <DATA>
+      <key>26</key>
+      <value>{managePrefix}/service/com.ibm.team.workitem.common.internal.rest.IWorkItemRestService/workItemDTO2?id={id}&amp;includeAttributes=false&amp;includeLinks=false&amp;includeApprovals=false&amp;includeHistory=true</value>
+      <desc>Get defect history</desc>
+    </DATA>
+    <DATA>
+      <key>27</key>
+      <value>{managePrefix}/oslc_qm/contexts/{ProjectGuid}/resources/com.ibm.rqm.execution.ExecutionResult</value>
+      <desc>Get all execution results</desc>
+    </DATA>
+    <DATA>
+      <key>28</key>
+      <value>{managePrefix}/application-about</value>
+      <desc>Get application information</desc>
+    </DATA>
+    <DATA>
+      <key>29</key>
+      <value>{managePrefix}/service/com.ibm.rqm.configmanagement.service.rest.IConfigurationManagementRestService/configurations?projectArea={ProjectGuid}&amp;defaultOnly=true</value>
+      <desc>Get configuration context</desc>
+    </DATA>
+    <DATA>
+      <key>30</key>
+      <value>{managePrefix}/process/project-areas</value>
+      <desc>Get all execution results</desc>
+    </DATA>
+    <DATA>
+      <key>31</key>
+      <value>{managePrefix}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{projectname}/categoryType</value>
+      <desc>Get Categories Type</desc>
+    </DATA>
+    <DATA>
+      <key>32</key>
+      <value>{managePrefix}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{projectname}/category</value>
+      <desc>Get Categories</desc>
+    </DATA>
+    <DATA>
+      <key>33</key>
+      <value>{managePrefix}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{projectname}/attachment</value>
+      <desc>Get and Post attachments. For get - need to add attachment id</desc>
+    </DATA>
+    <DATA>
+      <key>34</key>
+      <value>{managePrefix}/oslc_qm/contexts/{ProjectGuid}/resources/com.ibm.rqm.execution.TestcaseExecutionRecord?oslc.where=oslc_qm:reportsOnTestPlan=%22{testPlanUri}%22</value>
+      <desc>Get Execution By TestPlan URI</desc>
+    </DATA>
+    <DATA>
+      <key>35</key>
+      <value>{managePrefix}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{ProjectGuid}/testcase/urn:com.ibm.rqm:testcase:{id}</value>
+      <desc>Correct Link On TestCase (non-slug)</desc>
+    </DATA>
+    <DATA>
+      <key>36</key>
+      <value>{managePrefix}/oslc_qm/contexts/{ProjectGuid}/resources/com.ibm.rqm.planning.VersionedTestCase?oslc.where=oslc:shortId={id}</value>
+      <desc>Get OSLC Execution By TestCase URI</desc>
+    </DATA>
+    <DATA>
+      <key>37</key>
+      <value>{managePrefix}/oslc_rm/{ProjectGuid}/services.xml</value>
+      <desc>Get All services per RM project</desc>
+    </DATA>
+    <DATA>
+      <key>38</key>
+      <value>{managePrefix}/oslc_qm/contexts/{ProjectGuid}/resources/com.ibm.rqm.planning.VersionedTestCase/{id}</value>
+      <desc>Update TestCase By OSLC Api</desc>
+    </DATA>
+    <DATA>
+      <key>39</key>
+      <value>
+        {managePrefix}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{projectname}/executionworkitem?fields=feed/entry/content/executionworkitem/(title|testplan[@href=%22{serverName}/{managePrefix}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{projectname}/testplan/urn:com.ibm.rqm:testplan:{id}%22])
+      </value>
+      <desc>Get Execution Work Items By TestPlan URI</desc>
+    </DATA>
+    <DATA>
+      <key>40</key>
+      <desc>Get TestPlan By URI</desc>
+      <value>
+        {managePrefix}/oslc_qm/contexts/{ProjectGuid}/resources/com.ibm.rqm.planning.VersionedTestPlan?oslc.where=oslc:shortId={id}
+      </value>
+    </DATA>
+    <DATA>
+      <key>41</key>
+      <value>{managePrefix}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{projectname}/attachment/urn:com.ibm.rqm:attachment:{attachmentId}</value>
+      <desc>Update a OSCL TestCase with attachment ID</desc>
+    </DATA>
+    <DATA>
+      <key>42</key>
+      <value>{managePrefix}/oslc_qm/contexts/{ProjectGuid}/resources/com.ibm.rqm.execution.TestSuiteExecutionRecord?oslc.where=oslc_qm:reportsOnTestPlan=%22{testPlanUri}%22</value>
+      <desc>Get TestSuite's Execution Record Per Test Plan URI</desc>
+    </DATA>
+    <DATA>
+      <key>43</key>
+      <value>{managePrefix}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{ProjectGuid}/testsuitelog/urn:com.ibm.rqm:testsuitelog:{id}</value>
+      <desc>Get TestSuite's Execution Log (with list of Test Cases Execution Records)</desc>
+    </DATA>
+  </RESTAPI>
+</RQM>

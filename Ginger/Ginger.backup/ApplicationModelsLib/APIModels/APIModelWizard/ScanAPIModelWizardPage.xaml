@@ -1,0 +1,100 @@
+    <Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ginger="clr-namespace:Ginger"
+    xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
+    x:Class="GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard.ScanAPIModelWizardPage"
+      mc:Ignorable="d" 
+      d:DesignHeight="1555.556" d:DesignWidth="3453.333"
+      Title="ScanAPIModelWizardPage">
+
+    <Grid Name="MainGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.Resources>
+            <DataTemplate x:Key="xIsSelectedTemplate">
+                <CheckBox x:Name="xIsSelected_FieldSelection" Click="IsSelected_FieldSelection_Click" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding SelectedOperation}" Value="Do Not Add New">
+                        <Setter Property="IsEnabled" TargetName="xIsSelected_FieldSelection" Value="False" />
+                        <Setter Property="IsChecked" TargetName="xIsSelected_FieldSelection" Value="False" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding SelectedOperation}" Value="Add New">
+                        <Setter Property="IsChecked" TargetName="xIsSelected_FieldSelection" Value="True" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding SelectedOperation}" Value="Replace Existing with New">
+                        <Setter Property="IsChecked" TargetName="xIsSelected_FieldSelection" Value="True" />
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+
+            <DataTemplate x:Key="xMatchingModelTemplate">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120*" />
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="30" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock x:Name="xMatchingAPIName" ToolTip="{Binding MatchingAPIName}" Text="{Binding MatchingAPIName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" />
+
+                    <UserControls:ucButton x:Name="xManualMatchBtn" VerticalAlignment="Center" IsEnabled="True" Grid.Column="1" Margin="0" Padding="0" Height="23"
+                      ButtonType="ImageButton" Click="XManualMatchBtn_Click" ButtonText="" ToolTip="Manually Match an Existing API Model" ButtonFontImageSize="15" ButtonImageHeight="15"
+                            ButtonImageWidth="15" ButtonImageType="Edit" />
+
+                    <UserControls:ucButton x:Name="xClearMatchBtn" VerticalAlignment="Center" IsEnabled="{Binding ShowMergerLink}" Grid.Column="2" Margin="0" Padding="0" Height="23"
+                              ButtonType="ImageButton" Click="xClearMatchBtn_Click" ButtonText="" ToolTip="Clear Matching API Model" ButtonFontImageSize="15" ButtonImageHeight="15"
+                                           ButtonImageWidth="15" ButtonImageType="Close" />
+
+                </Grid>
+            </DataTemplate>
+
+            <DataTemplate x:Key="xCompareAndMergeTemplate">
+                <UserControls:ucButton x:Name="xCompareAndMergeButton" VerticalAlignment="Center" IsEnabled="{Binding ShowMergerLink}" Margin="0" Padding="0" Height="23"
+                      ButtonType="ImageButton" Click="xCompareAndMergeButton_Click" ButtonText="" ToolTip="Compare and Merge"  ButtonFontImageSize="15" ButtonImageHeight="15"
+                            ButtonImageWidth="15" ButtonImageType="Columns" />
+            </DataTemplate>
+
+            <DataTemplate  x:Key="xDeltaStatusIconTemplate">
+                <UserControls:ImageMakerControl x:Name="xDeltaStatusIconImageMakerControl" ImageType="{Binding DeltaStatusIcon}" SetAsFontImageWithSize="16" Width="16" Height="16" />
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Unknown">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Gray"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Unchanged">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Green"/>
+                        <Setter Property="ToolTip" TargetName="xDeltaStatusIconImageMakerControl" Value="Un-Changed API" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Changed">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Orange"/>
+                        <Setter Property="ToolTip" TargetName="xDeltaStatusIconImageMakerControl" Value="Modified" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Deleted">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Red"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Added">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Blue"/>
+                        <Setter Property="ToolTip" TargetName="xDeltaStatusIconImageMakerControl" Value="New API" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Avoided">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Purple"/>
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+            
+        </Grid.Resources>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" x:Name="xCompareBtnRow" />
+            <RowDefinition Height="300*"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel>
+            <UserControls:ucButton x:Name="xCompreExistingItemBtn" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right"
+                      ButtonType="RoundTextAndImageButton" Click="BtnCompareAPIClicked" ButtonText="Compare APIs" ToolTip="Compare with Existing API Models"  ButtonFontImageSize="15" ButtonImageHeight="15"
+                            ButtonImageWidth="15" ButtonImageType="Analyze" />
+        </DockPanel>
+
+        <ginger:ucGrid x:Name="xApisSelectionGrid"  Grid.Row="1" Margin="0,0,0,0" Visibility="Visible" ShowTitle="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ></ginger:ucGrid>
+    </Grid>
+</Page>

@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.Repository;
 using GingerCore.Properties;
@@ -86,7 +88,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(WindowTitle)).ValueForDriver;
+                return GetOrCreateInputParam(nameof(WindowTitle)).Value;
             }
             set
             {
@@ -117,7 +119,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(PatternPath)).ValueForDriver;
+                return GetOrCreateInputParam(nameof(PatternPath)).Value;
             }
             set
             {
@@ -141,7 +143,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(SetTextValue)).ValueForDriver;
+                return GetOrCreateInputParam(nameof(SetTextValue)).Value;
             }
             set
             {
@@ -153,7 +155,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(ProcessNameForSikuliOperation)).ValueForDriver;
+                return GetOrCreateInputParam(nameof(ProcessNameForSikuliOperation)).Value;
             }
             set
             {
@@ -165,7 +167,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam(nameof(PatternSimilarity)).ValueForDriver;
+                return GetOrCreateInputParam(nameof(PatternSimilarity)).Value;
             }
             set
             {
@@ -175,7 +177,7 @@ namespace GingerCore.Actions
 
         public override eImageType Image { get { return eImageType.BullsEye; } }
 
-        private List<AutomationElement> lstWindows = new List<AutomationElement>();
+        private List<UIAuto.AutomationElement> lstWindows = new List<UIAuto.AutomationElement>();
 
         public static new partial class Fields
         {
@@ -201,7 +203,6 @@ namespace GingerCore.Actions
             [EnumValueDescription("1920 x 1080")]
             Resolution1920x1080,
         }
-        [IsSerializedForLocalRepository]
         public bool SetCustomResolution
         {
             get
@@ -215,7 +216,7 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue(nameof(ShowSikuliConsole), value.ToString());
             }
         }
-        [IsSerializedForLocalRepository]
+
         public eChangeAppWindowSize ChangeAppWindowSize
         {
             get
@@ -242,12 +243,11 @@ namespace GingerCore.Actions
 
         private string mCustomJavaPath = string.Empty;
 
-        [IsSerializedForLocalRepository]
         public string CustomJavaPath
         {
             get
             {
-                return GetOrCreateInputParam(nameof(CustomJavaPath)).ValueForDriver;
+                return GetOrCreateInputParam(nameof(CustomJavaPath)).Value;
             }
             set
             {
@@ -269,7 +269,10 @@ namespace GingerCore.Actions
                     if (SetCustomResolution)
                     {
                         List<int> lstVal = GetCustomResolutionValues();
-                        WinAPIAutomation.ResizeExternalWindow(lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).First(), lstVal[0], lstVal[1]);
+                        if (lstVal.Count == 2)
+                        {
+                            WinAPIAutomation.ResizeExternalWindow(lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).First(), lstVal[0], lstVal[1]);
+                        }
                     }
                 }
             }
@@ -280,7 +283,8 @@ namespace GingerCore.Actions
             if (CheckIfImageValidAndIfPercentageValidAndSelectedApplicationValid())
             {
                 string logMessage = string.Empty;
-                APILauncher sikuliLauncher = new APILauncher(out logMessage, ShowSikuliConsole, UseCustomJava, CustomJavaPath);
+                APILauncher sikuliLauncher = new APILauncher(out logMessage, ShowSikuliConsole, UseCustomJava,
+                                                             ValueExpression.Calculate(CustomJavaPath));
                 if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
                 {
                     sikuliLauncher.EvtLogMessage += sikuliLauncher_EvtLogMessage;
@@ -290,8 +294,8 @@ namespace GingerCore.Actions
                 {
                     Screen sekuliScreen = new Screen();
 
-                    Pattern sikuliPattern = new Pattern(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(PatternPath),
-                                                        double.Parse(PatternSimilarity) / 100);
+                    Pattern sikuliPattern = new Pattern(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(
+                                                        ValueExpression.Calculate(PatternPath)), new Point(0, 0), PatternSimilarity);
 
                     if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
                     {
@@ -303,7 +307,7 @@ namespace GingerCore.Actions
                             sekuliScreen.Click(sikuliPattern);
                             break;
                         case eActSikuliOperation.SetValue:
-                            sekuliScreen.Type(sikuliPattern, SetTextValue);
+                            sekuliScreen.Type(sikuliPattern, ValueExpression.Calculate(SetTextValue));
                             break;
                         case eActSikuliOperation.DoubleClick:
                             sekuliScreen.DoubleClick(sikuliPattern);
@@ -377,7 +381,7 @@ namespace GingerCore.Actions
             List<object> lstAppWindow = uiHelper.GetListOfWindows();
             ActiveProcessWindowsList.Clear();
             lstWindows.Clear();
-            foreach (AutomationElement process in lstAppWindow)
+            foreach (UIAuto.AutomationElement process in lstAppWindow)
             {
                 // If the process appears on the Taskbar (if has a title)
                 // print the information of the process
@@ -478,24 +482,30 @@ namespace GingerCore.Actions
 
         private bool CheckIfImageValidAndIfPercentageValidAndSelectedApplicationValid()
         {
-            if (string.IsNullOrEmpty(PatternPath))
+            if (string.IsNullOrEmpty(ValueExpression.Calculate(PatternPath)))
             {
                 Error = "File Path is Empty";
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "File Path is Empty");
                 return false;
             }
-            if (!File.Exists(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(PatternPath)))
+            if (!File.Exists(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(
+                ValueExpression.Calculate(PatternPath))))
             {
                 Error = "File Path is Invalid";
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "File Path is Invalid");
                 return false;
             }
             double result = 0;
-            if (!double.TryParse(PatternSimilarity, out result))
+            if (!double.TryParse(ValueExpression.Calculate(PatternSimilarity), out result))
             {
                 Error = "Please enter a valid percentage similarity";
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please enter a valid percentage similarity");
                 return false;
+            }
+            else
+            {
+                if (result < 0 || result > 100)
+                {
+                    Error = "Percentage Similarity should be between 0-100";
+                    return false;
+                }
             }
             if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
             {
@@ -504,8 +514,32 @@ namespace GingerCore.Actions
                     lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).Count() == 0)
                 {
                     Error = "Target Application is not running";
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Target Application is not running");
                     return false;
+                }
+            }
+            if (UseCustomJava)
+            {
+                if (string.IsNullOrEmpty(ValueExpression.Calculate(CustomJavaPath)))
+                {
+                    Error = "Java Version Path cannot be empty";
+                    return false;
+                }
+                else
+                {
+                    string customJavaPath = ValueExpression.Calculate(CustomJavaPath);
+                    string customBinPath = Path.Combine(customJavaPath, @"bin");
+                    string customExePath = Path.Combine(customBinPath, @"java.exe");
+                    string customWExePath = Path.Combine(customBinPath, @"javaw.exe");
+                    if (!File.Exists(customExePath))
+                    {
+                        Error = "java.exe is missing inside bin folder " + customJavaPath;
+                        return false;
+                    }
+                    if (!File.Exists(customWExePath))
+                    {
+                        Error = "javaw.exe is missing inside bin folder " + customJavaPath;
+                        return false;
+                    }
                 }
             }
             return true;

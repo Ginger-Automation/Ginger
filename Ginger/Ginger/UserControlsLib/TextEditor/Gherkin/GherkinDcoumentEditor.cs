@@ -219,7 +219,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             
             BitmapImage b = new BitmapImage();
             b.BeginInit();
-            b.UriSource = new Uri("pack://application:,,,/Ginger;component/Images/@AddActivity_16x16.png"); 
+            b.UriSource = new Uri(@"/Images/@AddActivity_16x16.png", UriKind.RelativeOrAbsolute); 
             b.EndInit();
             TCD.Image = b;
 
@@ -233,7 +233,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
             BitmapImage b = new BitmapImage();
             b.BeginInit();
-            b.UriSource = new Uri("pack://application:,,,/Ginger;component/Images/@AddActivity_16x16.png");
+            b.UriSource = new Uri(@"/Images/@AddActivity_16x16.png", UriKind.RelativeOrAbsolute);
             b.EndInit();
             TCD.Image = b;
 
@@ -247,7 +247,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
             BitmapImage b = new BitmapImage();
             b.BeginInit();
-            b.UriSource = new Uri("pack://application:,,,/Ginger;component/Images/@AddActivity_16x16.png");
+            b.UriSource = new Uri(@"/Images/@AddActivity_16x16.png", UriKind.RelativeOrAbsolute);
             b.EndInit();
             TCD.Image = b;
 

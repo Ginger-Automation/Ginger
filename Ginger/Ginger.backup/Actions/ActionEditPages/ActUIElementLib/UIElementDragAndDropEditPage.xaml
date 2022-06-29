@@ -1,0 +1,61 @@
+    <Page x:Class="Ginger.Actions._Common.ActUIElementLib.UIElementDragAndDropEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.Actions._Common.ActUIElementLib"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      xmlns:Actions="clr-namespace:Ginger.Actions"
+      xmlns:h="clr-namespace:Ginger.Help"
+      mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="110"
+      Title="ActDragAndDropEditPage"  >
+
+    <Grid>
+        <StackPanel>
+            <StackPanel>                
+                <StackPanel Orientation="Horizontal">
+                    <Label Style="{StaticResource @InputFieldLabelStyle}" Width="160">Drag and Drop Type:</Label>
+                     <UserControlsLib:UCComboBox x:Name="DragDropType" Width="200"></UserControlsLib:UCComboBox>
+                </StackPanel>
+                <StackPanel x:Name="DragXY" Orientation="Horizontal" Visibility="Collapsed">
+                    <Label Style="{StaticResource @InputFieldLabelStyle}" Width="160">Source Drag Location:</Label>
+                    <Actions:UCValueExpression x:Name="SourceDragXY" ToolTip="Source Element Drag Location" Width="250"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Style="{StaticResource @InputFieldLabelStyle}" Width="160">Target Element Type:</Label>
+                    <ComboBox x:Name="TargetElement"  Style="{StaticResource @InputComboBoxStyle}"
+                            
+                              ToolTip="How to Locate the Element on the screen"  Width="160"></ComboBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Style="{StaticResource @InputFieldLabelStyle}" Width="160">Target Locate By:</Label>
+                    <ComboBox x:Name="TargetLocateByComboBox"  Style="{StaticResource @InputComboBoxStyle}" ToolTip="How to Locate the Target Element on the screen" Width="160" SelectionChanged="TargetLocateByComboBox_SelectionChanged"/>
+                   
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Style="{StaticResource @InputFieldLabelStyle}" Width="160">Target Locate Value:</Label>
+                    <Actions:UCValueExpression x:Name="TargetLocatorValue" ToolTip="Target Element location expression" Width="250"/>
+                    <Grid x:Name="TargetXYGrid" Visibility="Collapsed" Margin="-20 0 0 0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="69*"/>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="69*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Row="1" Grid.Column="0" >X</Label>
+                        <Actions:UCValueExpression Grid.Row="1" HorizontalAlignment="Stretch" x:Name="txtLocateValueX" Grid.Column="1" Width="150" Margin="-15,0,0,0" />
+                        <Label Grid.Row="1" Grid.Column="2">Y</Label>
+                        <Actions:UCValueExpression HorizontalAlignment="Stretch" x:Name="txtLocateValueY" Grid.Column="3" Grid.Row="1" Width="150" Margin="-15,0,10,0" />
+                    </Grid>
+                </StackPanel>
+                <StackPanel x:Name="DropXY" Orientation="Horizontal"  Visibility="Collapsed">
+                    <Label Style="{StaticResource @InputFieldLabelStyle}" Width="160">Target Drop Location:</Label>
+                    <Actions:UCValueExpression x:Name="TargetDropXY" ToolTip="Target Element Drop Location" Width="250"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

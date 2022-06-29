@@ -1,488 +1,171 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C4CEF07F-5257-49A0-A056-7D52CC5CD5FA}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GingerTest</RootNamespace>
-    <AssemblyName>GingerTest</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">15.0</VisualStudioVersion>
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
-    <IsCodedUITest>False</IsCodedUITest>
-    <TestProjectType>UnitTest</TestProjectType>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <TargetFrameworkProfile />
+    <TargetFramework>net6.0-windows</TargetFramework>
+	<UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+	  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Speech" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Controls.Ribbon" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="WindowsBase" />
+    <None Remove="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb" />
+    <None Remove="TestResources\Solutions\POMsTest\DataSources\GingerDataSource.mdb" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="ActionConversion\ActionConversionTest.cs" />
-    <Compile Include="APIModelLib\POMsTest.cs" />
-    <Compile Include="APIModelLib\WSDLParserTest.cs" />
-    <!--<Compile Include="APIModelLib\WSDLToAPITest.cs" />-->
-    <Compile Include="AgentsLib\AgentsTest.cs" />
-    <Compile Include="BusinessFlowLib\BusinessFlowPOMTest.cs" />
-    <Compile Include="EnvironemntsLib\EnvsTest.cs" />
-    <Compile Include="GeneralLib\CopyDir.cs" />
-    <Compile Include="GeneralLib\VisualCompare.cs" />
-    <Compile Include="GingerAutomator.cs" />
-    <Compile Include="HTMLReportsLib\HTMLReportTest.cs" />
-    <Compile Include="POMs\AdornerLib\HighlightAdorner.cs" />
-    <Compile Include="POMs\AgentsPOM.cs" />
-    <Compile Include="POMs\BusinessFlowPOM.cs" />
-    <Compile Include="POMs\Common\ButtonPOM.cs" />
-    <Compile Include="POMs\Common\ContextMenuItemPOM.cs" />
-    <Compile Include="POMs\Common\ContextMenuPOM.cs" />
-    <Compile Include="POMs\Common\GenericWindowPOM.cs" />
-    <Compile Include="POMs\Common\InputBoxWindowPOM.cs" />
-    <Compile Include="POMs\Common\PagePOM.cs" />
-    <Compile Include="POMs\Common\POMButtons.cs" />
-    <Compile Include="POMs\Common\TreeViewItemPOM.cs" />
-    <Compile Include="POMs\Common\ucAgentControlPOM.cs" />
-    <Compile Include="POMs\Common\ucGridPOM.cs" />
-    <Compile Include="POMs\Common\WindowPOM.cs" />
-    <Compile Include="POMs\EnvironmentsPOM.cs" />
-    <Compile Include="POMs\GingerPOMBase.cs" />
-    <Compile Include="POMs\GlobalVariablesPOM.cs" />
-    <!--<Compile Include="GeneralLib\GingerTests.cs" />-->
-    <Compile Include="POMs\MainWindowPOM.cs" />
-    <Compile Include="GingerBasicsTest.cs" />
-    <Compile Include="POMs\POMsPOM.cs" />
-    <Compile Include="POMs\SingleItemTreeViewExplorerPagePOM.cs" />
-    <Compile Include="POMs\UCButtonPOM.cs" />
-    <Compile Include="POMs\UIElementPOM.cs" />
-    <Compile Include="POMs\WizardPOM.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repository\GingerSolutionRepositoryTest.cs" />
-    <Compile Include="Repository\GingerSolutionRepositorySyncTest.cs" />
-    <Compile Include="TestAssemblyInit.cs" />
-    <Compile Include="UserControlsLib\ImageMakerLib\ImageMakerControlTest.cs" />
-    <Compile Include="Variable Dependancies\VariableDependancyTest.cs" />
-    <Compile Include="VariablesLib\VariablesTest.cs" />
-    <Compile Include="VideosLib\Speach.cs" />
-    <Compile Include="WizardLib\WizardTest.cs" />
+    <PackageReference Include="GingerTestHelper" Version="2.0.2" />
+    <PackageReference Include="log4net" Version="2.0.14" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="11.2.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.7" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.7" />
+    <PackageReference Include="coverlet.collector" Version="3.1.0" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="TestData\Agents.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TestResources\Solutions\BasicSimple\RecentlyUsed.dat">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestResources\Solutions\POMsTest\RecentlyUsed.dat">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TestResources\Solutions\TestUndoBusinessFlow\DataSources\LiteDB.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="TestResources\Solutions\TestUndoBusinessFlow\ExecutionResults\GingerExecutionResults.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\GingerAutoPilot\GingerAutoPilot.csproj" />
+    <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
+    <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
+    <ProjectReference Include="..\GingerCore\GingerCore.csproj" />
+    <ProjectReference Include="..\Ginger\Ginger.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\GingerAutoPilot\GingerAutoPilot.csproj">
-      <Project>{651e20ac-3f67-4173-811b-ac1df4d92fcd}</Project>
-      <Name>GingerAutoPilot</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj">
-      <Project>{a2e3c260-7447-472d-9dce-39b7c80f12f7}</Project>
-      <Name>GingerCoreCommon</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj">
-      <Project>{6facd2ab-8747-473b-af43-5b6691775f62}</Project>
-      <Name>GingerCoreNET</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GingerCore\GingerCore.csproj">
-      <Project>{b86281c6-f6ff-4439-94c9-c8ef99bef58f}</Project>
-      <Name>GingerCore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Ginger\Ginger.csproj">
-      <Project>{3efcb931-48fc-45bf-9598-0f8138802411}</Project>
-      <Name>Ginger</Name>
-    </ProjectReference>
+    <Resource Include="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb" />
+    <Resource Include="TestResources\Solutions\POMsTest\DataSources\GingerDataSource.mdb" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="TestResources\APIModel\globalweather.xml">
+    <None Update="TestResources\APIModel\globalweather.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\HTML\HTMLControls.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\JavaLegacyToPOMxml\Java Swing Test App.Ginger.ApplicationPOMModel.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\JavaLegacyToPOMxml\Java_Legacy_Actions_BF.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AgentsTest\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AgentsTest\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AgentsTest\DataSources\GingerDataSource.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\AgentsTest\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\DosConsole\Agents\MyDosApp - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\DosConsole\BusinessFlows\DOS_RegressionTestingSuite.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\DosConsole\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\DosConsole\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EnvsTest\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EnvsTest\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EnvsTest\DataSources\GingerDataSource.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EnvsTest\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EnvsTest\Environments\ST.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EnvsTest\Environments\UAT.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\EnvsTest\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\POMsTest\Agents\MyWebApp - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\POMsTest\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\POMsTest\DataSources\GingerDataSource.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\POMsTest\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\POMsTest\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\POMsTest\HTMLReportConfigurations\Default.Ginger.HTMLReportConfiguration.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\ReportSR\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\ReportSR\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\ReportSR\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\ReportSR\HTMLReportConfigurations\HTML Report Template.Ginger.HTMLReportConfiguration.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\ReportSR\HTMLReportConfigurations\Template #1.Ginger.HTMLReportConfiguration.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\ReportSR\RunSetConfigs\Default Run Set.Ginger.RunSetConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\TestUndoBusinessFlow\Agents\MyWebApp - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\TestUndoBusinessFlow\BusinessFlows\Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\TestUndoBusinessFlow\BusinessFlows\Flow 2.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\TestUndoBusinessFlow\DataSources\DefaultDataSource.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\TestUndoBusinessFlow\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\TestUndoBusinessFlow\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\TestUndoBusinessFlow\HTMLReportConfigurations\Default.Ginger.HTMLReportConfiguration.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="TestResources\HTML\HTMLControls.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\JavaLegacyToPOMxml\Java Swing Test App.Ginger.ApplicationPOMModel.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\JavaLegacyToPOMxml\Java_Legacy_Actions_BF.Ginger.BusinessFlow.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\AgentsTest\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="TestResources\Solutions\AgentsTest\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\AgentsTest\DataSources\GingerDataSource.Ginger.DataSource.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\AgentsTest\Ginger.Solution.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\DosConsole\Agents\MyDosApp - Agent 1.Ginger.Agent.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\DosConsole\BusinessFlows\DOS_RegressionTestingSuite.Ginger.BusinessFlow.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\DosConsole\Documents\Scripts\GetSolutionFolder.vbs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\DosConsole\Environments\Default.Ginger.Environment.xml" />
-    <Content Include="TestResources\Solutions\DosConsole\Ginger.Solution.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\POMsTest\Agents\MyWebApp - Agent 1.Ginger.Agent.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\POMsTest\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\POMsTest\DataSources\GingerDataSource.Ginger.DataSource.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\POMsTest\DataSources\GingerDataSource.mdb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\POMsTest\Environments\Default.Ginger.Environment.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\POMsTest\Ginger.Solution.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\POMsTest\HTMLReportConfigurations\Default.Ginger.HTMLReportConfiguration.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\ReportSR\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\ReportSR\Environments\Default.Ginger.Environment.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\ReportSR\Ginger.Solution.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\ReportSR\HTMLReportConfigurations\HTML Report Template.Ginger.HTMLReportConfiguration.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\ReportSR\HTMLReportConfigurations\Template #1.Ginger.HTMLReportConfiguration.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\ReportSR\RunSetConfigs\Default Run Set.Ginger.RunSetConfig.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\Agents\MyWebApp - Agent 1.Ginger.Agent.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\BusinessFlows\Flow 1.Ginger.BusinessFlow.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\BusinessFlows\Flow 2.Ginger.BusinessFlow.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\DataSources\DefaultDataSource.Ginger.DataSource.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\Environments\Default.Ginger.Environment.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\Ginger.Solution.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\HTMLReportConfigurations\Default.Ginger.HTMLReportConfiguration.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\VisualCompareScreens\AgentEditPage.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <None Include="TestResources\Solutions\BasicSimple\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestResources\Solutions\BasicSimple\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.Ginger.DataSource.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestResources\Solutions\BasicSimple\Environments\Default.Ginger.Environment.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestResources\Solutions\BasicSimple\Ginger.Solution.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Content Include="TestResources\Solutions\EnvsTest\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\EnvsTest\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\EnvsTest\DataSources\GingerDataSource.Ginger.DataSource.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\EnvsTest\Environments\Default.Ginger.Environment.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\EnvsTest\Environments\ST.Ginger.Environment.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\EnvsTest\Environments\UAT.Ginger.Environment.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\Solutions\EnvsTest\Ginger.Solution.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\VisualCompareScreens\ImageMakerControlsVisualTest1_50.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\VisualCompareScreens\ImageMakerControlsVisualTest51_100.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestResources\VisualCompareScreens\VisualCompareAgentConfig.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TestResources\Solutions\POMsTest\ALMDefectProfiles\" />
-    <Folder Include="TestResources\Solutions\POMsTest\Applications Models\API Models\" />
-    <Folder Include="TestResources\Solutions\POMsTest\Applications Models\Global Models Parameters\" />
-    <Folder Include="TestResources\Solutions\POMsTest\Applications Models\POM Models\" />
-    <Folder Include="TestResources\Solutions\POMsTest\ExecutionResults\AutomationTab_LastExecution\" />
-    <Folder Include="TestResources\Solutions\POMsTest\HTMLReportConfigurations\HTMLReportTemplate\" />
-    <Folder Include="TestResources\Solutions\POMsTest\HTMLReportConfigurations\ReportTemplates\" />
-    <Folder Include="TestResources\Solutions\POMsTest\Plugins\" />
-    <Folder Include="TestResources\Solutions\POMsTest\RunSetConfigs\" />
-    <Folder Include="TestResources\Solutions\POMsTest\SharedRepository\Actions\" />
-    <Folder Include="TestResources\Solutions\POMsTest\SharedRepository\ActivitiesGroup\" />
-    <Folder Include="TestResources\Solutions\POMsTest\SharedRepository\Activities\" />
-    <Folder Include="TestResources\Solutions\POMsTest\SharedRepository\Variables\" />
-    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\ALMDefectProfiles\" />
-    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\Applications Models\API Models\" />
-    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\Applications Models\Global Models Parameters\" />
-    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\Applications Models\POM Models\" />
-    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\AutoSave\" />
-    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\Plugins\" />
-    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\RemoteServiceGrid\" />
-    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\RunSetConfigs\" />
-    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\SharedRepository\Actions\" />
-    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\SharedRepository\ActivitiesGroup\" />
-    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\SharedRepository\Activities\" />
-    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\SharedRepository\Variables\" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="FontAwesome.WPF">
-      <Version>4.7.0.9</Version>
-    </PackageReference>
-    <PackageReference Include="GingerTestHelper">
-      <Version>2.0.2</Version>
-    </PackageReference>
-    <PackageReference Include="log4net">
-      <Version>2.0.12</Version>
-    </PackageReference>
-    <PackageReference Include="Magick.NET-Q16-AnyCPU">
-      <Version>7.22.0</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
-      <Version>3.3.0</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting">
-      <Version>3.7.0</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CSharp">
-      <Version>4.7.0</Version>
-    </PackageReference>
-    <PackageReference Include="MSTest.TestAdapter">
-      <Version>2.1.2</Version>
-    </PackageReference>
-    <PackageReference Include="MSTest.TestFramework">
-      <Version>2.1.2</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="System.AppContext">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Collections">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Collections.Concurrent">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Console">
-      <Version>4.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Diagnostics.Debug">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Diagnostics.FileVersionInfo">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Diagnostics.StackTrace">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Diagnostics.Tools">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Drawing.Common">
-      <Version>5.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="System.Dynamic.Runtime">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Globalization">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.IO">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.IO.Compression">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.IO.FileSystem">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Linq">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Linq.Expressions">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Reflection">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Reflection.Extensions">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Reflection.Metadata">
-      <Version>1.8.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Resources.Extensions">
-      <Version>4.7.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Resources.ResourceManager">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime">
-      <Version>4.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime.Extensions">
-      <Version>4.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime.InteropServices">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Runtime.Numerics">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Security.Cryptography.Algorithms">
-      <Version>4.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Security.Cryptography.X509Certificates">
-      <Version>4.3.2</Version>
-    </PackageReference>
-    <PackageReference Include="System.Text.Encoding">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Text.Encoding.CodePages">
-      <Version>4.7.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Text.Encoding.Extensions">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading.Tasks">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading.Tasks.Extensions">
-      <Version>4.5.4</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading.Tasks.Parallel">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Threading.Thread">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.ValueTuple">
-      <Version>4.5.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Xml.ReaderWriter">
-      <Version>4.3.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.Xml.XDocument">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Xml.XmlDocument">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="System.Xml.XPath.XDocument">
-      <Version>4.3.0</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

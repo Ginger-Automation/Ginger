@@ -128,26 +128,22 @@ namespace GingerCore
             [EnumValueDescription("Read Text From Table In Pdf")]
             ReadTextFromTableInPdf = 3
         }
-        [IsSerializedForLocalRepository]
         public eActOcrImageOperations SelectedOcrImageOperation
         {
             get => GetOrCreateInputParam(nameof(SelectedOcrImageOperation), eActOcrImageOperations.ReadTextAfterLabel);
             set => AddOrUpdateInputParamValue(nameof(SelectedOcrImageOperation), value.ToString());
         }
-        [IsSerializedForLocalRepository]
         public eActOcrPdfOperations SelectedOcrPdfOperation
         {
             get => GetOrCreateInputParam(nameof(SelectedOcrPdfOperation), eActOcrPdfOperations.ReadTextAfterLabel);
             set => AddOrUpdateInputParamValue(nameof(SelectedOcrPdfOperation), value.ToString());
         }
-        [IsSerializedForLocalRepository]
         public eActOcrFileType SelectedOcrFileType
         {
             get => GetOrCreateInputParam(nameof(SelectedOcrFileType), eActOcrFileType.ReadTextFromImage);
             set => AddOrUpdateInputParamValue(nameof(SelectedOcrFileType), value.ToString());
         }
 
-        [IsSerializedForLocalRepository]
         public string OcrFilePath
         {
             get
@@ -160,7 +156,6 @@ namespace GingerCore
             }
         }
 
-        [IsSerializedForLocalRepository]
         public string OcrPassword
         {
             get
@@ -173,7 +168,6 @@ namespace GingerCore
             }
         }
 
-        [IsSerializedForLocalRepository]
         public string PageNumber
         {
             get
@@ -186,7 +180,6 @@ namespace GingerCore
             }
         }
 
-        [IsSerializedForLocalRepository]
         public string FirstString
         {
             get
@@ -199,7 +192,6 @@ namespace GingerCore
             }
         }
 
-        [IsSerializedForLocalRepository]
         public string SecondString
         {
             get
@@ -240,7 +232,6 @@ namespace GingerCore
 
         private string mGetFromRowNumber { get; set; } = "0";
 
-        [IsSerializedForLocalRepository]
         public string GetFromRowNumber
         {
             get
@@ -253,21 +244,18 @@ namespace GingerCore
             }
         }
 
-        [IsSerializedForLocalRepository]
         public string ConditionColumnName
         {
             get => GetOrCreateInputParam(nameof(ConditionColumnName)).Value;
             set => AddOrUpdateInputParamValue(nameof(ConditionColumnName), value);
         }
 
-        [IsSerializedForLocalRepository]
         public string ConditionColumnValue
         {
             get => GetOrCreateInputParam(nameof(ConditionColumnValue)).Value;
             set => AddOrUpdateInputParamValue(nameof(ConditionColumnValue), value);
         }
 
-        [IsSerializedForLocalRepository]
         public string UseRowNumber
         {
             get => GetOrCreateInputParam(nameof(UseRowNumber)).Value;
@@ -289,7 +277,7 @@ namespace GingerCore
             switch (SelectedOcrImageOperation)
             {
                 case eActOcrImageOperations.ReadTextAfterLabel:
-                    resultText = GingerOcrOperations.ReadTextFromImageAfterLabel(OcrFilePath, FirstString);
+                    resultText = GingerOcrOperations.ReadTextFromImageAfterLabel(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
@@ -300,7 +288,7 @@ namespace GingerCore
                     }
                     break;
                 case eActOcrImageOperations.ReadTextBetweenTwoStrings:
-                    resultText = GingerOcrOperations.ReadTextFromImageBetweenStrings(OcrFilePath, FirstString, SecondString);
+                    resultText = GingerOcrOperations.ReadTextFromImageBetweenStrings(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString), ValueExpression.Calculate(SecondString));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
@@ -311,7 +299,7 @@ namespace GingerCore
                     }
                     break;
                 case eActOcrImageOperations.ReadAllText:
-                    resultText = GingerOcrOperations.ReadTextFromImage(OcrFilePath);
+                    resultText = GingerOcrOperations.ReadTextFromImage(ValueExpression.Calculate(OcrFilePath));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
@@ -334,7 +322,7 @@ namespace GingerCore
             switch (SelectedOcrPdfOperation)
             {
                 case eActOcrPdfOperations.ReadTextAfterLabel:
-                    resultText = GingerOcrOperations.ReadTextAfterLabelPdf(OcrFilePath, FirstString, PageNumber, OcrPassword);
+                    resultText = GingerOcrOperations.ReadTextAfterLabelPdf(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString), ValueExpression.Calculate(PageNumber), ValueExpression.Calculate(OcrPassword));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
@@ -345,7 +333,8 @@ namespace GingerCore
                     }
                     break;
                 case eActOcrPdfOperations.ReadTextBetweenTwoStrings:
-                    resultText = GingerOcrOperations.ReadTextBetweenLabelsPdf(OcrFilePath, FirstString, SecondString, PageNumber, OcrPassword);
+                    resultText = GingerOcrOperations.ReadTextBetweenLabelsPdf(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString),
+                        ValueExpression.Calculate(SecondString), ValueExpression.Calculate(PageNumber), ValueExpression.Calculate(OcrPassword));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
@@ -356,7 +345,7 @@ namespace GingerCore
                     }
                     break;
                 case eActOcrPdfOperations.ReadTextFromPDFSinglePage:
-                    resultText = GingerOcrOperations.ReadTextFromPdfSinglePage(OcrFilePath, PageNumber, OcrPassword);
+                    resultText = GingerOcrOperations.ReadTextFromPdfSinglePage(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(PageNumber), ValueExpression.Calculate(OcrPassword));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
@@ -371,14 +360,16 @@ namespace GingerCore
                     {
                         GetFromRowNumber = "0";
                     }
-                    resultText = GingerOcrOperations.ReadTextFromPdfTable(OcrFilePath, FirstString, PageNumber, bool.Parse(UseRowNumber), int.Parse(GetFromRowNumber), ElementLocateBy, ConditionColumnName, ConditionColumnValue, OcrPassword);
+                    resultText = GingerOcrOperations.ReadTextFromPdfTable(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString), ValueExpression.Calculate(PageNumber), bool.Parse(UseRowNumber),
+                        int.Parse(ValueExpression.Calculate(GetFromRowNumber)), ElementLocateBy, ValueExpression.Calculate(ConditionColumnName),
+                        ValueExpression.Calculate(ConditionColumnValue), ValueExpression.Calculate(OcrPassword));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
                     }
                     else
                     {
-                        Error = "Unable to read text from Image";
+                        Error = "Unable to read text from PDF";
                     }
                     break;
                 default:

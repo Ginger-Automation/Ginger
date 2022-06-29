@@ -1,0 +1,66 @@
+﻿<Page x:Class="Ginger.BusinessFlowsLibNew.AddActionMenu.SharedRepositoryNavPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d" 
+      xmlns:h="clr-namespace:Ginger.Help"
+      h:GingerHelpProvider.HelpString="Shared Repository"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="SharedRepositoryNavAction">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <TabControl x:Name="xTabRepository" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Stretch" SelectionChanged="TabControl_SelectionChanged" >
+            <TabControl.Resources>
+                <Style TargetType="{x:Type TabItem}">
+                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                    <Setter Property="Height" Value="33"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="False" >
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True" >
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TabControl.Resources>
+
+            <TabItem x:Name="xTabActivitiesGroups" Margin="0,0,0,0">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="{StaticResource  @Group_16x16.png }" Height="16" Width="16" />
+                        <TextBlock x:Name="xActivitiesGroupsTextBlock" Text="Activities Groups" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                    </StackPanel>
+                </TabItem.Header>
+                <Frame x:Name="xFrameActivitiesGroups" Background="{StaticResource $BackgroundColor_LightGray}"></Frame>
+            </TabItem>
+            <TabItem x:Name="xTabActivities" Margin="2,0,-6,0">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="{StaticResource  @Activities_16x16 }" Height="16" Width="16" />
+                        <TextBlock x:Name="xActivitiesTextBlock" Text="Activities" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                    </StackPanel>
+                </TabItem.Header>
+                <Frame  x:Name="xFrameActivities" Background="{StaticResource $BackgroundColor_LightGray}"></Frame>
+            </TabItem>
+
+            <TabItem x:Name="xTabActions" Margin="8,0,-12,0">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="{StaticResource  @Action_32x32 }" Height="16" Width="16" />
+                        <TextBlock Text="Actions" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                    </StackPanel>
+                </TabItem.Header>
+                <Frame  x:Name="xFrameActions" Background="{StaticResource $BackgroundColor_LightGray}"></Frame>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Page>

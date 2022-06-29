@@ -8,8 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RuntimeFrameworkVersion>3.1.0</RuntimeFrameworkVersion>
+    <TargetFramework>net6.0</TargetFramework>
     <IsPackable>false</IsPackable>
 
     <ApplicationIcon />
@@ -17,6 +16,8 @@
     <OutputType>Library</OutputType>
 
     <StartupObject />
+
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,0 +1,56 @@
+    <Window x:Class="Ginger.GeneralLib.ToolTipPopUpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Tip" Height="80" Width="200" BorderThickness="0" MouseEnter="Window_MouseEnter" AllowsTransparency="True" WindowStyle="None" SizeToContent="WidthAndHeight" ShowInTaskbar="False">
+    
+    <Grid>
+        <Border BorderBrush="#152B37" BorderThickness="1" CornerRadius="4">
+            <DockPanel Background="White">
+                <DockPanel.Effect>
+                    <DropShadowEffect/>
+                </DockPanel.Effect>
+
+                <TextBlock x:Name="ToolTipPopupTextBlock" TextWrapping="Wrap" Background="White" Margin="10,10" DockPanel.Dock="Top" Foreground="#152B37" >                    
+                            Tip text goes here
+                 </TextBlock>                    
+                 
+                <Button x:Name="ToolTipF1Button" DockPanel.Dock="Bottom" Click="ToolTipF1Button_Click"  Width="60"  HorizontalAlignment="Right" VerticalAlignment="Stretch" Margin="10,10,10,10" >Help {F1}
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="#ecf1f6" />
+                            <Setter Property="Foreground" Value="#152B37" />
+                            <Setter Property="FontFamily" Value="Open Sans" />
+                            <Setter Property="Height" Value="25" />
+                            <Setter Property="FontSize" Value="12" />
+                            <Setter Property="Margin" Value="2,0,0,2" />
+                            <Setter Property="Padding" Value="5,0,5,0"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="#152B37" BorderThickness="1">
+                                            <ContentPresenter 
+                                TextElement.Foreground="{TemplateBinding Foreground}" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="true">
+                                                <Setter Property="Foreground" Value="White" />
+                                                <Setter Property="Background" Value="#152B37" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>                       
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </DockPanel>
+        </Border>
+    </Grid>
+
+    
+</Window>

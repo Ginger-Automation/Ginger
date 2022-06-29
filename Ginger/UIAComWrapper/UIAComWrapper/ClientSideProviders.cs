@@ -188,7 +188,7 @@ namespace System.Windows.Automation
                 
                 // Construct a factory entry
                 UIAutomationClient.IUIAutomationProxyFactoryEntry factoryEntry =
-                    Automation.Factory.CreateProxyFactoryEntry(wrapper);
+                    AutomationExtended.Factory.CreateProxyFactoryEntry(wrapper);
                 factoryEntry.AllowSubstringMatch = ((provider.Flags & ClientSideProviderMatchIndicator.AllowSubstringMatch) != 0) ? 1 : 0;
                 factoryEntry.CanCheckBaseClass = ((provider.Flags & ClientSideProviderMatchIndicator.DisallowBaseClassNameMatch) != 0) ? 0 : 1;
                 factoryEntry.ClassName = provider.ClassName;
@@ -199,7 +199,7 @@ namespace System.Windows.Automation
             }
 
             // Get the proxy map from Automation and restore the default table
-            UIAutomationClient.IUIAutomationProxyFactoryMapping map = Automation.Factory.ProxyFactoryMapping;
+            UIAutomationClient.IUIAutomationProxyFactoryMapping map = AutomationExtended.Factory.ProxyFactoryMapping;
             map.RestoreDefaultTable();
 
             // Decide where to insert

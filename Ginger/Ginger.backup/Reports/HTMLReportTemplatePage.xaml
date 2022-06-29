@@ -1,0 +1,561 @@
+    <Page x:Class="Ginger.Reports.HTMLReportTemplatePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Ginger="clr-namespace:Ginger" xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"      
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d" 
+       xmlns:h="clr-namespace:Ginger.Help"
+      xmlns:usercontrols1="clr-namespace:Ginger.UserControlsLib" h:GingerHelpProvider.HelpString="Report"
+      
+	Title="New HTML Report Template">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.Resources>
+            <DataTemplate x:Key="FieldIsAddedToReportSummaryView">
+                <CheckBox x:Name="grdSummaryView_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Checked="FieldIsAddedToReport_Checked" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+            </DataTemplate>
+        </Grid.Resources>
+
+        <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <TabControl x:Name="tabConfigurations" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="tabConfigurations_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}" >
+            <TabItem x:Name="tbiConfigurations">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Configurations"/>
+                    </StackPanel>
+                </TabItem.Header>
+
+                <StackPanel Margin="0,0,0,0">
+                     <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50*"/>
+                                <RowDefinition Height="50*"/>
+                                <RowDefinition Height="50*"/>
+                            </Grid.RowDefinitions>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="50*"/>
+                                    <RowDefinition Height="50*"/>
+                                </Grid.RowDefinitions>
+                                <Expander x:Name="GeneralExpander" IsExpanded="False">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="General" FontWeight="Bold" Foreground="{DynamicResource $Color_DarkBlue}"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <StackPanel>
+                                        <StackPanel x:Name="TemplateName" Margin="10,10,0,0" HorizontalAlignment="Left">
+                                            <DockPanel >
+                                                <Label Content="Name:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12" DockPanel.Dock="Left"></Label>
+                                                <usercontrols1:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" DockPanel.Dock="Left" Margin="0,0,0,0"/>
+                                                <usercontrols:ImageMakerControl x:Name="xDefualtImage" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default Template" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="0,0,10,0" />
+                                            </DockPanel>
+
+                                            <StackPanel Margin="5,0,0,0" Orientation="Horizontal" >
+                                                <TextBox x:Name="NewTemplateNameTextBox"  Width="484px" Style="{StaticResource @TextBoxStyle}" TextChanged="NewTemplateName_TextChanged" ></TextBox>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <StackPanel x:Name="TemplateDescription" Margin="10,10,0,0" HorizontalAlignment="Left">
+                                            <Label Content="Description:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"></Label>
+                                            <StackPanel Margin="5,0,0,0" Orientation="Horizontal" >
+                                                <TextBox x:Name="TemplateDescriptionTextBox" VerticalAlignment="Stretch" Width="484px" Style="{StaticResource @TextBoxStyle}" Height="45" AcceptsReturn="True" AcceptsTab="True" TextChanged="TemplateDescriptionTextBox_TextChanged" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <StackPanel x:Name="htmlDefaultSwitchPnl" Margin="10,10,0,0" Orientation="Horizontal" Visibility="Collapsed">
+                                <Label Content="Set as Default:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
+                                <StackPanel x:Name="htmlDefaultSwitchBtnsPnl" Margin="10,0,0,0" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <RadioButton x:Name="htmlDefaultOnRadioBtn" Content="Yes" Padding="5,0,15,0" Checked="htmlDefaultOnRadioBtn_Checked"/>
+                                    <RadioButton x:Name="htmlDefaultOffRadioBtn" Content="No" Padding="5,0,0,0" IsChecked="True" Checked="htmlDefaultOffRadioBtn_Checked"/>
+                                </StackPanel>
+                            </StackPanel>
+                                    </StackPanel>
+                                </Expander>
+                                <Expander x:Name="LayoutExpander" Margin="0,5,0,0" IsExpanded="False" Grid.Row="1">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Layout" FontWeight="Bold" Foreground="{DynamicResource $Color_DarkBlue}"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+                                    <StackPanel>
+                                        <StackPanel x:Name="htmlReportImagePnl" Margin="10,10,0,0" HorizontalAlignment="Left" >
+                                            <Label Content="Project Logo Image:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
+                                            <StackPanel Margin="5,0,0,0" Orientation="Horizontal" >
+                                                <Grid Height="100 px">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="180 px" />
+                                                        <ColumnDefinition Width="100 px" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="1*" />
+                                                        <RowDefinition Height="22px" />
+                                                        <RowDefinition Height="1*" />
+                                                    </Grid.RowDefinitions>
+                                                    <Border Margin="0,0,0,0" Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" BorderBrush="#FF252A30" CornerRadius="5" BorderThickness="1" >
+                                                        <Image Margin="5,5,5,5" RenderOptions.BitmapScalingMode="HighQuality"  Name="imgLogo" Stretch="Uniform"  HorizontalAlignment="Center"/>
+                                                    </Border>
+                                                    <Button x:Name="SelectHTMLReportsImageFolderButton" Height="22 px" Style="{StaticResource @InputButtonStyle}" Width="85" Margin="5,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Change Logo" Grid.Row="1" Grid.Column="1" Click="SelectHTMLReportsImageFolderButton_Click"/>
+                                                </Grid>
+                                            </StackPanel>
+
+                                            <StackPanel Margin="5,0,0,0" Orientation="Horizontal" />
+                                        </StackPanel>
+                                        <StackPanel x:Name="htmlUseLocalStoredStylingSwitchPnl" Margin="10,10,0,0" Orientation="Horizontal">
+                                            <Label Content="Style source mode:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
+                                            <StackPanel x:Name="htmlUseLocalStoredStylingSwitchBtnsPnl" Margin="10,0,0,0" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <RadioButton x:Name="htmlUseLocalStoredStylingOffRadioBtn" Content="Offline" Padding="5,0,15,0" IsChecked="True" Checked="htmlUseLocalStoredStylingOffRadioBtn_Checked" ToolTip="All Data related to styling of HTML report(e.g Stylesheet,Javascript) stored in HTML report folder" Style="{StaticResource @InputRadioButtonStyle}"/>
+                                                <RadioButton x:Name="htmlUseLocalStoredStylingOnRadioBtn" Content="Online" Padding="5,0,0,0" Checked="htmlUseLocalStoredStylingOnRadioBtn_Checked" ToolTip="All Data related to styling of HTML report(e.g Stylesheet,Javascript) stored in HTML report file itself(*Requires internet connection)" Style="{StaticResource @InputRadioButtonStyle}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Expander>
+                            </Grid>
+
+                            <Expander x:Name="DataExpander" Margin="0,5,0,0" IsExpanded="True" Grid.Row="1">
+                            <Expander.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Reports Data" FontWeight="Bold" Foreground="{DynamicResource $Color_DarkBlue}"/>
+                                </StackPanel>
+                            </Expander.Header>
+                            <StackPanel>
+                                <StackPanel x:Name="htmlShowFirstIterationSwitchPnl" Margin="10,10,0,0" Orientation="Horizontal" ToolTip="Show all iterations execution results on HTML Report e.g. Flow control or retry mechanism iterations">
+                                    <Label Content="Show Each Element Execution Iteration:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
+                                    <StackPanel x:Name="htmlShowFirstIterationSwitchBtnsPnl" Margin="10,0,0,0" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <RadioButton x:Name="htmlShowFirstIterationOffRadioBtn" Content="No" Padding="5,0,15,0" IsChecked="True" Checked="htmlShowFirstIterationOffRadioBtn_Checked" Style="{StaticResource @InputRadioButtonStyle}"/>
+                                        <RadioButton x:Name="htmlShowFirstIterationOnRadioBtn" Content="Yes" Padding="5,0,0,0" Checked="htmlShowFirstIterationOnRadioBtn_Checked" Style="{StaticResource @InputRadioButtonStyle}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel x:Name="xExecutionCalculationLevelPnl" Margin="10,10,0,0" Orientation="Horizontal" ToolTip="Show all iterations execution results on HTML Report e.g. Flow control or retry mechanism iterations">
+                                    <Label Content="Execution/Pass Rate Calculation Level:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
+                                    <StackPanel x:Name="xExecutionCalculationLevelBtnsPnl" Margin="10,0,0,0" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <RadioButton x:Name="xExecutionCalculationLevelActivityRadioBtn" Padding="5,0,15,0" Checked="htmlExecutionCalculationLevelActivityRadioBtn_Checked" Style="{StaticResource @InputRadioButtonStyle}">
+                                            <RadioButton.Content>
+                                                <GingerCore:ucTextDicResource Text="Activities"/>
+                                            </RadioButton.Content>
+                                        </RadioButton>
+                                        <RadioButton x:Name="xExecutionCalculationLevelActionRadioBtn" Padding="5,0,0,0" Checked="htmlExecutionCalculationLevelActionRadioBtn_Checked" Style="{StaticResource @InputRadioButtonStyle}">
+                                            <RadioButton.Content>
+                                                <GingerCore:ucTextDicResource Text="Actions"/>
+                                            </RadioButton.Content>
+                                        </RadioButton>
+                                    </StackPanel>
+                                </StackPanel>
+                                <Label Style="{StaticResource @LabelStyle}" FontSize="10" Content="Note: Supported only in case the selected Execution Logger type is DB." Padding="15,0,0,0"/>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="50*"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="50*"/>
+                                            <ColumnDefinition Width="50*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel x:Name="htmlReportConfigurationPnl" Margin="10,10,0,0" Orientation="Vertical">
+                                            <Label Content="HTML Report Configuration By Levels:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
+                                            <StackPanel x:Name="htmlReportConfigSummaryViewFieldsPnl"  Orientation="Horizontal">
+                                                <TabControl x:Name="tabReportLevels" DockPanel.Dock="Top" Width="494" VerticalAlignment="Stretch" >
+                                                    <TabItem x:Name="tbiSummaryViewFields">
+                                                        <TabItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <CheckBox x:Name="SummaryViews_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsEnabled="False" IsChecked="True"/>
+                                                                <TextBlock Text="Summary View"/>
+                                                            </StackPanel>
+                                                        </TabItem.Header>
+
+                                                        <Grid Name="grdSummaryViewField">
+                                                            <Grid.Resources>
+                                                                <DataTemplate x:Key="FieldIsAddedToReportSummaryView">
+                                                                    <CheckBox x:Name="grdSummaryView_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="FieldIsAddedToReport_Checked" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                                </DataTemplate>
+                                                                <DataTemplate x:Key="SectionCollapsedSummaryView">
+                                                                    <CheckBox x:Name="grdSummaryView_SectionCollapsed"  Unchecked="SectionCollapsed_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="SectionCollapsed_Checked" IsEnabled="{Binding IsSection, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSectionCollapsed,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                                </DataTemplate>
+                                                            </Grid.Resources>
+
+                                                            <Ginger:ucGrid x:Name="grdSummaryViewFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                                <Ginger:ucGrid.Title>
+                                                                    <GingerCore:ucTextDicResource Text="[Summary View]"/>
+                                                                </Ginger:ucGrid.Title>
+                                                            </Ginger:ucGrid>
+                                                        </Grid>
+                                                    </TabItem>
+
+                                                    <TabItem x:Name="tbiGingersField">
+                                                        <TabItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <CheckBox x:Name="gingers_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
+                                                                <TextBlock Text="Runners"/>
+                                                            </StackPanel>
+                                                        </TabItem.Header>
+
+                                                        <Grid Name="grdGingersField">
+                                                            <Grid.Resources>
+                                                                <DataTemplate x:Key="FieldIsAddedToReportGingers">
+                                                                    <CheckBox x:Name="grdGingers_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="FieldIsAddedToReport_Checked" IsEnabled="{Binding IsNotMandatory,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                                </DataTemplate>
+                                                                <DataTemplate x:Key="SectionCollapsedGingers">
+                                                                    <CheckBox x:Name="grdGingers_SectionCollapsed"   Unchecked="SectionCollapsed_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="SectionCollapsed_Checked" IsEnabled="{Binding IsSection,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSectionCollapsed,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                                </DataTemplate>
+                                                            </Grid.Resources>
+
+                                                            <Ginger:ucGrid x:Name="grdGingersFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                                <Ginger:ucGrid.Title>
+                                                                    <GingerCore:ucTextDicResource Text="[Ginger Runners]"/>
+                                                                </Ginger:ucGrid.Title>
+                                                            </Ginger:ucGrid>
+                                                        </Grid>
+                                                    </TabItem>
+
+                                                    <TabItem x:Name="tbBusinessFlowField">
+                                                        <TabItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <CheckBox x:Name="bf_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
+                                                                <Label>
+                                                                    <Label.Content>
+                                                                        <GingerCore:ucTextDicResource Text="[BusinessFlows]"/>
+                                                                    </Label.Content>
+                                                                </Label>
+                                                            </StackPanel>
+                                                        </TabItem.Header>
+
+                                                        <Grid Name="grdBusinessFlowField">
+                                                            <Grid.Resources>
+                                                                <DataTemplate x:Key="FieldIsAddedToReportBFs">
+                                                                    <CheckBox x:Name="grdBusinessFlow_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="FieldIsAddedToReport_Checked" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                                </DataTemplate>
+                                                                <DataTemplate x:Key="SectionCollapsedBusinessFlow">
+                                                                    <CheckBox x:Name="grdBusinessFlow_SectionCollapsed"  Unchecked="SectionCollapsed_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="SectionCollapsed_Checked" IsEnabled="{Binding IsSection, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSectionCollapsed,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                                </DataTemplate>
+                                                            </Grid.Resources>
+
+                                                            <Ginger:ucGrid x:Name="grdBusinessFlowFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden"  ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                                <Ginger:ucGrid.Title>
+                                                                    <GingerCore:ucTextDicResource Text="[Business Flows]"/>
+                                                                </Ginger:ucGrid.Title>
+                                                            </Ginger:ucGrid>
+                                                        </Grid>
+                                                    </TabItem>
+
+                                                    <TabItem x:Name="tbActivityGroupsField">
+                                                        <TabItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <CheckBox x:Name="activityGroups_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
+                                                                <Label>
+                                                                    <Label.Content>
+                                                                        <GingerCore:ucTextDicResource Text="[ActivitiesGroups]"/>
+                                                                    </Label.Content>
+                                                                </Label>
+                                                            </StackPanel>
+                                                        </TabItem.Header>
+
+                                                        <Grid Name="grdActivityGroupsField">
+                                                            <Grid.Resources>
+                                                                <DataTemplate x:Key="FieldIsAddedToReportActivityGroups">
+                                                                    <CheckBox x:Name="grdActivityGroups_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="FieldIsAddedToReport_Checked" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                                </DataTemplate>
+                                                                <DataTemplate x:Key="SectionCollapsedActivityGroups">
+                                                                    <CheckBox x:Name="grdActivityGroups_SectionCollapsed"  Unchecked="SectionCollapsed_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsSection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="SectionCollapsed_Checked" IsChecked="{Binding IsSectionCollapsed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                                </DataTemplate>
+                                                            </Grid.Resources>
+
+                                                            <Ginger:ucGrid x:Name="grdActivityGroupsFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                                <Ginger:ucGrid.Title>
+                                                                    <GingerCore:ucTextDicResource Text="[ActivityGroups]"/>
+                                                                </Ginger:ucGrid.Title>
+                                                            </Ginger:ucGrid>
+                                                        </Grid>
+                                                    </TabItem>
+
+                                                    <TabItem x:Name="tbiActivitiesField">
+                                                        <TabItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <CheckBox x:Name="activities_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
+                                                                <Label>
+                                                                    <Label.Content>
+                                                                        <GingerCore:ucTextDicResource Text="[Activities]"/>
+                                                                    </Label.Content>
+                                                                </Label>
+                                                            </StackPanel>
+                                                        </TabItem.Header>
+
+                                                        <Grid Name="grdActivitiesField">
+                                                            <Grid.Resources>
+                                                                <DataTemplate x:Key="FieldIsAddedToReportActivities">
+                                                                    <CheckBox x:Name="grdActivities_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="FieldIsAddedToReport_Checked" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                                </DataTemplate>
+                                                                <DataTemplate x:Key="SectionCollapsedActivities">
+                                                                    <CheckBox x:Name="grdActivities_SectionCollapsed"  Unchecked="SectionCollapsed_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsSection, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Checked="SectionCollapsed_Checked" IsChecked="{Binding IsSectionCollapsed,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                                </DataTemplate>
+                                                            </Grid.Resources>
+
+                                                            <Ginger:ucGrid x:Name="grdActivitiesFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                                <Ginger:ucGrid.Title>
+                                                                    <GingerCore:ucTextDicResource Text="[Activities]"/>
+                                                                </Ginger:ucGrid.Title>
+                                                            </Ginger:ucGrid>
+                                                        </Grid>
+                                                    </TabItem>
+
+                                                    <TabItem x:Name="tbiActionsField">
+                                                        <TabItem.Header>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <CheckBox x:Name="actions_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
+                                                                <TextBlock Text="Actions"/>
+                                                            </StackPanel>
+                                                        </TabItem.Header>
+                                                        <Grid Name="grdActionsField">
+                                                            <Grid.Resources>
+                                                                <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+                                                                <DataTemplate x:Key="FieldIsAddedToReportActions">
+                                                                    <CheckBox x:Name="grdActions_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="FieldIsAddedToReport_Checked" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                                </DataTemplate>
+                                                                <DataTemplate x:Key="SectionCollapsedActions">
+                                                                    <CheckBox x:Name="grdActions_SectionCollapsed" Unchecked="SectionCollapsed_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="SectionCollapsed_Checked" IsEnabled="{Binding IsSection, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSectionCollapsed,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                                </DataTemplate>
+                                                            </Grid.Resources>
+
+                                                            <Ginger:ucGrid x:Name="grdActionsFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                                <Ginger:ucGrid.Title>
+                                                                    <GingerCore:ucTextDicResource Text="[Actions]"/>
+                                                                </Ginger:ucGrid.Title>
+                                                            </Ginger:ucGrid>
+                                                        </Grid>
+                                                    </TabItem>
+
+                                                </TabControl>
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" Margin="10,10,0,0">
+                                            <Label Content="Email Report Configuration:"  Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
+
+                                            <Grid Name="grdEmailSummaryViewField" Width="494" HorizontalAlignment="Left" Margin="0,10,0,0">
+                                                <Grid.Resources>
+                                                    <DataTemplate x:Key="FieldIsAddedToEmailReportSummaryView">
+                                                        <CheckBox x:Name="grdEmailSummaryView_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="FieldIsAddedToReport_Checked" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                    </DataTemplate>
+                                                    <DataTemplate x:Key="SectionCollapsedEmailSummaryView">
+                                                        <CheckBox x:Name="grdEmailSummaryView_SectionCollapsed"  Unchecked="SectionCollapsed_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="SectionCollapsed_Checked" IsEnabled="{Binding IsSection, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSectionCollapsed,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                    </DataTemplate>
+                                                </Grid.Resources>
+
+                                                <Ginger:ucGrid x:Name="grdEmailSummaryViewFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                    <Ginger:ucGrid.Title>
+                                                        <GingerCore:ucTextDicResource Text="[Email Body Summary View]"/>
+                                                    </Ginger:ucGrid.Title>
+                                                </Ginger:ucGrid>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                        </Expander>
+                            <Expander x:Name="SourceFeildsExpander" Margin="0,5,0,0" IsExpanded="True" Grid.Row="2">
+                                <Expander.Header>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Execution JSON Data" FontWeight="Bold" Foreground="{DynamicResource $Color_DarkBlue}"/>
+                                    </StackPanel>
+                                </Expander.Header>
+                                <StackPanel>
+                                    <Label Style="{StaticResource @LabelStyle}" FontSize="10" Content="Note: Supported only in case the selected Execution Logger type is DB." Margin="10,5,0,0"/>
+                                    <StackPanel x:Name="htmlReportConfigurationPnlx" Margin="10,0,0,0" Orientation="Vertical">
+                                        <Label Content="Source Fields Configuration By Levels:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
+                                        <StackPanel x:Name="FieldsConfigPnl"  Orientation="Horizontal">
+                                            <TabControl x:Name="tabReportLevelFeilds" DockPanel.Dock="Top" Width="494" VerticalAlignment="Stretch" >
+                                                <TabItem x:Name="tbiRunsetViewSourceFields">
+                                                    <TabItem.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <CheckBox x:Name="RunsetViewSourceFields_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsEnabled="False" IsChecked="True"/>
+                                                            <TextBlock Text="Runset"/>
+                                                        </StackPanel>
+                                                    </TabItem.Header>
+
+                                                    <Grid Name="grdRunsetViewSourceField">
+                                                        <Grid.Resources>
+                                                            <DataTemplate x:Key="FieldIsAddedToRensetViewSourceFields">
+                                                                <CheckBox x:Name="grdRunsetViewSourceFields_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="FieldIsAddedToReport_Checked" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                            <DataTemplate x:Key="SectionCollapsedRensetViewSourceFields">
+                                                                <CheckBox x:Name="grdRunsetViewSourceFields_SectionCollapsed"  Unchecked="SectionCollapsed_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="SectionCollapsed_Checked" IsEnabled="{Binding IsSection, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSectionCollapsed,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </Grid.Resources>
+
+                                                        <Ginger:ucGrid x:Name="grdRunsetViewSourceFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                            <Ginger:ucGrid.Title>
+                                                                <GingerCore:ucTextDicResource Text="[Runset View]"/>
+                                                            </Ginger:ucGrid.Title>
+                                                        </Ginger:ucGrid>
+                                                    </Grid>
+                                                </TabItem>
+
+                                                <TabItem x:Name="tbiRunnerViewSourceFields">
+                                                    <TabItem.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <CheckBox x:Name="RunnerViewSourceFields_HeaderSelectionx" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
+                                                            <TextBlock Text="Runners"/>
+                                                        </StackPanel>
+                                                    </TabItem.Header>
+
+                                                    <Grid Name="grdRunnerViewSourceField">
+                                                        <Grid.Resources>
+                                                            <DataTemplate x:Key="FieldIsAddedToRunnerViewSourceFields">
+                                                                <CheckBox x:Name="grdRunnerViewSourceFields_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="FieldIsAddedToReport_Checked" IsEnabled="{Binding IsNotMandatory,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                            <DataTemplate x:Key="SectionCollapsedGingers">
+                                                                <CheckBox x:Name="grdRunnerViewSourceFields_SectionCollapsed"   Unchecked="SectionCollapsed_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="SectionCollapsed_Checked" IsEnabled="{Binding IsSection,  Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSectionCollapsed,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </Grid.Resources>
+
+                                                        <Ginger:ucGrid x:Name="grdRunnerViewSourceFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                            <Ginger:ucGrid.Title>
+                                                                <GingerCore:ucTextDicResource Text="[Ginger Runners]"/>
+                                                            </Ginger:ucGrid.Title>
+                                                        </Ginger:ucGrid>
+                                                    </Grid>
+                                                </TabItem>
+
+                                                <TabItem x:Name="tbBusinessFlowViewSourceFields">
+                                                    <TabItem.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <CheckBox x:Name="BusinessFlowViewSourceFields_HeaderSelectionx" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
+                                                            <Label>
+                                                                <Label.Content>
+                                                                    <GingerCore:ucTextDicResource Text="[BusinessFlows]"/>
+                                                                </Label.Content>
+                                                            </Label>
+                                                        </StackPanel>
+                                                    </TabItem.Header>
+
+                                                    <Grid Name="grdBusinessFlowViewSourceField">
+                                                        <Grid.Resources>
+                                                            <DataTemplate x:Key="FieldIsAddedToBusinessFlowViewSourceFields">
+                                                                <CheckBox x:Name="grdBusinessFlowViewSourceFields_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="FieldIsAddedToReport_Checked" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                            <DataTemplate x:Key="SectionCollapsedBusinessFlowViewSourceFields">
+                                                                <CheckBox x:Name="grdBusinessFlowViewSourceFields_SectionCollapsed"  Unchecked="SectionCollapsed_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="SectionCollapsed_Checked" IsEnabled="{Binding IsSection, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSectionCollapsed,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </Grid.Resources>
+
+                                                        <Ginger:ucGrid x:Name="grdBusinessFlowViewSourceFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden"  ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                            <Ginger:ucGrid.Title>
+                                                                <GingerCore:ucTextDicResource Text="[Business Flows]"/>
+                                                            </Ginger:ucGrid.Title>
+                                                        </Ginger:ucGrid>
+                                                    </Grid>
+                                                </TabItem>
+
+                                                <TabItem x:Name="tbActivityGroupsViewSourceFields">
+                                                    <TabItem.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <CheckBox x:Name="ActivityGroupsViewSourceFields_HeaderSelectionx" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
+                                                            <Label>
+                                                                <Label.Content>
+                                                                    <GingerCore:ucTextDicResource Text="[ActivitiesGroups]"/>
+                                                                </Label.Content>
+                                                            </Label>
+                                                        </StackPanel>
+                                                    </TabItem.Header>
+
+                                                    <Grid Name="grdActivityGroupsViewSourceField">
+                                                        <Grid.Resources>
+                                                            <DataTemplate x:Key="FieldIsAddedToActivityGroupsViewSourceFields">
+                                                                <CheckBox x:Name="grdActivityGroupsViewSourceFields_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="FieldIsAddedToReport_Checked" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                            <DataTemplate x:Key="SectionCollapsedActivityGroupsViewSourceFields">
+                                                                <CheckBox x:Name="grdActivityGroupsViewSourceFields_SectionCollapsed"  Unchecked="SectionCollapsed_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsSection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="SectionCollapsed_Checked" IsChecked="{Binding IsSectionCollapsed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </Grid.Resources>
+
+                                                        <Ginger:ucGrid x:Name="grdActivityGroupsViewSourceFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                            <Ginger:ucGrid.Title>
+                                                                <GingerCore:ucTextDicResource Text="[ActivityGroups]"/>
+                                                            </Ginger:ucGrid.Title>
+                                                        </Ginger:ucGrid>
+                                                    </Grid>
+                                                </TabItem>
+
+                                                <TabItem x:Name="tbiActivityViewSourceFields">
+                                                    <TabItem.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <CheckBox x:Name="ActivityViewSourceFields_HeaderSelectionx" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
+                                                            <Label>
+                                                                <Label.Content>
+                                                                    <GingerCore:ucTextDicResource Text="[Activities]"/>
+                                                                </Label.Content>
+                                                            </Label>
+                                                        </StackPanel>
+                                                    </TabItem.Header>
+
+                                                    <Grid Name="grdActivityViewSourceField">
+                                                        <Grid.Resources>
+                                                            <DataTemplate x:Key="FieldIsAddedToActivityViewSourceFields">
+                                                                <CheckBox x:Name="grdActivityViewSourceFields_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="FieldIsAddedToReport_Checked" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                            <DataTemplate x:Key="SectionCollapsedActivityViewSourceFields">
+                                                                <CheckBox x:Name="grdActivityViewSourceFields_SectionCollapsed"  Unchecked="SectionCollapsed_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsSection, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Checked="SectionCollapsed_Checked" IsChecked="{Binding IsSectionCollapsed,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </Grid.Resources>
+
+                                                        <Ginger:ucGrid x:Name="grdActivityViewSourceFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                            <Ginger:ucGrid.Title>
+                                                                <GingerCore:ucTextDicResource Text="[Activities]"/>
+                                                            </Ginger:ucGrid.Title>
+                                                        </Ginger:ucGrid>
+                                                    </Grid>
+                                                </TabItem>
+
+                                                <TabItem x:Name="tbiActionViewSourceFields">
+                                                    <TabItem.Header>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <CheckBox x:Name="ActionViewSourceFields_HeaderSelectionx" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
+                                                            <TextBlock Text="Actions"/>
+                                                        </StackPanel>
+                                                    </TabItem.Header>
+                                                    <Grid Name="grdActionViewSourceField">
+                                                        <Grid.Resources>
+                                                            <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+                                                            <DataTemplate x:Key="FieldIsAddedToActionViewSourceFields">
+                                                                <CheckBox x:Name="grdActionViewSourceFields_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="FieldIsAddedToReport_Checked" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                            <DataTemplate x:Key="SectionCollapsedActionViewSourceFields">
+                                                                <CheckBox x:Name="grdActionViewSourceFields_SectionCollapsed" Unchecked="SectionCollapsed_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="SectionCollapsed_Checked" IsEnabled="{Binding IsSection, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSectionCollapsed,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                            </DataTemplate>
+                                                        </Grid.Resources>
+
+                                                        <Ginger:ucGrid x:Name="grdActionViewSourceFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                            <Ginger:ucGrid.Title>
+                                                                <GingerCore:ucTextDicResource Text="[Actions]"/>
+                                                            </Ginger:ucGrid.Title>
+                                                        </Ginger:ucGrid>
+                                                    </Grid>
+                                                </TabItem>
+
+                                            </TabControl>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Expander>
+
+                        </Grid>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem x:Name="tbiPreview">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Preview"/>
+                        </StackPanel>
+                    </TabItem.Header>
+                    <DockPanel >
+                        <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Left" >
+                            <Button x:Name="RefreshPreviewButton" usercontrols:ImageMaker.Content="Refresh" Width="16" Style="{StaticResource @InputImageButtonStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" Click="RefreshPreviewButton_Click" ToolTip="Refresh">                                
+                            </Button>
+                        </DockPanel>
+                        <DockPanel DockPanel.Dock="Bottom" >
+                            <Frame x:Name="frmBrowser" NavigationUIVisibility="Hidden"  Content="Report Preview according to Template" ></Frame>
+                        </DockPanel>
+                    </DockPanel>
+                </TabItem>
+        </TabControl>
+        </ScrollViewer>
+    </Grid>
+</Page>

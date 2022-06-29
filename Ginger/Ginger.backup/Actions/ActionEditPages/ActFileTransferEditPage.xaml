@@ -1,0 +1,101 @@
+    <Page x:Class="Ginger.Actions.ActFileTransferEditPage" xmlns:Actions="clr-namespace:Ginger.Actions"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d"
+	Title="ActFileTransferEditPage" Height="300" Width="484.941" >
+
+    <Grid Margin="0,0,53,0">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="187*"/>
+            <ColumnDefinition Width="188*"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="56*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+
+        </Grid.RowDefinitions>
+        <StackPanel  Grid.Row="0" Grid.Column="1" >
+            <ComboBox x:Name="FileTransferActionComboBox" Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="FileTransferActionComboBox_SelectionChanged"/>
+        </StackPanel>
+
+        <StackPanel  Grid.Row="1" Grid.Column="1" >
+            <Actions:UCValueExpression x:Name="PCPath"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Grid.Column="1" >
+            <Actions:UCValueExpression x:Name="Host"/>
+        </StackPanel>
+        <StackPanel Grid.Row="4" Grid.Column="1" >
+            <Actions:UCValueExpression x:Name="Port"/>
+        </StackPanel>
+        <StackPanel Grid.Row="5" Grid.Column="1" >
+            <Actions:UCValueExpression x:Name="UserName"/>
+        </StackPanel>
+        <StackPanel Grid.Row="6" Grid.Column="1" >
+            <Actions:UCValueExpression x:Name="Password"/>
+        </StackPanel>
+        <StackPanel Grid.Row="7" Grid.Column="1" >
+            
+            <Actions:UCValueExpression x:Name="PrivateKey"/>
+        </StackPanel>
+        <StackPanel Grid.Row="8" Grid.Column="1" >
+            <Actions:UCValueExpression x:Name="KeyPassPhrase"/>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Grid.Column="1" >
+            <Actions:UCValueExpression x:Name="UnixPath"/>
+        </StackPanel>
+
+        <StackPanel  Grid.Row="0" Grid.Column="0" >
+            <Label Style="{StaticResource @InputFieldLabelStyle}">File Transfer Action</Label>
+
+        </StackPanel>
+
+        <StackPanel  Grid.Row="1">
+            <Label Name="pcPath" Style="{StaticResource @InputFieldLabelStyle}">PC Path</Label>
+
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Grid.Column="0" >
+            <Label Name="unixPath" Style="{StaticResource @InputFieldLabelStyle}">Unix Path</Label>
+
+        </StackPanel>
+        <StackPanel Grid.Row="3" Grid.Column="0">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Host</Label>
+        </StackPanel>
+        <StackPanel Grid.Row="4" Grid.Column="0">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Port</Label>
+        </StackPanel>
+        <StackPanel Grid.Row="5" Grid.Column="0">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">UserName</Label>
+        </StackPanel>
+        <StackPanel Grid.Row="6" Grid.Column="0">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Password</Label>
+        </StackPanel>
+        <StackPanel Grid.Row="7" Grid.Column="0">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">PrivateKeyFile</Label>
+        </StackPanel>
+        <StackPanel Grid.Row="8" Grid.Column="0">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">KeyPassPhrase</Label>
+
+        </StackPanel>
+        <StackPanel Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2">
+            <CheckBox x:Name="xChkBoxKeyboardInteractiveAuth" Content="Keyboard Interactive Authentication" Style="{StaticResource $CeckBoxStyle}" ToolTip="Enable for keyboard interactive authentication" Margin="5,5,0,0"/>
+        </StackPanel>
+        <Button x:Name="BrowsePCPathButton" Style="{StaticResource @InputButtonStyle}" Content="Browse" Grid.Column="4" Grid.Row="1" Width="Auto" Click="BrowsePCPathButton_Click" HorizontalAlignment="Stretch" Margin="0,2,0,5" Height="22" />
+
+    </Grid>
+</Page>

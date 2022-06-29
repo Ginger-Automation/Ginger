@@ -1,0 +1,63 @@
+<Page   x:Class="Ginger.ApplicationModelsLib.APIModels.APIModelWizard.AddAPIModelSelectTypePage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
+        xmlns:ginger="clr-namespace:Ginger"
+        xmlns:usercontrols="clr-namespace:GingerCore.UserControls;assembly=GingerCore"
+        mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="600"
+      Title="AddAPIModelSelectTypePage" >
+
+    <Grid x:Name="PageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Name="SecondRow" Height="0"/>
+            <RowDefinition Name="ThirdRow" Height="40" />
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="300*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="200*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.Resources>
+            <DataTemplate x:Key="MatchingResponseBrowse">
+                <Button x:Name="MatchingResponseBrowseButton" Content="..." Click="MatchingResponseBrowseButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+            </DataTemplate>
+        </Grid.Resources>
+
+        <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Content="API Type:" />
+
+        <ComboBox Grid.Row="0" Grid.Column="1"  Name="APITypeComboBox" ContextMenu="{x:Null}" Width="200"  Style="{StaticResource $FlatEditInputComboBoxStyle}"  VerticalAlignment="Center"  SelectionChanged="APIType_SelectionChanged"  HorizontalAlignment="Left"  >
+        </ComboBox>
+
+        <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" Content="Source Type:"  />
+
+        <StackPanel Grid.Row="1" Grid.Column="1" x:Name="SourceType" Orientation="Horizontal" VerticalAlignment="Center" >
+            <RadioButton x:Name="URLRadioButton" IsChecked="True" Content="URL" Checked="URLRadioButtonChecked" GroupName="a" Margin="5,5,0,0" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
+            <RadioButton x:Name="FileRadioButton" Content="File"  GroupName="a" Checked="FileRadioButtonChecked" Margin="20,5,0,0" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
+        </StackPanel>
+
+        <Label Name="URLLable" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" Content="URL:" VerticalAlignment="Center"  />
+
+        <TextBox Grid.Row="2" Grid.Column="1"  Background="White"   x:Name="xURLTextBox" TextChanged="URLTextBoxTextChange" Text="" VerticalAlignment="Center" IsEnabled="False" Margin="0,0,5,0"/>
+
+        <DockPanel HorizontalAlignment="Right"  Grid.Row="3" Grid.Column="1">
+
+            <UserControls:ucButton x:Name="xBrowseLoadButton" ButtonType="RoundTextAndImageButton" ButtonText="Load" ButtonImageType="MoveDown" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Visibility="Collapsed"  Click="BrowseButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+            <UserControls:ucButton x:Name="xPreviewButton" ButtonType="RoundTextAndImageButton" ButtonText="Preview" ButtonImageType="Search" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Visibility="Collapsed" Click="PreviewButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+
+            </DockPanel>
+
+        <Label Name="SourceRviewLable" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" Visibility="Collapsed" Content="Source Preview:" VerticalAlignment="Top"  />
+
+        <usercontrols:XMLViewer x:Name="XMLViewer" Grid.Row="4" Grid.Column="1"  Visibility="Collapsed" Margin="0,0,5,0"/>
+
+        <Label Name="XMLTemplatesLable" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" Visibility="Collapsed" Content="Request Templates:" VerticalAlignment="Top"  />
+        <ginger:ucGrid x:Name="XMLTemplatesGrid" Grid.Row="4" Grid.Column="1" Visibility="Collapsed" Title="Request Templates" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowAdd="Visible" ShowDelete="Visible" ShowClearAll="Visible" ShowUndo="Collapsed" EnableTagsPanel="False" ShowUpDown="Collapsed"></ginger:ucGrid>
+
+    </Grid>
+</Page>

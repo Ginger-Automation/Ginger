@@ -183,7 +183,7 @@ namespace Ginger.Agents
             {                
                 xAgentStatusBtn.ButtonImageForground = Brushes.Gray;
                 xAgentStatusBtn.ToolTip = "Please select Agent";
-                xAgentConfigsExpander.IsExpanded = false;
+                xAgentConfigsExpander.Visibility = Visibility.Collapsed;
                 xAgentConfigsExpander.IsEnabled = false;
                 xAgentConfigurationsGrid.IsEnabled = false;
                 return;
@@ -196,7 +196,7 @@ namespace Ginger.Agents
                     xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Power;
                     xAgentStatusBtn.ButtonImageForground = Brushes.Red;
                     xAgentStatusBtn.ToolTip = "Agent is Off, click to turn it On";
-                    xAgentConfigsExpander.IsExpanded = false;
+                    xAgentConfigsExpander.Visibility = Visibility.Collapsed;
                     xAgentConfigsExpander.IsEnabled = false;
                     xAgentConfigurationsGrid.IsEnabled = false;
                     break;
@@ -205,7 +205,7 @@ namespace Ginger.Agents
                     xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
                     xAgentStatusBtn.ButtonImageForground = Brushes.Orange;                    
                     xAgentStatusBtn.ToolTip = "Agent is starting...";
-                    xAgentConfigsExpander.IsExpanded = false;
+                    xAgentConfigsExpander.Visibility = Visibility.Collapsed;
                     xAgentConfigsExpander.IsEnabled = false;
                     xAgentConfigurationsGrid.IsEnabled = false;
                     break;
@@ -216,7 +216,7 @@ namespace Ginger.Agents
                     xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Power;
                     xAgentStatusBtn.ButtonImageForground = Brushes.Green;                   
                     xAgentStatusBtn.ToolTip = "Agent is On, click to turn it Off";
-                    xAgentConfigsExpander.IsExpanded = true;
+                    xAgentConfigsExpander.Visibility = Visibility.Visible;
                     xAgentConfigsExpander.IsEnabled = true;
                     xAgentConfigurationsGrid.IsEnabled = true;
                     break;

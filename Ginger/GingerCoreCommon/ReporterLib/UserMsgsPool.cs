@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.Common
         PleaseStartAgent, AskToSelectValidation,
         EnvironmentItemLoadError, MissingUnixCredential,
         ErrorConnectingToDataBase, ErrorClosingConnectionToDataBase, DbTableError, DbTableNameError, DbQueryError, DbConnSucceed, DbConnFailed,
-        TestagentSucceed, FailedToConnectAgent, RecordingStopped, SshCommandError, GoToUrlFailure, HookLinkEventError, AskToStartAgent, RestartAgent,
+        TestagentSucceed, MobileDriverNotConnected, FailedToConnectAgent, RecordingStopped, SshCommandError, GoToUrlFailure, HookLinkEventError, AskToStartAgent, RestartAgent,
         MissingActionPropertiesEditor, AskToSelectItem, AskToSelectAction, ImportSeleniumScriptError,
         AskToSelectVariable, VariablesAssignError, SetCycleNumError, VariablesParentNotFound, CantStoreToVariable,
         AskToSelectSolutionFolder, SolutionLoadError,
@@ -138,7 +138,7 @@ namespace Amdocs.Ginger.Common
         POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, WizardCantMoveWhileInProcess, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported, WizardSureWantToCancel,
         POMSearchByGUIDFailed, POMElementSearchByGUIDFailed, NoRelevantAgentInRunningStatus, SolutionSaveWarning,
         InvalidIndexValue, FileOperationError, FolderOperationError, ObjectUnavailable, PatternNotHandled, LostConnection, AskToSelectBusinessflow,
-        ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, OperationNotSupported, ValueIssue, MissingTargetApplication,
+        ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, RunSetNotExecuted, OperationNotSupported, ValueIssue, MissingTargetApplication,
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, CopiedErrorInfo, RepositoryNameCantEmpty,
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
         POMElementNotExist, UpdateExistingPOMElement, POMMoveElementFromUnmappedToMapped, SavePOMChanges,
@@ -154,7 +154,10 @@ namespace Amdocs.Ginger.Common
         FailedToPublishRepositoryInfo,
         MissingErrorString,
         RunsetAutoRunResult,
-        RunsetAutoConfigBackWarn
+        RunsetAutoConfigBackWarn,
+        SolutionOpenedOnNewerVersion,
+        UploadSolutionInfo,
+        UploadSolutionToSourceControl
     }
 
     public static class UserMsgsPool
@@ -167,7 +170,7 @@ namespace Amdocs.Ginger.Common
             //Add user messages to the pool
             #region General Application Messages
             Reporter.UserMsgsPool.Add(eUserMsgKey.GherkinNotifyFeatureFileExists, new UserMsg(eUserMsgType.ERROR, "Feature File Already Exists", "Feature File with the same name already exist - '{0}'." + Environment.NewLine + "Please select another Feature File to continue.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.GherkinNotifyFeatureFileSelectedFromTheSolution, new UserMsg(eUserMsgType.ERROR, "Feature File Already Exists", "Feature File - '{0}'." + Environment.NewLine + "Selected From The Solution folder hence its already exist and cannot be copy to the same place" + Environment.NewLine + "Please select another Feature File to continue.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.GherkinNotifyFeatureFileSelectedFromTheSolution, new UserMsg(eUserMsgType.ERROR, "Feature File Already Exists", "Feature File - '{0}'." + Environment.NewLine + "Selected From The Solution folder hence its already exist and cannot be copied to the same place" + Environment.NewLine + "Please select another Feature File to continue.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.GherkinNotifyBFIsNotExistForThisFeatureFile, new UserMsg(eUserMsgType.ERROR, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Is Not Exists", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " has to been generated for Feature File - '{0}'." + Environment.NewLine + Environment.NewLine + "Please create " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " from the Editor Page.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.GherkinFileNotFound, new UserMsg(eUserMsgType.ERROR, "Gherkin File Not Found", "Gherkin file was not found at the path: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.GherkinColumnNotExist, new UserMsg(eUserMsgType.WARN, "Column Not Exist", "Cant find value for: '{0}' Item/s. since column/s not exist in example table", eUserMsgOption.OK, eUserMsgSelection.None));
@@ -198,8 +201,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticWarnMessage, new UserMsg(eUserMsgType.WARN, "Warning", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticInfoMessage, new UserMsg(eUserMsgType.INFO, "Info", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticQuestionsMessage, new UserMsg(eUserMsgType.QUESTION, "Question", "{0}", eUserMsgOption.YesNo, eUserMsgSelection.No));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToClose, new UserMsg(eUserMsgType.QUESTION, "Close Ginger", "Are you sure you want to close Ginger?" + Environment.NewLine + Environment.NewLine + "Notice: Un-saved changes won't be saved.", eUserMsgOption.YesNo, eUserMsgSelection.No));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToRestart, new UserMsg(eUserMsgType.QUESTION, "Restart Ginger", "Are you sure you want to Restart Ginger?" + Environment.NewLine + Environment.NewLine + "Notice: Un-saved changes won't be saved.", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToClose, new UserMsg(eUserMsgType.QUESTION, "Close Ginger", "Are you sure you want to close Ginger?" + Environment.NewLine + Environment.NewLine + "Notice: Unsaved changes won't be saved.", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToRestart, new UserMsg(eUserMsgType.QUESTION, "Restart Ginger", "Are you sure you want to Restart Ginger?" + Environment.NewLine + Environment.NewLine + "Notice: Unsaved changes won't be saved.", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.BusinessFlowNeedTargetApplication, new UserMsg(eUserMsgType.WARN, "Target Application Not Selected", "Target Application Not Selected! Please Select at least one Target Application", eUserMsgOption.OK, eUserMsgSelection.None));
 
@@ -283,6 +286,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlResolveConflict, new UserMsg(eUserMsgType.QUESTION, "Source Control Conflicts", "Source control conflicts has been identified for the path: '{0}'." + Environment.NewLine + "You probably won't be able to use the item which in the path till conflicts will be resolved." + Environment.NewLine + Environment.NewLine + "Do you want to automatically resolve the conflicts and keep your local changes for all conflicts?" + Environment.NewLine + Environment.NewLine + "Select 'No' for accepting server updates for all conflicts or select 'Cancel' for canceling the conflicts handling.", eUserMsgOption.YesNoCancel, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDoRevert, new UserMsg(eUserMsgType.QUESTION, "Undo Changes", "Are you sure you want to revert changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDoCheckIn, new UserMsg(eUserMsgType.QUESTION, "Check-In Changes", "Are you sure you want to check-in changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.UploadSolutionInfo, new UserMsg(eUserMsgType.INFO, "Upload Solution", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.UploadSolutionToSourceControl, new UserMsg(eUserMsgType.QUESTION, "Upload Solution", "The solution was created and loaded successfully.\nPlease make a note of the encryption key provided from solution details page."+Environment.NewLine + "Do you want to upload the Solution: '{0}' to Source Control?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             #endregion SourceControl Messages
 
             #region Validation Messages
@@ -309,6 +314,7 @@ namespace Amdocs.Ginger.Common
             #endregion Environment Messages
 
             #region Agents/Drivers Messages
+            Reporter.UserMsgsPool.Add(eUserMsgKey.MobileDriverNotConnected, new UserMsg(eUserMsgType.INFO, "Mobile Device Error", "The connection to the mobile device has failed, please try again.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.TestagentSucceed, new UserMsg(eUserMsgType.INFO, "Test Agent", "Agent starting test ended successfully!", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToConnectAgent, new UserMsg(eUserMsgType.ERROR, "Connect to Agent", "Failed to load '{0}' Agent." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SshCommandError, new UserMsg(eUserMsgType.ERROR, "Ssh Command Error", "The Ssh Run Command returns error, please double check the connection info and credentials." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
@@ -406,6 +412,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.RefreshTreeGroupFailed, new UserMsg(eUserMsgType.ERROR, "Refresh", "Failed to perform the refresh operation." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToDeleteRepoItem, new UserMsg(eUserMsgType.ERROR, "Delete", "Failed to perform the delete operation." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.InvalidEncryptionKey, new UserMsg(eUserMsgType.WARN, "Encryption Key", "Encryption key must be 8-16 in lenght and should contain atleast 1 cap, 1 small, 1 digit and 1 special char.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SolutionOpenedOnNewerVersion, new UserMsg(eUserMsgType.QUESTION, "Load Solution", "Note: Ginger version is higher than the loaded Solution version which will make it incompatible with older versions of Ginger if you will make any changes on the Solution, are you sure you want to continue with loading the Solution?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.FolderExistsWithName, new UserMsg(eUserMsgType.WARN, "Folder Creation Failed", "Folder with same name already exists. Please choose a different name for the folder.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UpdateApplicationNameChangeInSolution, new UserMsg(eUserMsgType.WARN, "Target Application Name Change", "Do you want to automatically update the Target Application name in all Solution items?" + Environment.NewLine + Environment.NewLine + "Note: If you choose 'Yes', changes won't be saved, for saving them please click 'SaveAll'", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
@@ -615,6 +622,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToInitiate, new UserMsg(eUserMsgType.ERROR, "Failed to initiate", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToCreateRequestResponse, new UserMsg(eUserMsgType.ERROR, "Failed to create Request / Response", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ActionNotImplemented, new UserMsg(eUserMsgType.ERROR, "Action is not implemented yet for control type ", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RunSetNotExecuted, new UserMsg(eUserMsgType.ERROR, "Runset Not Executed", "Please execute the Runset before running Send Email Report Operation", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.OperationNotSupported, new UserMsg(eUserMsgType.INFO, "Operation not supported ", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ValueIssue, new UserMsg(eUserMsgType.ERROR, "Value Issue", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.JSExecutionFailed, new UserMsg(eUserMsgType.ERROR, "Error Executing JS", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));

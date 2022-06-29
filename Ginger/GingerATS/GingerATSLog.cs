@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -53,7 +53,7 @@ namespace GingerATS
                     mGingerATSLogLines.Add("Source: " + ex.Source);
                     mGingerATSLogLines.Add("InnerException: " + ex.InnerException);
                     mGingerATSLogLines.Add("StackTrace: " + ex.StackTrace);
-                }                
+                }
             }
             catch (Exception)
             {

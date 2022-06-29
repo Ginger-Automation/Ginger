@@ -26,11 +26,11 @@ namespace System.Windows.Automation
     {
         
         private UIAutomationClient.IUIAutomationDockPattern _pattern;
-        public static readonly AutomationProperty DockPositionProperty = DockPatternIdentifiers.DockPositionProperty;
-        public static readonly AutomationPattern Pattern = DockPatternIdentifiers.Pattern;
+        public static readonly AutomationPropertyExtended DockPositionProperty = DockPatternIdentifiers.DockPositionProperty;
+        public static readonly AutomationPatternExtended Pattern = DockPatternIdentifiers.Pattern;
 
         
-        private DockPattern(AutomationElement el, UIAutomationClient.IUIAutomationDockPattern pattern, bool cached)
+        private DockPattern(AutomationElement_Extend el, UIAutomationClient.IUIAutomationDockPattern pattern, bool cached)
             : base(el, cached)
         {
             Debug.Assert(pattern != null);
@@ -49,7 +49,7 @@ namespace System.Windows.Automation
             }
         }
 
-        internal static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
             return (pattern == null) ? null : new DockPattern(el, (UIAutomationClient.IUIAutomationDockPattern)pattern, cached);
         }
@@ -76,9 +76,9 @@ namespace System.Windows.Automation
         [StructLayout(LayoutKind.Sequential)]
         public struct DockPatternInformation
         {
-            private AutomationElement _el;
+            private AutomationElement_Extend _el;
             private bool _isCached;
-            internal DockPatternInformation(AutomationElement element, bool isCached)
+            internal DockPatternInformation(AutomationElement_Extend element, bool isCached)
             {
                 this._el = element;
                 this._isCached = isCached;

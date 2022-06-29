@@ -42,7 +42,7 @@ namespace System.Windows.Automation
 
         public CacheRequest() 
         {
-            this._obj = Automation.Factory.CreateCacheRequest();
+            this._obj = AutomationExtended.Factory.CreateCacheRequest();
             this._lock = new object();
         }
 
@@ -52,7 +52,7 @@ namespace System.Windows.Automation
             return new CacheRequestActivation(this);
         }
 
-        public void Add(AutomationPattern pattern)
+        public void Add(AutomationPatternExtended pattern)
         {
             Utility.ValidateArgumentNonNull(pattern, "pattern");
             lock (this._lock)
@@ -62,7 +62,7 @@ namespace System.Windows.Automation
             }
         }
 
-        public void Add(AutomationProperty property)
+        public void Add(AutomationPropertyExtended property)
         {
             Utility.ValidateArgumentNonNull(property, "property");
             lock (this._lock)
@@ -148,11 +148,11 @@ namespace System.Windows.Automation
             }
         }
 
-        public Condition TreeFilter
+        public ConditionExtended TreeFilter
         {
             get
             {
-                return Condition.Wrap(this._obj.TreeFilter);
+                return ConditionExtended.Wrap(this._obj.TreeFilter);
             }
             set
             {
@@ -165,11 +165,11 @@ namespace System.Windows.Automation
             }
         }
 
-        public TreeScope TreeScope
+        public TreeScopeExtended TreeScope
         {
             get
             {
-                return (TreeScope)this._obj.TreeScope;
+                return (TreeScopeExtended)this._obj.TreeScope;
             }
             set
             {

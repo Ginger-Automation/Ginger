@@ -1,0 +1,148 @@
+<Page   x:Class="GingerWPF.BusinessFlowsLib.BusinessFlowViewPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
+        xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+        mc:Ignorable="d" 
+        xmlns:h="clr-namespace:Ginger.Help"
+      h:GingerHelpProvider.HelpString="Business Flow"
+      d:DesignHeight="300" d:DesignWidth="800" 
+      Title="BusinessFlowViewPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="500*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="30"></ColumnDefinition>
+            <ColumnDefinition Width="200*"></ColumnDefinition>
+            <ColumnDefinition Width="200"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <UserControls:ImageMakerControl x:Name="xIconImage" Grid.Row="0" Grid.Column="0"  ImageType="BusinessFlow" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" Margin="0,-5,0,0">
+            <UserControls:ImageMakerControl.ToolTip>
+                <GingerCore:ucTextDicResource Text="[BusinessFlow]"/>
+            </UserControls:ImageMakerControl.ToolTip>
+        </UserControls:ImageMakerControl>
+        <TextBlock x:Name="xNameTextBlock" Grid.Row="0" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,0" Text="Business Flow Name" VerticalAlignment="Center" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" />
+
+        <DockPanel x:Name="xOperationsPnl" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+            <StackPanel x:Name="xGeneralOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
+                <!--<UserControls:ucButton x:Name="xSearchBtn" ButtonType="CircleImageButton" Click="xSearchBtn_Click"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Search" >
+                    <UserControls:ucButton.ToolTip>
+                        <GingerCore:ucTextDicResource Text="Find &amp; Replace in [BusinessFlow]"/>
+                    </UserControls:ucButton.ToolTip>
+                </UserControls:ucButton>-->
+                <UserControls:ucButton x:Name="xAnalyzeBtn" ButtonType="CircleImageButton" Click="xAnalyzeBtn_Click"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Analyze" >
+                    <UserControls:ucButton.ToolTip>
+                        <GingerCore:ucTextDicResource Text="Analyze [BusinessFlow]- Detect Integrity Issues"/>
+                    </UserControls:ucButton.ToolTip>
+                </UserControls:ucButton>
+                <Menu x:Name="xExtraOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Extra Operations">
+                    <MenuItem Cursor="Hand">
+                        <MenuItem.Header>
+                            <UserControls:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="16"  HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
+                        </MenuItem.Header>
+                        <MenuItem x:Name="xExportMenuItem" Style="{StaticResource $MenuItemStyle}">
+                            <MenuItem.Icon>
+                                <UserControls:ImageMakerControl ImageType="Export" SetAsFontImageWithSize="16" />
+                            </MenuItem.Icon>
+                            <MenuItem.Header>
+                                <GingerCore:ucTextDicResource Text="Export [BusinessFlow]" />
+                            </MenuItem.Header>
+                            <!--<MenuItem x:Name="xExportToAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportToAlmMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl ImageType="ALM" SetAsFontImageWithSize="16" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Export [BusinessFlow] to ALM" />
+                                </MenuItem.Header>
+                            </MenuItem>-->
+                            <MenuItem x:Name="xExportToCSVMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportToCSVMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl ImageType="CSV" SetAsFontImageWithSize="16" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Export [BusinessFlow] to CSV" />
+                                </MenuItem.Header>
+                            </MenuItem>
+                        </MenuItem>
+                    </MenuItem>
+                </Menu>
+            </StackPanel>
+            <GridSplitter x:Name="xAutomateSplitter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4"/>
+            <StackPanel x:Name="xExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
+                <UserControls:ucButton x:Name="xAutomateBtn" ButtonType="RoundTextAndImageButton" ButtonText="Automate"  ButtonImageType="Automate"  ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xAutomate_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Highlighted}" Loaded="xAutomateBtn_Loaded">
+                    <UserControls:ucButton.ToolTip>
+                        <GingerCore:ucTextDicResource Text="Automate [BusinessFlow]"/>
+                    </UserControls:ucButton.ToolTip>
+                </UserControls:ucButton>
+            </StackPanel>
+        </DockPanel>
+
+        <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1" Grid.ColumnSpan="3" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Business Flow Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}"/>
+
+        <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="XItemsTabs_SelectionChanged">
+            <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTab}" TabIndex="1">
+                <TabItem.Header>
+                    <Border Style="{StaticResource $CoolTabBorderStyle}">
+                        <DockPanel >
+                            <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                            <TextBlock  Text="Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                        </DockPanel>
+                    </Border>
+                </TabItem.Header>
+                <Frame x:Name="xDetailsTabFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}">
+                    <Frame.Content>
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
+                            <UserControls:ImageMakerControl  ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" />
+                            <Label Content="Loading..." HorizontalAlignment="Center" FontSize="14" Style="{StaticResource $LabelStyle}" Margin="5,5,0,0" FontWeight="Normal"/>
+                        </StackPanel>
+                    </Frame.Content>
+                </Frame>
+            </TabItem>
+            
+            <TabItem x:Name="xActivitisTab"  Style="{StaticResource $CoolTab}" TabIndex="2">
+                <TabItem.Header>
+                    <Border Style="{StaticResource $CoolTabBorderStyle}">
+                        <DockPanel >
+                            <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Action" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                            <TextBlock x:Name="xActivitiesTabHeaderText" Text="Activities ()" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                        </DockPanel>
+                    </Border>
+                </TabItem.Header>
+                <Frame x:Name="xActivitiesTabFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}">
+                    <Frame.Content>
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
+                            <UserControls:ImageMakerControl  ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" />
+                            <Label Content="Loading..." HorizontalAlignment="Center" FontSize="14" Style="{StaticResource $LabelStyle}" Margin="5,5,0,0" FontWeight="Normal"/>
+                        </StackPanel>
+                    </Frame.Content>
+                </Frame>
+            </TabItem>
+
+            <TabItem x:Name="xVariablesTab" Style="{StaticResource $CoolTab}" TabIndex="3">
+                <TabItem.Header>
+                    <Border Style="{StaticResource $CoolTabBorderStyle}">
+                        <DockPanel >
+                            <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Variable" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                            <TextBlock x:Name="xVariabelsTabHeaderText" Text="Variables ()" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                        </DockPanel>
+                    </Border>
+                </TabItem.Header>
+                <Frame x:Name="xVariabelsTabFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}">
+                    <Frame.Content>
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
+                            <UserControls:ImageMakerControl  ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" />
+                            <Label Content="Loading..." HorizontalAlignment="Center" FontSize="14" Style="{StaticResource $LabelStyle}" Margin="5,5,0,0" FontWeight="Normal"/>
+                        </StackPanel>
+                    </Frame.Content>
+                </Frame>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Page>

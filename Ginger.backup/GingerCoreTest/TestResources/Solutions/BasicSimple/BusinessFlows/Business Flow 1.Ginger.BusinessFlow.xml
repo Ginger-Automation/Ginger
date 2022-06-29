@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="4484405c-0cf7-4d8b-95e9-97df761fdcc3" ItemType="BusinessFlow" CreatedBy="YARONWE" Created="201905220334" GingerVersion="3.2.0.0" Version="2" LastUpdateBy="YARONWE" LastUpdate="201905220334" />
+<BusinessFlow Active="False" Guid="4484405c-0cf7-4d8b-95e9-97df761fdcc3" Name="Business Flow 1" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="4fa2ffd2-dc73-4f53-9d68-bad6db7b64dc" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="0%" TargetApplication="Amdo CSP" />
+</Activities>
+
+<TargetApplications>
+<TargetApplication AppName="Amdo CSP" Guid="74f2f292-f647-4336-9b17-588850dbd70c" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+</BusinessFlow></GingerRepositoryItem>

@@ -1,0 +1,28 @@
+    <Page x:Class="Ginger.Environments.AddEnvironmentWizardLib.AddNewEnvAppsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.Environments.AddEnvironmentWizardLib"
+      xmlns:ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="AddNewEnvAppsPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <StackPanel>
+            <Button x:Name="xAddAppBtn" Content="Add" ToolTip="Add New Environment Application" Style="{StaticResource @InputButtonStyle}" Width="50" HorizontalAlignment="Right" Margin="0,20,20,0" Click="xAddAppBtn_Click"/>
+            <ListBox x:Name="xAppsListBox" Margin="0,10,0,0" Grid.Row="1">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <CheckBox Content="{Binding Name}" IsChecked="{Binding Active}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+        
+
+    </Grid>
+</Page>

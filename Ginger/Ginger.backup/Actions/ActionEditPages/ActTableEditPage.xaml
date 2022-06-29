@@ -1,0 +1,86 @@
+    <Page x:Class="Ginger.Actions.ActTableEditPage"  xmlns:Actions="clr-namespace:Ginger.Actions"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="800"
+	Title="ActTableEditPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="ColRow" Height="55"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition x:Name="WhereDataRow" Height="100"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition x:Name="OperationTypeRow" Height="50"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80"/>
+            <ColumnDefinition Width="130"/>
+            <ColumnDefinition Width="130"/>
+            <ColumnDefinition Width="460"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,10,0,17">
+            <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}" VerticalAlignment="Center">Column:</Label>
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,10,0,17">            
+            <ComboBox x:Name="cmbColSelectorValue" Height="25"  SelectionChanged="ColSelectorValue_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"/>
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,10,0,17" >
+            <ComboBox x:Name="cmbColumnValue" Grid.Column="1" Height="25" IsEditable="True" Margin="10,0,0,0" Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="ColumnValue_SelectionChanged" LostKeyboardFocus="ColumnValue_LostKeyboardFocus"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="0">
+            <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}" VerticalAlignment="Top">Row:</Label>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="1" x:Name="RowSelectorPanel" Margin="0,0,0,0">
+            <RadioButton Name="RowNum" Content="Row Number" IsChecked="True" Checked="RowNum_Checked" Unchecked="RowNum_Unchecked" Margin="0,5,0,5"/>
+            <RadioButton Name="AnyRow" Content="Any Row" Checked="AnyRow_Checked" Margin="0,5,0,5"/>
+            <RadioButton Name="BySelectedRow" Content="Selected Row" Checked="BySelectedRow_Checked" Margin="0,5,0,5"/>
+            <RadioButton Name="Where" Content="Where..." Checked="Where_Checked" Unchecked="Where_Unchecked" Margin="0,5,0,5"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal" VerticalAlignment="Top">
+            <DockPanel>
+                <ComboBox x:Name="RowSelectorValue" Width="250" Margin="10,0,0,0" IsEditable="True" IsEnabled="True" Style="{StaticResource @InputComboBoxStyle}"  SelectionChanged="RowSelectorValue_SelectionChanged" LostKeyboardFocus="RowSelectorValue_LostKeyboardFocus"/>
+                <Button x:Name="RowSelectorValueVE" Content="..." Click="RowSelectorValueVE_Click" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="1,0,5,0" Width="30" Height="24"></Button>
+            </DockPanel>
+            
+        </StackPanel>
+        <StackPanel Grid.Row="2" Grid.Column="1" x:Name="WherePanel" Visibility="Collapsed" Grid.RowSpan="1" Grid.ColumnSpan="3">
+            <Grid Margin="0,5,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="200"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox x:Name="WhereColumn"  Grid.Row="0" Grid.Column="0" Style="{StaticResource @InputComboBoxStyle}" Height="25" SelectionChanged="WhereColumn_SelectionChanged" Margin="10,5,0,0" />
+                <ComboBox x:Name="WhereColumnTitle" Grid.Row="0" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" Height="25" Margin="10,5,0,0"   VerticalAlignment="Top" LostKeyboardFocus="WhereColumnTitle_LostKeyboardFocus" SelectionChanged="WhereColumnTitle_SelectionChanged"/>
+                <ComboBox x:Name="WhereProperty" Grid.Row="1" Grid.Column="0" Style="{StaticResource @InputComboBoxStyle}" Height="25" Margin="10,5,0,0" SelectionChanged="WhereProperty_SelectionChanged"/>
+                <ComboBox x:Name="WhereOperator" Grid.Row="1" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}" Height="25" Margin="10,5,0,0" SelectionChanged="WhereOperator_SelectionChanged"/>
+                
+                <Actions:UCValueExpression x:Name="WhereColumnValue" Grid.Row="1" Grid.Column="2" Height="25"  Margin="10,5,0,0" LostFocus="WhereColumnValue_LostFocus" ToolTip="Enter the Value to be search by given Condition"/>
+            </Grid>
+        </StackPanel>
+        <Label  Grid.Row="3" Grid.Column="0" Content="Description:" Style="{StaticResource @LabelStyle}"  HorizontalAlignment="Stretch" Margin="0,10,0,0"/>
+        <StackPanel Grid.Row="3" Grid.Column="1" x:Name="DescriptionPanel" Visibility="Visible" Margin="0,10,0,0" Grid.RowSpan="1" Grid.ColumnSpan="3">
+            <Grid Margin="0,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="70"/>
+                </Grid.RowDefinitions>
+                <DockPanel x:Name="Description" Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="1" >                    
+                    <ScrollViewer Background="White">
+                        <TextBlock x:Name="txtDescription" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" DockPanel.Dock="Top" Background="#FFEFEFF2"></TextBlock>
+                    </ScrollViewer>
+                </DockPanel>
+            </Grid>
+        </StackPanel>
+        <StackPanel x:Name="ControlActionPanle" Grid.Row="4" Grid.ColumnSpan="3">
+            <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Selected Operation:</Label>
+            <ComboBox x:Name="ControlActionComboBox" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+        </StackPanel>
+    </Grid>
+</Page>

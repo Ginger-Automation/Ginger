@@ -20,19 +20,19 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Automation
 {
-    public class AutomationEventArgs : EventArgs
+    public class AutomationEventArgsExtended : EventArgs
     {
         
-        private AutomationEvent _eventId;
+        private AutomationEventExtended _eventId;
 
         
-        public AutomationEventArgs(AutomationEvent eventId)
+        public AutomationEventArgsExtended(AutomationEventExtended eventId)
         {
             this._eventId = eventId;
         }
 
         
-        public AutomationEvent EventId
+        public AutomationEventExtended EventId
         {
             get
             {
@@ -41,9 +41,9 @@ namespace System.Windows.Automation
         }
     }
 
-    public delegate void AutomationEventHandler(object sender, AutomationEventArgs e);
+    public delegate void AutomationEventHandler(object sender, AutomationEventArgsExtended e);
 
-    public sealed class WindowClosedEventArgs : AutomationEventArgs
+    public sealed class WindowClosedEventArgs : AutomationEventArgsExtended
     {
         
         private int[] _runtimeId;
@@ -73,7 +73,7 @@ namespace System.Windows.Automation
         Completed
     }
 
-    public sealed class AsyncContentLoadedEventArgs : AutomationEventArgs
+    public sealed class AsyncContentLoadedEventArgs : AutomationEventArgsExtended
     {
         
         private AsyncContentLoadedState _asyncContentState;
@@ -81,7 +81,7 @@ namespace System.Windows.Automation
 
         
         public AsyncContentLoadedEventArgs(AsyncContentLoadedState asyncContentState, double percentComplete)
-            : base(AutomationElementIdentifiers.AsyncContentLoadedEvent)
+            : base(AutomationElementIdentifiersExtended.AsyncContentLoadedEvent)
         {
             this._asyncContentState = asyncContentState;
             this._percentComplete = percentComplete;
@@ -105,16 +105,16 @@ namespace System.Windows.Automation
         }
     }
 
-    public sealed class AutomationPropertyChangedEventArgs : AutomationEventArgs
+    public sealed class AutomationPropertyChangedEventArgsExtended : AutomationEventArgsExtended
     {
         
         private object _newValue;
         private object _oldValue;
-        private AutomationProperty _property;
+        private AutomationPropertyExtended _property;
 
         
-        public AutomationPropertyChangedEventArgs(AutomationProperty property, object oldValue, object newValue)
-            : base(AutomationElementIdentifiers.AutomationPropertyChangedEvent)
+        public AutomationPropertyChangedEventArgsExtended(AutomationPropertyExtended property, object oldValue, object newValue)
+            : base(AutomationElementIdentifiersExtended.AutomationPropertyChangedEvent)
         {
             this._oldValue = oldValue;
             this._newValue = newValue;
@@ -138,7 +138,7 @@ namespace System.Windows.Automation
             }
         }
 
-        public AutomationProperty Property
+        public AutomationPropertyExtended Property
         {
             get
             {
@@ -147,17 +147,17 @@ namespace System.Windows.Automation
         }
     }
 
-    public delegate void AutomationPropertyChangedEventHandler(object sender, AutomationPropertyChangedEventArgs e);
+    public delegate void AutomationPropertyChangedEventHandler(object sender, AutomationPropertyChangedEventArgsExtended e);
 
-    public class AutomationFocusChangedEventArgs : AutomationEventArgs
+    public class AutomationFocusChangedEventArgsExtended : AutomationEventArgsExtended
     {
         
         private int _idChild;
         private int _idObject;
 
         
-        public AutomationFocusChangedEventArgs(int idObject, int idChild)
-            : base(AutomationElement.AutomationFocusChangedEvent)
+        public AutomationFocusChangedEventArgsExtended(int idObject, int idChild)
+            : base(AutomationElement_Extend.AutomationFocusChangedEvent)
         {
             this._idObject = idObject;
             this._idChild = idChild;
@@ -181,11 +181,11 @@ namespace System.Windows.Automation
         }
     }
 
-    public delegate void AutomationFocusChangedEventHandler(object sender, AutomationFocusChangedEventArgs e);
+    public delegate void AutomationFocusChangedEventHandler(object sender, AutomationFocusChangedEventArgsExtended e);
 
 
     [Guid("e4cfef41-071d-472c-a65c-c14f59ea81eb"), ComVisible(true)]
-    public enum StructureChangeType
+    public enum StructureChangeTypeExtended
     {
         ChildAdded,
         ChildRemoved,
@@ -195,15 +195,15 @@ namespace System.Windows.Automation
         ChildrenReordered
     }
 
-    public sealed class StructureChangedEventArgs : AutomationEventArgs
+    public sealed class StructureChangedEventArgsExtended : AutomationEventArgsExtended
     {
         
         private int[] _runtimeID;
-        private StructureChangeType _structureChangeType;
+        private StructureChangeTypeExtended _structureChangeType;
 
         
-        public StructureChangedEventArgs(StructureChangeType structureChangeType, int[] runtimeId)
-            : base(AutomationElementIdentifiers.StructureChangedEvent)
+        public StructureChangedEventArgsExtended(StructureChangeTypeExtended structureChangeType, int[] runtimeId)
+            : base(AutomationElementIdentifiersExtended.StructureChangedEvent)
         {
             if (runtimeId == null)
             {
@@ -219,7 +219,7 @@ namespace System.Windows.Automation
         }
 
         
-        public StructureChangeType StructureChangeType
+        public StructureChangeTypeExtended StructureChangeType
         {
             get
             {
@@ -228,5 +228,5 @@ namespace System.Windows.Automation
         }
     }
 
-    public delegate void StructureChangedEventHandler(object sender, StructureChangedEventArgs e);
+    public delegate void StructureChangedEventHandler(object sender, StructureChangedEventArgsExtended e);
 }

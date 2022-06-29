@@ -51,6 +51,7 @@ using Ginger.Run.RunSetActions;
 using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Ginger.Reports;
+using Ginger.Configurations;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -357,7 +358,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
 
             // Configuration Logger - Sealights
-            if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog == ExecutionLoggerConfiguration.eSealightsLog.Yes)
+            if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == SealightsConfiguration.eSealightsLog.Yes)
             {
                 WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
             }
@@ -417,6 +418,12 @@ namespace amdocs.ginger.GingerCoreNET
                 if (SolutionUpgrade.IsGingerUpgradeNeeded(solutionFolder, solutionFiles))
                 {
                     Reporter.ToLog(eLogLevel.WARN, "Loading Solution- Error: Current Ginger version can't load the Solution because it includes items from higher Ginger version");
+                    return false;
+                }
+
+                if (!SolutionUpgrade.IsUserProceedWithLoadSolutionInNewerGingerVersion(solutionFolder, solutionFiles))
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Loading Solution- Error: User doesn't wish to proceed with loading the Solution in Newer Ginger version");
                     return false;
                 }
 
@@ -508,6 +515,9 @@ namespace amdocs.ginger.GingerCoreNET
                 // mPluginsManager.Init(SolutionRepository);
 
                 CheckForExistingEnterpriseFeaturesConfiguration(); // Auto set the ExistingEnterprise's flag to true if needed
+
+                //Change sealights configurations object
+                Solution.SetSealightsOldConifurationsToNewObject();
 
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
                 return true;

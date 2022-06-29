@@ -1,0 +1,36 @@
+    <Window x:Class="GingerCore.GeneralLib.ComboBoxWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="InputBoxWindow" 
+        Height="180" 
+        Width="300" 
+        WindowStartupLocation="CenterScreen" 
+        Topmost="True"
+        WindowStyle="None"
+        BorderThickness="1"
+        BorderBrush="{DynamicResource $Color_DarkBlue}"     
+        >
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0"  Background="{StaticResource $Color_DarkBlue}">
+            <Label x:Name="winTitle" Grid.Row="0" Content="Page Title" Foreground="{DynamicResource $SelectionColor_Pink}" FontWeight="Bold" FontSize="14" FontFamily="Open Sans" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,0,0" Background="{StaticResource $Color_DarkBlue}"/>
+        </StackPanel>
+               
+        <TextBlock x:Name="MessageLabel" Grid.Row="1" Text="Message" HorizontalAlignment="Stretch" Margin="10,10,10,10" VerticalAlignment="Center" Style="{StaticResource @TextBlockStyle}" Foreground="{StaticResource $Color_DarkBlue}" FontSize="14"/>
+
+        <ComboBox x:Name="ValueComboBox" Grid.Row="2" HorizontalAlignment="Stretch" Text="Value" Margin="10,0,10,10" Style="{StaticResource @InputComboBoxStyle}"/>
+        
+        <DockPanel Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="3">            
+            <Button x:Name="OKButton" Content="Ok" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,10,0" Click="OKButton_Click" Style="{StaticResource @WindowButtonStyle}" IsDefault="true"/>
+            <Button x:Name="CancelButton" Content="Cancel" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,10,0" Click="CancelButton_Click" Style="{StaticResource @WindowButtonStyle}" IsCancel="True" />
+        </DockPanel>
+        
+    </Grid>
+</Window>

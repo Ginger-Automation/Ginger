@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
+using Ginger.Configurations;
 using Ginger.GeneralWindows;
 using Ginger.Reports;
 using Ginger.SolutionWindows;
@@ -43,6 +44,7 @@ namespace Ginger.ConfigurationsLib
                 {
                     mMenusPage = new TwoLevelMenuPage(GetMenu());
                      WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+                     WorkSpace.Instance.UserProfile.PropertyChanged += WorkSpacePropertyChanged;
                 }
                 return mMenusPage;
             }
@@ -51,6 +53,10 @@ namespace Ginger.ConfigurationsLib
         private static void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(WorkSpace.Solution))
+            {
+                MenusPage.Reset();
+            }
+            if (e.PropertyName == nameof(WorkSpace.UserProfile.ShowEnterpriseFeatures))
             {
                 MenusPage.Reset();
             }
@@ -77,6 +83,12 @@ namespace Ginger.ConfigurationsLib
             TopMenuItem tagsMenu = new TopMenuItem(eImageType.Tag, "Tags", ConsoleKey.T, "Tags AID", "List of Tags to be used for marking any of the Solution items with");
             tagsMenu.Add(eImageType.Tag, "", GetTagsPage, ConsoleKey.T, "", "AID");
             twoLevelMenu.Add(tagsMenu);
+
+            TopMenuItem externalConfigMenu = new TopMenuItem(eImageType.Building, WorkSpace.Instance.Solution.ExternalIntegrationsTabName, ConsoleKey.X, "External Configurations AID", "List of External Configurations to be used");
+            externalConfigMenu.Add(eImageType.VRT, "VRT Configuration", GetVRTExteranalConfigsPage, ConsoleKey.X, "Visual Regression Testing External Configurations", "VRT Configuration AID");
+            externalConfigMenu.Add(eImageType.Applitools, "Applitools Configuration", GetApplitoolsExteranalConfigsPage, ConsoleKey.X, "Applitools External Configurations", "Applitools Configuration AID");
+            externalConfigMenu.Add(eImageType.Sealights, "Sealights Configuration", GetSealightsExteranalConfigsPage, ConsoleKey.X, "Sealights External Configurations", "Sealights Configuration AID");
+            twoLevelMenu.Add(externalConfigMenu);
 
             return twoLevelMenu;
         }
@@ -120,7 +132,23 @@ namespace Ginger.ConfigurationsLib
             return reportsPage;
         }
 
+        private static Page GetVRTExteranalConfigsPage()
+        {
+            return new VRTExternalConfigurationsPage();
+        }
+        private static Page GetApplitoolsExteranalConfigsPage()
+        {
+            return new ApplitoolsExternalConfigurationsPage();
+        }
+        private static Page GetSealightsExteranalConfigsPage()
+        {
+            return new SealightsExternalConfigurationsPage();
+        }
 
-
+        //Remove when we add other pages
+        private static Page OthersPage()
+        {
+            return new Page();
+        }
     }
 }

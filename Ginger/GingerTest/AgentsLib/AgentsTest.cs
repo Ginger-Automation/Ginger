@@ -26,7 +26,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
-
+using System.Data;
 namespace GingerTest
 {
     [TestClass]
@@ -203,9 +203,9 @@ namespace GingerTest
         public void CreateAgentsFromCSV()
         {
             // arrange
-            string agentName = mTC.DataRow["Name"].ToString();
-            string platfromType = mTC.DataRow["PlatfromType"].ToString();
-            string driverType = mTC.DataRow["DriverType"].ToString();
+            string agentName = mTC.Properties["Name"].ToString();
+            string platfromType = mTC.Properties["PlatfromType"].ToString();
+            string driverType = mTC.Properties["DriverType"].ToString();
 
             //Act
             AgentsPOM AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();

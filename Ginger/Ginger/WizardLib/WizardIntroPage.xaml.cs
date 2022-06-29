@@ -86,7 +86,7 @@ namespace Ginger.WizardLib
         public string GetMarkDown(string location)
         {
             // Add try catch - add make sure md marked as resource
-            Uri uri = new Uri("pack://application:,,,/Ginger;component" + location);
+            Uri uri = new Uri(@"" + location, UriKind.RelativeOrAbsolute);
             StreamResourceInfo MarkDown = Application.GetResourceStream(uri);
             byte[] b = new byte[MarkDown.Stream.Length];
             MarkDown.Stream.Read(b,0, (int)MarkDown.Stream.Length);

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root>
+  <Groups>
+    <Group id="1" name="fa1qm1" default="true">
+      <Description>SandBox QM</Description>
+      <Path>/qm/fa1qm1</Path>
+      <TestPlanTemplate_FileName>testPlan</TestPlanTemplate_FileName>
+      <TestCaseTemplate_FileName>testCase</TestCaseTemplate_FileName>
+      <TestScriptTemplate_FileName>testScript</TestScriptTemplate_FileName>
+      <ExecutionRecordTemplate_FileName>executionRecord</ExecutionRecordTemplate_FileName>
+      <SuiteExecutionRecordTemplate_FileName>TestSuiteExecutionRecord</SuiteExecutionRecordTemplate_FileName>
+      <TestCaseExecutionRecordForTestSuite_FileName>TestCaseExecutionRecordForTestSuite</TestCaseExecutionRecordForTestSuite_FileName>
+      <TestSuiteLogTemplate_FileName>TestSuiteLog</TestSuiteLogTemplate_FileName>
+      <TestScript_Namespace key="ns2">http://jazz.net/xmlns/alm/qm/v0.1/</TestScript_Namespace>
+      <TestScript_NewId>ns2:testscript/ns2:webId</TestScript_NewId>
+      <TestCase_Namespace key="ns2">http://jazz.net/xmlns/alm/qm/v0.1/</TestCase_Namespace>
+      <TestCase_NewId>ns2:testcase/ns2:webId</TestCase_NewId>
+      <TestPlan_Namespace key="ns2">http://jazz.net/xmlns/alm/qm/v0.1/</TestPlan_Namespace>
+      <TestPlan_NewId>ns2:testplan/ns2:webId</TestPlan_NewId>
+      <ExecutionRecoed_Namespace key="ns2">http://jazz.net/xmlns/alm/qm/v0.1/</ExecutionRecoed_Namespace>
+      <ExecutionRecoed_NewId>ns2:executionworkitem/ns2:webId</ExecutionRecoed_NewId>
+      <TestSuiteExecutionRecordWebIdTag>ns2:suiteexecutionrecord/ns2:webId</TestSuiteExecutionRecordWebIdTag>
+      <TestSuiteLogWebIdTag>ns2:testsuitelog/ns2:webId</TestSuiteLogWebIdTag>
+      <TestCaseResultWebIdTag>ns2:executionresult/ns2:webId</TestCaseResultWebIdTag>
+    </Group>
+  </Groups>
+  <projects>
+    <Project name="Corporate_Operations_QM_20.19" Guid="_lxKOUI77EeaMm9uRfXkFdQ" GroupId="1" DeleteMeTestPlanLink="https://tdp.test.att.com/fa1qm1/service/com.ibm.rqm.integration.service.IIntegrationService/resources/Corporate_Operations_QM_20.19/testplan/urn:com.ibm.rqm:testplan:2450">Corporate_Operations_QM_20.19</Project>
+    <Project name="test.09" Guid="_L9NQIHMEEeazFuhSbAbfvQ" GroupId="1">test.09</Project>
+  </projects>
+</Root>

@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <PackageId>VisualRegressionTracker</PackageId>
+    <Version>4.8.0</Version>
+    <Authors>Daniel Crowe</Authors>
+    <Company>Visual Regression Tracker</Company>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Visual-Regression-Tracker/Visual-Regression-Tracker</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Visual-Regression-Tracker/sdk-dotnet</RepositoryUrl>
+    <PackageDescription>Open source, self hosted solution for visual testing and managing results of visual testing.</PackageDescription>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <ApplicationIcon />
+    <OutputType>Library</OutputType>
+    <StartupObject />
+    <UserSecretsId>6a2532d7-bd00-41ae-a0ca-f02d2e82e569</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <OpenApiReference Include="Api.json" SourceUrl="http://localhost:4200/api-json" Options="/OperationGenerationMode:SingleClientFromOperationId" />
+  </ItemGroup>
+</Project>

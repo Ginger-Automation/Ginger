@@ -264,19 +264,7 @@ namespace GingerCore.NoSqlBase
                         break;
                     case eDBValidationType.Insert:
                         Container objContainerForInsert = GetContainer(dbName, containerName);
-                        string primaryKeyForInsert = Act.GetInputParamCalculatedValue(nameof(Act.PrimaryKey));
-                        string partitionKeyForInsert = Act.GetInputParamCalculatedValue(nameof(Act.PartitionKey));
                         string insertJson = Act.GetInputParamCalculatedValue("InsertJson");
-                        if (string.IsNullOrEmpty(primaryKeyForInsert))
-                        {
-                            Act.Error = "Primary Key cannot be empty";
-                            return;
-                        }
-                        if (string.IsNullOrEmpty(partitionKeyForInsert))
-                        {
-                            Act.Error = "Partition Key cannot be empty";
-                            return;
-                        }
                         if (string.IsNullOrEmpty(insertJson))
                         {
                             Act.Error = "JSON cannot be empty";

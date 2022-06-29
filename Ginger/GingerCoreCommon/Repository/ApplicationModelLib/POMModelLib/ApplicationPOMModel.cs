@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -240,6 +240,20 @@ namespace Amdocs.Ginger.Repository
         public override string GetItemType()
         {
             return nameof(ApplicationPOMModel);
+        }
+
+        private bool mIsCollapseDetailsExapander;
+        public bool IsCollapseDetailsExapander //OperationName 
+        {
+            get
+            {
+                return mIsCollapseDetailsExapander;
+            }
+            set
+            {
+                mIsCollapseDetailsExapander = value;
+                OnPropertyChanged(nameof(this.IsCollapseDetailsExapander));
+            }
         }
     }
 }

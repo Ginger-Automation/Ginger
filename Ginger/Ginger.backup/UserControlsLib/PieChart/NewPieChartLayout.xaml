@@ -1,0 +1,14 @@
+    <UserControl
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="clr-namespace:Ginger.UserControlsLib.PieChart"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="Ginger.UserControlsLib.PieChart.NewPieChartLayout"
+    d:DesignWidth="301" d:DesignHeight="217"
+    >
+    <Grid>
+        <StackPanel>
+            <c:NewPiePlotter Margin="8 0 10 10" Height="60" HorizontalAlignment="Left" VerticalAlignment="Top" Width="65" HoleSize="0.8" DockPanel.Dock="Left"/>
+        </StackPanel>
+
+    </Grid>
+</UserControl>

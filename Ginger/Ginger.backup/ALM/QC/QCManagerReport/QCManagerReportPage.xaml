@@ -1,0 +1,76 @@
+    <Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.ALM.QC.QCManagerReportPage" 
+        xmlns:PieChart="clr-namespace:Ginger.UserControlsLib.PieChart"
+      mc:Ignorable="d" 
+      Height="700" Width="1000"
+	Title="QCManagerReportPage">
+
+    <Page.Resources>
+        <x:ArrayExtension Type="{x:Type Brush}" x:Key="brushes">
+            <SolidColorBrush Color="#9F15C3"/>
+            <SolidColorBrush Color="#FF8E01"/>
+            <SolidColorBrush Color="#339933"/>
+            <SolidColorBrush Color="#00AAFF"/>
+            <SolidColorBrush Color="#818183"/>
+            <SolidColorBrush Color="#000033"/>
+        </x:ArrayExtension>
+    </Page.Resources>
+    
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100*"/>
+            <ColumnDefinition Width="60"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="135"/>
+            <RowDefinition Height="200*"/>
+            <RowDefinition x:Name="PieRow" Height="180"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" Grid.Column="0">
+            <Label Grid.Column="0" Content="QC/ALM Test Set/Folder:" Style="{StaticResource @LabelStyle}" DockPanel.Dock="Top"/>
+            <TextBox x:Name="QCTestSetsPathTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" Grid.Column="0" HorizontalAlignment="Stretch" DockPanel.Dock="Top" Height="25" FontWeight="Bold" IsReadOnly="True"/>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                <Label Content="View Type:" Style="{StaticResource @LabelStyle}" Margin="0,10,0,0"/>
+                <ComboBox x:Name="ViewComboBox" Margin="10" SelectionChanged="ViewComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" Width="150"/>
+            </StackPanel>
+            <StackPanel x:Name="ExecutionFilters" Orientation="Horizontal" DockPanel.Dock="Top" Margin="75,0,0,0">                
+                <StackPanel x:Name="ExecutionTesterFilter" Orientation="Horizontal">
+                    <Label Content="Filter by Tester:" Style="{StaticResource @LabelStyle}" Margin="0,10,0,0"/>
+                    <ComboBox x:Name="ExecutionTesterFilterComboBox" Margin="10" Style="{StaticResource @InputComboBoxStyle}" Width="150"/>
+                </StackPanel>
+                <StackPanel x:Name="ExecutionPeriodFilter" Orientation="Horizontal">
+                    <Label Content="Filter by Execution Period:" Style="{StaticResource @LabelStyle}" Margin="0,10,0,0"/>
+                    <ComboBox x:Name="ExecutionPeriodFilterComboBox" Margin="10" Style="{StaticResource @InputComboBoxStyle}" Width="150"/>
+                </StackPanel>
+            </StackPanel>
+        </DockPanel>
+        <Button x:Name="QCTestCaseBrowseBtn" Grid.Row="0" Grid.Column="1" Content="Browse" Width="50" Style="{StaticResource @InputButtonStyle}" VerticalAlignment="Top" Margin="0,24" Click="QCTestCaseBrowseBtn_Click"/>
+
+        <Ginger:ucGrid x:Name="DetailsGrid" Grid.Row="1" Grid.ColumnSpan="2"  Title="Details Grid" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" IsReadOnly="True" Margin="0,10,0,0"/>
+
+        <!--<Frame  x:Name="ExtraDataFrame" Grid.Row="2" Grid.ColumnSpan="2"/>-->
+
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel  Margin="20,20,20,20" HorizontalAlignment="Center">
+                <PieChart:PieChartLayout x:Name="PieChartLayout" >
+                    <PieChart:PieChartLayout.ColorSelector>
+                        <PieChart:StatusColorSelector Brushes="{StaticResource brushes}"/>
+                    </PieChart:PieChartLayout.ColorSelector>
+                </PieChart:PieChartLayout>
+            </StackPanel>
+
+            <StackPanel x:Name="PiePassRate" Margin="20,20,20,20" HorizontalAlignment="Center" Visibility="Collapsed">
+                <PieChart:PieChartLayout x:Name="PieChartLayout2" >
+                    <PieChart:PieChartLayout.ColorSelector>
+                        <PieChart:StatusColorSelector Brushes="{StaticResource brushes}"/>
+                    </PieChart:PieChartLayout.ColorSelector>
+                </PieChart:PieChartLayout>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

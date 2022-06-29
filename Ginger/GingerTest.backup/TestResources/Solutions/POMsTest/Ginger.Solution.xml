@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="2d63419e-31cd-45ba-b222-0917b4605f9f" ItemType="Solution" CreatedBy="ELIRANBA" Created="201812130910" GingerVersion="3.1.0.0" Version="1" LastUpdateBy="ELIRANBA" LastUpdate="201812130910" />
+<Solution EncryptedValidationString="VUmheVjtatgVR0oSpuArDg==" AlmType="QC" Guid="2d63419e-31cd-45ba-b222-0917b4605f9f" Name="POMsTest" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ApplicationPlatforms>
+<ApplicationPlatform AppName="MyWebApp" CoreGUID="00000000-0000-0000-0000-000000000000" Guid="843fb8a6-a844-45e9-b7ef-b045b6433c44" GUID="00000000-0000-0000-0000-000000000000" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" />
+</ApplicationPlatforms>
+</Solution></GingerRepositoryItem>

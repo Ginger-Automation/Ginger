@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="b52f9842-acd8-442b-a89c-9408f814dd4d" ItemType="Solution" CreatedBy="ravikugu" Created="201811061057" GingerVersion="3.0.0.0" Version="1" LastUpdateBy="ravikugu" LastUpdate="201811061057" />
+<Solution AlmType="QC"  EncryptedValidationString="VUmheVjtatgVR0oSpuArDg==" Guid="b52f9842-acd8-442b-a89c-9408f814dd4d" Name="TestSolution" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ApplicationPlatforms>
+<ApplicationPlatform AppName="MyDosApp" CoreGUID="00000000-0000-0000-0000-000000000000" Guid="5a59c2d9-fe42-42e2-89f7-bf27dd439c42" GUID="00000000-0000-0000-0000-000000000000" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="DOS" />
+</ApplicationPlatforms>
+</Solution></GingerRepositoryItem>

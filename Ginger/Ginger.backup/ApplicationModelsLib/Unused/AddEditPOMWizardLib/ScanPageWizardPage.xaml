@@ -1,0 +1,26 @@
+    <Page x:Class="Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib.ScanPageWizardPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.POMsLib"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="800"
+      Title="ScanPageWizardPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="181*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <Label>Agent</Label>
+            <ComboBox x:Name="AgentComboBox" Width="150" Margin="5"></ComboBox>
+            <Button x:Name="ScanCurrentPageButton" Click="ScanCurrentPageButton_Click" Content="Take screen shot" HorizontalAlignment="Left" Height="29" VerticalAlignment="Top" Width="151"/>
+            <Button Content="Load from Mockup" HorizontalAlignment="Left" Height="29"  VerticalAlignment="Top" Width="120"/>
+        </StackPanel>
+        
+        <Frame x:Name="MainFrame" Content="Frame" Grid.Row="1"/>
+
+    </Grid>
+</Page>

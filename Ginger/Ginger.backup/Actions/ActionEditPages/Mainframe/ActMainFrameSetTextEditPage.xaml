@@ -1,0 +1,43 @@
+    <Page x:Class="Ginger.Actions.Mainframe.ActMainFrameSetTextEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+	Title="ActMainFrameSendKey"
+       xmlns:Actions="clr-namespace:Ginger.Actions"
+      xmlns:Ginger="clr-namespace:Ginger" >
+
+    <Grid Name="pageGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel  Grid.Row="0" Grid.ColumnSpan="5" x:Name="TextDetailsInstancePanel">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Set Text Mode</Label>
+            <ComboBox x:Name="SetTextModeCombo"  Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="SetTextModeCombo_SelectionChanged"></ComboBox>
+        </StackPanel>
+        <StackPanel  Grid.Row="1">
+         <CheckBox x:Name="SendAfterSettingText" Margin="0,10,0,0"></CheckBox>
+        <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="20,-20,0,0">Set Text And Send Enter </Label>
+        </StackPanel>
+
+        <StackPanel  Grid.Row="2" x:Name="MultiFieldPanel" >
+            <StackPanel>
+            <Button x:Name="LoadFields" Style="{StaticResource @InputButtonStyle}" Click="LoadFields_Click" Width="100">Load Fields</Button>
+        </StackPanel>
+            <StackPanel>
+                <CheckBox x:Name="ReloadValue" Margin="0,10,0,0"></CheckBox>
+                <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="20,-20,0,0">Reload values at runtime</Label>
+            </StackPanel>
+       
+      
+
+            <Ginger:ucGrid x:Name="CaretValueGrid" Title="Caret Text List" MaxHeight="250"/>
+     
+        </StackPanel>
+
+    </Grid>
+</Page>

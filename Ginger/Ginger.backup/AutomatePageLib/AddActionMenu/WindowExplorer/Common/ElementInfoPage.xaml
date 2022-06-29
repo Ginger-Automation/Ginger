@@ -1,0 +1,41 @@
+    <Page x:Class="Ginger.Drivers.Common.ElementInfoPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Ginger="clr-namespace:Ginger"            
+      
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="600"
+	Title="ElementInfoPage">
+
+    <ScrollViewer>
+        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="100*"/>
+            
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="113*"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+        
+            <Label Content="Title" Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Height="24" Margin="0,0,0,1" Width="42"/>
+            <TextBox x:Name="TitleTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" IsReadOnly="True" Grid.Column="1" TextWrapping="Wrap" Text="" Grid.ColumnSpan="2" Margin="2"/>
+            <Label Content="Type" Grid.Row="1" Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Height="24" Margin="0,1,0,0" Width="35"/>
+            <TextBox x:Name="TypeTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}"  IsReadOnly="True" Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" Text="" Grid.ColumnSpan="2" Margin="2"/>
+            <Label Content="Value" Grid.Row="2" Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Height="24" Margin="0,0,0,1" Width="40"/>
+            <TextBox x:Name="ValueTextBox"  Style="{StaticResource @MultiRowsTextBoxStyle}"  IsReadOnly="True" Grid.Column="1" Grid.Row="2" TextWrapping="Wrap" Text="" Grid.ColumnSpan="2" Margin="2"/>
+            <Label x:Name="Path" Content="Path" Grid.Row="3" Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Height="24" Margin="0,1,0,0" Width="34"/>
+            <TextBox x:Name="PathTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" IsReadOnly="True" Grid.Column="1" Grid.Row="3" TextWrapping="Wrap" Text="" Grid.ColumnSpan="2" Margin="2"/>
+            <Label Content="XPath" Grid.Row="4" Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+            <TextBox x:Name="XPathTextBox" Text="" IsReadOnly="True" Style="{StaticResource @MultiRowsTextBoxStyle}" Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="2" Margin="2,2,2,5"/>
+        
+        </Grid>
+    </ScrollViewer>
+</Page>

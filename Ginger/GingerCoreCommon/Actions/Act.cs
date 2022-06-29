@@ -65,7 +65,9 @@ namespace GingerCore.Actions
             [EnumValueDescription("All Available Windows")]
             AllAvailableWindows = 1,
             [EnumValueDescription("Desktop Screen")]
-            DesktopScreen = 2
+            DesktopScreen = 2,
+            [EnumValueDescription("Full Page Screenshot")]
+            FullPage = 3
         }
 
 
@@ -1006,7 +1008,7 @@ namespace GingerCore.Actions
 
         public static string GetScreenShotRandomFileName()
         {
-            string filename = Path.GetRandomFileName();
+            string filename = Path.GetRandomFileName().Split('.')[0] + ".png";
             string filePath = Path.Combine(ScreenshotTempFolder, filename);
             if (!Directory.Exists(ScreenshotTempFolder))
             {

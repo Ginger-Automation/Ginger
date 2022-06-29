@@ -1,0 +1,25 @@
+    <Page x:Class="GingerWPF.ApplicationModelsLib.APIModels.OutputTemplatePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="OutputTemplatePage">
+
+    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.Resources>
+            <DataTemplate x:Key="ValueExpressionButton">
+                <Button x:Name="GridVEButton" Content="..." Click="GridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+            </DataTemplate>
+            <DataTemplate x:Key="ClearStoreToBtnTemplate">
+                <Button x:Name="GridClearStoreToBtn" Content="X" Click="GridClearStoreToBtn_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+            </DataTemplate>
+        </Grid.Resources>
+
+
+        <ginger:ucGrid x:Name="xOutputValuesGrid" Grid.Row="1"/>
+        
+    </Grid>
+</Page>

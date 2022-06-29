@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -33,21 +33,38 @@ namespace Amdocs.Ginger.Repository
             return AIV;
         }
 
-        
-        [IsSerializedForLocalRepository]
-        public string Param { get; set; }
+        private string mParam;
 
-        public Type ParamType { get; set; }        
+        [IsSerializedForLocalRepository]
+        public string Param
+        {
+            get
+            {
+                return mParam;
+            }
+            set
+            {
+                if (mParam != value)
+                {
+                    mParam = value;
+                    OnPropertyChanged(nameof(Param));
+                }
+            }
+        }
+
+        public Type ParamType { get; set; }
 
         private string mValue;
 
-        [IsSerializedForLocalRepository]        
-        public string Value { get { return mValue; }                  
+        [IsSerializedForLocalRepository]
+        public string Value
+        {
+            get { return mValue; }
             set
             {
                 if (mValue != value)
                 {
-                    mValue = value;                    
+                    mValue = value;
                     OnPropertyChanged(nameof(Value));
                 }
             }
@@ -86,14 +103,14 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        
+
         DynamicListWrapper mDynamicListWrapper = null;
 
         public List<string> GetListItemProperties()
         {
             return mDynamicListWrapper.GetListItemProperties();
         }
-        
+
         public ObservableList<dynamic> ListDynamicValue
         {
             get
@@ -113,7 +130,7 @@ namespace Amdocs.Ginger.Repository
                         {
                             dynList = JsonConvert.DeserializeObject(mValue);
                         }
-                        catch(Exception exc)
+                        catch (Exception exc)
                         {
                             Reporter.ToLog(eLogLevel.WARN, "An error occurred while Deserializing JSON object", exc);
                             dynList = JsonConvert.DeserializeObject(string.Format("{0}{1}{0}", "\"", mValue));
@@ -143,14 +160,14 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-      
+
 
 
         private string mValueForDriver;
 
         public string ValueForDriver { get { return mValueForDriver; } set { mValueForDriver = value; OnPropertyChanged(ValueForDriver); } }
 
-        
+
         public override string ItemName
         {
             get

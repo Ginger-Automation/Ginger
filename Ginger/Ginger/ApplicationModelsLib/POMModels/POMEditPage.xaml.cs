@@ -134,6 +134,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
             xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);
 
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEditPageExpander, Expander.IsExpandedProperty, mPOM, nameof(mPOM.IsCollapseDetailsExapander));
+
             SetDefaultPage();
         }
 
@@ -448,7 +451,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void xEditPageExpander_Expanded(object sender, RoutedEventArgs e)
         {
-            FirstRow.Height = new GridLength(280, GridUnitType.Pixel);
+            FirstRow.Height = new GridLength(170, GridUnitType.Pixel);
             SecondRow.Height = new GridLength(100, GridUnitType.Star);
         }
 

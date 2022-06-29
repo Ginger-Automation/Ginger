@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Ginger Repository Item created with version: 2.7.0.0-->
+<Ginger.Environments.Solution AlmType="QC"  EncryptedValidationString="VUmheVjtatgVR0oSpuArDg==" Created="9/28/2017 3:31:07 PM" CreatedBy="YARONWE" Guid="9908f3ae-b8b5-4c05-ad7b-efc3ce7b684b" LastBusinessFlowFileName="C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerWPFUnitTest\TestResources\Solutions\EnvsTest\\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml" LastUpdate="5/31/2018 4:14:30 PM" LastUpdateBy="YARONWE" Name="Envs tester" ParentGuid="00000000-0000-0000-0000-000000000000" ShowIndicationkForLockedItems="False" Version="2">
+<ApplicationPlatforms>
+<GingerCore.Platforms.ApplicationPlatform AppName="Amdo CSP" CoreGUID="00000000-0000-0000-0000-000000000000" Created="9/28/2017 3:35:51 PM" CreatedBy="YARONWE" Guid="67845df5-359a-4706-a1de-71d7db092e2c" GUID="00000000-0000-0000-0000-000000000000" LastUpdate="1/1/0001 12:00:00 AM" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" Version="0" />
+</ApplicationPlatforms>
+
+<ExecutionLoggerConfigurationSetList>
+<Ginger.Reports.ExecutionLoggerConfiguration Created="5/31/2018 4:13:57 PM" CreatedBy="YARONWE" ExecutionLoggerConfigurationExecResultsFolder="~\ExecutionResults\" ExecutionLoggerConfigurationIsEnabled="True" ExecutionLoggerConfigurationMaximalFolderSize="250" Guid="7b7a29bb-d532-4778-a72e-f780d2d514d9" IsSelected="True" LastUpdate="1/1/0001 12:00:00 AM" ParentGuid="00000000-0000-0000-0000-000000000000" Seq="0" Version="0" />
+</ExecutionLoggerConfigurationSetList>
+
+<ExternalItemsFields>
+</ExternalItemsFields>
+
+<HTMLReportsConfigurationSetList>
+<Ginger.Reports.HTMLReportsConfiguration Created="5/31/2018 4:13:57 PM" CreatedBy="YARONWE" Guid="e66a2d34-4331-4613-a755-f0dab53ad58c" HTMLReportConfigurationMaximalFolderSize="0" HTMLReportsAutomaticProdIsEnabled="False" HTMLReportsFolder="~\HTMLReports\" HTMLReportTemplatesSeq="0" IsSelected="True" LastUpdate="1/1/0001 12:00:00 AM" LimitReportFolderSize="False" ParentGuid="00000000-0000-0000-0000-000000000000" Seq="0" Version="0" />
+</HTMLReportsConfigurationSetList>
+
+<Tags>
+</Tags>
+
+<Variables>
+</Variables>
+</Ginger.Environments.Solution>

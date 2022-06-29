@@ -1,0 +1,41 @@
+    <Page x:Class="Ginger.Reports.HTMLReportAttachmentConfigurationPage"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Ginger="clr-namespace:Ginger" xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      xmlns:Actions="clr-namespace:Ginger.Actions"      
+      mc:Ignorable="d" 
+      Height="200" Width="600"
+	Title="HTML Reports Attachment Configurations">
+
+    <ScrollViewer>
+        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+            <StackPanel Margin="0,0,-11,0">
+                <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
+                    <Label Margin="0,0,10,0" Style="{StaticResource @LabelStyle}" Content="Select Report Template:"/>
+                    <ComboBox x:Name="DefaultTemplatePickerCbx"  ContextMenu="{x:Null}" Width="250" Style="{DynamicResource @InputComboBoxStyle}" ></ComboBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" x:Name="Panel" Margin="0,5,0,0">
+                    <Label Style="{StaticResource @LabelStyle}" FontSize="12" HorizontalAlignment="Left" Content="HTML Report Attachment Option : " Margin="0,0,5,0"></Label>
+                    <RadioButton x:Name="RadioZippedReportOption" Tag="ZippedReport" GroupName="LinkOptionRadio" Content="Attached Zip Report" Width="130" VerticalAlignment="Center" Checked="RadioZippedOption_Checked" Style="{StaticResource @InputRadioButtonStyle}"/>
+                    <RadioButton x:Name="RadioLinkOption" Tag="Link"  GroupName="LinkOptionRadio" Content="Link to Shared Report" Width="130" VerticalAlignment="Center" Checked="LinkOption_Checked"  Style="{StaticResource @InputRadioButtonStyle}"/>
+                </StackPanel>
+                <Label x:Name="ZipReportlbl" Style="{StaticResource @LabelStyle}" FontSize="10" Height="40" Margin="0,0,0,0" HorizontalAlignment="Left" >
+                    <TextBlock Height="30">Notice: In case the zipped report file size together with the other attachments) will exceed 10 MB then the report won't be attached and <LineBreak/>'Link to Shared Report' option will be used. It is recommended to provide alternative SHARED folder, e.g \\Machine Name\\Share\\ReportPath\\</TextBlock>
+                </Label>
+                <Label x:Name="Linklbl" Style="{StaticResource @LabelStyle}" FontSize="10" Height="40" Margin="0,0,10,0" HorizontalAlignment="Left" Visibility="Collapsed">
+                    <TextBlock Height="30">Notice: It is recommended to provide alternative SHARED folder,<LineBreak/>e.g \\Machine Name\\Share\\ReportPath\\</TextBlock>
+                </Label>
+                <CheckBox x:Name="UseAlternativeHTMLReportFolderCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5,9,5,5" Content="Save HTML report to alternative folder/shared path" Checked="UseAlternativeHTMLReportFolderCbx_Checked" Unchecked="UseAlternativeHTMLReportFolderCbx_Unchecked"></CheckBox>
+                <StackPanel x:Name="HTMLReportFolderPanel" Orientation="Vertical" IsEnabled="False">
+                    <StackPanel Orientation="Horizontal">
+                        <Actions:UCValueExpression x:Name="HTMLReportFolderTextBox"   ToolTip="HTML Report path" Width="500" Margin="5,5,0,5"/>
+                        
+                    </StackPanel>
+                </StackPanel>
+
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page>

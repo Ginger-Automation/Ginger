@@ -44,6 +44,8 @@ namespace GingerCore.Actions
             public static string ImplicitWait = "ImplicitWait";
             public static string URLSrc = "URLSrc";
             public static string PomGUID = "PomGUID";
+            public static string NetworkLog = "NetworkLog";
+            public static string NetworkUrl = "NetworkUrl";
         }
 
         public override string ActionDescription { get { return "Browser Action"; } }

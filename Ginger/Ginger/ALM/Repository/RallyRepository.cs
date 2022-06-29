@@ -52,8 +52,8 @@ namespace Ginger.ALM.Repository
                 importDestinationFolderPath = WorkSpace.Instance.Solution.BusinessFlowsMainFolder;
             }
             // get activities groups
-            RallyImportReviewPage win = new RallyImportReviewPage(RallyConnect.Instance.GetRallyTestPlanFullData(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName, (RallyTestPlan)selectedTestPlan), importDestinationFolderPath);
-            win.ShowAsWindow();
+            //RallyImportReviewPage win = new RallyImportReviewPage(RallyConnect.Instance.GetRallyTestPlanFullData(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName, (RallyTestPlan)selectedTestPlan), importDestinationFolderPath);
+            //win.ShowAsWindow();
 
             return true;
         }
@@ -111,44 +111,44 @@ namespace Ginger.ALM.Repository
                         Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testPlan.Name);
 
                         // convert test set into BF
-                        BusinessFlow tsBusFlow = ((RallyCore)ALMIntegration.Instance.AlmCore).ConvertRallyTestPlanToBF(testPlan);
+                        //BusinessFlow tsBusFlow = ((RallyCore)ALMIntegration.Instance.AlmCore).ConvertRallyTestPlanToBF(testPlan);
 
-                        if ( WorkSpace.Instance.Solution.MainApplication != null)
-                        {
-                            //add the applications mapped to the Activities
-                            foreach (Activity activ in tsBusFlow.Activities)
-                            {
-                                if (string.IsNullOrEmpty(activ.TargetApplication) == false)
-                                    if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
-                                    {
-                                        ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
-                                        if (appAgent != null)
-                                            tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
-                                    }
-                            }
-                            //handle non mapped Activities
-                            if (tsBusFlow.TargetApplications.Count == 0)
-                            {
-                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
-                            }
-                            foreach (Activity activ in tsBusFlow.Activities)
-                            {
-                                if (string.IsNullOrEmpty(activ.TargetApplication))
-                                {
-                                    activ.TargetApplication = tsBusFlow.MainApplication;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            foreach (Activity activ in tsBusFlow.Activities)
-                            {
-                                activ.TargetApplication = null; // no app configured on solution level
-                            }
-                        }
+                        //if ( WorkSpace.Instance.Solution.MainApplication != null)
+                        //{
+                        //    //add the applications mapped to the Activities
+                        //    foreach (Activity activ in tsBusFlow.Activities)
+                        //    {
+                        //        if (string.IsNullOrEmpty(activ.TargetApplication) == false)
+                        //            if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
+                        //            {
+                        //                ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                        //                if (appAgent != null)
+                        //                    tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
+                        //            }
+                        //    }
+                        //    //handle non mapped Activities
+                        //    if (tsBusFlow.TargetApplications.Count == 0)
+                        //    {
+                        //        tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
+                        //    }
+                        //    foreach (Activity activ in tsBusFlow.Activities)
+                        //    {
+                        //        if (string.IsNullOrEmpty(activ.TargetApplication))
+                        //        {
+                        //            activ.TargetApplication = tsBusFlow.MainApplication;
+                        //        }
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    foreach (Activity activ in tsBusFlow.Activities)
+                        //    {
+                        //        activ.TargetApplication = null; // no app configured on solution level
+                        //    }
+                        //}
 
-                        //save bf
-                        AddTestSetFlowToFolder(tsBusFlow, importDestinationPath);
+                        ////save bf
+                        //AddTestSetFlowToFolder(tsBusFlow, importDestinationPath);
                         Reporter.HideStatusMessage();
                     }
                     catch (Exception ex)
@@ -190,17 +190,17 @@ namespace Ginger.ALM.Repository
 
             string res = string.Empty;
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, "Selected " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups));
-            exportRes = ((RallyCore)ALMIntegration.Instance.AlmCore).ExportBfActivitiesGroupsToALM(businessFlow, grdActivitiesGroups, ref res);
+            //exportRes = ((RallyCore)ALMIntegration.Instance.AlmCore).ExportBfActivitiesGroupsToALM(businessFlow, grdActivitiesGroups, ref res);
 
-            if (exportRes)
-            {
-                //Check if we need to perform save
-                Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
-            }
+            //if (exportRes)
+            //{
+            //    //Check if we need to perform save
+            //    Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
+            //}
+            //else
+            //{
+            //    Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
+            //}
 
             Reporter.HideStatusMessage();
         }
@@ -220,25 +220,25 @@ namespace Ginger.ALM.Repository
             bool exportRes;
             string res = string.Empty;
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
+            exportRes = true;
+            //exportRes = ((RallyCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRally(businessFlow,  WorkSpace.Instance.Solution.ExternalItemsFields, ref res);
 
-            exportRes = ((RallyCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRally(businessFlow,  WorkSpace.Instance.Solution.ExternalItemsFields, ref res);
-
-            if (exportRes)
-            {
-                if (performSaveAfterExport)
-                {
-                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
-                }
-                if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
-                {
-                    Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
-                }
-            }
-            else if (almConectStyle != eALMConnectType.Silence)
-            {
-                Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
-            }
+            //if (exportRes)
+            //{
+            //    if (performSaveAfterExport)
+            //    {
+            //        Reporter.ToStatus(eStatusMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+            //        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
+            //    }
+            //    if (almConectStyle != eALMConnectType.Auto && almConectStyle != eALMConnectType.Silence)
+            //    {
+            //        Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
+            //    }
+            //}
+            //else if (almConectStyle != eALMConnectType.Silence)
+            //{
+            //    Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
+            //}
 
             Reporter.HideStatusMessage();
             return exportRes;

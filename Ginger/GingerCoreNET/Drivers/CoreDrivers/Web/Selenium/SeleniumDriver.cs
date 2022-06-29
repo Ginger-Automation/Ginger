@@ -59,11 +59,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Text;
 using OpenQA.Selenium.Edge;
+using OpenQA.Selenium.DevTools;
+using DevToolsSessionDomains = OpenQA.Selenium.DevTools.V96.DevToolsSessionDomains;
 
 namespace GingerCore.Drivers
 {
     public class SeleniumDriver : DriverBase, IVirtualDriver, IWindowExplorer, IVisualTestingDriver, IXPath, IPOM, IRecord
     {
+        protected IDevToolsSession Session;
+        DevToolsSession devToolsSession;
         public enum eBrowserType
         {
             IE,
@@ -222,21 +226,6 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Selenium line arguments || Set Selenium arguments separated with ; sign")]
         public string SeleniumUserArguments { get; set; }
 
-
-        //[UserConfigured]
-        //[UserConfiguredDefault("False")]
-        //[UserConfiguredDescription("Applitool - Set to true if you want to use Applitools for visual testing")]
-        //public Boolean UseApplitools { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Applitool View Key number")]
-        public String ApplitoolsViewKey { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Applitool Server Url")]
-        public String ApplitoolsServerUrl { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("true")]
@@ -407,11 +396,11 @@ namespace GingerCore.Drivers
                         if (!(String.IsNullOrEmpty(SeleniumUserArguments) && String.IsNullOrWhiteSpace(SeleniumUserArguments)))
                             ieoptions.BrowserCommandLineArguments += "," + SeleniumUserArguments;
 
-                        if (!(String.IsNullOrEmpty(ApplitoolsViewKey) && String.IsNullOrWhiteSpace(ApplitoolsViewKey)))
-                            ieoptions.BrowserCommandLineArguments += "," + ApplitoolsViewKey;
+                        if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey)))
+                            ieoptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey;
 
-                        if (!(String.IsNullOrEmpty(ApplitoolsServerUrl) && String.IsNullOrWhiteSpace(ApplitoolsServerUrl)))
-                            ieoptions.BrowserCommandLineArguments += "," + ApplitoolsServerUrl;
+                        if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl)))
+                            ieoptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
                         InternetExplorerDriverService IEService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
                         IEService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new InternetExplorerDriver(IEService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
@@ -504,11 +493,11 @@ namespace GingerCore.Drivers
                             options.AddArgument("--user-agent=" + BrowserUserAgent.Trim());
                         }
 
-                        if (!(String.IsNullOrEmpty(ApplitoolsViewKey) && String.IsNullOrWhiteSpace(ApplitoolsViewKey)))
-                            options.AddArgument(ApplitoolsViewKey);
+                        if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey)))
+                            options.AddArgument(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey);
 
-                        if (!(String.IsNullOrEmpty(ApplitoolsServerUrl) && String.IsNullOrWhiteSpace(ApplitoolsServerUrl)))
-                            options.AddArgument(ApplitoolsServerUrl);
+                        if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl)))
+                            options.AddArgument(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl);
 
                         ChromeDriverService ChService = ChromeDriverService.CreateDefaultService(GetDriversPathPerOS());
                         if (HideConsoleWindow)
@@ -518,7 +507,8 @@ namespace GingerCore.Drivers
 
                         try
                         {
-                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));    
+                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut))); 
+                            
                         }
                         catch (Exception ex)
                         {
@@ -671,7 +661,10 @@ namespace GingerCore.Drivers
                 {
                     Driver.Manage().Window.Size = new Size() { Height = Convert.ToInt32(BrowserHeight), Width = Convert.ToInt32(BrowserWidth) };
                 }
-
+                else
+                {
+                    Driver.Manage().Window.Maximize();
+                }
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
 
                 //set pageLoad timeout limit
@@ -1248,6 +1241,11 @@ namespace GingerCore.Drivers
                 if (act.WindowsToCapture == Act.eWindowsToCapture.OnlyActiveWindow || TakeOnlyActiveFrameOrWindowScreenShotInCaseOfFailure)
                 {
                     AddCurrentScreenShot(act);
+                }
+                if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
+                {
+                    Bitmap img = GetScreenShot(true);
+                    act.AddScreenShot(img, Driver.Title);
                 }
                 else
                 {
@@ -3913,7 +3911,7 @@ namespace GingerCore.Drivers
         /// Else, it'll be skipped - Checking the performance
         /// </summary>
         public bool ExtraLocatorsRequired = true;
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
         {
             return await Task.Run(() =>
             {
@@ -3927,7 +3925,7 @@ namespace GingerCore.Drivers
                     List<ElementInfo> list = new List<ElementInfo>();
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
-                    list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, relativeXpathTemplateList));
+                    list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, relativeXpathTemplateList, LearnScreenshotsOfElements));
                     allReadElem.Clear();
                     CurrentFrame = "";
                     Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
@@ -3943,7 +3941,7 @@ namespace GingerCore.Drivers
         }
 
 
-        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, List<string> relativeXpathTemplateList = null)
+        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
@@ -4032,6 +4030,19 @@ namespace GingerCore.Drivers
                                     {
                                         CreateXpathFromUserTemplate(template, foundElemntInfo);
                                     }
+                                }
+                            }
+                            //Element Screenshot
+                            if (LearnScreenshotsOfElements)
+                            {
+                                var screenshot = ((ITakesScreenshot)webElement).GetScreenshot();
+                                Bitmap image = ScreenshotToImage(screenshot);
+                                //foundElemntInfo.ScreenShotImage = BitmapToBase64(screenshot);
+                                using (MemoryStream ms = new MemoryStream())
+                                {
+                                    image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                                    byte[] byteImage = ms.ToArray();
+                                    foundElemntInfo.ScreenShotImage = Convert.ToBase64String(byteImage);
                                 }
                             }
 
@@ -6676,36 +6687,48 @@ namespace GingerCore.Drivers
                     break;
                 case ActBrowserElement.eControlAction.GetBrowserLog:
 
-                    String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
-                    var networkLogs = ((IJavaScriptExecutor)Driver).ExecuteScript(scriptToExecute) as ReadOnlyCollection<object>;
+                    //String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
+                    //var networkLogs = ((IJavaScriptExecutor)Driver).ExecuteScript(scriptToExecute) as ReadOnlyCollection<object>;
 
-                    foreach (var item in networkLogs)
-                    {
-                        Dictionary<string, object> dict = item as Dictionary<string, object>;
-                        if (dict != null)
-                        {
-                            if (dict.ContainsKey("name"))
-                            {
-                                var urlArray = dict.Where(x => x.Key == "name").FirstOrDefault().Value.ToString().Split('/');
+                    //foreach (var item in networkLogs)
+                    //{
+                    //    Dictionary<string, object> dict = item as Dictionary<string, object>;
+                    //    if (dict != null)
+                    //    {
+                    //        if (dict.ContainsKey("name"))
+                    //        {
+                    //            var urlArray = dict.Where(x => x.Key == "name").FirstOrDefault().Value.ToString().Split('/');
 
-                                var urlString = string.Empty;
-                                if (urlArray.Length > 0)
-                                {
-                                    urlString = urlArray[urlArray.Length - 1];
-                                    if (string.IsNullOrEmpty(urlString) && urlArray.Length > 1)
-                                    {
-                                        urlString = urlArray[urlArray.Length - 2];
-                                    }
-                                    foreach (var val in dict)
-                                    {
-                                        act.AddOrUpdateReturnParamActual(Convert.ToString(urlString + ":[" + val.Key + "]"), Convert.ToString(val.Value));
-                                    }
-                                }
-                            }
+                    //            var urlString = string.Empty;
+                    //            if (urlArray.Length > 0)
+                    //            {
+                    //                urlString = urlArray[urlArray.Length - 1];
+                    //                if (string.IsNullOrEmpty(urlString) && urlArray.Length > 1)
+                    //                {
+                    //                    urlString = urlArray[urlArray.Length - 2];
+                    //                }
+                    //                foreach (var val in dict)
+                    //                {
+                    //                    act.AddOrUpdateReturnParamActual(Convert.ToString(urlString + ":[" + val.Key + "]"), Convert.ToString(val.Value));
+                    //                }
+                    //            }
+                    //        }
 
-                        }
+                    //    }
 
-                    }
+                    //}
+                    SetUPDevTools(Driver);
+
+                    INetwork interceptor = Driver.Manage().Network;
+                    interceptor.NetworkRequestSent += OnNetworkRequestSent;
+                    interceptor.NetworkResponseReceived += OnNetworkResponseReceived;
+                    interceptor.StartMonitoring();
+                    string Networkurl = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.NetworkUrl);
+                    Driver.Navigate().GoToUrl(Networkurl);
+                    interceptor.StopMonitoring();
+                    interceptor.NetworkRequestSent -= OnNetworkRequestSent;
+                    interceptor.NetworkResponseReceived -= OnNetworkResponseReceived;
+                    //_ =NetworkLogTestAsync(Driver);
 
                     break;
                 case ActBrowserElement.eControlAction.NavigateBack:
@@ -7475,6 +7498,19 @@ namespace GingerCore.Drivers
 
         public Bitmap GetScreenShot(bool IsFullPageScreenshot = false)
         {
+            switch (mBrowserTpe)
+            {
+                case eBrowserType.FireFox:
+                    if (IsFullPageScreenshot)
+                    {
+                        var screenshot = ((FirefoxDriver)Driver).GetFullPageScreenshot();
+                        return ScreenshotToImage(screenshot);
+                    }
+                    break;
+                default:
+                    //
+                    break;
+            }
             try
             {
                 // If set to false only take screenshot of whats in view and not the whole page
@@ -7718,6 +7754,12 @@ namespace GingerCore.Drivers
             }
 
             return GetScreenShot(IsFullPageScreenshot);
+        }
+        public Bitmap GetElementScreenshot(Act act)
+        {
+            WebElement element = (WebElement)LocateElement(act, false, null, null);
+            var screenshot = ((ITakesScreenshot)element).GetScreenshot();
+            return ScreenshotToImage(screenshot);
         }
 
         VisualElementsInfo IVisualTestingDriver.GetVisualElementsInfo()
@@ -8487,12 +8529,12 @@ namespace GingerCore.Drivers
 
         public string GetApplitoolServerURL()
         {
-            return this.ApplitoolsServerUrl;
+            return WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
         }
 
         public string GetApplitoolKey()
         {
-            return this.ApplitoolsViewKey;
+            return WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey;
         }
 
         public ePlatformType GetPlatform()
@@ -8503,6 +8545,144 @@ namespace GingerCore.Drivers
         public string GetEnvironment()
         {
             return this.BusinessFlow.Environment;
+        }
+
+        public Size GetWindowSize()
+        {
+            return Driver.Manage().Window.Size;
+        }
+
+        public string GetAgentAppName()
+        {
+            return GetBrowserType().ToString();
+        }
+
+        public string GetViewport()
+        {
+            return Driver.Manage().Window.Size.ToString();
+        }
+
+        private void SetUPDevTools(IWebDriver webDriver)
+        {
+            //Get DevTools
+            var devTool = webDriver as IDevTools;
+
+            //DevTool Session 
+            devToolsSession = devTool.GetDevToolsSession();
+            var domains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V96.DevToolsSessionDomains>();
+
+            domains.Network.Enable(new OpenQA.Selenium.DevTools.V96.Network.EnableCommandSettings());
+        }
+        public async Task NetworkLogTestAsync(IWebDriver webDriver)
+        {
+            //SetUPDevTools(webDriver);
+            ////webDriver.Url = "http://www.executeautomation.com";
+            ////var logs =  webDriver.Manage().Logs.GetLog(LogType.Server);
+
+            ////var l = webDriver.Manage().Network.NetworkResponseReceived();
+            //var domains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V96.DevToolsSessionDomains>();
+
+            //domains.Network.Enable(new OpenQA.Selenium.DevTools.V96.Network.EnableCommandSettings());
+            //domains.Network.GetResponseBody(new OpenQA.Selenium.DevTools.V96.Network.GetResponseBodyCommandSettings { }, default, 60, true);
+
+            //////devToolsSession.SendCommand(domains.Network.Enable(new OpenQA.Selenium.DevTools.V96.Network.EnableCommandSettings());
+            //////devTools.send(Network.emulateNetworkConditions(
+            //////        false,
+            //////        20,
+            //////        20,
+            //////        50,
+            //////        Optional.of(ConnectionType.CELLULAR2G)
+            //////));
+
+            //webDriver.Url = "http://www.executeautomation.com";
+            // webDriver.Manage().Network.;
+
+            //EventHandler<MessageAddedEventArgs> messageAdded = (sender, e) =>
+            //{
+            //    Assert.AreEqual("BELLATRIX is cool", e.Message);
+            //};
+            //domains.Console.Enable();
+            //domains.Console.ClearMessages();
+            //domains.Console.MessageAdded += messageAdded;
+            //var ff = DevToolsSessionLogLevel.;
+
+            //object p = webDriver.e("console.log('BELLATRIX is cool');");
+            INetwork interceptor = webDriver.Manage().Network;
+            interceptor.NetworkRequestSent += OnNetworkRequestSent;
+            interceptor.NetworkResponseReceived += OnNetworkResponseReceived;
+            await interceptor.StartMonitoring();
+            // webDriver.Url = "http://the-internet.herokuapp.com/redirect";
+            webDriver.Url = "https://my.smart.com.ph/smart";
+            //webDriver.Navigate().GoToUrl("https://www.google.com");
+            // webDriver.Url = "https://www.google.com";
+            await interceptor.StopMonitoring();
+        }
+
+        private void OnNetworkRequestSent(object sender, NetworkRequestSentEventArgs e)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat("Request {0}", e.RequestId).AppendLine();
+            builder.AppendLine("--------------------------------");
+            builder.AppendFormat("{0} {1}", e.RequestMethod, e.RequestUrl).AppendLine();
+            foreach (KeyValuePair<string, string> header in e.RequestHeaders)
+            {
+                builder.AppendFormat("{0}: {1}", header.Key, header.Value).AppendLine();
+            }
+            builder.AppendLine("--------------------------------");
+            builder.AppendLine();
+            Console.WriteLine(builder.ToString());
+            string path = @"C:\networklog\" + "log.txt";
+            File.WriteAllText(path, builder.ToString());
+        }
+
+        private void OnNetworkResponseReceived(object sender, NetworkResponseReceivedEventArgs e)
+        {
+            try
+            {
+                StringBuilder builder = new StringBuilder();
+                builder.AppendFormat("Response {0}", e.RequestId).AppendLine();
+                builder.AppendLine("--------------------------------");
+                builder.AppendFormat("{0} {1}", e.ResponseStatusCode, e.ResponseUrl).AppendLine();
+                foreach (KeyValuePair<string, string> header in e.ResponseHeaders)
+                {
+                    builder.AppendFormat("{0}: {1}", header.Key, header.Value).AppendLine();
+                }
+
+                if (e.ResponseResourceType == "XHR")
+                {
+                    Console.WriteLine(e.ResponseBody);
+                }
+                else if (e.ResponseResourceType == "Document")
+                {
+                    builder.AppendLine(e.ResponseBody);
+                }
+                else if (e.ResponseResourceType == "Script")
+                {
+                    builder.AppendLine("<JavaScript content>");
+                }
+                else if (e.ResponseResourceType == "Stylesheet")
+                {
+                    builder.AppendLine("<stylesheet content>");
+                }
+                else if (e.ResponseResourceType == "Image")
+                {
+                    builder.AppendLine("<image>");
+                }
+                else
+                {
+                    builder.AppendFormat("Content type: {0}", e.ResponseResourceType).AppendLine();
+                }
+
+                builder.AppendLine("--------------------------------");
+                Console.WriteLine(builder.ToString());
+                string path = @"C:\networklog\" + "log.txt";
+                File.WriteAllText(path, builder.ToString());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
         }
     }
 }

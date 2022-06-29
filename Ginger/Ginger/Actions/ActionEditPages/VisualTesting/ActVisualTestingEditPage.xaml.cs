@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.Actions.UserControls;
 using GingerCore;
@@ -44,14 +45,14 @@ namespace Ginger.Actions.VisualTesting
         ApplitoolsComparePage mApplitoolsComparePage = null;
         BitmapPixelsComaprePage mBitmapPixelsComaprePage = null;
         UIElementsComparisonPage mUIElementsBitmapComparisonPage = null;
-
+        VRTComparePage mVRtComparisonPage = null;
         public ActVisualTestingEditPage(GingerCore.Actions.ActVisualTesting Act)
         {
             InitializeComponent();
             this.mAct = Act;
 
             //Visual Testing Engine
-            VisualTestingEngineComboBox.Init(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.VisualAnalyzer, ActVisualTesting.eVisualTestingAnalyzer.BitmapPixelsComparison.ToString()), typeof(ActVisualTesting.eVisualTestingAnalyzer), false, new SelectionChangedEventHandler(VisualTestingEngineComboBox_SelectionChanged));
+            VisualTestingEngineComboBox.Init(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.VisualAnalyzer, ActVisualTesting.eVisualTestingAnalyzer.VRT.ToString()), typeof(ActVisualTesting.eVisualTestingAnalyzer), false, new SelectionChangedEventHandler(VisualTestingEngineComboBox_SelectionChanged));
             
             //Saved baseline image path for that action
             CurrentBaselineImagePathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.SavedBaseImageFilenameString), true, true, UCValueExpression.eBrowserType.File, "*", BaseLineFileSelected_Click);
@@ -249,6 +250,7 @@ namespace Ginger.Actions.VisualTesting
                     }
                     mApplitoolsComparePage.InitLayout();
                     EngineConfigFrame.Content = mApplitoolsComparePage;
+                    xFullPageScreenshotCheckbox.Visibility = Visibility.Collapsed;
                     break;
 
                 case ActVisualTesting.eVisualTestingAnalyzer.BitmapPixelsComparison:
@@ -259,6 +261,7 @@ namespace Ginger.Actions.VisualTesting
                     }
                     mBitmapPixelsComaprePage.InitLayout();
                     EngineConfigFrame.Content = mBitmapPixelsComaprePage;
+                    xFullPageScreenshotCheckbox.Visibility = Visibility.Visible;
                     break;
 
                 case ActVisualTesting.eVisualTestingAnalyzer.UIElementsComparison:
@@ -269,8 +272,23 @@ namespace Ginger.Actions.VisualTesting
                     }
                     mUIElementsBitmapComparisonPage.InitLayout();
                     EngineConfigFrame.Content = mUIElementsBitmapComparisonPage;
+                    xFullPageScreenshotCheckbox.Visibility = Visibility.Visible;
                     break;
+                case ActVisualTesting.eVisualTestingAnalyzer.VRT:
+                    if (mVRtComparisonPage == null)
+                    {
+                        mVRtComparisonPage = new VRTComparePage(mAct);
+                        mVRtComparisonPage.visualCompareAnalyzerIntegration.VisualTestingEvent += VisualCompareAnalyzerIntegration_VisualTestingEvent;
+                    }
+                    mVRtComparisonPage.InitLayout();
+                    EngineConfigFrame.Content = mVRtComparisonPage;
+                    xFullPageScreenshotCheckbox.Visibility = Visibility.Collapsed;
 
+                    if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl) || string.IsNullOrEmpty(WorkSpace.Instance.Solution.VRTConfiguration.ApiKey) || string.IsNullOrEmpty(WorkSpace.Instance.Solution.VRTConfiguration.Project))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please check VRT configuration. From Configurations -> External Integrations -> VRT configurations");
+                    }
+                    break;
                 default:
                     EngineConfigFrame.Content = null;
                     xSetApplicationScreenSize.Visibility = Visibility.Collapsed;
@@ -280,6 +298,7 @@ namespace Ginger.Actions.VisualTesting
                     xDiffrenceImageFrameRow.Height = new GridLength(500, GridUnitType.Star);
                     xResultImageHeader.Visibility = Visibility.Collapsed;
                     xResultImageHeaderRow.Height = new GridLength(30, GridUnitType.Star);
+                    xFullPageScreenshotCheckbox.Visibility = Visibility.Collapsed;
                     break;
             }
         }

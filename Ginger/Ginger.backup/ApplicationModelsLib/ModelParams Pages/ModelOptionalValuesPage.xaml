@@ -1,0 +1,22 @@
+<Page x:Class="GingerWPF.ApplicationModelsLib.APIModelWizard.ModelOptionalValuesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="ModelOptionalValuesPage">
+
+    <Grid x:Name="pageGrid">
+        <ginger:ucGrid x:Name="OptionalValuesGrid" ShowCut="Visible" ShowAdd="Visible" ShowClearAll="Visible" ShowDelete="Visible" ShowCopyCutPast="Visible" ShowTitle="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTagsFilter="Collapsed" ></ginger:ucGrid>
+
+        <Grid.Resources>
+            <DataTemplate x:Key="DefaultValueTemplate">
+                <RadioButton x:Name="DefaultValueRadioButton" GroupName="RadioBtnsGroup" IsChecked="{Binding IsDefault}"  Tag="{Binding Guid, Mode=OneTime}" Checked="DefaultValueRadioButton_Checked" VerticalContentAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource @InputRadioButtonStyle}" />
+            </DataTemplate>
+        </Grid.Resources>
+    </Grid>
+
+
+</Page>

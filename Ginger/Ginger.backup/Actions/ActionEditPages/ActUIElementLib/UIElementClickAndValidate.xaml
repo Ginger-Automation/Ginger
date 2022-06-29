@@ -1,0 +1,43 @@
+    <Page x:Class="Ginger.Actions._Common.ActUIElementLib.UIElementClickAndValidateEditPage" xmlns:Actions="clr-namespace:Ginger.Actions"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.Actions._Common.ActUIElementLib"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="UIElementMouseClickAndValidate">
+
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30*"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="250*"/>
+        </Grid.ColumnDefinitions>
+        <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Row="0" Grid.Column="0" >Click Type:</Label>
+        <UserControlsLib:UCComboBox x:Name="ClickType" Grid.Row="0" Grid.Column="1"></UserControlsLib:UCComboBox>
+
+        <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Row="1" Grid.Column="0" >Validation Type:</Label>
+        <UserControlsLib:UCComboBox x:Name="xValidationType"  Grid.Row="1" Grid.Column="1"></UserControlsLib:UCComboBox>
+
+        <Label Style="{StaticResource @InputFieldLabelStyle}"  Grid.Row="2" Grid.Column="0" >Validation Element Locate By:</Label>
+        <UserControlsLib:UCComboBox x:Name="xValidationElementLocateByComboBox" Grid.Row="2" Grid.Column="1" ></UserControlsLib:UCComboBox>
+
+        <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Row="3" Grid.Column="0">Validation Element Locate Value:</Label>
+        <Frame x:Name="LocateValueEditFrame" NavigationUIVisibility="Hidden" Grid.Row="3" Grid.Column="1" BorderBrush="Transparent" />
+        
+        <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Row="4"  Grid.Column="0" >Validation Element Type:</Label>
+        <UserControlsLib:UCComboBox x:Name="xValidationElementTypeComboBox" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" ></UserControlsLib:UCComboBox>
+
+        <CheckBox x:Name="LoopThroughClicks" Grid.Row="5" Grid.Column="0" Content="Loop through click types on validation failure" Margin="0,10,0,0"  HorizontalAlignment="Left" ToolTip="If the assigned validation fails cycle through all click types" Style="{StaticResource @CheckBoxGridCellElemntStyle}"/>
+    </Grid>
+
+</Page>

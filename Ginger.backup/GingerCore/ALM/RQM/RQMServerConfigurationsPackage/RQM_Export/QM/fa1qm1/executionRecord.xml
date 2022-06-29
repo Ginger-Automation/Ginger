@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns2:executionworkitem xmlns:ns2="http://jazz.net/xmlns/alm/qm/v0.1/"
+    xmlns:ns1="http://schema.ibm.com/vega/2008/" xmlns:ns3="http://purl.org/dc/elements/1.1/"
+    xmlns:ns4="http://jazz.net/xmlns/prod/jazz/process/0.6/"
+    xmlns:ns5="http://jazz.net/xmlns/alm/v0.1/" xmlns:ns6="http://purl.org/dc/terms/"
+    xmlns:ns7="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:ns8="http://jazz.net/xmlns/alm/qm/v0.1/tsl/v0.1/"
+    xmlns:ns9="http://jazz.net/xmlns/alm/qm/v0.1/testscript/v0.1/"
+    xmlns:ns10="http://jazz.net/xmlns/alm/qm/qmadapter/task/v0.1"
+    xmlns:ns11="http://jazz.net/xmlns/alm/qm/qmadapter/v0.1"
+    xmlns:ns12="http://jazz.net/xmlns/alm/qm/v0.1/executionworkitem/v0.1"
+    xmlns:ns13="http://open-services.net/ns/core#" xmlns:ns14="http://open-services.net/ns/qm#"
+    xmlns:ns15="http://jazz.net/xmlns/prod/jazz/rqm/process/1.0/"
+    xmlns:ns16="http://www.w3.org/2002/07/owl#"
+    xmlns:ns17="http://jazz.net/xmlns/alm/qm/v0.1/executionresult/v0.1"
+    xmlns:ns18="http://jazz.net/xmlns/alm/qm/v0.1/catalog/v0.1"
+    xmlns:ns20="http://jazz.net/xmlns/alm/qm/styleinfo/v0.1/"
+    xmlns:ns21="http://www.w3.org/1999/XSL/Transform">
+    <ns2:projectArea
+        href="{ALM.Domain}/{ALM.manageType}/resource/itemOid/com.ibm.team.process.ProjectArea/{ALM.ProjectGUID}"
+        alias="{ALM.ProjectName}"/>
+    <ns3:title>{ALM.ExecutionName}</ns3:title>
+    <ns3:description/>
+    <ns3:creator
+        ns7:resource="{ALM.Domain}/jts/resource/itemName/com.ibm.team.repository.Contributor/{ALM.UserName}">
+        {ALM.UserName}</ns3:creator>
+    <ns5:owner
+        ns7:resource="{ALM.Domain}/jts/resource/itemName/com.ibm.team.repository.Contributor/{ALM.UserName}">
+        {ALM.UserName}</ns5:owner>
+    <ns12:frequency>Once</ns12:frequency>
+    <ns12:regression>false</ns12:regression>
+    <ns12:priority
+        ns7:resource="{ALM.Domain}/{ALM.manageType}/service/com.ibm.rqm.integration.service.IIntegrationService/process-info/{ALM.ProjectGUID}/priority/literal.priority.101"
+        >literal.priority.101</ns12:priority>
+    <ns12:weight>100</ns12:weight>
+    <ns2:estimate/>
+    <ns2:timeSpent/>
+    <ns12:tags/>
+    <ns2:testcase 
+        href="{ALM.Domain}/{ALM.manageType}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{ALM.ProjectName}/testcase/urn:com.ibm.rqm:testcase:{ALM.TestCaseWebId}"/>
+    <ns2:testscript
+        href="{ALM.Domain}/{ALM.manageType}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{ALM.ProjectName}/testscript/{ALM.TestScriptWebId}"/>
+    <ns2:testplan
+        href="{ALM.Domain}/{ALM.manageType}/service/com.ibm.rqm.integration.service.IIntegrationService/resources/{ALM.ProjectName}/testplan/urn:com.ibm.rqm:testplan:{ALM.TestPlanWebId}"/>
+    <ns2:customAttributes>
+        <ns2:customAttribute type="TIMESTAMP" required="false">
+            <ns2:identifier>Planned_End_Date</ns2:identifier>
+            <ns2:name>Planned End Date</ns2:name>
+            <ns2:value></ns2:value>
+            <ns2:description/>
+        </ns2:customAttribute>
+        <ns2:customAttribute type="TIMESTAMP" required="false">
+            <ns2:identifier>Planned_Start_Date</ns2:identifier>
+            <ns2:name>Planned Start Date</ns2:name>
+            <ns2:value></ns2:value>
+            <ns2:description/>
+        </ns2:customAttribute>
+        <ns2:customAttribute type="MEDIUM_STRING" required="false">
+            <ns2:identifier>User_1</ns2:identifier>
+            <ns2:name>User 1</ns2:name>
+            <ns2:value></ns2:value>
+            <ns2:description/>
+        </ns2:customAttribute>
+        <ns2:customAttribute type="MEDIUM_STRING" required="false">
+            <ns2:identifier>User_2</ns2:identifier>
+            <ns2:name>User 2</ns2:name>
+            <ns2:value></ns2:value>
+            <ns2:description/>
+        </ns2:customAttribute>
+        <ns2:customAttribute type="MEDIUM_STRING" required="false">
+            <ns2:identifier>User_3</ns2:identifier>
+            <ns2:name>User 3</ns2:name>
+            <ns2:value></ns2:value>
+            <ns2:description/>
+        </ns2:customAttribute>
+        <ns2:customAttribute type="MEDIUM_STRING" required="false">
+            <ns2:identifier>User_4</ns2:identifier>
+            <ns2:name>User 4</ns2:name>
+            <ns2:value></ns2:value>
+            <ns2:description/>
+        </ns2:customAttribute>
+        <ns2:customAttribute type="MEDIUM_STRING" required="false">
+            <ns2:identifier>User_5</ns2:identifier>
+            <ns2:name>User 5</ns2:name>
+            <ns2:value></ns2:value>
+            <ns2:description/>
+        </ns2:customAttribute>
+    </ns2:customAttributes>
+</ns2:executionworkitem>

@@ -502,7 +502,7 @@ namespace Ginger.Reports
 
         private void SetDefaultLogoImage()
         {
-            imgLogo.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@amdocs_logo.jpg"));
+            imgLogo.Source = new BitmapImage(new Uri(@"/Images/" + "@amdocs_logo.jpg", UriKind.RelativeOrAbsolute));
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)

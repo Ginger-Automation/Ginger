@@ -1,0 +1,43 @@
+    <Page x:Class="Ginger.Actions.UserControls.ScreenShotViewPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="800"
+	Title="ScreenShotViewPage">
+
+    <Border BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1">
+        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100*"/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+
+            <Label x:Name="xErrorLabel" Foreground="Red" FontSize="14" FontWeight="Bold" Visibility="Collapsed">Error</Label>
+
+            <ScrollViewer x:Name="xMainScrollViewer" Grid.Row="0" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <Canvas x:Name="xMainCanvas" >
+                    <Image x:Name="xMainImage"  MouseLeftButtonDown="MainImage_MouseLeftButtonDown" MouseLeftButtonUp="MainImage_MouseLeftButtonUp" MouseMove="MainImage_MouseMove"/>
+                    <Border x:Name="xHighlighterBorder" BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}" BorderThickness="3" Visibility="Collapsed" Margin="3" />
+                    <Rectangle x:Name="xHighLighterRectangle" Margin="50,50,0,0" Width="200" Height="50" Fill="Pink" Opacity="0.4" ></Rectangle>
+                </Canvas>
+            </ScrollViewer>
+
+            <Border BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" Grid.Row="1">
+                <DockPanel  HorizontalAlignment="Stretch" VerticalAlignment="Center" >
+                    <Label x:Name="xNameLabel" DockPanel.Dock="Left" Margin="10,0,0,0" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"  FontWeight="Bold">Name</Label>
+
+                    <UserControls:ucButton x:Name="xEnlargeButton" DockPanel.Dock="Right" ButtonType="ImageButton" HorizontalAlignment="Right" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="ExpandToFullScreen" Click="EnlargeButton_Click" VerticalAlignment="Center" ToolTip="View in full screen"/>
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Label x:Name="xZoomPercentLabel" FontSize="14">100%</Label>
+                        <Button x:Name="xZoomMinus" Click="ZoomMinus_Click"  Width="25" ClickMode="Press" >-</Button>
+                        <Slider x:Name="xZoomSlider" Width="100" Minimum="0.1" Maximum="5" Value="1" Margin="0,5,0,0" ValueChanged="ZoomSlider_ValueChanged"/>
+                        <Button x:Name="xZoomPlus" Click="ZoomPlus_Click"  Width="25">+</Button>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Page>
