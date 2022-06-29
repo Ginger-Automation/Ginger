@@ -618,7 +618,15 @@ namespace Ginger
         {
             //show solution folder files
             if (WorkSpace.Instance.Solution != null)
-                Process.Start(WorkSpace.Instance.Solution.Folder);
+            {
+                ProcessStartInfo pi = new ProcessStartInfo(WorkSpace.Instance.Solution.Folder);
+                pi.UseShellExecute = true;
+
+                Process proc = new Process();
+                proc.StartInfo = pi;
+
+                proc.Start();
+            }
         }
 
         private void btnSourceControlConnectionDetails_Click(object sender, RoutedEventArgs e)
