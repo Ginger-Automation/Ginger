@@ -561,6 +561,7 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\android.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\androidOutline.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\androidWhite.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\ApplitoolsLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\Ginger.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoGray.png" />
@@ -571,6 +572,8 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\ios.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\iosOutline.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\iosWhite.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\VRTLogo.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -2325,6 +2328,9 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\androidWhite.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\ApplitoolsLogo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\Ginger.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -2353,6 +2359,12 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\iosWhite.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\VRTLogo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
