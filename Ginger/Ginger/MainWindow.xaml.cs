@@ -869,32 +869,32 @@ namespace Ginger
 
         private void xLoadSupportSiteMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://ilrnaginger01/");
+            Process.Start(new ProcessStartInfo { FileName = @"http://ilrnaginger01/", UseShellExecute = true });
         }
 
         private void xLoadForumSiteMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://ilrnaginger01:81/");
+            Process.Start(new ProcessStartInfo { FileName = @"http://ilrnaginger01:81/", UseShellExecute = true });
         }
 
         private void xGingerGithubMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/Ginger-Automation");
+            Process.Start(new ProcessStartInfo { FileName = @"https://github.com/Ginger-Automation", UseShellExecute = true });
         }
 
         private void xOpenTicketMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://ilrnaginger01/Ticket/Create");
+            Process.Start(new ProcessStartInfo { FileName = @"http://ilrnaginger01/Ticket/Create", UseShellExecute = true });
         }
 
         private void xSupportTeamMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("mailto:AmdocsTestingGingerDVCISupport@int.amdocs.com");
+            Process.Start(new ProcessStartInfo { FileName = @"mailto:AmdocsTestingGingerDVCISupport@int.amdocs.com", UseShellExecute = true });
         }
 
         private void xCoreTeamMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("mailto:GingerCoreTeam@int.amdocs.com");
+            Process.Start(new ProcessStartInfo { FileName = @"mailto:GingerCoreTeam@int.amdocs.com", UseShellExecute = true });
         }
 
         private void RecentSolutionSelection_Click(object sender, RoutedEventArgs e)
@@ -1125,17 +1125,17 @@ namespace Ginger
 
         private void xCheckForUpgradeMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://ginger.amdocs.com/#downloads");
+            Process.Start(new ProcessStartInfo { FileName = @"https://ginger.amdocs.com/#downloads", UseShellExecute = true });
         }
 
         private void xLoadPublicSiteMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://ginger.amdocs.com/");
+            Process.Start(new ProcessStartInfo { FileName = @"https://ginger.amdocs.com/", UseShellExecute = true });
         }
 
         private void xLoadPublicSupportSiteMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/Ginger-Automation/Ginger/issues");
+            Process.Start(new ProcessStartInfo { FileName = @"https://github.com/Ginger-Automation/Ginger/issues", UseShellExecute = true });
         }
 
         private void xLoadOfflineHelpMenuItem_Click(object sender, RoutedEventArgs e)
