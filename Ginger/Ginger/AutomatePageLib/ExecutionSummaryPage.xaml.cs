@@ -27,7 +27,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using FontAwesome.Sharp;
+using FontAwesome5;
 using LiveCharts;
 using LiveCharts.Wpf;
 using LiveCharts.Defaults;

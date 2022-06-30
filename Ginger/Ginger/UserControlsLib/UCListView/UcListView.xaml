@@ -20,8 +20,8 @@
 
             <DockPanel x:Name="xListTitlePnl" DockPanel.Dock="Left">
                 <usercontrols:ImageMakerControl x:Name="xListTitleImage" DockPanel.Dock="Left" SetAsFontImageWithSize="20" ImageType="Null"  Width="20" Height="20" FontWeight="Thin" VerticalAlignment="Center" HorizontalAlignment="Left" ImageToolTip="" ImageForeground="{StaticResource $BackgroundColor_DarkGray}"/>
-                <Label x:Name="xListTitleLbl" DockPanel.Dock="Left" Margin="0,8,0,0" Content="Title" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
-                <Label x:Name="xListCountTitleLbl" DockPanel.Dock="Left" Margin="0,8,0,0" Content="(0)" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
+                <Label x:Name="xListTitleLbl" DockPanel.Dock="Left" Margin="5,0,0,0" Content="Title" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
+                <Label x:Name="xListCountTitleLbl" DockPanel.Dock="Left" Margin="0,0,0,0" Content="(0)" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20"/>
             </DockPanel>
 
             <DockPanel x:Name="xAllListOperationsBarPnl"  HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="10 0 0 0">

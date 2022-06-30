@@ -22,7 +22,7 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.UserControls;
-using FontAwesome.Sharp;
+using FontAwesome5;
 using Ginger.Agents;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.TextEditor;

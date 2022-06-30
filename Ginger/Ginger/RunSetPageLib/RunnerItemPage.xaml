@@ -26,10 +26,10 @@
         <state:BorderStatus x:Name="xBorder" Grid.RowSpan="2"  Grid.ColumnSpan="2" Visibility="Collapsed"></state:BorderStatus>
 
         <state:StatusItem x:Name="xStatus" Grid.Column="1"  Grid.Row="0" Width="60" Height="60" Margin="0 0 -2 0"></state:StatusItem>
-        <Label  Grid.Row="0" Height="Auto" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="15"  Width="Auto" Grid.Column="1"  Margin="0 -3 0 0">
+        <Label  Grid.Row="0" Height="Auto" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="15"  Width="Auto" Grid.Column="1"  Margin="0,-4,0,0">
             <Label.Content >
                 <StackPanel Orientation="Horizontal">
-                    <usercontrols:ImageMakerControl x:Name="xStatusIcon" Foreground="White" SetAsFontImageWithSize="15" Width="15" Height="15" FontWeight="Thin"/>
+                    <usercontrols:ImageMakerControl x:Name="xStatusIcon" Foreground="White" SetAsFontImageWithSize="12" Width="15" Height="15" FontWeight="Thin"/>
                 </StackPanel>
             </Label.Content>
         </Label>
@@ -90,18 +90,18 @@
                 </MenuItem>
             </Menu>
 
-            <usercontrols:ucButton x:Name="xViewRunnerItem" DockPanel.Dock="Right"  ButtonImageType="View"   ButtonType="ImageButton" ButtonFontImageSize="16" ButtonImageWidth="20" ButtonImageHeight="15"  Click="xViewRunnerItem_Click"   VerticalAlignment="Bottom"  Visibility="Collapsed" Margin="-5,0,0,0"/>
-            <usercontrols:ucButton x:Name="xconfig" DockPanel.Dock="Right" ButtonType="ImageButton" ButtonFontImageSize="16" ButtonImageType="Config" Click="xconfig_Click"  VerticalAlignment="Bottom" Visibility="Collapsed"  Margin="-5,0,0,0" >
+            <usercontrols:ucButton x:Name="xViewRunnerItem" DockPanel.Dock="Right"  ButtonImageType="View"   ButtonType="ImageButton" ButtonFontImageSize="14" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xViewRunnerItem_Click"   VerticalAlignment="Bottom"  Visibility="Collapsed" Margin="-5,0,0,0"/>
+            <usercontrols:ucButton x:Name="xconfig" DockPanel.Dock="Right" ButtonType="ImageButton" ButtonFontImageSize="14" ButtonImageType="Config" Click="xconfig_Click"  VerticalAlignment="Bottom" Visibility="Collapsed"  Margin="-5,0,0,0" >
                 <usercontrols:ucButton.ToolTip>
                     <GingerCore:ucTextDicResource Text="Configure [BusinessFlow]"/>
                 </usercontrols:ucButton.ToolTip>
             </usercontrols:ucButton>
-            <usercontrols:ucButton x:Name="xremoveBusinessflow" DockPanel.Dock="Right"  ButtonType="ImageButton" ButtonFontImageSize="16"  Click="xremoveBusinessflow_Click" ButtonImageType="Delete" Visibility="Collapsed" Margin="-5,0,0,0">
+            <usercontrols:ucButton x:Name="xremoveBusinessflow" DockPanel.Dock="Right"  ButtonType="ImageButton" ButtonFontImageSize="12"  Click="xremoveBusinessflow_Click" ButtonImageType="Delete" Visibility="Collapsed" Margin="-5,0,0,0">
                 <usercontrols:ucButton.ToolTip>
                     <GingerCore:ucTextDicResource Text="Remove [BusinessFlow]"/>
                 </usercontrols:ucButton.ToolTip>
             </usercontrols:ucButton>
-            <usercontrols:ucButton x:Name="xBusinessflowActive" DockPanel.Dock="Right" ButtonFontImageSize="16" ButtonType="ImageButton" ButtonImageType="Active"   Click="xBusinessflowActive_Click" VerticalAlignment="Bottom" Visibility="Collapsed" Margin="-5,0,0,0">
+            <usercontrols:ucButton x:Name="xBusinessflowActive" DockPanel.Dock="Right" ButtonFontImageSize="14" ButtonType="ImageButton" ButtonImageType="Active"   Click="xBusinessflowActive_Click" VerticalAlignment="Bottom" Visibility="Collapsed" Margin="-5,0,0,0">
                 <usercontrols:ucButton.ToolTip>
                     <GingerCore:ucTextDicResource Text="Active"/>
                 </usercontrols:ucButton.ToolTip>

@@ -18,6 +18,6 @@
             </TransformGroup>
         </Polygon.RenderTransform>
     </Polygon>
-    <usercontrols:ImageMakerControl x:Name="xStatusIcon" Margin="0 0 0 0" Padding="0" SetAsFontImageWithSize="25"  Width="30" Height="30" FontWeight="Thin" Visibility="Collapsed"/>
+    <usercontrols:ImageMakerControl x:Name="xStatusIcon" Margin="0 0 0 0" Padding="0" SetAsFontImageWithSize="20"  Width="30" Height="30" FontWeight="Thin" Visibility="Collapsed"/>
     </Grid>
 </UserControl>
