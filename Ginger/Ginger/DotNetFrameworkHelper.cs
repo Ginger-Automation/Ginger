@@ -553,11 +553,6 @@ namespace Ginger
         {
             return new SVNSourceControl();
         }
-        public DbConnection GetMSAccessConnection()
-        {
-            DbProviderFactory factory = DbProviderFactories.GetFactory("System.Data.OleDb");
-            return factory.CreateConnection();
-        }
 
         public IWebserviceDriverWindow GetWebserviceDriverWindow(BusinessFlow businessFlow)
         {
