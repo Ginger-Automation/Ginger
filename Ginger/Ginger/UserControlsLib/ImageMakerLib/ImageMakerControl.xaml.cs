@@ -242,13 +242,13 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Html5);
                     break;
                 case eImageType.SharedRepositoryItem:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Star, Brushes.Orange);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Star, Brushes.Orange);
                     break;
                 case eImageType.NonSharedRepositoryItem:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Star, Brushes.Gray);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Star, Brushes.Gray);
                     break;
                 case eImageType.SharedRepositoryItemDark:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Star);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Star);
                     break;
                 case eImageType.Tag:
                 case eImageType.Ticket:
@@ -458,7 +458,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Random);
                     break;
                 case eImageType.SequentialExecution:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SortNumericUp);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SortNumericDown);
                     break;
                 case eImageType.Search:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Search);
