@@ -55,7 +55,7 @@
             <usercontrols:ucButton x:Name="xContinueRunnerBtn"  ToolTip="Continue Runner Execution from Last Stopped Action" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Continue" Click="xContinueRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
         </DockPanel>
         <Label x:Name="xruntime" Grid.Row="0" Grid.ColumnSpan="4"  Content="00:00:00" Width="150" Height="32" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="15" Foreground="{StaticResource $SelectionColor_LightBlue}"/>
-        <state:StatusItem x:Name="xStatus" Grid.RowSpan="3" Grid.ColumnSpan="7" Margin="0 2 2 0" HorizontalAlignment="Right" ></state:StatusItem>
+        <state:StatusItem Panel.ZIndex="-1" x:Name="xStatus" Grid.RowSpan="3" Grid.ColumnSpan="7" Margin="0 2 2 0" HorizontalAlignment="Right" ></state:StatusItem>
         <Label Margin="0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="15"  Width="25" Grid.Row="0" Grid.ColumnSpan="4" >
             <Label.Content >
                 <StackPanel Orientation="Horizontal">
