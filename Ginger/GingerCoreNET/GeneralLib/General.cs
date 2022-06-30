@@ -315,7 +315,10 @@ namespace GingerCoreNET.GeneralLib
             {
                 DataSource.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();
-
+                if (dsTables == null)
+                {
+                    return "";
+                }
                 foreach (DataSourceTable dst in dsTables)
                 {
                     if (dst.Name == DSTableName)
