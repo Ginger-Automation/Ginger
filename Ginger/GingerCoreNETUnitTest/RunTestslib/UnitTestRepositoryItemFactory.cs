@@ -153,10 +153,6 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             throw new NotImplementedException();
         }
-        public DbConnection GetMSAccessConnection()
-        {
-            throw new NotImplementedException("MS Acess is not supported on Ginger Console");
-        }
 
         public IWebserviceDriverWindow GetWebserviceDriverWindow(BusinessFlow businessFlow)
         {
