@@ -40,9 +40,9 @@ namespace GingerCore.DataSource
             string strAccessConn = "";
 
             if (sMode == "Read")
-                strAccessConn = @"Provider=Microsoft.Jet.OLEDB.4.0;Mode=" + sMode + ";Data Source=" + FileFullPath;
+                strAccessConn = @"Provider=Microsoft.ACE.OLEDB.12.0;Mode=" + sMode + ";Data Source=" + FileFullPath;
             else
-                strAccessConn = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FileFullPath;
+                strAccessConn = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + FileFullPath;
 
             return strAccessConn;
         }

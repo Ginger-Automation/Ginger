@@ -255,11 +255,6 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             return WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType.ToString();
         }
 
-        public DbConnection GetMSAccessConnection()
-        {
-            throw new NotImplementedException("MS Acess is not supported on Ginger Console");
-        }
-
         public IWebserviceDriverWindow GetWebserviceDriverWindow(BusinessFlow businessFlow)
         {
             return new WebserviceDriverConsoleReporter();

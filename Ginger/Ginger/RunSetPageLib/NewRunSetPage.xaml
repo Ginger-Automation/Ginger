@@ -172,11 +172,11 @@
                                 <DockPanel x:Name="xRunnersExecutionControls" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,-3,0">
                                     <Label Content="Environment :" x:Name="xEnvironmentCombolbl" Foreground="{StaticResource $BackgroundColor_DarkBlue}" ></Label>
                                     <ComboBox x:Name="xRunsetEnvironmentCombo" ToolTip="Environment"  HorizontalAlignment="Left" ContextMenu="{x:Null}" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="0,5,5,3" SelectionChanged="XRunsetEnvironmentCombo_SelectionChanged"></ComboBox>
-                                    <usercontrols:ucButton x:Name="xRunnersExecutionConfigBtn" ToolTip="Runners Execution Configurations" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Config" Click="xRunnersExecutionConfigBtn_Click"></usercontrols:ucButton>
-                                    <usercontrols:ucButton x:Name="xSelfHealingConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="22" ButtonImageType="SelfHealing" Click="xSelfHealingConfigBtn_Click"  ToolTip="Self Healing Configurations"/>
+                                    <usercontrols:ucButton x:Name="xRunnersExecutionConfigBtn" ToolTip="Runners Execution Configurations" ButtonType="ImageButton" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Config" Click="xRunnersExecutionConfigBtn_Click"></usercontrols:ucButton>
+                                <usercontrols:ucButton x:Name="xSelfHealingConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonImageType="SelfHealing" ButtonImageWidth="20" ButtonImageHeight="20" Click="xSelfHealingConfigBtn_Click"  ToolTip="Self Healing Configurations"/>
 
-                                    <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="12 0 12 0"/>
-                                    <usercontrols:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Runner Items Selection is Synced with Execution Progress, Click to Un-Sync it" ButtonType="ImageButton" ButtonFontImageSize="17" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click"></usercontrols:ucButton>
+                                    <GridSplitter Width="1" Height="25" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="10 0 5 0"/>
+                                <usercontrols:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Runner Items Selection is Synced with Execution Progress, Click to Un-Sync it" ButtonType="ImageButton" ButtonImageWidth="25" ButtonImageHeight="20" ButtonImageType="Visible" Click="xSelectedItemExecutionSyncBtn_Click"></usercontrols:ucButton>
                                 </DockPanel>
                             </DockPanel>
 
