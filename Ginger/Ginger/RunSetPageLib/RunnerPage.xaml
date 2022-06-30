@@ -59,7 +59,7 @@
         <Label Margin="0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="15"  Width="25" Grid.Row="0" Grid.ColumnSpan="4" >
             <Label.Content >
                 <StackPanel Orientation="Horizontal">
-                    <usercontrols:ImageMakerControl x:Name="xStatusLabel" Foreground="White" SetAsFontImageWithSize="15" Width="15" Height="15" FontWeight="Thin"/>
+                    <usercontrols:ImageMakerControl x:Name="xStatusLabel" Foreground="White" SetAsFontImageWithSize="14" Width="15" Height="15" FontWeight="Thin"/>
                 </StackPanel>
             </Label.Content>
         </Label>
@@ -76,9 +76,9 @@
             <StackPanel x:Name="xOperationsPnl" Grid.Row="2" Orientation="Horizontal" Margin="5,0,0,0">
                 <usercontrols:ImageMakerControl x:Name="xRunOption" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Thin" HorizontalAlignment="Left" Visibility="Collapsed"/>
                 <usercontrols:ImageMakerControl x:Name="xSimulationMode" ImageType="ItemModified"  SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Thin" HorizontalAlignment="Left" Visibility="Collapsed"/>
-                <usercontrols:ucButton x:Name="xRunnerActive" ButtonFontImageSize="18" ButtonType="ImageButton" ButtonImageType="Active" ToolTip="Active" Click="xRunnerActive_Click" />
-                <usercontrols:ucButton x:Name="xremoveRunner" ToolTip="Remove Runner" ButtonType="ImageButton" ButtonFontImageSize="18" ButtonImageType="Delete" Click="xremoveRunner_Click"></usercontrols:ucButton>
-                <usercontrols:ucButton x:Name="xConfigButton" ButtonType="ImageButton" ToolTip="Configure Runner" ButtonFontImageSize="18" ButtonImageType="Config" Click="xConfigButton_Click" HorizontalAlignment="Left"></usercontrols:ucButton>
+                <usercontrols:ucButton x:Name="xRunnerActive" ButtonFontImageSize="16" ButtonType="ImageButton" ButtonImageType="Active" ToolTip="Active" Click="xRunnerActive_Click" />
+                <usercontrols:ucButton x:Name="xremoveRunner" ToolTip="Remove Runner" ButtonType="ImageButton" ButtonFontImageSize="14" ButtonImageType="Delete" Click="xremoveRunner_Click"></usercontrols:ucButton>
+                <usercontrols:ucButton x:Name="xConfigButton" ButtonType="ImageButton" ToolTip="Configure Runner" ButtonFontImageSize="16" ButtonImageType="Config" Click="xConfigButton_Click" HorizontalAlignment="Left"></usercontrols:ucButton>
                 <Menu x:Name="xRunnerItemMenu" Margin="0,5,0,0" DockPanel.Dock="Right" Height="25">
                     <MenuItem>
                         <MenuItem.Icon>

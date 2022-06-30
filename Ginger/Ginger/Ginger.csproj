@@ -634,7 +634,7 @@
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.16.0" />
     <PackageReference Include="EPPlus" Version="6.0.4" />
-    <PackageReference Include="FontAwesome.Sharp" Version="5.15.4" />
+    <PackageReference Include="FontAwesome5" Version="2.1.11" />
     <PackageReference Include="Gherkin" Version="5.1.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.42" />
     <PackageReference Include="LiteDB" Version="4.1.4" />
