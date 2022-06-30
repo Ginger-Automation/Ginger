@@ -42,7 +42,7 @@
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="130"/>
+                        <ColumnDefinition Width="180"/>
                         <ColumnDefinition Width="350*"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
@@ -76,9 +76,9 @@
                     </StackPanel>
                     <Activities:UCValueExpression x:Name="xBranchNameTextBox" Grid.Column="1" Grid.Row="8" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Branch Name" Margin="10,0,0,0"  Width="400"/>
 
-                    <Label  Content="EnableSoftAssert:" Grid.Row="10" Grid.Column="0"  Style="{StaticResource @LabelStyle}" VerticalAlignment="Center" FontSize="12"></Label>
-                    <StackPanel x:Name="xEnableSoftAssertPanel" Margin="-15,0,0,0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="10" Grid.Column="1">
-                        <UserControlsLib:UCRadioButtons x:Name="xEnableSoftAssertRadioButton" ToolTip="Do not fail Actions if found any differences ." ></UserControlsLib:UCRadioButtons>
+                        <Label  Content="Ignore Failed Checkpoints:" Grid.Row="10" Grid.Column="0"  Style="{StaticResource @LabelStyle}" VerticalAlignment="Center" FontSize="12"></Label>
+                        <StackPanel x:Name="xEnableSoftAssertPanel" Margin="-15,0,0,0" Orientation="Horizontal" ToolTip="Select 'Yes' to ignore mismatches on checkpoint actions." VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="10" Grid.Column="1">
+                        <UserControlsLib:UCRadioButtons x:Name="xEnableSoftAssertRadioButton" ></UserControlsLib:UCRadioButtons>
                     </StackPanel>
 
                 </Grid>

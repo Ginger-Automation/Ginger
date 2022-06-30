@@ -90,7 +90,7 @@
                 </MenuItem>
             </Menu>
 
-            <usercontrols:ucButton x:Name="xViewRunnerItem" DockPanel.Dock="Right"  ButtonImageType="View"   ButtonType="ImageButton" ButtonFontImageSize="16" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xViewRunnerItem_Click"   VerticalAlignment="Bottom"  Visibility="Collapsed" Margin="-5,0,0,0"/>
+            <usercontrols:ucButton x:Name="xViewRunnerItem" DockPanel.Dock="Right"  ButtonImageType="View"   ButtonType="ImageButton" ButtonFontImageSize="16" ButtonImageWidth="20" ButtonImageHeight="15"  Click="xViewRunnerItem_Click"   VerticalAlignment="Bottom"  Visibility="Collapsed" Margin="-5,0,0,0"/>
             <usercontrols:ucButton x:Name="xconfig" DockPanel.Dock="Right" ButtonType="ImageButton" ButtonFontImageSize="16" ButtonImageType="Config" Click="xconfig_Click"  VerticalAlignment="Bottom" Visibility="Collapsed"  Margin="-5,0,0,0" >
                 <usercontrols:ucButton.ToolTip>
                     <GingerCore:ucTextDicResource Text="Configure [BusinessFlow]"/>
