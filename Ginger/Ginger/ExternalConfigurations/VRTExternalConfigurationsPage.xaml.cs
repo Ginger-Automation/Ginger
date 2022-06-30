@@ -57,9 +57,9 @@ namespace Ginger.Configurations
             xAPIKeyTextBox.Init(mContext, _VRTConfiguration, nameof(VRTConfiguration.ApiKey));
             xProjectTextBox.Init(mContext, _VRTConfiguration, nameof(VRTConfiguration.Project));
             xBranchNameTextBox.Init(mContext, _VRTConfiguration, nameof(VRTConfiguration.BranchName));
-            xEnableSoftAssertRadioButton.Init(typeof(VRTConfiguration.eEnableSoftAssert),
+            xEnableSoftAssertRadioButton.Init(typeof(VRTConfiguration.eFailActionOnCheckpointMismatch),
                 xEnableSoftAssertPanel, _VRTConfiguration,
-                nameof(VRTConfiguration.EnableSoftAssert));
+                nameof(VRTConfiguration.FailActionOnCheckpointMismatch));
             ApplyValidationRules();
         }
 

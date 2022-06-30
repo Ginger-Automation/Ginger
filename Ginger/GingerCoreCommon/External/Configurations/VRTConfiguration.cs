@@ -86,23 +86,23 @@ namespace Ginger.Configurations
             }
         }        
 
-        public enum eEnableSoftAssert
+        public enum eFailActionOnCheckpointMismatch
         {
             Yes,
             No
         }
-        private eEnableSoftAssert mEnableSoftAssert = eEnableSoftAssert.No;
+        private eFailActionOnCheckpointMismatch mFailActionOnCheckpointMismatch = eFailActionOnCheckpointMismatch.Yes;
 
         [IsSerializedForLocalRepository]
-        public eEnableSoftAssert EnableSoftAssert
+        public eFailActionOnCheckpointMismatch FailActionOnCheckpointMismatch
         {
             get
             {
-                return mEnableSoftAssert;
+                return mFailActionOnCheckpointMismatch;
             }
             set
             {
-                mEnableSoftAssert = value;
+                mFailActionOnCheckpointMismatch = value;
             }
         }
         public override string ItemName { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }

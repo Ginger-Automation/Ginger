@@ -60,7 +60,7 @@ namespace GingerCore.Actions.VisualTesting
                 Project = WorkSpace.Instance.Solution.VRTConfiguration.Project,
                 ApiUrl = WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl,
                 ApiKey = WorkSpace.Instance.Solution.VRTConfiguration.ApiKey,
-                EnableSoftAssert = WorkSpace.Instance.Solution.VRTConfiguration.EnableSoftAssert == Ginger.Configurations.VRTConfiguration.eEnableSoftAssert.Yes ? true : false
+                EnableSoftAssert = WorkSpace.Instance.Solution.VRTConfiguration.FailActionOnCheckpointMismatch == Ginger.Configurations.VRTConfiguration.eFailActionOnCheckpointMismatch.Yes ? false : true
             };
         }
 
