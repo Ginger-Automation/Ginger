@@ -41,6 +41,7 @@ using GingerCore.Actions.UIAutomation;
 using System.Windows;
 using System.IO;
 using GingerCore.Common;
+using GingerCore.GeneralLib;
 
 // a lot of samples from Microsoft on UIA at: https://uiautomationverify.svn.codeplex.com/svn/UIAVerify/
 // DO NOT add any specific driver here, this is generic windows app driver helper 
@@ -539,19 +540,30 @@ namespace GingerCore.Drivers
 
             return list;
         }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
         private bool CheckUserSpecificProcess(UIAuto.AutomationElement window)
         {
-            Process currentProcess = Process.GetProcessById(window.Current.ProcessId);
-            ////Need to fix currentProcess.StartInfo issue temporary Commented
-            //if (currentProcess.StartInfo.Environment["USERNAME"] != Environment.UserName)
-            //{
-            //    return false;
-            //}
-            //else
-            //{
-            //    return true;
-            //}
-            return true;
+            try
+            {
+                Process currentProcess = Process.GetProcessById(window.Current.ProcessId);
+                var userWithDomain = Environment.UserDomainName + "\\" + Environment.UserName;
+                var currentProcessUser = currentProcess.WindowsIdentity().Name;
+
+                if (currentProcessUser != userWithDomain)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }                
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Get Windows List, checking user specific process", ex);
+                return false;
+            }
         }
  
 
