@@ -419,9 +419,9 @@ namespace GingerCore.SourceControl
             {
                 if (System.IO.Path.GetExtension(path) != string.Empty && !System.IO.File.Exists(path.Replace(".xml", ".ignore")))
                 {
-                    if (!System.IO.File.Exists(path.Replace(".xml", ".conflictBackup")))
+                    if (!System.IO.File.Exists(path.Replace(".xml", "-conflictBackup.xml")))
                     {
-                        System.IO.File.Copy(path, path.Replace(".xml", ".conflictBackup"));
+                        System.IO.File.Copy(path, path.Replace(".xml", "-conflictBackup.xml"));
                     }
                 }
 
@@ -444,6 +444,17 @@ namespace GingerCore.SourceControl
                     lastCommonResultText = fileContent.Substring(startIndex);
                     startIndex = lastCommonResultText.IndexOf("\r\n");
                     lastCommonResultText = lastCommonResultText.Substring(startIndex + 2);
+
+                    if (middleResultText.Contains("BusinessFlow"))
+                    {
+                        int indexOfDuplicateNode = middleResultText.IndexOf("BusinessFlow");
+                        int endOfDuplicateNode = middleResultText.IndexOf(".xml");
+                        middleResultText = middleResultText.Remove(indexOfDuplicateNode - 1, endOfDuplicateNode + 4);
+                        if (middleResultText.Contains("=="))
+                        {
+                            middleResultText = middleResultText.Replace("==", "=");
+                        }
+                    }
 
                     File.WriteAllText(path, firstCommonResultText + middleResultText + lastCommonResultText);
 
@@ -752,13 +763,14 @@ namespace GingerCore.SourceControl
 
         private MergeResult Pull()
         {
-            //Pull = Fetch + Merge
+            //Pull = Fetch + Merger
             using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
             {
-                PullOptions PullOptions = new PullOptions();
-                PullOptions.FetchOptions = new FetchOptions();
-                PullOptions.FetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
-                MergeResult mergeResult = Commands.Pull(repo, new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), PullOptions);
+                PullOptions objPullOptions = new PullOptions();
+                objPullOptions.MergeOptions = new MergeOptions();
+                objPullOptions.FetchOptions = new FetchOptions();
+                objPullOptions.FetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
+                MergeResult mergeResult = Commands.Pull(repo, new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), objPullOptions);
                 return mergeResult;
             }
         }
