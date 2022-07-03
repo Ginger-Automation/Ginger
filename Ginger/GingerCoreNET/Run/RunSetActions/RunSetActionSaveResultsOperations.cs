@@ -28,6 +28,7 @@ using Ginger.Reports;
 using GingerCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -100,7 +101,7 @@ namespace Ginger.Run.RunSetActions
 
             if (RunSetActionSaveResults.OpenExecutionResultsFolder)
             {
-                System.Diagnostics.Process.Start(folder);
+                Process.Start(new ProcessStartInfo() { FileName = folder, UseShellExecute = true });
             }
         }
 

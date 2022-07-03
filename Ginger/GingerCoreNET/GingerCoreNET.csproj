@@ -230,7 +230,7 @@
   
     <PackageReference Include="CouchbaseNetClient" Version="2.7.11" />
   
-    <PackageReference Include="EPPlus" Version="4.5.3.1" />
+    <PackageReference Include="EPPlus" Version="6.0.4" />
   
     <PackageReference Include="Eyes.Images" Version="2.32.0" />
   

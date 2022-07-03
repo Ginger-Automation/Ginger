@@ -347,8 +347,8 @@ namespace Ginger.Run
                         string fileName = System.IO.Path.GetFileName(txt_file);
                         if (fileName.Contains(".html"))
                         {
-                            Process.Start(reportsResultFolder);
-                            Process.Start(reportsResultFolder + "\\" + fileName);
+                            Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder, UseShellExecute = true });
+                            Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder + "\\" + fileName, UseShellExecute = true });
                         }
                     }
                 }
@@ -765,8 +765,8 @@ namespace Ginger.Run
                     string fileName = System.IO.Path.GetFileName(txt_file);
                     if (fileName.Contains(".html"))
                     {
-                        Process.Start(reportsResultFolder);
-                        Process.Start(reportsResultFolder + "\\" + fileName);
+                        Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder, UseShellExecute = true });
+                        Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder + "\\" + fileName, UseShellExecute = true });
                     }
                 }
             }

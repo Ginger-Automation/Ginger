@@ -173,14 +173,14 @@ namespace Ginger.Actions.VisualTesting
                 try
                 {
                     //First try open with Chrome
-                    System.Diagnostics.Process.Start("chrome.exe", url);
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "chrome.exe", Arguments = url , UseShellExecute = true });
                 }
                 catch (Exception ex)
                 {
                     try
                     {
                         //Try open with Firefox
-                        System.Diagnostics.Process.Start("firefox.exe", url);
+                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "firefox.exe", Arguments = url, UseShellExecute = true });
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     }
                     catch (Exception ee)
