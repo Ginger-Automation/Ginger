@@ -26,7 +26,7 @@
                     </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="5">
-                    <Label Style="{StaticResource @InputFieldLabelStyle}">Pre Command</Label>
+                    <Label Style="{StaticResource @InputFieldLabelStyle}">Pre-Command</Label>
                     <TextBox x:Name="PreComamndTextBox" Width="300"/>
                     <Label Style="{StaticResource @InputFieldLabelStyle}">Any command to execute before the ud command, for Juliet enter the keys</Label>
                 </StackPanel>

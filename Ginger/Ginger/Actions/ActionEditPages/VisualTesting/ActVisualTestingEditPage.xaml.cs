@@ -354,7 +354,7 @@ namespace Ginger.Actions.VisualTesting
 
         private BitmapImage GetFreeBitmapCopy(String filePath)
         {
-            // make sure we load bitmap and the file is readonly not get locked
+            // make sure we load bitmap and the file is read-only not get locked
             Bitmap bmp = new Bitmap(filePath);
             BitmapImage bi = BitmapToImageSource(bmp);
             bmp.Dispose();

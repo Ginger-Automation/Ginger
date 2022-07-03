@@ -95,7 +95,7 @@ namespace GingerTest
             bool IsEquel = AgentsPOM.IsWindowBitmapEquel(AgentsPOM.GetSelectedAgentEditPage(), "AgentEditPage");
 
             //Assert
-            Assert.IsTrue(IsEquel, "Agent edit page equel to baseline");
+            Assert.IsTrue(IsEquel, "Agent edit page equal to baseline");
         }
 
 

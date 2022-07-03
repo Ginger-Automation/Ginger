@@ -24,7 +24,7 @@ using System.Text;
 namespace Ginger.Plugin.Platform.Web.Elements
 {
     /// <summary>
-    /// Exposes the Funationality of ComboBox
+    /// Exposes the Functionality of ComboBox
     /// </summary>
     public interface IComboBox: IGingerWebElement, ISelect
     {

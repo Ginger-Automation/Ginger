@@ -83,7 +83,7 @@ namespace GingerUtils
             {
                 gZipStream.Write(buffer, 0, buffer.Length);                
             }
-            //TODO: check if it will reduce mem
+            //TODO: check if it will reduce memory
             return memoryStream;
         }
 

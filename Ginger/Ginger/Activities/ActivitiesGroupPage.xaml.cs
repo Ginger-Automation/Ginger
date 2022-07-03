@@ -180,7 +180,7 @@ namespace Ginger.Activities
             {
                 case ActivitiesGroupPage.eEditMode.ExecutionFlow:
                     Button okBtn = new Button();
-                    okBtn.Content = "Ok";
+                    okBtn.Content = "OK";
                     okBtn.Click += new RoutedEventHandler(okBtn_Click);
                     winButtons.Add(okBtn);
                     break;

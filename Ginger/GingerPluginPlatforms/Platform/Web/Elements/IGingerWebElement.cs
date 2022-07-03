@@ -49,7 +49,7 @@ namespace Ginger.Plugin.Platform.Web.Elements
         /// <summary>
         /// Perform Drag and Drop Operation
         /// </summary>
-        /// <param name="DragDropType">it SUpports Selenium and Javascript Drag and drop</param>
+        /// <param name="DragDropType">it Supports Selenium and Javascript Drag and drop</param>
         /// <param name="Element"></param>
         void DragAndDrop(string DragDropType,IGingerWebElement Element);
         /// <summary>

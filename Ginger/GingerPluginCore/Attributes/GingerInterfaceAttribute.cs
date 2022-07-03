@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.Plugin.Core
         string mID;
         string mDescription;
         /// <summary>
-        /// Define the interace as Ginger service/actions interface
+        /// Define the interface as Ginger service/actions interface
         /// </summary>
         /// <param name="Id">Service Id is kept in the XML and should never change</param>
         /// <param name="Description">Description is displayed to the user when he select Service</param>

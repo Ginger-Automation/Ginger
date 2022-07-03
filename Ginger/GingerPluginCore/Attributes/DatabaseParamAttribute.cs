@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.Plugin.Core
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class DatabaseParamAttribute : Attribute, IParamProperty
     {
-        // when saved to services json the attr property name will be:
+        // when saved to services JSON the attr property name will be:
         public string PropertyName => "Param";
 
         public string Param { get; set; }

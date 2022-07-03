@@ -414,7 +414,7 @@ namespace GingerWPF.BusinessFlowsLib
             string closeContent = "Undo & Close";
 
             Button okBtn = new Button();
-            okBtn.Content = "Ok";
+            okBtn.Content = "OK";
             okBtn.Click += new RoutedEventHandler(OkBtn_Click);
 
             Button undoBtn = new Button();

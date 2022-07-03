@@ -208,7 +208,7 @@ namespace GingerCore.Drivers.AndroidADB
         //    // Step #2 We do port forward
 
         //    //TODO: fix the hard coded IPs/Port
-        //    // Do ADB Port forward so socket on PC go to the device which is our Ginger Server running the the Andorid device
+        //    // Do ADB Port forward so socket on PC go to the device which is our Ginger Server running the the Android device
         //    // ConsoleOutputReceiver receiver = new ConsoleOutputReceiver();
         //    // adb forward tcp:8888 tcp:7878
 

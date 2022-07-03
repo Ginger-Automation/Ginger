@@ -37,7 +37,7 @@ namespace Ginger.Plugin.Platform.Web.Elements
         void SetValue(string Text);
 
         /// <summary>
-        /// Perfroms CLick on a Table Element
+        /// Performs CLick on a Table Element
         /// </summary>
         void Click();
     }

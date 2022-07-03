@@ -732,7 +732,7 @@ namespace Ginger.Actions
             xOutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
             xOutputValuesGrid.AddSeparator();
 
-            xOutputValuesGrid.AddToolbarTool(eImageType.Reset, "Clear Un-used Parameters", new RoutedEventHandler(ClearUnusedParameter), imageSize: 14);
+            xOutputValuesGrid.AddToolbarTool(eImageType.Reset, "Clear Unused Parameters", new RoutedEventHandler(ClearUnusedParameter), imageSize: 14);
             BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, nameof(Act.AddNewReturnParams));
             BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mAction, nameof(Act.SupportSimulation));
 
@@ -1023,7 +1023,7 @@ namespace Ginger.Actions
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button okBtn = new Button();
-            okBtn.Content = "Ok";
+            okBtn.Content = "OK";
             okBtn.Click += new RoutedEventHandler(okBtn_Click);
             Button undoBtn = new Button();
             undoBtn.Content = "Undo & Close";

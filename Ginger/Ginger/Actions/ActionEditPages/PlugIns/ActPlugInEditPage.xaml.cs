@@ -59,7 +59,7 @@ namespace Ginger.Actions.PlugIns
             foreach (ActInputValue param in mAct.InputValues)
             {
                 ActionInputValueInfo actionInputValueInfo = (from x in actionInputsDetails where x.Param == param.Param select x).SingleOrDefault();
-                // update the type based on the info json of the plugin
+                // update the type based on the info JSON of the plugin
                 param.ParamType = actionInputValueInfo.ParamType;
                 
                 // Add ActionInputValueUserControl for the param value to edit
@@ -77,7 +77,7 @@ namespace Ginger.Actions.PlugIns
         //        mAct.AddOrUpdateInputParamValue(((ActionParam)sender).Name, ((ActionParam)sender).Value.ToString());
         //}
 
-        // We Bind the controls on the page to the action input params based on the Xaml object Name - x:Name=
+        // We Bind the controls on the page to the action input params based on the XAML object Name - x:Name=
         //this is recursive function which drill down when needed
         //private void BindControlsToAction(Panel container)
         //{         

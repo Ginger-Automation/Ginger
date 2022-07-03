@@ -89,7 +89,7 @@ namespace GingerTest
                 Ginger.GeneralLib.Dummy d = new Ginger.GeneralLib.Dummy();
                 Assembly asm1 = d.GetType().Assembly;
 
-                // Set the app resources to Ginger so images and other resources will be locally avaiilable to Ginger
+                // Set the application resources to Ginger so images and other resources will be locally avaiilable to Ginger
                 var applicationType = typeof(Application);
                 var resourceField = applicationType.GetField("_resourceAssembly", BindingFlags.NonPublic | BindingFlags.Static);
                 resourceField.SetValue(null, asm1);

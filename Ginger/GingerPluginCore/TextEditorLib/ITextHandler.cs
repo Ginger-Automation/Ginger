@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.Plugin.Core
         /// <summary>
         /// Add text at the end 
         /// </summary>
-        /// <param name="text">text to appennd</param>
+        /// <param name="text">text to append</param>
         void AppendText(string text);
 
 

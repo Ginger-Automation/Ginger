@@ -76,7 +76,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             // Act
 
-            // We run on 2 drivers in parralel
+            // We run on 2 drivers in parallel
             Task t1 = Task.Factory.StartNew(() =>
             {
                 GingerNodeInfo GNI1 = GG.NodeList[0];

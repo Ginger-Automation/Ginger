@@ -317,8 +317,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             activeUnactiveAllActions.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             activeUnactiveAllActions.AutomationID = "activeUnactiveAllActions";
             activeUnactiveAllActions.ImageType = Amdocs.Ginger.Common.Enums.eImageType.CheckBox;
-            activeUnactiveAllActions.Header = "Activate/De-Activate all Actions";
-            activeUnactiveAllActions.ToolTip = "Activate/De-Activate all Actions";
+            activeUnactiveAllActions.Header = "Activate/Deactivate all Actions";
+            activeUnactiveAllActions.ToolTip = "Activate/Deactivate all Actions";
             activeUnactiveAllActions.OperationHandler = ActiveUnactiveAllActionsHandler;
             extraOperationsList.Add(activeUnactiveAllActions);
 
@@ -326,8 +326,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             takeUntakeSS.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             takeUntakeSS.AutomationID = "takeUntakeSS";
             takeUntakeSS.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Image;
-            takeUntakeSS.Header = "Take/Un-Take Screen Shots";
-            takeUntakeSS.ToolTip = "Set Take/Un-Take Screen Shots to all Actions";
+            takeUntakeSS.Header = "Take/Untake Screen Shots";
+            takeUntakeSS.ToolTip = "Set Take/Untake Screen Shots to all Actions";
             takeUntakeSS.OperationHandler = TakeUntakeSSHandler;
             extraOperationsList.Add(takeUntakeSS);
 

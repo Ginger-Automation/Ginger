@@ -170,7 +170,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
             else if (mAction.ElementType != eElementType.Unknown && !mElementActionsList.Contains(mAction.ElementAction))
             {
-                mAction.ElementAction = mElementActionsList[0];//defualt operation for element type should be first one
+                mAction.ElementAction = mElementActionsList[0];//default operation for element type should be first one
             }
 
             xElementTypeImage.ImageType = ElementInfo.GetElementTypeImage(mAction.ElementType);

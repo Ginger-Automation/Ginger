@@ -128,7 +128,7 @@ namespace UnitTests.NonUITests
         //    // BusinessFlow BF = (BusinessFlow)RS2.DeserializeFromFile(fileName);
         //    //Serialize to new style
         //    //string s = RS2.SerializeToString(BF);
-        //    // cretae from new style SR2
+        //    // create from new style SR2
         //    BusinessFlow BF2 = (BusinessFlow)RS2.DeserializeFromText(typeof(BusinessFlow), txt, filePath: fileName);
 
         //    //to test the compare change something in b like below

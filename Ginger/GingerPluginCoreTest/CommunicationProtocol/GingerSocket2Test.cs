@@ -113,7 +113,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         }
 
         // --------------------------------------------------------------------------------------------
-        // Sample Ginger Client app
+        // Sample Ginger Client application
         // --------------------------------------------------------------------------------------------
 
         class MyGingerClient

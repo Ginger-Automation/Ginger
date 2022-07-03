@@ -793,7 +793,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             {
                 case eEditMode.Design:
                     Button okBtn2 = new Button();
-                    okBtn2.Content = "Ok";
+                    okBtn2.Content = "OK";
                     okBtn2.Click += new RoutedEventHandler(okBtn_Click);
                     Button undoBtn2 = new Button();
                     undoBtn2.Content = "Undo & Close";
@@ -805,7 +805,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 case eEditMode.View:
                     title = "View " + mApplicationAPIModel.Name + " API Model";
                     Button okBtnView = new Button();
-                    okBtnView.Content = "Ok";
+                    okBtnView.Content = "OK";
                     okBtnView.Click += new RoutedEventHandler(okBtn_Click);
                     winButtons.Add(okBtnView);
                     break;

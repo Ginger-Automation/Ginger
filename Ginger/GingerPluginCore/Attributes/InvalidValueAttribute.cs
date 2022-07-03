@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.Plugin.Core
     [System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = true)]
     public class InvalidValueAttribute : Attribute, IParamProperty
     {
-        // when saved to services json the attr property name will be:
+        // when saved to services JSON the attr property name will be:
         public string PropertyName => "InvalidValue";
         
         public List<int> InvalidValue { get; set; }

@@ -38,7 +38,7 @@ namespace Ginger.Plugin.Platform.Web.Actions
         /// <returns></returns>
         List<string> GetValidValue();
         /// <summary>
-        /// Let you know if value is populated in Selectio element
+        /// Let you know if value is populated in Selection element
         /// </summary>
         /// <returns></returns>
         bool IsValuePopulated();

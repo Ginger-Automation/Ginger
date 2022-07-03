@@ -22,7 +22,7 @@ using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core
 {
-    // Define param propert is Mandatory
+    // Define param property is Mandatory
     // [Mandatory] 
 
     [System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = false)]

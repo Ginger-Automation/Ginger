@@ -50,7 +50,7 @@ namespace GingerTest.POMs
         private void ClickOK()
         {
             Execute(() => {               
-                CurrentGenericWindow.Buttons["Ok"].Click();
+                CurrentGenericWindow.Buttons["OK"].Click();
             });
         }
 

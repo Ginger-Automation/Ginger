@@ -69,7 +69,7 @@ namespace Ginger.Plugin.Platform.Web
 
 
         /// <summary>
-        /// Closes cureent WIndow
+        /// Closes current WIndow
         /// </summary>
         void CloseWindow();
         /// <summary>
