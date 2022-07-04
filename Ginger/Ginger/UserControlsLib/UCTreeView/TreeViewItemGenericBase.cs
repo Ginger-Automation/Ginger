@@ -410,7 +410,7 @@ namespace GingerWPF.TreeViewItemsLib
                 return;
             if (!Directory.Exists(this.NodePath()))
                 Directory.CreateDirectory(this.NodePath());
-            Process.Start(this.NodePath());
+            Process.Start(new ProcessStartInfo() { FileName = this.NodePath(), UseShellExecute = true });
         }
 
         public virtual void AddSourceControlOptions(ContextMenu CM, bool addDetailsOption = true, bool addLocksOption = true)
@@ -472,12 +472,12 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 Directory.CreateDirectory(path);
             }
-            Process.Start(path);
+            Process.Start(new ProcessStartInfo() { FileName = path, UseShellExecute = true });
         }
 
         public void ExploreFile(string Path)
         {
-            Process.Start(Path);
+            Process.Start(new ProcessStartInfo() { FileName = Path, UseShellExecute = true });
         }
 
         public RepositoryItemBase CopyTreeItemWithNewName(RepositoryItemBase itemToCopy)

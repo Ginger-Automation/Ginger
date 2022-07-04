@@ -22,6 +22,7 @@ using Ginger.Reports;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 
@@ -114,7 +115,7 @@ namespace Amdocs.Ginger.CoreNET
             var htmlServiceUrl = GetReportHTMLServiceUrl();
             if (!string.IsNullOrEmpty(htmlServiceUrl))
             {
-                System.Diagnostics.Process.Start(htmlServiceUrl + "?ExecutionId=" + executionGuid);
+                Process.Start(new ProcessStartInfo() { FileName = htmlServiceUrl + "?ExecutionId=" + executionGuid, UseShellExecute = true });
             }
             else
             {

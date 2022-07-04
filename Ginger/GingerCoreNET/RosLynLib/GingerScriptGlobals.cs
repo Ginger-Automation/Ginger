@@ -122,8 +122,8 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
             }
             else
             {
-                Process.Start(reportsResultFolder);
-                Process.Start(reportsResultFolder + "\\" + "GingerExecutionReport.html");
+                Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder, UseShellExecute = true });
+                Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder + "\\" + "GingerExecutionReport.html", UseShellExecute = true });
             }
 
 
