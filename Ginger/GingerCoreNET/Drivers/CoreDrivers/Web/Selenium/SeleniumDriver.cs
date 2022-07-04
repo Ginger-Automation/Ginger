@@ -147,6 +147,16 @@ namespace GingerCore.Drivers
         public bool BrowserMinimized { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Only for Edge: Open Edge browser in IE Mode")]
+        public bool OpenEdgeInIEMode { get; set;}
+
+        [UserConfigured]
+        [UserConfiguredDefault("C:/ Program Files(x86) / Microsoft / Edge / Application / msedge.exe")]
+        [UserConfiguredDescription("Only in case of OpenEdgeInIEMode is set to true: location of Edge.exe file in the local computer")]
+        public string EdgeApplicationPath { get; set; }
+
+        [UserConfigured]
         [UserConfiguredDefault("false")]//"driver is failing to launch when the mode is true"
         [UserConfiguredDescription("Hide the Driver Console (Command Prompt) Window")]
         public bool HideConsoleWindow { get; set; }
@@ -548,16 +558,61 @@ namespace GingerCore.Drivers
 
                     #region EDGE
                     case eBrowserType.Edge:
-                        EdgeOptions EDOpts = new EdgeOptions();
-                        //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
-                        //EDOpts.UseChromium = true;
-                        EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
-                        if (IsUserProfileFolderPathValid())
-                            EDOpts.AddAdditionalEdgeOption("user-data-dir=" ,UserProfileFolderPath);
-                        SetCurrentPageLoadStrategy(EDOpts);
-                        EdgeDriverService EDService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
-                        EDService.HideCommandPromptWindow = HideConsoleWindow;
-                        Driver = new EdgeDriver(EDService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        if (OpenEdgeInIEMode)
+                        {
+                            var ieOptions = new InternetExplorerOptions();
+                            ieOptions.AttachToEdgeChrome = true;
+                            ieOptions.EdgeExecutablePath = EdgeApplicationPath;
+
+                            if (EnsureCleanSession == true)
+                            {
+                                ieOptions.EnsureCleanSession = true;
+                            }
+                            
+                            ieOptions.Proxy = mProxy == null ? null : mProxy;
+                            ieOptions.IntroduceInstabilityByIgnoringProtectedModeSettings = true;
+                            if (IgnoreIEProtectedMode == true)
+                            {
+                                ieOptions.IntroduceInstabilityByIgnoringProtectedModeSettings = true;
+                                ieOptions.ElementScrollBehavior = InternetExplorerElementScrollBehavior.Bottom;
+                            }
+                            if (BrowserPrivateMode == true)
+                            {
+                                ieOptions.ForceCreateProcessApi = true;
+                                ieOptions.BrowserCommandLineArguments = "-private";
+                            }
+                            if (EnableNativeEvents == true)
+                            {
+                                ieOptions.EnableNativeEvents = true;
+                            }
+                            if (!(String.IsNullOrEmpty(SeleniumUserArguments) && String.IsNullOrWhiteSpace(SeleniumUserArguments)))
+                                ieOptions.BrowserCommandLineArguments += "," + SeleniumUserArguments;
+
+                            if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey)))
+                                ieOptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey;
+
+                            if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl)))
+                                ieOptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
+                            SetCurrentPageLoadStrategy(ieOptions);
+                            ieOptions.IgnoreZoomLevel = true;
+                            InternetExplorerDriverService IExplorerService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
+                            IExplorerService.HideCommandPromptWindow = HideConsoleWindow;
+                            Driver = new InternetExplorerDriver(IExplorerService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        }
+                        else
+
+                        {
+                            EdgeOptions EDOpts = new EdgeOptions();
+                            //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
+                            //EDOpts.UseChromium = true;
+                            EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                            if (IsUserProfileFolderPathValid())
+                                EDOpts.AddAdditionalEdgeOption("user-data-dir=", UserProfileFolderPath);
+                            SetCurrentPageLoadStrategy(EDOpts);
+                            EdgeDriverService EDService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
+                            EDService.HideCommandPromptWindow = HideConsoleWindow;
+                            Driver = new EdgeDriver(EDService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        }
 
                         break;
                     #endregion
