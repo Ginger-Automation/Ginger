@@ -764,7 +764,17 @@ namespace GingerCore.Actions
                         foreach (Process process in processlist)
                         {
                             mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
-                            if (process.StartInfo.Environment["USERNAME"] != Environment.UserName)
+                            var userWithDomain = Environment.UserDomainName + "\\" + Environment.UserName;
+                            try
+                            {
+                                var currentProcessUser = process.WindowsIdentity().Name;
+
+                                if (currentProcessUser != userWithDomain)
+                                {
+                                    continue;
+                                }
+                            }
+                            catch
                             {
                                 continue;
                             }
