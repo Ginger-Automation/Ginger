@@ -763,25 +763,35 @@ namespace GingerCore.Actions
                             Process[] processlist = Process.GetProcesses();
                             List<Process> matchingProcessList = new List<Process>();
 
-                            foreach (Process process in processlist)
+                        foreach (Process process in processlist)
+                        {
+                            mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
+                            var userWithDomain = Environment.UserDomainName + "\\" + Environment.UserName;
+                            try
                             {
-                                mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
-                                if (process.StartInfo.Environment["USERNAME"] != Environment.UserName)
+                                var currentProcessUser = process.WindowsIdentity().Name;
+
+                                if (currentProcessUser != userWithDomain)
                                 {
                                     continue;
                                 }
-                                if (BlockingJavaWindow)
-                                {
-                                    if (CheckForBlockWindow(process))
-                                    {
-                                        matchingProcessList.Add(process);
-                                    }
-                                }
-                                else if (MatchProcessTitle(process.MainWindowTitle.ToLower()))
+                            }
+                            catch
+                            {
+                                continue;
+                            }
+                            if (BlockingJavaWindow)
+                            {
+                                if (CheckForBlockWindow(process))
                                 {
                                     matchingProcessList.Add(process);
                                 }
                             }
+                            else if (MatchProcessTitle(process.MainWindowTitle.ToLower()))
+                            {
+                                matchingProcessList.Add(process);
+                            }
+                        }
 
 
                             if (matchingProcessList.Count == 1)
