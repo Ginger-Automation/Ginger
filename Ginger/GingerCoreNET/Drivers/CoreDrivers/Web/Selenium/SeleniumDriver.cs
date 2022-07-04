@@ -1242,7 +1242,7 @@ namespace GingerCore.Drivers
                 {
                     AddCurrentScreenShot(act);
                 }
-                if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
+                else if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
                 {
                     Bitmap img = GetScreenShot(true);
                     act.AddScreenShot(img, Driver.Title);
@@ -3513,6 +3513,16 @@ namespace GingerCore.Drivers
                 }
                 if (locator.LocateBy == eLocateBy.ByXPath || locator.LocateBy == eLocateBy.ByRelXPath)
                 {
+                    //Driver.SwitchTo().DefaultContent();
+
+                    //elem = Driver.FindElement(By.XPath("//*[@id='preview']"));
+                    //Driver.SwitchTo().Frame(elem);
+
+                    //elem = Driver.FindElement(By.XPath("/html/body/iframe[2]"));
+                    //Driver.SwitchTo().Frame(elem);
+
+                    //elem = Driver.FindElement(By.XPath("/html/body/p"));
+
                     elem = Driver.FindElement(By.XPath(locator.LocateValue));
                 }
 
