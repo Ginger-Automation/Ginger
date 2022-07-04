@@ -3513,16 +3513,6 @@ namespace GingerCore.Drivers
                 }
                 if (locator.LocateBy == eLocateBy.ByXPath || locator.LocateBy == eLocateBy.ByRelXPath)
                 {
-                    //Driver.SwitchTo().DefaultContent();
-
-                    //elem = Driver.FindElement(By.XPath("//*[@id='preview']"));
-                    //Driver.SwitchTo().Frame(elem);
-
-                    //elem = Driver.FindElement(By.XPath("/html/body/iframe[2]"));
-                    //Driver.SwitchTo().Frame(elem);
-
-                    //elem = Driver.FindElement(By.XPath("/html/body/p"));
-
                     elem = Driver.FindElement(By.XPath(locator.LocateValue));
                 }
 
