@@ -746,72 +746,79 @@ namespace GingerCore.Actions
                 sw.Start();
                 while (!bFound)
                 {
-                    // If Application Launch is done by Ginger then we already know the process id. No need to iterate.
-                    if (mJavaApplicationProcessID != -1 && ProcessExists(mJavaApplicationProcessID) && !IsInstrumentationModuleLoaded(mJavaApplicationProcessID))
+                    try
                     {
-
-                        mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
-
-                        bFound = CheckWindowTitleByProcessId(mJavaApplicationProcessID);
-
-                    }
-                    // If Application is not launched from Ginger then we go over the process to find the target Process ID
-                    else
-                    {
-                        Process[] processlist = Process.GetProcesses();
-                        List<Process> matchingProcessList = new List<Process>();
-
-                        foreach (Process process in processlist)
+                        // If Application Launch is done by Ginger then we already know the process id. No need to iterate.
+                        if (mJavaApplicationProcessID != -1 && ProcessExists(mJavaApplicationProcessID) && !IsInstrumentationModuleLoaded(mJavaApplicationProcessID))
                         {
+
                             mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
-                            if (process.StartInfo.Environment["USERNAME"] != Environment.UserName)
+
+                            bFound = CheckWindowTitleByProcessId(mJavaApplicationProcessID);
+
+                        }
+                        // If Application is not launched from Ginger then we go over the process to find the target Process ID
+                        else
+                        {
+                            Process[] processlist = Process.GetProcesses();
+                            List<Process> matchingProcessList = new List<Process>();
+
+                            foreach (Process process in processlist)
                             {
-                                continue;
-                            }
-                            if (BlockingJavaWindow)
-                            {
-                                if (CheckForBlockWindow(process))
+                                mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
+                                if (process.StartInfo.Environment["USERNAME"] != Environment.UserName)
+                                {
+                                    continue;
+                                }
+                                if (BlockingJavaWindow)
+                                {
+                                    if (CheckForBlockWindow(process))
+                                    {
+                                        matchingProcessList.Add(process);
+                                    }
+                                }
+                                else if (MatchProcessTitle(process.MainWindowTitle.ToLower()))
                                 {
                                     matchingProcessList.Add(process);
                                 }
                             }
-                            else if (MatchProcessTitle(process.MainWindowTitle.ToLower()))
-                            {
-                                matchingProcessList.Add(process);
-                            }
-                        }
 
 
-                        if (matchingProcessList.Count == 1)
-                        {
-                            if (!IsInstrumentationModuleLoaded(matchingProcessList.ElementAt(0).Id))
+                            if (matchingProcessList.Count == 1)
                             {
-                                bFound = true;
-                                mProcessIDForAttach = matchingProcessList.ElementAt(0).Id;
-                            }
-                        }
-                        else if (matchingProcessList.Count > 1)
-                        {
-                            foreach (Process process in matchingProcessList)
-                            {
-                                mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
-                                if ((process.ProcessName.StartsWith("java", StringComparison.CurrentCultureIgnoreCase) || process.ProcessName.StartsWith("jp2", StringComparison.CurrentCultureIgnoreCase)))
+                                if (!IsInstrumentationModuleLoaded(matchingProcessList.ElementAt(0).Id))
                                 {
-                                    if (!IsInstrumentationModuleLoaded(process.Id))
+                                    bFound = true;
+                                    mProcessIDForAttach = matchingProcessList.ElementAt(0).Id;
+                                }
+                            }
+                            else if (matchingProcessList.Count > 1)
+                            {
+                                foreach (Process process in matchingProcessList)
+                                {
+                                    mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
+                                    if ((process.ProcessName.StartsWith("java", StringComparison.CurrentCultureIgnoreCase) || process.ProcessName.StartsWith("jp2", StringComparison.CurrentCultureIgnoreCase)))
                                     {
-                                        bFound = true;
-                                        mProcessIDForAttach = process.Id;
-                                        break;
+                                        if (!IsInstrumentationModuleLoaded(process.Id))
+                                        {
+                                            bFound = true;
+                                            mProcessIDForAttach = process.Id;
+                                            break;
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                    // Go out after max seconds
-                    if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
-                        break;
+                        // Go out after max seconds
+                        if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
+                            break;
 
-                    Thread.Sleep(1000);
+                        Thread.Sleep(1000);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                    }
                 }
             }
             catch (OperationCanceledException ex)
