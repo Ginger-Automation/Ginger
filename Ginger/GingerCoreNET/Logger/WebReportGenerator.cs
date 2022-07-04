@@ -141,8 +141,8 @@ namespace Amdocs.Ginger.CoreNET.Logger
 
                 if (shouldDisplayReport && !Assembly.GetEntryAssembly().FullName.ToUpper().Contains("CONSOLE"))
                 {
-                    System.Diagnostics.Process.Start(@browserPath, taskCommand);
-                    System.Diagnostics.Process.Start(backDir);
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = @browserPath,Arguments= taskCommand, UseShellExecute = true });
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = backDir, UseShellExecute = true });
                 }
                 response = true;
             }

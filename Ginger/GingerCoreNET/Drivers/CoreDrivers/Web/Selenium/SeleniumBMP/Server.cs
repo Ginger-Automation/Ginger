@@ -42,10 +42,8 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
 
         public void Start()
         {
-            _serverProcess = new Process
-                                 {
-                                     StartInfo = {FileName = _path}
-                                 };
+            _serverProcess = Process.Start(new ProcessStartInfo() { FileName = _path, UseShellExecute = true });
+
             if (_port != 0)
             {
                 _serverProcess.StartInfo.Arguments = String.Format("--port={0}", _port);

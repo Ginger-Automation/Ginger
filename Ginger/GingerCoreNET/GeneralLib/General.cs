@@ -402,6 +402,7 @@ namespace GingerCoreNET.GeneralLib
         {
             try
             {
+                OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
                 using (OfficeOpenXml.ExcelPackage xlPackage = new OfficeOpenXml.ExcelPackage())
                 {
                     if (File.Exists(filePath))

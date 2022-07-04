@@ -1954,8 +1954,8 @@ namespace Ginger.Run
                             string fileName = System.IO.Path.GetFileName(txt_file);
                             if (fileName.Contains(".html"))
                             {
-                                System.Diagnostics.Process.Start(reportsResultFolder);
-                                System.Diagnostics.Process.Start(reportsResultFolder + "\\" + fileName);
+                                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = reportsResultFolder, UseShellExecute = true });
+                                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = reportsResultFolder + "\\" + fileName, UseShellExecute = true });
                             }
                         }
                     }
@@ -1977,7 +1977,7 @@ namespace Ginger.Run
             {
                 string taskCommand = $"{Path.Combine(clientAppFolderPath, "index.html")} --allow-file-access-from-files";
                 System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.json"), json); //TODO - Replace with the real location under Ginger installation
-                System.Diagnostics.Process.Start("chrome", taskCommand);
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "chrome", Arguments= taskCommand, UseShellExecute = true });
             }
             catch (Exception ex)
             {

@@ -25,6 +25,7 @@ using GingerCore;
 using GingerWPF.WizardLib;
 using IWshRuntimeLibrary;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -138,7 +139,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                             {
                                 args = "dynamic --filename " + AutoRunConfiguration.ConfigFileFullPath;
                             }
-                            System.Diagnostics.Process.Start(AutoRunShortcut.ExecuterFullPath, args);
+                            Process.Start(new ProcessStartInfo() { FileName = AutoRunShortcut.ExecuterFullPath, Arguments = args, UseShellExecute = true });
                             successCount++;
                         }
                     }

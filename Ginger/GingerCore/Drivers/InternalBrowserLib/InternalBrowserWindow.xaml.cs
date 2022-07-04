@@ -1566,7 +1566,7 @@ namespace GingerCore.Drivers
             //TODO: create windows temp file
             string filename = @"C:\temp\sc1.png"; // Path.te.GetTempFileName();
             bmpScreenShot.Save(filename);
-            System.Diagnostics.Process.Start(filename);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = filename, UseShellExecute = true });
         }
 
         private void MainRibbon_SelectionChanged(object sender, SelectionChangedEventArgs e)
