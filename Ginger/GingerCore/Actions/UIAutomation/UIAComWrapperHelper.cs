@@ -3764,7 +3764,7 @@ namespace GingerCore.Drivers
                     case "NativeWindowHandle":
                         propValue = element.Current.NativeWindowHandle.ToString();
                         break;
-                    case "Interop.UIAutomationClient.ToggleState":
+                    case "ToggleState":
                         UIAuto.TogglePattern togPattern;
                         Object objPattern;
                         if (true == element.TryGetCurrentPattern(UIAuto.TogglePattern.Pattern, out objPattern))
