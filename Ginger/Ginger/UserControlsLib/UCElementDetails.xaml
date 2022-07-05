@@ -59,7 +59,7 @@
 
         <Frame x:Name="xElementScreenShotFrameTop" Visibility="Collapsed" Grid.Column="0" Grid.Row="1" Margin="5,0,0,0" MaxHeight="100" VerticalAlignment="Top"></Frame>
 
-        <TabControl x:Name="xElementDetailsTabs" Grid.Row="2" Grid.Column="0"  HorizontalAlignment="Stretch" SelectionChanged="ElementDetailsTabs_SelectionChanged" >
+        <TabControl x:Name="xElementDetailsTabs" Grid.Row="2" Grid.Column="0" Margin="5,5,0,0" HorizontalAlignment="Stretch" SelectionChanged="ElementDetailsTabs_SelectionChanged" >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>

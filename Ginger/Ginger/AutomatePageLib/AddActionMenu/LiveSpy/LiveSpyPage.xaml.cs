@@ -76,9 +76,17 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             xUCElementDetails.PropertyChanged += XUCElementDetails_PropertyChanged;
 
+            if (mContext.Platform == ePlatformType.Web)
+            {
+                xUCElementDetails.xElementScreenShotFrameTop.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xUCElementDetails.xElementScreenShotFrameTop.Visibility = Visibility.Collapsed;
+            }
             xUCElementDetails.xElementScreenShotFrame.Visibility = Visibility.Collapsed;
-            xUCElementDetails.xElementScreenShotFrameTop.Visibility = Visibility.Visible;
             xUCElementDetails.xRightImageSection.Width = new GridLength(0, GridUnitType.Pixel);
+
         }
 
         private void XUCElementDetails_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
