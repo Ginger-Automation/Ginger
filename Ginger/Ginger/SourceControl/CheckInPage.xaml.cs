@@ -298,30 +298,33 @@ namespace Ginger.SourceControl
             List<string> conflictsPaths = new List<string>();
             if (!SourceControl.CommitChanges(pathsToCommit, Comments, ref error, ref conflictsPaths, includeLocks))
             {
-                App.MainWindow.Dispatcher.Invoke(() =>
+                if (conflictsPaths.Count != 0)
                 {
-                    ResolveConflictWindow resConfPage = new ResolveConflictWindow(conflictsPaths);
-                    if (WorkSpace.Instance.RunningInExecutionMode == true)
-                        conflictsPaths.ForEach(cPath => SourceControlIntegration.ResolveConflicts(WorkSpace.Instance.Solution.SourceControl, cPath, eResolveConflictsSide.Server));
-                    else
-                        resConfPage.ShowAsWindow();
-                    result = resConfPage.IsResolved;
-                    conflict = true;
-                    SourceControlIntegration.conflictFlag = conflict;
-                    if (SourceControl.GetSourceControlmConflict != null)
-                        SourceControl.GetSourceControlmConflict.Clear();
-                });
-                if (!conflict)
-                {
-                    if (error.Contains("too many redirects or authentication replays"))
-                        error = "Commit failed because of wrong credentials error, please enter valid Username and Password and try again";
-                    if (error.Contains("is locked in another working copy"))
-                        error = "This file has been locked by other user. Please remove lock and then try to Check in.";
                     App.MainWindow.Dispatcher.Invoke(() =>
                     {
-                        Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
+                        ResolveConflictWindow resConfPage = new ResolveConflictWindow(conflictsPaths);
+                        if (WorkSpace.Instance.RunningInExecutionMode == true)
+                            conflictsPaths.ForEach(cPath => SourceControlIntegration.ResolveConflicts(WorkSpace.Instance.Solution.SourceControl, cPath, eResolveConflictsSide.Server));
+                        else
+                            resConfPage.ShowAsWindow();
+                        result = resConfPage.IsResolved;
+                        conflict = true;
+                        SourceControlIntegration.conflictFlag = conflict;
+                        if (SourceControl.GetSourceControlmConflict != null)
+                            SourceControl.GetSourceControlmConflict.Clear();
                     });
-                    return false;
+                    if (!conflict)
+                    {
+                        if (error.Contains("too many redirects or authentication replays"))
+                            error = "Commit failed because of wrong credentials error, please enter valid Username and Password and try again";
+                        if (error.Contains("is locked in another working copy"))
+                            error = "This file has been locked by other user. Please remove lock and then try to Check in.";
+                        App.MainWindow.Dispatcher.Invoke(() =>
+                        {
+                            Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
+                        });
+                        return false;
+                    }
                 }
             }
             return result;
