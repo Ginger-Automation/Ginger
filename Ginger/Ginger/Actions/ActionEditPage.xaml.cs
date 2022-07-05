@@ -37,6 +37,7 @@ using Ginger.WindowExplorer;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Java;
+using GingerCore.Actions.Windows;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
 using GingerCore.GeneralLib;
@@ -511,7 +512,8 @@ namespace Ginger.Actions
             if (a.GetType() != typeof(ActDBValidation) && a.GetType() != typeof(ActTableElement) &&
                 a.GetType() != typeof(ActLaunchJavaWSApplication) && a.GetType() != typeof(ActJavaEXE) &&
                 a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand) &&
-                a.GetType() != typeof(ActSetVariableValue) && a.GetType() != typeof(ActCreatePDFChart) && a.GetType() != typeof(ActCompareImgs) && a.GetType() != typeof(ActGenerateFileFromTemplate))
+                a.GetType() != typeof(ActSetVariableValue) && a.GetType() != typeof(ActCreatePDFChart) && a.GetType() != typeof(ActCompareImgs) &&
+                a.GetType() != typeof(ActGenerateFileFromTemplate) && a.GetType() != typeof(ActPBControl) && a.GetType() != typeof(ActWindowsControl))
             {
                 if (a.InputValues.Count > minimumInputValuesToHideGrid)
                 {
@@ -621,7 +623,8 @@ namespace Ginger.Actions
                     xValueBoxPnl.Visibility = Visibility.Collapsed;
                 }
             }
-            else if (a.GetType() == typeof(ActSetVariableValue) || a.GetType() == typeof(ActCreatePDFChart) || a.GetType() == typeof(ActCompareImgs) || a.GetType() == typeof(ActGenerateFileFromTemplate))
+            else if (a.GetType() == typeof(ActSetVariableValue) || a.GetType() == typeof(ActCreatePDFChart) || a.GetType() == typeof(ActCompareImgs) || a.GetType() == typeof(ActGenerateFileFromTemplate)
+                        || a.GetType() == typeof(ActPBControl) || a.GetType() == typeof(ActWindowsControl))
             {
                 xInputValuesGrid.Visibility = Visibility.Collapsed;
                 xValueBoxPnl.Visibility = Visibility.Visible;
