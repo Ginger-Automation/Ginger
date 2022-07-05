@@ -152,11 +152,14 @@ namespace GingerCore.Drivers
         public bool OpenEdgeInIEMode { get; set;}
 
         [UserConfigured]
+<<<<<<< HEAD
         [UserConfiguredDefault("C:/ Program Files(x86) / Microsoft / Edge / Application / msedge.exe")]
         [UserConfiguredDescription("Only in case of OpenEdgeInIEMode is set to true: location of Edge.exe file in the local computer")]
         public string EdgeApplicationPath { get; set; }
 
         [UserConfigured]
+=======
+>>>>>>> 16061c8ea665cb5fd39bfe51fefbd59acf91ce25
         [UserConfiguredDefault("false")]//"driver is failing to launch when the mode is true"
         [UserConfiguredDescription("Hide the Driver Console (Command Prompt) Window")]
         public bool HideConsoleWindow { get; set; }
@@ -562,7 +565,11 @@ namespace GingerCore.Drivers
                         {
                             var ieOptions = new InternetExplorerOptions();
                             ieOptions.AttachToEdgeChrome = true;
+<<<<<<< HEAD
                             ieOptions.EdgeExecutablePath = EdgeApplicationPath;
+=======
+                            ieOptions.EdgeExecutablePath = "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe";
+>>>>>>> 16061c8ea665cb5fd39bfe51fefbd59acf91ce25
 
                             if (EnsureCleanSession == true)
                             {
@@ -1297,7 +1304,7 @@ namespace GingerCore.Drivers
                 {
                     AddCurrentScreenShot(act);
                 }
-                if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
+                else if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
                 {
                     Bitmap img = GetScreenShot(true);
                     act.AddScreenShot(img, Driver.Title);
