@@ -80,7 +80,7 @@
 
                     <TextBox x:Name="txtSearch" MinWidth="120" Height="25" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="txtSearch_TextChanged" BorderBrush="White" />
                     <usercontrols:ucButton x:Name="btnClearSearch" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="btnClearSearchText_Click" BorderBrush="Transparent" Background="Transparent" Margin="-3,0,6,0" ></usercontrols:ucButton>
-                    <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" BorderBrush="Transparent" Background="Transparent" Margin="-3,0,6,0" ></usercontrols:ucButton>
+                    <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" IsEnabled="False"  VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" BorderBrush="Transparent" Background="Transparent" Margin="-3,0,6,0" ></usercontrols:ucButton>
 
                     <!--<Label x:Name="lblSearch" Style="{DynamicResource @LabelStyle}">Search:</Label>-->
                     <!--<TextBox x:Name="txtSearch" Width="100" TextChanged="txtSearch_TextChanged" Style="{DynamicResource @ToolBarTextBoxStyle}" ></TextBox>-->
