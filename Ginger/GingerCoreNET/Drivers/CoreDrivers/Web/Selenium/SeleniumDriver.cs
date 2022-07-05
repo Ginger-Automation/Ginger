@@ -157,7 +157,7 @@ namespace GingerCore.Drivers
         public string EdgeApplicationPath { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("false")]//"driver is failing to launch when the mode is true"
+        [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Hide the Driver Console (Command Prompt) Window")]
         public bool HideConsoleWindow { get; set; }
 
@@ -1297,7 +1297,7 @@ namespace GingerCore.Drivers
                 {
                     AddCurrentScreenShot(act);
                 }
-                if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
+                else if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
                 {
                     Bitmap img = GetScreenShot(true);
                     act.AddScreenShot(img, Driver.Title);
