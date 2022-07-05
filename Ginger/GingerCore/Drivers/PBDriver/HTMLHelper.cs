@@ -974,7 +974,7 @@ namespace GingerCore.Drivers.PBDriver
             {
                 IHTMLElement elem = null;
                 string res=string.Empty;
-                if (HElem.GetType().ToString().Contains("mshtml"))
+                if (HElem.GetType().ToString().Contains("mshtml") || HElem.GetType().ToString().Contains("_ComObject"))
                 {
                     elem = ((IHTMLElement)HElem);
                 }
