@@ -312,7 +312,7 @@ namespace GingerCore.SourceControl
                             SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.Unknown;
                             SCFI.Selected = true;
                             SCFI.Diff = "";
-                            if (item.State == FileStatus.ModifiedInWorkdir)
+                            if (item.State.ToString().Contains(FileStatus.ModifiedInWorkdir.ToString()))
                             {
                                 SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.Modified;
                             }
