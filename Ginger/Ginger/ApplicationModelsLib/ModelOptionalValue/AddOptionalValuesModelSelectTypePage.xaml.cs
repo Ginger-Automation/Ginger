@@ -168,7 +168,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             else if (xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.Json.ToString())
             {
-                dlg.Filter = "Json files (*.json)|*.json|Text files (*.txt)|*.txt";
+                dlg.Filter = "JSON files (*.json)|*.json|Text files (*.txt)|*.txt";
             }
             else if (xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.DB.ToString())
             {

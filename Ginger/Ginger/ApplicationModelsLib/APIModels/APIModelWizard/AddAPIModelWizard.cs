@@ -40,7 +40,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             WSDL,
             [EnumValueDescription("XML Templates")]
             XMLTemplates,
-            [EnumValueDescription("Json Templates")]
+            [EnumValueDescription("JSON Templates")]
             JsonTemplate,
             [EnumValueDescription("Swagger(Open API) Document")]
             Swagger

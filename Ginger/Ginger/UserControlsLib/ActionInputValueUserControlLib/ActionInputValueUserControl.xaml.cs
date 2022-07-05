@@ -244,7 +244,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
                 return;
             }
 
-            throw new System.Exception("unknown param type to create control: " + mActInputValue.ParamType.FullName);
+            throw new System.Exception("unknown parameter type to create control: " + mActInputValue.ParamType.FullName);
 
         }        
 
