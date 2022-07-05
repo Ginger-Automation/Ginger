@@ -44,7 +44,7 @@ namespace Ginger
         {
             Hyperlink hl = (Hyperlink)sender;
             string navigateUri = hl.NavigateUri.ToString();
-            Process.Start(new ProcessStartInfo(navigateUri));
+            Process.Start(new ProcessStartInfo() { FileName = navigateUri, UseShellExecute = true });
             e.Handled = true;
         }
     }

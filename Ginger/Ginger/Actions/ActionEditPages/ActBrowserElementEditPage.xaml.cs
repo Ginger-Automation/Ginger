@@ -26,6 +26,7 @@ using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Ginger.Actions
@@ -68,8 +69,6 @@ namespace Ginger.Actions
             xImplicitWaitVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.ImplicitWait);
             xNetworkUrlVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.NetworkUrl);
             SetVisibleControlsForAction();
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNetworkLogCheckbox, CheckBox.IsCheckedProperty, mAct, ActBrowserElement.Fields.NetworkLog);
-            xNetworkLogPnl.Visibility = System.Windows.Visibility.Visible;
         }
 
         private void ResetView()
@@ -79,14 +78,8 @@ namespace Ginger.Actions
             xURLSrcPnl.Visibility = System.Windows.Visibility.Collapsed;
             xValueGrid.Visibility = System.Windows.Visibility.Collapsed;
             xImplicitWaitPnl.Visibility = System.Windows.Visibility.Collapsed;
-            if(xNetworkLogCheckbox.IsChecked == true)
-            {
-                xNetworkLogPnl.Visibility = System.Windows.Visibility.Visible;
-            }
-            else
-            {
-                xNetworkLogPnl.Visibility = System.Windows.Visibility.Collapsed;
-            }
+            xNetworkLogPnl.Visibility = System.Windows.Visibility.Collapsed;
+            xNetworkLogCheckbox.Visibility = System.Windows.Visibility.Collapsed;
             
         }
 
@@ -99,6 +92,23 @@ namespace Ginger.Actions
         private void ControlActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             SetVisibleControlsForAction();
+        }
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            CheckBox cb = sender as CheckBox;
+            string checkState;
+
+            if (!cb.IsChecked.HasValue)
+            {
+                xNetworkLogPnl.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                if (cb.IsChecked == true)
+                    xNetworkLogPnl.Visibility = Visibility.Visible;
+                else
+                    xNetworkLogPnl.Visibility = Visibility.Collapsed;
+            }
         }
 
         private ePlatformType GetActionPlatform()
@@ -164,6 +174,10 @@ namespace Ginger.Actions
                     xValueGrid.Visibility = System.Windows.Visibility.Visible;
                     xValueLabel.Content = "Script:";
                 }
+            }
+            else if (mAct.ControlAction == ActBrowserElement.eControlAction.GetBrowserLog)
+            {
+                xNetworkLogCheckbox.Visibility = System.Windows.Visibility.Visible;
             }
             else
             {

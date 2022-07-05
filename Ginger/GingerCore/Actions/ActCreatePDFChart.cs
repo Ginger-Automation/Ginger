@@ -206,7 +206,7 @@ namespace GingerCore.Actions
                 XGraphics gfx = XGraphics.FromPdfPage(page);
                 chartFrame.Draw(gfx);
                 document.Close();
-                Process.Start(filename);
+                Process.Start(new ProcessStartInfo() { FileName = FileName, UseShellExecute = true });
             }
             catch 
             {

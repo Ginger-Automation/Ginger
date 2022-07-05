@@ -149,7 +149,14 @@ namespace GingerCore.Drivers
         [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Only for Edge: Open Edge browser in IE Mode")]
-        public bool OpenEdgeInIEMode { get; set;}
+        public bool OpenIEModeInEdge { get; set;}
+
+
+        [UserConfigured]
+        [UserConfiguredDefault("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")]
+        [UserConfiguredDescription("Only if OpenEdgeInIEMode is set to true: location of Edge.exe file in local computer")]
+        public string EdgeExcutablePath { get; set; }
+        //"C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
 
         [UserConfigured]
         [UserConfiguredDefault("false")]//"driver is failing to launch when the mode is true"
@@ -553,11 +560,11 @@ namespace GingerCore.Drivers
 
                     #region EDGE
                     case eBrowserType.Edge:
-                        if (OpenEdgeInIEMode)
+                        if (OpenIEModeInEdge)
                         {
                             var ieOptions = new InternetExplorerOptions();
                             ieOptions.AttachToEdgeChrome = true;
-                            ieOptions.EdgeExecutablePath = "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe";
+                            ieOptions.EdgeExecutablePath = EdgeExcutablePath;
 
                             if (EnsureCleanSession == true)
                             {
@@ -1292,7 +1299,7 @@ namespace GingerCore.Drivers
                 {
                     AddCurrentScreenShot(act);
                 }
-                if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
+                else if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
                 {
                     Bitmap img = GetScreenShot(true);
                     act.AddScreenShot(img, Driver.Title);
@@ -4085,15 +4092,7 @@ namespace GingerCore.Drivers
                             //Element Screenshot
                             if (LearnScreenshotsOfElements)
                             {
-                                var screenshot = ((ITakesScreenshot)webElement).GetScreenshot();
-                                Bitmap image = ScreenshotToImage(screenshot);
-                                //foundElemntInfo.ScreenShotImage = BitmapToBase64(screenshot);
-                                using (MemoryStream ms = new MemoryStream())
-                                {
-                                    image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                                    byte[] byteImage = ms.ToArray();
-                                    foundElemntInfo.ScreenShotImage = Convert.ToBase64String(byteImage);
-                                }
+                                foundElemntInfo.ScreenShotImage = TakeElementScreenShot(webElement);
                             }
 
                             foundElemntInfo.IsAutoLearned = true;
@@ -5439,6 +5438,7 @@ namespace GingerCore.Drivers
 
                 foundElemntInfo.ElementObject = el;
                 foundElemntInfo.Path = string.Empty;
+                foundElemntInfo.ScreenShotImage = TakeElementScreenShot(el);
 
                 if (el.TagName == "iframe" || el.TagName == "frame")
                 {
@@ -5457,7 +5457,23 @@ namespace GingerCore.Drivers
             }
             return null;
         }
-
+        /// <summary>
+        /// Take specific element screenshot
+        /// </summary>
+        /// <param name="element">IWebElement</param>
+        /// <returns>String image base64</returns>
+        private string TakeElementScreenShot(IWebElement element)
+        {
+            var screenshot = ((ITakesScreenshot)element).GetScreenshot();
+            Bitmap image = ScreenshotToImage(screenshot);
+            byte[] byteImage;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                byteImage = ms.ToArray();
+            }
+            return Convert.ToBase64String(byteImage);
+        }
 
         private ElementInfo GetElementFromIframe(ElementInfo IframeElementInfo)
         {
