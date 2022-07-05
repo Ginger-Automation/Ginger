@@ -1179,10 +1179,7 @@ namespace Ginger.Imports.UFT
 
         private void Image_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            System.Diagnostics.Process wordProcess = new System.Diagnostics.Process();
-            wordProcess.StartInfo.FileName = Directory.GetCurrentDirectory() + @"\Help\Import_From_ASAP.pdf";
-            wordProcess.StartInfo.UseShellExecute = true;
-            wordProcess.Start();
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = Directory.GetCurrentDirectory() + @"\Help\Import_From_ASAP.pdf", UseShellExecute = true });
         }
         
         private void TargetApplication_SelectionChanged(object sender, SelectionChangedEventArgs e)

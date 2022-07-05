@@ -297,7 +297,7 @@ namespace Ginger.Run
         {
             if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.LoggerConfigurations != null)
             {
-                Process.Start(executionLoggerHelper.GetLoggerDirectory( WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
+                Process.Start(new ProcessStartInfo() { FileName = WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, UseShellExecute = true });
             }
             else
                 return;
@@ -321,7 +321,7 @@ namespace Ginger.Run
                 Directory.CreateDirectory(runSetFolder);
             }
 
-            Process.Start(runSetFolder);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = runSetFolder, UseShellExecute = true });
         }
 
         private void OpenExecutionResultsFolder(object sender, RoutedEventArgs e)
@@ -368,8 +368,8 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    Process.Start(reportsResultFolder);
-                    Process.Start(reportsResultFolder + "\\" + "GingerExecutionReport.html");
+                   Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder, UseShellExecute = true });
+                    Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder + "\\" + "GingerExecutionReport.html", UseShellExecute = true });
                 }
             }
         }

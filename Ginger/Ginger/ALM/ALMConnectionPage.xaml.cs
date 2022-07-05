@@ -767,7 +767,7 @@ namespace Ginger.ALM
 
         private void HandleLinkClick(object sender, RequestNavigateEventArgs e)
         {
-            System.Diagnostics.Process.Start(@"http://ginger/Downloads/Other");
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = @"http://ginger/Downloads/Other", UseShellExecute = true });
             e.Handled = true;
         }
 

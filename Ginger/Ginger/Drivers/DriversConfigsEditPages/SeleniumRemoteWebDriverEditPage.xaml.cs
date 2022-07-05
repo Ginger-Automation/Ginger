@@ -160,7 +160,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             System.IO.Directory.Delete(targetPath,true);
 
             //Open Dialog folder
-            Process.Start(targetZipPath);
+            Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = targetZipPath, UseShellExecute = true });           
         }
 
         private void GetNodeFilesButton_Click(object sender, RoutedEventArgs e)
@@ -295,7 +295,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             System.IO.Directory.Delete(targetPath, true);
 
             //Open Dialog folder
-            Process.Start(targetZipPath);
+            Process.Start(new ProcessStartInfo() { FileName = targetZipPath, UseShellExecute = true });
         }
 
         //If LocalHost selected then return the IPv4 local IP else return the selected IP
