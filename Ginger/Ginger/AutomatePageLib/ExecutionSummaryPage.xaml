@@ -22,9 +22,10 @@
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="150"/>
             <RowDefinition Height="100"/>
-            <RowDefinition Height="200*"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="300*"/>
         </Grid.RowDefinitions>
         
         <Viewbox Grid.Row="0">
@@ -35,8 +36,11 @@
             <Label x:Name="StatusLabel" Content="Status"  FontSize="30" FontWeight="ExtraBold" />
             <Label x:Name="lblElapsed" Content="Elapsed" FontSize="15" Foreground="{StaticResource $Color_DarkBlue}"/>
         </StackPanel>
-        
-        <DockPanel Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="150,0,0,0" >
+            <Label x:Name="Activities" Content="Activities" Background="{StaticResource $BackgroundColor_LightGray}" Foreground="{StaticResource $BackgroundColor_DarkGray}" HorizontalAlignment="Left" FontFamily="MS Arial"  FontSize="20" Margin="310,0,0,0"/>
+            <Label x:Name="Actions" Content="Actions" Background="{StaticResource $BackgroundColor_LightGray}" Foreground="{StaticResource $BackgroundColor_DarkGray}" HorizontalAlignment="Left" FontFamily="MS Arial" FontSize="20"  Margin="110,0,0,0"/>
+        </StackPanel>
+        <DockPanel Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50,0,0,70">
             <StackPanel Grid.Row="1" Margin="0,50,0,0">
                 <StackPanel Grid.Row="1" HorizontalAlignment="Left" Orientation="Horizontal"  Height="30" Width="100" Margin="0,0,0,2" x:Name="Passed" Visibility="Collapsed">
                     <Rectangle Height="10" Stroke="#54A81B" StrokeThickness="10"  Width="20" VerticalAlignment="Center" Margin="10" HorizontalAlignment="Left"/>
@@ -64,9 +68,9 @@
                     <Label Content="Running" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 </StackPanel>
             </StackPanel>
-            <StackPanel Grid.Row="1" x:Name="stck" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal"  Height="250" Width="600" >
-                <lvc:PieChart x:Name="ActivityChart" InnerRadius="60" Series="{Binding SeriesActivityCollection}" VerticalAlignment="Center"  Width="200" Height="200" Hoverable="False" DataTooltip="{x:Null}" Margin="0,20,50,20"/>
-                <lvc:PieChart x:Name="ActionChart" InnerRadius="60" Series="{Binding SeriesActionCollection}" VerticalAlignment="Center" HorizontalAlignment="Right" Width="200" Height="200"  Hoverable="False" DataTooltip="{x:Null}" Margin="0,20,50,20">
+            <StackPanel Grid.Row="1" x:Name="stck" HorizontalAlignment="Center" VerticalAlignment="Center" Height="200" Width="600" Orientation="Horizontal" Margin="100,0,0,0">
+                <lvc:PieChart x:Name="ActivityChart" InnerRadius="80" Series="{Binding SeriesActivityCollection}" VerticalAlignment="Center"  Width="200" Height="200" Hoverable="False" DataTooltip="{x:Null}" Margin="0,30,50,30"/>
+                <lvc:PieChart x:Name="ActionChart" InnerRadius="80" Series="{Binding SeriesActionCollection}" VerticalAlignment="Center" HorizontalAlignment="Right" Width="200" Height="200"  Hoverable="False" DataTooltip="{x:Null}" Margin="0,30,50,30">
                     
                 </lvc:PieChart>
             </StackPanel>
