@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
+using Ginger.Actions.UserControls;
 using Ginger.Drivers.Common;
 using Ginger.UserControls;
 using Ginger.WindowExplorer;
@@ -35,6 +36,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
@@ -73,6 +75,18 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             InitUCElementDetailsLocatorsGrid();
 
             xUCElementDetails.PropertyChanged += XUCElementDetails_PropertyChanged;
+
+            if (mContext.Platform == ePlatformType.Web)
+            {
+                xUCElementDetails.xElementScreenShotFrameTop.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xUCElementDetails.xElementScreenShotFrameTop.Visibility = Visibility.Collapsed;
+            }
+            xUCElementDetails.xElementScreenShotFrame.Visibility = Visibility.Collapsed;
+            xUCElementDetails.xRightImageSection.Width = new GridLength(0, GridUnitType.Pixel);
+
         }
 
         private void XUCElementDetails_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -251,6 +265,13 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                         mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSpyElement);
                         mWindowExplorerDriver.HighLightElement(mSpyElement);
                         xUCElementDetails.SelectedElement = mSpyElement;
+                        //update screenshot
+                        BitmapSource source = null;
+                        if (mSpyElement.ScreenShotImage != null)
+                        {
+                            source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mSpyElement.ScreenShotImage.ToString()));
+                        }
+                        xUCElementDetails.xElementScreenShotFrameTop.Content = new ScreenShotViewPage(mSpyElement?.ElementName, source, false);
                     }
                     else
                     {
