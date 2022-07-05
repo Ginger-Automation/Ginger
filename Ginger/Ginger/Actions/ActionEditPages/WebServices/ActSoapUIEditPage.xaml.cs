@@ -51,12 +51,12 @@ namespace Ginger.Actions.WebServices
             mContext = Context.GetAsContext(act.Context);
 
             Bind();
-            mAct.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+            mAct.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
         }
 
         public void Bind()
         {
-            XMLFilePathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActSoapUI.Fields.XMLFile),true, true, UCValueExpression.eBrowserType.File, "xml", new RoutedEventHandler(BrowseButtonXML_Click));
+            XMLFilePathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActSoapUI.Fields.XMLFile), true, true, UCValueExpression.eBrowserType.File, "xml", new RoutedEventHandler(BrowseButtonXML_Click));
 
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotImportFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.ImportFile));
 
@@ -82,7 +82,7 @@ namespace Ginger.Actions.WebServices
 
 
 
-            PasswordWSSUCComboBox.Init(mAct.GetOrCreateInputParam(ActSoapUI.Fields.PasswordWSSType), typeof(ActSoapUI.ePasswordWSSType),false, new SelectionChangedEventHandler(PasswordWSSComboBox_SelectionChanged));
+            PasswordWSSUCComboBox.Init(mAct.GetOrCreateInputParam(ActSoapUI.Fields.PasswordWSSType), typeof(ActSoapUI.ePasswordWSSType), false, new SelectionChangedEventHandler(PasswordWSSComboBox_SelectionChanged));
             PasswordWSSUCComboBox.ComboBox.IsEditable = true;
 
             if (!string.IsNullOrEmpty(XMLFilePathTextBox.ValueTextBox.Text))
@@ -91,14 +91,14 @@ namespace Ginger.Actions.WebServices
                 TestCaseComboBox.SelectedValue = mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.TestCase);
             }
 
-            SystemPropertiesVEGrid.Init(Context.GetAsContext(mAct.Context), mAct.SystemProperties,"System Properties","Property Name","Property Value","Property Calculated Value");
+            SystemPropertiesVEGrid.Init(Context.GetAsContext(mAct.Context), mAct.SystemProperties, "System Properties", "Property Name", "Property Value", "Property Calculated Value");
             GlobalPropertiesVEGrid.Init(Context.GetAsContext(mAct.Context), mAct.GlobalProperties, "Global Properties", "Property Name", "Property Value", "Property Calculated Value");
             ExpendPopulatedExpenders();
 
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(AddXMLTagsToOutput, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActSoapUI.Fields.AddXMLResponse));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(OpenExecutionDirectoryButton, Button.IsEnabledProperty, mAct, ActSoapUI.Fields.isActionExecuted, BindingMode.OneWay);
             ProjectPropertiesGrid.VEGrid.AddToolbarTool("@Reset_16x16.png", "Reset Properties to default", new RoutedEventHandler(ResetProjectButton_Click));
-            
+
         }
 
         private void MergeAndClearList()
@@ -248,7 +248,7 @@ namespace Ginger.Actions.WebServices
                 OverridesExpander.IsExpanded = true;
             }
 
-            if (SystemPropertiesVEGrid.DataSource.Count != 0 || GlobalPropertiesVEGrid.DataSource.Count != 0 )
+            if (SystemPropertiesVEGrid.DataSource.Count != 0 || GlobalPropertiesVEGrid.DataSource.Count != 0)
             {
                 PropertiesExpander.IsExpanded = true;
             }
@@ -264,7 +264,7 @@ namespace Ginger.Actions.WebServices
             ProcessInputForDriver();
 
             bool isImportedFile;
-            Boolean.TryParse(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.ImportFile),out isImportedFile);
+            Boolean.TryParse(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.ImportFile), out isImportedFile);
             if (!isImportedFile)
             {
                 mAct.TempProperties.ClearAll();
@@ -274,7 +274,7 @@ namespace Ginger.Actions.WebServices
                 return;
             }
 
-            string SolutionFolder =  WorkSpace.Instance.Solution.Folder;
+            string SolutionFolder = WorkSpace.Instance.Solution.Folder;
             string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\WebServices\SoapUI\ProjectXMLs");
             if (!System.IO.Directory.Exists(targetPath))
             {
@@ -319,7 +319,7 @@ namespace Ginger.Actions.WebServices
                 {
                     if (XMLFiledValue.Substring(0, 1).Equals("~"))
                     {
-                        string SolutionFolder =  WorkSpace.Instance.Solution.Folder;
+                        string SolutionFolder = WorkSpace.Instance.Solution.Folder;
                         XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue.Substring(2));
                     }
                     if (!System.IO.File.Exists(XMLFiledValue))
@@ -359,7 +359,7 @@ namespace Ginger.Actions.WebServices
             {
                 if (XMLFiledValue.Substring(0, 1).Equals("~"))
                 {
-                    string SolutionFolder =  WorkSpace.Instance.Solution.Folder;
+                    string SolutionFolder = WorkSpace.Instance.Solution.Folder;
                     XMLFiledValue = System.IO.Path.Combine(SolutionFolder, XMLFiledValue.Substring(2));
                 }
                 if (!System.IO.File.Exists(XMLFiledValue))
@@ -368,7 +368,7 @@ namespace Ginger.Actions.WebServices
                     return;
                 }
                 doc.Load(XMLFiledValue);
-                XmlNamespaceManager manager = XMLDocExtended.GetAllNamespaces(doc); 
+                XmlNamespaceManager manager = XMLDocExtended.GetAllNamespaces(doc);
                 int SuiteSelectedItemID = TestSuiteComboBox.SelectedIndex;
                 XmlNodeList testCases;
                 if (SuiteSelectedItemID > 0)
@@ -445,8 +445,7 @@ namespace Ginger.Actions.WebServices
         }
         private void ExecutionDirectoryButton_Click(object sender, RoutedEventArgs e)
         {
-            ReportPath = mAct.LastExecutionFolderPath;
-            Process.Start(ReportPath);
+            Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = mAct.LastExecutionFolderPath, UseShellExecute = true });
         }
 
         private void TextCasePropertiesRequieredTextBoxChecked(object sender, RoutedEventArgs e)
@@ -611,7 +610,7 @@ namespace Ginger.Actions.WebServices
                     return;
                 }
                 doc.Load(XMLFiledValue);
-                XmlNamespaceManager manager = XMLDocExtended.GetAllNamespaces(doc); 
+                XmlNamespaceManager manager = XMLDocExtended.GetAllNamespaces(doc);
                 XmlNodeList properties = doc.SelectNodes("//*[local-name()='soapui-project']/*[local-name()='testSuite'][@name='" + testSuite + "']/*[local-name()='testCase'][@name='" + testCase + "']/*[local-name()='testStep'][@type='properties']/*[local-name()='config']/*[local-name()='properties']/*[local-name()='property']", manager);
 
                 PopulatePropertiesGrid(properties, ActSoapUiInputValue.ePropertyType.TestStep);

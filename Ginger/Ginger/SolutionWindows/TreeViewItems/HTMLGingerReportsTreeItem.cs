@@ -170,7 +170,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 string path = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory(_selectedHTMLReportConfiguration.HTMLReportsFolder);
                 if (System.IO.Directory.Exists(path))
-                    Process.Start(path);
+                {
+                    Process.Start(new ProcessStartInfo() { FileName = Path, UseShellExecute = true }); 
+                }
             }
         }
     }

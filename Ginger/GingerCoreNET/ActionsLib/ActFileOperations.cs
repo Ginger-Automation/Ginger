@@ -312,9 +312,13 @@ namespace GingerCore.Actions
             try
             {
                 if (!string.IsNullOrEmpty(arguments))
-                    System.Diagnostics.Process.Start(fileName, Arguments);
+                {
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = fileName, Arguments = Arguments, UseShellExecute = true });
+                }
                 else
-                    System.Diagnostics.Process.Start(fileName);
+                {
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = fileName, UseShellExecute = true });
+                }
 
             }
             catch (Exception e)

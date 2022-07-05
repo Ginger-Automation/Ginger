@@ -1292,7 +1292,7 @@ namespace GingerCore.Drivers
                 {
                     AddCurrentScreenShot(act);
                 }
-                if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
+                else if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
                 {
                     Bitmap img = GetScreenShot(true);
                     act.AddScreenShot(img, Driver.Title);
