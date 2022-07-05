@@ -102,7 +102,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (Directory.Exists(mPluginPackage.Folder))
             {
-                Process.Start(mPluginPackage.Folder);
+                Process.Start(new ProcessStartInfo() { FileName = mPluginPackage.Folder, UseShellExecute = true });
             }
             else
             {

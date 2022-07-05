@@ -541,7 +541,8 @@ namespace amdocs.ginger.GingerCoreNET
 
             if (solution.SourceControl != null && WorkSpace.Instance.UserProfile != null)
             {
-                if (string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlPass))
+                if (string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlPass) ||
+                    solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
                     if (WorkSpace.Instance.UserProfile.SourceControlUser != null && WorkSpace.Instance.UserProfile.SourceControlPass != null)
                     {

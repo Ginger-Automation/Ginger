@@ -214,7 +214,7 @@ namespace Ginger.GeneralLib
         {
             if (System.IO.File.Exists(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile))
             {
-                Process.Start(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile);
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile, UseShellExecute = true });
             }
             else
             {

@@ -185,7 +185,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
                 List<AppParameters> parameters = GetParameterList();
                 string filePath = im.ExportParametersToExcelFile(parameters, "GlobalParameters");
-                System.Diagnostics.Process.Start(filePath); 
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = filePath, UseShellExecute = true }); 
             }
         }
 
