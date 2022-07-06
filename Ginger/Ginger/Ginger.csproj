@@ -569,6 +569,7 @@
     <None Remove="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
     <None Remove="Resources\GingerDataSource.mdb" />
     <None Remove="RunSetLib\CreateAutoRunWizardLib\AutoRunIntroduction.md" />
+    <None Remove="StaticDrivers\selenium-server-standalone.jar" />
     <None Remove="TestLib\WizardLib\Intro.md" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\android.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\androidOutline.png" />
@@ -602,6 +603,12 @@
       <Isolated>false</Isolated>
       <EmbedInteropTypes>true</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="StaticDrivers\selenium-server-standalone.jar">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -2445,9 +2452,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="StaticDrivers\GingerAgentStarter.jar">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="StaticDrivers\selenium-server-standalone.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
