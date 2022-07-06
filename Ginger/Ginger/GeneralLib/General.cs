@@ -260,19 +260,19 @@ namespace Ginger
             Ellipse e = new Ellipse();
             if (count.Length == 1)
             {
-                xAxis = 147;
+                xAxis = 101;
             }
             else if (count.Length == 2)
             {
-                xAxis = 143;
+                xAxis = 103;
             }
             else if (count.Length == 3)
             {
-                xAxis = 141;
+                xAxis = 105;
             }
             else if (count.Length == 4)
             {
-                xAxis = 138;
+                xAxis = 107;
             }
             viewbox = new Viewbox();
             Grid grd = new Grid();
@@ -284,24 +284,24 @@ namespace Ginger
 
             grd.Children.Add(control);
             grd.Children.Add(CreateAnEllipse());
-            TextBlock txt = new TextBlock { Margin = new Thickness(xAxis, 168, 0, 0) };
-            // if(typ==0)
-            // {
-            //     App.RunsetBFTextbox = txt;
-            // }
-            //else if(typ==1)
-            // {
-            //     App.RunsetActivityTextbox = txt;
-            // }
-            // else
-            // {
-            //     App.RunsetActionTextbox = txt;
-            // }        
+            TextBlock txt = new TextBlock { Margin = new Thickness(xAxis, 125, 0, 0), FontWeight = FontWeights.Bold };
+            //if (typ == 0)
+            //{
+            //    App.RunsetBFTextbox = txt;
+            //}
+            //else if (typ == 1)
+            //{
+            //    App.RunsetActivityTextbox = txt;
+            //}
+            //else
+            //{
+            //    App.RunsetActionTextbox = txt;
+            //}
             txt.Text = count.ToString();
             grd.Children.Add(txt);
             viewbox.Child = grd;
             viewbox.Measure(new System.Windows.Size(400, 200));
-            viewbox.Arrange(new Rect(0, 0, 400, 200));
+            viewbox.Arrange(new Rect(0, 0, 500, 200));
             viewbox.UpdateLayout();
             return viewbox;
         }
@@ -320,7 +320,7 @@ namespace Ginger
             blueRectangle.Stroke = blueBrush;
             // Fill rectangle with blue color
             blueRectangle.Fill = blueBrush;
-            blueRectangle.Margin = new Thickness(0, 35, 0, 0);
+            blueRectangle.Margin = new Thickness(0, 30, 40, 25);
             return blueRectangle;
         }
 
