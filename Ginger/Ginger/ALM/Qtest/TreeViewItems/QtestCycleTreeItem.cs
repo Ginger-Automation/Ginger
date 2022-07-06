@@ -42,13 +42,13 @@ namespace Ginger.ALM.Qtest.TreeViewItems
             return null;
         }
 
-        public QtestCycleTreeItem(List<QTestApiModel.TestCycleResource> childrenCycles = null, List<QTestApiModel.TestSuiteWithCustomFieldResource> childrenSuites = null)
+        public QtestCycleTreeItem(List<QTestAPIStdModel.TestCycleResource> childrenCycles = null, List<QTestAPIStdModel.TestSuiteWithCustomFieldResource> childrenSuites = null)
         {
             currentChildrens = new List<ITreeViewItem>();
 
             if (childrenCycles != null)
             {
-                foreach (QTestApiModel.TestCycleResource cycle in childrenCycles)
+                foreach (QTestAPIStdModel.TestCycleResource cycle in childrenCycles)
                 {
                     QtestCycleTreeItem pfn = new QtestCycleTreeItem(cycle.TestCycles, cycle.TestSuites);
                     pfn.Name = cycle.Name.ToString();
@@ -60,7 +60,7 @@ namespace Ginger.ALM.Qtest.TreeViewItems
 
             if (childrenSuites != null)
             {
-                foreach (QTestApiModel.TestSuiteWithCustomFieldResource suite in childrenSuites)
+                foreach (QTestAPIStdModel.TestSuiteWithCustomFieldResource suite in childrenSuites)
                 {
                     QtestSuiteTreeItem pfn = new QtestSuiteTreeItem();
                     pfn.Name = suite.Name.ToString();
