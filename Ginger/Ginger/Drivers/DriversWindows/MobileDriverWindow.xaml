@@ -204,7 +204,7 @@
                         <ComboBoxItem>10</ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
-                <UserControls:ucButton x:Name="xDeviceSettingsBtn" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageHeight="16" ButtonImageWidth="16" ButtonImageType="Config" Click="xDeviceSettingsBtn_Click" ButtonText="Device Settings" Margin="0,10,0,0"/>
+                <UserControls:ucButton x:Name="xDeviceSettingsBtn" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Left" Visibility="Collapsed" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageHeight="16" ButtonImageWidth="16" ButtonImageType="Config" Click="xDeviceSettingsBtn_Click" ButtonText="Device Settings" Margin="0,10,0,0"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>
