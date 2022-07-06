@@ -36,9 +36,9 @@
                         
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}" >
 
-                        <Ginger:ucGrid x:Name="xDeviceDetailsGrid" Width="346"  HorizontalAlignment="Left" IsReadOnly="False" Title="Device Details" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Visible" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Collapsed"/>
+                        <Ginger:ucGrid x:Name="xDeviceDetailsGrid" Width="346" HorizontalAlignment="Left" IsReadOnly="False" Title="Device Details" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Visible" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Collapsed"/>
 
-                        <StackPanel x:Name="xDetailsLoadingPnl" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                        <StackPanel x:Name="xDetailsLoadingPnl" Margin="0,150,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
                             <UserControls:ImageMakerControl x:Name="xDetailsProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
                             <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_DarkBlue}">
                                 <Label.Content>
@@ -64,7 +64,7 @@
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}">
                         <Ginger:ucGrid x:Name="xDeviceMetricsGrid" Width="346" HorizontalAlignment="Left" Title="Metrics Details"  IsReadOnly="false"  ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Visible" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowSearch="Collapsed"/>
 
-                        <StackPanel x:Name="xMetricsLoadingPnl" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                        <StackPanel x:Name="xMetricsLoadingPnl" Margin="0,150,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
                             <UserControls:ImageMakerControl x:Name="xMetricsProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
                             <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_DarkBlue}">
                                 <Label.Content>
