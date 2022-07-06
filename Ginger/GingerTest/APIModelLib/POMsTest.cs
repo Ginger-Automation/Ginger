@@ -113,7 +113,7 @@ namespace GingerTest.APIModelLib
             //Act
             BitmapSource source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mLearnedPOM.ScreenShotImage.ToString()));
             //Assert  
-            Assert.IsNotNull(source, "POM.ScreenShotImage converted to source check");
+            Assert.IsNotNull(source, "POM.ScreenShotImage converted to sourse check");
         }
 
 
