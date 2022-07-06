@@ -147,6 +147,18 @@ namespace GingerCore.Drivers
         public bool BrowserMinimized { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Only for Edge: Open Edge browser in IE Mode")]
+        public bool OpenIEModeInEdge { get; set;}
+
+
+        [UserConfigured]
+        [UserConfiguredDefault("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")]
+        [UserConfiguredDescription("Only if OpenEdgeInIEMode is set to true: location of Edge.exe file in local computer")]
+        public string EdgeExcutablePath { get; set; }
+        //"C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
+
+        [UserConfigured]
         [UserConfiguredDefault("false")]//"driver is failing to launch when the mode is true"
         [UserConfiguredDescription("Hide the Driver Console (Command Prompt) Window")]
         public bool HideConsoleWindow { get; set; }
@@ -548,16 +560,61 @@ namespace GingerCore.Drivers
 
                     #region EDGE
                     case eBrowserType.Edge:
-                        EdgeOptions EDOpts = new EdgeOptions();
-                        //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
-                        //EDOpts.UseChromium = true;
-                        EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
-                        if (IsUserProfileFolderPathValid())
-                            EDOpts.AddAdditionalEdgeOption("user-data-dir=" ,UserProfileFolderPath);
-                        SetCurrentPageLoadStrategy(EDOpts);
-                        EdgeDriverService EDService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
-                        EDService.HideCommandPromptWindow = HideConsoleWindow;
-                        Driver = new EdgeDriver(EDService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        if (OpenIEModeInEdge)
+                        {
+                            var ieOptions = new InternetExplorerOptions();
+                            ieOptions.AttachToEdgeChrome = true;
+                            ieOptions.EdgeExecutablePath = EdgeExcutablePath;
+
+                            if (EnsureCleanSession == true)
+                            {
+                                ieOptions.EnsureCleanSession = true;
+                            }
+                            
+                            ieOptions.Proxy = mProxy == null ? null : mProxy;
+                            ieOptions.IntroduceInstabilityByIgnoringProtectedModeSettings = true;
+                            if (IgnoreIEProtectedMode == true)
+                            {
+                                ieOptions.IntroduceInstabilityByIgnoringProtectedModeSettings = true;
+                                ieOptions.ElementScrollBehavior = InternetExplorerElementScrollBehavior.Bottom;
+                            }
+                            if (BrowserPrivateMode == true)
+                            {
+                                ieOptions.ForceCreateProcessApi = true;
+                                ieOptions.BrowserCommandLineArguments = "-private";
+                            }
+                            if (EnableNativeEvents == true)
+                            {
+                                ieOptions.EnableNativeEvents = true;
+                            }
+                            if (!(String.IsNullOrEmpty(SeleniumUserArguments) && String.IsNullOrWhiteSpace(SeleniumUserArguments)))
+                                ieOptions.BrowserCommandLineArguments += "," + SeleniumUserArguments;
+
+                            if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey)))
+                                ieOptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey;
+
+                            if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl)))
+                                ieOptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
+                            SetCurrentPageLoadStrategy(ieOptions);
+                            ieOptions.IgnoreZoomLevel = true;
+                            InternetExplorerDriverService IExplorerService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
+                            IExplorerService.HideCommandPromptWindow = HideConsoleWindow;
+                            Driver = new InternetExplorerDriver(IExplorerService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        }
+                        else
+
+                        {
+                            EdgeOptions EDOpts = new EdgeOptions();
+                            //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
+                            //EDOpts.UseChromium = true;
+                            EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                            if (IsUserProfileFolderPathValid())
+                                EDOpts.AddAdditionalEdgeOption("user-data-dir=", UserProfileFolderPath);
+                            SetCurrentPageLoadStrategy(EDOpts);
+                            EdgeDriverService EDService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
+                            EDService.HideCommandPromptWindow = HideConsoleWindow;
+                            Driver = new EdgeDriver(EDService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        }
 
                         break;
                     #endregion
@@ -1242,7 +1299,7 @@ namespace GingerCore.Drivers
                 {
                     AddCurrentScreenShot(act);
                 }
-                if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
+                else if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
                 {
                     Bitmap img = GetScreenShot(true);
                     act.AddScreenShot(img, Driver.Title);
@@ -4035,15 +4092,7 @@ namespace GingerCore.Drivers
                             //Element Screenshot
                             if (LearnScreenshotsOfElements)
                             {
-                                var screenshot = ((ITakesScreenshot)webElement).GetScreenshot();
-                                Bitmap image = ScreenshotToImage(screenshot);
-                                //foundElemntInfo.ScreenShotImage = BitmapToBase64(screenshot);
-                                using (MemoryStream ms = new MemoryStream())
-                                {
-                                    image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                                    byte[] byteImage = ms.ToArray();
-                                    foundElemntInfo.ScreenShotImage = Convert.ToBase64String(byteImage);
-                                }
+                                foundElemntInfo.ScreenShotImage = TakeElementScreenShot(webElement);
                             }
 
                             foundElemntInfo.IsAutoLearned = true;
@@ -5389,6 +5438,7 @@ namespace GingerCore.Drivers
 
                 foundElemntInfo.ElementObject = el;
                 foundElemntInfo.Path = string.Empty;
+                foundElemntInfo.ScreenShotImage = TakeElementScreenShot(el);
 
                 if (el.TagName == "iframe" || el.TagName == "frame")
                 {
@@ -5407,7 +5457,23 @@ namespace GingerCore.Drivers
             }
             return null;
         }
-
+        /// <summary>
+        /// Take specific element screenshot
+        /// </summary>
+        /// <param name="element">IWebElement</param>
+        /// <returns>String image base64</returns>
+        private string TakeElementScreenShot(IWebElement element)
+        {
+            var screenshot = ((ITakesScreenshot)element).GetScreenshot();
+            Bitmap image = ScreenshotToImage(screenshot);
+            byte[] byteImage;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                byteImage = ms.ToArray();
+            }
+            return Convert.ToBase64String(byteImage);
+        }
 
         private ElementInfo GetElementFromIframe(ElementInfo IframeElementInfo)
         {

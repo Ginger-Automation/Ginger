@@ -104,7 +104,6 @@ namespace GingerCore.Actions.Windows
             List =6
         }
 
-        [IsSerializedForLocalRepository]
         public eControlAction ControlAction
         {
             get

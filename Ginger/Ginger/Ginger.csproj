@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Nullable>enable</Nullable>
@@ -2408,8 +2408,8 @@
     <None Update="ALMRESTConfiguration\appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Documents\License.rtf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Help\Library\OfflineHelp.htm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Images\DragDrop\DoNotDrop.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
