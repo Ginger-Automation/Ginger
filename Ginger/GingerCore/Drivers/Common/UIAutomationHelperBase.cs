@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
@@ -188,8 +190,8 @@ namespace GingerCore.Drivers.Common
                 double x;
                 double y;
 
-                x = ((AutomationElement)GetCurrentWindow()).Current.BoundingRectangle.X;
-                y = ((AutomationElement)GetCurrentWindow()).Current.BoundingRectangle.Y;
+                x = ((UIAuto.AutomationElement)GetCurrentWindow()).Current.BoundingRectangle.X;
+                y = ((UIAuto.AutomationElement)GetCurrentWindow()).Current.BoundingRectangle.Y;
 
                 double xCordinate = double.Parse(GetControlPropertyValue(ei.ElementObject, "XOffset")) - x;
                 double yCordinate = double.Parse(GetControlPropertyValue(ei.ElementObject, "YOffset")) - y;
