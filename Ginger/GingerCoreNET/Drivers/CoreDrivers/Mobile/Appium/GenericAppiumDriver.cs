@@ -2954,9 +2954,9 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                Method method = Method.POST;
+                Method method = Method.Post;
                 RestRequest restRequest = (RestRequest)new RestRequest(api, method) { RequestFormat = DataFormat.Json }.AddJsonBody(requestBody);
-                IRestResponse response = await restClient.ExecuteAsync(restRequest);
+                RestResponse response = await restClient.ExecuteAsync(restRequest);
                 if (response.IsSuccessful)
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + api);

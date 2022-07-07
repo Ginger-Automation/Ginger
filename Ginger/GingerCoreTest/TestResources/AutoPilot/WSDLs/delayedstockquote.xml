@@ -157,7 +157,7 @@
       <wsdl:output message="tns:GetQuickQuoteSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="GetQuoteDataSet">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">This method retrieves the stock information and returns it in a dataset.  Use a , to diplay multiple quotes.  Use a license key of 0 for testing.</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">This method retrieves the stock information and returns it in a dataset.  Use a , to display multiple quotes.  Use a license key of 0 for testing.</wsdl:documentation>
       <wsdl:input message="tns:GetQuoteDataSetSoapIn" />
       <wsdl:output message="tns:GetQuoteDataSetSoapOut" />
     </wsdl:operation>
@@ -174,7 +174,7 @@
       <wsdl:output message="tns:GetQuickQuoteHttpGetOut" />
     </wsdl:operation>
     <wsdl:operation name="GetQuoteDataSet">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">This method retrieves the stock information and returns it in a dataset.  Use a , to diplay multiple quotes.  Use a license key of 0 for testing.</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">This method retrieves the stock information and returns it in a dataset.  Use a , to display multiple quotes.  Use a license key of 0 for testing.</wsdl:documentation>
       <wsdl:input message="tns:GetQuoteDataSetHttpGetIn" />
       <wsdl:output message="tns:GetQuoteDataSetHttpGetOut" />
     </wsdl:operation>
@@ -191,7 +191,7 @@
       <wsdl:output message="tns:GetQuickQuoteHttpPostOut" />
     </wsdl:operation>
     <wsdl:operation name="GetQuoteDataSet">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">This method retrieves the stock information and returns it in a dataset.  Use a , to diplay multiple quotes.  Use a license key of 0 for testing.</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">This method retrieves the stock information and returns it in a dataset.  Use a , to display multiple quotes.  Use a license key of 0 for testing.</wsdl:documentation>
       <wsdl:input message="tns:GetQuoteDataSetHttpPostIn" />
       <wsdl:output message="tns:GetQuoteDataSetHttpPostOut" />
     </wsdl:operation>

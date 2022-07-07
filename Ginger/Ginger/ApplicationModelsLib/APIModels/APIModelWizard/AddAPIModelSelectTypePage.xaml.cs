@@ -413,7 +413,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     System.Windows.Forms.OpenFileDialog dlg2 = new System.Windows.Forms.OpenFileDialog();
 
-                    dlg2.Filter = "Json Files (*.json)|*.json" + "|YAML Files (*.yaml)|*.yaml;*.yml" + "|All Files (*.*)|*.*";
+                    dlg2.Filter = "JSON Files (*.json)|*.json" + "|YAML Files (*.yaml)|*.yaml;*.yml" + "|All Files (*.*)|*.*";
 
                     System.Windows.Forms.DialogResult result = dlg2.ShowDialog();
 
@@ -520,7 +520,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             }
             else if (CheckForJsonParser(fileName))
             {
-                Reporter.ToUser(eUserMsgKey.FileOperationError, "Please use Json for this file");
+                Reporter.ToUser(eUserMsgKey.FileOperationError, "Please use JSON for this file");
             }
         }
 

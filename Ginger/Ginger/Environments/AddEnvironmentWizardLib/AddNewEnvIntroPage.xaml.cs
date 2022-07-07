@@ -53,7 +53,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
             TBH.AddLineBreak();
             TBH.AddFormattedText("Important to Know:", foregroundColor, true);
             TBH.AddLineBreak();            
-            TBH.AddFormattedText("All configured Environments must have identical Applications/Params/DB/Unix names- only actual end point data value supposed to be different for each Environment ", foregroundColor);
+            TBH.AddFormattedText("All configured Environments must have identical Applications/Parameters/DB/Unix names- only actual end point data value supposed to be different for each Environment ", foregroundColor);
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddLineBreak();        
