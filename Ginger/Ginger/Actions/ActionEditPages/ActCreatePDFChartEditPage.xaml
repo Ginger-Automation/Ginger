@@ -30,7 +30,7 @@
         </StackPanel>
 
         <StackPanel Grid.Row="1" Margin="30,0,0,0">
-            <Label Style="{StaticResource @InputFieldLabelStyle}">Params Name</Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Parameters Name</Label>
             <UserControlsLib:UCComboBox x:Name="ParamsComboBox" Margin="0,0,0,10"/>
         </StackPanel>
 
