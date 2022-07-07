@@ -334,6 +334,7 @@
     <Compile Include="GeneralLib\ComboBoxWindow.xaml.cs">
       <DependentUpon>ComboBoxWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GeneralLib\MarshalExtension.cs" />
     <Compile Include="GeneralLib\ProcessExtension.cs" />
     <Compile Include="GingerOCR\GingerOcrOperations.cs" />
     <Compile Include="Helpers\HTMLHelper.cs" />
