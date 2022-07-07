@@ -739,8 +739,8 @@
     <Reference Include="QCRestClient">
       <HintPath>..\GingerCoreNET\DLLS\QCRestClient.dll</HintPath>
     </Reference>
-    <Reference Include="QTestAPI">
-      <HintPath>..\GingerCoreNET\DLLS\QTestAPI.dll</HintPath>
+    <Reference Include="QTestAPIStd">
+      <HintPath>..\GingerCoreNET\DLLS\QTestAPIStd.dll</HintPath>
     </Reference>
     <Reference Include="SikuliStandardNet">
       <HintPath>..\GingerCoreNET\DLLS\SikuliStandardNet.dll</HintPath>
