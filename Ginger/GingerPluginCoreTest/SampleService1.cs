@@ -25,7 +25,7 @@ namespace GingerPluginCoreTest
     public class SampleService1
     {        
 
-        [GingerAction(Id: "Concat", description: "Concat two string")]        
+        [GingerAction(Id: "Concat", description: "Concatenate two string")]        
         public void Concat(IGingerAction GA,                                                          
                             [MinLength(10)]// define s1 Min 10
                             [Mandatory] // user must fill a value

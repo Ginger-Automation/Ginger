@@ -9,10 +9,10 @@ Like: for Mobile testing you will have Agent type which fits for android testing
             
 ### Can I have Multiple Agents from Same Type?           
 Yes, you can define as many Agents as you need, each Agent store configurations list, so you can have 2 Agents from the same Type but each will have different configurations values."            
-Like: 2 Chrome Agents but one configured to use Proxy and the other not, or 2 Android Agents but each will point to different Android App in the device."            
+Like: 2 Chrome Agents but one configured to use Proxy and the other not, or 2 Android Agents but each will point to different Android Application in the device."            
             
             
 ### Where I Use Agents in my Automation Flow?            
 You will need to match between the ```$GingerCore.eTermResKey.BusinessFlow$``` Target Application and the Agent you want it to use (both must be from the same Platform type).            
-Like: your Target Application for testing is Facebook and the Agent you want to use is Chrome Agent because you want to test Facebook behaviour on Chrome browser."
+Like: your Target Application for testing is Facebook and the Agent you want to use is Chrome Agent because you want to test Facebook behavior on Chrome browser."
                        
