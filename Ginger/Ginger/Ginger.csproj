@@ -569,6 +569,7 @@
     <None Remove="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
     <None Remove="Resources\GingerDataSource.mdb" />
     <None Remove="RunSetLib\CreateAutoRunWizardLib\AutoRunIntroduction.md" />
+    <None Remove="StaticDrivers\selenium-server-standalone.jar" />
     <None Remove="TestLib\WizardLib\Intro.md" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\android.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\androidOutline.png" />
@@ -602,15 +603,12 @@
       <Isolated>false</Isolated>
       <EmbedInteropTypes>true</EmbedInteropTypes>
     </COMReference>
-    <COMReference Include="Microsoft.Office.Interop.Outlook">
-      <WrapperTool>tlbimp</WrapperTool>
-      <VersionMinor>6</VersionMinor>
-      <VersionMajor>9</VersionMajor>
-      <Guid>00062fff-0000-0000-c000-000000000046</Guid>
-      <Lcid>0</Lcid>
-      <Isolated>false</Isolated>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
-    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="StaticDrivers\selenium-server-standalone.jar">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -708,6 +706,10 @@
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>..\GingerCoreNET\DLLS\GingerExternal.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.Microsoft.Office.Interop.Outlook">
+      <HintPath>..\GingerCoreNET\DLLS\Interop.Microsoft.Office.Interop.Outlook.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Interop.TDAPIOLELib">
       <HintPath>DLLs\Interop.TDAPIOLELib.dll</HintPath>
@@ -2454,9 +2456,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="StaticDrivers\GingerAgentStarter.jar">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="StaticDrivers\selenium-server-standalone.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
