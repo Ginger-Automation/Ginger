@@ -36,7 +36,7 @@ namespace Ginger.ALM.Qtest
 
         GenericWindow genWin = null;
 
-        ObservableList<QTestApiModel.ModuleResource> treeData;
+        ObservableList<QTestAPIStdModel.ModuleResource> treeData;
         object mCurrentSelectedObject = new object();
         private ITreeViewItem mCurrentSelectedTreeItem = null;
 
@@ -48,7 +48,7 @@ namespace Ginger.ALM.Qtest
             TestPlanExplorerTreeView.SetTitleSection(2, 30, 15, FontWeights.Bold);
             //set root item
             GetTreeData();
-            foreach (QTestApiModel.ModuleResource moduleResource in treeData)
+            foreach (QTestAPIStdModel.ModuleResource moduleResource in treeData)
             {
                 QtestModuleTreeItem tvi = new QtestModuleTreeItem(moduleResource.Children);
                 tvi.ID = moduleResource.Id.ToString();

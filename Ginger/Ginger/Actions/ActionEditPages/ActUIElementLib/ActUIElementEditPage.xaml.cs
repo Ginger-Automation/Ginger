@@ -432,7 +432,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     break;
 
                 default:
-                    Reporter.ToLog(eLogLevel.DEBUG, mAction.ElementAction.ToString() + "not required config page.");
+                    Reporter.ToLog(eLogLevel.DEBUG, mAction.ElementAction.ToString() + "not required configuration page.");
                     break;
             }
 

@@ -40,12 +40,12 @@ namespace Ginger.ALM.Qtest.TreeViewItems
 
         private new ContextMenu mContextMenu = new ContextMenu();
 
-        public QtestModuleTreeItem(List<QTestApiModel.ModuleResource> moduleChildrenResources)
+        public QtestModuleTreeItem(List<QTestAPIStdModel.ModuleResource> moduleChildrenResources)
         {
             CurrentChildrens = new List<ITreeViewItem>();
             if (moduleChildrenResources != null)
             {
-                foreach (QTestApiModel.ModuleResource module in moduleChildrenResources)
+                foreach (QTestAPIStdModel.ModuleResource module in moduleChildrenResources)
                 {
                     QtestModuleTreeItem tvi = new QtestModuleTreeItem(module.Children);
                     tvi.ID = module.Id.ToString();
