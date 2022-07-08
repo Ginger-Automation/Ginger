@@ -40,7 +40,7 @@ namespace Ginger.ALM.Qtest
 
         ObservableList<BusinessFlow> mBizFlows;
         private List<string[]> mExecDetailNames;
-        ObservableList<QTestApiModel.TestCycleResource> treeData;
+        ObservableList<QTestAPIStdModel.TestCycleResource> treeData;
 
         private ITreeViewItem mCurrentSelectedTreeItem = null;
         public string CurrentSelectedPath { get; set; }
@@ -74,7 +74,7 @@ namespace Ginger.ALM.Qtest
             QtestCyclesExplorerTreeView.TreeTitle = "'" + ALMCore.DefaultAlmConfig.ALMProjectName + "' - Qtest Cycles Explorer";
             QtestCyclesExplorerTreeView.TreeTitleStyle = (Style)TryFindResource("@ucTitleStyle_3");
             QtestCyclesExplorerTreeView.Tree.ItemSelected += TestLabExplorerTreeView_ItemSelected;
-            foreach (QTestApiModel.TestCycleResource cycle in treeData)
+            foreach (QTestAPIStdModel.TestCycleResource cycle in treeData)
             {
                 QtestCycleTreeItem tvi = new QtestCycleTreeItem(cycle.TestCycles, cycle.TestSuites);
                 tvi.Name = cycle.Name.ToString();
