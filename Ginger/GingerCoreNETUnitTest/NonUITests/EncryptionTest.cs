@@ -74,6 +74,35 @@ namespace UnitTests.NonUITests
             //Assert
             Assert.AreEqual("ginger", decryptedString);
         }
-        
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void EncryptLongString()
+        {
+            //Arrange
+            string encryptedString = string.Empty;
+            bool result = false;
+
+            //Act
+            encryptedString = EncryptionHandler.EncryptwithKey("53d7ccd462fbfbc43c6dc9f3f638747582df333b");
+
+            //Assert
+            Assert.AreEqual("FJoU8gEfBEM33VFEL7RZI4begMs2zj35JHGmMn6MUd9V1uYhkpNmtvo3uBRLYhtL", encryptedString);
+        }
+        [TestMethod]
+        [Timeout(60000)]
+        public void DecryptLongString()
+        {
+            //Arrange
+            string decryptedString = string.Empty;
+            bool result = false;
+
+            //Act
+            decryptedString = EncryptionHandler.DecryptwithKey("FJoU8gEfBEM33VFEL7RZI4begMs2zj35JHGmMn6MUd9V1uYhkpNmtvo3uBRLYhtL");
+
+            //Assert
+            Assert.AreEqual("53d7ccd462fbfbc43c6dc9f3f638747582df333b", decryptedString);
+        }
+
     }
 }
