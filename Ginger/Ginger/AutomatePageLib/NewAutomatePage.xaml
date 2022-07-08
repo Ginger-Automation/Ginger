@@ -82,7 +82,7 @@
                 <GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,10,5,10"/>
 
                 <StackPanel x:Name="xBusinessFlowOperationssPnl" DockPanel.Dock="Left" Orientation="Horizontal">
-                    <UserControls:ucButton x:Name="xSearchBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageType="Search" Click="xSearchBtn_Click" >
+                    <UserControls:ucButton x:Name="xSearchBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageType="Search" Click="xSearchBtn_Click" >
                         <UserControls:ucButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Find &amp; Replace in [BusinessFlow]"></GingerCore:ucTextDicResource>
                         </UserControls:ucButton.ToolTip>
@@ -91,7 +91,7 @@
                     <Menu x:Name="xAnalyzerOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Analyzer Options">
                         <MenuItem Cursor="Hand">
                             <MenuItem.Icon>
-                                <UserControls:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="14"  HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
+                                <UserControls:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="16"  HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
                             </MenuItem.Icon>
                             <MenuItem.Header>
                                 <UserControls:ImageMakerControl ImageType="ArrowDown" SetAsFontImageWithSize="15"  HorizontalAlignment="Left" Margin="0,0,0,0" Background="Transparent"/>
@@ -118,7 +118,7 @@
                     <Menu x:Name="xReportOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Report Options">
                         <MenuItem Cursor="Hand">
                             <MenuItem.Icon>
-                                <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="15"  HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
+                                <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="16" HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
                             </MenuItem.Icon>
                             <MenuItem.Header>
                                 <UserControls:ImageMakerControl ImageType="ArrowDown" SetAsFontImageWithSize="15"  HorizontalAlignment="Left" Margin="0,0,0,0" Background="Transparent"/>
