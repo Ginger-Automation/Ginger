@@ -89,9 +89,9 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         private void GetHubFilesButton_Click(object sender, RoutedEventArgs e)
         {
             //Getting the Ginger execution path
-            string exeLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string? assemblyLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string sourcePath = exeLocation.Replace("Ginger.exe", "StaticDrivers");
+            string sourcePath = Path.Combine(assemblyLocation, "StaticDrivers");
             string targetPath = userFolder + "\\Temp\\GingerTemp";
             
             string jarFileName = "selenium-server-standalone.jar";
@@ -166,9 +166,9 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         private void GetNodeFilesButton_Click(object sender, RoutedEventArgs e)
         {
             //Getting the Ginger execution path
-            string exeLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string? assemblyLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string sourcePath = exeLocation.Replace("Ginger.exe", "StaticDrivers");
+            string sourcePath = Path.Combine(assemblyLocation, "StaticDrivers");
             string targetPath = userFolder + "\\Temp\\GingerTemp";
             string jarFileName = "selenium-server-standalone.jar";
             string sourceFile = System.IO.Path.Combine(sourcePath, jarFileName);
@@ -187,13 +187,13 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
 
             //taking the drivers to the temp folder
-            string driversSourcePath = exeLocation.Replace("Ginger.exe", "");
+            string driversSourcePath = assemblyLocation;
             string chromeDriverFile = "chromedriver.exe";
             string fireFoxDriverFile = "geckodriver.exe";
             string IEDriverFile = "IEDriverServer.exe";
             string EdgeDriverFile = "msedgedriver.exe";
 
-            string chromeSourceFile = System.IO.Path.Combine(driversSourcePath, chromeDriverFile);
+            string chromeSourceFile = System.IO.Path.Combine(assemblyLocation, chromeDriverFile);
             string chromeDestFile = System.IO.Path.Combine(targetPath, chromeDriverFile);
 
             if (!System.IO.File.Exists(chromeDestFile))
