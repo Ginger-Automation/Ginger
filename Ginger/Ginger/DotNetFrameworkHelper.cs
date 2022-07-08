@@ -43,6 +43,7 @@ using GingerCore.Drivers.PBDriver;
 using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Drivers.WindowsLib;
 using GingerCore.Environments;
+using GingerCore.GeneralLib;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using Oracle.ManagedDataAccess.Client;
@@ -241,7 +242,7 @@ namespace Ginger
                 {
                     // If so, use the GetActiveObject method to obtain the process and cast it to an ApplicatioInstall-Package Microsoft.Office.Interop.Exceln object.
 
-                    //objOutLook = Marshal.GetActiveObject("Outlook.Application") as Outlook.Application;
+                    objOutLook = MarshalExtension.GetActiveObject("Outlook.Application") as Outlook.Application;
                 }
                 else
                 {
