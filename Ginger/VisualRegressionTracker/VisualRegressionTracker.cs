@@ -235,33 +235,7 @@ namespace VisualRegressionTracker
                 IgnoreAreas = ignoreAreas == null ? null : new List<IgnoreAreaDto>(ignoreAreas),
             };
 
-            var result = await SubmitTestRun(dto, cancellationToken).ConfigureAwait(false);
-
-            //if (result.Status == TestRunStatus.AutoApproved)
-            //{
-            //    return result;
-            //}
-
-            //if (!config.EnableSoftAssert && result.Status != TestRunStatus.Ok)
-            //{
-            //    var errorString = "";
-            //    switch (result.Status)
-            //    {
-            //        case TestRunStatus.New:
-            //            errorString = $"No baseline: {result.Url}";
-            //            break;
-            //        case TestRunStatus.Unresolved:
-            //            errorString = $"Difference found: {result.DiffUrl}";
-            //            break;
-                    
-            //        default:
-            //            throw new VisualRegressionTrackerError("Unexpected status");
-            //            break;
-            //    }
-            //    throw new VisualRegressionTrackerError(errorString);
-            //}
-
-            return result;
+            return await SubmitTestRun(dto, cancellationToken).ConfigureAwait(false);
         }
  
         public Task<TestRunResult> Track(

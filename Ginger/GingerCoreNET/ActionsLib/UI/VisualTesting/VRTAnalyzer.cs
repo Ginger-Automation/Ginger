@@ -229,29 +229,32 @@ namespace GingerCore.Actions.VisualTesting
 
 
                 //Calculate the action status based on the results
-                switch (result.Status)
+                if (WorkSpace.Instance.Solution.VRTConfiguration.FailActionOnCheckpointMismatch == Ginger.Configurations.VRTConfiguration.eFailActionOnCheckpointMismatch.Yes && result.Status != TestRunStatus.Ok)
                 {
-                    case TestRunStatus.New:
-                        mAct.Error += $"No baseline found, Please approve it on dashboard to create baseline." + System.Environment.NewLine + result.Url;
-                        break;
-                    case TestRunStatus.Unresolved:
-                        mAct.Error += $"Differences from baseline was found." + System.Environment.NewLine + result.DiffUrl;
+                    switch (result.Status)
+                    {
+                        case TestRunStatus.New:
+                            mAct.Error += $"No baseline found, Please approve it on dashboard to create baseline." + System.Environment.NewLine + result.Url;
+                            break;
+                        case TestRunStatus.Unresolved:
+                            mAct.Error += $"Differences from baseline was found." + System.Environment.NewLine + result.DiffUrl;
 
-                        //Add difference image to act screenshots
-                        int index = result.DiffUrl.LastIndexOf("/");
-                        string imageToDownload = result.DiffUrl.Substring(index + 1);
-                        General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
+                            //Add difference image to act screenshots
+                            int index = result.DiffUrl.LastIndexOf("/");
+                            string imageToDownload = result.DiffUrl.Substring(index + 1);
+                            General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
 
-                        //Add baseline image to act screenshots
-                        index = result.BaselineUrl.LastIndexOf("/");
-                        imageToDownload = result.BaselineUrl.Substring(index + 1);
-                        General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
+                            //Add baseline image to act screenshots
+                            index = result.BaselineUrl.LastIndexOf("/");
+                            imageToDownload = result.BaselineUrl.Substring(index + 1);
+                            General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
 
-                        //No need to Add current Screenshot to act screenshots, it will be added in the end if the action is failed
-                        break;
-                    default:
-                        mAct.ExInfo = "TestRun Results Status: " + result.Status;
-                        break;
+                            //No need to Add current Screenshot to act screenshots, it will be added in the end if the action is failed
+                            break;
+                        default:
+                            mAct.ExInfo = "TestRun Results Status: " + result.Status;
+                            break;
+                    }
                 }
             }
             catch (AggregateException ae)
