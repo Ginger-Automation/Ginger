@@ -37,7 +37,7 @@
 
         </TabItem>
 
-            <TabItem Header="Unix Config">
+            <TabItem Header="Unix Configurations">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200"/>

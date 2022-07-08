@@ -213,7 +213,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Bolt);
                     break;
                 case eImageType.Agent:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_User);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_User);
                     break;
                 case eImageType.RunSet:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_PlayCircle);

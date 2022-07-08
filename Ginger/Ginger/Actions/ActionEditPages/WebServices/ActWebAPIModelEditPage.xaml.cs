@@ -271,7 +271,7 @@ namespace Ginger.Actions.WebServices
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while mapping the API Model params to Data Source", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while mapping the API Model parameters to Data Source", ex);
                 Reporter.ToUser(eUserMsgKey.MappedtoDataSourceError);
             }
         }

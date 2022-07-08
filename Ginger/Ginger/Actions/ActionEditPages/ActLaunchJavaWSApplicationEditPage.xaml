@@ -78,7 +78,7 @@
                     <Actions:UCValueExpression x:Name="WaitForWindowTitleTextBox" Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
                     <Label Grid.Row="1" Grid.Column="0"  Style="{StaticResource @InputFieldLabelStyle}">Max Waiting Time (seconds):</Label>
                     <Actions:UCValueExpression x:Name="WaitForWindowTitleMaxTimeTextBox" Grid.Row="1" Grid.Column="1" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <CheckBox x:Name="BlockingWindowChkbox" Style="{StaticResource @CheckBoxStyle}" Content="Blocking Java Window"  Grid.Column="0" Grid.Row="2" Margin="10" ToolTip="Handling of blocking windows that pop up before loading the app"/>
+                    <CheckBox x:Name="BlockingWindowChkbox" Style="{StaticResource @CheckBoxStyle}" Content="Blocking Java Window"  Grid.Column="0" Grid.Row="2" Margin="10" ToolTip="Handling of blocking windows that pop up before loading the application"/>
                 </Grid>
             </StackPanel>
         </StackPanel>

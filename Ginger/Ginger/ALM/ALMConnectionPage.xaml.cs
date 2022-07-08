@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using GingerCore.ALM;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -767,7 +768,8 @@ namespace Ginger.ALM
 
         private void HandleLinkClick(object sender, RequestNavigateEventArgs e)
         {
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = @"http://ginger/Downloads/Other", UseShellExecute = true });
+            System.Diagnostics.Process.Start(new ProcessStartInfo { FileName = @"http://ginger/Downloads/Other", UseShellExecute = true });
+
             e.Handled = true;
         }
 

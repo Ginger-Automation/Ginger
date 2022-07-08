@@ -38,7 +38,7 @@ namespace Ginger.Actions.ApiActionsConversion
     {
         RepositoryFolder<ApplicationAPIModel> mAPIModelFolder;
 
-        public override string Title { get { return "Convert Webservices Actions"; } }
+        public override string Title { get { return "Convert Web services Actions"; } }
 
         private ObservableList<BusinessFlowToConvert> mListOfBusinessFlow = null;
         public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow
@@ -77,7 +77,7 @@ namespace Ginger.Actions.ApiActionsConversion
             mAPIModelFolder = apiModelFolder;
             ListOfBusinessFlow = GetBusinessFlowsToConvert(); 
 
-            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Webservices Actions Conversion Introduction", Page: new WizardIntroPage("/ApplicationModelsLib/APIModels/ApiActionsConversionWizard/ApiActionsConversionIntro.md"));
+            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Web services Actions Conversion Introduction", Page: new WizardIntroPage("/ApplicationModelsLib/APIModels/ApiActionsConversionWizard/ApiActionsConversionIntro.md"));
 
             string businessFlow = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
             AddPage(Name: "Select " + businessFlow + " for Conversion", Title: "Select " + businessFlow + " for Conversion", SubTitle: "Select " + businessFlow + " for Conversion", Page: new SelectBusinessFlowWzardPage(ListOfBusinessFlow, new Context()));
