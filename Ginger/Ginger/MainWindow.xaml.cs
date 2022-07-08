@@ -953,6 +953,18 @@ namespace Ginger
             {
                 xUserNameLbl.Content = WorkSpace.Instance.UserProfile.UserFirstName;
             }
+            string displayName;
+            string OriginalUserName = Convert.ToString(xUserNameLbl.Content);
+            if (OriginalUserName.Length > 10)
+            {
+                displayName = OriginalUserName.Substring(0, 7) + "...";
+            }
+            else
+            {
+                displayName = OriginalUserName;
+            }
+            xUserNameLbl.Content = displayName;
+            xUserNameLbl.ToolTip = OriginalUserName;
         }
 
         private void xLogOptionsMenuItem_Click(object sender, RoutedEventArgs e)
