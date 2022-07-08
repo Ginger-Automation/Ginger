@@ -76,7 +76,7 @@
 
             <Grid x:Name="xUpdateNetworkUrlGridPnl" Visibility="Collapsed" HorizontalAlignment="Stretch" Margin="0,10,0,0">
                 <Label Style="{StaticResource @LabelStyle}" x:Name="LabelHeaders" Content="Request Headers:" />
-                <Ginger:ucGrid x:Name="UpdateNetworkUrlGrid" Title="Network Update Parameter" Height="156"/>
+                <Ginger:ucGrid x:Name="UpdateNetworkUrlGrid" Title="Network URLs to Monitor" Height="156"/>
                 <Grid.Resources>
                     <DataTemplate x:Key="UpdateNetworkParametersPathValueExpressionButton">
                         <Button x:Name="UpdateNetworkParametersGridPathVEButton" Content="..." Click="UpdateNetworkParametersGridPathVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>

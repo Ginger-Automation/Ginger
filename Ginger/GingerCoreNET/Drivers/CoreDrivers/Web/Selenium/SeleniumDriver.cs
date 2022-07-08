@@ -69,12 +69,11 @@ namespace GingerCore.Drivers
     {
         protected IDevToolsSession Session;
         DevToolsSession devToolsSession;
-        Dictionary<string, object> networklogdict;
-        Dictionary<string, object> networklogdictRequest;
+        List<Tuple<string,object>> networkResponseLogList;
+        List<Tuple<string, object>> networkRequestLogList;
         INetwork interceptor;
-        public bool isStartMonitor = false;
+        public bool isNetworkLogMonitoringStarted = false;
         ActBrowserElement mAct;
-        public Dictionary<string, string> NetworkLog { get; set; }
         public enum eBrowserType
         {
             IE,
@@ -156,7 +155,7 @@ namespace GingerCore.Drivers
         [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Only for Edge: Open Edge browser in IE Mode")]
-        public bool OpenIEModeInEdge { get; set;}
+        public bool OpenIEModeInEdge { get; set; }
 
 
         [UserConfigured]
@@ -526,8 +525,8 @@ namespace GingerCore.Drivers
 
                         try
                         {
-                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut))); 
-                            
+                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+
                         }
                         catch (Exception ex)
                         {
@@ -577,7 +576,7 @@ namespace GingerCore.Drivers
                             {
                                 ieOptions.EnsureCleanSession = true;
                             }
-                            
+
                             ieOptions.Proxy = mProxy == null ? null : mProxy;
                             ieOptions.IntroduceInstabilityByIgnoringProtectedModeSettings = true;
                             if (IgnoreIEProtectedMode == true)
@@ -1306,7 +1305,7 @@ namespace GingerCore.Drivers
                 {
                     AddCurrentScreenShot(act);
                 }
-                else if(act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
+                else if (act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
                 {
                     Bitmap img = GetScreenShot(true);
                     act.AddScreenShot(img, Driver.Title);
@@ -3337,8 +3336,8 @@ namespace GingerCore.Drivers
 
             if (locateBy == eLocateBy.POMElement)
             {
-                var pomExcutionUtil = new POMExecutionUtils(act,act is ActUIElement ? ((ActUIElement)act).ElementLocateValue : ((ActVisualTesting)act).LocateValue);
-                
+                var pomExcutionUtil = new POMExecutionUtils(act, act is ActUIElement ? ((ActUIElement)act).ElementLocateValue : ((ActVisualTesting)act).LocateValue);
+
                 var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
                 if (currentPOM != null)
@@ -3390,7 +3389,7 @@ namespace GingerCore.Drivers
             return elem;
         }
 
-        
+
 
         private void SwitchFrame(ElementInfo EI)
         {
@@ -6615,6 +6614,7 @@ namespace GingerCore.Drivers
 
         public async void ActBrowserElementHandler(ActBrowserElement act)
         {
+            string AgentType = GetAgentAppName();
             switch (act.ControlAction)
             {
                 case ActBrowserElement.eControlAction.Maximize:
@@ -6793,7 +6793,7 @@ namespace GingerCore.Drivers
 
                     break;
                 case ActBrowserElement.eControlAction.StartMonitoringNetworkLog:
-                    string AgentType = GetAgentAppName();
+                    
                     if (AgentType == eBrowserType.Chrome.ToString())
                     {
                         mAct = act;
@@ -6802,19 +6802,31 @@ namespace GingerCore.Drivers
                     }
                     else
                     {
-                        act.ExInfo = "Action is skipped, Selected browser operation:"+ act.ControlAction + "  is not supported for browser type:"+ AgentType;
+                        act.ExInfo = "Action is skipped, Selected browser operation:" + act.ControlAction + "  is not supported for browser type:" + AgentType;
                         act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                     }
-                        
+
                     break;
                 case ActBrowserElement.eControlAction.GetNetworkLog:
+                    if (AgentType == eBrowserType.Chrome.ToString())
                     {
                         GetNetworkLogAsync(Driver, act).GetAwaiter().GetResult();
                     }
+                    else
+                    {
+                        act.ExInfo = "Action is skipped, Selected browser operation:" + act.ControlAction + "  is not supported for browser type:" + AgentType;
+                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                    }
                     break;
                 case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
+                    if (AgentType == eBrowserType.Chrome.ToString())
                     {
                         StopMonitoringNetworkLog(Driver, act).GetAwaiter().GetResult();
+                    }
+                    else
+                    {
+                        act.ExInfo = "Action is skipped, Selected browser operation:" + act.ControlAction + "  is not supported for browser type:" + AgentType;
+                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                     }
                     break;
 
@@ -8607,7 +8619,7 @@ namespace GingerCore.Drivers
             {
                 options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.None;
             }
-            else 
+            else
             {
                 options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Default;
             }
@@ -8659,78 +8671,65 @@ namespace GingerCore.Drivers
             var domains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V96.DevToolsSessionDomains>();
             domains.Network.Enable(new OpenQA.Selenium.DevTools.V96.Network.EnableCommandSettings());
         }
-        public async Task GetNetworkLogAsync(IWebDriver webDriver,ActBrowserElement act)
+        public async Task GetNetworkLogAsync(IWebDriver webDriver, ActBrowserElement act)
         {
-            if (isStartMonitor)
+            if (isNetworkLogMonitoringStarted)
             {
-                act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networklogdictRequest.ToList()));
-                foreach (var val in networklogdictRequest.ToList())
+                act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x=>x.Item2).ToList()));
+                act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
+                foreach (var val in networkRequestLogList.ToList())
                 {
-                    act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + val.Key.ToString(), Convert.ToString(val.Value));
+                    act.AddOrUpdateReturnParamActual(act.ControlAction.ToString()+ " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                 }
-                act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networklogdict.ToList()));
-                foreach (var val in networklogdict.ToList())
+                
+                foreach (var val in networkResponseLogList.ToList())
                 {
-                    act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + val.Key.ToString(), Convert.ToString(val.Value));
+                    act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                 }
             }
             else
             {
-                act.ExInfo = "Action is skipped," + ActBrowserElement.eControlAction.StartMonitoringNetworkLog.ToString() + " Action is not started" ;
+                act.ExInfo = "Action is skipped," + ActBrowserElement.eControlAction.StartMonitoringNetworkLog.ToString() + " Action is not started";
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
             }
-            
+
         }
 
         public async Task StartMonitoringNetworkLog(IWebDriver webDriver, ActBrowserElement act)
         {
-            
-            networklogdict = new Dictionary<string, object>();
-            networklogdictRequest = new Dictionary<string, object>();
+
+            networkRequestLogList = new List<Tuple<string, object>>();
+            networkResponseLogList = new List<Tuple<string, object>>();
             interceptor = webDriver.Manage().Network;
 
             interceptor.NetworkRequestSent += OnNetworkRequestSent;
             interceptor.NetworkResponseReceived += OnNetworkResponseReceived;
 
             await interceptor.StartMonitoring();
-            isStartMonitor = true;
+            isNetworkLogMonitoringStarted = true;
         }
 
         public async Task StopMonitoringNetworkLog(IWebDriver webDriver, ActBrowserElement act)
         {
-            if (isStartMonitor)
+            if (isNetworkLogMonitoringStarted)
             {
                 await interceptor.StopMonitoring();
 
                 interceptor.NetworkRequestSent -= OnNetworkRequestSent;
                 interceptor.NetworkResponseReceived -= OnNetworkResponseReceived;
-                foreach (var val in networklogdictRequest.ToList())
+                act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
+                act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
+                foreach (var val in networkRequestLogList.ToList())
                 {
-                    act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + val.Key.ToString(), Convert.ToString(val.Value));
+                    act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                 }
-                foreach (var val in networklogdict.ToList())
+                foreach (var val in networkRequestLogList.ToList())
                 {
-                    act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + val.Key.ToString(), Convert.ToString(val.Value));
+                    act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                 }
+                CreateNetworkLogFile("NetworklogRequest");
+                CreateNetworkLogFile("NetworklogResponse");
 
-                string FullDirectoryPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, "Documents", "NetworkLog");
-                if (!System.IO.Directory.Exists(FullDirectoryPath))
-                {
-                    System.IO.Directory.CreateDirectory(FullDirectoryPath);
-                }
-                string FullFilePath = FullDirectoryPath + @"\" + "Networklog" + DateTime.Now.Day.ToString() +"_" + DateTime.Now.Month.ToString() + "_" + DateTime.Now.Year.ToString() + "_"+ DateTime.Now.Millisecond.ToString() + ".har";
-                if (!System.IO.File.Exists(FullFilePath))
-                {
-                    string FileContent = JsonConvert.SerializeObject(networklogdictRequest.ToList());
-                    FileContent = FileContent + "############################";
-                    FileContent = FileContent + JsonConvert.SerializeObject(networklogdict.ToList());
-                    
-                    using (Stream fileStream = System.IO.File.Create(FullFilePath))
-                    {
-                        fileStream.Close();
-                    }
-                    System.IO.File.WriteAllText(FullFilePath, FileContent);
-                }
             }
             else
             {
@@ -8741,45 +8740,37 @@ namespace GingerCore.Drivers
 
         }
 
+        private void CreateNetworkLogFile(string Filename)
+        {
+            string FullDirectoryPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, "Documents", "NetworkLog");
+            if (!System.IO.Directory.Exists(FullDirectoryPath))
+            {
+                System.IO.Directory.CreateDirectory(FullDirectoryPath);
+            }
+
+            string FullFilePath = FullDirectoryPath + @"\" + Filename + DateTime.Now.Day.ToString() + "_" + DateTime.Now.Month.ToString() + "_" + DateTime.Now.Year.ToString() + "_" + DateTime.Now.Millisecond.ToString() + ".har";
+            if (!System.IO.File.Exists(FullFilePath))
+            {
+                string FileContent = Filename.Contains("Request") ? JsonConvert.SerializeObject(networkRequestLogList.ToList()) : JsonConvert.SerializeObject(networkResponseLogList.ToList());
+                
+                using (Stream fileStream = System.IO.File.Create(FullFilePath))
+                {
+                    fileStream.Close();
+                }
+                System.IO.File.WriteAllText(FullFilePath, FileContent);
+            }
+        }
+
         private void OnNetworkRequestSent(object sender, NetworkRequestSentEventArgs e)
         {
-            if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() && mAct.UpdateOperationInputValues != null && mAct.UpdateOperationInputValues.Any(x => e.RequestUrl == x.Param.ToString()))
+            if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() && mAct.UpdateOperationInputValues != null && mAct.UpdateOperationInputValues.Any(x => e.RequestUrl.ToLower().Equals(x.Param.ToLower())))
             {
-                if(networklogdictRequest.Count > 0)
-                {
-                    if (networklogdictRequest.ContainsKey(e.RequestUrl.ToString()))
-                    {
-
-                    }
-                    else
-                    {
-                        networklogdictRequest.Add("RequestUrl:" + e.RequestUrl + e.RequestId, JsonConvert.SerializeObject(e));
-                    }
-                }
-                else
-                {
-                    networklogdictRequest.Add("RequestUrl:" + e.RequestUrl, JsonConvert.SerializeObject(e));
-                }
-                
+                networkRequestLogList.Add(new Tuple<string, object>("RequestUrl:" + e.RequestUrl, JsonConvert.SerializeObject(e)));
 
             }
             else if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.AllUrl.ToString())
             {
-                if (networklogdictRequest.Count > 0)
-                {
-                    if (networklogdictRequest.ContainsKey(e.RequestUrl.ToString()))
-                    {
-                        
-                    }
-                    else
-                    {
-                        networklogdictRequest.Add("RequestUrl:" + e.RequestUrl + e.RequestId, JsonConvert.SerializeObject(e));
-                    }
-                }
-                else
-                {
-                    networklogdictRequest.Add("RequestUrl:" + e.RequestUrl, JsonConvert.SerializeObject(e));
-                }
+                networkRequestLogList.Add(new Tuple<string, object>("RequestUrl:" + e.RequestUrl, JsonConvert.SerializeObject(e)));
 
             }
 
@@ -8790,87 +8781,39 @@ namespace GingerCore.Drivers
         {
             try
             {
-                if(mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() && mAct.UpdateOperationInputValues != null && mAct.UpdateOperationInputValues.Any(x => e.ResponseUrl == x.Param.ToString()))
-                {
-                    if(mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
-                    {
-                        if(e.ResponseResourceType == "XHR")
-                        {
-                            if(networklogdict.Count > 0)
-                            {
-                                if (networklogdict.ContainsKey(e.ResponseUrl.ToString()))
-                                { 
-                                }
-                                else
-                                {
-                                    networklogdict.Add("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e));
-                                }
-                            }
-                            else
-                            {
-                                networklogdict.Add("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e));
-                            }
-                            
-                            
-                        }  
-                    }
-                    else
-                    {
-                        if (networklogdict.Count > 0)
-                        {
-                            if (networklogdict.ContainsKey(e.ResponseUrl.ToString()))
-                            {
-                            }
-                            else
-                            {
-                                networklogdict.Add("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e));
-                            }
-                        }
-                        else
-                        {
-                            networklogdict.Add("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e));
-                        }
-                    }
-                    
-                }
-                else if(mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.AllUrl.ToString())
+                if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() && mAct.UpdateOperationInputValues != null && mAct.UpdateOperationInputValues.Any(x => e.ResponseUrl.ToLower().Equals(x.Param.ToLower())))
                 {
                     if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
                     {
-                        if (networklogdict.Count > 0)
+                        if (e.ResponseResourceType == "XHR")
                         {
-                            if (networklogdict.ContainsKey(e.ResponseUrl.ToString()))
-                            {
-                            }
-                            else
-                            {
-                                networklogdict.Add("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e));
-                            }
-                        }
-                        else
-                        {
-                            networklogdict.Add("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e));
+                            networkResponseLogList.Add(new Tuple<string, object>("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e)));
                         }
                     }
                     else
                     {
-                        if (networklogdict.Count > 0)
+                        networkResponseLogList.Add(new Tuple<string, object>("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e)));
+                    }
+
+                }
+                else if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.AllUrl.ToString())
+                {
+                    if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
+                    {
+                        if (e.ResponseResourceType == "XHR")
                         {
-                            if (networklogdict.ContainsKey(e.ResponseUrl.ToString()))
-                            {
-                            }
-                            else
-                            {
-                                networklogdict.Add("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e));
-                            }
-                        }
-                        else
-                        {
-                            networklogdict.Add("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e));
+                            
+                            networkResponseLogList.Add(new Tuple<string, object>("ResponseUrl:" + e.ResponseUrl,JsonConvert.SerializeObject(e)));
                         }
                     }
+                    else
+                    {
+
+                        networkResponseLogList.Add(new Tuple<string, object>("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e)));
+                    }
+
                 }
-                
+
             }
             catch (Exception ex)
             {
