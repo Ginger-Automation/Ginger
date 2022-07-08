@@ -69,7 +69,7 @@
 
         <Border x:Name="xIdentifierBorder" Grid.RowSpan="2" Grid.Column="2" BorderBrush="Transparent"/>
 
-        <usercontrols:ImageMakerControl x:Name="xItemIcon" Grid.RowSpan="2" Grid.Column="3" ImageToolTip="" ImageType="Null" ImageForeground="{StaticResource $BackgroundColor_DarkGray}" SetAsFontImageWithSize="20" Height="20" Width="20" HorizontalAlignment="Center" Margin="0,0,0,0"/>
+        <usercontrols:ImageMakerControl x:Name="xItemIcon" Grid.RowSpan="2" Grid.Column="3" ImageToolTip="" ImageType="Null" ImageForeground="{StaticResource $BackgroundColor_DarkGray}" SetAsFontImageWithSize="17" Height="20" Width="20" HorizontalAlignment="Center" Margin="0,0,0,0"/>
 
         <Grid x:Name="xDetailsGrid" Grid.Row="0" Grid.Column="4" >
             <Grid.ColumnDefinitions>

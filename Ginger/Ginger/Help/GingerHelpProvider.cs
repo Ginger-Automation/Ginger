@@ -86,8 +86,9 @@ namespace Ginger.Help
                 if (File.Exists(helpLibIndex))
                 {
                     //start local help lib
-                    System.Diagnostics.Process proc = new System.Diagnostics.Process();
-                    proc.StartInfo.FileName = helpLibIndex;
+                    ProcessStartInfo processStartInfo = new ProcessStartInfo();
+                    processStartInfo.FileName = helpLibIndex;
+                    processStartInfo.UseShellExecute = true;
                     if (!string.IsNullOrEmpty(searchText))
                     {
                         string htmWithSearch = System.IO.Path.GetTempPath() + "OfflineGingerHelpWithSearch.htm";
@@ -99,9 +100,9 @@ namespace Ginger.Help
                         {
                             sw.WriteLine(string.Format("<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0; url='{0}'\" /></head></html>", helpLibIndex + "?rhsearch=" + Uri.EscapeUriString(searchText)));
                         }
-                        proc.StartInfo.FileName = htmWithSearch;
+                        processStartInfo.FileName = htmWithSearch;
                     }
-                    proc.Start();
+                    Process.Start(processStartInfo);
                 }
                 else
                 {
