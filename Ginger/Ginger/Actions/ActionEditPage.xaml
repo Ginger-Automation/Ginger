@@ -53,7 +53,7 @@
 
         <Grid Grid.Row="0">
             <!--Tabs Area-->
-            <TabControl x:Name="xActionTabs" Margin="0,0,0,0" HorizontalAlignment="Stretch" SelectionChanged="xActionTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="0" >
+            <TabControl x:Name="xActionTabs" Margin="0,8,0,-8" SelectionChanged="xActionTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="0" >
                 <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="0" Tag="False">
                     <TabItem.Header>
                         <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="General Details">

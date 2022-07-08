@@ -2361,6 +2361,9 @@
     <Resource Include="Images\_Images.xaml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="StaticDrivers\selenium-server-standalone.jar">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="TestLib\WizardLib\Intro.md" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\android.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

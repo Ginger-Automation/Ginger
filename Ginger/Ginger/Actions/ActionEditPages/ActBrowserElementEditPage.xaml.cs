@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions._Common.ActUIElementLib;
+using Ginger.UserControls;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
@@ -28,6 +29,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Amdocs.Ginger.Repository;
+using System.Windows.Data;
 
 namespace Ginger.Actions
 {
@@ -65,9 +68,11 @@ namespace Ginger.Actions
             xLocateValueVE.BindControl(Context.GetAsContext(mAct.Context), mAct, Act.Fields.LocateValue);
             xGotoURLTypeRadioButton.Init(typeof(ActBrowserElement.eGotoURLType), xGotoURLTypeRadioButtonPnl, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString()));
             xURLSrcRadioButton.Init(typeof(ActBrowserElement.eURLSrc), xURLSrcRadioButtonPnl, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString()), URLSrcRadioButton_Clicked);
+            xMonitorURLRadioButton.Init(typeof(ActBrowserElement.eMonitorUrl), xMonitorURLRadioButtonPnl, mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl), ActBrowserElement.eMonitorUrl.AllUrl.ToString()), MonitorURLRadioButton_Clicked);
+            xRequestTypeRadioButton.Init(typeof(ActBrowserElement.eRequestTypes), xRequestTypeRadioButtonPnl, mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes), ActBrowserElement.eRequestTypes.All.ToString()), RequestTypeRadioButton_Clicked);
             xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy);
             xImplicitWaitVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.ImplicitWait);
-            xNetworkUrlVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.NetworkUrl);
+            SetGridView();
             SetVisibleControlsForAction();
         }
 
@@ -78,9 +83,10 @@ namespace Ginger.Actions
             xURLSrcPnl.Visibility = System.Windows.Visibility.Collapsed;
             xValueGrid.Visibility = System.Windows.Visibility.Collapsed;
             xImplicitWaitPnl.Visibility = System.Windows.Visibility.Collapsed;
-            xNetworkLogPnl.Visibility = System.Windows.Visibility.Collapsed;
-            xNetworkLogCheckbox.Visibility = System.Windows.Visibility.Collapsed;
-            
+            xMonitorURLPnl.Visibility = System.Windows.Visibility.Collapsed;
+            xRequestTypePnl.Visibility = System.Windows.Visibility.Collapsed;
+            xUpdateNetworkUrlGridPnl.Visibility = System.Windows.Visibility.Collapsed;
+
         }
 
         private void ResetPOMView()
@@ -92,23 +98,6 @@ namespace Ginger.Actions
         private void ControlActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             SetVisibleControlsForAction();
-        }
-        private void CheckBox_Click(object sender, RoutedEventArgs e)
-        {
-            CheckBox cb = sender as CheckBox;
-            string checkState;
-
-            if (!cb.IsChecked.HasValue)
-            {
-                xNetworkLogPnl.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                if (cb.IsChecked == true)
-                    xNetworkLogPnl.Visibility = Visibility.Visible;
-                else
-                    xNetworkLogPnl.Visibility = Visibility.Collapsed;
-            }
         }
 
         private ePlatformType GetActionPlatform()
@@ -175,9 +164,14 @@ namespace Ginger.Actions
                     xValueLabel.Content = "Script:";
                 }
             }
-            else if (mAct.ControlAction == ActBrowserElement.eControlAction.GetBrowserLog)
+            else if (mAct.ControlAction == ActBrowserElement.eControlAction.StartMonitoringNetworkLog)
             {
-                xNetworkLogCheckbox.Visibility = System.Windows.Visibility.Visible;
+                xRequestTypePnl.Visibility = System.Windows.Visibility.Visible;
+                xMonitorURLPnl.Visibility = System.Windows.Visibility.Visible;
+                if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString())
+                {
+                    xUpdateNetworkUrlGridPnl.Visibility = System.Windows.Visibility.Visible;
+                }
             }
             else
             {
@@ -251,6 +245,59 @@ namespace Ginger.Actions
             xPOMUrlFrame.Content = locateByPOMElementPage;
         }
 
+        private void SetGridView()
+        {
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Url", WidthWeight = 250 });
+            view.GridColsView.Add(new GridColView() { Field = "...", Header = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xUpdateNetworkUrlGridPnl.Resources["UpdateNetworkParametersPathValueExpressionButton"] });
+            UpdateNetworkUrlGrid.SetAllColumnsDefaultView(view);
+            UpdateNetworkUrlGrid.InitViewItems();
+            UpdateNetworkUrlGrid.SetTitleLightStyle = true;
+            UpdateNetworkUrlGrid.btnAdd.RemoveHandler(Button.ClickEvent, new RoutedEventHandler(AddPatchOperationForNetwork));
+            UpdateNetworkUrlGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddPatchOperationForNetwork));
+            UpdateNetworkUrlGrid.btnDown.Visibility = Visibility.Collapsed;
+            UpdateNetworkUrlGrid.btnUp.Visibility = Visibility.Collapsed;
+            UpdateNetworkUrlGrid.btnClearAll.Visibility = Visibility.Collapsed;
+            UpdateNetworkUrlGrid.btnRefresh.Visibility = Visibility.Collapsed;
 
+            UpdateNetworkUrlGrid.DataSourceList = mAct.UpdateOperationInputValues;
+        }
+
+        private void MonitorURLRadioButton_Clicked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.AllUrl.ToString())
+            {
+                xUpdateNetworkUrlGridPnl.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            else
+            {
+                xUpdateNetworkUrlGridPnl.Visibility = System.Windows.Visibility.Visible;
+            }
+        }
+
+        private void RequestTypeRadioButton_Clicked(object sender, System.Windows.RoutedEventArgs e)
+        {
+
+        }
+
+        private void AddPatchOperationForNetwork(object sender, RoutedEventArgs e)
+        {
+            ActInputValue NetworkPatchInput = new ActInputValue();
+            mAct.UpdateOperationInputValues.Add(NetworkPatchInput);
+        }
+
+        private void UpdateNetworkParametersGridVEButton_Click(object sender, RoutedEventArgs e)
+        {
+            ActInputValue cosmosPatchInput = (ActInputValue)UpdateNetworkUrlGrid.CurrentItem;
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(cosmosPatchInput, nameof(ActInputValue.Value), Context.GetAsContext(mAct.Context));
+            VEEW.ShowAsWindow();
+        }
+        private void UpdateNetworkParametersGridPathVEButton_Click(object sender, RoutedEventArgs e)
+        {
+            ActInputValue cosmosPatchInput = (ActInputValue)UpdateNetworkUrlGrid.CurrentItem;
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(cosmosPatchInput, nameof(ActInputValue.Param), Context.GetAsContext(mAct.Context));
+            VEEW.ShowAsWindow();
+        }
     }
 }
