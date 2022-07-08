@@ -264,15 +264,15 @@ namespace Ginger
             }
             else if (count.Length == 2)
             {
-                xAxis = 103;
+                xAxis = 99;
             }
             else if (count.Length == 3)
             {
-                xAxis = 105;
+                xAxis = 97;
             }
             else if (count.Length == 4)
             {
-                xAxis = 107;
+                xAxis = 95;
             }
             viewbox = new Viewbox();
             Grid grd = new Grid();
