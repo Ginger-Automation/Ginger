@@ -26,7 +26,7 @@
             <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,10,0,0">Expected String (Optional):</Label>
             <Actions:UCValueExpression x:Name="txtExpected" ToolTip="Expected String" />
 
-            <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,10,0,0">Delimiter (Optional, default is '=', split the console output param/value)</Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,10,0,0">Delimiter (Optional, default is '=', split the console output parameter/value)</Label>
             <Actions:UCValueExpression x:Name="xDelimiterVE" ToolTip="Expected String" />
 
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">

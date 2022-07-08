@@ -55,6 +55,9 @@
       <HintPath>DLLs\ALMRestClient.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="ALMRestClientStd">
+      <HintPath>..\GingerCoreNET\DLLS\ALMRestClientStd.dll</HintPath>
+    </Reference>
     <Reference Include="ALM_Common">
       <HintPath>..\GingerCoreNET\DLLS\ALM_Common.dll</HintPath>
     </Reference>
@@ -82,8 +85,8 @@
     <Reference Include="QCRestClient">
       <HintPath>DLLs\QCRestClient.dll</HintPath>
     </Reference>
-    <Reference Include="QTestAPI">
-      <HintPath>..\GingerCoreNET\DLLS\QTestAPI.dll</HintPath>
+    <Reference Include="QTestAPIStd">
+      <HintPath>..\GingerCoreNET\DLLS\QTestAPIStd.dll</HintPath>
     </Reference>
     <Reference Include="RQMExport, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -334,6 +337,7 @@
     <Compile Include="GeneralLib\ComboBoxWindow.xaml.cs">
       <DependentUpon>ComboBoxWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GeneralLib\MarshalExtension.cs" />
     <Compile Include="GeneralLib\ProcessExtension.cs" />
     <Compile Include="GingerOCR\GingerOcrOperations.cs" />
     <Compile Include="Helpers\HTMLHelper.cs" />
@@ -608,7 +612,7 @@
     </PackageReference>
     <PackageReference Include="PdfSharpCore.Charting" Version="1.3.16" />
     <PackageReference Include="RestSharp">
-      <Version>106.11.4</Version>
+      <Version>108.0.1</Version>
     </PackageReference>
     <PackageReference Include="SharpSvn" Version="1.14001.156" />
     <PackageReference Include="SSH.NET">

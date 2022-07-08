@@ -139,9 +139,9 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void SetApplicationCapabilities(bool init=false)
         {
-            DriverConfigParam appPackage = new DriverConfigParam() { Parameter = "appPackage", Description = "Java package of the Android app you want to run", Value = "com.android.settings" };
+            DriverConfigParam appPackage = new DriverConfigParam() { Parameter = "appPackage", Description = "Java package of the Android application you want to run", Value = "com.android.settings" };
             DriverConfigParam appActivity = new DriverConfigParam() { Parameter = "appActivity", Description = "Activity name for the Android activity you want to launch from your package", Value = "com.android.settings.Settings" };
-            DriverConfigParam bundleId = new DriverConfigParam() { Parameter = "bundleId", Description = "Bundle ID of the app under test", Value = "com.apple.Preferences" };
+            DriverConfigParam bundleId = new DriverConfigParam() { Parameter = "bundleId", Description = "Bundle ID of the application under test", Value = "com.apple.Preferences" };
             DriverConfigParam browserName = new DriverConfigParam() { Parameter = "browserName", Description = "Name of mobile web browser to automate" };
             DriverConfigParam defualtURL = new DriverConfigParam() { Parameter = "defaultURL", Description = "Ginger Capability | Default URL to load on browser connection", Value= "https://ginger.amdocs.com/" };
             if (mAppType.Value == eAppType.NativeHybride.ToString())
