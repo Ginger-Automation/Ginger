@@ -24,7 +24,7 @@
                 <RowDefinition Height="100*"/>
             </Grid.RowDefinitions>
 
-        <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,5,0,0">Json Content:</Label>
+        <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,5,0,0">JSON Content:</Label>
         <Actions:UCValueExpression x:Name="JSONPath" ToolTip="JSON full/relative path" Grid.Column="1" Margin="5,0,0,0"/>
 
             <StackPanel Orientation="Horizontal" Grid.Row="1">

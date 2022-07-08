@@ -218,7 +218,7 @@
                                                     <Label HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" Style="{StaticResource $LabelStyle}">Data Source Table:</Label>
                                                     <ComboBox Name="xDataSourceTableNameCombo" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" Width="200" SelectionChanged="cmbDataSourceTableName_SelectionChanged"></ComboBox>
 
-                                                    <Label HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" Style="{StaticResource $LabelStyle}">Out Param Mapping:</Label>
+                                                    <Label HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" Style="{StaticResource $LabelStyle}">Out Parameter Mapping:</Label>
                                                     <ComboBox Name="xdsOutputParamMapType" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" Width="200" SelectionChanged="OutDSParamType_SelectionChanged"></ComboBox>
                                                     <CheckBox x:Name="xdsOutputParamAutoCheck" Content="Auto Map Parameters" Click="xdsOutputParamAutoCheck_Click" Style="{StaticResource @CheckBoxStyle}" Margin="5,5,0,0"/>
                                                 </StackPanel>

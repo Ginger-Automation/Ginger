@@ -45,7 +45,7 @@
                     <TextBox x:Name="DeviceSerialTextBox"/>
                     <Label Content="Device Model"/>
                     <TextBox x:Name="DeviceModelTextBox"/>
-                    <Label>Device Config Folder (Skin and visual definitions) located at ~Solution\Documents\Devices</Label>
+                    <Label>Device Configuration Folder (Skin and visual definitions) located at ~Solution\Documents\Devices</Label>
                     <StackPanel Orientation="Horizontal">
                         <TextBox x:Name="DeviceConfigFolderTextBox" Width="200"></TextBox>
                         <Label>Select from solution</Label>

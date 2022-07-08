@@ -133,7 +133,7 @@ namespace Ginger.Environments
         #region Events
         private void AddParam(object sender, RoutedEventArgs e)
         {
-            GeneralParam param = new GeneralParam() { Name = "Param " + AppOwner.GeneralParams.Count };
+            GeneralParam param = new GeneralParam() { Name = "Parameter " + AppOwner.GeneralParams.Count };
             param.PropertyChanged += param_PropertyChanged;
 
             AppOwner.GeneralParams.Add(param);

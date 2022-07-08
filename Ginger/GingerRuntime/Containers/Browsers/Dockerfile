@@ -1,4 +1,4 @@
-#Build and deploy one time with latest dependencies and another time use version specific dependenecies
+#Build and deploy one time with latest dependencies and another time use version specific dependencies
 #FROM ghcr.io/ginger-automation/gingerruntime:latest
 #FROM ghcr.io/ginger-automation/gingerruntime:4.2
 

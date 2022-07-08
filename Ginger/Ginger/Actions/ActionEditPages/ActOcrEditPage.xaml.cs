@@ -103,7 +103,7 @@ namespace Ginger.Actions
                 if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
                 {
                     DefaultExt = "*.pdf",
-                    Filter = "Pdf Files (*.pdf)|*.pdf"
+                    Filter = "PDF Files (*.pdf)|*.pdf"
                 }, false) is string fileName)
                 {
                     fileName = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(fileName);
