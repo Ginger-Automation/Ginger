@@ -2356,7 +2356,6 @@ namespace GingerCore.Drivers.PBDriver
             int childPos = 0;
             int pos=0;
             List<IHTMLElement> elChilds = new List<IHTMLElement>();
-            var x = (el.children);
             elChilds.Add((IHTMLElement)el.children);
             if (node.Name.StartsWith(".."))
             {
