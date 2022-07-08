@@ -180,8 +180,6 @@ namespace GingerCore.Actions.VisualTesting
         }
         private void TrackVRT()
         {
-            //string diffImage = string.Empty;
-
             if (!vrt.IsStarted)
             {
                 mAct.Error = "VRT is not Started";
