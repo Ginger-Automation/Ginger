@@ -16,19 +16,19 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions;
 using Ginger.UserControls;
-using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
 using System;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
+using Interop.UIAutomationClient;
 
 namespace Ginger.WindowExplorer.Common
 {
@@ -38,9 +38,9 @@ namespace Ginger.WindowExplorer.Common
     public partial class MenuControlActionsPage : Page
     {
         ObservableList<Act> mActions;
-        AutomationElement mAE;
+        UIAuto.AutomationElement mAE;
 
-        public MenuControlActionsPage(ObservableList<Act> Actions, AutomationElement AE)
+        public MenuControlActionsPage(ObservableList<Act> Actions, UIAuto.AutomationElement AE)
         {
             InitializeComponent();
             mActions = Actions;
@@ -75,7 +75,7 @@ namespace Ginger.WindowExplorer.Common
 
         private void LoadMenuItems()
         {
-            AutomationElementCollection menuList = null;
+            UIAuto.AutomationElementCollection menuList = null;
             try
             {
                 CollapseMenu();
@@ -83,10 +83,10 @@ namespace Ginger.WindowExplorer.Common
                 thread1.Start();
                 System.Threading.Thread.Sleep(1500);
 
-                PropertyCondition menuMatch = new PropertyCondition(AutomationElement.LocalizedControlTypeProperty, "menu item");
-                menuList = mAE.FindAll(TreeScope.Descendants, menuMatch);
+                UIAuto.PropertyCondition menuMatch = new UIAuto.PropertyCondition(UIAuto.AutomationElement.LocalizedControlTypeProperty, "menu item");
+                menuList = mAE.FindAll(TreeScope.TreeScope_Descendants, menuMatch);
 
-                foreach (AutomationElement menuElement in menuList)
+                foreach (UIAuto.AutomationElement menuElement in menuList)
                 {
                     MenuItemComboBox.Items.Add(menuElement.Current.Name);
                 }
@@ -104,7 +104,7 @@ namespace Ginger.WindowExplorer.Common
         {
             try
             {
-                ExpandCollapsePattern fileECPattern = mAE.GetCurrentPattern(ExpandCollapsePattern.Pattern) as ExpandCollapsePattern;
+                UIAuto.ExpandCollapsePattern fileECPattern = mAE.GetCurrentPattern(UIAuto.ExpandCollapsePattern.Pattern) as UIAuto.ExpandCollapsePattern;
                 fileECPattern.Expand();
             }
             catch (InvalidOperationException e)
@@ -116,7 +116,7 @@ namespace Ginger.WindowExplorer.Common
 
         private void CollapseMenu()
         {
-            ExpandCollapsePattern fileECPattern = mAE.GetCurrentPattern(ExpandCollapsePattern.Pattern) as ExpandCollapsePattern;
+            UIAuto.ExpandCollapsePattern fileECPattern = mAE.GetCurrentPattern(UIAuto.ExpandCollapsePattern.Pattern) as UIAuto.ExpandCollapsePattern;
             fileECPattern.Collapse();
         }
 

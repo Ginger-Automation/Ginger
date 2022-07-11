@@ -21,7 +21,7 @@ using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common.UIElement;
 using System;
 using System.Collections.Generic;
-using System.Windows.Automation;
+
 
 namespace GingerCore.Drivers.Common
 {

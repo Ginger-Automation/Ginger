@@ -24,7 +24,7 @@ using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 using Ginger.Drivers.PowerBuilder;
-using System.Windows.Automation;
+
 
 namespace Ginger.WindowExplorer.PowerBuilder
 {

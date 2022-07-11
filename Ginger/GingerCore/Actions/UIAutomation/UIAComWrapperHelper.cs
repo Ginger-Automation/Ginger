@@ -34,14 +34,13 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-//using Windows.Foundation;
-using System.Windows.Automation;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions.UIAutomation;
 using System.Windows;
 using System.IO;
 using GingerCore.Common;
 using GingerCore.GeneralLib;
+using System.Windows.Automation;
 
 // a lot of samples from Microsoft on UIA at: https://uiautomationverify.svn.codeplex.com/svn/UIAVerify/
 // DO NOT add any specific driver here, this is generic windows app driver helper 
@@ -5221,7 +5220,7 @@ namespace GingerCore.Drivers
 
             int sourceYPoint = (int)element.Current.BoundingRectangle.Height + 7;
             int tableHeight = (int)tableElement.Current.BoundingRectangle.Height;
-            UIAuto.AutomationElement Scroll = tableElement.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.OrientationProperty, OrientationType.Vertical));
+            UIAuto.AutomationElement Scroll = tableElement.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.OrientationProperty,  OrientationType.Vertical));
             UIAuto.AutomationElement pageDown = null, pageUp = null;
 
             if (Scroll != null)
@@ -5641,7 +5640,7 @@ namespace GingerCore.Drivers
             //Rect emptyRect = new Rect(0, 0, 0, 0);
             //foreach (UIAuto.AutomationElement aeScroll in AEScrolls)
             //{
-            //    if (aeScroll.Current.Orientation == OrientationType.Vertical)
+            //    if (aeScroll.Current.Orientation == UIAuto.OrientationType.Vertical)
             //        verScroll = aeScroll;
             //}
             //int i = 0;
@@ -6034,9 +6033,9 @@ namespace GingerCore.Drivers
             //TODO::Scroll Handling
             //foreach (UIAuto.AutomationElement aeScroll in AEScrolls)
             //{
-            //    if (aeScroll.Current.Orientation == OrientationType.Horizontal)
+            //    if (aeScroll.Current.Orientation == UIAuto.OrientationType.Horizontal)
             //        horScroll = aeScroll;
-            //    else if (aeScroll.Current.Orientation == OrientationType.Vertical)
+            //    else if (aeScroll.Current.Orientation == UIAuto.OrientationType.Vertical)
             //        verScroll = aeScroll;                
             //}
             //if(horScroll!=null)
