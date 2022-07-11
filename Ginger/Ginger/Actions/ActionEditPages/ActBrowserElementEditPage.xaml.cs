@@ -249,7 +249,7 @@ namespace Ginger.Actions
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Url", WidthWeight = 250 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "URL", WidthWeight = 250 });
             view.GridColsView.Add(new GridColView() { Field = "...", Header = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xUpdateNetworkUrlGridPnl.Resources["UpdateNetworkParametersPathValueExpressionButton"] });
             UpdateNetworkUrlGrid.SetAllColumnsDefaultView(view);
             UpdateNetworkUrlGrid.InitViewItems();
