@@ -749,22 +749,20 @@ namespace GingerCore.Actions
                 sw.Start();
                 while (!bFound)
                 {
-                    try
+                    // If Application Launch is done by Ginger then we already know the process id. No need to iterate.
+                    if (mJavaApplicationProcessID != -1 && ProcessExists(mJavaApplicationProcessID) && !IsInstrumentationModuleLoaded(mJavaApplicationProcessID))
                     {
-                        // If Application Launch is done by Ginger then we already know the process id. No need to iterate.
-                        if (mJavaApplicationProcessID != -1 && ProcessExists(mJavaApplicationProcessID) && !IsInstrumentationModuleLoaded(mJavaApplicationProcessID))
-                        {
 
-                            mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
+                        mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
 
-                            bFound = CheckWindowTitleByProcessId(mJavaApplicationProcessID);
+                        bFound = CheckWindowTitleByProcessId(mJavaApplicationProcessID);
 
-                        }
-                        // If Application is not launched from Ginger then we go over the process to find the target Process ID
-                        else
-                        {
-                            Process[] processlist = Process.GetProcesses();
-                            List<Process> matchingProcessList = new List<Process>();
+                    }
+                    // If Application is not launched from Ginger then we go over the process to find the target Process ID
+                    else
+                    {
+                        Process[] processlist = Process.GetProcesses();
+                        List<Process> matchingProcessList = new List<Process>();
 
                         foreach (Process process in processlist)
                         {
@@ -797,41 +795,36 @@ namespace GingerCore.Actions
                         }
 
 
-                            if (matchingProcessList.Count == 1)
+                        if (matchingProcessList.Count == 1)
+                        {
+                            if (!IsInstrumentationModuleLoaded(matchingProcessList.ElementAt(0).Id))
                             {
-                                if (!IsInstrumentationModuleLoaded(matchingProcessList.ElementAt(0).Id))
-                                {
-                                    bFound = true;
-                                    mProcessIDForAttach = matchingProcessList.ElementAt(0).Id;
-                                }
+                                bFound = true;
+                                mProcessIDForAttach = matchingProcessList.ElementAt(0).Id;
                             }
-                            else if (matchingProcessList.Count > 1)
+                        }
+                        else if (matchingProcessList.Count > 1)
+                        {
+                            foreach (Process process in matchingProcessList)
                             {
-                                foreach (Process process in matchingProcessList)
+                                mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
+                                if ((process.ProcessName.StartsWith("java", StringComparison.CurrentCultureIgnoreCase) || process.ProcessName.StartsWith("jp2", StringComparison.CurrentCultureIgnoreCase)))
                                 {
-                                    mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
-                                    if ((process.ProcessName.StartsWith("java", StringComparison.CurrentCultureIgnoreCase) || process.ProcessName.StartsWith("jp2", StringComparison.CurrentCultureIgnoreCase)))
+                                    if (!IsInstrumentationModuleLoaded(process.Id))
                                     {
-                                        if (!IsInstrumentationModuleLoaded(process.Id))
-                                        {
-                                            bFound = true;
-                                            mProcessIDForAttach = process.Id;
-                                            break;
-                                        }
+                                        bFound = true;
+                                        mProcessIDForAttach = process.Id;
+                                        break;
                                     }
                                 }
                             }
                         }
-                        // Go out after max seconds
-                        if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
-                            break;
+                    }
+                    // Go out after max seconds
+                    if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
+                        break;
 
-                        Thread.Sleep(1000);
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
-                    }
+                    Thread.Sleep(1000);
                 }
             }
             catch (OperationCanceledException ex)
