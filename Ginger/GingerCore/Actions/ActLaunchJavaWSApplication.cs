@@ -16,6 +16,9 @@ limitations under the License.
 */
 #endregion
 
+
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
@@ -883,8 +886,8 @@ namespace GingerCore.Actions
 
         private bool FindProcessWindowTitle(Process p, string waitForWindowTilte)//no need to get all windows.
         {
-            TreeWalker walker = TreeWalker.ControlViewWalker;
-            AutomationElement window = walker.GetFirstChild(AutomationElement.RootElement);
+            UIAuto.TreeWalker walker = UIAuto.TreeWalker.ControlViewWalker;
+            UIAuto.AutomationElement window = walker.GetFirstChild(UIAuto.AutomationElement.RootElement);
             UIAComWrapperHelper uiHelper = new UIAComWrapperHelper();
             while (window != null)
             {
