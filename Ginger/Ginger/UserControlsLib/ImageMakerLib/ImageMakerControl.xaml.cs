@@ -553,7 +553,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_ThumbsDown);
                     break;
                 case eImageType.Retry:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Spinner);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Retweet);
                     break;
                 case eImageType.Warn:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExclamationTriangle);

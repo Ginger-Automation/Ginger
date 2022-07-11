@@ -33,7 +33,7 @@ using GingerCore.Actions.Common;
 using System.Data;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Windows.Automation;
+
 using Amdocs.Ginger.Common.UIElement;
 using System.Threading.Tasks;
 

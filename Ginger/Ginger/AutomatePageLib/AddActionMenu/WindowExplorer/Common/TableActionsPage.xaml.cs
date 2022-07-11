@@ -16,11 +16,12 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using System.Windows.Automation;
 using Ginger.WindowExplorer.Java;
 using GingerCore.Actions;
 using GingerCore.Drivers.Common;
@@ -41,12 +42,12 @@ namespace Ginger.WindowExplorer.Common
         List<String> mColNames = null;
         int mRowCount=0;
 
-        private System.Windows.Automation.AutomationElement AEControl;
+        private UIAuto.AutomationElement AEControl;
         private int rowCount = -1;
         private int columnCount = 0;
 
         // TOOD: need to be OO and generic
-        AutomationElement[,] gridArray;
+        UIAuto.AutomationElement[,] gridArray;
 
         ElementInfo mElementInfo;
         ObservableList<Act> mActions = null;
@@ -97,7 +98,7 @@ namespace Ginger.WindowExplorer.Common
         }
         
         // TOOD: need to be OO and generic can pass ElementInfo
-        public TableActionsPage(AutomationElement AE)
+        public TableActionsPage(UIAuto.AutomationElement AE)
         {   
             AEControl = AE;
             LoadGridToArray();
@@ -179,20 +180,20 @@ namespace Ginger.WindowExplorer.Common
         
         private void LoadGridToArray()
         {
-            AutomationElement tempElement;
-            gridArray = new AutomationElement[rowCount, columnCount];
-            tempElement = TreeWalker.ContentViewWalker.GetFirstChild(AEControl);
+            UIAuto.AutomationElement tempElement;
+            gridArray = new UIAuto.AutomationElement[rowCount, columnCount];
+            tempElement = UIAuto.TreeWalker.ContentViewWalker.GetFirstChild(AEControl);
             for (int i = 0; i < rowCount; i++)
                 for (int j = 0; j < columnCount; j++)
                 {
                     gridArray[i, j] = tempElement;
-                    tempElement = TreeWalker.ContentViewWalker.GetNextSibling(tempElement);
+                    tempElement = UIAuto.TreeWalker.ContentViewWalker.GetNextSibling(tempElement);
                 }
         }
 
         private void LoadColumnNameCombo()
         {
-            AutomationElement headerElement;
+            UIAuto.AutomationElement headerElement;
             mColNames = new List<string>();
             int k = 0;
             while (k < columnCount)

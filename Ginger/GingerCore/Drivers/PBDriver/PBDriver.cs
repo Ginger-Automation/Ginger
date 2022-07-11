@@ -22,7 +22,6 @@ using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using GingerCore.Actions;
-using System.Windows.Automation;
 using System.Drawing;
 using System.Windows.Forms;
 using GingerCore.Drivers.Common;
@@ -282,7 +281,7 @@ namespace GingerCore.Drivers.PBDriver
                 CheckAndRetryRunAction(act,e);
                 return;
             }
-            catch (ElementNotAvailableException e)
+            catch (UIAuto.ElementNotAvailableException e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 CheckAndRetryRunAction(act,e);
@@ -649,7 +648,7 @@ namespace GingerCore.Drivers.PBDriver
                 Reporter.ToLog(eLogLevel.ERROR, "COM Exception when HandlePBControlAction Error details:", e);
                 throw e;
             }
-            catch (ElementNotAvailableException e)
+            catch (UIAuto.ElementNotAvailableException e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when HandlePBControlAction Error details:", e);
                 throw e;
@@ -900,7 +899,7 @@ namespace GingerCore.Drivers.PBDriver
                 throw e;
 
             }
-            catch (ElementNotAvailableException e)
+            catch (UIAuto.ElementNotAvailableException e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when HandleMenuControlAction Error details:", e);
                 throw e;
@@ -961,7 +960,7 @@ namespace GingerCore.Drivers.PBDriver
                 Reporter.ToLog(eLogLevel.ERROR, "COM Exception when HandleWindowControlAction Error details:", e);
                 throw e;
             }
-            catch (ElementNotAvailableException e)
+            catch (UIAuto.ElementNotAvailableException e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when HandleWindowControlAction Error details:", e);
                 throw e;

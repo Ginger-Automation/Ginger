@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
@@ -24,7 +26,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows.Automation;
+
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Drivers;
@@ -167,7 +169,7 @@ namespace Ginger.Actions
 
 
                 IntPtr winhandle = IntPtr.Zero;
-                AutomationElement window;
+                UIAuto.AutomationElement window;
 
 
 
@@ -259,14 +261,14 @@ namespace Ginger.Actions
                 return p[0].MainWindowHandle;
             return IntPtr.Zero;
         }
-        AutomationElement GetWindow(string LocValCal) //*******
+        UIAuto.AutomationElement GetWindow(string LocValCal) //*******
         {
             UIAComWrapperHelper UIA = new UIAComWrapperHelper();
 
             List<object> AppWindows = UIA.GetListOfWindows();
 
 
-            foreach (AutomationElement window in AppWindows)
+            foreach (UIAuto.AutomationElement window in AppWindows)
             {
                 string WindowTitle = UIA.GetWindowInfo(window);
                 

@@ -16,10 +16,12 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common.UIElement;
 using System;
 using System.Windows;
-using System.Windows.Automation;
+
 
 namespace GingerCore.Actions
 {
@@ -56,12 +58,12 @@ namespace GingerCore.Actions
         {
         }
 
-        internal AutomationElement TryGetActElementByLocator(Act act)
+        internal UIAuto.AutomationElement TryGetActElementByLocator(Act act)
         {
             if (act == null) return null;
             try
             {
-                AutomationElement e = TryGetActElementByLocator(act, act.LocateBy, act.LocateValue);
+                UIAuto.AutomationElement e = TryGetActElementByLocator(act, act.LocateBy, act.LocateValue);
                 if (e == null)
                 {
                     act.Error = "Element not found - " + act.LocateBy + " - " + act.LocateValue + Environment.NewLine; //TODO add to accommodate multiple locator's need to be done for UIA
@@ -76,9 +78,9 @@ namespace GingerCore.Actions
             }
         }
 
-        internal AutomationElement TryGetActElementByLocator(Act A, eLocateBy LocateBy, string LocateValue)
+        internal UIAuto.AutomationElement TryGetActElementByLocator(Act A, eLocateBy LocateBy, string LocateValue)
         {
-            AutomationElement e = null;
+            UIAuto.AutomationElement e = null;
             switch (LocateBy)
             {
                 case eLocateBy.ByID:
