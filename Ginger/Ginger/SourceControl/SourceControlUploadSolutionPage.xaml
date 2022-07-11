@@ -16,8 +16,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="105"/>
             <RowDefinition Height="100"/>
-            <RowDefinition Name="ExpenderConfigurationRow" Height="150"/>
-            <RowDefinition Height="45"/>
+            <RowDefinition Name="ExpenderConfigurationRow" Height="150*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250*"/>
@@ -122,7 +122,9 @@
             </Expander.Content>
         </Expander>
 
-        <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing" Grid.Row="3" Margin="19,9,0,9" HorizontalAlignment="Left" Width="35" Visibility="Collapsed"/>
+        <DockPanel Grid.Row="3">
+            <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing" Margin="19,9,0,9" HorizontalAlignment="Left" Width="35" Visibility="Collapsed" DockPanel.Dock="Bottom"/>
+        </DockPanel>
 
     </Grid>
 </Page>
