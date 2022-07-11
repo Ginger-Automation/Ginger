@@ -2129,7 +2129,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             {
                 if (!(URL.ToUpper().EndsWith("XML") || (URL.ToUpper().EndsWith("WSDL"))))
                 {
-                    error = "Please specify valid xml/wsdl File";
+                    error = "Please specify valid XML/WSDL File";
                     return false;
                 }
             }
