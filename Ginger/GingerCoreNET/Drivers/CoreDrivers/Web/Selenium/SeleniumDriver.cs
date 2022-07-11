@@ -1043,29 +1043,35 @@ namespace GingerCore.Drivers
             {
                 sURL = "http://" + sURL;
             }
-
-            Uri uri = ValidateURL(sURL);
-            if (uri != null)
+            try
             {
-                Driver.Navigate().GoToUrl(uri.AbsoluteUri);
-            }
-            else
-            {
-                act.Error = "Error: Invalid URL. Give valid URL(Complete URL)";
-            }
-            string winTitle = Driver.Title;
-            if (Driver.GetType() == typeof(InternetExplorerDriver) && winTitle.IndexOf("Certificate Error", StringComparison.CurrentCultureIgnoreCase) >= 0)
-            {
-                Thread.Sleep(100);
-                try
+                Uri uri = ValidateURL(sURL);
+                if (uri != null)
                 {
-                    Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1);
-                    Driver.Navigate().GoToUrl("javascript:document.getElementById('overridelink').click()");
+                    Driver.Navigate().GoToUrl(uri.AbsoluteUri);
                 }
-                catch { }
-                Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)ImplicitWait);
+                else
+                {
+                    act.Error = "Error: Invalid URL. Give valid URL(Complete URL)";
+                }
+                string winTitle = Driver.Title;
+                if (Driver.GetType() == typeof(InternetExplorerDriver) && winTitle.IndexOf("Certificate Error", StringComparison.CurrentCultureIgnoreCase) >= 0)
+                {
+                    Thread.Sleep(100);
+                    try
+                    {
+                        Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1);
+                        Driver.Navigate().GoToUrl("javascript:document.getElementById('overridelink').click()");
+                    }
+                    catch { }
+                    Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)ImplicitWait);
+                }
             }
-
+            catch (Exception ex)
+            {
+                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                act.Error += ex.Message;
+            }
             //just to be sure the page is fully loaded
             CheckifPageLoaded();
         }

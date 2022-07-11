@@ -894,7 +894,13 @@
     <None Update="Reports\Ginger-Web-Client\loading.8732a6660b528fadfaeb.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\main-es2015.0f9f167139a9a9213c38.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\main-es2015.dc498bf7897879d127bf.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\main-es5.0f9f167139a9a9213c38.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\main-es5.dc498bf7897879d127bf.js">
