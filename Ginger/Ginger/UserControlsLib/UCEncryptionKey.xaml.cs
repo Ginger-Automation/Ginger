@@ -96,7 +96,7 @@ namespace Ginger.UserControlsLib
                 ValidFlag.Visibility = Visibility.Collapsed;
                 EncryptionKeyPasswordBox.Visibility = Visibility.Visible;
                 EncryptionkeyError.Visibility = Visibility.Visible;
-                EncryptionkeyError.Content = "Encryption key must be 8-16 in length and should contain atleast 1 cap, 1 small, 1 digit and 1 special char.";
+                EncryptionkeyError.Content = "Encryption key must be 8-16 in length and should contain at least 1 cap, 1 small, 1 digit and 1 special char.";
                 EncryptionkeyError.Foreground = Brushes.Red;
                 EncryptionkeyError.FontSize = 9;
                 return false;
