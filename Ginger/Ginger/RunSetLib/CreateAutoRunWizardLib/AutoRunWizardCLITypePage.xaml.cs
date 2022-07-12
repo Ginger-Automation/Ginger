@@ -68,7 +68,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     break;
 
                 case EventType.Prev:
-                    if (mTempCLIContent != mAutoRunWizard.AutoRunConfiguration.CLIContent && WizardEventArgs.Wizard.GetCurrentPage().Page == this  && Reporter.ToUser(eUserMsgKey.RunsetAutoConfigBackWarn, "Configuartions customizations will be lost,do you want to go back?") == eUserMsgSelection.No)
+                    if (mTempCLIContent != mAutoRunWizard.AutoRunConfiguration.CLIContent && WizardEventArgs.Wizard.GetCurrentPage().Page == this  && Reporter.ToUser(eUserMsgKey.RunsetAutoConfigBackWarn, "Configurations customizations will be lost,do you want to go back?") == eUserMsgSelection.No)
                     {
                         WizardEventArgs.CancelEvent = true;
                     }

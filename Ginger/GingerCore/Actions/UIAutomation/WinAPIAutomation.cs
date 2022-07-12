@@ -17,17 +17,16 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Automation;
 using System.Windows.Forms;
 using mshtml;
 using System.Threading;
 using Amdocs.Ginger.Common;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace GingerCore.Drivers
 {
@@ -290,7 +289,7 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, "COM Exception when ShowWindow Error details:", e);
                 throw e;
             }
-            catch (ElementNotAvailableException e)
+            catch (UIAuto.ElementNotAvailableException e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when ShowWindow Error details:", e);
                 throw e;

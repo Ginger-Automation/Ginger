@@ -5,4 +5,4 @@ Data Source is used to Read/Write Data from a common place for all Business Flow
            
 ### How to Import Data Source from Excel File
             
-Continue with the Wizard ity will help you to import the excel sheet as data table
+Continue with the Wizard it will help you to import the excel sheet as data table
