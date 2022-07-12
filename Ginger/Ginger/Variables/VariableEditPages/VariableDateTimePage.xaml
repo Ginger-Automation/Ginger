@@ -24,8 +24,9 @@
                     <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
                         <DockPanel>
                             <Label Style="{StaticResource @InputFieldLabelStyle}">DateTime Format :</Label>
-                            <ComboBox  x:Name="txtDateFormat"  SelectedIndex="0"  HorizontalAlignment="Left"  Width="215" Margin="0,0,0,20" IsEditable="True">
+                            <ComboBox  x:Name="txtDateFormat"  SelectedIndex="1"  Style="{StaticResource $FlatEditInputComboBoxStyle}" HorizontalAlignment="Left"  Width="215" Margin="0,0,0,20" IsEditable="True" SelectionChanged="txtDateFormat_TextChanged">
                                 <ComboBoxItem Content = "dddd, dd MMMM yyyy HH:mm"/>
+                                <ComboBoxItem Content = "MM/dd/yyyy h:mm:ss tt"/>
                                 <ComboBoxItem Content = "dddd, dd MMMM yyyy h:mm tt"/>
                                 <ComboBoxItem Content = "dddd, dd MMMM yyyy HH:mm:ss"/>
                                 <ComboBoxItem Content = "dddd, dd MMMM yyyy"/>
