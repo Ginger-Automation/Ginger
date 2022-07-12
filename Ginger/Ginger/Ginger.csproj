@@ -2435,6 +2435,27 @@
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
     </None>
+    <None Update="Reports\GingerExecutionReport\ActionReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\ActivityGroupReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\ActivityReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\BusinessFlowReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\GingerExecutionReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\GingerRunnerReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\RunSetReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\%40ErrorOrange_16x16.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
