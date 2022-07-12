@@ -7,6 +7,7 @@
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="Misc\DataSourceTest.cs">
