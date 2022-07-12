@@ -82,8 +82,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Ginger\DLLs\Open3270.dll</HintPath>
     </Reference>
-    <Reference Include="QCRestClient">
-      <HintPath>DLLs\QCRestClient.dll</HintPath>
+    <Reference Include="QCRestClientStd">
+      <HintPath>..\GingerCoreNET\DLLS\QCRestClientStd.dll</HintPath>
     </Reference>
     <Reference Include="QTestAPIStd">
       <HintPath>..\GingerCoreNET\DLLS\QTestAPIStd.dll</HintPath>

@@ -76,7 +76,7 @@
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <Label Style="{StaticResource @InputFieldLabelStyle}">Server URL:</Label>
-                                    <Label x:Name="ExampleURLHint" HorizontalAlignment="Left" FontSize="10" Foreground="Gray">Example: http://server:8080/almbin</Label>
+                                    <Label x:Name="ExampleURLHint" HorizontalAlignment="Left" FontSize="10" Foreground="Gray">Example: http://server:8080/</Label>
                                 </StackPanel>
                                 <TextBox x:Name="ServerURLTextBox" TextChanged="ServerURLTextBox_TextChanged" MouseEnter="ShowToolTip" Style="{StaticResource @TextBoxStyle}" Height="25"></TextBox>
                             </StackPanel>
@@ -89,7 +89,7 @@
                                 <PasswordBox x:Name="PasswordTextBox" Style="{StaticResource @PasswordBoxStyle}" Height="25" PasswordChanged="PasswordTextBox_PasswordChanged" ></PasswordBox>
                             </StackPanel>
                         </StackPanel>
-                        <CheckBox x:Name="RestAPICheckBox" IsChecked="True" Content="Use Rest API" Checked="RestAPICheckBox_Checked" Unchecked="RestAPICheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}" Grid.Column="0" Grid.Row ="1" Margin="5,10,0,0" ToolTip="RestApi should be Checked for QC12 and above"/>
+                        <CheckBox x:Name="RestAPICheckBox" IsChecked="True" IsEnabled="False" Content="Use Rest API" Checked="RestAPICheckBox_Checked" Unchecked="RestAPICheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}" Grid.Column="0" Grid.Row ="1" Margin="5,10,0,0" ToolTip="RestApi should be Checked for QC12 and above"/>
                         <CheckBox x:Name="TokenCheckBox" IsChecked="True" Content="Connect With Token" Visibility="Collapsed"  Checked="TokenCheckBox_Checked" Unchecked="TokenCheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}" Grid.Column="0" Grid.Row ="1" Margin="5,10,0,0" ToolTip="Select connect with token or password "/>
                         <Button x:Name="LoginServerButton" Click="GetProjectsDetails_Clicked"  Style="{StaticResource @WindowButtonStyle}" Margin="0,10,0,10" HorizontalAlignment="Center">Get Projects Details</Button>
                     </StackPanel>
