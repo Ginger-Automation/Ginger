@@ -31,7 +31,7 @@ using GingerCore.Activities;
 using GingerCore.ALM.QCRestAPI;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using QCRestClient;
+using QCRestClientStd;
 
 namespace GingerCore.ALM
 {

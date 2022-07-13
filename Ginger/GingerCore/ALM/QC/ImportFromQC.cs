@@ -22,7 +22,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using QCRestClient;
+using QCRestClientStd;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -103,10 +103,10 @@ namespace GingerCore.ALM.QC
 
                 //Linked TC
                 DesignStep TestParam = GetListTSTestVars(tsTest);
-                //for (int i = 0; i <= TestParam.LinkedParams.Count - 1; i++)
+                //for (int i = 0; i <= ((List<object>)TestParam.LinkedParams).Count - 1; i++)
                 //{
                 //    ALMTSTestParameter newtsVar = new ALMTSTestParameter();
-                //    if (TestParam.LinkedParams.ParamName(i) != null) { newtsVar.Name = TestParam.LinkedParams.ParamName(i); }
+                //    if (((List<object>)TestParam.LinkedParams).ParamName[i] != null) { newtsVar.Name = TestParam.LinkedParams.ParamName(i); }
                 //    if (TestParam.LinkedParams.ParamValue(i) != null) { newtsVar.Value = TestParam.LinkedParams.ParamValue(i).ToString(); }
                 //    if (TestParam.LinkedParams.Type(i) != null) { newtsVar.Type = TestParam.LinkedParams.Type(i).ToString(); }
                 //    newTSTest.Parameters.Add(newtsVar);
@@ -122,7 +122,7 @@ namespace GingerCore.ALM.QC
                 //    if (tsTest.Params.ParamValue(i) != null) { newtsVar.Value = tsTest.Params.ParamValue(i).ToString(); }
                 //    if (tsTest.Params.Type(i) != null) { newtsVar.Type = tsTest.Params.Type(i).ToString(); }
                 //    newTSTest.Parameters.Add(newtsVar);
-                //}                
+                //}
             }
 
             //Get the TC execution history
@@ -1373,7 +1373,7 @@ namespace GingerCore.ALM.QC
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
 
             string qcbin = "qcbin";
-            QCRestClient.QCClient qcClientREST = new QCClient(ALMCore.DefaultAlmConfig.ALMServerURL.TrimEnd(qcbin.ToCharArray()), ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMDomain, ALMCore.DefaultAlmConfig.ALMProjectName, 11);           
+            QCRestClientStd.QCClient qcClientREST = new QCClient(ALMCore.DefaultAlmConfig.ALMServerURL.TrimEnd(qcbin.ToCharArray()), ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMDomain, ALMCore.DefaultAlmConfig.ALMProjectName, 11);           
 
             if (qcClientREST.Login())
             {

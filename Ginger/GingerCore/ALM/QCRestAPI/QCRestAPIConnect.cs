@@ -17,10 +17,10 @@ limitations under the License.
 #endregion
 
 using AlmDataContractsStd.Enums;
-using ALMRestClient;
+using ALMRestClientStd;
 using Amdocs.Ginger.Common;
 using GingerCore.ALM.QC;
-using QCRestClient;
+using QCRestClientStd;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -126,7 +126,7 @@ namespace GingerCore.ALM.QCRestAPI
             CurrentDomain = qcDomain;
             CurrentProject = qcProject;
 
-            QcRestClient = new QCRestClient.QCClient(ServerURL, UserName, Password, qcDomain, qcProject);
+            QcRestClient = new QCRestClientStd.QCClient(ServerURL, UserName, Password, qcDomain, qcProject);
             return QcRestClient.Login();
         }
 
@@ -252,7 +252,7 @@ namespace GingerCore.ALM.QCRestAPI
 
                 QCTestSetColl testSets = QcRestClient.GetAllTestSetsUnderFolder(int.Parse(separatePath[separatePath.Length - 1]));
 
-                foreach (QCRestClient.QCTestSet testset in testSets)
+                foreach (QCRestClientStd.QCTestSet testset in testSets)
                 {
                     ALMTestSetSummary QCTestSetTreeItem = new ALMTestSetSummary();
                     QCTestSetTreeItem.TestSetID = testset.Id;
@@ -331,7 +331,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
         }
 
-        public static QCRestClient.QCTestSet GetTestSetDetails(string testSetID)
+        public static QCRestClientStd.QCTestSet GetTestSetDetails(string testSetID)
         {
             try
             {
