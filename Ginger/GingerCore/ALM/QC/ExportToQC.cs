@@ -137,50 +137,50 @@ namespace GingerCore.ALM.QC
                                     foreach (Step step in stepsList)
                                     {
                                         //search for matching activity based on ID and not order, un matching steps need to be left as No Run
-                                        //int stepDesignID = (stepsList[index]).Field("ST_DESSTEP_ID");
-                                        //Activity matchingActivity = activities.Where(x => x.ExternalID == stepDesignID.ToString()).FirstOrDefault();
-                                        //if (matchingActivity != null)
-                                        //{
-                                        //    switch(matchingActivity.Status)
-                                        //    {
-                                        //        case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed:
-                                        //            step.Status = "Failed";
-                                        //            List<IAct> failedActs= matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
-                                        //            string errors = string.Empty;
-                                        //            foreach (Act act in failedActs) errors += act.Error + Environment.NewLine;
-                                        //            step["ST_ACTUAL"] = errors;
-                                        //            break;
-                                        //        case Amdocs.Ginger.CoreNET.Execution.eRunStatus.NA:
-                                        //            step.Status = "N/A";
-                                        //            step["ST_ACTUAL"] = "NA";
-                                        //            break;
-                                        //        case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed:
-                                        //            step.Status = "Passed";
-                                        //            step["ST_ACTUAL"] = "Passed as expected";
-                                        //            break;
-                                        //        case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped:
-                                        //            //step.Status = "No Run";
-                                        //            step.Status = "N/A";
-                                        //            step["ST_ACTUAL"] = "Skipped";
-                                        //            break;
-                                        //        case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending:
-                                        //            step.Status = "No Run";
-                                        //            step["ST_ACTUAL"] = "Was not executed";
-                                        //            break;
-                                        //        case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running:
-                                        //            step.Status = "Not Completed";
-                                        //            step["ST_ACTUAL"] = "Not Completed";
-                                        //            break;
-                                        //    }
-                                        //}
-                                        //else
-                                        //{
-                                        //    //Step not exist in Ginger so left as "No Run" unless it is step data
-                                        //    if (step.Name.ToUpper() == "STEP DATA")
-                                        //        step.Status = "Passed";
-                                        //    else
-                                        //        step.Status = "No Run";
-                                        //}
+                                        int stepDesignID = Convert.ToInt16(step["ST_DESSTEP_ID"].ToString());
+                                        Activity matchingActivity = activities.Where(x => x.ExternalID == stepDesignID.ToString()).FirstOrDefault();
+                                        if (matchingActivity != null)
+                                        {
+                                            switch (matchingActivity.Status)
+                                            {
+                                                case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed:
+                                                    step.Status = "Failed";
+                                                    List<IAct> failedActs = matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
+                                                    string errors = string.Empty;
+                                                    foreach (Act act in failedActs) errors += act.Error + Environment.NewLine;
+                                                    step["ST_ACTUAL"] = errors;
+                                                    break;
+                                                case Amdocs.Ginger.CoreNET.Execution.eRunStatus.NA:
+                                                    step.Status = "N/A";
+                                                    step["ST_ACTUAL"] = "NA";
+                                                    break;
+                                                case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed:
+                                                    step.Status = "Passed";
+                                                    step["ST_ACTUAL"] = "Passed as expected";
+                                                    break;
+                                                case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped:
+                                                    //step.Status = "No Run";
+                                                    step.Status = "N/A";
+                                                    step["ST_ACTUAL"] = "Skipped";
+                                                    break;
+                                                case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending:
+                                                    step.Status = "No Run";
+                                                    step["ST_ACTUAL"] = "Was not executed";
+                                                    break;
+                                                case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running:
+                                                    step.Status = "Not Completed";
+                                                    step["ST_ACTUAL"] = "Not Completed";
+                                                    break;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            //Step not exist in Ginger so left as "No Run" unless it is step data
+                                            if (step.Name.ToUpper() == "STEP DATA")
+                                                step.Status = "Passed";
+                                            else
+                                                step.Status = "No Run";
+                                        }
                                         step.Post();
                                         index++;
                                     }

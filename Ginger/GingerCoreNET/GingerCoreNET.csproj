@@ -328,8 +328,8 @@
     <Reference Include="OctaneStdSDK">
       <HintPath>DLLS\OctaneStdSDK.dll</HintPath>
     </Reference>
-    <Reference Include="QCRestClient">
-      <HintPath>DLLS\QCRestClient.dll</HintPath>
+    <Reference Include="QCRestClientStd">
+      <HintPath>DLLS\QCRestClientStd.dll</HintPath>
     </Reference>
     <Reference Include="SikuliStandardNet">
       <HintPath>DLLS\SikuliStandardNet.dll</HintPath>

@@ -22,7 +22,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using QCRestClient;
+using QCRestClientStd;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -658,7 +658,7 @@ namespace GingerCore.ALM.QCRestAPI
         {
             Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
             string qcbin = "qcbin";
-            QCRestClient.QCClient qcClientREST = new QCClient(ALMCore.DefaultAlmConfig.ALMServerURL.TrimEnd(qcbin.ToCharArray()), ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMDomain, ALMCore.DefaultAlmConfig.ALMProjectName, 12);
+            QCRestClientStd.QCClient qcClientREST = new QCClient(ALMCore.DefaultAlmConfig.ALMServerURL.TrimEnd(qcbin.ToCharArray()), ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMDomain, ALMCore.DefaultAlmConfig.ALMProjectName, 12);
 
             if (qcClientREST.Login())
             {
@@ -687,7 +687,7 @@ namespace GingerCore.ALM.QCRestAPI
             return defectsOpeningResults;
         }
 
-        private static bool AddAttachmentToDefect(QCRestClient.QCClient qcClientREST,string defectId, string filePath)
+        private static bool AddAttachmentToDefect(QCRestClientStd.QCClient qcClientREST,string defectId, string filePath)
         {
             try
             {
