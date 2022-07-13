@@ -14,7 +14,7 @@
     <Grid x:Name="xViewAndControlsSection" Background="{StaticResource $BackgroundColor_LightGray}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" SizeChanged="xMainGrid_SizeChanged">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="WindowComboboxRow" Height="50" />
-            <RowDefinition Height="*" MinHeight="500" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -146,14 +146,18 @@
                             <TextBlock x:Name="xLiveSpyTabTextBlock" Text="Live Spy" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                         </StackPanel>
                     </TabItem.Header>
-                    <Frame x:Name="xLiveSpyTabContentFrame" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ScrollViewer.CanContentScroll="True"/>
+                    <ScrollViewer x:Name="xScrollViewer" VerticalScrollBarVisibility="Auto">
+                        <Frame x:Name="xLiveSpyTabContentFrame" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ScrollViewer.CanContentScroll="True"/>
+                    </ScrollViewer>
                 </TabItem>
             </TabControl>
 
             <GridSplitter x:Name="xRowSplitter" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ResizeDirection="Rows" Height="1" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource $Color_DarkBlue}"/>
             <GridSplitter x:Name="xColumnSplitter" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" ResizeDirection="Columns" Height="Auto" Width="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" Visibility="Collapsed"/>
 
-            <Ginger:UCElementDetails x:Name="xUCElementDetails" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                <Ginger:UCElementDetails x:Name="xUCElementDetails" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            </StackPanel>
         </Grid>
 
         <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
