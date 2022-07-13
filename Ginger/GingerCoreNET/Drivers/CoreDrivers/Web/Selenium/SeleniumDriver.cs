@@ -7612,6 +7612,14 @@ namespace GingerCore.Drivers
                         return ScreenshotToImage(screenshot);
                     }
                     break;
+                case eBrowserType.Edge:
+                case eBrowserType.Chrome:
+                    if (IsFullPageScreenshot)
+                    {
+                        var screenshot = ((OpenQA.Selenium.Chromium.ChromiumDriver)Driver).GetFullPageScreenshot();
+                        return ScreenshotToImage(screenshot);
+                    }
+                    break;
                 default:
                     //
                     break;
