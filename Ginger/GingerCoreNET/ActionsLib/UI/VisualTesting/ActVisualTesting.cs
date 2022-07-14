@@ -311,7 +311,10 @@ namespace GingerCore.Actions
         {
             mDriver = driver;
             CheckSetVisualAnalyzer();
-            CheckSetAppWindowSize();
+            if (mDriver.GetType().Name == "SeleniumDriver")
+            {
+                CheckSetAppWindowSize();
+            }
             if (Amdocs.Ginger.Common.Context.GetAsContext(Context).Activity == null)
             {
                 Amdocs.Ginger.Common.Context.GetAsContext(Context).Activity = ((Drivers.DriverBase)mDriver).BusinessFlow.CurrentActivity;

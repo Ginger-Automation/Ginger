@@ -247,7 +247,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                             basicModal.ReturnValues.Add(arv);
                         }
                     }
-                    else if (basicModal.ContentType == ApplicationAPIUtils.eContentType.JSon)
+                    else if (basicModal.ContentType == ApplicationAPIUtils.eContentType.JSon ||
+                        basicModal.ContentType == ApplicationAPIUtils.eContentType.FormData)
                     {
                         ApplicationAPIModel JsonResponseModel = new ApplicationAPIModel();
                         var i = GenerateJsonBody(JsonResponseModel, schemaObj);
