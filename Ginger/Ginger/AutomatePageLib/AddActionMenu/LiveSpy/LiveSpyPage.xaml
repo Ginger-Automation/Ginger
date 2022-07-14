@@ -9,7 +9,7 @@
       mc:Ignorable="d" 
       xmlns:h="clr-namespace:Ginger.Help"
       h:GingerHelpProvider.HelpString="Live Spy"
-      d:DesignHeight="800" d:DesignWidth="500"
+      d:DesignHeight="300" d:DesignWidth="500"
       Title="LiveSpyPage">
 
     <Grid>
@@ -33,8 +33,9 @@
                 <TextBlock Name="xStatusTextBlock"  HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="{StaticResource $HighlightColor_Purple}" Text="Hover with the mouse over the element you want to spy and click/hold down the 'Ctrl' Key" Style="{StaticResource $TextBlockStyle}" FontSize="10" TextWrapping="Wrap"/>
             </ScrollViewer>
         </DockPanel>
-
-        <Ginger:UCElementDetails x:Name="xUCElementDetails" ShowActionTab="True" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <StackPanel Grid.Row="2">
+        <Ginger:UCElementDetails x:Name="xUCElementDetails" ShowActionTab="True"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        </StackPanel>
 
 
     </Grid>

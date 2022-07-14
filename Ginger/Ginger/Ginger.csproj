@@ -699,6 +699,9 @@
     <Reference Include="ALMRestClient">
       <HintPath>..\GingerCoreNET\DLLS\ALMRestClient.dll</HintPath>
     </Reference>
+    <Reference Include="ALMRestClientStd">
+      <HintPath>..\GingerCoreNET\DLLS\ALMRestClientStd.dll</HintPath>
+    </Reference>
     <Reference Include="ALM_Common">
       <HintPath>..\GingerCoreNET\DLLS\ALM_Common.dll</HintPath>
     </Reference>
@@ -739,8 +742,8 @@
     <Reference Include="Open3270">
       <HintPath>DLLs\Open3270.dll</HintPath>
     </Reference>
-    <Reference Include="QCRestClient">
-      <HintPath>..\GingerCoreNET\DLLS\QCRestClient.dll</HintPath>
+    <Reference Include="QCRestClientStd">
+      <HintPath>..\GingerCoreNET\DLLS\QCRestClientStd.dll</HintPath>
     </Reference>
     <Reference Include="QTestAPIStd">
       <HintPath>..\GingerCoreNET\DLLS\QTestAPIStd.dll</HintPath>

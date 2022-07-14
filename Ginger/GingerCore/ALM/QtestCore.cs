@@ -375,11 +375,11 @@ namespace GingerCore.ALM
                                         {
                                             testCaseStatus = statuses.Where(z => z.Name == "Failed").FirstOrDefault();
                                         }
-                                        else if (stepsStatuses.Where(x => x.Name == "No Run").Count() == testStepsCount || stepsStatuses.Where(x => x.Name == "Not Applicable").Count() == testStepsCount)
+                                        else if (stepsStatuses.Where(x => x.Name == "No Run").Count() == testStepsCount || (stepsStatuses.Where(x => x.Name == "Not Applicable").Count() + stepsStatuses.Where(x => x.Name == "Unexecuted").Count()) == testStepsCount)
                                         {
                                             testCaseStatus = statuses.Where(z => z.Name == "Unexecuted").FirstOrDefault();
                                         }
-                                        else if (stepsStatuses.Where(x => x.Name == "Passed").Count() == testStepsCount || (stepsStatuses.Where(x => x.Name == "Passed").Count() + stepsStatuses.Where(x => x.Name == "Unexecuted").Count()) == testStepsCount)
+                                        else if (stepsStatuses.Where(x => x.Name == "Passed").Count() == testStepsCount || (stepsStatuses.Where(x => x.Name == "Passed").Count()) == testStepsCount)
                                         {
                                             testCaseStatus = statuses.Where(z => z.Name == "Passed").FirstOrDefault();
                                         }
