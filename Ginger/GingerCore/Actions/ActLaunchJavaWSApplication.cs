@@ -95,6 +95,7 @@ namespace GingerCore.Actions
             public static string BlockingJavaWindow = "BlockingJavaWindow"; //search for blocking java window that popup before the application(Security, Update...) 
             public static string PortConfigParam = "PortConfigParam";
             public static string DynamicPortPlaceHolder = "DynamicPortPlaceHolder";
+
         }
 
         //------------------- Java version to use args
@@ -1010,11 +1011,12 @@ namespace GingerCore.Actions
 
             return false;
         }
-
+        private static string handleExePath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "StaticDrivers", "handle.exe");
         private Boolean IsInstrumentationModuleLoaded(int id)
         {
             //This method will check if process modules contains instrument dll
             //if yes that means java agent is already attached to this process
+            //Process processHandle = null;
             try
             {
                 if (id == -1)
@@ -1022,27 +1024,44 @@ namespace GingerCore.Actions
                     return false;
                 }
 
-                Process process = Process.GetProcessById(id);
-                ProcessModuleCollection processModules = process.Modules;
-                ProcessModule module;
+                var processHandle = Process.Start(new ProcessStartInfo() { FileName = handleExePath, Arguments = String.Format(" -p {0} GingerAgent.jar", id), UseShellExecute = false, RedirectStandardOutput = true });
+                string cliOut = processHandle.StandardOutput.ReadToEnd();
+                processHandle.WaitForExit();
+                processHandle.Close();
 
-                int modulesCount = processModules.Count - 1;
-                // we start from end, because instrument dll is always loaded after rest of the modules are already loaded
-                //So we look for only last 5 modules
-                int maxProcessToCheck = modulesCount - 5 > 0 ? modulesCount - 5 : 0;
-                for (int i = modulesCount; i > maxProcessToCheck - 5; i--)
+                if (cliOut.Contains("GingerAgent.jar"))
                 {
-                    module = processModules[i];
-
-                    if (module.ModuleName.Equals("instrument.dll"))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
+                //Process process = Process.GetProcessById(id);
+                //ProcessModuleCollection processModules = process.Modules;
+                //ProcessModule module;
+
+                //int modulesCount = processModules.Count - 1;
+                //// we start from end, because instrument dll is always loaded after rest of the modules are already loaded
+                ////So we look for only last 5 modules
+
+                //int maxProcessToCheck = modulesCount - 5 > 0 ? modulesCount - 5 : 0;
+                //for (int i = modulesCount; i > maxProcessToCheck - 5; i--)
+                //{
+                //    module = processModules[i];
+
+                //    if (module.ModuleName.Equals("instrument.dll"))
+                //    {
+                //        return true;
+                //    }
+                //}
             }
             catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.WARN, "Exception when checking IsInstrumentationModuleLoaded for process id:" + id, e);
+            }
+            finally
+            {
+                //if (processHandle != null && !processHandle.HasExited)
+                //{
+                //    processHandle.Kill();
+                //}
             }
 
             return false;
