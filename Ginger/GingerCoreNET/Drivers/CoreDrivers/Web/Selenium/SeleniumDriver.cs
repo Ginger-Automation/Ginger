@@ -61,7 +61,7 @@ using System.Text;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.DevTools;
 using Newtonsoft.Json;
-using DevToolsSessionDomains = OpenQA.Selenium.DevTools.V96.DevToolsSessionDomains;
+using DevToolsSessionDomains = OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains;
 
 namespace GingerCore.Drivers
 {
@@ -8688,9 +8688,9 @@ namespace GingerCore.Drivers
             var devTool = webDriver as IDevTools;
 
             //DevTool Session 
-            devToolsSession = devTool.GetDevToolsSession(96);
-            var domains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V96.DevToolsSessionDomains>();
-            domains.Network.Enable(new OpenQA.Selenium.DevTools.V96.Network.EnableCommandSettings());
+            devToolsSession = devTool.GetDevToolsSession(101);
+            var domains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains>();
+            domains.Network.Enable(new OpenQA.Selenium.DevTools.V101.Network.EnableCommandSettings());
         }
         public async Task GetNetworkLogAsync(IWebDriver webDriver, ActBrowserElement act)
         {
