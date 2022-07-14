@@ -6671,9 +6671,16 @@ namespace GingerCore.Drivers
                         if (!string.IsNullOrEmpty(POMGuid))
                         {
                             ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(p => p.Guid.ToString() == POMGuid).FirstOrDefault();
-                            POMUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);     // SelectedPOM?.PageURL;
+                            if (SelectedPOM != null)
+                            {
+                                POMUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);
+                                GotoURL(act, POMUrl);
+                            }
+                            else
+                            {
+                                act.Error = "Error: Selected POM was not found.";
+                            }
                         }
-                        GotoURL(act, POMUrl);
                     }
                     else
                     {
