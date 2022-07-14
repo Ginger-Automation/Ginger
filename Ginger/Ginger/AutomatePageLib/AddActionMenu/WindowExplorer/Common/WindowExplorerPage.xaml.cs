@@ -181,6 +181,17 @@ namespace Ginger.WindowExplorer
 
             xHTMLPageSrcViewer.HTMLTree.SelectedItemChanged += HTMLPageSourceTree_SelectedItemChanged;
             xXMLPageSrcViewer.XMLTree.SelectedItemChanged += XMLPageSourceTree_SelectedItemChanged;
+
+            if (mContext.Platform == ePlatformType.Web)
+            {
+                xUCElementDetails.xElementScreenShotFrameTop.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xUCElementDetails.xElementScreenShotFrameTop.Visibility = Visibility.Collapsed;
+            }
+            xUCElementDetails.xElementScreenShotFrame.Visibility = Visibility.Collapsed;
+            xUCElementDetails.xRightImageSection.Width = new GridLength(0, GridUnitType.Pixel);
         }
 
         private void HTMLPageSourceTree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
