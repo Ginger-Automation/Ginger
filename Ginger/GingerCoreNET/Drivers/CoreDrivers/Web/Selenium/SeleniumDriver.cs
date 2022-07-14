@@ -7731,7 +7731,7 @@ namespace GingerCore.Drivers
             {
                 string s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
 
-                RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
+                IWebElement ele = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
 
                 if (ele == null)
                 {
@@ -7789,7 +7789,7 @@ namespace GingerCore.Drivers
                 parentElementLocation.X += elemInfo.X;
                 parentElementLocation.Y += elemInfo.Y;
 
-                Point p_Pos = GetElementPosition(ele);
+                Point p_Pos = GetElementPosition((RemoteWebElement)ele);
                 ptX -= p_Pos.X;
                 ptY -= p_Pos.Y;
 
@@ -7840,7 +7840,7 @@ namespace GingerCore.Drivers
                             + "} "
                             + "return new Array(X, Y);";
 
-            RemoteWebDriver i_Driver = (RemoteWebDriver)i_Elem.WrappedDriver;
+            RemoteWebDriver i_Driver = (RemoteWebDriver)((RemoteWebElement)i_Elem).WrappedDriver;
             IList<Object> i_Coord = (IList<Object>)i_Driver.ExecuteScript(s_Script);
 
             int s32_ScrollX = Convert.ToInt32(i_Coord[0]);
