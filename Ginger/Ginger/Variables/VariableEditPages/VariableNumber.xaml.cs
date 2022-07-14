@@ -68,7 +68,6 @@ namespace Ginger.Variables
                 {
                     variableNumber.MaxValue = Int32.MaxValue.ToString();
                 }
-
             }
             else
             {
@@ -76,6 +75,12 @@ namespace Ginger.Variables
                 pnlPrecision.Visibility = System.Windows.Visibility.Visible;
             }
 
+        }
+
+        private void SetNumericVaueOnRediobuttonChange()
+        {
+            variableNumber.Value = txtNumberValue.Text;
+            variableNumber.InitialNumberValue = variableNumber.Value;
         }
 
         private void rdoInputDecimal_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -87,6 +92,7 @@ namespace Ginger.Variables
             {
                 variableNumber.PrecisionValue = "2"; //default
             }
+            SetNumericVaueOnRediobuttonChange();
         }
 
         private void rdoInputInt_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -94,6 +100,7 @@ namespace Ginger.Variables
             pnlPrecision.Visibility = System.Windows.Visibility.Collapsed;
             variableNumber.MinValue = Int32.MinValue.ToString();
             variableNumber.MaxValue = Int32.MaxValue.ToString();
+            SetNumericVaueOnRediobuttonChange();
         }
 
 

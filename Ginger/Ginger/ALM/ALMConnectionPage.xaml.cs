@@ -137,7 +137,7 @@ namespace Ginger.ALM
             }
             UserNameTextBox.IsEnabled = true;
             PasswordTextBox.IsEnabled = true;
-            RestAPICheckBox.IsEnabled = true;
+            RestAPICheckBox.IsEnabled = false;
             TokenCheckBox.IsEnabled = true;
             if (isConnWin)
             {
@@ -492,11 +492,11 @@ namespace Ginger.ALM
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
                     PackageHint.Visibility = Visibility.Collapsed;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
-                    ExampleURLHint.Content = "Example: http://server:8080/almbin";
+                    ExampleURLHint.Content = "Example: http://server:8080/";
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
                     ServerURLTextBox.Cursor = null;                 
                     RestAPICheckBox.Visibility = Visibility.Visible;
-                    RestAPICheckBox.IsEnabled = true;
+                    RestAPICheckBox.IsEnabled = false;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.RQM:
@@ -635,6 +635,7 @@ namespace Ginger.ALM
                 {
                     case "QCRadioButton":
                             almType = GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.QC;
+                            RestAPICheckBox.IsEnabled = false;
                         break;
                     case "RQMRadioButton":
                             almType = GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.RQM;                           
