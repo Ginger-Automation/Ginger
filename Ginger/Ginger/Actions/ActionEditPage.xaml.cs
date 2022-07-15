@@ -37,6 +37,7 @@ using Ginger.WindowExplorer;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Java;
+using GingerCore.Actions.Windows;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
 using GingerCore.GeneralLib;
@@ -511,7 +512,9 @@ namespace Ginger.Actions
             if (a.GetType() != typeof(ActDBValidation) && a.GetType() != typeof(ActTableElement) &&
                 a.GetType() != typeof(ActLaunchJavaWSApplication) && a.GetType() != typeof(ActJavaEXE) &&
                 a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand) &&
-                a.GetType() != typeof(ActSetVariableValue) && a.GetType() != typeof(ActCreatePDFChart) && a.GetType() != typeof(ActCompareImgs) && a.GetType() != typeof(ActGenerateFileFromTemplate))
+                a.GetType() != typeof(ActSetVariableValue) && a.GetType() != typeof(ActCreatePDFChart) && a.GetType() != typeof(ActCompareImgs) &&
+                a.GetType() != typeof(ActGenerateFileFromTemplate) && a.GetType() != typeof(ActPBControl) && a.GetType() != typeof(ActWindowsControl) &&
+                a.GetType() != typeof(ActMenuItem) && a.GetType() != typeof(ActJavaElement))
             {
                 if (a.InputValues.Count > minimumInputValuesToHideGrid)
                 {
@@ -556,16 +559,8 @@ namespace Ginger.Actions
             }
             else if (a.GetType() == typeof(ActLaunchJavaWSApplication) || a.GetType() == typeof(ActJavaEXE))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
-                if (a.InputValues.Count <= 1)
-                {
-                    xInputValuesGrid.Visibility = Visibility.Collapsed;
-                    xValueBoxPnl.Visibility = Visibility.Collapsed;
-                }
-                else if (a.InputValues.Count >= 2)
-                {
-                    xInputValuesGrid.Visibility = Visibility.Visible;
-                    xValueBoxPnl.Visibility = Visibility.Collapsed;
-                }
+                xInputValuesGrid.Visibility = Visibility.Collapsed;
+                xValueBoxPnl.Visibility = Visibility.Collapsed;
             }
             else if (a.GetType() == typeof(ActDBValidation))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
@@ -621,7 +616,10 @@ namespace Ginger.Actions
                     xValueBoxPnl.Visibility = Visibility.Collapsed;
                 }
             }
-            else if (a.GetType() == typeof(ActSetVariableValue) || a.GetType() == typeof(ActCreatePDFChart) || a.GetType() == typeof(ActCompareImgs) || a.GetType() == typeof(ActGenerateFileFromTemplate))
+            else if (a.GetType() == typeof(ActSetVariableValue) || a.GetType() == typeof(ActCreatePDFChart) 
+                        || a.GetType() == typeof(ActCompareImgs) || a.GetType() == typeof(ActGenerateFileFromTemplate)
+                        || a.GetType() == typeof(ActPBControl) || a.GetType() == typeof(ActWindowsControl) 
+                        || a.GetType() == typeof(ActMenuItem) || a.GetType() == typeof(ActJavaElement))
             {
                 xInputValuesGrid.Visibility = Visibility.Collapsed;
                 xValueBoxPnl.Visibility = Visibility.Visible;
@@ -732,7 +730,7 @@ namespace Ginger.Actions
             xOutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
             xOutputValuesGrid.AddSeparator();
 
-            xOutputValuesGrid.AddToolbarTool(eImageType.Reset, "Clear Un-used Parameters", new RoutedEventHandler(ClearUnusedParameter), imageSize: 14);
+            xOutputValuesGrid.AddToolbarTool(eImageType.Reset, "Clear Unused Parameters", new RoutedEventHandler(ClearUnusedParameter), imageSize: 14);
             BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, nameof(Act.AddNewReturnParams));
             BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mAction, nameof(Act.SupportSimulation));
 

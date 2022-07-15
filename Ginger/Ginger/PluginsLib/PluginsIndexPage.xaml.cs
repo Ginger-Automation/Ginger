@@ -157,7 +157,7 @@ namespace Ginger.PlugInsWindows
       
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start(((Button)sender).Content.ToString());
+            Process.Start(new ProcessStartInfo() { FileName = ((Button)sender).Content.ToString(), UseShellExecute = true });
         }
 
         private void xInstallButonn_Click(object sender, RoutedEventArgs e)
@@ -194,7 +194,7 @@ namespace Ginger.PlugInsWindows
         {
             if (Directory.Exists(PluginPackage.LocalPluginsFolder))
             {
-                Process.Start(PluginPackage.LocalPluginsFolder);
+                Process.Start(new ProcessStartInfo() { FileName = PluginPackage.LocalPluginsFolder, UseShellExecute = true });
             }
             else
             {

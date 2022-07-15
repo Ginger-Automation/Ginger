@@ -35,7 +35,7 @@
             </Grid>
 
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                <CheckBox x:Name="xWidgetElementCheckBox" ToolTip="Embedded Html Element" Click="XWidgetsElementType_Click" Content="Widgets Element" Visibility="Collapsed" HorizontalAlignment="Center"  VerticalAlignment="Center" />
+                <CheckBox x:Name="xWidgetElementCheckBox" ToolTip="Embedded HTML Element" Click="XWidgetsElementType_Click" Content="Widgets Element" Visibility="Collapsed" HorizontalAlignment="Center"  VerticalAlignment="Center" />
                 <UserControls:ImageMakerControl x:Name="xWidgetElementImage" ImageType="Browser" SetAsFontImageWithSize="16"  Width="16" Height="16" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0"  Visibility="Collapsed"/>
             </StackPanel>
 

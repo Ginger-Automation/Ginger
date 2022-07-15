@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -85,8 +86,9 @@ namespace Ginger.Help
                 if (File.Exists(helpLibIndex))
                 {
                     //start local help lib
-                    System.Diagnostics.Process proc = new System.Diagnostics.Process();
-                    proc.StartInfo.FileName = helpLibIndex;
+                    ProcessStartInfo processStartInfo = new ProcessStartInfo();
+                    processStartInfo.FileName = helpLibIndex;
+                    processStartInfo.UseShellExecute = true;
                     if (!string.IsNullOrEmpty(searchText))
                     {
                         string htmWithSearch = System.IO.Path.GetTempPath() + "OfflineGingerHelpWithSearch.htm";
@@ -98,9 +100,9 @@ namespace Ginger.Help
                         {
                             sw.WriteLine(string.Format("<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0; url='{0}'\" /></head></html>", helpLibIndex + "?rhsearch=" + Uri.EscapeUriString(searchText)));
                         }
-                        proc.StartInfo.FileName = htmWithSearch;
+                        processStartInfo.FileName = htmWithSearch;
                     }
-                    proc.Start();
+                    Process.Start(processStartInfo);
                 }
                 else
                 {
@@ -130,11 +132,11 @@ namespace Ginger.Help
 
                 if (!string.IsNullOrEmpty(searchText))
                 {
-                    System.Diagnostics.Process.Start(publicLibURI + "/?rhsearch=" + Uri.EscapeUriString(searchText));
+                    System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = publicLibURI + "/?rhsearch=" + Uri.EscapeUriString(searchText), UseShellExecute = true });
                 }
                 else
                 {
-                    System.Diagnostics.Process.Start(publicLibURI);
+                    System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = publicLibURI, UseShellExecute = true });                  
                 }
 
             }

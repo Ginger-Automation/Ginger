@@ -157,7 +157,9 @@ namespace Amdocs.Ginger.Common
         RunsetAutoConfigBackWarn,
         SolutionOpenedOnNewerVersion,
         UploadSolutionInfo,
-        UploadSolutionToSourceControl
+        UploadSolutionToSourceControl,
+        UploadSolutionFailed,
+        SourceControlBranchNameEmpty
     }
 
     public static class UserMsgsPool
@@ -288,6 +290,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDoCheckIn, new UserMsg(eUserMsgType.QUESTION, "Check-In Changes", "Are you sure you want to check-in changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UploadSolutionInfo, new UserMsg(eUserMsgType.INFO, "Upload Solution", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UploadSolutionToSourceControl, new UserMsg(eUserMsgType.QUESTION, "Upload Solution", "The solution was created and loaded successfully.\nPlease make a note of the encryption key provided from solution details page."+Environment.NewLine + "Do you want to upload the Solution: '{0}' to Source Control?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.UploadSolutionFailed, new UserMsg(eUserMsgType.ERROR, "Upload Solution", "Failed to Upload Solution to Source Control" + Environment.NewLine + "'{0}'", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlBranchNameEmpty, new UserMsg(eUserMsgType.ERROR, "Upload Solution", "Branch name cannot be empty.", eUserMsgOption.OK, eUserMsgSelection.None));
             #endregion SourceControl Messages
 
             #region Validation Messages

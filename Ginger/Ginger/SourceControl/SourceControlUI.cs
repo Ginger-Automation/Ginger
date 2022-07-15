@@ -59,29 +59,32 @@ namespace Ginger.SourceControl
         {
             string error = string.Empty;
             List<string> conflictsPaths = new List<string>();
-          
+
             if (!SourceControl.GetLatest(path, ref error, ref conflictsPaths))
             {
-                ResolveConflictWindow conflictWindow = new ResolveConflictWindow(conflictsPaths);
-                if (WorkSpace.Instance.RunningInExecutionMode == true)
+                if (conflictsPaths.Count != 0)
                 {
-                    conflictsPaths.ForEach(path => SourceControlIntegration.ResolveConflicts(SourceControl, path, eResolveConflictsSide.Server));
-                }
-                else
-                {
-                    conflictWindow.ShowAsWindow();
-                }
-                if (!conflictWindow.IsResolved)
-                {
-                    if (!string.IsNullOrEmpty(error))
+                    ResolveConflictWindow conflictWindow = new ResolveConflictWindow(conflictsPaths);
+                    if (WorkSpace.Instance.RunningInExecutionMode == true)
                     {
-                        Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, error);
-                        return false;
+                        conflictsPaths.ForEach(path => SourceControlIntegration.ResolveConflicts(SourceControl, path, eResolveConflictsSide.Server));
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unable to resolve conflict");
-                        return false;
+                        conflictWindow.ShowAsWindow();
+                    }
+                    if (!conflictWindow.IsResolved)
+                    {
+                        if (!string.IsNullOrEmpty(error))
+                        {
+                            Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, error);
+                            return false;
+                        }
+                        else
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unable to resolve conflict");
+                            return false;
+                        }
                     }
                 }
             }

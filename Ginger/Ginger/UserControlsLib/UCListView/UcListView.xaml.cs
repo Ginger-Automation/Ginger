@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
@@ -31,10 +33,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Automation;
 
 namespace Ginger.UserControlsLib.UCListView
 {
@@ -495,8 +497,8 @@ namespace Ginger.UserControlsLib.UCListView
                     operationBtn.ButtonImageType = operation.ImageType;
                     operationBtn.ToolTip = operation.ToolTip;
                     operationBtn.Margin = new Thickness(-2, 0, -2, 0);
-                    operationBtn.ButtonImageHeight = 16;
-                    operationBtn.ButtonImageWidth = 16;
+                    operationBtn.ButtonImageHeight = 14;
+                    operationBtn.ButtonImageWidth = 14;
                     operationBtn.ButtonFontImageSize = operation.ImageSize;
 
                     if (operation.ImageForeground == null)

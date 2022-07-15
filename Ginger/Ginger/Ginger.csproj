@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>GingerIconNew.ico</ApplicationIcon>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -569,6 +570,7 @@
     <None Remove="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
     <None Remove="Resources\GingerDataSource.mdb" />
     <None Remove="RunSetLib\CreateAutoRunWizardLib\AutoRunIntroduction.md" />
+    <None Remove="StaticDrivers\selenium-server-standalone.jar" />
     <None Remove="TestLib\WizardLib\Intro.md" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\android.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\androidOutline.png" />
@@ -605,8 +607,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="StaticDrivers\selenium-server-standalone.jar">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="GingerIconNew.ico">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Actions\ActionConversion\ActionConversionIntro.md" />
     <Resource Include="Agents\AddAgentWizardLib\AddAgentIntro.md" />
@@ -634,19 +642,23 @@
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.16.0" />
     <PackageReference Include="EPPlus" Version="6.0.4" />
-    <PackageReference Include="FontAwesome.Sharp" Version="5.15.4" />
+    <PackageReference Include="FontAwesome5" Version="2.1.11" />
     <PackageReference Include="Gherkin" Version="5.1.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.42" />
     <PackageReference Include="LiteDB" Version="4.1.4" />
     <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.7" />
     <PackageReference Include="log4net" Version="2.0.14" />
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="11.1.1" />
-    <PackageReference Include="Microsoft.Office.Interop.Outlook" Version="15.0.4797.1004" />
+    <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
     <PackageReference Include="Mono.Posix" Version="7.1.0-final.1.21458.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="NSwag.Core.Yaml" Version="13.15.10" />
+    <PackageReference Include="NSwag.Core.Yaml" Version="12.0.9" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.61" />
     <PackageReference Include="RoyWpf.System.Windows.Interactivity" Version="0.1.2" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="103.0.5060.5300" />
+    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.31.0.1" />
+    <PackageReference Include="Selenium.WebDriver.IEDriver" Version="4.2.0" />
+    <PackageReference Include="Selenium.WebDriver.MSEdgeDriver" Version="103.0.1264.37" />
     <PackageReference Include="sharpadbclient" Version="2.3.23" />
     <PackageReference Include="Syncfusion.Shared.WPF" Version="20.1.0.55" />
     <PackageReference Include="System.Data.OleDb" Version="6.0.0" />
@@ -687,6 +699,9 @@
     <Reference Include="ALMRestClient">
       <HintPath>..\GingerCoreNET\DLLS\ALMRestClient.dll</HintPath>
     </Reference>
+    <Reference Include="ALMRestClientStd">
+      <HintPath>..\GingerCoreNET\DLLS\ALMRestClientStd.dll</HintPath>
+    </Reference>
     <Reference Include="ALM_Common">
       <HintPath>..\GingerCoreNET\DLLS\ALM_Common.dll</HintPath>
     </Reference>
@@ -695,6 +710,10 @@
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>..\GingerCoreNET\DLLS\GingerExternal.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.Microsoft.Office.Interop.Outlook">
+      <HintPath>..\GingerCoreNET\DLLS\Interop.Microsoft.Office.Interop.Outlook.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Interop.TDAPIOLELib">
       <HintPath>DLLs\Interop.TDAPIOLELib.dll</HintPath>
@@ -723,11 +742,11 @@
     <Reference Include="Open3270">
       <HintPath>DLLs\Open3270.dll</HintPath>
     </Reference>
-    <Reference Include="QCRestClient">
-      <HintPath>..\GingerCoreNET\DLLS\QCRestClient.dll</HintPath>
+    <Reference Include="QCRestClientStd">
+      <HintPath>..\GingerCoreNET\DLLS\QCRestClientStd.dll</HintPath>
     </Reference>
-    <Reference Include="QTestAPI">
-      <HintPath>..\GingerCoreNET\DLLS\QTestAPI.dll</HintPath>
+    <Reference Include="QTestAPIStd">
+      <HintPath>..\GingerCoreNET\DLLS\QTestAPIStd.dll</HintPath>
     </Reference>
     <Reference Include="SikuliStandardNet">
       <HintPath>..\GingerCoreNET\DLLS\SikuliStandardNet.dll</HintPath>
@@ -2346,6 +2365,9 @@
     <Resource Include="Images\_Images.xaml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="StaticDrivers\selenium-server-standalone.jar">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="TestLib\WizardLib\Intro.md" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\android.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
@@ -2404,8 +2426,8 @@
     <None Update="ALMRESTConfiguration\appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Documents\License.rtf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Help\Library\OfflineHelp.htm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Images\DragDrop\DoNotDrop.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -2415,6 +2437,27 @@
     </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
+    </None>
+    <None Update="Reports\GingerExecutionReport\ActionReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\ActivityGroupReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\ActivityReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\BusinessFlowReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\GingerExecutionReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\GingerRunnerReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\RunSetReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\%40ErrorOrange_16x16.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -2443,7 +2486,7 @@
     <None Update="StaticDrivers\GingerAgentStarter.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="StaticDrivers\selenium-server-standalone.jar">
+    <None Update="StaticDrivers\handle.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

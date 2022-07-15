@@ -33,7 +33,7 @@ using GingerCore.Actions.Common;
 using System.Data;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Windows.Automation;
+
 using Amdocs.Ginger.Common.UIElement;
 using System.Threading.Tasks;
 
@@ -974,7 +974,7 @@ namespace GingerCore.Drivers.PBDriver
             {
                 IHTMLElement elem = null;
                 string res=string.Empty;
-                if (HElem.GetType().ToString().Contains("mshtml"))
+                if (HElem.GetType().ToString().Contains("mshtml") || HElem.GetType().ToString().Contains("_ComObject"))
                 {
                     elem = ((IHTMLElement)HElem);
                 }
@@ -1019,7 +1019,7 @@ namespace GingerCore.Drivers.PBDriver
             {
                 string res = string.Empty;
                 IHTMLDOMNode d1;
-                if (HElem.GetType().ToString().Contains("mshtml"))
+                if (HElem.GetType().ToString().Contains("mshtml") || HElem.GetType().ToString().Contains("_ComObject"))
                 {
                     IHTMLElement h1 = (IHTMLElement)HElem;
                     d1 = h1 as IHTMLDOMNode;
@@ -1056,7 +1056,7 @@ namespace GingerCore.Drivers.PBDriver
             {
                 IHTMLElement elem = null;
                 string res = string.Empty;
-                if (HElem.GetType().ToString().Contains("mshtml"))
+                if (HElem.GetType().ToString().Contains("mshtml") || HElem.GetType().ToString().Contains("_ComObject"))
                 {
                     elem = ((IHTMLElement)HElem);
                 }
@@ -1089,7 +1089,7 @@ namespace GingerCore.Drivers.PBDriver
             try
             {
                 IHTMLElement elem = null;
-                if (HElem.GetType().ToString().Contains("mshtml"))
+                if (HElem.GetType().ToString().Contains("mshtml") || HElem.GetType().ToString().Contains("_ComObject"))
                 {
                     elem = ((IHTMLElement)HElem);
                 }
@@ -1158,7 +1158,7 @@ namespace GingerCore.Drivers.PBDriver
             try
             {
                 IHTMLElement elem = null;
-                if (HElem.GetType().ToString().Contains("mshtml"))
+                if (HElem.GetType().ToString().Contains("mshtml") || HElem.GetType().ToString().Contains("_ComObject"))
                 {
                     elem=((IHTMLElement)HElem);
                 }
@@ -1181,7 +1181,7 @@ namespace GingerCore.Drivers.PBDriver
             try
             {
                 IHTMLElement elem = null;
-                if (HElem.GetType().ToString().Contains("mshtml"))
+                if (HElem.GetType().ToString().Contains("mshtml") || HElem.GetType().ToString().Contains("_ComObject"))
                 {
                     elem = ((IHTMLElement)HElem);
                     ((HTMLDocument)browserObject.Document).focus();
@@ -1283,7 +1283,7 @@ namespace GingerCore.Drivers.PBDriver
         {
             ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
             IHTMLDOMNode d1;
-            if (EI.ElementObject.GetType().ToString().Contains("mshtml"))
+            if (EI.ElementObject.GetType().ToString().Contains("mshtml") || EI.ElementObject.GetType().ToString().Contains("_ComObject"))
             {
                 IHTMLElement h1 = (IHTMLElement)EI.ElementObject;
                 d1 = h1 as IHTMLDOMNode;
@@ -1892,7 +1892,7 @@ namespace GingerCore.Drivers.PBDriver
             {
                 throw new Exception("Error: GetElementProperty received ElementInfo with HTMLElement = null");
             }
-            if (EI.ElementObject.GetType().ToString().Contains("mshtml"))
+            if (EI.ElementObject.GetType().ToString().Contains("mshtml") || EI.ElementObject.GetType().ToString().Contains("_ComObject"))
                 return GetValue((IHTMLElement)EI.ElementObject, PropertyName);
             else
                 return GetValue((IHTMLDOMNode)EI.ElementObject, PropertyName);
@@ -1934,7 +1934,7 @@ namespace GingerCore.Drivers.PBDriver
                     }
                 }
             }
-            if (child.GetType().ToString().Contains("mshtml"))
+            if (child.GetType().ToString().Contains("mshtml") || EI.ElementObject.GetType().ToString().Contains("_ComObject"))
                 return GetHtmlElementInfo((IHTMLElement)child);
             else
                 return GetHtmlElementInfo((IHTMLDOMNode)child);
@@ -1973,7 +1973,7 @@ namespace GingerCore.Drivers.PBDriver
                 return new ElementInfo();
             else
             {
-                if (EI.ElementObject.GetType().ToString().Contains("mshtml"))
+                if (EI.ElementObject.GetType().ToString().Contains("mshtml") || EI.ElementObject.GetType().ToString().Contains("_ComObject"))
                 {
                     obj = (IHTMLElement)EI.ElementObject;
                     childNode = (IHTMLDOMNode)obj;
@@ -1983,7 +1983,7 @@ namespace GingerCore.Drivers.PBDriver
                     if (ReferenceEquals(childNode, null))
                         return null;
                     #endregion
-                    if (childNode.GetType().ToString().Contains("mshtml"))
+                    if (childNode.GetType().ToString().Contains("mshtml") || childNode.GetType().ToString().Contains("_ComObject"))
                         return GetHtmlElementInfo((IHTMLElement)childNode);
                     else
                     {
@@ -1997,7 +1997,7 @@ namespace GingerCore.Drivers.PBDriver
                     if (ReferenceEquals(childNode, null))
                         return null;
                     #endregion
-                    if (childNode.GetType().ToString().Contains("mshtml"))
+                    if (childNode.GetType().ToString().Contains("mshtml") || childNode.GetType().ToString().Contains("_ComObject"))
                         return GetHtmlElementInfo((IHTMLElement)childNode);
                     else
                     {
@@ -2020,7 +2020,7 @@ namespace GingerCore.Drivers.PBDriver
             {
                 IHTMLElement obj;
                 IHTMLDOMNode elem23;
-                if (EI.ElementObject.GetType().ToString().Contains("mshtml"))
+                if (EI.ElementObject.GetType().ToString().Contains("mshtml") || EI.ElementObject.GetType().ToString().Contains("_ComObject"))
                 {
                     obj = (IHTMLElement)EI.ElementObject;
                     elem23 = (IHTMLDOMNode)obj;
@@ -2030,7 +2030,7 @@ namespace GingerCore.Drivers.PBDriver
                     if (object.ReferenceEquals(elem23, null))
                         return null;
                     #endregion
-                    if (elem23.GetType().ToString().Contains("mshtml"))
+                    if (elem23.GetType().ToString().Contains("mshtml") || elem23.GetType().ToString().Contains("_ComObject"))
                         return GetHtmlElementInfo((IHTMLElement)elem23);
                     else
                         return GetHtmlElementInfo((IHTMLDOMNode)elem23);
@@ -2043,7 +2043,7 @@ namespace GingerCore.Drivers.PBDriver
                     if (object.ReferenceEquals(elem23, null))
                         return null; 
                     #endregion
-                    if (elem23.GetType().ToString().Contains("mshtml"))
+                    if (elem23.GetType().ToString().Contains("mshtml") || elem23.GetType().ToString().Contains("_ComObject"))
                         return GetHtmlElementInfo((IHTMLElement)elem23);
                     else
                         return GetHtmlElementInfo((IHTMLDOMNode)elem23);
@@ -2270,8 +2270,8 @@ namespace GingerCore.Drivers.PBDriver
             {
                 elemInnerHtml = ele.innerHTML.Replace("\"", string.Empty);
                 elemOuterHtml = ele.outerHTML.Replace("\"", string.Empty);
-                if (elemInnerHtml.Replace("\"", string.Empty).Equals(inHtml) &&
-                    elemOuterHtml.Replace("\"", string.Empty).Equals(outHtml))
+                if (elemInnerHtml.Replace("\"", string.Empty).Equals(inHtml) && outHtml.Replace("\"", string.Empty).Contains(elemOuterHtml)
+                    )
                 {
                     return true;
                 }
@@ -2355,7 +2355,7 @@ namespace GingerCore.Drivers.PBDriver
             // based on the name and position of the node
             int childPos = 0;
             int pos=0;
-            List<IHTMLElement> elChilds = new List<IHTMLElement>(); 
+            List<IHTMLElement> elChilds = new List<IHTMLElement>();
             elChilds.Add((IHTMLElement)el.children);
             if (node.Name.StartsWith(".."))
             {

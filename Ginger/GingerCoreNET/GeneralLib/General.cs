@@ -315,7 +315,10 @@ namespace GingerCoreNET.GeneralLib
             {
                 DataSource.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();
-
+                if (dsTables == null)
+                {
+                    return "";
+                }
                 foreach (DataSourceTable dst in dsTables)
                 {
                     if (dst.Name == DSTableName)
@@ -399,6 +402,7 @@ namespace GingerCoreNET.GeneralLib
         {
             try
             {
+                OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
                 using (OfficeOpenXml.ExcelPackage xlPackage = new OfficeOpenXml.ExcelPackage())
                 {
                     if (File.Exists(filePath))

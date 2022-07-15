@@ -24,23 +24,18 @@
                     <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
                         <DockPanel>
                             <Label Style="{StaticResource @InputFieldLabelStyle}">DateTime Format :</Label>
-                            <ComboBox  x:Name="txtDateFormat"  SelectedIndex="0"  Style="{StaticResource $FlatEditInputComboBoxStyle}" HorizontalAlignment="Left"  Width="215" Margin="0,0,0,20" >
+                            <ComboBox  x:Name="txtDateFormat"  SelectedIndex="1"  Style="{StaticResource $FlatEditInputComboBoxStyle}" HorizontalAlignment="Left"  Width="215" Margin="0,0,0,20" IsEditable="True" SelectionChanged="txtDateFormat_TextChanged">
                                 <ComboBoxItem Content = "dddd, dd MMMM yyyy HH:mm"/>
-                                <ComboBoxItem Content = "dddd, dd MMMM yyyy h:mm"/>
+                                <ComboBoxItem Content = "MM/dd/yyyy h:mm:ss tt"/>
                                 <ComboBoxItem Content = "dddd, dd MMMM yyyy h:mm tt"/>
                                 <ComboBoxItem Content = "dddd, dd MMMM yyyy HH:mm:ss"/>
                                 <ComboBoxItem Content = "dddd, dd MMMM yyyy"/>
                                 <ComboBoxItem Content = "MM/dd/yyyy"/>
                                 <ComboBoxItem Content = "MM/dd/yyyy HH:mm"/>
                                 <ComboBoxItem Content = "MM/dd/yyyy h:mm tt"/>
-                                <ComboBoxItem Content = "MM/dd/yyyy h:mm:ss tt"/>
-                                <ComboBoxItem Content = "MM/dd/yyyy h:mm" />
-                                <ComboBoxItem Content = "MM/dd/yyyy h:mm tt"/>
                                 <ComboBoxItem Content = "MM/dd/yyyy HH:mm:ss"/>
                                 <ComboBoxItem Content = "MMMM dd"/>
                                 <ComboBoxItem Content = "HH:mm"/>
-                                <ComboBoxItem Content = "HH:mm tt"/>
-                                <ComboBoxItem Content = "h:mm"/>
                                 <ComboBoxItem Content = "h:mm tt"/>
                                 <ComboBoxItem Content = "HH:mm:ss"/>
                                 <ComboBoxItem Content = "yyyy MMMM"/>

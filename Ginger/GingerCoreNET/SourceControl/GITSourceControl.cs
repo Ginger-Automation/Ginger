@@ -312,7 +312,7 @@ namespace GingerCore.SourceControl
                             SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.Unknown;
                             SCFI.Selected = true;
                             SCFI.Diff = "";
-                            if (item.State == FileStatus.ModifiedInWorkdir)
+                            if (item.State.ToString().Contains(FileStatus.ModifiedInWorkdir.ToString()))
                             {
                                 SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.Modified;
                             }
@@ -553,6 +553,11 @@ namespace GingerCore.SourceControl
                 {
                     IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL, GetSourceCredentialsHandler());
                 }
+                else
+                {
+                    error = "Username cannot be empty";
+                    return false;
+                }
             }
             catch (Exception ex)
             {
@@ -561,6 +566,7 @@ namespace GingerCore.SourceControl
             }
             return true;
         }
+
         public override bool InitializeRepository(string remoteURL)
         {
             try
@@ -573,6 +579,7 @@ namespace GingerCore.SourceControl
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to Upload Solution to Source Control", ex);
+                Reporter.ToUser(eUserMsgKey.UploadSolutionFailed, ex.Message);
                 return false;
             }
         }

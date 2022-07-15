@@ -176,14 +176,18 @@ namespace GingerCore
                     byte[] plainTextBytes = new byte[strToDecryptBytes.Length];
 
                     // Start decrypting
-                    int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        cryptoStream.CopyTo(ms, plainTextBytes.Length);
+                        plainTextBytes = ms.ToArray();
+                    }
 
                     // Close both streams
                     memoryStream.Close();
                     cryptoStream.Close();
 
                     // Convert decrypted data into a string. 
-                    string decryptedStr = Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
+                    string decryptedStr = Encoding.UTF8.GetString(plainTextBytes);
 
                     // Return decrypted string.   
                     result = true;

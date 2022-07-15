@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Windows.Automation;
+
 using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace GingerCore.Drivers.Common
@@ -459,7 +459,7 @@ namespace GingerCore.Drivers.Common
                 if (invokePattern != null)
                 {
                     clickTriggeredFlag = true;                   
-                    ((InvokePattern)invokePattern).Invoke();
+                    ((UIAuto.InvokePattern)invokePattern).Invoke();
                     actionResult.executionInfo = "Successfully clicked the element";
                 }
                 else

@@ -18,7 +18,7 @@ limitations under the License.
 
 //using ALM_Common.DataContracts;
 using AlmDataContractsStd.Enums;
-using ALMRestClient;
+using ALMRestClientStd;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.IO;
@@ -26,7 +26,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Variables;
-using QCRestClient;
+using QCRestClientStd;
 using System;
 using System.Collections.Generic;
 using System.IO.Compression;

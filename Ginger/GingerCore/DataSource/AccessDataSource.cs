@@ -40,9 +40,9 @@ namespace GingerCore.DataSource
             string strAccessConn = "";
 
             if (sMode == "Read")
-                strAccessConn = @"Provider=Microsoft.Jet.OLEDB.4.0;Mode=" + sMode + ";Data Source=" + FileFullPath;
+                strAccessConn = @"Provider=Microsoft.ACE.OLEDB.12.0;Mode=" + sMode + ";Data Source=" + FileFullPath;
             else
-                strAccessConn = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FileFullPath;
+                strAccessConn = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + FileFullPath;
 
             return strAccessConn;
         }
@@ -380,19 +380,53 @@ namespace GingerCore.DataSource
             return GetQueryOutput("Select * from " + TableName);
         }
 
-        public override void AddRow( List<string> mColumnNames, DataSourceTable mDSTableDetails)
+        public bool CheckAutoIncrement(DataSourceTable mDSTableDetails)
         {
+            bool check = false;
+            foreach (DataColumn mColumn in mDSTableDetails.DataTable.Columns)
+            {
+                if (mColumn.AutoIncrement)
+                {
+                    check = true;
+                    break;
+                }
+            }
+            return check;
+        }
+        public override void AddRow(List<string> mColumnNames, DataSourceTable mDSTableDetails)
+        {
+            var count = mDSTableDetails.DataTable.Constraints.Count;
+            if (count > 0)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The table contains Primary key constraint, adding new rows will not work. To avoid any issues, remove the Primary key constraint and add the data source again.");
+                return;
+            }
+            if (!CheckAutoIncrement(mDSTableDetails))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "No Auto Increment Column Present. To avoid any issues, add one auto-increment column and add the data source again.");
+                return;
+            }
+
             DataRow dr = mDSTableDetails.DataTable.NewRow();
             mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
             foreach (string sColName in mColumnNames)
             {
+                string colType = mDSTableDetails.DSC.GetTable(mDSTableDetails.Name).Columns[sColName].DataType.ToString();
+
                 if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
                 {
-                        dr[sColName] = "";
+                    if (colType == "Int32")
+                    {
+                        dr[sColName] = 0;
+                    }
+                    else if (colType == "String")
+                    {
+                        dr[sColName] = string.Empty;
+                    }
                 }
                 else if (sColName == "GINGER_ID")
                 {
-                        dr[sColName] = System.DBNull.Value;
+                    dr[sColName] = System.DBNull.Value;
                 }
             }
             mDSTableDetails.DataTable.Rows.Add(dr);

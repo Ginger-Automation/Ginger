@@ -25,7 +25,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.UIAutomation;
 using mshtml;
 using GingerCore.Drivers.PBDriver;
-using System.Windows.Automation;
+
 using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Drivers.Common

@@ -83,7 +83,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.Selected), Header = "Select", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox });
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemType), Header = "Item Type", WidthWeight = 50, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemName), Header = "Item Name", WidthWeight = 50, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.RequiredFor), Header = "Dependancy For", WidthWeight = 50, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.RequiredFor), Header = "Dependency For", WidthWeight = 50, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemImportSetting), Header = "Import Setting", WidthWeight = 30, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.Comments), Header = "Comments", WidthWeight = 120, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalSolutionItem.ItemExtraInfo), Header = "Item Full Path", WidthWeight = 150, ReadOnly = true });

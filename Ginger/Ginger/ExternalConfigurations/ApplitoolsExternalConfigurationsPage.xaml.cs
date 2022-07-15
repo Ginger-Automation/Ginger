@@ -61,7 +61,7 @@ namespace Ginger.Configurations
         private void ApplyValidationRules()
         {
             // check if fields have been populated (font-end validation)
-            xAPIURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Url cannot be empty"));
+            xAPIURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("URL cannot be empty"));
             xAPIKeyTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Key cannot be empty"));
 
             CallSealightsConfigPropertyChange();

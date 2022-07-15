@@ -22,7 +22,7 @@ using Amdocs.Ginger.Common;
 using Ginger.WindowExplorer;
 using Ginger.WindowExplorer.PowerBuilder;
 using GingerCore.Actions;
-using System.Windows.Automation;
+
 using System.Windows.Controls;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Amdocs.Ginger.Common.UIElement;

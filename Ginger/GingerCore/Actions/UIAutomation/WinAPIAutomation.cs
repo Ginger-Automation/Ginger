@@ -17,17 +17,16 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Automation;
 using System.Windows.Forms;
 using mshtml;
 using System.Threading;
 using Amdocs.Ginger.Common;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace GingerCore.Drivers
 {
@@ -290,7 +289,7 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, "COM Exception when ShowWindow Error details:", e);
                 throw e;
             }
-            catch (ElementNotAvailableException e)
+            catch (UIAuto.ElementNotAvailableException e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when ShowWindow Error details:", e);
                 throw e;
@@ -437,13 +436,13 @@ namespace GingerCore.Drivers
         }
         public void MoveMousetoXYPoint(UIAuto.AutomationElement element, int x, int y)
         {
-            System.Windows.Rect boundingRect = (System.Windows.Rect)
+            System.Drawing.Rectangle boundingRect = (System.Drawing.Rectangle)
             element.GetCurrentPropertyValue(UIAuto.AutomationElement.BoundingRectangleProperty);
 
             int targetProcessID = element.Current.ProcessId;
             SetForeGroundWindow(targetProcessID);
 
-            Cursor.Position = new System.Drawing.Point((int)(boundingRect.TopLeft.X + x), (int)(boundingRect.TopLeft.Y + y));
+            Cursor.Position = new System.Drawing.Point((int)(boundingRect.X + x), (int)(boundingRect.Y + y));
         }
 
         public void SendClickOnXYPoint(UIAuto.AutomationElement element, int x, int y)
@@ -459,21 +458,20 @@ namespace GingerCore.Drivers
         }
         public void SendClickOnWinXYPoint(UIAuto.AutomationElement element, int x, int y)
         {
-            System.Windows.Rect boundingRect = (System.Windows.Rect)
-            element.GetCurrentPropertyValue(UIAuto.AutomationElement.BoundingRectangleProperty);
+            System.Drawing.Rectangle boundingRect = (System.Drawing.Rectangle)element.GetCurrentPropertyValue(UIAuto.AutomationElement.BoundingRectangleProperty);
             System.Drawing.Point p = System.Windows.Forms.Cursor.Position;
 
             int targetProcessID = element.Current.ProcessId;
             SetForeGroundWindow(targetProcessID);
 
 
-            ClickLeftMouseButton((int)(boundingRect.TopLeft.X + x), (int)(boundingRect.TopLeft.Y + y));
+            ClickLeftMouseButton((int)(boundingRect.X + x), (int)(boundingRect.Y + y));
             System.Windows.Forms.Cursor.Position = p;
         }
 
         public void SendDoubleClickOnWinXYPoint(UIAuto.AutomationElement element, int x, int y)
         {
-            System.Windows.Rect boundingRect = (System.Windows.Rect)
+            System.Drawing.Rectangle boundingRect = (System.Drawing.Rectangle)
     element.GetCurrentPropertyValue(UIAuto.AutomationElement.BoundingRectangleProperty);
 
             System.Drawing.Point p = System.Windows.Forms.Cursor.Position;
@@ -482,35 +480,35 @@ namespace GingerCore.Drivers
             SetForeGroundWindow(targetProcessID);
 
 
-            ClickLeftMouseButton((int)(boundingRect.TopLeft.X + x), (int)(boundingRect.TopLeft.Y + y));
+            ClickLeftMouseButton((int)(boundingRect.X + x), (int)(boundingRect.Y + y));
             System.Threading.Thread.Sleep(500);
-            ClickLeftMouseButton((int)(boundingRect.TopLeft.X + x), (int)(boundingRect.TopLeft.Y + y));
+            ClickLeftMouseButton((int)(boundingRect.X + x), (int)(boundingRect.Y + y));
             System.Windows.Forms.Cursor.Position = p;
         }
         public void SendRightClickOnWinXYPoint(UIAuto.AutomationElement element, int x, int y)
         {
             System.Drawing.Point p = System.Windows.Forms.Cursor.Position;
-            System.Windows.Rect boundingRect = (System.Windows.Rect)
+            System.Drawing.Rectangle boundingRect = (System.Drawing.Rectangle)
             element.GetCurrentPropertyValue(UIAuto.AutomationElement.BoundingRectangleProperty);
             int targetProcessID = element.Current.ProcessId;
             SetForeGroundWindow(targetProcessID);
 
 
-            ClickRightMouseButton((int)(boundingRect.TopLeft.X + x), (int)(boundingRect.TopLeft.Y + y));
+            ClickRightMouseButton((int)(boundingRect.X + x), (int)(boundingRect.Y + y));
             System.Windows.Forms.Cursor.Position = p;
         }
 
         public void SetElementTextOnWinXYPoint(UIAuto.AutomationElement element, string value, int x, int y)
         {
             //Save the Current Cursor Position
-            System.Windows.Rect boundingRect = (System.Windows.Rect)
+            System.Drawing.Rectangle boundingRect = (System.Drawing.Rectangle)
             element.GetCurrentPropertyValue(UIAuto.AutomationElement.BoundingRectangleProperty);
             System.Drawing.Point p = System.Windows.Forms.Cursor.Position;
 
             int targetProcessID = element.Current.ProcessId;
             SetForeGroundWindow(targetProcessID);
 
-            ClickLeftMouseButton((int)(boundingRect.TopLeft.X + x), (int)(boundingRect.TopLeft.Y + y));
+            ClickLeftMouseButton((int)(boundingRect.X + x), (int)(boundingRect.Y + y));
             SendInputKeys(value);
             SendTabKey();
 

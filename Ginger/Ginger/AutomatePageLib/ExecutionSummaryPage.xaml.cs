@@ -27,7 +27,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using FontAwesome.Sharp;
+using FontAwesome5;
 using LiveCharts;
 using LiveCharts.Wpf;
 using LiveCharts.Defaults;
@@ -86,16 +86,11 @@ namespace Ginger.BusinessFlowWindows
                 {
                     continue;
                 }
-                //activityStatList.Add(new StatItems() { Description = v.Description, Count = (int)v.Count});
-                SeriesActivityCollection.Add(new PieSeries() { Title = v.Description,  LabelPosition = PieLabelPosition.InsideSlice, Foreground= new SolidColorBrush(Colors.Black), Fill= GingerCore.General.SelectColorByCollection(v.Description), Values = new ChartValues<ObservableValue> { new ObservableValue(v.Count) }, DataLabels = true });
-                //ActivityChart.Palette.Add(GingerCore.General.SelectColor(v.Description));
+                SeriesActivityCollection.Add(new PieSeries() { Title = v.Description,  LabelPosition = PieLabelPosition.OutsideSlice, Foreground= new SolidColorBrush(Colors.Gray), FontSize = 12, FontFamily = new FontFamily("MS Arial"),  Fill = GingerCore.General.SelectColorByCollection(v.Description), Values = new ChartValues<ObservableValue> { new ObservableValue(v.Count) }, DataLabels = true });
                 totalActivity += (int)v.Count;
-            }         
-           
-            //ViewModel activity = new ViewModel(activityStatList);
-            //ActivityChart.ChartTitle = GingerDicser.GetTermResValue(eTermResKey.Activities);
-            //ActivityChart.DataContext = activity;
-
+            }
+            Activities.Content = GingerDicser.GetTermResValue(eTermResKey.Activities);
+            
             //Action
             //if (ActionChart.Palette == null)
             //    ActionChart.Palette = new ResourceDictionaryCollection();
@@ -109,14 +104,9 @@ namespace Ginger.BusinessFlowWindows
                 {
                     continue;
                 }
-                //actionStatList.Add(new StatItems() { Description = v.Description, Count =(int)v.Count});
-                SeriesActionCollection.Add(new PieSeries() { Title = v.Description, LabelPosition = PieLabelPosition.InsideSlice, Foreground = new SolidColorBrush(Colors.Black), Fill = GingerCore.General.SelectColorByCollection(v.Description), Values = new ChartValues<ObservableValue> { new ObservableValue(v.Count) }, DataLabels = true });
-                //ActionChart.Palette.Add(GingerCore.General.SelectColor(v.Description));
+                SeriesActionCollection.Add(new PieSeries() { Title = v.Description, LabelPosition = PieLabelPosition.OutsideSlice, Foreground = new SolidColorBrush(Colors.Gray), FontSize = 12, FontFamily = new FontFamily("MS Arial"), Fill = GingerCore.General.SelectColorByCollection(v.Description), Values = new ChartValues<ObservableValue> { new ObservableValue(v.Count) }, DataLabels = true });
                 totalAction += (int)v.Count;
             }
-            //ViewModel action = new ViewModel(actionStatList);
-            //ActionChart.DataContext = action;
-            //status = actionStatList.Select(b => b.Description).Concat(actionStatList.Select(c => c.Description)).Distinct().ToList();
             status = SeriesActionCollection.Select(b => b.Title).Concat(SeriesActionCollection.Select(c => c.Title)).Distinct().ToList();
             HideAllLegend();
             foreach (string s in status)
@@ -124,8 +114,8 @@ namespace Ginger.BusinessFlowWindows
                 SwitchLegend(s);
             }
             {
-                //stck.Children.Add(Ginger.General.makeImgFromControl(ActivityChart, totalActivity.ToString(), 1));
-                //stck.Children.Add(Ginger.General.makeImgFromControl(ActionChart, totalAction.ToString(), 2));
+                stck.Children.Add(Ginger.General.makeImgFromControl(ActivityChart, totalActivity.ToString(), 1));
+                stck.Children.Add(Ginger.General.makeImgFromControl(ActionChart, totalAction.ToString(), 2));
             }
             {                
                 //App.RunsetActivityTextbox.Text = totalActivity.ToString();

@@ -34,13 +34,13 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-//using Windows.Foundation;
-using System.Windows.Automation;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions.UIAutomation;
 using System.Windows;
 using System.IO;
 using GingerCore.Common;
+using GingerCore.GeneralLib;
+using System.Windows.Automation;
 
 // a lot of samples from Microsoft on UIA at: https://uiautomationverify.svn.codeplex.com/svn/UIAVerify/
 // DO NOT add any specific driver here, this is generic windows app driver helper 
@@ -539,19 +539,30 @@ namespace GingerCore.Drivers
 
             return list;
         }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
         private bool CheckUserSpecificProcess(UIAuto.AutomationElement window)
         {
-            Process currentProcess = Process.GetProcessById(window.Current.ProcessId);
-            ////Need to fix currentProcess.StartInfo issue temporary Commented
-            //if (currentProcess.StartInfo.Environment["USERNAME"] != Environment.UserName)
-            //{
-            //    return false;
-            //}
-            //else
-            //{
-            //    return true;
-            //}
-            return true;
+            try
+            {
+                Process currentProcess = Process.GetProcessById(window.Current.ProcessId);
+                var userWithDomain = Environment.UserDomainName + "\\" + Environment.UserName;
+                var currentProcessUser = currentProcess.WindowsIdentity().Name;
+
+                if (currentProcessUser != userWithDomain)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }                
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Get Windows List, checking user specific process", ex);
+                return false;
+            }
         }
  
 
@@ -3752,7 +3763,7 @@ namespace GingerCore.Drivers
                     case "NativeWindowHandle":
                         propValue = element.Current.NativeWindowHandle.ToString();
                         break;
-                    case "Interop.UIAutomationClient.ToggleState":
+                    case "ToggleState":
                         UIAuto.TogglePattern togPattern;
                         Object objPattern;
                         if (true == element.TryGetCurrentPattern(UIAuto.TogglePattern.Pattern, out objPattern))
@@ -5209,7 +5220,7 @@ namespace GingerCore.Drivers
 
             int sourceYPoint = (int)element.Current.BoundingRectangle.Height + 7;
             int tableHeight = (int)tableElement.Current.BoundingRectangle.Height;
-            UIAuto.AutomationElement Scroll = tableElement.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.OrientationProperty, OrientationType.Vertical));
+            UIAuto.AutomationElement Scroll = tableElement.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.OrientationProperty,  OrientationType.Vertical));
             UIAuto.AutomationElement pageDown = null, pageUp = null;
 
             if (Scroll != null)
@@ -5629,7 +5640,7 @@ namespace GingerCore.Drivers
             //Rect emptyRect = new Rect(0, 0, 0, 0);
             //foreach (UIAuto.AutomationElement aeScroll in AEScrolls)
             //{
-            //    if (aeScroll.Current.Orientation == OrientationType.Vertical)
+            //    if (aeScroll.Current.Orientation == UIAuto.OrientationType.Vertical)
             //        verScroll = aeScroll;
             //}
             //int i = 0;
@@ -6022,9 +6033,9 @@ namespace GingerCore.Drivers
             //TODO::Scroll Handling
             //foreach (UIAuto.AutomationElement aeScroll in AEScrolls)
             //{
-            //    if (aeScroll.Current.Orientation == OrientationType.Horizontal)
+            //    if (aeScroll.Current.Orientation == UIAuto.OrientationType.Horizontal)
             //        horScroll = aeScroll;
-            //    else if (aeScroll.Current.Orientation == OrientationType.Vertical)
+            //    else if (aeScroll.Current.Orientation == UIAuto.OrientationType.Vertical)
             //        verScroll = aeScroll;                
             //}
             //if(horScroll!=null)

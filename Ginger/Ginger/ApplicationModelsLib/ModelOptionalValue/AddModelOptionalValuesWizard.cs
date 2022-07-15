@@ -34,7 +34,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             Excel,
             [EnumValueDescription("XML")]
             XML,
-            [EnumValueDescription("Json")]
+            [EnumValueDescription("JSON")]
             Json,
             [EnumValueDescription("DataBase")]
             DB

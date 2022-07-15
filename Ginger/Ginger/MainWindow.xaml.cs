@@ -756,7 +756,7 @@ namespace Ginger
         {
             if (System.IO.File.Exists(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile))
             {
-                Process.Start(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile);
+                Process.Start(new ProcessStartInfo() { FileName = Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile, UseShellExecute = true });
             }
             else
             {
@@ -781,7 +781,7 @@ namespace Ginger
             string folder = System.IO.Path.GetDirectoryName(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile);
             if (System.IO.Directory.Exists(folder))
             {
-                Process.Start(folder);
+                Process.Start(new ProcessStartInfo() { FileName = folder, UseShellExecute = true });
             }
             else
             {
@@ -852,7 +852,7 @@ namespace Ginger
             base.OnClosed(e);
             if (mRestartApplication)
             {
-                Process.Start(Application.ResourceAssembly.Location);
+                Process.Start(new ProcessStartInfo() { FileName = Application.ResourceAssembly.Location, UseShellExecute = true });
             }
 
             Application.Current.Shutdown();
@@ -953,6 +953,18 @@ namespace Ginger
             {
                 xUserNameLbl.Content = WorkSpace.Instance.UserProfile.UserFirstName;
             }
+            string displayName;
+            string OriginalUserName = Convert.ToString(xUserNameLbl.Content);
+            if (OriginalUserName.Length > 10)
+            {
+                displayName = OriginalUserName.Substring(0, 7) + "...";
+            }
+            else
+            {
+                displayName = OriginalUserName;
+            }
+            xUserNameLbl.Content = displayName;
+            xUserNameLbl.ToolTip = OriginalUserName;
         }
 
         private void xLogOptionsMenuItem_Click(object sender, RoutedEventArgs e)

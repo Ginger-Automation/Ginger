@@ -22,7 +22,7 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.UserControls;
-using FontAwesome.Sharp;
+using FontAwesome5;
 using Ginger.Agents;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.TextEditor;
@@ -120,9 +120,9 @@ namespace Ginger.Drivers.DriversWindows
             view.GridColsView = new ObservableList<GridColView>();
 
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Name", WidthWeight = 5, ReadOnly = true});
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Name", WidthWeight = 4.5, ReadOnly = true});
             view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailValue), Header = "Value", WidthWeight = 7, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.ExtraInfo), Header = "Extra Info", WidthWeight = 2, MaxWidth = 70, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xWindowGrid.Resources["ExtraInfo"] });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.ExtraInfo), Header = "Extra Info", WidthWeight = 2.5, MaxWidth = 70, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xWindowGrid.Resources["ExtraInfo"] });
 
             xDeviceDetailsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshDetailsTable));
 
@@ -138,9 +138,9 @@ namespace Ginger.Drivers.DriversWindows
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Name", WidthWeight = 5, ReadOnly = true});
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Name", WidthWeight = 4.5, ReadOnly = true});
             view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailValue), Header = "Value", WidthWeight = 7, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.ExtraInfo), Header = "Extra Info", WidthWeight = 2, MaxWidth = 70, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xWindowGrid.Resources["ExtraInfo"] });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.ExtraInfo), Header = "Extra Info", WidthWeight = 2.6, MaxWidth = 70, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xWindowGrid.Resources["ExtraInfo"] });
 
             xDeviceMetricsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshMetricsTable));
 
@@ -333,12 +333,14 @@ namespace Ginger.Drivers.DriversWindows
 
             mDeviceDetails = new ObservableList<DeviceInfo>(mDeviceDetails.Where(x => x.Category == DeviceInfo.eDeviceInfoCategory.Detail).ToList());
 
-            #region setting device metrics grid the old way
+            #region setting device metrics grid
             if (mDeviceCPUInfo != null && mDeviceCPUInfo.Count > 0)
             {
                 double userCpuUsage = 0, kernelCpuUsage = 0;
                 double.TryParse(mDeviceCPUInfo["user"], out userCpuUsage);
+                userCpuUsage = Math.Round(userCpuUsage, 2);
                 double.TryParse(mDeviceCPUInfo["kernel"], out kernelCpuUsage);
+                kernelCpuUsage = Math.Round(kernelCpuUsage, 2);
 
                 string cpuUsage = (userCpuUsage + kernelCpuUsage).ToString() + " %";
                 mDeviceDetails.Add(new DeviceInfo("App CPU Usage:", cpuUsage, DeviceInfo.eDeviceInfoCategory.Metric, DictionaryToString(mDeviceCPUInfo)));
@@ -401,7 +403,7 @@ namespace Ginger.Drivers.DriversWindows
 
             mDeviceDetails = new ObservableList<DeviceInfo>(mDeviceDetails.Where(x => x.Category == DeviceInfo.eDeviceInfoCategory.Metric).ToList());
 
-            #region setting device details grid the old way
+            #region setting device details grid
             object value, apiVersion, platformVersion;
             string battery;
 
@@ -692,8 +694,10 @@ namespace Ginger.Drivers.DriversWindows
 
                 if (mMeticsIsOn)
                 {
+
                     await this.Dispatcher.InvokeAsync(async () =>
                     {
+                        xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
                         //Loading the device details and metrics
                         xDeviceDetailsGrid.Visibility = Visibility.Collapsed;
                         xDeviceMetricsGrid.Visibility = Visibility.Collapsed;
@@ -710,6 +714,10 @@ namespace Ginger.Drivers.DriversWindows
                         xMetricsLoadingPnl.Visibility = Visibility.Collapsed;
                     });
 
+                }
+                else
+                {
+                    xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 }
 
             }
@@ -734,7 +742,7 @@ namespace Ginger.Drivers.DriversWindows
             {
                 //dock
                 this.Topmost = true;
-                xPinBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
+                xPinBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xPinBtn.ToolTip = "Undock Window";
             }
 

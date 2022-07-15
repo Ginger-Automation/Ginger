@@ -19,7 +19,7 @@ limitations under the License.
 
 //using System.Collections.Generic;
 //using System.Linq;
-//using System.Windows.Automation;
+//
 //using Amdocs.Ginger.Common;
 //using GingerCore.Drivers;
 //using GingerCore.Drivers.Common;

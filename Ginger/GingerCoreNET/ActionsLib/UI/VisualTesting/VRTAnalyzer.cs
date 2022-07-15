@@ -60,7 +60,7 @@ namespace GingerCore.Actions.VisualTesting
                 Project = WorkSpace.Instance.Solution.VRTConfiguration.Project,
                 ApiUrl = WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl,
                 ApiKey = WorkSpace.Instance.Solution.VRTConfiguration.ApiKey,
-                EnableSoftAssert = WorkSpace.Instance.Solution.VRTConfiguration.EnableSoftAssert == Ginger.Configurations.VRTConfiguration.eEnableSoftAssert.Yes ? true : false
+                EnableSoftAssert = WorkSpace.Instance.Solution.VRTConfiguration.FailActionOnCheckpointMismatch == Ginger.Configurations.VRTConfiguration.eFailActionOnCheckpointMismatch.Yes ? false : true
             };
         }
 
@@ -180,8 +180,6 @@ namespace GingerCore.Actions.VisualTesting
         }
         private void TrackVRT()
         {
-            string diffImage = string.Empty;
-
             if (!vrt.IsStarted)
             {
                 mAct.Error = "VRT is not Started";
@@ -221,11 +219,41 @@ namespace GingerCore.Actions.VisualTesting
                 TestRunResult result = vrt.Track(imageName, General.ImageToByteArray(image, System.Drawing.Imaging.ImageFormat.Png), null, os, browser, viewport, device, tags, diffTollerancePercent).GetAwaiter().GetResult();
                 //results
                 mAct.ExInfo = "TestRun Results Status: " + result.Status;
-                mAct.AddOrUpdateReturnParamActual("Result Status", result.Status + "");
-                mAct.AddOrUpdateReturnParamActual("Results Image URL", result.ImageUrl + "");
-                mAct.AddOrUpdateReturnParamActual("Results Baseline URL", result.BaselineUrl + "");
-                mAct.AddOrUpdateReturnParamActual("Results Diff URL", result.DiffUrl + "");
-                mAct.AddOrUpdateReturnParamActual("Results URL", result.Url + "");
+                mAct.AddOrUpdateReturnParamActual("Status", result.Status + "");
+                mAct.AddOrUpdateReturnParamActual("Image URL", result.ImageUrl + "");
+                mAct.AddOrUpdateReturnParamActual("Baseline URL", result.BaselineUrl + "");
+                mAct.AddOrUpdateReturnParamActual("Difference URL", result.DiffUrl + "");
+                mAct.AddOrUpdateReturnParamActual("URL", result.Url + "");
+
+
+                //Calculate the action status based on the results
+                if (WorkSpace.Instance.Solution.VRTConfiguration.FailActionOnCheckpointMismatch == Ginger.Configurations.VRTConfiguration.eFailActionOnCheckpointMismatch.Yes && result.Status != TestRunStatus.Ok)
+                {
+                    switch (result.Status)
+                    {
+                        case TestRunStatus.New:
+                            mAct.Error += $"No baseline found, Please approve it on dashboard to create baseline." + System.Environment.NewLine + result.Url;
+                            break;
+                        case TestRunStatus.Unresolved:
+                            mAct.Error += $"Differences from baseline was found." + System.Environment.NewLine + result.DiffUrl;
+
+                            //Add difference image to act screenshots
+                            int index = result.DiffUrl.LastIndexOf("/");
+                            string imageToDownload = result.DiffUrl.Substring(index + 1);
+                            General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
+
+                            //Add baseline image to act screenshots
+                            index = result.BaselineUrl.LastIndexOf("/");
+                            imageToDownload = result.BaselineUrl.Substring(index + 1);
+                            General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
+
+                            //No need to Add current Screenshot to act screenshots, it will be added in the end if the action is failed
+                            break;
+                        default:
+                            mAct.ExInfo = "TestRun Results Status: " + result.Status;
+                            break;
+                    }
+                }
             }
             catch (AggregateException ae)
             {
@@ -238,24 +266,7 @@ namespace GingerCore.Actions.VisualTesting
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception occured when TrackVRT", ex);
-                if (ex.Message.Contains("Difference found"))
-                {
-                    int index = ex.Message.LastIndexOf("/");
-                    mAct.Error += ex.Message.Substring(0, index);
-                    diffImage = ex.Message.Substring(index + 1);
-                }
-                else
-                {
-                    mAct.Error += ex.Message;
-                }
-            }
-            finally
-            {
-                if(!string.IsNullOrEmpty(diffImage))
-                {
-                    //Adding only difference image
-                    General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + diffImage, mAct);
-                }
+                mAct.Error += ex.Message;
             }
         }
 

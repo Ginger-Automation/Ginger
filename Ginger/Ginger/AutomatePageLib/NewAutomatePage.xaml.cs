@@ -1469,8 +1469,8 @@ namespace GingerWPF.BusinessFlowsLib
                             string fileName = Path.GetFileName(txt_file);
                             if (fileName.Contains(".html"))
                             {
-                                System.Diagnostics.Process.Start(reportsResultFolder);
-                                System.Diagnostics.Process.Start(reportsResultFolder + "\\" + fileName);
+                                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = reportsResultFolder, UseShellExecute = true });
+                                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = reportsResultFolder + "\\" + fileName, UseShellExecute = true });
                             }
                         }
                     }
@@ -1608,8 +1608,8 @@ namespace GingerWPF.BusinessFlowsLib
                     string fileName = Path.GetFileName(txt_file);
                     if (fileName.Contains(".html"))
                     {
-                        System.Diagnostics.Process.Start(reportsResultFolder);
-                        System.Diagnostics.Process.Start(reportsResultFolder + "\\" + fileName);
+                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = reportsResultFolder, UseShellExecute = true });
+                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = reportsResultFolder + "\\" + fileName, UseShellExecute = true });
                     }
                 }
             }

@@ -190,7 +190,7 @@ namespace GingerCore.Variables
                 {
                     mFormula = formula;
 
-                    OnPropertyChanged(nameof(Formula));
+                    OnPropertyChanged(formula);
                 }
                 return mFormula;
             }

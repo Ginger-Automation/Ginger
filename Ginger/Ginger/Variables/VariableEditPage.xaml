@@ -80,7 +80,7 @@
                         </Label.Content>
                     </Label>
 
-                    <Frame x:Name="xVarTypeConfigFrame" Content="Variable Configs" DockPanel.Dock="Top" NavigationUIVisibility="Hidden" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,50,0"/>
+                    <Frame x:Name="xVarTypeConfigFrame" Content="Variable Configurations" DockPanel.Dock="Top" NavigationUIVisibility="Hidden" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,50,0"/>
 
                     <Label DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}" Margin="-5,20,0,0">Formula:</Label>
                     <TextBox x:Name="xFormulaTxtBox" DockPanel.Dock="Top" IsReadOnly="True" Style="{StaticResource $TextBoxStyle}" Background="#FFEFEFF2" Margin="0,0,50,0"/>
