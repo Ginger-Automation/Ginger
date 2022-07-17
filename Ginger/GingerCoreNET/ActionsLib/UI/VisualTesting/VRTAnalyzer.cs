@@ -198,8 +198,15 @@ namespace GingerCore.Actions.VisualTesting
                 {
                     image = mDriver.GetElementScreenshot(mAct);
                 }
+
                 //diffTollerancePercent
-                bool res = Double.TryParse(mAct.GetInputParamCalculatedValue(VRTAnalyzer.VRTParamDiffTollerancePercent), out double diffTollerancePercent);
+                string tolleranceValue = mAct.GetInputParamCalculatedValue(VRTAnalyzer.VRTParamDiffTollerancePercent);
+                if (!Double.TryParse(tolleranceValue, out double diffTollerancePercent))
+                {
+                    mAct.Error = string.Format("The configured tollerance Precentage value '{0}' is not valid", tolleranceValue);
+                    return;
+                }
+
                 //Operating System
                 string os = GingerPluginCore.OperatingSystem.GetCurrentOS();
 
@@ -278,15 +285,16 @@ namespace GingerCore.Actions.VisualTesting
             {
                 tags = string.Join(",", activityTagsList);
             }
-            //environment tag
-            if (string.IsNullOrEmpty(tags))
-            {
-                tags = "Environment:" + mDriver.GetEnvironment();
-            }
-            else
-            {
-                tags += ",Environment:" + mDriver.GetEnvironment();
-            }
+
+            ////environment tag --> disabeled for now till it will be allowed as optional over project configs in Ginger
+            //if (string.IsNullOrEmpty(tags))
+            //{
+            //    tags = "Environment:" + mDriver.GetEnvironment();
+            //}
+            //else
+            //{
+            //    tags += ",Environment:" + mDriver.GetEnvironment();
+            //}
 
             return tags;
         }
