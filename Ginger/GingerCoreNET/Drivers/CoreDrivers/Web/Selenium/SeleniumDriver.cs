@@ -8748,8 +8748,10 @@ namespace GingerCore.Drivers
                 {
                     act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                 }
-                CreateNetworkLogFile("NetworklogRequest");
-                CreateNetworkLogFile("NetworklogResponse");
+                string requestPath = CreateNetworkLogFile("NetworklogRequest");
+                act.ExInfo = "RequestFile : " + requestPath + "\n";
+                string responsePath = CreateNetworkLogFile("NetworklogResponse");
+                act.ExInfo = act.ExInfo + "ResponseFile : " + responsePath + "\n";
 
             }
             else
@@ -8761,15 +8763,16 @@ namespace GingerCore.Drivers
 
         }
 
-        private void CreateNetworkLogFile(string Filename)
+        private string CreateNetworkLogFile(string Filename)
         {
-            string FullDirectoryPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, "Documents", "NetworkLog");
+            string FullFilePath = string.Empty;
+           string FullDirectoryPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, "Documents", "NetworkLog");
             if (!System.IO.Directory.Exists(FullDirectoryPath))
             {
                 System.IO.Directory.CreateDirectory(FullDirectoryPath);
             }
 
-            string FullFilePath = FullDirectoryPath + @"\" + Filename + DateTime.Now.Day.ToString() + "_" + DateTime.Now.Month.ToString() + "_" + DateTime.Now.Year.ToString() + "_" + DateTime.Now.Millisecond.ToString() + ".har";
+            FullFilePath = FullDirectoryPath + @"\" + Filename + DateTime.Now.Day.ToString() + "_" + DateTime.Now.Month.ToString() + "_" + DateTime.Now.Year.ToString() + "_" + DateTime.Now.Millisecond.ToString() + ".har";
             if (!System.IO.File.Exists(FullFilePath))
             {
                 string FileContent = Filename.Contains("Request") ? JsonConvert.SerializeObject(networkRequestLogList.ToList()) : JsonConvert.SerializeObject(networkResponseLogList.ToList());
@@ -8780,6 +8783,7 @@ namespace GingerCore.Drivers
                 }
                 System.IO.File.WriteAllText(FullFilePath, FileContent);
             }
+            return FullFilePath;
         }
 
         private void OnNetworkRequestSent(object sender, NetworkRequestSentEventArgs e)
