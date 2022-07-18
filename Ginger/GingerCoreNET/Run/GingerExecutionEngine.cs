@@ -2864,7 +2864,11 @@ namespace Ginger.Run
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             }
 
-            if (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
+            if(act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
+            {
+                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+            }
+            else if (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
             {
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
             }
