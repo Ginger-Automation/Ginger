@@ -89,7 +89,7 @@ namespace Ginger.Actions.VisualTesting
             switch (vrtAction)
             {
                 case VRTAnalyzer.eVRTAction.Start:
-                    xVRTDiffTollerancePercent.Visibility = Visibility.Visible;
+                    xVRTDiffTollerancePercent.Visibility = Visibility.Collapsed;
                     xVRTBuildName.Visibility = Visibility.Visible;
                     xLocateByAndValuePanel.Visibility = Visibility.Collapsed;
                     xActionByPanel.Visibility = Visibility.Collapsed;
@@ -98,7 +98,7 @@ namespace Ginger.Actions.VisualTesting
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility, eVisualTestingVisibility.Visible);
                     break;
                 case VRTAnalyzer.eVRTAction.Track:
-                    xVRTDiffTollerancePercent.Visibility = Visibility.Collapsed;
+                    xVRTDiffTollerancePercent.Visibility = Visibility.Visible;
                     xVRTBuildName.Visibility = Visibility.Collapsed;
                     xActionByPanel.Visibility = Visibility.Visible;
                     if (actionBy == VRTAnalyzer.eActionBy.Region)
