@@ -4069,6 +4069,14 @@ namespace Ginger.Run
                         a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                     }
                 }
+
+                foreach (ActivitiesGroup group in  businessFlow.ActivitiesGroups)
+                {
+                    if (avoidCurrentStatus || group.ActivitiesIdentifiers.Where(x=>x.IdentifiedActivity.Status == eRunStatus.Skipped).ToList().Count == group.ActivitiesIdentifiers.Count)
+                    {
+                        group.RunStatus = eActivitiesGroupRunStatus.Skipped;
+                    }
+                }
             }
             catch (Exception ex)
             {
