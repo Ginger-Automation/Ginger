@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -41,6 +41,9 @@ namespace GingerCore.Variables
             get { return "Selection List"; }
         }
 
+        private bool isLoopEnabled = true;
+        public bool IsLoopEnabled { get { return isLoopEnabled; } set { isLoopEnabled = value; } }
+
         //DO NOT REMOVE! Used for conversion of old OptionalValues which were kept in one string with delimiter
         public string OptionalValues
         {
@@ -54,6 +57,24 @@ namespace GingerCore.Variables
         public ObservableList<OptionalValue> OptionalValuesList = new ObservableList<OptionalValue>();
 
         public string SelectedValue { set { Value = value; OnPropertyChanged(nameof(SelectedValue)); } get { return Value; } }
+
+        private bool mRandomOrder;
+        [IsSerializedForLocalRepository]
+        public bool RandomOrder
+        {
+            set
+            {
+                mRandomOrder = value;
+                OnPropertyChanged(nameof(this.RandomOrder));
+            }
+            get
+            {
+                return mRandomOrder;
+            }
+        }
+
+        [IsSerializedForLocalRepository]
+        public int CurrentValueIndex { set; get; }
 
         private string mValue;
         [IsSerializedForLocalRepository]
@@ -81,6 +102,11 @@ namespace GingerCore.Variables
             {
                 return false;
             }
+        }
+
+        public VariableSelectionList()
+        {
+            CurrentValueIndex = 0;
         }
 
         public override void PostDeserialization()
@@ -122,13 +148,43 @@ namespace GingerCore.Variables
             if (OptionalValuesList.Count > 0)
             {
                 Value = OptionalValuesList[0].Value;
+                CurrentValueIndex = 0;
             }
 
         }
 
         public override void GenerateAutoValue()
         {
-            //NA
+            string trimString = "Options: ";
+            string[] listValues = Formula.Substring(trimString.Length).Split(',');
+            if (listValues.Length == 0)
+            {
+                Value = string.Empty;
+                return;
+            }
+
+            if (RandomOrder)
+            {
+                Random rnd = new Random();
+                CurrentValueIndex = rnd.Next(listValues.Length);
+                Value = OptionalValuesList[CurrentValueIndex].Value;
+            }
+            else
+            {
+                //If no loop chechbox is enabled, return an error instead of returning to the first OptionalValue
+                if (!IsLoopEnabled && CurrentValueIndex == 0)
+                {
+                    Value = "Value is at the last in the list and no looping chechkbox is not enabled";
+                    Reporter.ToLog(eLogLevel.ERROR, "Value is at the last in the list and no looping chechkbox is not enabled");
+
+                }
+                else
+                {
+                    Value = OptionalValuesList[CurrentValueIndex++].Value;
+                    if (CurrentValueIndex >= OptionalValuesList.Count) CurrentValueIndex = 0;
+                }
+
+            }
         }
 
         public override bool SupportSetValue { get { return true; } }
@@ -137,13 +193,14 @@ namespace GingerCore.Variables
         {
             List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
             supportedOperations.Add(VariableBase.eSetValueOptions.SetValue);
+            supportedOperations.Add(VariableBase.eSetValueOptions.AutoGenerateValue);
             supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
             return supportedOperations;
         }
 
         public override bool SupportResetValue { get { return true; } }
 
-        public override bool SupportAutoValue { get { return false; } }
+        public override bool SupportAutoValue { get { return true; } }
 
         public override void SetInitialSetup()
         {

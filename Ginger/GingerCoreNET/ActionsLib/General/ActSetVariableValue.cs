@@ -274,7 +274,11 @@ namespace GingerCore.Actions
                 Error = "Unknown set " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " value operation.";
                 return;
             }
-
+            if (Var.Value.Contains("Value is at the last in the list"))
+            {
+                Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                Error = "Value is at the last in the list and no looping chechkbox is not enabled";
+            }
             ExInfo = GingerDicser.GetTermResValue(eTermResKey.Variable) + " '" + Var.Name + "' value was set to: '" + Var.Value + "'";
         }
     }
