@@ -199,7 +199,13 @@ namespace GingerCore.Actions.VisualTesting
                     image = mDriver.GetElementScreenshot(mAct);
                 }
                 //diffTollerancePercent
-                bool res = Double.TryParse(mAct.GetInputParamCalculatedValue(VRTAnalyzer.VRTParamDiffTollerancePercent), out double diffTollerancePercent);
+                string tolleranceValue = mAct.GetInputParamCalculatedValue(VRTAnalyzer.VRTParamDiffTollerancePercent);
+                if (!Double.TryParse(tolleranceValue, out double diffTollerancePercent))
+                {
+                    mAct.Error = string.Format("The configured tollerance Precentage value '{0}' is not valid", tolleranceValue);
+                    return;
+                }
+
                 //Operating System
                 string os = GingerPluginCore.OperatingSystem.GetCurrentOS();
 
