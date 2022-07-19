@@ -25,7 +25,6 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Automation;
 using GingerCore.Actions;
 using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.PBDriver;
@@ -96,7 +95,7 @@ namespace GingerCore.Drivers.Common
                 throw e;
 
             }
-            catch (ElementNotAvailableException e)
+            catch (UIAuto.ElementNotAvailableException e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 throw e;

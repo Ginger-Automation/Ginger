@@ -16,11 +16,12 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
 using Amdocs.Ginger.Common;
 using Ginger.Drivers.WindowsAutomation;
@@ -90,9 +91,9 @@ namespace Ginger.Drivers.UIA
         [DllImport("user32.dll")]
         private static extern void mouse_event(UInt32 dwFlags, UInt32 dx, UInt32 dy, UInt32 dwData, IntPtr dwExtraInfo);
         
-        private void MouseClickElement(AutomationElement AE)
-        {            
-            System.Windows.Point clickpoint;
+        private void MouseClickElement(UIAuto.AutomationElement AE)
+        {
+            System.Drawing.Point clickpoint;
             bool b = AE.TryGetClickablePoint(out clickpoint);
             if (!b) return;
 

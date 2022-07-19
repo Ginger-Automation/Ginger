@@ -216,18 +216,68 @@ namespace Ginger.SourceControl
             if (mSourceControl.InitializeRepository(mSourceControl.SourceControlURL))
             {
                 Reporter.ToUser(eUserMsgKey.UploadSolutionInfo, "Solution was successfully uploaded into: '" + mSourceControl.SourceControlURL + "'");
-                App.MainWindow.Dispatcher.Invoke(() =>
-                {
-                    Close_Click(sender, e);
-                });
+                UpdateSourceControlDetails();
                 if (WorkSpace.Instance.Solution.SourceControl == null)
                 {
                     WorkSpace.Instance.Solution.SourceControl = mSourceControl;
                 }
+                SourceControlIntegration.BusyInProcessWhileDownloading = false;
+                App.MainWindow.Dispatcher.Invoke(() =>
+                {
+                    Close_Click(sender, e);
+                });
             }
             else
             {
                 CleanSourceControlFolderUponFailure();
+            }
+        }
+        private void UpdateSourceControlDetails()
+        {
+            UpdateSourceControlSolutionFolder();
+            UpdateSourceControlAuthorDetails();
+        }
+
+        private void UpdateSourceControlSolutionFolder()
+        {
+            if(String.IsNullOrEmpty(mSourceControl.SolutionFolder))
+            {
+                mSourceControl.SolutionFolder = WorkSpace.Instance.Solution.Folder;
+            }
+        }
+
+        private void UpdateSourceControlAuthorDetails()
+        {
+            if (String.IsNullOrEmpty(mSourceControl.SolutionSourceControlAuthorEmail))
+            {
+                UpdateSourceControlAuthorEmail();
+            }
+            if (String.IsNullOrEmpty(mSourceControl.SolutionSourceControlAuthorName))
+            {
+                UpdateSourceControlAuthorName();
+            }
+        }
+        private void UpdateSourceControlAuthorEmail()
+        {
+            if (!String.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail))
+            {
+                mSourceControl.SolutionSourceControlAuthorEmail = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail;
+            }
+            else
+            {
+                mSourceControl.SolutionSourceControlAuthorEmail = mSourceControl.SourceControlUser;
+            }
+        }
+
+        private void UpdateSourceControlAuthorName()
+        {
+            if (!String.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName))
+            {
+                mSourceControl.SolutionSourceControlAuthorName = WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName;
+            }
+            else
+            {
+                mSourceControl.SolutionSourceControlAuthorName = mSourceControl.SourceControlUser;
             }
         }
 

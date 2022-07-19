@@ -120,7 +120,7 @@ namespace Ginger.Drivers.DriversWindows
             view.GridColsView = new ObservableList<GridColView>();
 
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Name", WidthWeight = 4.5, ReadOnly = true});
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Name", WidthWeight = 4.5, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailValue), Header = "Value", WidthWeight = 7, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.ExtraInfo), Header = "Extra Info", WidthWeight = 2.5, MaxWidth = 70, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xWindowGrid.Resources["ExtraInfo"] });
 
@@ -138,7 +138,7 @@ namespace Ginger.Drivers.DriversWindows
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Name", WidthWeight = 4.5, ReadOnly = true});
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Name", WidthWeight = 4.5, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailValue), Header = "Value", WidthWeight = 7, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.ExtraInfo), Header = "Extra Info", WidthWeight = 2.6, MaxWidth = 70, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xWindowGrid.Resources["ExtraInfo"] });
 
@@ -283,9 +283,9 @@ namespace Ginger.Drivers.DriversWindows
             object value, platformVersion;
             if (mDeviceGeneralInfo.Count > 0)
             {
-                if (mDeviceGeneralInfo.TryGetValue("manufacturer", out value))
+                if (mDeviceGeneralInfo.TryGetValue("manufacturer", out value) || mDeviceGeneralInfo.TryGetValue("model", out value))
                 {
-                    if ((string)value != "apple")
+                    if ((string)value != "iPhone")
                     {
                         this.Title = " Android";
                     }
@@ -354,7 +354,7 @@ namespace Ginger.Drivers.DriversWindows
             {
                 double totalPss = 0;
                 double.TryParse(mDeviceMemoryInfo["totalPss"], out totalPss);
-                totalPss = Math.Round(totalPss/1024, 2);
+                totalPss = Math.Round(totalPss / 1024, 2);
                 string ramUsage = (totalPss).ToString() + " Mb";
                 mDeviceDetails.Add(new DeviceInfo("App RAM Usage:", ramUsage, DeviceInfo.eDeviceInfoCategory.Metric, DictionaryToString(mDeviceMemoryInfo)));
             }
@@ -397,7 +397,20 @@ namespace Ginger.Drivers.DriversWindows
             await Task.Run(() =>
             {
                 mDeviceGeneralInfo = mDriver.GetDeviceGeneralInfo();
-                isPhysicalDevice = mDriver.IsRealDeviceAsync().Result;
+                if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
+                {
+                    object value;
+                    mDeviceGeneralInfo.TryGetValue("isSimulator", out value);
+                    if (value is bool)
+                    {
+                        isPhysicalDevice = !(bool)value;
+                    }
+                }
+                else
+                {
+                    isPhysicalDevice = mDriver.IsRealDeviceAsync().Result;
+                }
+
                 mDeviceBatteryInfo = mDriver.GetDeviceBatteryInfo();
             });
 
@@ -426,24 +439,34 @@ namespace Ginger.Drivers.DriversWindows
                 mDeviceDetails.Add(new DeviceInfo("Physical/emulator:", "Emulator", DeviceInfo.eDeviceInfoCategory.Detail));
             }
 
-            if (mDeviceGeneralInfo.TryGetValue("manufacturer", out value) && !string.IsNullOrEmpty((string)value))
+            if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
             {
-                mDeviceDetails.Add(new DeviceInfo("Manufacture:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
+                mDeviceDetails.Add(new DeviceInfo("Manufacture:", "Apple", DeviceInfo.eDeviceInfoCategory.Detail));
+                mDeviceDetails.Add(new DeviceInfo("Brand:", "Apple", DeviceInfo.eDeviceInfoCategory.Detail));
             }
             else
             {
-                mDeviceDetails.Add(new DeviceInfo("Manufacture:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+                if ((mDeviceGeneralInfo.TryGetValue("manufacturer", out value) && !string.IsNullOrEmpty((string)value)))
+                {
+                    mDeviceDetails.Add(new DeviceInfo("Manufacture:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
+                }
+                else
+                {
+                    mDeviceDetails.Add(new DeviceInfo("Manufacture:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
 
+                }
+
+                if (mDeviceGeneralInfo.TryGetValue("brand", out value) && !string.IsNullOrEmpty((string)value))
+                {
+                    mDeviceDetails.Add(new DeviceInfo("Brand:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
+                }
+                else
+                {
+                    mDeviceDetails.Add(new DeviceInfo("Brand:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+                }
             }
 
-            if (mDeviceGeneralInfo.TryGetValue("brand", out value) && !string.IsNullOrEmpty((string)value))
-            {
-                mDeviceDetails.Add(new DeviceInfo("Brand:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
-            }
-            else
-            {
-                mDeviceDetails.Add(new DeviceInfo("Brand:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-            }
+
 
             if (mDeviceGeneralInfo.TryGetValue("model", out value) && !string.IsNullOrEmpty((string)value))
             {
@@ -454,21 +477,29 @@ namespace Ginger.Drivers.DriversWindows
                 mDeviceDetails.Add(new DeviceInfo("Model:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
             }
 
-            if (mDeviceGeneralInfo.TryGetValue("manufacturer", out value) && !string.IsNullOrEmpty((string)value))
+            if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
             {
-                if ((string)value != "apple")
-                {
-                    mDeviceDetails.Add(new DeviceInfo("OS Type:", "Android", DeviceInfo.eDeviceInfoCategory.Detail));
-                }
-                else
-                {
-                    mDeviceDetails.Add(new DeviceInfo("OS Type:", "iOS", DeviceInfo.eDeviceInfoCategory.Detail));
-                }
+                mDeviceDetails.Add(new DeviceInfo("OS Type:", "iOS", DeviceInfo.eDeviceInfoCategory.Detail));
             }
             else
             {
-                mDeviceDetails.Add(new DeviceInfo("OS Type:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+                if (mDeviceGeneralInfo.TryGetValue("manufacturer", out value) && !string.IsNullOrEmpty((string)value))
+                {
+                    if ((string)value != "apple")
+                    {
+                        mDeviceDetails.Add(new DeviceInfo("OS Type:", "Android", DeviceInfo.eDeviceInfoCategory.Detail));
+                    }
+                    else
+                    {
+                        mDeviceDetails.Add(new DeviceInfo("OS Type:", "iOS", DeviceInfo.eDeviceInfoCategory.Detail));
+                    }
+                }
+                else
+                {
+                    mDeviceDetails.Add(new DeviceInfo("OS Type:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+                }
             }
+
 
             if (mDeviceGeneralInfo.TryGetValue("platformVersion", out platformVersion))
             {
@@ -485,14 +516,24 @@ namespace Ginger.Drivers.DriversWindows
                 }
             }
 
-            if (mDeviceGeneralInfo.TryGetValue("locale", out value) && !string.IsNullOrEmpty((string)value))
+            if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS && mDeviceGeneralInfo.TryGetValue("currentLocale", out value))
             {
                 mDeviceDetails.Add(new DeviceInfo("Language:", ((string)value).Replace("_", "/"), DeviceInfo.eDeviceInfoCategory.Detail));
+
             }
             else
             {
-                mDeviceDetails.Add(new DeviceInfo("Language:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+                if (mDeviceGeneralInfo.TryGetValue("locale", out value) && !string.IsNullOrEmpty((string)value))
+                {
+                    mDeviceDetails.Add(new DeviceInfo("Language:", ((string)value).Replace("_", "/"), DeviceInfo.eDeviceInfoCategory.Detail));
+                }
+                else
+                {
+                    mDeviceDetails.Add(new DeviceInfo("Language:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+                }
             }
+
+            
 
             if (mDeviceGeneralInfo.TryGetValue("timeZone", out value) && !string.IsNullOrEmpty((string)value))
             {
@@ -735,7 +776,7 @@ namespace Ginger.Drivers.DriversWindows
             {
                 //undock
                 this.Topmost = false;
-                xPinBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
+                xPinBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
                 xPinBtn.ToolTip = "Dock Window";
             }
             else

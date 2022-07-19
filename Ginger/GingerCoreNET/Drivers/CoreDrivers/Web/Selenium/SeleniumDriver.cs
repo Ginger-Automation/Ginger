@@ -61,7 +61,7 @@ using System.Text;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.DevTools;
 using Newtonsoft.Json;
-using DevToolsSessionDomains = OpenQA.Selenium.DevTools.V96.DevToolsSessionDomains;
+using DevToolsSessionDomains = OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains;
 
 namespace GingerCore.Drivers
 {
@@ -6671,9 +6671,16 @@ namespace GingerCore.Drivers
                         if (!string.IsNullOrEmpty(POMGuid))
                         {
                             ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(p => p.Guid.ToString() == POMGuid).FirstOrDefault();
-                            POMUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);     // SelectedPOM?.PageURL;
+                            if (SelectedPOM != null)
+                            {
+                                POMUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);
+                                GotoURL(act, POMUrl);
+                            }
+                            else
+                            {
+                                act.Error = "Error: Selected POM was not found.";
+                            }
                         }
-                        GotoURL(act, POMUrl);
                     }
                     else
                     {
@@ -7612,6 +7619,14 @@ namespace GingerCore.Drivers
                         return ScreenshotToImage(screenshot);
                     }
                     break;
+                case eBrowserType.Edge:
+                case eBrowserType.Chrome:
+                    if (IsFullPageScreenshot)
+                    {
+                        var screenshot = ((OpenQA.Selenium.Chromium.ChromiumDriver)Driver).GetFullPageScreenshot();
+                        return ScreenshotToImage(screenshot);
+                    }
+                    break;
                 default:
                     //
                     break;
@@ -7716,7 +7731,7 @@ namespace GingerCore.Drivers
             {
                 string s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
 
-                RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
+                IWebElement ele = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
 
                 if (ele == null)
                 {
@@ -7774,7 +7789,7 @@ namespace GingerCore.Drivers
                 parentElementLocation.X += elemInfo.X;
                 parentElementLocation.Y += elemInfo.Y;
 
-                Point p_Pos = GetElementPosition(ele);
+                Point p_Pos = GetElementPosition((RemoteWebElement)ele);
                 ptX -= p_Pos.X;
                 ptY -= p_Pos.Y;
 
@@ -7825,7 +7840,7 @@ namespace GingerCore.Drivers
                             + "} "
                             + "return new Array(X, Y);";
 
-            RemoteWebDriver i_Driver = (RemoteWebDriver)i_Elem.WrappedDriver;
+            RemoteWebDriver i_Driver = (RemoteWebDriver)((RemoteWebElement)i_Elem).WrappedDriver;
             IList<Object> i_Coord = (IList<Object>)i_Driver.ExecuteScript(s_Script);
 
             int s32_ScrollX = Convert.ToInt32(i_Coord[0]);
@@ -8673,9 +8688,9 @@ namespace GingerCore.Drivers
             var devTool = webDriver as IDevTools;
 
             //DevTool Session 
-            devToolsSession = devTool.GetDevToolsSession(96);
-            var domains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V96.DevToolsSessionDomains>();
-            domains.Network.Enable(new OpenQA.Selenium.DevTools.V96.Network.EnableCommandSettings());
+            devToolsSession = devTool.GetDevToolsSession(101);
+            var domains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains>();
+            domains.Network.Enable(new OpenQA.Selenium.DevTools.V101.Network.EnableCommandSettings());
         }
         public async Task GetNetworkLogAsync(IWebDriver webDriver, ActBrowserElement act)
         {

@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>GingerIconNew.ico</ApplicationIcon>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -651,13 +652,13 @@
     <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
     <PackageReference Include="Mono.Posix" Version="7.1.0-final.1.21458.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="NSwag.Core.Yaml" Version="13.15.10" />
+    <PackageReference Include="NSwag.Core.Yaml" Version="12.0.9" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.61" />
     <PackageReference Include="RoyWpf.System.Windows.Interactivity" Version="0.1.2" />
     <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="103.0.5060.5300" />
     <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.31.0.1" />
     <PackageReference Include="Selenium.WebDriver.IEDriver" Version="4.2.0" />
-    <PackageReference Include="Selenium.WebDriver.MSEdgeDriver" Version="101.0.1210.47" />
+    <PackageReference Include="Selenium.WebDriver.MSEdgeDriver" Version="103.0.1264.37" />
     <PackageReference Include="sharpadbclient" Version="2.3.23" />
     <PackageReference Include="Syncfusion.Shared.WPF" Version="20.1.0.55" />
     <PackageReference Include="System.Data.OleDb" Version="6.0.0" />
@@ -697,6 +698,9 @@
     </Reference>
     <Reference Include="ALMRestClient">
       <HintPath>..\GingerCoreNET\DLLS\ALMRestClient.dll</HintPath>
+    </Reference>
+    <Reference Include="ALMRestClientStd">
+      <HintPath>..\GingerCoreNET\DLLS\ALMRestClientStd.dll</HintPath>
     </Reference>
     <Reference Include="ALM_Common">
       <HintPath>..\GingerCoreNET\DLLS\ALM_Common.dll</HintPath>
@@ -738,8 +742,8 @@
     <Reference Include="Open3270">
       <HintPath>DLLs\Open3270.dll</HintPath>
     </Reference>
-    <Reference Include="QCRestClient">
-      <HintPath>..\GingerCoreNET\DLLS\QCRestClient.dll</HintPath>
+    <Reference Include="QCRestClientStd">
+      <HintPath>..\GingerCoreNET\DLLS\QCRestClientStd.dll</HintPath>
     </Reference>
     <Reference Include="QTestAPIStd">
       <HintPath>..\GingerCoreNET\DLLS\QTestAPIStd.dll</HintPath>
@@ -2434,6 +2438,27 @@
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
     </None>
+    <None Update="Reports\GingerExecutionReport\ActionReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\ActivityGroupReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\ActivityReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\BusinessFlowReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\GingerExecutionReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\GingerRunnerReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\GingerExecutionReport\RunSetReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\%40ErrorOrange_16x16.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -2459,6 +2484,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="StaticDrivers\GingerAgentStarter.jar">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="StaticDrivers\handle.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

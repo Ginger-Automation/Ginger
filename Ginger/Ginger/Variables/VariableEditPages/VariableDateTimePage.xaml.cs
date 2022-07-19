@@ -57,7 +57,7 @@ namespace Ginger.Variables
 
             txtDateFormat.Text = variableDateTime.DateTimeFormat;
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDateFormat, ComboBox.TextProperty,variableDateTime,nameof(VariableDateTime.DateTimeFormat));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDateFormat, ComboBox.TextProperty,variableDateTime,nameof(VariableDateTime.DateTimeFormat), System.Windows.Data.BindingMode.TwoWay);
             txtDateFormat.AddValidationRule(new DateTimeFormatValidationRule(variableDateTime));
         }
 
@@ -109,22 +109,30 @@ namespace Ginger.Variables
 
         private void UpdateIntialDateTimePicker()
         {
-            dtpInitialDate.CustomFormat = txtDateFormat.Text;
-            dpMinDate.CustomFormat = txtDateFormat.Text;
-            dpMaxDate.CustomFormat = txtDateFormat.Text;
+            if (!String.IsNullOrEmpty(((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedValue).Content.ToString()))
+            {
+                dtpInitialDate.CustomFormat = ((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedValue).Content.ToString();
+                if (dpMinDate != null || dpMaxDate != null)
+                {
+                    dpMinDate.CustomFormat = ((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedValue).Content.ToString();
+                    dpMaxDate.CustomFormat = ((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedValue).Content.ToString();
+                }
+            }
+            
         }
 
-        private async void txtDateFormat_TextChanged(object sender, TextChangedEventArgs e)
+        private void txtDateFormat_TextChanged(object sender, SelectionChangedEventArgs e)
         {
             // this inner method checks if user is still typing
-            async Task<bool> UserKeepsTyping()
-            {
-                var txt = txtDateFormat.Text;
-                await Task.Delay(1000);
-                return txt != txtDateFormat.Text;
-            }
-            if (await UserKeepsTyping() || dtpInitialDate.CustomFormat == txtDateFormat.Text) return;
-
+            //async Task<bool> UserKeepsTyping()
+            //{
+            //    var txt = txtDateFormat.Text;
+            //    await Task.Delay(1000);
+            //    return txt != txtDateFormat.Text;
+            //}
+            //if (await UserKeepsTyping() || dtpInitialDate.CustomFormat == txtDateFormat.Text) return;
+            //dtpInitialDate.CustomFormat = txtDateFormat.Text;
+            variableDateTime.DateTimeFormat = ((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedValue).Content.ToString();
             UpdateIntialDateTimePicker();
         }
     }

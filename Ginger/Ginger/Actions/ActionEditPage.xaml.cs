@@ -513,7 +513,8 @@ namespace Ginger.Actions
                 a.GetType() != typeof(ActLaunchJavaWSApplication) && a.GetType() != typeof(ActJavaEXE) &&
                 a.GetType() != typeof(ActGenElement) && a.GetType() != typeof(ActScript) && a.GetType() != typeof(ActConsoleCommand) &&
                 a.GetType() != typeof(ActSetVariableValue) && a.GetType() != typeof(ActCreatePDFChart) && a.GetType() != typeof(ActCompareImgs) &&
-                a.GetType() != typeof(ActGenerateFileFromTemplate) && a.GetType() != typeof(ActPBControl) && a.GetType() != typeof(ActWindowsControl))
+                a.GetType() != typeof(ActGenerateFileFromTemplate) && a.GetType() != typeof(ActPBControl) && a.GetType() != typeof(ActWindowsControl) &&
+                a.GetType() != typeof(ActMenuItem) && a.GetType() != typeof(ActJavaElement))
             {
                 if (a.InputValues.Count > minimumInputValuesToHideGrid)
                 {
@@ -558,16 +559,8 @@ namespace Ginger.Actions
             }
             else if (a.GetType() == typeof(ActLaunchJavaWSApplication) || a.GetType() == typeof(ActJavaEXE))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
-                if (a.InputValues.Count <= 1)
-                {
-                    xInputValuesGrid.Visibility = Visibility.Collapsed;
-                    xValueBoxPnl.Visibility = Visibility.Collapsed;
-                }
-                else if (a.InputValues.Count >= 2)
-                {
-                    xInputValuesGrid.Visibility = Visibility.Visible;
-                    xValueBoxPnl.Visibility = Visibility.Collapsed;
-                }
+                xInputValuesGrid.Visibility = Visibility.Collapsed;
+                xValueBoxPnl.Visibility = Visibility.Collapsed;
             }
             else if (a.GetType() == typeof(ActDBValidation))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
@@ -623,8 +616,10 @@ namespace Ginger.Actions
                     xValueBoxPnl.Visibility = Visibility.Collapsed;
                 }
             }
-            else if (a.GetType() == typeof(ActSetVariableValue) || a.GetType() == typeof(ActCreatePDFChart) || a.GetType() == typeof(ActCompareImgs) || a.GetType() == typeof(ActGenerateFileFromTemplate)
-                        || a.GetType() == typeof(ActPBControl) || a.GetType() == typeof(ActWindowsControl))
+            else if (a.GetType() == typeof(ActSetVariableValue) || a.GetType() == typeof(ActCreatePDFChart) 
+                        || a.GetType() == typeof(ActCompareImgs) || a.GetType() == typeof(ActGenerateFileFromTemplate)
+                        || a.GetType() == typeof(ActPBControl) || a.GetType() == typeof(ActWindowsControl) 
+                        || a.GetType() == typeof(ActMenuItem) || a.GetType() == typeof(ActJavaElement))
             {
                 xInputValuesGrid.Visibility = Visibility.Collapsed;
                 xValueBoxPnl.Visibility = Visibility.Visible;

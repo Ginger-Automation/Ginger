@@ -237,7 +237,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                     solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
                 }
                 ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, eGingerVersionComparisonResult.LowerVersion);
-                if (lowerVersionFiles.Count > 0)
+                if (lowerVersionFiles.Count > 0 && lowerVersionFiles.Any(x => x.Contains("Ginger.Solution.xml")))
                 {
                     if (WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
                     {

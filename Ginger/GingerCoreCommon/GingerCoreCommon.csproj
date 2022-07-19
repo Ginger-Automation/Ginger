@@ -10,8 +10,8 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>Amdocs.Ginger.Common</RootNamespace>
-    <AssemblyVersion>4.4.1.1</AssemblyVersion>
-    <FileVersion>4.4.1.1</FileVersion>
+    <AssemblyVersion>4.5.1.1</AssemblyVersion>
+    <FileVersion>4.5.1.1</FileVersion>
     <PackageId>Ginger.Core.Common</PackageId>
     <Authors>Amdocs</Authors>
     <Company>Amdocs</Company>

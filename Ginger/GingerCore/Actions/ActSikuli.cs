@@ -30,7 +30,7 @@ using System.Runtime.InteropServices;
 using GingerCore.Helpers;
 using System.Drawing.Imaging;
 using System.Drawing;
-using System.Windows.Automation;
+
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;

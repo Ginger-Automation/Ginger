@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+
 using GingerWPFUnitTest.POMs;
 using System;
 using System.Collections.Generic;

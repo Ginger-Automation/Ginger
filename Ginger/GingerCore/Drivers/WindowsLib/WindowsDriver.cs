@@ -36,7 +36,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Automation;
+
 using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
@@ -252,7 +252,7 @@ namespace GingerCore.Drivers.WindowsLib
                 CheckAndRetryRunAction(act, e);
                 return;
             }
-            catch (ElementNotAvailableException e)
+            catch (UIAuto.ElementNotAvailableException e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 CheckAndRetryRunAction(act, e);

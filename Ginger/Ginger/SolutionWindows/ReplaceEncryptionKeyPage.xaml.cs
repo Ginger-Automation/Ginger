@@ -580,7 +580,7 @@ namespace Ginger.SolutionWindows
                 finally
                 {
                     this.HideLoader();
-                    ShowStatusMessage("Please set the new values for password paramters");
+                    ShowStatusMessage("Please set the new values for password parameters");
                 }
             });
 
@@ -702,7 +702,7 @@ namespace Ginger.SolutionWindows
 
         private async Task<int> ReEncryptEnvironmentPasswordValues(string oldKey = null)
         {
-            ShowStatusMessage("Re-Encrypting Environment paramters and DB Password Values with new Key...");
+            ShowStatusMessage("Re-Encrypting Environment parameters and DB Password Values with new Key...");
             return await Task.Run(() =>
             {
                 bool isSaveRequired = false;

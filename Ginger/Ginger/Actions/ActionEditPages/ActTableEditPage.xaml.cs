@@ -22,7 +22,7 @@ using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Automation;
+
 using System.Windows.Controls;
 using System.Windows.Input;
 using GingerCore;
