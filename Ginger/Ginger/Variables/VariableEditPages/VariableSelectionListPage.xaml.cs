@@ -139,6 +139,5 @@ namespace Ginger.Variables
             grdOptionalValues.Grid.CommitEdit();
             grdOptionalValues.Grid.CancelEdit();
         }
-
     }
 }
