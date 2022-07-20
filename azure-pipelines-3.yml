@@ -2,11 +2,6 @@
 pool:
   vmImage: 'macOS-latest'
 
-- task: UseDotNet@2
-  inputs:
-    packageType: 'sdk'
-    version: '6.0.302'
-
 variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
