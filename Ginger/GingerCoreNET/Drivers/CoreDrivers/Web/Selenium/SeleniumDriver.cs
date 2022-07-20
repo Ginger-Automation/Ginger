@@ -6806,41 +6806,15 @@ namespace GingerCore.Drivers
 
                     break;
                 case ActBrowserElement.eControlAction.StartMonitoringNetworkLog:
-                    
-                    if (AgentType == eBrowserType.Chrome.ToString())
-                    {
                         mAct = act;
                         SetUPDevTools(Driver);
                         StartMonitoringNetworkLog(Driver, act).GetAwaiter().GetResult();
-                    }
-                    else
-                    {
-                        act.ExInfo = "Action is skipped, Selected browser operation:" + act.ControlAction + "  is not supported for browser type:" + AgentType;
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                    }
-
                     break;
                 case ActBrowserElement.eControlAction.GetNetworkLog:
-                    if (AgentType == eBrowserType.Chrome.ToString())
-                    {
                         GetNetworkLogAsync(Driver, act).GetAwaiter().GetResult();
-                    }
-                    else
-                    {
-                        act.ExInfo = "Action is skipped, Selected browser operation:" + act.ControlAction + "  is not supported for browser type:" + AgentType;
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                    }
                     break;
                 case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
-                    if (AgentType == eBrowserType.Chrome.ToString())
-                    {
                         StopMonitoringNetworkLog(Driver, act).GetAwaiter().GetResult();
-                    }
-                    else
-                    {
-                        act.ExInfo = "Action is skipped, Selected browser operation:" + act.ControlAction + "  is not supported for browser type:" + AgentType;
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                    }
                     break;
 
                 case ActBrowserElement.eControlAction.NavigateBack:
