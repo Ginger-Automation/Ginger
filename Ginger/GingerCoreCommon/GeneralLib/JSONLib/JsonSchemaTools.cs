@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -62,7 +62,18 @@ namespace Amdocs.Ginger.Common
             Dictionary<string, object> JsonBody = new Dictionary<string, object>();
             if (schema.AllOf.Count == 0)
             {
-                foreach (KeyValuePair<string, JsonProperty> jkp in schema.ActualProperties)
+                IReadOnlyDictionary<string, JsonProperty> dctJkp = schema.ActualProperties;
+                if (schema.ActualProperties != null && schema.ActualProperties.Count == 0)
+                {
+                    if (schema.Item != null && schema.Item.ActualSchema != null && schema.Item.ActualSchema.ActualProperties != null)
+                    {
+                        if (schema.Item.ActualSchema.ActualProperties.Count != 0)
+                        {
+                            dctJkp = schema.Item.ActualSchema.ActualProperties;
+                        }
+                    }
+                }
+                foreach (KeyValuePair<string, JsonProperty> jkp in dctJkp)
                 {
                     //code
                     string key = jkp.Key;
