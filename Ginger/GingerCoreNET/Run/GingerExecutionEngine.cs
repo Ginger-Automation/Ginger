@@ -1166,6 +1166,11 @@ namespace Ginger.Run
                         SkipActionAndNotifyEnd(act);
                         act.ExInfo = "Visual Testing Action Run Mode is Inactive.";
                     }
+                    if (!CheckRunInNetworkLog(act))
+                    {
+                        SkipActionAndNotifyEnd(act);
+                        return;
+                    }
                     if (act.CheckIfVaribalesDependenciesAllowsToRun((Activity)(CurrentBusinessFlow.CurrentActivity), true) == false)
                         return;
                 }
@@ -2864,7 +2869,11 @@ namespace Ginger.Run
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             }
 
-            if (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
+            if(act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
+            {
+                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+            }
+            else if (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
             {
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
             }
@@ -3301,7 +3310,7 @@ namespace Ginger.Run
                         CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
 
                         GiveUserFeedback();
-                        if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true && CheckRunInVisualTestingMode(act))
+                        if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true && CheckRunInVisualTestingMode(act) && CheckRunInNetworkLog(act))
                         {
                             RunAction(act, false);
                             GiveUserFeedback();
@@ -3367,6 +3376,10 @@ namespace Ginger.Run
                             {
                                 SkipActionAndNotifyEnd(act);
                                 act.ExInfo = "Visual Testing Action Run Mode is Inactive.";
+                            }
+                            if (!CheckRunInNetworkLog(act))
+                            {
+                                SkipActionAndNotifyEnd(act);
                             }
                             if (!activity.Acts.IsLastItem())
                             {
@@ -3479,6 +3492,30 @@ namespace Ginger.Run
                 return false;
             }
             else { return true; }
+        }
+
+        private bool CheckRunInNetworkLog(Act act)
+        {
+            if (act is ActBrowserElement)
+            {
+                ActBrowserElement actBrowserElement = (ActBrowserElement)act;
+                if (actBrowserElement.ControlAction == ActBrowserElement.eControlAction.StartMonitoringNetworkLog || actBrowserElement.ControlAction == ActBrowserElement.eControlAction.GetNetworkLog || actBrowserElement.ControlAction == ActBrowserElement.eControlAction.StopMonitoringNetworkLog)
+                {
+                    GingerCore.Drivers.DriverBase driver = ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Driver;
+
+                    if (driver is GingerCore.Drivers.SeleniumDriver)
+                    {
+                        GingerCore.Drivers.SeleniumDriver.eBrowserType browserType = ((GingerCore.Drivers.SeleniumDriver)driver).GetBrowserType();
+                        if (browserType != GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome)
+                        {
+                            SkipActionAndNotifyEnd(act);
+                            act.ExInfo = "Action is skipped, Selected browser operation:" + actBrowserElement.ControlAction + "  is not supported for browser type:" + browserType;
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
         }
 
         private void ContinueTimerVariables(ObservableList<VariableBase> variableList)

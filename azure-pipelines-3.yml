@@ -8,7 +8,11 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '6.0.x'
+    
 - script: dotnet test  Ginger/GingerUtilsTest --configuration $(buildConfiguration) --logger trx
   displayName: 'Testing GingerUtilsTest'
 
