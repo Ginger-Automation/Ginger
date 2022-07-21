@@ -147,7 +147,9 @@ namespace Ginger.Configurations
             get
             {
                 if (mAgent.HasValue)
+                {
                     return mAgent.Value;
+                }
                 else { return true; }
             }
             set
