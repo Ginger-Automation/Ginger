@@ -199,31 +199,69 @@ namespace GingerCore.Actions.VisualTesting
                     image = mDriver.GetElementScreenshot(mAct);
                 }
 
-                //diffTollerancePercent
-                string tolleranceValue = mAct.GetInputParamCalculatedValue(VRTAnalyzer.VRTParamDiffTollerancePercent);
-                if (!Double.TryParse(tolleranceValue, out double diffTollerancePercent))
+                //diffTolerancePercent
+                string toleranceValue = mAct.GetInputParamCalculatedValue(VRTAnalyzer.VRTParamDiffTollerancePercent);
+                if (!Double.TryParse(toleranceValue, out double diffTolerancePercent))
                 {
-                    mAct.Error = string.Format("The configured tollerance Precentage value '{0}' is not valid", tolleranceValue);
+                    mAct.Error = string.Format("The configured tolerance Precentage value '{0}' is not valid", toleranceValue);
                     return;
+                }
+                else 
+                {
+                    if (diffTolerancePercent == 0)
+                    {
+                        toleranceValue = WorkSpace.Instance.Solution.VRTConfiguration.DifferenceTolerance;
+                        if (!Double.TryParse(toleranceValue, out diffTolerancePercent))
+                        {
+                            mAct.Error = string.Format("The configured tolerance Precentage value '{0}' is not valid on the VRT Configurations", toleranceValue);
+                            return;
+                        }
+                    }
                 }
 
                 //Operating System
-                string os = GingerPluginCore.OperatingSystem.GetCurrentOS();
-
+                string os = string.Empty;
+                if (WorkSpace.Instance.Solution.VRTConfiguration.OS)
+                {
+                    os = GingerPluginCore.OperatingSystem.GetCurrentOS();
+                }
                 //tags
-                string tags = GetTags();
-
-                //Browser name and resolution from driver
-                string browser = mDriver.GetPlatform() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web ? mDriver.GetAgentAppName() : mDriver.GetAgentAppName()+"App";
-                string viewport = mDriver.GetViewport();
-               
+                string tags = string.Empty;
+                if (WorkSpace.Instance.Solution.VRTConfiguration.ActivityTags)
+                {
+                    tags = GetTags();
+                }
+                //Environment tag
+                if (WorkSpace.Instance.Solution.VRTConfiguration.Environment)
+                {
+                    if (string.IsNullOrEmpty(tags))
+                    {
+                        tags = "Environment:" + mDriver.GetEnvironment();
+                    }
+                    else
+                    {
+                        tags += ",Environment:" + mDriver.GetEnvironment();
+                    }
+                }
+                //Browser/agent/app name 
+                string browser = string.Empty;
+                if (WorkSpace.Instance.Solution.VRTConfiguration.Agent)
+                {
+                    browser = mDriver.GetPlatform() == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web ? mDriver.GetAgentAppName() : mDriver.GetAgentAppName() + "App";
+                }
+                //Viewport/resolution from driver
+                string viewport = string.Empty;
+                if (WorkSpace.Instance.Solution.VRTConfiguration.Viewport)
+                {
+                    mDriver.GetViewport();
+                }
                 //device
                 string device = null;
                 //imageName
                 string imageName = GetImageName();
 
                 //checkpoint
-                TestRunResult result = vrt.Track(imageName, General.ImageToByteArray(image, System.Drawing.Imaging.ImageFormat.Png), null, os, browser, viewport, device, tags, diffTollerancePercent).GetAwaiter().GetResult();
+                TestRunResult result = vrt.Track(imageName, General.ImageToByteArray(image, System.Drawing.Imaging.ImageFormat.Png), null, os, browser, viewport, device, tags, diffTolerancePercent).GetAwaiter().GetResult();
                 //results
                 mAct.ExInfo = "TestRun Results Status: " + result.Status;
                 mAct.AddOrUpdateReturnParamActual("Status", result.Status + "");
@@ -285,17 +323,6 @@ namespace GingerCore.Actions.VisualTesting
             {
                 tags = string.Join(",", activityTagsList);
             }
-
-            ////environment tag --> disabeled for now till it will be allowed as optional over project configs in Ginger
-            //if (string.IsNullOrEmpty(tags))
-            //{
-            //    tags = "Environment:" + mDriver.GetEnvironment();
-            //}
-            //else
-            //{
-            //    tags += ",Environment:" + mDriver.GetEnvironment();
-            //}
-
             return tags;
         }
 

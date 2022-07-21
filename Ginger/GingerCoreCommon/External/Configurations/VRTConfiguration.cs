@@ -84,7 +84,22 @@ namespace Ginger.Configurations
                 mBranchName = value;
                 OnPropertyChanged(nameof(BranchName));
             }
-        }        
+        }
+
+        private string mDifferenceTolerance = "0.0";
+        [IsSerializedForLocalRepository]
+        public string DifferenceTolerance
+        {
+            get
+            {
+                return mDifferenceTolerance;
+            }
+            set
+            {
+                mDifferenceTolerance = value;
+                OnPropertyChanged(nameof(DifferenceTolerance));
+            }
+        }
 
         public enum eFailActionOnCheckpointMismatch
         {
@@ -107,8 +122,94 @@ namespace Ginger.Configurations
         }
         public override string ItemName { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
-
-
+        private bool? mOS;
+        [IsSerializedForLocalRepository]
+        public bool OS
+        {
+            get
+            {
+                if (mOS.HasValue)
+                {
+                    return mOS.Value;
+                }
+                else { return true; }
+            }
+            set
+            {
+                mOS = value;
+                OnPropertyChanged(nameof(OS));
+            }
+        }
+        private bool? mAgent;
+        [IsSerializedForLocalRepository]
+        public bool Agent
+        {
+            get
+            {
+                if (mAgent.HasValue)
+                    return mAgent.Value;
+                else { return true; }
+            }
+            set
+            {
+                mAgent = value;
+                OnPropertyChanged(nameof(Agent));
+            }
+        }
+        private bool? mEnvironment;
+        [IsSerializedForLocalRepository]
+        public bool Environment
+        {
+            get
+            {
+                if (mEnvironment.HasValue)
+                {
+                    return mEnvironment.Value;
+                }
+                else { return true; }
+            }
+            set
+            {
+                mEnvironment = value;
+                OnPropertyChanged(nameof(Environment));
+            }
+        }
+        private bool? mViewport;
+        [IsSerializedForLocalRepository]
+        public bool Viewport
+        {
+            get
+            {
+                if (mViewport.HasValue)
+                {
+                    return mViewport.Value;
+                }
+                else { return true; }
+            }
+            set
+            {
+                mViewport = value;
+                OnPropertyChanged(nameof(Viewport));
+            }
+        }
+        private bool? mActivityTags;
+        [IsSerializedForLocalRepository]
+        public bool ActivityTags
+        {
+            get
+            {
+                if (mActivityTags.HasValue)
+                {
+                    return mActivityTags.Value;
+                }
+                else { return true; }
+            }
+            set
+            {
+                mActivityTags = value;
+                OnPropertyChanged(nameof(ActivityTags));
+            }
+        }
         #region General
 
         #endregion
