@@ -41,8 +41,8 @@ namespace GingerCore.Variables
             get { return "Selection List"; }
         }
 
-        private bool isLoopEnabled = true;
-        public bool IsLoopEnabled { get { return isLoopEnabled; } set { isLoopEnabled = value; } }
+        [IsSerializedForLocalRepository]
+        public bool IsLoopEnabled { get; set; } = true;
 
         //DO NOT REMOVE! Used for conversion of old OptionalValues which were kept in one string with delimiter
         public string OptionalValues
@@ -57,24 +57,6 @@ namespace GingerCore.Variables
         public ObservableList<OptionalValue> OptionalValuesList = new ObservableList<OptionalValue>();
 
         public string SelectedValue { set { Value = value; OnPropertyChanged(nameof(SelectedValue)); } get { return Value; } }
-
-        private bool mRandomOrder;
-        [IsSerializedForLocalRepository]
-        public bool RandomOrder
-        {
-            set
-            {
-                mRandomOrder = value;
-                OnPropertyChanged(nameof(this.RandomOrder));
-            }
-            get
-            {
-                return mRandomOrder;
-            }
-        }
-
-        [IsSerializedForLocalRepository]
-        public int CurrentValueIndex { set; get; }
 
         private string mValue;
         [IsSerializedForLocalRepository]
@@ -104,14 +86,9 @@ namespace GingerCore.Variables
             }
         }
 
-        public VariableSelectionList()
-        {
-            CurrentValueIndex = 0;
-        }
-
         public override void PostDeserialization()
         {
-           //Note: we need to reset all variables postserialization except variableSelectionList, thats why empty overriden method. 
+            //Note: we need to reset all variables postserialization except variableSelectionList, thats why empty overriden method. 
         }
 
         public override string GetFormula()
@@ -148,7 +125,6 @@ namespace GingerCore.Variables
             if (OptionalValuesList.Count > 0)
             {
                 Value = OptionalValuesList[0].Value;
-                CurrentValueIndex = 0;
             }
 
         }
@@ -163,16 +139,16 @@ namespace GingerCore.Variables
                 return;
             }
 
-            if (RandomOrder)
+            //Try to move to the next value if possible.
+            try
             {
-                Random rnd = new Random();
-                CurrentValueIndex = rnd.Next(listValues.Length);
-                Value = OptionalValuesList[CurrentValueIndex].Value;
+                bool isLast = !OptionalValuesList.MoveNext();
+                Value = ((OptionalValue)OptionalValuesList.CurrentItem).Value;
             }
-            else
+            catch (Exception e)
             {
-                //If no loop chechbox is enabled, return an error instead of returning to the first OptionalValue
-                if (!IsLoopEnabled && CurrentValueIndex == 0)
+                //If loop chechbox is disabled so return a proper message.
+                if (!IsLoopEnabled)
                 {
                     Value = "Value is at the last in the list and no looping chechkbox is not enabled";
                     Reporter.ToLog(eLogLevel.ERROR, "Value is at the last in the list and no looping chechkbox is not enabled");
@@ -180,11 +156,11 @@ namespace GingerCore.Variables
                 }
                 else
                 {
-                    Value = OptionalValuesList[CurrentValueIndex++].Value;
-                    if (CurrentValueIndex >= OptionalValuesList.Count) CurrentValueIndex = 0;
+                    OptionalValuesList.CurrentItem = OptionalValuesList.ElementAt<OptionalValue>(0);
+                    Value = ((OptionalValue)OptionalValuesList.CurrentItem).Value;
                 }
-
             }
+
         }
 
         public override bool SupportSetValue { get { return true; } }

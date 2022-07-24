@@ -217,7 +217,7 @@ namespace GingerCore.Variables
         public override string GetNameForFileName() { return Name; }
         public abstract string VariableEditPage { get; }
         public virtual bool IsObsolete { get { return false; } }
-        public virtual bool IsLoopEnabled { get { return true; } }
+        //public virtual bool IsLoopEnabled { get { return true; } }
 
         public abstract bool SupportResetValue { get; }
         public abstract bool SupportAutoValue { get; }
