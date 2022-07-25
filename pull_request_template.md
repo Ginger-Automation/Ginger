@@ -1,5 +1,6 @@
 Thank you for your contribution.
 Before submitting this PR, please make sure:
+-
 - [ ] The commit message follows our guidelines
 - [ ] Latest Code from master is merged to your branch.
 - [ ] No new warning upon build solution.
