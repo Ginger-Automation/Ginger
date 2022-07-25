@@ -87,14 +87,14 @@
                         <StackPanel x:Name="xEnableSoftAssertPanel" Margin="-15,0,0,0" Orientation="Horizontal" ToolTip="Select 'No' to ignore mismatches on checkpoint actions." VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="12" Grid.Column="1">
                             <UserControlsLib:UCRadioButtons x:Name="xEnableSoftAssertRadioButton" ></UserControlsLib:UCRadioButtons>
                         </StackPanel>
-                        
-                        <Label  Content="Checkpoint Tags:" Grid.Row="14" Grid.Column="0"  Style="{StaticResource @LabelStyle}" VerticalAlignment="Center" FontSize="12"></Label>
+
+                        <Label  Content="Checkpoint Tags:" Grid.Row="14" Grid.Column="0" ToolTip="Add checked tags on all checkpoint images." Style="{StaticResource @LabelStyle}" VerticalAlignment="Center" FontSize="12"></Label>
                         <StackPanel Margin="0,0,0,0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="14" Grid.Column="1">
-                            <CheckBox x:Name="xOsCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="OS" />
-                            <CheckBox x:Name="xAgentCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Agent" />
-                            <CheckBox x:Name="xEnvironmentCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Environment"  />
-                            <CheckBox x:Name="xViewportCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Viewport"  />
-                            <CheckBox x:Name="xActivityTagsCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Activity Tags"  />
+                            <CheckBox x:Name="xOsCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="OS" ToolTip="Add execution machine OS as tag on checkpoint images."/>
+                            <CheckBox x:Name="xAgentCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Agent" ToolTip="Add agent type as tag on checkpoint images."/>
+                            <CheckBox x:Name="xEnvironmentCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Environment" ToolTip="Add execution Environment as tag on checkpoint images." />
+                            <CheckBox x:Name="xViewportCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Viewport" ToolTip="Add current viewport as tag on checkpoint images." />
+                            <CheckBox x:Name="xActivityTagsCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Activity Tags" ToolTip="Add activity tags as tag on checkpoint images." />
                         </StackPanel>
                     </Grid>
                 </StackPanel>

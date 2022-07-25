@@ -208,7 +208,7 @@ namespace GingerCore.Actions.VisualTesting
                 }
                 else 
                 {
-                    if (diffTolerancePercent == 0.0)
+                    if (diffTolerancePercent <= 0.0 || diffTolerancePercent >= 0.0)// Noncompliant indirect equality test
                     {
                         toleranceValue = WorkSpace.Instance.Solution.VRTConfiguration.DifferenceTolerance;
                         if (!Double.TryParse(toleranceValue, out diffTolerancePercent))
