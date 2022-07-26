@@ -267,8 +267,9 @@ namespace GingerCoreCommonTest.VariableTests
             variableSelectionList.OptionalValuesList.Add(newVal3);
 
             // Act
-            variableSelectionList.GenerateAutoValue();
-            variableSelectionList.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableSelectionList.GenerateAutoValue(ref errorMsg);
+            variableSelectionList.GenerateAutoValue(ref errorMsg);
 
             string setValueResult = variableSelectionList.Value;
 
@@ -291,9 +292,10 @@ namespace GingerCoreCommonTest.VariableTests
             variableSelectionList.IsLoopEnabled = true;
 
             // Act
-            variableSelectionList.GenerateAutoValue();
-            variableSelectionList.GenerateAutoValue();
-            variableSelectionList.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableSelectionList.GenerateAutoValue(ref errorMsg);
+            variableSelectionList.GenerateAutoValue(ref errorMsg);
+            variableSelectionList.GenerateAutoValue(ref errorMsg);
 
             string setValueResult = variableSelectionList.Value;
 
@@ -317,8 +319,9 @@ namespace GingerCoreCommonTest.VariableTests
             //Todo Add no loop ticker
 
             // Act
-            variableSelectionList.GenerateAutoValue();
-            variableSelectionList.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableSelectionList.GenerateAutoValue(ref errorMsg);
+            variableSelectionList.GenerateAutoValue(ref errorMsg);
 
             string setValueResult = variableSelectionList.Value;
 

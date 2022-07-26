@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -171,12 +171,13 @@ namespace GingerCore.Variables
         public override void ResetValue()
         {
             ////TODO: fixme should be = or give user error - do not change
-                      
+
             ////TODO: get the range
-            GenerateAutoValue();
+            string errorMsg = string.Empty;
+            GenerateAutoValue(ref errorMsg);
         }
 
-        public override void GenerateAutoValue()
+        public override void GenerateAutoValue(ref string errorMsg)
         {
             if (Min > Max)
             {

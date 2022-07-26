@@ -400,7 +400,14 @@ namespace Ginger.BusinessFlowPages
 
         private void xAutoValueBtn_Click(object sender, RoutedEventArgs e)
         {
-            mVarBeenEdit.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            mVarBeenEdit.GenerateAutoValue(ref errorMsg);
+
+            if (!string.IsNullOrEmpty(errorMsg))
+            {
+                object[] errorParams = { errorMsg };
+                Reporter.ToUser(eUserMsgKey.VariablesAssignError, errorParams);
+            }
         }
     }
 }

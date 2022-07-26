@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -68,7 +68,7 @@ namespace GingerCore.Variables
             Value = Min.ToString();
         }
 
-        public override void GenerateAutoValue()
+        public override void GenerateAutoValue(ref string errorMsg)
         {
             CurrentValueIndex++;
             int delta = CurrentValueIndex * Interval;

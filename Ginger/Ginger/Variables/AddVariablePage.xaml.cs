@@ -107,7 +107,6 @@ namespace Ginger.Variables
                 {
                     list.Add(v);
                 }
-                list.Add(v);
             }
 
             return list;

@@ -212,12 +212,12 @@ namespace GingerCore.Variables
         public abstract string GetFormula();
         public abstract string VariableType { get; }
         public abstract void ResetValue();
-        public abstract void GenerateAutoValue();
+        private string errorMsg;
+        public abstract void GenerateAutoValue(ref string errorMsg);
         public virtual eImageType Image { get { return eImageType.Variable; } }
         public override string GetNameForFileName() { return Name; }
         public abstract string VariableEditPage { get; }
         public virtual bool IsObsolete { get { return false; } }
-        //public virtual bool IsLoopEnabled { get { return true; } }
 
         public abstract bool SupportResetValue { get; }
         public abstract bool SupportAutoValue { get; }

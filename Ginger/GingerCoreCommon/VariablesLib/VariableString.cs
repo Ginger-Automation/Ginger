@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -69,7 +69,7 @@ namespace GingerCore.Variables
             Value = mInitialStringValue; 
         }
 
-        public override void GenerateAutoValue()
+        public override void GenerateAutoValue(ref string errorMsg)
         { 
             //NA
         }

@@ -261,7 +261,7 @@ namespace GingerCore.Variables
 
 
 
-        public override void GenerateAutoValue()
+        public override void GenerateAutoValue(ref string errorMsg)
         {
             //NA
         }

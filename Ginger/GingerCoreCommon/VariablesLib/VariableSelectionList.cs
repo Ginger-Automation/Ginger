@@ -41,7 +41,7 @@ namespace GingerCore.Variables
             get { return "Selection List"; }
         }
 
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool IsLoopEnabled { get; set; } = true;
 
         //DO NOT REMOVE! Used for conversion of old OptionalValues which were kept in one string with delimiter
@@ -124,42 +124,52 @@ namespace GingerCore.Variables
         {
             if (OptionalValuesList.Count > 0)
             {
+                OptionalValuesList.CurrentItem = OptionalValuesList.ElementAt<OptionalValue>(0);
                 Value = OptionalValuesList[0].Value;
             }
 
         }
 
-        public override void GenerateAutoValue()
+        public override void GenerateAutoValue(ref string errorMsg)
         {
-            string trimString = "Options: ";
-            string[] listValues = Formula.Substring(trimString.Length).Split(',');
-            if (listValues.Length == 0)
+            if (OptionalValuesList.Count == 0)
             {
                 Value = string.Empty;
+                errorMsg = "Generate Auto Value is not possible because Selection List is empty";
                 return;
             }
 
-            //Try to move to the next value if possible.
-            try
-            {
-                bool isLast = !OptionalValuesList.MoveNext();
-                Value = ((OptionalValue)OptionalValuesList.CurrentItem).Value;
-            }
-            catch (Exception e)
+            int index = OptionalValuesList.IndexOf((OptionalValue)OptionalValuesList.CurrentItem);
+
+            //Check if the OptionalValue is last
+            if (index == OptionalValuesList.Count - 1)
             {
                 //If loop chechbox is disabled so return a proper message.
                 if (!IsLoopEnabled)
                 {
-                    Value = "Value is at the last in the list and no looping chechkbox is not enabled";
-                    Reporter.ToLog(eLogLevel.ERROR, "Value is at the last in the list and no looping chechkbox is not enabled");
-
+                    errorMsg = "Generate Auto Value is not possible because current value is last and looping is not allowed";
                 }
                 else
                 {
                     OptionalValuesList.CurrentItem = OptionalValuesList.ElementAt<OptionalValue>(0);
                     Value = ((OptionalValue)OptionalValuesList.CurrentItem).Value;
+                    errorMsg = string.Empty;
                 }
             }
+            else
+            {
+                if (index == -1)
+                {
+                    OptionalValuesList.CurrentItem = OptionalValuesList.ElementAt<OptionalValue>(0);
+                }
+                else
+                {
+                    OptionalValuesList.MoveNext();                 
+                }
+                Value = ((OptionalValue)OptionalValuesList.CurrentItem).Value;
+                errorMsg = string.Empty;
+            }
+
 
         }
 

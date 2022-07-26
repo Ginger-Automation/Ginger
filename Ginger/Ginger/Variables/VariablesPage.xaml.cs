@@ -344,8 +344,12 @@ namespace Ginger.Variables
             if (grdVariables.Grid.SelectedItems.Count == 0)
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             else
+            {
+                string errorMsg = string.Empty;
                 foreach (object var in grdVariables.Grid.SelectedItems)
-                    ((VariableBase)var).GenerateAutoValue();
+                    ((VariableBase)var).GenerateAutoValue(ref errorMsg);
+            }
+                
         }
 
         private void EditVar(object sender, RoutedEventArgs e)

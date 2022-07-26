@@ -33,6 +33,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Set " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Action"; } }
         public override string ActionUserDescription { get { return "Allows to set the value of a " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " in run time"; } }
 
+        private string errorMsg;
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("1- Select the " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " to modify it value");
@@ -225,7 +226,7 @@ namespace GingerCore.Actions
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.AutoGenerateValue)
             {
-                ((VariableBase)Var).GenerateAutoValue();
+                ((VariableBase)Var).GenerateAutoValue(ref errorMsg);
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.StartTimer)
             {
@@ -274,10 +275,10 @@ namespace GingerCore.Actions
                 Error = "Unknown set " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " value operation.";
                 return;
             }
-            if (Var.Value.Contains("Value is at the last in the list"))
+            if (!string.IsNullOrEmpty(errorMsg))
             {
                 Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                Error = "Value is at the last in the list and no looping chechkbox is not enabled";
+                Error = errorMsg;
             }
             ExInfo = GingerDicser.GetTermResValue(eTermResKey.Variable) + " '" + Var.Name + "' value was set to: '" + Var.Value + "'";
         }

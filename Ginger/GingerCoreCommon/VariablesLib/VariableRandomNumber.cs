@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -66,10 +66,11 @@ namespace GingerCore.Variables
 
         public override void ResetValue()
         {
-            GenerateAutoValue();
+            string errorMsg = string.Empty;
+            GenerateAutoValue(ref errorMsg);
         }
 
-        public override void GenerateAutoValue()
+        public override void GenerateAutoValue(ref string errorMsg)
         {
             // In case the user is editing the numbers we validate, he will get the err message in the formula
             if (mMin > mMax)
