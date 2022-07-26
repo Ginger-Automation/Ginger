@@ -281,6 +281,25 @@ namespace GingerCoreCommonTest.VariableTests
 
         [TestMethod]
         [Timeout(60000)]
+        public void SelectionListVar_TestGenerateAutoValueEmptyList()
+        {
+            //Arrange
+            VariableSelectionList variableSelectionList = new VariableSelectionList();
+
+            // Act
+            string errorMsg = string.Empty;
+            variableSelectionList.GenerateAutoValue(ref errorMsg);
+
+            string setValueResult = errorMsg;
+
+            string setValueExpectedResult = "Generate Auto Value is not possible because Selection List is empty";
+
+            //Assert
+            Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
         public void SelectionListVar_TestGenerateAutoValueLoopToStart()
         {
             //Arrange
@@ -322,10 +341,11 @@ namespace GingerCoreCommonTest.VariableTests
             string errorMsg = string.Empty;
             variableSelectionList.GenerateAutoValue(ref errorMsg);
             variableSelectionList.GenerateAutoValue(ref errorMsg);
+            variableSelectionList.GenerateAutoValue(ref errorMsg);
 
-            string setValueResult = variableSelectionList.Value;
+            string setValueResult = errorMsg;
 
-            string setValueExpectedResult = "Value is at the last in the list and no looping chechkbox is not enabled";
+            string setValueExpectedResult = "Generate Auto Value is not possible because current value is last and looping is not allowed";
 
             //Assert
             Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
