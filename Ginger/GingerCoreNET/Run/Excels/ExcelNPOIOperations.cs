@@ -359,20 +359,19 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
         private object HandleNumericCellType(ICell cell)
         {
-            object cellVal;
             if (DateUtil.IsCellDateFormatted(cell))
             {
-                return cellVal = cell.DateCellValue.ToString(CultureInfo.InvariantCulture);
+                return cell.DateCellValue.ToString(CultureInfo.InvariantCulture);
             }
             else if (!String.IsNullOrEmpty(cell.DateCellValue.ToString()) && (cell.CellStyle.GetDataFormatString().Contains("yy") || cell.CellStyle.GetDataFormatString().Contains("mm") || cell.CellStyle.GetDataFormatString().Contains("dd")))
             {
-                return cellVal = cell.DateCellValue.ToString(cell.CellStyle.GetDataFormatString().Replace("-mm", "-MM").Replace("h", "H"), CultureInfo.InvariantCulture);
+                return cell.DateCellValue.ToString(cell.CellStyle.GetDataFormatString().Replace("-mm", "-MM").Replace("h", "H"), CultureInfo.InvariantCulture);
             }
             else if ((cell.NumericCellValue.ToString().Length > 15 || String.Equals(cell.CellStyle.GetDataFormatString(), "General", StringComparison.OrdinalIgnoreCase)))
             {
                 return ((decimal)cell.NumericCellValue).ToString(CultureInfo.InvariantCulture);
             }
-            return cellVal = cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
+            return cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
         }
     }
 }
