@@ -177,18 +177,19 @@ namespace GingerCore.Variables
             GenerateAutoValue(ref errorMsg);
         }
 
-        public override void GenerateAutoValue(ref string errorMsg)
+        public override bool GenerateAutoValue(ref string errorMsg)
         {
             if (Min > Max)
             {
                 Value = "Error: Min > Max";
-                return;
+                return false;
             }
             
             int c = 0;
             System.Threading.Thread.Sleep(1);
             c = (int)((random.NextDouble() * (double)(Max - Min + 1)) + Min);
             Value = RandomString(c);
+            return true;
         }
 
         public override eImageType Image { get { return eImageType.Languages; } }

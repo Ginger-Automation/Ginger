@@ -61,9 +61,10 @@ namespace GingerCore.Variables
             get { return GingerDicser.GetTermResValue(eTermResKey.Variable) + " DateTime"; }
         }
 
-        public override void GenerateAutoValue(ref string errorMsg)
+        public override bool GenerateAutoValue(ref string errorMsg)
         {
             //NA
+            return true;
         }
 
         [IsSerializedForLocalRepository]

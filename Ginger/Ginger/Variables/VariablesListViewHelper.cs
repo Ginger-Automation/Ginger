@@ -608,6 +608,10 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(sender);
             string errorMsg = string.Empty;
             mVariable.GenerateAutoValue(ref errorMsg);
+            if (!string.IsNullOrEmpty(errorMsg))
+            {
+                Reporter.ToUser(eUserMsgKey.VariablesAssignError, errorMsg);
+            }
         }
 
         private void InputHandler(object sender, RoutedEventArgs e)

@@ -68,7 +68,7 @@ namespace GingerCore.Variables
             Value = Min.ToString();
         }
 
-        public override void GenerateAutoValue(ref string errorMsg)
+        public override bool GenerateAutoValue(ref string errorMsg)
         {
             CurrentValueIndex++;
             int delta = CurrentValueIndex * Interval;
@@ -79,6 +79,7 @@ namespace GingerCore.Variables
                 CurrentValueIndex = 0;
             }
             Value = val.ToString();
+            return true;
         }
     
         public override eImageType Image { get { return eImageType.SequentialExecution; } }

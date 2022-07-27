@@ -345,9 +345,15 @@ namespace Ginger.Variables
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
             else
             {
-                string errorMsg = string.Empty;
                 foreach (object var in grdVariables.Grid.SelectedItems)
+                {
+                    string errorMsg = string.Empty;
                     ((VariableBase)var).GenerateAutoValue(ref errorMsg);
+                    if (!string.IsNullOrEmpty(errorMsg))
+                    {
+                        Reporter.ToUser(eUserMsgKey.VariablesAssignError, errorMsg);
+                    }
+                }
             }
                 
         }

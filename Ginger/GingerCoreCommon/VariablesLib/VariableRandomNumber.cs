@@ -70,19 +70,19 @@ namespace GingerCore.Variables
             GenerateAutoValue(ref errorMsg);
         }
 
-        public override void GenerateAutoValue(ref string errorMsg)
+        public override bool GenerateAutoValue(ref string errorMsg)
         {
             // In case the user is editing the numbers we validate, he will get the err message in the formula
             if (mMin > mMax)
             {
                 Value = "Error: Min > Max";
-                return;
+                return false;
             }
 
             if(mMax - mMin < Interval)
             {
                 Value = "Error: Max-Min should be greater than Interval";
-                return;
+                return false;
             }
 
             decimal d = mDecimalRandom.NextDecimal(mMin, mMax, IsInteger);
@@ -98,7 +98,8 @@ namespace GingerCore.Variables
                     d = d - d % Interval;
             }
             
-            Value = d.ToString();            
+            Value = d.ToString();    
+            return true;
         }
 
         public override eImageType Image { get { return eImageType.Random; } }

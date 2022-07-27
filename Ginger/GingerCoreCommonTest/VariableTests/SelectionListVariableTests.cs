@@ -274,9 +274,11 @@ namespace GingerCoreCommonTest.VariableTests
             string setValueResult = variableSelectionList.Value;
 
             string setValueExpectedResult = "Two";
+            string setErorMsgExpectedResult = string.Empty;
 
             //Assert
             Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
+            Assert.AreEqual(setErorMsgExpectedResult, errorMsg, "Set Error Message Result");
         }
 
         [TestMethod]
@@ -290,12 +292,16 @@ namespace GingerCoreCommonTest.VariableTests
             string errorMsg = string.Empty;
             variableSelectionList.GenerateAutoValue(ref errorMsg);
 
-            string setValueResult = errorMsg;
+            string setValueResult = variableSelectionList.Value;
 
-            string setValueExpectedResult = "Generate Auto Value is not possible because Selection List is empty";
+            string setValueExpectedResult = string.Empty;
+            string setErrorMsgExpectedResult = "Generate Auto Value is not possible because Selection List is empty";
+
 
             //Assert
             Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
+            Assert.AreEqual(setErrorMsgExpectedResult, errorMsg, "Set Error Message Result");
+
         }
 
         [TestMethod]
@@ -319,9 +325,11 @@ namespace GingerCoreCommonTest.VariableTests
             string setValueResult = variableSelectionList.Value;
 
             string setValueExpectedResult = "One";
+            string setErrorMsgExpectedResult = string.Empty;
 
             //Assert
             Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
+            Assert.AreEqual(setErrorMsgExpectedResult, errorMsg, "Set Error Message Result");
         }
 
         [TestMethod]
@@ -343,12 +351,14 @@ namespace GingerCoreCommonTest.VariableTests
             variableSelectionList.GenerateAutoValue(ref errorMsg);
             variableSelectionList.GenerateAutoValue(ref errorMsg);
 
-            string setValueResult = errorMsg;
+            string setValueResult = variableSelectionList.Value;
 
-            string setValueExpectedResult = "Generate Auto Value is not possible because current value is last and looping is not allowed";
+            string setValueExpectedResult = "Two";
+            string setErrorMsgExpectedResult = "Generate Auto Value is not possible because current value is last and looping is not allowed";
 
             //Assert
             Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
+            Assert.AreEqual(setErrorMsgExpectedResult, errorMsg, "Set Error Message Result");
         }
     }
 }

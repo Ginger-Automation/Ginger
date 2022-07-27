@@ -124,50 +124,51 @@ namespace GingerCore.Variables
         {
             if (OptionalValuesList.Count > 0)
             {
-                OptionalValuesList.CurrentItem = OptionalValuesList.ElementAt<OptionalValue>(0);
                 Value = OptionalValuesList[0].Value;
             }
 
         }
 
-        public override void GenerateAutoValue(ref string errorMsg)
+        public override bool GenerateAutoValue(ref string errorMsg)
         {
             if (OptionalValuesList.Count == 0)
             {
                 Value = string.Empty;
                 errorMsg = "Generate Auto Value is not possible because Selection List is empty";
-                return;
+                return false;
             }
 
-            int index = OptionalValuesList.IndexOf((OptionalValue)OptionalValuesList.CurrentItem);
+            //Finding the index of the current Optional Value
+            OptionalValue optionalValue = OptionalValuesList.Where<OptionalValue>(op => op.Value == Value).FirstOrDefault();
+            int index = OptionalValuesList.IndexOf(optionalValue);
 
-            //Check if the OptionalValue is last
+            if (index == -1)
+            {
+                errorMsg = "Generate Auto Value is not possible because the Value was not found in the list";
+                return false;
+            }
+
+            //Check if the current OptionalValue is last
             if (index == OptionalValuesList.Count - 1)
             {
                 //If loop chechbox is disabled so return a proper message.
                 if (!IsLoopEnabled)
                 {
                     errorMsg = "Generate Auto Value is not possible because current value is last and looping is not allowed";
+                    return false;
                 }
                 else
                 {
-                    OptionalValuesList.CurrentItem = OptionalValuesList.ElementAt<OptionalValue>(0);
-                    Value = ((OptionalValue)OptionalValuesList.CurrentItem).Value;
+                    Value = OptionalValuesList[0].Value;
                     errorMsg = string.Empty;
+                    return true;
                 }
             }
             else
             {
-                if (index == -1)
-                {
-                    OptionalValuesList.CurrentItem = OptionalValuesList.ElementAt<OptionalValue>(0);
-                }
-                else
-                {
-                    OptionalValuesList.MoveNext();                 
-                }
-                Value = ((OptionalValue)OptionalValuesList.CurrentItem).Value;
+                Value = OptionalValuesList[++index].Value;
                 errorMsg = string.Empty;
+                return true;
             }
 
 

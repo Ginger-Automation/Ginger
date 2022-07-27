@@ -34,6 +34,7 @@ namespace GingerCore.Actions
         public override string ActionUserDescription { get { return "Allows to set the value of a " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " in run time"; } }
 
         private string errorMsg;
+        private bool isAutoGenerateValuesucceed;
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("1- Select the " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " to modify it value");
@@ -226,7 +227,7 @@ namespace GingerCore.Actions
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.AutoGenerateValue)
             {
-                ((VariableBase)Var).GenerateAutoValue(ref errorMsg);
+                isAutoGenerateValuesucceed = ((VariableBase)Var).GenerateAutoValue(ref errorMsg);
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.StartTimer)
             {
@@ -275,7 +276,7 @@ namespace GingerCore.Actions
                 Error = "Unknown set " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " value operation.";
                 return;
             }
-            if (!string.IsNullOrEmpty(errorMsg))
+            if (!isAutoGenerateValuesucceed)
             {
                 Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 Error = errorMsg;

@@ -405,8 +405,7 @@ namespace Ginger.BusinessFlowPages
 
             if (!string.IsNullOrEmpty(errorMsg))
             {
-                object[] errorParams = { errorMsg };
-                Reporter.ToUser(eUserMsgKey.VariablesAssignError, errorParams);
+                Reporter.ToUser(eUserMsgKey.VariablesAssignError, errorMsg);
             }
         }
     }

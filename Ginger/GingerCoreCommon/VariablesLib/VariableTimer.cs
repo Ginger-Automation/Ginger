@@ -174,9 +174,10 @@ namespace GingerCore.Variables
         }
 
        
-        public override void GenerateAutoValue(ref string errorMsg)
+        public override bool GenerateAutoValue(ref string errorMsg)
         {
             //NA
+            return true;
         }
 
         public override eImageType Image { get { return eImageType.Timer; } }
