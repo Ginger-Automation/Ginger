@@ -363,7 +363,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             {
                 return cell.DateCellValue.ToString(CultureInfo.InvariantCulture);
             }
-            else if (!String.IsNullOrEmpty(cell.DateCellValue.ToString()) && (cell.CellStyle.GetDataFormatString().Contains("yy") || cell.CellStyle.GetDataFormatString().Contains("mm") || cell.CellStyle.GetDataFormatString().Contains("dd")))
+            else if (cell.CellStyle.GetDataFormatString().Contains("yy") || cell.CellStyle.GetDataFormatString().Contains("mm") || cell.CellStyle.GetDataFormatString().Contains("dd"))
             {
                 return cell.DateCellValue.ToString(cell.CellStyle.GetDataFormatString().Replace("-mm", "-MM").Replace("h", "H"), CultureInfo.InvariantCulture);
             }
