@@ -9,5 +9,5 @@ Before submitting this PR, please make sure:
 - [ ] No unwanted\commented\junk code is included.
 - [ ] After creating pull request there is no conflicts.
 - [ ] Builds and checks are passed before PR is sent for review.
-- [ ] Resolve code reivew comments.
+- [ ] Resolve code review comments.
 - [ ] Resolve codacy comments.
