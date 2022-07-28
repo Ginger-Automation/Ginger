@@ -268,12 +268,13 @@ namespace GingerCoreCommonTest.VariableTests
 
             // Act
             string errorMsg = string.Empty;
+            variableSelectionList.SetValue("One");
             variableSelectionList.GenerateAutoValue(ref errorMsg);
             variableSelectionList.GenerateAutoValue(ref errorMsg);
 
             string setValueResult = variableSelectionList.Value;
 
-            string setValueExpectedResult = "Two";
+            string setValueExpectedResult = "Three";
             string setErorMsgExpectedResult = string.Empty;
 
             //Assert
@@ -318,7 +319,7 @@ namespace GingerCoreCommonTest.VariableTests
 
             // Act
             string errorMsg = string.Empty;
-            variableSelectionList.GenerateAutoValue(ref errorMsg);
+            variableSelectionList.SetValue("One");
             variableSelectionList.GenerateAutoValue(ref errorMsg);
             variableSelectionList.GenerateAutoValue(ref errorMsg);
 
@@ -347,7 +348,7 @@ namespace GingerCoreCommonTest.VariableTests
 
             // Act
             string errorMsg = string.Empty;
-            variableSelectionList.GenerateAutoValue(ref errorMsg);
+            variableSelectionList.SetValue("One");
             variableSelectionList.GenerateAutoValue(ref errorMsg);
             variableSelectionList.GenerateAutoValue(ref errorMsg);
 
