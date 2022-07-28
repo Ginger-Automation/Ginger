@@ -264,7 +264,8 @@ namespace GingerCore.Variables
         public override bool GenerateAutoValue(ref string errorMsg)
         {
             //NA
-            return true;
+            errorMsg = "Generate Auto Value is not supported";
+            return false;
         }
 
         public override string GetFormula()

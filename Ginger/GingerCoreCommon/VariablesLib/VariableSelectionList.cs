@@ -139,12 +139,17 @@ namespace GingerCore.Variables
             }
 
             //Finding the index of the current Optional Value
-            OptionalValue optionalValue = OptionalValuesList.Where<OptionalValue>(op => op.Value == Value).FirstOrDefault();
-            int index = OptionalValuesList.IndexOf(optionalValue);
+            OptionalValue currentOptionalValue = OptionalValuesList.Where<OptionalValue>(op => op.Value == Value).FirstOrDefault();
+            if (currentOptionalValue == null)
+            {
+                errorMsg = "Failed to generate auto value because current value is not part of the list of values";
+                return false;
+            }
+            int index = OptionalValuesList.IndexOf(currentOptionalValue);
 
             if (index == -1)
             {
-                errorMsg = "Generate Auto Value is not possible because the Value was not found in the list";
+                errorMsg = "Failed to generate auto value because current value is not part of the list of values";
                 return false;
             }
 
