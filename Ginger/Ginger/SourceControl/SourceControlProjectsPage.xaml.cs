@@ -388,7 +388,7 @@ namespace Ginger.SourceControl
         {
             try
             {
-                if (string.IsNullOrEmpty(mSourceControl.SourceControlUser) || string.IsNullOrEmpty(mSourceControl.SourceControlPass) || string.IsNullOrEmpty(mSourceControl.SourceControlURL))
+                if (!mSourceControl.IsPublicRepo && (string.IsNullOrEmpty(mSourceControl.SourceControlUser) || string.IsNullOrEmpty(mSourceControl.SourceControlPass)) || string.IsNullOrEmpty(mSourceControl.SourceControlURL))
                 {
                     Reporter.ToUser(eUserMsgKey.SourceControlConnMissingConnInputs);
                     return;
@@ -455,10 +455,15 @@ namespace Ginger.SourceControl
         private void FetchBranches_Click(object sender, RoutedEventArgs e)
         {
             loaderElement.Visibility = Visibility.Visible;
+            mSourceControl.IsPublicRepo = false;
             xBranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
             if (xBranchesCombo.Items.Count > 0)
             {
                 xBranchesCombo.SelectedIndex = 0;
+                if(String.IsNullOrEmpty(mSourceControl.SourceControlUser) || String.IsNullOrEmpty(mSourceControl.SourceControlPass))
+                {
+                    mSourceControl.IsPublicRepo = true;
+                }
             }
             loaderElement.Visibility = Visibility.Collapsed;
         }
