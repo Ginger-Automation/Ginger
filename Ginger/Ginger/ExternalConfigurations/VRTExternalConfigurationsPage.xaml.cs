@@ -35,7 +35,7 @@ namespace Ginger.Configurations
     /// </summary>
     public partial class VRTExternalConfigurationsPage : Page
     {
-        VRTConfiguration _VRTConfiguration = new VRTConfiguration();
+        VRTConfiguration _VRTConfiguration = null;
 
         public VRTExternalConfigurationsPage()
         {
@@ -57,9 +57,14 @@ namespace Ginger.Configurations
             xAPIKeyTextBox.Init(mContext, _VRTConfiguration, nameof(VRTConfiguration.ApiKey));
             xProjectTextBox.Init(mContext, _VRTConfiguration, nameof(VRTConfiguration.Project));
             xBranchNameTextBox.Init(mContext, _VRTConfiguration, nameof(VRTConfiguration.BranchName));
-            xEnableSoftAssertRadioButton.Init(typeof(VRTConfiguration.eFailActionOnCheckpointMismatch),
-                xEnableSoftAssertPanel, _VRTConfiguration,
-                nameof(VRTConfiguration.FailActionOnCheckpointMismatch));
+            xDiffToleranceTextBox.Init(mContext, _VRTConfiguration, nameof(VRTConfiguration.DifferenceTolerance));
+            xEnableSoftAssertRadioButton.Init(typeof(VRTConfiguration.eFailActionOnCheckpointMismatch), xEnableSoftAssertPanel, _VRTConfiguration, nameof(VRTConfiguration.FailActionOnCheckpointMismatch));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xOsCheckBox, CheckBox.IsCheckedProperty, _VRTConfiguration, nameof(VRTConfiguration.OS));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentCheckBox, CheckBox.IsCheckedProperty, _VRTConfiguration, nameof(VRTConfiguration.Agent));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEnvironmentCheckBox, CheckBox.IsCheckedProperty, _VRTConfiguration, nameof(VRTConfiguration.Environment));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xViewportCheckBox, CheckBox.IsCheckedProperty, _VRTConfiguration, nameof(VRTConfiguration.Viewport));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xActivityTagsCheckBox, CheckBox.IsCheckedProperty, _VRTConfiguration, nameof(VRTConfiguration.ActivityTags));
+
             ApplyValidationRules();
         }
 
@@ -69,16 +74,19 @@ namespace Ginger.Configurations
             xAPIURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("URL cannot be empty"));
             xAPIKeyTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Key cannot be empty"));
             xProjectTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Project Name cannot be empty"));
+            xBranchNameTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Branch Name cannot be empty"));
+            xDiffToleranceTextBox.ValueTextBox.AddValidationRule(new ValidateDecimalNumberInputRule("Enter decimal number only"));
 
-            CallSealightsConfigPropertyChange();
+            CallVRTConfigPropertyChange();
         }
 
-        private void CallSealightsConfigPropertyChange()
+        private void CallVRTConfigPropertyChange()
         {
             // need in order to trigger the validation's rules on init binding (load/init form)
             _VRTConfiguration.OnPropertyChanged(nameof(VRTConfiguration.ApiUrl));
             _VRTConfiguration.OnPropertyChanged(nameof(VRTConfiguration.ApiKey));
             _VRTConfiguration.OnPropertyChanged(nameof(VRTConfiguration.Project));
+            _VRTConfiguration.OnPropertyChanged(nameof(VRTConfiguration.BranchName));
         }
 
         private void xSaveButton_Click(object sender, RoutedEventArgs e)

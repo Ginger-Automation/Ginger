@@ -7851,10 +7851,87 @@ namespace GingerCore.Drivers
         public Bitmap GetElementScreenshot(Act act)
         {
             WebElement element = (WebElement)LocateElement(act, false, null, null);
-            var screenshot = ((ITakesScreenshot)element).GetScreenshot();
-            return ScreenshotToImage(screenshot);
+            return CaptureScrollableElementScreenshot(element);
         }
 
+        private Bitmap CaptureScrollableElementScreenshot(WebElement element)
+        {
+            try
+            {
+                // Get the total size of the element
+                var offsetWidth = (int)(long)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].offsetWidth", element);
+                var scrollHeight = (int)(long)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].scrollHeight", element);
+
+                // Get the size of the viewport
+                var clientWidth = (int)(long)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].clientWidth", element);
+                var clientHeihgt = (int)(long)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].clientHeight", element);
+
+                // We only care about taking multiple images together if it doesn't already fit
+                if ((offsetWidth <= clientWidth) && (scrollHeight <= clientHeihgt))
+                {
+                    // return screenshot of what's visible currently in the viewport
+                    var screenshot = ((ITakesScreenshot)element).GetScreenshot();
+                    return ScreenshotToImage(screenshot);
+                }
+                // Split the screen in multiple Rectangles
+                var rectangles = new List<Rectangle>();
+                // Loop until the totalHeight is reached
+                for (var y = 0; y < scrollHeight; y += clientHeihgt)
+                {
+                    var newHeight = clientHeihgt;
+                    // Fix if the height of the element is too big
+                    if (y + clientHeihgt > scrollHeight)
+                        newHeight = scrollHeight - y;
+                    // Loop until the totalWidth is reached
+                    for (var x = 0; x < offsetWidth; x += clientWidth)
+                    {
+                        var newWidth = clientWidth;
+                        // Fix if the Width of the Element is too big
+                        if (x + clientWidth > offsetWidth)
+                            newWidth = offsetWidth - x;
+                        // Create and add the Rectangle
+                        var currRect = new Rectangle(x, y, newWidth, newHeight);
+                        rectangles.Add(currRect);
+                    }
+                }
+                // Build the Image
+                var stitchedImage = new Bitmap(offsetWidth, scrollHeight);
+                // Get all Screenshots and stitch them together
+                var previous = Rectangle.Empty;
+                foreach (var rectangle in rectangles)
+                {
+                    // Calculate the scrolling (if needed)
+                    if (previous != Rectangle.Empty)
+                    {
+                        var xDiff = rectangle.Right - previous.Right;
+                        var yDiff = rectangle.Bottom - previous.Bottom;
+                        // Scroll
+                        ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].scrollTo(arguments[1], arguments[2])", element, xDiff, yDiff);
+                    }
+                    // Take Screenshot
+                    var screenshot = ((ITakesScreenshot)element).GetScreenshot();
+                    // Build an Image out of the Screenshot
+                    var screenshotImage = ScreenshotToImage(screenshot);
+                    // Calculate the source Rectangle
+                    var sourceRectangle = new Rectangle(clientWidth - rectangle.Width, clientHeihgt - rectangle.Height, rectangle.Width, rectangle.Height);
+                    // Copy the Image
+                    using (var graphics = Graphics.FromImage(stitchedImage))
+                    {
+                        graphics.DrawImage(screenshotImage, rectangle, sourceRectangle, GraphicsUnit.Pixel);
+                    }
+                    // Set the Previous Rectangle
+                    previous = rectangle;
+                }
+                return stitchedImage;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to capture scrollable element screenshot", ex);
+                var screenshot = ((ITakesScreenshot)element).GetScreenshot();
+                return ScreenshotToImage(screenshot);
+            }
+
+        }
         VisualElementsInfo IVisualTestingDriver.GetVisualElementsInfo()
         {
             VisualElementsInfo VEI = new VisualElementsInfo();
