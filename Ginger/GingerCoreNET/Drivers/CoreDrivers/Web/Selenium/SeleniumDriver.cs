@@ -7581,39 +7581,10 @@ namespace GingerCore.Drivers
 
         public HtmlDocument SSPageDoc = null;
 
-        public Bitmap GetScreenShot(bool IsFullPageScreenshot = false)
+        private Bitmap CaptureFullPageScreenshot()
         {
-            switch (mBrowserTpe)
-            {
-                case eBrowserType.FireFox:
-                    if (IsFullPageScreenshot)
-                    {
-                        var screenshot = ((FirefoxDriver)Driver).GetFullPageScreenshot();
-                        return ScreenshotToImage(screenshot);
-                    }
-                    break;
-                case eBrowserType.Edge:
-                case eBrowserType.Chrome:
-                    if (IsFullPageScreenshot)
-                    {
-                        var screenshot = ((OpenQA.Selenium.Chromium.ChromiumDriver)Driver).GetFullPageScreenshot();
-                        return ScreenshotToImage(screenshot);
-                    }
-                    break;
-                default:
-                    //
-                    break;
-            }
             try
             {
-                // If set to false only take screenshot of whats in view and not the whole page
-                if (!IsFullPageScreenshot)
-                {
-                    // return screenshot of what's visible currently in the viewport
-                    var screenshot = ((ITakesScreenshot)Driver).GetScreenshot();
-                    return ScreenshotToImage(screenshot);
-                }
-
                 // Scroll to Top
                 ((IJavaScriptExecutor)Driver).ExecuteScript(string.Format("window.scrollTo(0,0)"));
 
@@ -7687,6 +7658,41 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to create Selenium WebDriver Browser Page Screenshot", ex);
                 return null;
             }
+        }
+
+        public Bitmap GetScreenShot(bool IsFullPageScreenshot = false)
+        {
+            if (!IsFullPageScreenshot)
+            {
+                // return screenshot of what's visible currently in the viewport
+                var screenshot = ((ITakesScreenshot)Driver).GetScreenshot();
+                return ScreenshotToImage(screenshot);
+            }
+            Bitmap bitmapImage = null;
+            switch (mBrowserTpe)
+            {
+                case eBrowserType.FireFox:
+                    var screenShot = ((FirefoxDriver)Driver).GetFullPageScreenshot();
+                    bitmapImage = ScreenshotToImage(screenShot);
+                    break;
+                case eBrowserType.Edge:
+                case eBrowserType.Chrome:
+                    if (Driver is InternetExplorerDriver)
+                    {
+                        bitmapImage = CaptureFullPageScreenshot();
+                    }
+                    else
+                    {
+                        var screenshot = ((OpenQA.Selenium.Chromium.ChromiumDriver)Driver).GetFullPageScreenshot();
+                        bitmapImage = ScreenshotToImage(screenshot);
+                    }
+                    break;
+                default:
+                    bitmapImage = CaptureFullPageScreenshot();
+                    break;
+            }
+            return bitmapImage;
+
         }
         private Bitmap ScreenshotToImage(Screenshot screenshot)
         {
