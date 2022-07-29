@@ -84,6 +84,9 @@ namespace GingerCoreNET.SourceControl
         string mSolutionSourceControlAuthorEmail;
         public string SolutionSourceControlAuthorEmail { get { return mSolutionSourceControlAuthorEmail; } set { mSolutionSourceControlAuthorEmail = value; OnPropertyChanged(nameof(SourceControlConfigureProxy)); } }
 
+        bool mIsPublicRepo;
+        public bool IsPublicRepo { get { return mIsPublicRepo; } set { mIsPublicRepo = value; OnPropertyChanged(nameof(mIsPublicRepo)); } }
+
         public string SolutionFolder { get; set; }
 
         public string RepositoryRootFolder { get; set; }
