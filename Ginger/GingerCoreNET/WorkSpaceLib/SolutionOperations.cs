@@ -215,10 +215,10 @@ namespace Ginger.SolutionGeneral
         {
             try
             {
-                bool isDecrypted = EncryptionHandler.DecryptwithKey(Solution.EncryptedValidationString, encryptionKey ?? Solution.EncryptionKey).Equals("valid");
+                bool isDecrypted = Amdocs.Ginger.Common.EncryptionHandler.DecryptwithKey(Solution.EncryptedValidationString, encryptionKey ?? Solution.EncryptionKey).Equals("valid");
                 if (isDecrypted)
                 {
-                    Solution.EncryptionKey = encryptionKey ?? (Solution.EncryptionKey ?? EncryptionHandler.GetDefaultKey());
+                    Solution.EncryptionKey = encryptionKey ?? (Solution.EncryptionKey ?? Amdocs.Ginger.Common.EncryptionHandler.GetDefaultKey());
                 }
                 return isDecrypted;
             }
@@ -233,7 +233,7 @@ namespace Ginger.SolutionGeneral
         {
             try
             {
-                Solution.EncryptedValidationString = EncryptionHandler.EncryptwithKey("valid");
+                Solution.EncryptedValidationString = Amdocs.Ginger.Common.EncryptionHandler.EncryptwithKey("valid");
                 return true;
             }
             catch (Exception ex)
@@ -282,7 +282,7 @@ namespace Ginger.SolutionGeneral
             try
             {
                 GingerCore.GeneralLib.WinCredentialUtil.SetCredentials("Ginger_Sol_" + Solution.Guid, Solution.Name, Solution.EncryptionKey);
-                EncryptionHandler.SetCustomKey(Solution.EncryptionKey);
+                Amdocs.Ginger.Common.EncryptionHandler.SetCustomKey(Solution.EncryptionKey);
                 AddValidationString();
                 return true;
             }

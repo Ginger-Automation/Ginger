@@ -34,6 +34,7 @@ using GingerCore.Variables;
 using GingerCore.GeneralLib;
 using GingerCore;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Variables
 {

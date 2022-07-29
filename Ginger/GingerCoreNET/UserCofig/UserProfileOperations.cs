@@ -285,7 +285,7 @@ namespace Ginger
             //Get sourcecontrol password
             if (!string.IsNullOrEmpty(userProfile.EncryptedSourceControlPass))
             {
-                userProfile.SourceControlPass = EncryptionHandler.DecryptwithKey(userProfile.EncryptedSourceControlPass);
+                userProfile.SourceControlPass = Amdocs.Ginger.Common.EncryptionHandler.DecryptwithKey(userProfile.EncryptedSourceControlPass);
             }
             else if(userProfile.SourceControlType != SourceControlBase.eSourceControlType.None)
             {
@@ -294,7 +294,7 @@ namespace Ginger
 
             if (!string.IsNullOrEmpty(userProfile.EncryptedSolutionSourceControlPass))
             {
-                userProfile.SolutionSourceControlPass = EncryptionHandler.DecryptwithKey(userProfile.EncryptedSolutionSourceControlPass);
+                userProfile.SolutionSourceControlPass = Amdocs.Ginger.Common.EncryptionHandler.DecryptwithKey(userProfile.EncryptedSolutionSourceControlPass);
             }
             else
             {
@@ -307,7 +307,7 @@ namespace Ginger
             {
                 if (!string.IsNullOrEmpty(almConfig.EncryptedALMPassword))
                 {
-                    almConfig.ALMPassword = EncryptionHandler.DecryptwithKey(almConfig.EncryptedALMPassword);
+                    almConfig.ALMPassword = Amdocs.Ginger.Common.EncryptionHandler.DecryptwithKey(almConfig.EncryptedALMPassword);
                 }
                 else
                 {

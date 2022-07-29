@@ -70,9 +70,9 @@ namespace Ginger.Run.RunSetActions
         }
         private void xSMTPPassTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (!EncryptionHandler.IsStringEncrypted(xSMTPPassTextBox.Text))
+            if (!Amdocs.Ginger.Common.EncryptionHandler.IsStringEncrypted(xSMTPPassTextBox.Text))
             {
-                xSMTPPassTextBox.Text = EncryptionHandler.EncryptwithKey(xSMTPPassTextBox.Text);                
+                xSMTPPassTextBox.Text = Amdocs.Ginger.Common.EncryptionHandler.EncryptwithKey(xSMTPPassTextBox.Text);                
             }
         }
     }

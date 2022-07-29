@@ -85,9 +85,9 @@ namespace Ginger.Environments
                 //if Pass is stored in the form of variable, encryption not required at this stage
                 if (!string.IsNullOrEmpty(intialValue) && !intialValue.Contains("{Var Name"))
                 {
-                    if (!EncryptionHandler.IsStringEncrypted(intialValue))
+                    if (!Amdocs.Ginger.Common.EncryptionHandler.IsStringEncrypted(intialValue))
                     {
-                        selectedEnvDB.Pass = EncryptionHandler.EncryptwithKey(intialValue);
+                        selectedEnvDB.Pass = Amdocs.Ginger.Common.EncryptionHandler.EncryptwithKey(intialValue);
                         if (string.IsNullOrEmpty(selectedEnvDB.Pass))
                         {
                             selectedEnvDB.Pass = null;

@@ -76,7 +76,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 if (solution.SourceControl.SourceControlUser != null && solution.SourceControl.SourceControlPass != null)
                 {
                     dynamicExecution.SolutionDetails.SourceControlDetails.User = solution.SourceControl.SourceControlUser;
-                    dynamicExecution.SolutionDetails.SourceControlDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
+                    dynamicExecution.SolutionDetails.SourceControlDetails.Password = Amdocs.Ginger.Common.EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
                     dynamicExecution.SolutionDetails.SourceControlDetails.PasswordEncrypted = "Y";
                 }
                 else
@@ -431,7 +431,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 if (solution.SourceControl.SourceControlUser != null && solution.SourceControl.SourceControlPass != null)
                 {
                     executionConfig.SolutionScmDetails.User = solution.SourceControl.SourceControlUser;
-                    executionConfig.SolutionScmDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
+                    executionConfig.SolutionScmDetails.Password = Amdocs.Ginger.Common.EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
                     executionConfig.SolutionScmDetails.PasswordEncrypted = true;
                 }
                 else
@@ -468,13 +468,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         if (userProfileAlmConfig != null)
                         {
                             almDetails.User = userProfileAlmConfig.ALMUserName;
-                            almDetails.Password = EncryptionHandler.EncryptwithKey(userProfileAlmConfig.ALMPassword);
+                            almDetails.Password = Amdocs.Ginger.Common.EncryptionHandler.EncryptwithKey(userProfileAlmConfig.ALMPassword);
                             almDetails.PasswordEncrypted = true;
                         }
                         else
                         {
                             almDetails.User = solutionAlmConfig.ALMUserName;
-                            almDetails.Password = EncryptionHandler.EncryptwithKey(solutionAlmConfig.ALMPassword);
+                            almDetails.Password = Amdocs.Ginger.Common.EncryptionHandler.EncryptwithKey(solutionAlmConfig.ALMPassword);
                             almDetails.PasswordEncrypted = true;
                         }
                         if (!string.IsNullOrEmpty(solutionAlmConfig.ALMDomain))

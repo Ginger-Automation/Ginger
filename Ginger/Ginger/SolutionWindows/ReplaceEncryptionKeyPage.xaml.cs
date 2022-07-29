@@ -225,9 +225,9 @@ namespace Ginger.SolutionWindows
         {
             foreach (GingerCore.Variables.VariablePasswordString vp in xSolutionPasswordsParamtersGrid.DataSourceList)
             {
-                if (!string.IsNullOrEmpty(vp.Password) && !EncryptionHandler.IsStringEncrypted(vp.Password))
+                if (!string.IsNullOrEmpty(vp.Password) && !Amdocs.Ginger.Common.EncryptionHandler.IsStringEncrypted(vp.Password))
                 {
-                    vp.Password = EncryptionHandler.EncryptwithKey(vp.Password);
+                    vp.Password = Amdocs.Ginger.Common.EncryptionHandler.EncryptwithKey(vp.Password);
                 }
             }
         }
@@ -636,13 +636,13 @@ namespace Ginger.SolutionWindows
                    try
                    {
                        // Get all variables from BF
-                       List<GingerCore.Variables.VariableBase> variables = Bf.GetBFandActivitiesVariabeles(false).Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
+                       List<VariableBase> variables = Bf.GetBFandActivitiesVariabeles(false).Where<VariableBase>(f => f is GingerCore.Variables.VariablePasswordString).ToList();
                        variables.ForEach(v =>
                        {
                            try
                            {
                                ((GingerCore.Variables.VariablePasswordString)v).Password =
-                               EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password, oldKey);
+                               Amdocs.Ginger.Common.EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password, oldKey);
 
                                varReencryptedCount++;
                            }
@@ -677,12 +677,12 @@ namespace Ginger.SolutionWindows
                 // For Global Variables
                 bool isSaveRequired = false;
                 int varReencryptedCount = 0;
-                foreach (GingerCore.Variables.VariableBase v in WorkSpace.Instance.Solution.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString))
+                foreach (GingerCore.Variables.VariableBase v in WorkSpace.Instance.Solution.Variables.Where<VariableBase>(f => f is GingerCore.Variables.VariablePasswordString))
                 {
                     try
                     {
                         ((GingerCore.Variables.VariablePasswordString)v).Password =
-                            EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password, oldKey);
+                            Amdocs.Ginger.Common.EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password, oldKey);
                         isSaveRequired = true;
 
                         varReencryptedCount++;
@@ -717,9 +717,9 @@ namespace Ginger.SolutionWindows
                         isSaveRequired = false;
                         foreach (EnvApplication ea in pe.Applications)
                         {
-                            foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
+                            foreach (GeneralParam gp in ea.GeneralParams.Where<GeneralParam>(f => f.Encrypt))
                             {
-                                gp.Value = EncryptionHandler.ReEncryptString(gp.Value, oldKey);
+                                gp.Value = Amdocs.Ginger.Common.EncryptionHandler.ReEncryptString(gp.Value, oldKey);
                                 isSaveRequired = true;
                                 varReencryptedCount++;
                             }
@@ -730,10 +730,10 @@ namespace Ginger.SolutionWindows
                                     //if Pass is stored in the form of variable, encryption not required at this stage
                                     if (!db.Pass.Contains("{Var Name") && !db.Pass.Contains("{EnvParam"))
                                     {
-                                        string encryptedPassWord = EncryptionHandler.ReEncryptString(db.Pass, oldKey);
+                                        string encryptedPassWord = Amdocs.Ginger.Common.EncryptionHandler.ReEncryptString(db.Pass, oldKey);
                                         if (string.IsNullOrEmpty(encryptedPassWord))
                                         {
-                                            encryptedPassWord = EncryptionHandler.EncryptwithKey(db.Pass);
+                                            encryptedPassWord = Amdocs.Ginger.Common.EncryptionHandler.EncryptwithKey(db.Pass);
                                         }
                                         db.Pass = encryptedPassWord;
                                     }
@@ -764,13 +764,13 @@ namespace Ginger.SolutionWindows
             {
                 int varReencryptedCount = 0;
                 //For Shared Variables
-                List<GingerCore.Variables.VariableBase> sharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.Variables.VariableBase>().Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
+                List<VariableBase> sharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GingerCore.Variables.VariableBase>().Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
                 foreach (var sharedVar in sharedRepoVarsList)
                 {
                     try
                     {
                         ((GingerCore.Variables.VariablePasswordString)sharedVar).Password =
-                        EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)sharedVar).Password, oldKey);
+                        Amdocs.Ginger.Common.EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)sharedVar).Password, oldKey);
 
                         WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(sharedVar);
 
@@ -788,13 +788,13 @@ namespace Ginger.SolutionWindows
                 {
                     try
                     {
-                        List<GingerCore.Variables.VariableBase> variables = sharedAct.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString).ToList();
+                        List<VariableBase> variables = sharedAct.Variables.Where<VariableBase>(f => f is GingerCore.Variables.VariablePasswordString).ToList();
                         variables.ForEach(v =>
                         {
                             try
                             {
                                 ((GingerCore.Variables.VariablePasswordString)v).Password =
-                                EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password, oldKey);
+                                Amdocs.Ginger.Common.EncryptionHandler.ReEncryptString(((GingerCore.Variables.VariablePasswordString)v).Password, oldKey);
                                 varReencryptedCount++;
                             }
                             catch (Exception ex)
@@ -839,7 +839,7 @@ namespace Ginger.SolutionWindows
                             && !string.IsNullOrEmpty(((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass))
                             {
                                 ((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass =
-                                EncryptionHandler.ReEncryptString(((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass, oldKey);
+                                Amdocs.Ginger.Common.EncryptionHandler.ReEncryptString(((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass, oldKey);
                                 isSaveRequired = true;
                                 varReencryptedCount++;
                             }
@@ -847,7 +847,7 @@ namespace Ginger.SolutionWindows
                             && !string.IsNullOrEmpty(((RunSetActionSendFreeEmail)ra).Email.SMTPPass))
                             {
                                 ((RunSetActionSendFreeEmail)ra).Email.SMTPPass =
-                                EncryptionHandler.ReEncryptString(((RunSetActionSendFreeEmail)ra).Email.SMTPPass, oldKey);
+                                Amdocs.Ginger.Common.EncryptionHandler.ReEncryptString(((RunSetActionSendFreeEmail)ra).Email.SMTPPass, oldKey);
                                 isSaveRequired = true;
                                 varReencryptedCount++;
                             }
@@ -855,7 +855,7 @@ namespace Ginger.SolutionWindows
                             && !string.IsNullOrEmpty(((RunSetActionSendSMS)ra).SMSEmail.SMTPPass))
                             {
                                 ((RunSetActionSendSMS)ra).SMSEmail.SMTPPass =
-                                EncryptionHandler.ReEncryptString(((RunSetActionSendSMS)ra).SMSEmail.SMTPPass, oldKey);
+                                Amdocs.Ginger.Common.EncryptionHandler.ReEncryptString(((RunSetActionSendSMS)ra).SMSEmail.SMTPPass, oldKey);
                                 isSaveRequired = true;
                                 varReencryptedCount++;
                             }

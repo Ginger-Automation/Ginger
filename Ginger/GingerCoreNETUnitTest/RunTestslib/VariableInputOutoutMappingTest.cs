@@ -29,7 +29,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             mTestHelper.ClassInitialize(TestContext);
             string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "OutputVariableOldSolution"));
 
-            WorkSpace.Instance.OpenSolution(path, EncryptionHandler.GetDefaultKey());
+            WorkSpace.Instance.OpenSolution(path, Amdocs.Ginger.Common.EncryptionHandler.GetDefaultKey());
 
         }
 

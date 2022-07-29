@@ -87,9 +87,9 @@ namespace Ginger.Environments
                     {
                         //UpdateVariableNameChange(selectedEnvParam); // why is that needed here?
 
-                        if (!EncryptionHandler.IsStringEncrypted(intialValue))
+                        if (!Amdocs.Ginger.Common.EncryptionHandler.IsStringEncrypted(intialValue))
                         {
-                            selectedEnvParam.Value = EncryptionHandler.EncryptwithKey(intialValue);
+                            selectedEnvParam.Value = Amdocs.Ginger.Common.EncryptionHandler.EncryptwithKey(intialValue);
                             if (string.IsNullOrEmpty(selectedEnvParam.Value))
                             {
                                 selectedEnvParam.Value = string.Empty;
@@ -98,7 +98,7 @@ namespace Ginger.Environments
                     }
                     else
                     {
-                        if (EncryptionHandler.IsStringEncrypted(intialValue))
+                        if (Amdocs.Ginger.Common.EncryptionHandler.IsStringEncrypted(intialValue))
                         {
                             selectedEnvParam.Value = null;
                         }
@@ -182,9 +182,9 @@ namespace Ginger.Environments
                 bool res = false;
                 if (!string.IsNullOrEmpty(intialValue) && param.Encrypt)
                 {
-                    if (!EncryptionHandler.IsStringEncrypted(intialValue))
+                    if (!Amdocs.Ginger.Common.EncryptionHandler.IsStringEncrypted(intialValue))
                     {
-                        param.Value = EncryptionHandler.EncryptwithKey(intialValue);
+                        param.Value = Amdocs.Ginger.Common.EncryptionHandler.EncryptwithKey(intialValue);
                         if (string.IsNullOrEmpty(param.Value))
                         {
                             param.Value = string.Empty;
@@ -193,7 +193,7 @@ namespace Ginger.Environments
                 }
                 else
                 {
-                    if (EncryptionHandler.IsStringEncrypted(intialValue))
+                    if (Amdocs.Ginger.Common.EncryptionHandler.IsStringEncrypted(intialValue))
                     {
                         param.Value = null;
                     }

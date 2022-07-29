@@ -40,6 +40,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Amdocs.Ginger.Common;
 using System.Text.RegularExpressions;
 
 namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
@@ -1164,7 +1165,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
         public string EncryptValueWithCurrentSolutionKey(string oldEncryptedValue)
         {
             string varValue = string.Empty;
-            string strValuetoPass = EncryptionHandler.DecryptwithKey(oldEncryptedValue, EncryptionKey);
+            string strValuetoPass = Amdocs.Ginger.Common.EncryptionHandler.DecryptwithKey(oldEncryptedValue, EncryptionKey);
             if (!string.IsNullOrEmpty(strValuetoPass))
             {
                 varValue = strValuetoPass;
@@ -1173,7 +1174,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             {
                 varValue = oldEncryptedValue;
             }
-            return EncryptionHandler.EncryptwithKey(varValue);
+            return Amdocs.Ginger.Common.EncryptionHandler.EncryptwithKey(varValue);
         }
 
         public string ConvertToRelativePath(string fullPath)

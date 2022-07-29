@@ -43,7 +43,7 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
             mTestHelper.ClassInitialize(TC);
 
             string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "RepositoryItemTest"));
-            WorkSpace.Instance.OpenSolution(path, EncryptionHandler.GetDefaultKey());
+            WorkSpace.Instance.OpenSolution(path, Amdocs.Ginger.Common.EncryptionHandler.GetDefaultKey());
         }
 
         [ClassCleanup]

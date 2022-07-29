@@ -1181,7 +1181,7 @@ namespace WorkspaceHold
 
         private void PrepareForCLICreationAndExecution(string runsetName= "Default Run Set", string envName = "Default")
         {
-            WorkSpace.Instance.OpenSolution(mSolutionFolder, EncryptionHandler.GetDefaultKey());
+            WorkSpace.Instance.OpenSolution(mSolutionFolder, Amdocs.Ginger.Common.EncryptionHandler.GetDefaultKey());
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
             RunsetExecutor runsetExecutor = new RunsetExecutor();
             runsetExecutor.RunsetExecutionEnvironment = (from x in SR.GetAllRepositoryItems<ProjEnvironment>() where x.Name == envName select x).SingleOrDefault();

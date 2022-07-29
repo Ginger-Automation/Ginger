@@ -439,7 +439,7 @@ namespace amdocs.ginger.GingerCoreNET
                     return false;
                 }
 
-                EncryptionHandler.SetCustomKey(solution.EncryptionKey);
+                Amdocs.Ginger.Common.EncryptionHandler.SetCustomKey(solution.EncryptionKey);
                 if (!solution.SolutionOperations.ValidateKey())
                 {
                     if (WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
@@ -447,7 +447,7 @@ namespace amdocs.ginger.GingerCoreNET
                         if (string.IsNullOrEmpty(solution.EncryptedValidationString))
                         {
                             // To support existing solutions, 
-                            solution.EncryptionKey = EncryptionHandler.GetDefaultKey();
+                            solution.EncryptionKey = Amdocs.Ginger.Common.EncryptionHandler.GetDefaultKey();
                             solution.NeedVariablesReEncryption = true;
                             solution.SolutionOperations.SaveEncryptionKey();
                             solution.SolutionOperations.SaveSolution(false);

@@ -37,7 +37,7 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
             SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution(path);
 
             GlobalSolutionUtils.Instance.SolutionFolder = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "GlobalCrossSolution"));
-            GlobalSolutionUtils.Instance.EncryptionKey = EncryptionHandler.GetDefaultKey();
+            GlobalSolutionUtils.Instance.EncryptionKey = Amdocs.Ginger.Common.EncryptionHandler.GetDefaultKey();
         }
 
         [ClassCleanup]
@@ -167,7 +167,7 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
             Assert.AreEqual(VariableListToImport.Count, 2);
             Assert.IsNotNull(VariableListToImport.Where(x => x.Name == "NewVarString"));
             Assert.IsNotNull(VariableListToImport.Where(x => x.Name == "NewVarPasswordString"));
-            string strValuetoPass = EncryptionHandler.DecryptwithKey(VariableListToImport.Where(x => x.Name == "NewVarPasswordString").FirstOrDefault().Value, EncryptionHandler.GetDefaultKey());
+            string strValuetoPass = Amdocs.Ginger.Common.EncryptionHandler.DecryptwithKey(VariableListToImport.Where(x => x.Name == "NewVarPasswordString").FirstOrDefault().Value, Amdocs.Ginger.Common.EncryptionHandler.GetDefaultKey());
             Assert.AreEqual(strValuetoPass, "ABCD");
             
             Assert.AreEqual(EnvAppListToImport.Count, 1);
@@ -187,7 +187,7 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
             //Assert
             Assert.AreEqual(EnvAppListToImport.Count, 1);
             Assert.IsNotNull(EnvAppListToImport.Where(x => x.Name == "MyWebApp"));
-            string strValuetoPass = EncryptionHandler.DecryptwithKey(EnvAppListToImport[0].GeneralParams.Where(x => x.Name == "Password").FirstOrDefault().Value, EncryptionHandler.GetDefaultKey());
+            string strValuetoPass = Amdocs.Ginger.Common.EncryptionHandler.DecryptwithKey(EnvAppListToImport[0].GeneralParams.Where(x => x.Name == "Password").FirstOrDefault().Value, Amdocs.Ginger.Common.EncryptionHandler.GetDefaultKey());
             Assert.AreEqual(strValuetoPass, "ABCD");
 
         }
@@ -205,7 +205,7 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
             Assert.AreEqual(VariableListToImport.Count, 2);
             Assert.IsNotNull(VariableListToImport.Where(x => x.Name == "NewVarString"));
             Assert.IsNotNull(VariableListToImport.Where(x => x.Name == "NewVarPasswordString"));
-            string strValuetoPass = EncryptionHandler.DecryptwithKey(VariableListToImport.Where(x => x.Name == "NewVarPasswordString").FirstOrDefault().Value, EncryptionHandler.GetDefaultKey());
+            string strValuetoPass = Amdocs.Ginger.Common.EncryptionHandler.DecryptwithKey(VariableListToImport.Where(x => x.Name == "NewVarPasswordString").FirstOrDefault().Value, Amdocs.Ginger.Common.EncryptionHandler.GetDefaultKey());
             Assert.AreEqual(strValuetoPass, "ABCD");
 
         }

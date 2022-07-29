@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -24,19 +24,19 @@ using System.Text;
 using Amdocs.Ginger.Common;
 using GingerExternal;
 
-namespace GingerCore
+namespace Amdocs.Ginger.Common
 {
     public class EncryptionHandler
     {
         //Configuring the details to create the Encrypt key
-        private static string PASS_PHRASE = Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfo.getInfo().ElementAt(0)));
-        private static string SALT_VALUE = Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfo.getInfo().ElementAt(1)));
-        private static string INIT_VECTOR = Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfo.getInfo().ElementAt(2)));
-        private static string HASH_ALGORITHM = Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfo.getInfo().ElementAt(3)));
+        private static string PASS_PHRASE = Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfor.getInfo().ElementAt(0)));
+        private static string SALT_VALUE = Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfor.getInfo().ElementAt(1)));
+        private static string INIT_VECTOR = Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfor.getInfo().ElementAt(2)));
+        private static string HASH_ALGORITHM = Encoding.UTF8.GetString(System.Convert.FromBase64String(ExtraInfor.getInfo().ElementAt(3)));
         private static int PASSWORD_ITERATIONS = 3; // can be any number
         private static int KEY_SIZE = 128; // can be 192 or 256
         private static string CUSTOM_KEY = string.Empty;
-        private static readonly string ENCRYPTION_KEY = ExtraInfo.getInfo().ElementAt(4);
+        private static readonly string ENCRYPTION_KEY = ExtraInfor.getInfo().ElementAt(4);
 
         public static string GetDefaultKey()
         {
