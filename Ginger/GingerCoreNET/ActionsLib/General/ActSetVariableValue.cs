@@ -124,12 +124,14 @@ namespace GingerCore.Actions
                 if (Var.GetType() == typeof(VariableString))
                 {
                     ((VariableString)Var).Value = calculatedValue;
+                    Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                 }
                 else if (Var.GetType() == typeof(VariableSelectionList))
                 {                     
                     if (((VariableSelectionList)Var).OptionalValuesList.Where(pv => pv.Value == calculatedValue).SingleOrDefault() != null)
                     {
                         ((VariableSelectionList)Var).Value = calculatedValue;
+                        Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                     }
                     else
                     {
@@ -144,6 +146,7 @@ namespace GingerCore.Actions
                     if (possibleVals != null && possibleVals.Contains(calculatedValue))
                     {
                         ((VariableList)Var).Value = calculatedValue;
+                        Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                     }
                     else
                     {
@@ -155,6 +158,7 @@ namespace GingerCore.Actions
                 else if (Var.GetType() == typeof(VariableDynamic))
                 {
                     ((VariableDynamic)Var).ValueExpression = this.Value;
+                    Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                 }
                 else if (Var.GetType() == typeof(VariableNumber))
                 {
@@ -164,6 +168,7 @@ namespace GingerCore.Actions
                         if (varNumber.CheckNumberInRange(float.Parse(calculatedValue)))
                         {
                             varNumber.Value = calculatedValue;
+                            Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                         }
                         else
                         {
@@ -192,6 +197,8 @@ namespace GingerCore.Actions
                         if (varDateTime.CheckDateTimeWithInRange(calculatedValue))
                         {
                             varDateTime.Value = calculatedValue;
+                            Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+
                         }
                         else
                         {
@@ -228,6 +235,15 @@ namespace GingerCore.Actions
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.AutoGenerateValue)
             {
                 isAutoGenerateValuesucceed = ((VariableBase)Var).GenerateAutoValue(ref errorMsg);
+                if (!isAutoGenerateValuesucceed)
+                {
+                    Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                    Error = errorMsg;
+                }
+                else
+                {
+                    Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                }
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.StartTimer)
             {
@@ -276,11 +292,7 @@ namespace GingerCore.Actions
                 Error = "Unknown set " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " value operation.";
                 return;
             }
-            if (!isAutoGenerateValuesucceed)
-            {
-                Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                Error = errorMsg;
-            }
+
             ExInfo = GingerDicser.GetTermResValue(eTermResKey.Variable) + " '" + Var.Name + "' value was set to: '" + Var.Value + "'";
         }
     }
