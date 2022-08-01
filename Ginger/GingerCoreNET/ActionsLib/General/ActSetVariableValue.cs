@@ -104,7 +104,6 @@ namespace GingerCore.Actions
             VariableBase Var = RunOnBusinessFlow.GetHierarchyVariableByName(VariableName);
             if (Var == null)
             {
-                //Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 Error = GingerDicser.GetTermResValue(eTermResKey.Variable) + " was not found.";
                 return;
             }
@@ -124,18 +123,15 @@ namespace GingerCore.Actions
                 if (Var.GetType() == typeof(VariableString))
                 {
                     ((VariableString)Var).Value = calculatedValue;
-                    //Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                 }
                 else if (Var.GetType() == typeof(VariableSelectionList))
                 {                     
                     if (((VariableSelectionList)Var).OptionalValuesList.Where(pv => pv.Value == calculatedValue).SingleOrDefault() != null)
                     {
                         ((VariableSelectionList)Var).Value = calculatedValue;
-                        //Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                     }
                     else
                     {
-                        //Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                         Error = "The value '" + calculatedValue + "' is not part of the possible values of the '" + Var.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ".";
                         return;
                     }
@@ -146,11 +142,9 @@ namespace GingerCore.Actions
                     if (possibleVals != null && possibleVals.Contains(calculatedValue))
                     {
                         ((VariableList)Var).Value = calculatedValue;
-                        //Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                     }
                     else
                     {
-                        //Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                         Error = "The value '" + calculatedValue + "' is not part of the possible values of the '" + Var.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ".";
                         return;
                     }
@@ -158,7 +152,6 @@ namespace GingerCore.Actions
                 else if (Var.GetType() == typeof(VariableDynamic))
                 {
                     ((VariableDynamic)Var).ValueExpression = this.Value;
-                    //Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                 }
                 else if (Var.GetType() == typeof(VariableNumber))
                 {
@@ -168,7 +161,6 @@ namespace GingerCore.Actions
                         if (varNumber.CheckNumberInRange(float.Parse(calculatedValue)))
                         {
                             varNumber.Value = calculatedValue;
-                            //Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                         }
                         else
                         {
@@ -197,8 +189,6 @@ namespace GingerCore.Actions
                         if (varDateTime.CheckDateTimeWithInRange(calculatedValue))
                         {
                             varDateTime.Value = calculatedValue;
-                            //Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
-
                         }
                         else
                         {
@@ -237,12 +227,10 @@ namespace GingerCore.Actions
                 isAutoGenerateValuesucceed = ((VariableBase)Var).GenerateAutoValue(ref errorMsg);
                 if (!isAutoGenerateValuesucceed)
                 {
-                    //Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                     Error = errorMsg;
                 }
                 else
                 {
-                    //Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                 }
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.StartTimer)
@@ -253,7 +241,6 @@ namespace GingerCore.Actions
                 }
                 else
                 {
-                    //Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                     Error = "Operation type " + SetVariableValueOption + " is not supported for " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " of type " + Var.GetType();
                     return;
                 }
@@ -267,7 +254,6 @@ namespace GingerCore.Actions
                 }
                 else
                 {
-                    //Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                     Error = "Operation type " + SetVariableValueOption + " is not supported for " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " of type " + Var.GetType();
 
                     return;
@@ -281,14 +267,12 @@ namespace GingerCore.Actions
                 }
                 else
                 {
-                    //Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                     Error = "Operation type " + SetVariableValueOption + " is not supported for variable of type " + Var.GetType();
                     return;
                 }
             }
             else
             {
-                //Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 Error = "Unknown set " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " value operation.";
                 return;
             }
