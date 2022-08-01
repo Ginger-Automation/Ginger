@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -79,9 +79,11 @@ namespace GingerCore.Variables
             Value = GenerateVEValue();
         }
 
-        public override void GenerateAutoValue()
+        public override bool GenerateAutoValue(ref string errorMsg)
         {
             //NA
+            errorMsg = "Generate Auto Value is not supported";
+            return false;
         }
 
         private string GenerateVEValue()

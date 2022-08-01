@@ -606,7 +606,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void AutoValueHandler(object sender, RoutedEventArgs e)
         {
             SetItem(sender);
-            mVariable.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            mVariable.GenerateAutoValue(ref errorMsg);
+            if (!string.IsNullOrEmpty(errorMsg))
+            {
+                Reporter.ToUser(eUserMsgKey.VariablesAssignError, errorMsg);
+            }
         }
 
         private void InputHandler(object sender, RoutedEventArgs e)

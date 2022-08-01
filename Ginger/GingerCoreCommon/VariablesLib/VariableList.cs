@@ -84,13 +84,13 @@ namespace GingerCore.Variables
             }
         }
 
-        public override void GenerateAutoValue()
+        public override bool GenerateAutoValue(ref string errorMsg)
         {
             string[] listValues = Formula.Split(',');
             if (listValues.Length == 0)
             {
                 Value = string.Empty;
-                return;
+                return false;
             }
 
             if (RandomOrder)
@@ -104,6 +104,7 @@ namespace GingerCore.Variables
                 Value = listValues[CurrentValueIndex++];
                 if (CurrentValueIndex >= listValues.Length) CurrentValueIndex = 0;
             }
+            return true;
         }
 
         public override eImageType Image { get { return eImageType.VariableList; } }
