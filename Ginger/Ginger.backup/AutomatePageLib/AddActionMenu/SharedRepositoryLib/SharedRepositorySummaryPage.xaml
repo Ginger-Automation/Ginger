@@ -1,0 +1,51 @@
+    <Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Ginger="clr-namespace:Ginger" xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore" x:Class="Ginger.Repository.SharedRepositorySummaryPage" 
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d" 
+     xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Shared Repository"
+      d:DesignHeight="300" d:DesignWidth="300"
+	Title="SharedRepositoryPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="200*"/>            
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="32*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" Content="Shared Repository Items Summary" Style="{StaticResource @SectionHeaderLabelStyle}" HorizontalAlignment="Stretch"/>
+        <StackPanel Grid.Column="0" Grid.Row="1">
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,7,0,0">
+                <Label.Content>
+                    <GingerCore:ucTextDicResource Text="[ActivitiesGroups] Items Count:"/>
+                </Label.Content>
+            </Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,7,0,0">
+                <Label.Content>
+                    <GingerCore:ucTextDicResource Text="[Activities] Items Count:"/>
+                </Label.Content>
+            </Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Actions Items Count:" Margin="0,6,0,0"/>
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,5,0,0">
+                <Label.Content>
+                    <GingerCore:ucTextDicResource Text="[Variables] Items Count:"/>
+                </Label.Content>
+            </Label>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Grid.Row="1">
+            <TextBox x:Name="ActivitiesGroupsCountLabel" IsReadOnly="True" TextAlignment="Center" Text="0" FontWeight="Bold"  Margin="0,10,0,0"/>
+            <TextBox x:Name="ActivitiesCountLabel" IsReadOnly="True" TextAlignment="Center" Text="0" FontWeight="Bold" Margin="0,10,0,0"  />
+            <TextBox x:Name="ActionsCountLabel" IsReadOnly="True" TextAlignment="Center" Text="0" FontWeight="Bold" Margin="0,10,0,0" />
+            <TextBox x:Name="VariablesCountLabel" IsReadOnly="True" TextAlignment="Center" Text="0" FontWeight="Bold" Margin="0,10,0,0" />
+        </StackPanel>
+        <usercontrols:ucButton x:Name="RefreshButton" Grid.Column="2" Grid.Row="1" ButtonFontImageSize="16" ButtonImageHeight="16" ButtonImageWidth="16" ButtonType="CircleImageLightButton" ButtonImageType="Refresh" Click="RefreshButton_Click" ToolTip="Refresh Counters" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,0,3"/>        
+    </Grid>
+</Page>

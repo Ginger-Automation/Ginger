@@ -29,13 +29,14 @@ using System.Windows;
 using System.IO;
 using GingerCore.Platforms;
 using Ginger.Repository;
-using TDAPIOLELib;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
+using TDAPIOLELib;
+using QCRestClientStd;
 
 namespace Ginger.ALM.Repository
 {
@@ -324,7 +325,7 @@ namespace Ginger.ALM.Repository
                 if (matchingTS != null)
                 {
                     //ask user if want to continue
-                    userSelec = Reporter.ToUser(eUserMsgKey.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS.TestSetFolder.Path + "\\" + matchingTS.Name);
+                    userSelec = Reporter.ToUser(eUserMsgKey.BusinessFlowAlreadyMappedToTC, businessFlow.Name, ((QCTestSetFolder)matchingTS.TestSetFolder).Path + "\\" + matchingTS.Name);
                     if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.Cancel)
                     {
                         return false;
@@ -347,18 +348,18 @@ namespace Ginger.ALM.Repository
                     if (matchingTC != null)
                     {
                         //ask user if want to continue
-                        Amdocs.Ginger.Common.eUserMsgSelection userSelect = Reporter.ToUser(eUserMsgKey.ActivitiesGroupAlreadyMappedToTC, ag.Name, matchingTC["TS_SUBJECT"].Path + "\\" + matchingTC.Name);
+                        Amdocs.Ginger.Common.eUserMsgSelection userSelect = Reporter.ToUser(eUserMsgKey.ActivitiesGroupAlreadyMappedToTC, ag.Name, matchingTC.FullPath + "\\" + matchingTC.Name);
                         if (userSelect == Amdocs.Ginger.Common.eUserMsgSelection.Cancel)
-                        { 
-                            return false; 
+                        {
+                            return false;
                         }
                         else if (userSelect == Amdocs.Ginger.Common.eUserMsgSelection.No)
-                        { 
-                            matchingTC = null; 
+                        {
+                            matchingTC = null;
                         }
                         else
                         {
-                            testPlanUploadPath = matchingTC["TS_SUBJECT"].Path;
+                            testPlanUploadPath = matchingTC.FullPath;
                         }
                     }
                 }

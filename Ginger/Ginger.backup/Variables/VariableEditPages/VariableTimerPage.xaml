@@ -1,0 +1,18 @@
+﻿<Page x:Class="Ginger.Variables.VariableTimerPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.Variables"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      mc:Ignorable="d" 
+      d:DesignHeight="60" d:DesignWidth="300"
+      Title="VariableStopWatchEditPage">
+
+    <Grid>
+        <StackPanel Background="{StaticResource $BackgroundColor_LightGray}"  Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
+            <Label Style="{StaticResource @InputFieldLabelStyle}"  Width="80" >Timer unit:</Label>
+            <UserControlsLib:UCComboBox x:Name="xTimerUnitCombo"  Width="100" VerticalAlignment="Top" > </UserControlsLib:UCComboBox>
+        </StackPanel>
+    </Grid>
+</Page>

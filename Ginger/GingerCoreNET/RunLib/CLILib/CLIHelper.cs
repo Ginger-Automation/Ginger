@@ -32,7 +32,7 @@ using System.Linq;
 using System.Reflection;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 using static GingerCoreNET.SourceControl.SourceControlBase;
-
+using Ginger.Configurations;
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public enum eCLIType
@@ -361,7 +361,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public bool SetSealights()
         {
-            WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog = SealightsEnable ? eSealightsLog.Yes : eSealightsLog.No;
+            WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog = SealightsEnable ? SealightsConfiguration.eSealightsLog.Yes : SealightsConfiguration.eSealightsLog.No;
 
             if (SealightsEnable) 
             {
@@ -370,22 +370,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     SealightsTestStage != null && SealightsEntityLevel != null)
                 {
                     // Override the Sealights Solution's settings with the CLI's settings
-                    if (SealightsUrl != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsURL = SealightsUrl;
-                    if (SealightsAgentToken != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsAgentToken = SealightsAgentToken;
-                    if (SealightsLabID != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLabId = SealightsLabID;
-                    if (SealightsSessionID != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID = SealightsSessionID;
-                    if (SealightsTestStage != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsTestStage = SealightsTestStage;
-                    if (SealightsSessionTimeOut != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsSessionTimeout = SealightsSessionTimeOut;
-                    if (SealightsEntityLevel != null) WorkSpace.Instance.Solution.LoggerConfigurations.SealightsReportedEntityLevel = (eSealightsEntityLevel)Enum.Parse(typeof(eSealightsEntityLevel), SealightsEntityLevel);
+                    if (SealightsUrl != null) WorkSpace.Instance.Solution.SealightsConfiguration.SealightsURL = SealightsUrl;
+                    if (SealightsAgentToken != null) WorkSpace.Instance.Solution.SealightsConfiguration.SealightsAgentToken = SealightsAgentToken;
+                    if (SealightsLabID != null) WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLabId = SealightsLabID;
+                    if (SealightsSessionID != null) WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID = SealightsSessionID;
+                    if (SealightsTestStage != null) WorkSpace.Instance.Solution.SealightsConfiguration.SealightsTestStage = SealightsTestStage;
+                    if (SealightsSessionTimeOut != null) WorkSpace.Instance.Solution.SealightsConfiguration.SealightsSessionTimeout = SealightsSessionTimeOut;
+                    if (SealightsEntityLevel != null) WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel = (SealightsConfiguration.eSealightsEntityLevel)Enum.Parse(typeof(SealightsConfiguration.eSealightsEntityLevel), SealightsEntityLevel);
 
                     // Override the Sealights RunSet's settings with the CLI's settings
                     WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId = SealightsLabID;
                     WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID = SealightsSessionID;
                     WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage = SealightsTestStage;
 
-                    if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsSessionTimeout == null)
+                    if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsSessionTimeout == null)
                     {
-                        WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID = "14400"; // Default setting
+                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID = "14400"; // Default setting
                     }
                     return true;
                 }  

@@ -1,0 +1,66 @@
+<Page x:Class="Ginger.Run.RunSetActions.RunSetActionSendDataToExternalSourceEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:Actions="clr-namespace:Ginger.Actions"
+      mc:Ignorable="d" 
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore" xmlns:Ginger="clr-namespace:Ginger"
+      d:DesignHeight="550" d:DesignWidth="600"
+	Title="RunSetActionSendDataToExternalSourceEditPage">
+
+    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="600"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="350*" />
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <StackPanel Orientation="Vertical">
+                <Label Style="{StaticResource @LabelStyle}" Content="Select Report Template:"/>
+                <ComboBox x:Name="CurrentTemplatePickerCbx"  ContextMenu="{x:Null}" Style="{DynamicResource @InputComboBoxStyle}" SelectionChanged="CurrentTemplatePickerCbx_SelectionChanged" ></ComboBox>
+                <Label Style="{StaticResource @LabelStyle}" x:Name="LabelEndPoint" Content="End Point URL:" />
+                <Actions:UCValueExpression x:Name="xEndPointURLTextBox" ToolTip="EndPoint" />
+                
+            </StackPanel>
+            <StackPanel Orientation="Vertical">
+                <Label Style="{StaticResource @LabelStyle}" x:Name="LabelHeader" Content="Request Header:" />
+                <Grid  x:Name="RequestHeadersGrid">
+                    <Label Style="{StaticResource @LabelStyle}" x:Name="LabelHeaders" Content="Request Headers:" />
+                    <Ginger:ucGrid x:Name="grdRequestHeaders" DockPanel.Dock="Top" Title="Request Headers" ShowEdit="Collapsed" ShowSearch="Visible" ShowAdd="Visible" ShowClearAll="Visible" ShowDelete="Visible" ShowRefresh="Collapsed" ShowUpDown="Visible" />
+                    <Grid.Resources>
+                        <DataTemplate x:Key="HeaderValueExpressionButton">
+                            <Button x:Name="HeaderGridVEButton" Content="..." Click="HeaderGridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+                        </DataTemplate>
+                    </Grid.Resources>
+                </Grid>
+            </StackPanel>
+            <StackPanel Orientation="Vertical">
+                <Label Style="{StaticResource @LabelStyle}" x:Name="LabelBody" Content="Request Body:" />
+                <TabControl x:Name="tabRequestBody" SelectionChanged="tabRequestBody_SelectionChanged">
+                    <TabItem x:Name="tabListView">
+                        <TabItem.Header>
+                            <Label Content="List View" HorizontalAlignment="Stretch"/>
+                        </TabItem.Header>
+                        <Grid  x:Name="RequestBodyGrid">
+                            <Ginger:ucGrid x:Name="grdRequestBody" DockPanel.Dock="Top" Title="Request Body" ShowEdit="Collapsed" ShowSearch="Visible" ShowAdd="Visible" ShowClearAll="Visible" ShowDelete="Visible" ShowRefresh="Collapsed" ShowUpDown="Visible" />
+                            <Grid.Resources>
+                                <DataTemplate x:Key="BodyValueExpressionButton">
+                                    <Button x:Name="BodyGridVEButton" Content="..." Click="BodyGridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+                                </DataTemplate>
+                            </Grid.Resources>
+                        </Grid>
+                    </TabItem>
+                    <TabItem x:Name="tabJsonView" >
+                        <TabItem.Header>
+                            <Label Content="JSON View" HorizontalAlignment="Stretch"/>
+                        </TabItem.Header>
+                        <Actions:UCValueExpression x:Name="xJsonBodyTextBox" ToolTip="EndPoint" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                    </TabItem>
+                </TabControl>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

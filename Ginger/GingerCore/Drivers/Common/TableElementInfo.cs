@@ -16,10 +16,12 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common.UIElement;
 using System;
 using System.Collections.Generic;
-using System.Windows.Automation;
+
 
 namespace GingerCore.Drivers.Common
 {
@@ -38,8 +40,8 @@ namespace GingerCore.Drivers.Common
         // ---------------------------------------------------------------------------------------------------------------------
         //  Value
         // ---------------------------------------------------------------------------------------------------------------------
-        private Dictionary<string, AutomationElement[]> mMainDict = new Dictionary<string, AutomationElement[]>();
-        public Dictionary<string, AutomationElement[]> MainDict
+        private Dictionary<string, UIAuto.AutomationElement[]> mMainDict = new Dictionary<string, UIAuto.AutomationElement[]>();
+        public Dictionary<string, UIAuto.AutomationElement[]> MainDict
         {
             get
             {
@@ -90,7 +92,7 @@ namespace GingerCore.Drivers.Common
             // So we keep backward compatibility until all drivers do it correctly
             return mColumnNames;
         }
-        public virtual Dictionary<string, AutomationElement[]> GetMainDict()
+        public virtual Dictionary<string, UIAuto.AutomationElement[]> GetMainDict()
         {
             return MainDict;
         }

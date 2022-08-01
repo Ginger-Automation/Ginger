@@ -1,0 +1,244 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <title>Ginger Execution Report</title>
+    <meta name="description" content="Static &amp; Dynamic Tables" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    {css_path}
+    <style type="text/css">
+        {css_to_place}
+    </style>
+    {js_path}
+    <script type="text/jsx">
+        {js_to_place}
+    </script>   
+</head>
+<body class="no-skin">
+    <div style="background-color:#EBEFF2">
+        <div style="height:50px;background-color:#AAD0EE">
+        </div>
+        <div id="navbar" class="navbar navbar-default">
+            <div class="navbar-container" id="navbar-container">
+                <div class="navbar-header pull-left" style="margin-top:10px">
+                    {beat_logo}
+                </div>
+                <div style="float:left;display:block;width:47%">
+                    {ginger_logo}
+                </div>
+                <div class="navbar-buttons navbar-header pull-right" style="margin-right:80px;">
+                    {company_logo}
+                </div>
+            </div>
+        </div>
+        <div class="main-container" id="main-container">
+            <div class="main-content">
+                <div class="main-content-inner">
+                    <div class="breadcrumbs" id="breadcrumbs">
+
+                    </div>
+                    <div class="page-content">
+                        <div class="page-header">
+                            <h1 class="clss1" id="breadcum">
+                                <a href=".\..\GingerExecutionReport.html">{Parent_RunSetReport_Name_Link}</a>
+                                <small>
+                                    {Parent_RunSetReport_delimiter}
+                                    <a href=".\GingerRunnerReport.html">{Parent_GingerRunner_Name}</a>
+                                </small>
+                            </h1>
+                            <h1 id="clsh1">
+                                Ginger Execution Report
+                            </h1>
+                            <div>
+                                <table style="width:100%">
+                                    <tr>
+                                        <td align="left">
+                                            <span class="clsb1" id="b1"> Ginger Runner Execution Details - '{Parent_GingerRunner_Name}' </span>
+                                        </td>
+                                        <td align="right">
+                                            <div style="margin-right:5px">
+                                                <!--Prev_GingerLink_Start-->
+                                                <a href=".\..\{Prev_GingerFolder_Link}\GingerRunnerReport.html" title='{ItemPrevToolTip}'>{item_prev}</a>
+                                                <!--Prev_GingerLink_End-->
+                                                <!--Next_GingerLink_Start-->
+                                                <a href=".\..\{Next_GingerFolder_Link}\GingerRunnerReport.html" title='{ItemNextToolTip}'>{item_next}</a>
+                                                <!--Next_GingerLink_End-->
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-content" style="margin-top:0 auto">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="panel-heading">
+                                            <a class="accordion-toggle" data-toggle="collapse" href="#collapseGingerRunner">
+                                                <i class="ace-icon fa fa-angle-down bigger202" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
+                                                <h4 class="orangetxt"> Ginger Runner General Details </h4>
+                                            </a>
+                                        </div>
+                                        <div class="collapse in tableScroll" id="collapseGingerRunner">
+                                            <table class="table table-striped table-bordered table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        {GingerRunnerDetails_Headers}
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        {GingerRunnerDetails_Data}
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--ApplicationAgentsMapping_Start-->
+                    <div class="page-content">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <!--Section_PlaceHolder_ApplicationAgentsMapping-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--ApplicationAgentsMapping_End-->
+                    <!--BusinessFlowsDetails_Start-->
+                    <div class="page-content" style="margin-top:0 auto">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="panel-heading">
+                                            <a class="accordion-toggle" data-toggle="collapse" href="#collapseBusinessFlow">
+                                                <i class="{BusinessFlowStyle}" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
+                                                <h4 class="orangetxt"> Ginger Runner Business Flows Execution Details </h4>
+                                            </a>
+                                        </div>
+                                        <div class="{BusinessFlowIscollapse}" id="collapseBusinessFlow">
+                                            <div class="row">
+                                                <div class="percentSpace" style="position:relative;left:30%;width:70%">
+                                                    <div class="col-xs-6">
+                                                        <div style='height: 150px; float:left' id="passContainer">
+                                                            <script type="text/jsx"
+                                                                    data-presets="es2017,react,stage-0"
+                                                                    data-plugins="transform-decorators-legacy">
+
+                                                                const PassStat = [{name: 'Passed', value: {PassPercent}}
+                                                                ]
+                                                                CreateChart(PassStat, 'passContainer', 'Passed', {TotalPass}, {PassPercent} );
+                                                            </script>
+                                                        </div>
+                                                        <div style='height: 150px; float:left' id="failContainer">
+                                                            <script type="text/jsx"
+                                                                    data-presets="es2017,react,stage-0"
+                                                                    data-plugins="transform-decorators-legacy">
+
+                                                                const failStat = [{name: 'Failed', value: {FailPercent}}
+                                                                ]
+                                                                CreateChart(failStat, 'failContainer', 'Failed', {TotalFail},  {FailPercent} );
+                                                            </script>
+                                                        </div>
+                                                        <div style='height: 150px; float:left' id="stoppedContainer">
+                                                            <script type="text/jsx"
+                                                                    data-presets="es2017,react,stage-0"
+                                                                    data-plugins="transform-decorators-legacy">
+
+                                                                const StopStat = [{name: 'Stopped', value: {StoppedPercent}}
+                                                                ]
+                                                                CreateChart(StopStat, 'stoppedContainer', 'Stopped', {TotalStopped}, {StoppedPercent} );
+                                                            </script>
+                                                        </div>
+                                                        <div style='height: 150px; float:left' id="otherContainer">
+                                                            <script type="text/jsx"
+                                                                    data-presets="es2017,react,stage-0"
+                                                                    data-plugins="transform-decorators-legacy">
+
+                                                                const otherStat = [{name: 'Other', value: {OtherPercent}}
+                                                                ]
+                                                                CreateChart(otherStat, 'otherContainer', 'Other', {TotalOther}, {OtherPercent} );
+                                                            </script>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tableScroll">
+                                                <table class="table table-striped table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            {BusinessFlows_Headers}
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                        {BusinessFlows_Data}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--BusinessFlowsDetails_End-->
+
+                    <div class="alert alert-info" style="margin-top:10px">{ReportCreated}</div>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="footer-inner">
+                    <div class="footer-content">
+                    </div>
+                </div>
+            </div>
+            <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+                <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
+            </a>
+        </div>
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <span class="close">&times;</span>
+            <img class="modal-content" id="current_image_in_modal">
+            <div id="caption">sdafasd asdfasdf</div>
+        </div>
+
+        <script>
+            // Get the modal
+            var modal = document.getElementById('myModal');
+
+            function show_modal(image_id) {
+                var img = document.getElementById(image_id);
+                var modalImg = document.getElementById("current_image_in_modal");
+                var captionText = document.getElementById("caption");
+
+                modal.style.display = "block";
+                modalImg.src = img.src;
+                captionText.innerHTML = img.alt;
+            }
+
+            // Get the <span> element that closes the modal
+            var span = document.getElementsByClassName("close")[0];
+
+            // When the user clicks on <span> (x), close the modal
+            span.onclick = function () {
+                modal.style.display = "none";
+            }
+        </script>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,34 @@
+﻿<Page x:Class="Ginger.BusinessFlowPages.ActivitiesGroupSelectionPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d" 
+      xmlns:h="clr-namespace:Ginger.Help"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      h:GingerHelpProvider.HelpString="Activities Group"
+      d:DesignHeight="100" d:DesignWidth="500"
+      Title="Select Activities Group">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <StackPanel x:Name="xGroupPanel" Margin="10" >
+            <Label  Style="{StaticResource $LabelStyle}" FontWeight="Bold">
+                <Label.Content>
+                    <GingerCore:ucTextDicResource Text="[ActivitiesGroup]:" />
+                </Label.Content>
+            </Label>
+            <StackPanel Orientation="Horizontal">
+                <ComboBox x:Name="xGroupComboBox" AutomationProperties.AutomationId="Group AID" Width="200" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,7,0,0" />
+                <usercontrols:ucButton x:Name="xAddGroupBtn" ButtonType="RoundTextAndImageButton" ButtonImageType="Add" ButtonFontImageSize="16" ButtonText="New Activities Group" Click="XAddGroupBtn_Click" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <CheckBox x:Name="xCopyAsLink"  Grid.Column="0" Height="20" IsChecked="True" Grid.Row="3" HorizontalAlignment="Left"  Margin="10,10,0,0" >
+                    <CheckBox.Content>
+                        <GingerCore:ucTextDicResource Text="Copy Activity As Link"/>
+                    </CheckBox.Content>
+                </CheckBox>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

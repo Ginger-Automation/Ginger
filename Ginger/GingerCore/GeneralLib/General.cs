@@ -731,6 +731,45 @@ namespace GingerCore
             return r;
         }
 
+        public static SolidColorBrush SelectColorByCollection(string status)
+        {
+            System.Windows.Media.SolidColorBrush myBrush = null;
+            if (string.IsNullOrEmpty(status))
+                status = "Pending";
+            switch (status)
+            {
+                case "Passed":
+                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#54A81B"));
+                    
+                    break;
+                case "Failed":
+                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#E31123"));
+                    
+                    break;
+                case "Fail":
+                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#E31123"));
+                    
+                    break;
+                case "Stopped":
+                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#ED5588"));
+                    
+                    break;
+                case "Pending":
+                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#FF8C00"));
+                    
+                    break;
+                case "Running":
+                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#800080"));
+                    
+                    break;
+                default:
+                    myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#1B3651"));
+                   
+                    break;
+            }
+            return myBrush;
+        }
+
         /// <summary>
         /// The function will take full desktop screen shot of Primary screen or all Screens and will return Dictionary of (ScreenDeviceName, ScreenShotPath)
         /// </summary>

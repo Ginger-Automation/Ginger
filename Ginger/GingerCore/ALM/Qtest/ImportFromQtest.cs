@@ -22,7 +22,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using QCRestClient;
+using QCRestClientStd;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,12 +35,12 @@ namespace GingerCore.ALM.Qtest
 {
     public static class ImportFromQtest
     {
-        static QTestApi.LoginApi connObj = new QTestApi.LoginApi();
-        static QTestApi.ProjectApi projectsApi = new QTestApi.ProjectApi();
-        static QTestApi.FieldApi fieldApi = new QTestApi.FieldApi();
+        static QTestAPIStd.LoginApi connObj = new QTestAPIStd.LoginApi();
+        static QTestAPIStd.ProjectApi projectsApi = new QTestAPIStd.ProjectApi();
+        static QTestAPIStd.FieldApi fieldApi = new QTestAPIStd.FieldApi();
 
-        static QTestApiClient.ApiClient apiClient = new QTestApiClient.ApiClient();
-        static QTestApiClient.Configuration configuration = new QTestApiClient.Configuration();
+        static QTestAPIStdClient.ApiClient apiClient = new QTestAPIStdClient.ApiClient();
+        static QTestAPIStdClient.Configuration configuration = new QTestAPIStdClient.Configuration();
 
         public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
@@ -49,8 +49,8 @@ namespace GingerCore.ALM.Qtest
         
         public static QtestTestSuite ImportTestSuiteData(QtestTestSuite TS, long projectId)
         {
-            QTestApi.TestsuiteApi testsuiteApi = new QTestApi.TestsuiteApi(connObj.Configuration);
-            QTestApiModel.TestSuiteWithCustomFieldResource testSuite = testsuiteApi.GetTestSuite(projectId, (long)Convert.ToInt32(TS.ID));
+            QTestAPIStd.TestsuiteApi testsuiteApi = new QTestAPIStd.TestsuiteApi(connObj.Configuration);
+            QTestAPIStdModel.TestSuiteWithCustomFieldResource testSuite = testsuiteApi.GetTestSuite(projectId, (long)Convert.ToInt32(TS.ID));
             return TS;
         }
 
@@ -924,17 +924,17 @@ namespace GingerCore.ALM.Qtest
             return new QtestTest();
         }
 
-        public static ObservableList<ExternalItemFieldBase> GetALMItemFields(ALM_Common.DataContracts.ResourceType resourceType)
+        public static ObservableList<ExternalItemFieldBase> GetALMItemFields(AlmDataContractsStd.Enums.ResourceType resourceType)
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
 
-            if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
+            if (resourceType == AlmDataContractsStd.Enums.ResourceType.ALL)
             {
                 return GetALMItemFields();
             }
             else
             {
-                List<QTestApiModel.FieldResource> fieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), resourceType.ToString());
+                List<QTestAPIStdModel.FieldResource> fieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), resourceType.ToString());
 
                 fields.Append(AddFieldsValues(fieldsCollection, resourceType.ToString()));
             }
@@ -945,14 +945,14 @@ namespace GingerCore.ALM.Qtest
         private static ObservableList<ExternalItemFieldBase> GetALMItemFields()
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
-            fieldApi = new QTestApi.FieldApi(connObj.Configuration);
+            fieldApi = new QTestAPIStd.FieldApi(connObj.Configuration);
 
             //QC   ->testSet,    testCase,  designStep,testInstance,designStep,run
             //QTest->test-suites,test-cases,
 
-            List<QTestApiModel.FieldResource> testSetfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-suites");
-            List<QTestApiModel.FieldResource> testCasefieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-cases");
-            List<QTestApiModel.FieldResource> runfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-runs");
+            List<QTestAPIStdModel.FieldResource> testSetfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-suites");
+            List<QTestAPIStdModel.FieldResource> testCasefieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-cases");
+            List<QTestAPIStdModel.FieldResource> runfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-runs");
 
             fields.Append(AddFieldsValues(testSetfieldsCollection, "test-suites"));
             fields.Append(AddFieldsValues(testCasefieldsCollection, "test-cases"));
@@ -960,13 +960,13 @@ namespace GingerCore.ALM.Qtest
 
             return fields;
         }
-        private static ObservableList<ExternalItemFieldBase> AddFieldsValues(List<QTestApiModel.FieldResource> testSetfieldsCollection, string testSetfieldInRestSyntax)
+        private static ObservableList<ExternalItemFieldBase> AddFieldsValues(List<QTestAPIStdModel.FieldResource> testSetfieldsCollection, string testSetfieldInRestSyntax)
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
 
             if ((testSetfieldsCollection != null) && (testSetfieldsCollection.Count > 0))
             {
-                foreach (QTestApiModel.FieldResource field in testSetfieldsCollection)
+                foreach (QTestAPIStdModel.FieldResource field in testSetfieldsCollection)
                 {
                     if (string.IsNullOrEmpty(field.Label))
                     {

@@ -1,0 +1,16 @@
+    <Page x:Class="Ginger.SourceControl.SourceControlItemInfoPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.SourceControl"
+      xmlns:Ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      d:DesignHeight="150" d:DesignWidth="150"
+      x:Name="SourceControlItemInfoPageSource" Title="Eliran" Height="300" Width="300">
+    <ScrollViewer>
+        <Grid  Background="{StaticResource $BackgroundColor_LightGray}">
+            <TextBlock x:Name="ItemInfoTextBlock"></TextBlock>
+        </Grid>
+    </ScrollViewer>
+</Page>

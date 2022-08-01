@@ -22,19 +22,19 @@ using UIAComWrapperInternal;
 
 namespace System.Windows.Automation
 {
-    public class AutomationElementCollection : ICollection, IEnumerable
+    public class AutomationElementCollectionExtended : ICollection, IEnumerable
     {
         private UIAutomationClient.IUIAutomationElementArray _obj;
 
-        internal AutomationElementCollection(UIAutomationClient.IUIAutomationElementArray obj)
+        internal AutomationElementCollectionExtended(UIAutomationClient.IUIAutomationElementArray obj)
         {
             Debug.Assert(obj != null);
             this._obj = obj;
         }
 
-        internal static AutomationElementCollection Wrap(UIAutomationClient.IUIAutomationElementArray obj)
+        internal static AutomationElementCollectionExtended Wrap(UIAutomationClient.IUIAutomationElementArray obj)
         {
-            return (obj == null) ? null : new AutomationElementCollection(obj);
+            return (obj == null) ? null : new AutomationElementCollectionExtended(obj);
         }
 
         public virtual void CopyTo(Array array, int index)
@@ -46,7 +46,7 @@ namespace System.Windows.Automation
             }
         }
 
-        public void CopyTo(AutomationElement[] array, int index)
+        public void CopyTo(AutomationElement_Extend[] array, int index)
         {
             int cElem = this._obj.Length;
             for (int i = 0; i < cElem; ++i)
@@ -76,11 +76,11 @@ namespace System.Windows.Automation
             }
         }
 
-        public AutomationElement this[int index]
+        public AutomationElement_Extend this[int index]
         {
             get
             {
-                return AutomationElement.Wrap(this._obj.GetElement(index));
+                return AutomationElement_Extend.Wrap(this._obj.GetElement(index));
             }
         }
 
@@ -112,7 +112,7 @@ namespace System.Windows.Automation
         {
             get
             {
-                return AutomationElement.Wrap(this._obj.GetElement(this._index));
+                return AutomationElement_Extend.Wrap(this._obj.GetElement(this._index));
             }
         }
 

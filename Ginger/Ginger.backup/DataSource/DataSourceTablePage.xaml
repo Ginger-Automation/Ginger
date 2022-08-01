@@ -1,0 +1,37 @@
+    <Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.DataSource.DataSourceTablePage" 
+      mc:Ignorable="d" 
+    xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Data Source"
+      d:DesignHeight="600" d:DesignWidth="800"
+	Title="DataSourceTablePage">
+
+    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="141"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="80*"/>
+            <RowDefinition Height="300*"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.Column="0">
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Table Name:" Margin="0,10,0,0"/>
+            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Table Type:" Margin="0,10,0,0"/>
+            
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0,0,0,0">
+            <Button x:Name="Rename" Style="{StaticResource @InputButtonStyle}" FontSize="14"  Margin="430,-30,0,-80" Width="90" Height="20" Content="Rename" Click="Rename_Click"/>
+            <TextBox x:Name="DataSourceTableNameTextBox" Style="{StaticResource @TextBoxStyle}" Width="659" FontSize="14" FontWeight="Bold" HorizontalAlignment="Left" Margin="0,15,0,0" IsReadOnly="True" Background="#FFE8E8EC"/>
+            <TextBox x:Name="DataSourceTableType" Style="{StaticResource @TextBoxStyle}" Width="659" HorizontalAlignment="Left"  Margin="0,15,0,0"  IsReadOnly="True" Background="#FFE8E8EC" />
+            
+        </StackPanel>
+        <Ginger:ucGrid x:Name="grdTableData" Title="Table Data" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" Grid.Row="1" Margin="0,0,0,0" Grid.RowSpan="3" Grid.ColumnSpan="2"/>
+    </Grid>
+</Page>

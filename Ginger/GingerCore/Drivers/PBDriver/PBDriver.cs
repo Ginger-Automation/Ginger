@@ -16,11 +16,12 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using GingerCore.Actions;
-using System.Windows.Automation;
 using System.Drawing;
 using System.Windows.Forms;
 using GingerCore.Drivers.Common;
@@ -43,7 +44,7 @@ namespace GingerCore.Drivers.PBDriver
     //This class is for Power Builder UIAutomation
     public class PBDriver : UIAutomationDriverBase, IWindowExplorer, IVirtualDriver, IVisualTestingDriver
     {
-        Dictionary<AutomationElement, AutomationElement[,]> gridDictionary;
+        Dictionary<UIAuto.AutomationElement, UIAuto.AutomationElement[,]> gridDictionary;
 
         int mActionTimeout = 150;
 
@@ -99,7 +100,7 @@ namespace GingerCore.Drivers.PBDriver
         {
             BusinessFlow = BF;
             LibraryType = type;
-            gridDictionary = new Dictionary<AutomationElement, AutomationElement[,]>();
+            gridDictionary = new Dictionary<UIAuto.AutomationElement, UIAuto.AutomationElement[,]>();
         }
 
         public override void StartDriver()
@@ -280,7 +281,7 @@ namespace GingerCore.Drivers.PBDriver
                 CheckAndRetryRunAction(act,e);
                 return;
             }
-            catch (ElementNotAvailableException e)
+            catch (UIAuto.ElementNotAvailableException e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 CheckAndRetryRunAction(act,e);
@@ -647,7 +648,7 @@ namespace GingerCore.Drivers.PBDriver
                 Reporter.ToLog(eLogLevel.ERROR, "COM Exception when HandlePBControlAction Error details:", e);
                 throw e;
             }
-            catch (ElementNotAvailableException e)
+            catch (UIAuto.ElementNotAvailableException e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when HandlePBControlAction Error details:", e);
                 throw e;
@@ -898,7 +899,7 @@ namespace GingerCore.Drivers.PBDriver
                 throw e;
 
             }
-            catch (ElementNotAvailableException e)
+            catch (UIAuto.ElementNotAvailableException e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when HandleMenuControlAction Error details:", e);
                 throw e;
@@ -959,7 +960,7 @@ namespace GingerCore.Drivers.PBDriver
                 Reporter.ToLog(eLogLevel.ERROR, "COM Exception when HandleWindowControlAction Error details:", e);
                 throw e;
             }
-            catch (ElementNotAvailableException e)
+            catch (UIAuto.ElementNotAvailableException e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when HandleWindowControlAction Error details:", e);
                 throw e;
@@ -1009,7 +1010,7 @@ namespace GingerCore.Drivers.PBDriver
             return mUIAutomationHelper.GetListOfDriverAppWindows();
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
         {
             return await mUIAutomationHelper.GetVisibleControls();
         }
@@ -1026,7 +1027,7 @@ namespace GingerCore.Drivers.PBDriver
         }
         string IWindowExplorer.GetFocusedControl()
         {
-            AutomationElement AE= AutomationElement.FocusedElement;
+            UIAuto.AutomationElement AE= UIAuto.AutomationElement.FocusedElement;
             string s = null;
 
             s = AE.Current.Name + " - " + AE.Current.ClassName + "-" + AE.Current.LocalizedControlType;
@@ -1059,11 +1060,11 @@ namespace GingerCore.Drivers.PBDriver
             return mUIAutomationHelper.GetElementData(EI.ElementObject);
         }
 
-        private AutomationElement ElementFromCursor()
+        private UIAuto.AutomationElement ElementFromCursor()
         {
             // Convert mouse position from System.Drawing.Point to System.Windows.Point.
-            System.Windows.Point point = new System.Windows.Point(Cursor.Position.X, Cursor.Position.Y);
-            AutomationElement element = AutomationElement.FromPoint(point);
+            System.Drawing.Point point = new System.Drawing.Point(Cursor.Position.X, Cursor.Position.Y);
+            UIAuto.AutomationElement element = UIAuto.AutomationElement.FromPoint(point);
             return element;
         }
 
@@ -1201,14 +1202,14 @@ namespace GingerCore.Drivers.PBDriver
         /// <returns></returns>
         public async Task<ElementInfo> GetElementAtPoint(long ptX, long ptY)
         {
-            object elem = mUIAutomationHelper.GetElementAtPoint(new System.Windows.Point(ptX, ptY));
+            object elem = mUIAutomationHelper.GetElementAtPoint(new System.Drawing.Point((int)ptX, (int)ptY));
 
             if (elem == null) return null;
             ElementInfo EI;
 
-            if (elem.GetType().Equals(typeof(AutomationElement)))
+            if (elem.GetType().Equals(typeof(UIAuto.AutomationElement)))
             {
-                EI = mUIAutomationHelper.GetElementInfoFor((AutomationElement)elem);
+                EI = mUIAutomationHelper.GetElementInfoFor((UIAuto.AutomationElement)elem);
             }
             else
             {
@@ -1291,6 +1292,19 @@ namespace GingerCore.Drivers.PBDriver
         public Bitmap GetElementScreenshot(Act act)
         {
             throw new NotImplementedException();
+        }
+
+        public string GetAgentAppName()
+        {
+            return this.Platform.ToString();
+        }
+
+        public string GetViewport()
+        {
+            Size size = new Size();
+            size.Height = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Height;
+            size.Width = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Width;
+            return size.ToString();
         }
     }
 }

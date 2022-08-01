@@ -1,0 +1,23 @@
+    <Window x:Class="Ginger.GeneralLib.GeneralErrorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="General Error" Height="200" Width="500" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70*"/>
+            <RowDefinition Height="35"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0">
+            <TextBox FontSize="14" Foreground="Blue" FontWeight="Bold" x:Name="ErrorMessageTextBox" IsReadOnly="true">Err Message</TextBox>
+            <TextBox x:Name="FullInfoTextBox" Visibility="Collapsed" IsReadOnly="true"  ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible" >Full Info</TextBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" FlowDirection="RightToLeft" Orientation="Horizontal" >
+            <Button x:Name="CloseButton" Content="Close" Click="CloseButton_Click" Width="120" />
+            <Button x:Name="MoreInfoButton" Content="More Info" Click="MoreInfoButton_Click" Width="120"/>
+            <Button x:Name="CopyToClipboardButton" Content="Copy to Clipboard" Width="120" Click="CopyToClipboardButton_Click"/>
+        </StackPanel>
+        
+    </Grid>
+</Window>

@@ -16,11 +16,13 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Automation;
+
 using System.Windows.Controls;
 using System.Windows.Input;
 using GingerCore;
@@ -41,12 +43,12 @@ namespace Ginger.Actions
         List<String> mColNames = null;
         int mRowCount = 0;
 
-        private System.Windows.Automation.AutomationElement AEControl;
+        private UIAuto.AutomationElement AEControl;
         private int rowCount = -1;
         private int totalCellElements = 0;
         private int columnCount = 0;
 
-        AutomationElement[,] gridArray;
+        UIAuto.AutomationElement[,] gridArray;
 
         ElementInfo mElementInfo;
         ObservableList<Act> mActions = null;
@@ -175,7 +177,7 @@ namespace Ginger.Actions
             mRowCount = tab.rows.length;
         }
 
-        public ActTableEditPage(AutomationElement AE)
+        public ActTableEditPage(UIAuto.AutomationElement AE)
         {   
             AEControl = AE;       
             calculateGridDimensions();
@@ -405,17 +407,17 @@ namespace Ginger.Actions
 
         private void calculateGridDimensions()
         {
-            AutomationElement gridHeaderElement;
-            AutomationElement tempElement;
+            UIAuto.AutomationElement gridHeaderElement;
+            UIAuto.AutomationElement tempElement;
             string gridHeaderType;
             string tempType;
 
-            gridHeaderElement = TreeWalker.ContentViewWalker.GetFirstChild(AEControl);
+            gridHeaderElement = UIAuto.TreeWalker.ContentViewWalker.GetFirstChild(AEControl);
             while (true)
             {
 
                 if (gridHeaderElement.Current.LocalizedControlType == "scroll bar")
-                    gridHeaderElement = TreeWalker.ContentViewWalker.GetNextSibling(gridHeaderElement);
+                    gridHeaderElement = UIAuto.TreeWalker.ContentViewWalker.GetNextSibling(gridHeaderElement);
                 else
                     break;
             }
@@ -425,7 +427,7 @@ namespace Ginger.Actions
             //Calculate total cells of Grid
             do
             {
-                tempElement = TreeWalker.ContentViewWalker.GetNextSibling(tempElement);
+                tempElement = UIAuto.TreeWalker.ContentViewWalker.GetNextSibling(tempElement);
                 totalCellElements++;
             } while (tempElement != null);
 
@@ -439,7 +441,7 @@ namespace Ginger.Actions
 
                 columnCount++;
 
-                tempElement = TreeWalker.ContentViewWalker.GetNextSibling(tempElement);
+                tempElement = UIAuto.TreeWalker.ContentViewWalker.GetNextSibling(tempElement);
                 if (tempElement != null)
                 {
                     tempType = tempElement.Current.LocalizedControlType;
@@ -452,20 +454,20 @@ namespace Ginger.Actions
 
         private void LoadGridToArray()
         {
-            AutomationElement tempElement;
-            gridArray = new AutomationElement[rowCount, columnCount];
-            tempElement = TreeWalker.ContentViewWalker.GetFirstChild(AEControl);
+            UIAuto.AutomationElement tempElement;
+            gridArray = new UIAuto.AutomationElement[rowCount, columnCount];
+            tempElement = UIAuto.TreeWalker.ContentViewWalker.GetFirstChild(AEControl);
             for (int i = 0; i < rowCount; i++)
                 for (int j = 0; j < columnCount; j++)
                 {
                     gridArray[i, j] = tempElement;
-                    tempElement = TreeWalker.ContentViewWalker.GetNextSibling(tempElement);
+                    tempElement = UIAuto.TreeWalker.ContentViewWalker.GetNextSibling(tempElement);
                 }
         }
 
         private void LoadColumnNameCombo()
         {
-            AutomationElement headerElement;
+            UIAuto.AutomationElement headerElement;
             mColNames = new List<string>();
             int k = 0;
             while (k < columnCount)

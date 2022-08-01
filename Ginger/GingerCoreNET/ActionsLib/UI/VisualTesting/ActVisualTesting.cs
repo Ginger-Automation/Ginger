@@ -263,7 +263,9 @@ namespace GingerCore.Actions
                 if (mPlatforms.Count == 0) {
                     mPlatforms.Add(ePlatformType.Web);
                     mPlatforms.Add(ePlatformType.Mobile);
+                    mPlatforms.Add(ePlatformType.Java);
                     mPlatforms.Add(ePlatformType.Windows);
+                    mPlatforms.Add(ePlatformType.PowerBuilder);
                     //mPlatforms.Add(ePlatformType.AndroidDevice);
                 }
                 return mPlatforms;
@@ -309,10 +311,14 @@ namespace GingerCore.Actions
         {
             mDriver = driver;
             CheckSetVisualAnalyzer();
-            CheckSetAppWindowSize();
+            if (mDriver.GetType().Name == "SeleniumDriver")
+            {
+                CheckSetAppWindowSize();
+            }
             if (Amdocs.Ginger.Common.Context.GetAsContext(Context).Activity == null)
             {
                 Amdocs.Ginger.Common.Context.GetAsContext(Context).Activity = ((Drivers.DriverBase)mDriver).BusinessFlow.CurrentActivity;
+                Amdocs.Ginger.Common.Context.GetAsContext(Context).BusinessFlow = ((Drivers.DriverBase)mDriver).BusinessFlow;
             }
             if (mVisualAnalyzer.SupportUniqueExecution())
             {

@@ -224,7 +224,7 @@ namespace GingerCore.ALM.QC
         {
             TreeManager treeM = (TreeManager)mTDConn.TreeManager;
 
-            SubjectNode SubjRoot = treeM.get_NodeByPath(PathNode);
+            SubjectNode SubjRoot = (SubjectNode)treeM.get_NodeByPath(PathNode);
             List SubjectNodeList = SubjRoot.NewList();
             List<string> testPlanPathList = new List<string>();
 
@@ -240,9 +240,9 @@ namespace GingerCore.ALM.QC
         public static List<string> GetTestLabExplorer(string PathNode)
         {
             TestSetTreeManager treeM = (TestSetTreeManager)mTDConn.TestSetTreeManager;
-            TestSetFolder tsFolder = treeM.get_NodeByPath(PathNode);
+            TestSetFolder tsFolder = (TestSetFolder)treeM.get_NodeByPath(PathNode);
             if (tsFolder == null && PathNode.ToUpper() == "ROOT")
-                tsFolder = treeM.Root;
+                tsFolder = (TestSetFolder)treeM.Root;
 
             List FoldersList = tsFolder.NewList();
             List<string> testlabPathList = new List<string>();
@@ -259,12 +259,12 @@ namespace GingerCore.ALM.QC
         public static IEnumerable<Object> GetTestSetExplorer(string PathNode)
         {
             TestSetTreeManager treeM = (TestSetTreeManager)mTDConn.TestSetTreeManager;
-            TestSetFolder tsFolder = treeM.get_NodeByPath(PathNode);
+            TestSetFolder tsFolder = (TestSetFolder)treeM.get_NodeByPath(PathNode);
             if (tsFolder == null && PathNode.ToUpper() == "ROOT")
-                tsFolder = treeM.Root;
+                tsFolder = (TestSetFolder)treeM.Root;
 
-            TestSetFactory TSetFact = mTDConn.TestSetFactory;
-            TDFilter tsFilter = TSetFact.Filter;
+            TestSetFactory TSetFact = (TestSetFactory)mTDConn.TestSetFactory;
+            TDFilter tsFilter = (TDFilter)TSetFact.Filter;
 
             try
             {
@@ -291,8 +291,8 @@ namespace GingerCore.ALM.QC
 
         public static Object GetTSRunStatus(dynamic TSItem)
         {
-            TestSetFactory TSetFact = mTDConn.TestSetFactory;
-            TDFilter tsFilter = TSetFact.Filter;
+            TestSetFactory TSetFact = (TestSetFactory)mTDConn.TestSetFactory;
+            TDFilter tsFilter = (TDFilter)TSetFact.Filter;
             tsFilter["CY_CYCLE_ID"] = "" + TSItem.TestSetID + "";
             List Testset = TSetFact.NewList(tsFilter.Text);
 
@@ -300,8 +300,8 @@ namespace GingerCore.ALM.QC
             {
                 if (testset.Name == TSItem.TestSetName)
                 {
-                    TSTestFactory TSTestFact = testset.TSTestFactory;
-                    TDFilter tsTestFilter = TSetFact.Filter;
+                    TSTestFactory TSTestFact = (TSTestFactory)testset.TSTestFactory;
+                    TDFilter tsTestFilter = (TDFilter)TSetFact.Filter;
                     tsTestFilter["TC_CYCLE_ID"] = "" + TSItem.TestSetID + "";
                     List TSActivities = TSTestFact.NewList(tsTestFilter.Text);
                     foreach (TSTest tst in TSActivities)
@@ -330,8 +330,8 @@ namespace GingerCore.ALM.QC
 
         public static TDAPIOLELib.SysTreeNode GetNodeObject(String folderPath)
         {
-            TDAPIOLELib.TreeManager OTManager = mTDConn.TreeManager;
-            return OTManager.NodeByPath[folderPath];
+            TDAPIOLELib.TreeManager OTManager = (TreeManager)mTDConn.TreeManager;
+            return (SysTreeNode)OTManager.NodeByPath[folderPath];
         }
     }
 }

@@ -6,10 +6,13 @@
       mc:Ignorable="d" 
       xmlns:h="clr-namespace:Ginger.Help"
       h:GingerHelpProvider.HelpString="Explorer"
-      d:DesignHeight="700" d:DesignWidth="410"
+      d:DesignHeight="400" d:DesignWidth="410"
       Title="WindowsExplorerNavPage">
 
     <Grid >
-        <Frame Name="xSelectedItemFrame" NavigationUIVisibility="Hidden" Margin="3,0,0,0" HorizontalAlignment="Stretch" Height="780" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Frame Name="xSelectedItemFrame" NavigationUIVisibility="Hidden" Margin="3,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
     </Grid>
 </Page>

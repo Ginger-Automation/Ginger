@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -84,6 +84,9 @@ namespace GingerCoreNET.SourceControl
         string mSolutionSourceControlAuthorEmail;
         public string SolutionSourceControlAuthorEmail { get { return mSolutionSourceControlAuthorEmail; } set { mSolutionSourceControlAuthorEmail = value; OnPropertyChanged(nameof(SourceControlConfigureProxy)); } }
 
+        bool mIsPublicRepo;
+        public bool IsPublicRepo { get { return mIsPublicRepo; } set { mIsPublicRepo = value; OnPropertyChanged(nameof(mIsPublicRepo)); } }
+
         public string SolutionFolder { get; set; }
 
         public string RepositoryRootFolder { get; set; }
@@ -125,6 +128,8 @@ namespace GingerCoreNET.SourceControl
         public abstract bool GetProject(string Path, string URI, ref string error);
 
         public abstract void Init();
+
+        public abstract bool InitializeRepository(string remoteURL);
 
         public abstract bool TestConnection(ref string error);
 

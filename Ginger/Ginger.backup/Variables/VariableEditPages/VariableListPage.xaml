@@ -1,0 +1,22 @@
+    <Page x:Class="Ginger.Variables.VariableListPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="215" d:DesignWidth="300"
+	Title="VariableListPage">
+
+    <Grid>
+        <StackPanel>
+            <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
+                <Label Style="{StaticResource @InputFieldLabelStyle}">List Values:</Label>
+                <Image x:Name="infoImage" Source="{StaticResource @Question_Large.png.png}" Height="16" Width="16" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,8,0" ToolTip="Set each list value in a separate row"/>
+            </DockPanel>
+            <TextBox x:Name="txtValueList" Height="150" Style="{StaticResource @MultiRowsTextBoxStyle}"></TextBox>
+            <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
+                <CheckBox x:Name="cbRandomOrder" Content="Random Order" Style="{StaticResource @InputCheckBoxStyle}" Margin="0,10,0,0"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

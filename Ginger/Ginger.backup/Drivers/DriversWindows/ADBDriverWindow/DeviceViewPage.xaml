@@ -1,0 +1,75 @@
+    <Page x:Class="GingerCore.Drivers.Common.DeviceViewPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="600"
+	Title="DeviceViewPage">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="419*"/>
+            <ColumnDefinition x:Name="DeviceControllerGridColumn" Width="200*"/>            
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="300*"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="50*"/>
+        </Grid.RowDefinitions>
+
+        <Label x:Name="DeviceNameLabel" Content="Device View - Nexus 5 ZZZ"/>
+
+        <Grid x:Name="DeviceScreenShotGrid" Grid.Row="1" SizeChanged="DeviceScreenShotGrid_SizeChanged" >
+            <!--How the real device look like picture which will be the background-->
+            <Image x:Name="DeviceScreenShotImageBK"  Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <!--Screen shot of the device which will be layover the background so it look like we see the real device and whats on it-->
+            <Image x:Name="DeviceImage"  HorizontalAlignment="Left" VerticalAlignment="Top" Height="200" Width="200" Margin="0"
+                   MouseLeftButtonDown="DeviceImage_MouseLeftButtonDown"  
+                   MouseMove="DeviceImage_MouseMove"
+                   MouseLeftButtonUp="DeviceImage_MouseLeftButtonUp"
+                   
+                   />
+            <!--Canvas for showing swipes - give user feedback-->
+            <Canvas  Name="DeviceScreenCanvas" MouseDown="DeviceScreenCanvas_MouseDown" MouseMove="DeviceScreenCanvas_MouseMove" MouseLeftButtonUp="DeviceScreenCanvas_MouseLeftButtonUp"
+                     HorizontalAlignment="Left" VerticalAlignment="Top"
+                     Height="200" Width="200" Margin="0">
+                <Canvas.Background>
+                    <SolidColorBrush Color="Blue" Opacity="0"/>
+                </Canvas.Background>
+            </Canvas>
+        </Grid>
+
+        <Grid x:Name="DeviceControllerGrid" Grid.Row="1" Grid.Column="1" SizeChanged="DeviceControllerGrid_SizeChanged" >
+            <Image x:Name="DeviceControllerImage"   
+                   Stretch="UniformToFill" >
+            </Image>
+        </Grid>
+
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+            <Label>Controller</Label>
+            <ComboBox Width="100" Margin="5"></ComboBox>
+        </StackPanel>
+
+        <StackPanel  Grid.Column="0" Grid.Row="2" Orientation="Horizontal">
+            <Label Content="Show Buttons" Style="{StaticResource @InputFieldLabelStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch"/>
+            <CheckBox DockPanel.Dock="Top" Margin="5">Show Buttons Grid</CheckBox>
+            <Label x:Name="ScaleLabel">1</Label>
+            <Label x:Name="MouseLcoationLabel">0,0</Label>
+        </StackPanel>
+
+        <DockPanel  Grid.Column="0" Grid.Row="3">
+            <Label Content="Device Buttons" Style="{StaticResource @InputFieldLabelStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch"/>
+            <DataGrid x:Name="DeviceButtonsGrid" MouseDoubleClick="ControllerActionsGrid_MouseDoubleClick"></DataGrid>
+        </DockPanel>
+
+        <DockPanel  Grid.Column="1" Grid.Row="3">            
+            <Label Content="Controller Buttons" Style="{StaticResource @InputFieldLabelStyle}" DockPanel.Dock="Top" HorizontalAlignment="Stretch"/>                            
+            <DataGrid x:Name="ControllerActionsGrid" MouseDoubleClick="ControllerActionsGrid_MouseDoubleClick"></DataGrid>
+        </DockPanel>
+
+        <GridSplitter ResizeDirection="Columns" Grid.Column="0" Width="5" HorizontalAlignment="Right" Grid.Row="0"  Grid.RowSpan="4" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" Margin="0,1,0,0"/>
+         
+    </Grid>
+</Page>

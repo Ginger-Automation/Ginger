@@ -1,0 +1,31 @@
+    <Page x:Class="Ginger.Actions.Mainframe.ActMainFrameGetDetailsEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="300"
+	Title="ActMainFrameGetDetailsEditPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <StackPanel  Grid.Row="0" Grid.ColumnSpan="5" >
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Get Mainframe Details</Label>
+            <ComboBox x:Name="GetMainFrameDetailsCombo"  Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="GetMainFrameDetailsCombo_SelectionChanged"></ComboBox>
+
+        </StackPanel>
+        <StackPanel  Grid.Row="1" Grid.ColumnSpan="5" x:Name="TextDetailsInstancePanel">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Get Details Of </Label>
+            <ComboBox x:Name="TextDetailsInstanceCombo"  Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="TextDetailsInstanceCombo_SelectionChanged"></ComboBox>
+        </StackPanel>
+        <StackPanel  Grid.Row="2"  x:Name="InstanceDetailsPanel">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Instance</Label>
+            <TextBox Style="{StaticResource @TextBoxStyle}" x:Name="TextInstanceNumberTextBox"> </TextBox>
+        </StackPanel>
+
+    </Grid>
+</Page>

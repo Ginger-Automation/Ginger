@@ -15,7 +15,7 @@
         <!--Grid be used for debug only-->
         <DataGrid x:Name="InputGrid" AutoGenerateColumns="False" DockPanel.Dock="Top" Margin="0,20,0,0" Visibility="Collapsed">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Param" Binding="{Binding Param}" Width="80"></DataGridTextColumn>
+                <DataGridTextColumn Header="Parameter" Binding="{Binding Param}" Width="80"></DataGridTextColumn>
                 <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="80"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>

@@ -34,6 +34,9 @@ using System.IO;
 using System.Linq;
 using System.Security;
 using System.Xml;
+using System.Net.Http;
+using System.Net;
+using GingerCore.Actions;
 
 namespace GingerCoreNET.GeneralLib
 {
@@ -312,7 +315,10 @@ namespace GingerCoreNET.GeneralLib
             {
                 DataSource.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();
-
+                if (dsTables == null)
+                {
+                    return "";
+                }
                 foreach (DataSourceTable dst in dsTables)
                 {
                     if (dst.Name == DSTableName)
@@ -396,6 +402,7 @@ namespace GingerCoreNET.GeneralLib
         {
             try
             {
+                OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
                 using (OfficeOpenXml.ExcelPackage xlPackage = new OfficeOpenXml.ExcelPackage())
                 {
                     if (File.Exists(filePath))
@@ -481,6 +488,38 @@ namespace GingerCoreNET.GeneralLib
                 img.Save(ms, format);
                 return ms.ToArray();
             }
+        }
+
+        public static void DownloadImage(string ImageURL, Act act)
+        {
+            String currImagePath = Act.GetScreenShotRandomFileName();
+            try
+            {
+                HttpResponseMessage response = SendRequest(ImageURL);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var fs = new FileStream(currImagePath, FileMode.Create, FileAccess.Write, FileShare.None);
+                    response.Content.CopyToAsync(fs).ContinueWith(
+                    (discard) =>
+                    {
+                        fs.Close();
+                    });
+                    act.ScreenShotsNames.Add(Path.GetFileName(currImagePath));
+                    act.ScreenShots.Add(currImagePath);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                act.Error += ex.Message;
+            }
+        }
+        public static HttpResponseMessage SendRequest(string URL)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, URL);
+            HttpClient client = new HttpClient();
+            HttpResponseMessage response = client.SendAsync(request).Result;
+            return response;
         }
     }
 

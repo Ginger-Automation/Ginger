@@ -35,6 +35,7 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Xml;
 
 namespace GingerCore.Actions.WebAPI
@@ -53,7 +54,7 @@ namespace GingerCore.Actions.WebAPI
         string BodyString = null;
         string ContentType;
         ApplicationAPIUtils.eContentType eContentType;
-        string ResponseMessage = null;
+        public string ResponseMessage = null;
         public string RequestFileContent = null;
         public string ResponseFileContent = null;
 
@@ -688,7 +689,7 @@ namespace GingerCore.Actions.WebAPI
                             GetRequest += mAct.RequestKeyValues[i].ItemName.ToString() + "=" + mAct.RequestKeyValues[i].ValueForDriver + "&";
                         }
                     }
-                    string ValuesURL = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.EndPointURL) + GetRequest.Substring(0, GetRequest.Length - 1);
+                    string ValuesURL = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.EndPointURL) + HttpUtility.UrlEncode(GetRequest.Substring(0, GetRequest.Length - 1));
                     Client.BaseAddress = new Uri(ValuesURL);
                 }
                 else

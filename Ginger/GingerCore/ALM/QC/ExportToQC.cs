@@ -129,7 +129,7 @@ namespace GingerCore.ALM.QC
                                     //create run with activities as steps
                                     run.CopyDesignSteps();
                                     run.Post();
-                                    StepFactory stepF = run.StepFactory;
+                                    StepFactory stepF = (StepFactory)run.StepFactory;
                                     List stepsList = stepF.NewList("");
 
                                     //int i = 0;
@@ -137,15 +137,15 @@ namespace GingerCore.ALM.QC
                                     foreach (Step step in stepsList)
                                     {
                                         //search for matching activity based on ID and not order, un matching steps need to be left as No Run
-                                        int stepDesignID = (stepsList[index]).Field("ST_DESSTEP_ID");
+                                        int stepDesignID = Convert.ToInt16(step["ST_DESSTEP_ID"].ToString());
                                         Activity matchingActivity = activities.Where(x => x.ExternalID == stepDesignID.ToString()).FirstOrDefault();
                                         if (matchingActivity != null)
                                         {
-                                            switch(matchingActivity.Status)
+                                            switch (matchingActivity.Status)
                                             {
                                                 case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed:
                                                     step.Status = "Failed";
-                                                    List<IAct> failedActs= matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
+                                                    List<IAct> failedActs = matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
                                                     string errors = string.Empty;
                                                     foreach (Act act in failedActs) errors += act.Error + Environment.NewLine;
                                                     step["ST_ACTUAL"] = errors;
@@ -269,7 +269,7 @@ namespace GingerCore.ALM.QC
                     test = ImportFromQC.GetQCTest(activitiesGroup.ExternalID);
 
                     //delete the un-needed steps
-                    DesignStepFactory stepF = test.DesignStepFactory;
+                    DesignStepFactory stepF = (DesignStepFactory)test.DesignStepFactory;
                     List stepsList = stepF.NewList("");
                     foreach (DesignStep step in stepsList)
                     {
@@ -278,7 +278,7 @@ namespace GingerCore.ALM.QC
                     }
 
                     //delete the existing parameters
-                    StepParams testParams = test.Params;
+                    StepParams testParams = (StepParams)test.Params;
                     if (testParams.Count > 0)
                     {
                         for (int indx = 0; indx < testParams.Count; indx++)
@@ -329,7 +329,7 @@ namespace GingerCore.ALM.QC
             DesignStep step = null;
             List stepsList;
 
-            stepF = test.DesignStepFactory;
+            stepF = (DesignStepFactory)test.DesignStepFactory;
 
             if (string.IsNullOrEmpty(activity.ExternalID) == false)
             {
@@ -347,14 +347,14 @@ namespace GingerCore.ALM.QC
             if (step == null)
             {
                 //create new step
-                step = stepF.AddItem(System.DBNull.Value);
+                step = (DesignStep)stepF.AddItem(System.DBNull.Value);
             }
 
             step.StepName = activity.ActivityName;
             string descriptionTemplate =
                 "<html><body><div align=\"left\"><font face=\"Arial\"><span style=\"font-size:8pt\"><<&Description&&>><br /><<&Parameters&>><br /><<&Actions&>></span></font></div></body></html>";
             string description = descriptionTemplate.Replace("<<&Description&&>>",activity.Description);
-            StepParams testParams = test.Params;
+            StepParams testParams = (StepParams)test.Params;
             string paramsSigns = string.Empty;
             if (activity.Variables.Count > 0)
             {
@@ -459,8 +459,8 @@ namespace GingerCore.ALM.QC
                     }
 
                     //Searching for the testset in case it was created in ALM although getting exception
-                    TestSetFactory TSetFact = mTDConn.TestSetFactory;
-                    TDFilter tsFilter = TSetFact.Filter;
+                    TestSetFactory TSetFact = (TestSetFactory)mTDConn.TestSetFactory;
+                    TDFilter tsFilter = (TDFilter)TSetFact.Filter;
                     TestSetTreeManager treeM = (TestSetTreeManager)mTDConn.TestSetTreeManager;
                     ISysTreeNode testSetParentFolder = (ISysTreeNode)treeM.get_NodeByPath(uploadPath);
 
@@ -488,15 +488,15 @@ namespace GingerCore.ALM.QC
                 businessFlow.ExternalID = testSet.ID.ToString();
 
                 //Add missing test cases
-                TSTestFactory testCasesF = testSet.TSTestFactory;
+                TSTestFactory testCasesF = (TSTestFactory)testSet.TSTestFactory;
                 foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
                 {
                     if (existingActivitiesGroups.Contains(ag) == false && string.IsNullOrEmpty(ag.ExternalID) == false && ImportFromQC.GetQCTest(ag.ExternalID) != null)
                     {
-                        TSTest tsTest = testCasesF.AddItem(ag.ExternalID);
+                        TSTest tsTest = (TSTest)testCasesF.AddItem(ag.ExternalID);
                         if (tsTest != null)
                         {
-                            ag.ExternalID2 = tsTest.ID;//the test case instance ID in the test set- used for exporting the execution details
+                            ag.ExternalID2 = (string)tsTest.ID;//the test case instance ID in the test set- used for exporting the execution details
                         }
                     }
                     else
@@ -526,7 +526,7 @@ namespace GingerCore.ALM.QC
         {
             try
             {
-                BugFactory bugFactory = mTDConn.BugFactory;
+                BugFactory bugFactory = (BugFactory)mTDConn.BugFactory;
 
                 //start of get bug mandatory fields
                 Customization field = (Customization)mTDConn.Customization;
@@ -540,16 +540,16 @@ namespace GingerCore.ALM.QC
                     if (BugField.IsRequired)
                     {
                         List<string> FieldList = new List<string>();
-                        if (BugField.List != null && BugField.List.RootNode.Children.Count > 0)
-                        {
-                            CustomizationListNode lnode = BugField.List.RootNode;
-                            List cNodes = lnode.Children;
-                            foreach (CustomizationListNode ccNode in cNodes)
-                            {
-                                //adds list of valid selections of Field
-                                FieldList.Add(ccNode.Name);
-                            }
-                        }
+                        //if (BugField.List != null && BugField.List.RootNode.Children.Count > 0)
+                        //{
+                        //    CustomizationListNode lnode = BugField.List.RootNode;
+                        //    List cNodes = lnode.Children;
+                        //    foreach (CustomizationListNode ccNode in cNodes)
+                        //    {
+                        //        //adds list of valid selections of Field
+                        //        FieldList.Add(ccNode.Name);
+                        //    }
+                        //}
                         if (!MandatoryFields.ContainsKey(BugField.UserLabel))
                         {
                             MandatoryFields.Add(BugField.UserLabel, BugField.ColumnName);
@@ -570,7 +570,7 @@ namespace GingerCore.ALM.QC
                             }
                             //end of populate mandatory fields
                 */
-                Bug bug = bugFactory.AddItem(System.DBNull.Value);
+                Bug bug = (Bug)bugFactory.AddItem(System.DBNull.Value);
                 bug.Status = Status;
                 //bug.Project = "Internal";            
                 bug.Summary = Summary;
@@ -580,7 +580,7 @@ namespace GingerCore.ALM.QC
                 //bug.Priority = "Low";
 
                 bug.Post();
-                return bug.ID;
+                return (int)bug.ID;
             }
             catch (Exception ex)
             {

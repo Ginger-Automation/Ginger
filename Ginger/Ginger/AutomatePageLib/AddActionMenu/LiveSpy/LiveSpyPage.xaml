@@ -9,7 +9,7 @@
       mc:Ignorable="d" 
       xmlns:h="clr-namespace:Ginger.Help"
       h:GingerHelpProvider.HelpString="Live Spy"
-      d:DesignHeight="800" d:DesignWidth="500"
+      d:DesignHeight="300" d:DesignWidth="500"
       Title="LiveSpyPage">
 
     <Grid>
@@ -33,27 +33,10 @@
                 <TextBlock Name="xStatusTextBlock"  HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="{StaticResource $HighlightColor_Purple}" Text="Hover with the mouse over the element you want to spy and click/hold down the 'Ctrl' Key" Style="{StaticResource $TextBlockStyle}" FontSize="10" TextWrapping="Wrap"/>
             </ScrollViewer>
         </DockPanel>
+        <StackPanel Grid.Row="2">
+        <Ginger:UCElementDetails x:Name="xUCElementDetails" ShowActionTab="True"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        </StackPanel>
 
-        <Ginger:UCElementDetails x:Name="xUCElementDetails" ShowActionTab="True" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-
-        <!--<Expander x:Name="xSelectedControlDetailsExpander" Grid.Row="2" Margin="5,0,5,0"  ExpandDirection="Down" Visibility="Collapsed" IsExpanded="False" Style="{StaticResource @ExpanderLightStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="SelectedControlDetailsExpander_Expanded" Collapsed="SelectedControlDetailsExpander_Collapsed">
-            <Expander.Header>
-                <Label x:Name="xSelectedControlDetailsExpanderLable" Style="{StaticResource $HeaderStyle}" Foreground="{StaticResource $BackgroundColor_DarkBlue}" Content="Selected Element Details &amp; Actions"/>
-            </Expander.Header>
-            <Expander.Content>
-                <TabControl x:Name="xControlTabs"  SelectionChanged="ControlTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}">
-                    <TabItem x:Name="xGeneralTab" Header="General" Foreground="{StaticResource $BackgroundColor_DarkBlue}">
-                        <Frame x:Name="ControlFrame" NavigationUIVisibility="Hidden"/>
-                    </TabItem>
-                    <TabItem x:Name="xPropertiesTab" Header="Properties" Foreground="{StaticResource $BackgroundColor_DarkBlue}">
-                        <Ginger:ucGrid x:Name="xControlPropertiesGrid" Title="Control Properties" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed"  />
-                    </TabItem>
-                    <TabItem x:Name="xActionsTab" Header="Actions" Foreground="{StaticResource $BackgroundColor_DarkBlue}">
-                        <Frame x:Name="ControlActionsFrame" NavigationUIVisibility="Hidden" />
-                    </TabItem>
-                </TabControl>
-            </Expander.Content>
-        </Expander>-->
 
     </Grid>
 </Page>

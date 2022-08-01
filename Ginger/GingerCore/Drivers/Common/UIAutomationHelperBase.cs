@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
@@ -23,7 +25,6 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Automation;
 using GingerCore.Actions;
 using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.PBDriver;
@@ -94,7 +95,7 @@ namespace GingerCore.Drivers.Common
                 throw e;
 
             }
-            catch (ElementNotAvailableException e)
+            catch (UIAuto.ElementNotAvailableException e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Element not available Exception when GetActElement of Type:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 throw e;
@@ -157,7 +158,7 @@ namespace GingerCore.Drivers.Common
 
         public abstract object GetElementFromCursor();
 
-        public abstract object GetElementAtPoint(System.Windows.Point point);
+        public abstract object GetElementAtPoint(System.Drawing.Point point);
 
         public abstract Task<List<ElementInfo>> GetVisibleControls();
 
@@ -188,8 +189,8 @@ namespace GingerCore.Drivers.Common
                 double x;
                 double y;
 
-                x = ((AutomationElement)GetCurrentWindow()).Current.BoundingRectangle.X;
-                y = ((AutomationElement)GetCurrentWindow()).Current.BoundingRectangle.Y;
+                x = ((UIAuto.AutomationElement)GetCurrentWindow()).Current.BoundingRectangle.X;
+                y = ((UIAuto.AutomationElement)GetCurrentWindow()).Current.BoundingRectangle.Y;
 
                 double xCordinate = double.Parse(GetControlPropertyValue(ei.ElementObject, "XOffset")) - x;
                 double yCordinate = double.Parse(GetControlPropertyValue(ei.ElementObject, "YOffset")) - y;
@@ -239,7 +240,7 @@ namespace GingerCore.Drivers.Common
 
         public abstract string GetElementControlType(object element);
 
-        public abstract Rect GetElementBoundingRectangle(object element);
+        public abstract System.Drawing.Rectangle GetElementBoundingRectangle(object element);
 
         public abstract int GetElementNativeWindowHandle(object element);
 
@@ -296,7 +297,7 @@ namespace GingerCore.Drivers.Common
                     return;
                 }
 
-                Rect r = new Rect();
+                System.Drawing.Rectangle r = new System.Drawing.Rectangle();
                 r = GetElementBoundingRectangle(WEI.ElementObject);
 
                 int hwnd = GetElementNativeWindowHandle(GetCurrentWindow());  // AE.Current.NativeWindowHandle;            
@@ -327,7 +328,7 @@ namespace GingerCore.Drivers.Common
         [DllImport("gdi32.dll")]
         static extern int CreateDC(string lpszDriver, string lpszDevice, string lpszOutput, IntPtr lpInitData);
 
-        public static void HighlightRect(System.Windows.Rect r, System.Windows.Forms.Screen scr, UIAElementInfo WEI)
+        public static void HighlightRect(System.Drawing.Rectangle r, System.Windows.Forms.Screen scr, UIAElementInfo WEI)
         {
             FontFamily CurrentFontFamily = null;
             for (int i = 0; i < System.Drawing.FontFamily.Families.Count(); i++)

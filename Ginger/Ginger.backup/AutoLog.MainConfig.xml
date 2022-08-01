@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+   <title>Account</title>         
+            <Account>A1</Account>
+            <Account>A2</Account>            
+   <title>Project</title>         
+            <Project>P1</Project>
+            <Project>P2</Project>
+            <Project>P3</Project> 
+   <title>Release</title>         
+            <Release>1</Release>
+            <Release>2</Release>
+            <Release>3</Release>   
+   <title>Execution Type</title>         
+            <ExecutionType>Development</ExecutionType>
+            <ExecutionType>Release</ExecutionType>             
+   <title>Drop ID</title>         
+            <DropID>1</DropID>
+            <DropID>2</DropID>
+            <DropID>3</DropID> 
+   <title>Phase</title>         
+            <Phase>Regression</Phase>
+            <Phase>Iteration</Phase>
+            <Phase>Agile</Phase>          
+</root>

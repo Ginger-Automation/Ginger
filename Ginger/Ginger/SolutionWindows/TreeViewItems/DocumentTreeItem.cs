@@ -134,7 +134,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
             try
             {
                 if (System.IO.File.Exists(Path))
-                    Process.Start(Path);            
+                {
+                    Process.Start(new ProcessStartInfo() { FileName = Path, UseShellExecute = true });
+                }
             }
             catch (Exception ex)
             {

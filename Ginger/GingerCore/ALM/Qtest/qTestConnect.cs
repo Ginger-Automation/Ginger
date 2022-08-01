@@ -45,14 +45,14 @@ namespace GingerCore.ALM.Qtest
         }
         #endregion singlton
 
-        QTestApi.LoginApi connObj = new QTestApi.LoginApi(ALMCore.DefaultAlmConfig.ALMServerURL);
+        QTestAPIStd.LoginApi connObj = new QTestAPIStd.LoginApi(ALMCore.DefaultAlmConfig.ALMServerURL);
 
         public bool ConnectALMServer()
         {
             try
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Connecting to qTest server");
-                connObj = new QTestApi.LoginApi(ALMCore.DefaultAlmConfig.ALMServerURL);
+                connObj = new QTestAPIStd.LoginApi(ALMCore.DefaultAlmConfig.ALMServerURL);
                 string granttype = "password";
                 string authorization = "Basic bWFoZXNoLmthbGUzQHQtbW9iaWxlLmNvbTo=";
                 string accessToken = ALMCore.DefaultAlmConfig.ALMPassword;
@@ -60,7 +60,7 @@ namespace GingerCore.ALM.Qtest
 
                 if (ALMCore.DefaultAlmConfig.UseToken)
                 {
-                    QTestApiModel.OAuthTokenStatusVM oAuthTokenStatusVM = connObj.TokenStatus(tokenType + " " + accessToken);
+                    QTestAPIStdModel.OAuthTokenStatusVM oAuthTokenStatusVM = connObj.TokenStatus(tokenType + " " + accessToken);
                     if (oAuthTokenStatusVM.ToString().ToLower().Contains("error"))
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to connect qTest Server" + System.Environment.NewLine + oAuthTokenStatusVM.ToString());
@@ -69,7 +69,7 @@ namespace GingerCore.ALM.Qtest
                 }
                 else
                 {
-                    QTestApiModel.OAuthResponse response = connObj.PostAccessToken(granttype, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, authorization);
+                    QTestAPIStdModel.OAuthResponse response = connObj.PostAccessToken(granttype, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, authorization);
                     accessToken = response.AccessToken;
                     tokenType = response.TokenType;
                 }
@@ -84,7 +84,7 @@ namespace GingerCore.ALM.Qtest
                 }
                 else
                 {
-                    connObj.Configuration.MyAPIConfig = new QTestApiClient.QTestClientConfig();
+                    connObj.Configuration.MyAPIConfig = new QTestAPIStdClient.QTestClientConfig();
                 }
                 return true;
             }
@@ -96,74 +96,74 @@ namespace GingerCore.ALM.Qtest
             }
         }
 
-        public ObservableList<QTestApiModel.TestCycleResource> GetQTestCyclesByProject(string qTestServerUrl, string qTestUserName, string qTestPassword, string qTestProject)
+        public ObservableList<QTestAPIStdModel.TestCycleResource> GetQTestCyclesByProject(string qTestServerUrl, string qTestUserName, string qTestPassword, string qTestProject)
         {
             ConnectALMServer();
-            ObservableList<QTestApiModel.TestCycleResource> cyclestList;
-            QTestApi.TestcycleApi TestcycleApi = new QTestApi.TestcycleApi(connObj.Configuration);
-            cyclestList = new ObservableList<QTestApiModel.TestCycleResource>(TestcycleApi.GetTestCycles((long)Convert.ToInt32(qTestProject), null, null, "descendants"));
+            ObservableList<QTestAPIStdModel.TestCycleResource> cyclestList;
+            QTestAPIStd.TestcycleApi TestcycleApi = new QTestAPIStd.TestcycleApi(connObj.Configuration);
+            cyclestList = new ObservableList<QTestAPIStdModel.TestCycleResource>(TestcycleApi.GetTestCycles((long)Convert.ToInt32(qTestProject), null, null, "descendants"));
             return cyclestList;
         }
 
-        public ObservableList<QTestApiModel.ModuleResource> GetQTestModulesByProject(string qTestServerUrl, string qTestUserName, string qTestPassword, string qTestProject)
+        public ObservableList<QTestAPIStdModel.ModuleResource> GetQTestModulesByProject(string qTestServerUrl, string qTestUserName, string qTestPassword, string qTestProject)
         {
             ConnectALMServer();
-            ObservableList<QTestApiModel.ModuleResource> modulesList;
-            QTestApi.ModuleApi moduleApi = new QTestApi.ModuleApi(connObj.Configuration);
-            modulesList = new ObservableList<QTestApiModel.ModuleResource>(moduleApi.GetModules((long)Convert.ToInt32(qTestProject), null));
+            ObservableList<QTestAPIStdModel.ModuleResource> modulesList;
+            QTestAPIStd.ModuleApi moduleApi = new QTestAPIStd.ModuleApi(connObj.Configuration);
+            modulesList = new ObservableList<QTestAPIStdModel.ModuleResource>(moduleApi.GetModules((long)Convert.ToInt32(qTestProject), null));
             return modulesList;
         }
-        public string ConvertResourceType(ALM_Common.DataContracts.ResourceType resourceType)
+        public string ConvertResourceType(AlmDataContractsStd.Enums.ResourceType resourceType)
         {
             string qTestResourceType;
             switch (resourceType)
             {
-                case ALM_Common.DataContracts.ResourceType.DEFECT:
+                case AlmDataContractsStd.Enums.ResourceType.DEFECT:
                     qTestResourceType = "defects";
                     break;
-                case ALM_Common.DataContracts.ResourceType.TEST_CASE:
+                case AlmDataContractsStd.Enums.ResourceType.TEST_CASE:
                     qTestResourceType = "test-cases";
                     break;
-                case ALM_Common.DataContracts.ResourceType.TEST_CYCLE:
+                case AlmDataContractsStd.Enums.ResourceType.TEST_CYCLE:
                     qTestResourceType = "test-cycles";
                     break;
-                case ALM_Common.DataContracts.ResourceType.REQUIREMENT:
+                case AlmDataContractsStd.Enums.ResourceType.REQUIREMENT:
                     qTestResourceType = "requirements";
                     break;
-                case ALM_Common.DataContracts.ResourceType.TEST_FOLDERS:
+                case AlmDataContractsStd.Enums.ResourceType.TEST_FOLDERS:
                     qTestResourceType = "modules";
                     break;
-                case ALM_Common.DataContracts.ResourceType.RELEASES:
+                case AlmDataContractsStd.Enums.ResourceType.RELEASES:
                     qTestResourceType = "releases";
                     break;
-                case ALM_Common.DataContracts.ResourceType.TEST_RUN:
+                case AlmDataContractsStd.Enums.ResourceType.TEST_RUN:
                     qTestResourceType = "test-runs";
                     break;
-                case ALM_Common.DataContracts.ResourceType.TEST_SET:
+                case AlmDataContractsStd.Enums.ResourceType.TEST_SET:
                     qTestResourceType = "test-suites";
                     break;
-                case ALM_Common.DataContracts.ResourceType.DESIGN_STEP:
+                case AlmDataContractsStd.Enums.ResourceType.DESIGN_STEP:
                     qTestResourceType = "test-steps";
                     break;
-                case ALM_Common.DataContracts.ResourceType.REQ_COVER:
+                case AlmDataContractsStd.Enums.ResourceType.REQ_COVER:
                     qTestResourceType = "linked-artifacts";
                     break;
-                case ALM_Common.DataContracts.ResourceType.ENUMERATIONS:
+                case AlmDataContractsStd.Enums.ResourceType.ENUMERATIONS:
                     qTestResourceType = "fields";
                     break;
-                case ALM_Common.DataContracts.ResourceType.TempSystem_Field:
+                case AlmDataContractsStd.Enums.ResourceType.TempSystem_Field:
                     qTestResourceType = "fields";
                     break;
-                case ALM_Common.DataContracts.ResourceType.USERS:
+                case AlmDataContractsStd.Enums.ResourceType.USERS:
                     qTestResourceType = "users";
                     break;
-                case ALM_Common.DataContracts.ResourceType.LINK:
+                case AlmDataContractsStd.Enums.ResourceType.LINK:
                     qTestResourceType = "linked-artifacts";
                     break;
-                case ALM_Common.DataContracts.ResourceType.TEST_CASE_PARAMETERS:
+                case AlmDataContractsStd.Enums.ResourceType.TEST_CASE_PARAMETERS:
                     qTestResourceType = "users";
                     break;
-                case ALM_Common.DataContracts.ResourceType.PARAMETERS:
+                case AlmDataContractsStd.Enums.ResourceType.PARAMETERS:
                     qTestResourceType = "parameters";
                     break;
                 default:

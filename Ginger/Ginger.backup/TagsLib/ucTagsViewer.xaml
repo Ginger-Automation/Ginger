@@ -1,0 +1,25 @@
+    <UserControl   x:Class="Ginger.ucTagsViewer"
+               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+               xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+               mc:Ignorable="d">
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,0" Background="Transparent">
+        <Label x:Name="xTagsLabel" Style="{StaticResource   $LabelStyle}" Background="Transparent" VerticalAlignment="Center" Margin="0,0,0,0">Tags:</Label>
+        <StackPanel x:Name="xTagsStackPanl" Orientation="Horizontal" VerticalAlignment="Center" Background="Transparent"/>
+        <usercontrols:ucButton x:Name="xAddTagBtn" ButtonType="ImageButton"  ButtonImageType="Tag" ButtonFontImageSize="12" ToolTip="Add Tag" Click="AddTagBtn_Click" Width="Auto" Margin="-10,0,0,0" HorizontalContentAlignment="Right" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        
+        <ComboBox x:Name="xTagsComboBox" Visibility="Collapsed" IsEditable="False" SelectionChanged="TagsComboBox_SelectionChanged" HorizontalAlignment="Right" DropDownOpened="TagsComboBox_DropDownOpened" DropDownClosed="XTagsComboBox_DropDownClosed" Style="{StaticResource  $FlatEditInputComboBoxStyle}" Margin="0" HorizontalContentAlignment="Right" Width="40">
+            <ComboBox.ItemContainerStyle>
+                <Style TargetType="ComboBoxItem">
+                    <Setter
+                        Property="HorizontalContentAlignment"
+                        Value="Stretch"/>
+                </Style>
+            </ComboBox.ItemContainerStyle>
+            
+        </ComboBox>
+
+    </StackPanel>
+</UserControl>

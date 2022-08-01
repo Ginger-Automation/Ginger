@@ -43,7 +43,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using static Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration.SealightsDetails;
-using static Ginger.Reports.ExecutionLoggerConfiguration;
+using static Ginger.Configurations.SealightsConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
@@ -510,13 +510,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 SealightsDetails sealightsDetails = new SealightsDetails();
 
-                sealightsDetails.SealightsEnable = solution.LoggerConfigurations.SealightsLog == eSealightsLog.Yes ? true : false;
-                sealightsDetails.SealightsLabId = solution.LoggerConfigurations.SealightsLabId;
-                sealightsDetails.SealightsBSId = solution.LoggerConfigurations.SealightsBuildSessionID;
-                sealightsDetails.SealightsTestStage = solution.LoggerConfigurations.SealightsTestStage;
-                sealightsDetails.SealightsSessionTimeout = Convert.ToInt32(solution.LoggerConfigurations.SealightsSessionTimeout);
-                sealightsDetails.SealightsEntityLevel = (eSealightsEntityLevel)solution.LoggerConfigurations.SealightsReportedEntityLevel;
-                sealightsDetails.SealightsAgentToken = solution.LoggerConfigurations.SealightsAgentToken;
+                sealightsDetails.SealightsEnable = solution.SealightsConfiguration.SealightsLog == eSealightsLog.Yes;
+                sealightsDetails.SealightsLabId = solution.SealightsConfiguration.SealightsLabId;
+                sealightsDetails.SealightsBSId = solution.SealightsConfiguration.SealightsBuildSessionID;
+                sealightsDetails.SealightsTestStage = solution.SealightsConfiguration.SealightsTestStage;
+                sealightsDetails.SealightsSessionTimeout = Convert.ToInt32(solution.SealightsConfiguration.SealightsSessionTimeout);
+                sealightsDetails.SealightsEntityLevel = (SealightsDetails.eSealightsEntityLevel)solution.SealightsConfiguration.SealightsReportedEntityLevel;
+                sealightsDetails.SealightsAgentToken = solution.SealightsConfiguration.SealightsAgentToken;
 
                 //  Check Sealights's values on run-set levels
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId != null)
@@ -562,7 +562,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 AutoFixAnalyzerIssue = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoFixAnalyzerIssue,
                 ReprioritizePOMLocators = runsetExecutor.RunSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators,
                 AutoUpdateApplicationModel = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel,
-                SaveChangesInSourceControl = runsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl
+                SaveChangesInSourceControl = runsetExecutor.RunSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl,
+                AutoExecuteInSimulationMode = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoExecuteInSimulationMode
             };
 
             runset.SelfHealingConfiguration = selfHealingConfiguration;
@@ -607,6 +608,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     }
                     runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.AgentID, ApplicationName = applicationAgent.AppName, ApplicationID = applicationAgent.AppID });
                 }
+
+                //
+                runner.RunInSimulationMode = gingerRunner.RunInSimulationMode;
+                runner.RunInVisualTestingMode = gingerRunner.RunInVisualTestingMode;
 
                 if (gingerRunner.BusinessFlowsRunList.Count > 0)
                 {
@@ -936,6 +941,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         gingerRunner.Active = runnerConfig.Active.Value;
                     }
 
+                    if (runnerConfig.RunInSimulationMode.HasValue)
+                    {
+                        gingerRunner.RunInSimulationMode = runnerConfig.RunInSimulationMode.Value;
+                    }
+                    if (runnerConfig.RunInVisualTestingMode.HasValue)
+                    {
+                        gingerRunner.RunInVisualTestingMode = runnerConfig.RunInVisualTestingMode.Value;
+                    }
+
                     if (runnerConfig.EnvironmentName != null || runnerConfig.EnvironmentID != null)
                     {
                         ProjEnvironment env = DynamicExecutionManager.FindItemByIDAndName<ProjEnvironment>(
@@ -1062,7 +1076,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                     string error = string.Format("Failed to find shared Activities to be added to the Virtual Business Flow");
                                     throw new Exception(error);
                                 }
-                                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(bf);
+                                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(bf, true);
                             }
 
                             if (businessFlowRun == null)
@@ -1516,6 +1530,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runSetConfig.SelfHealingConfiguration.AutoUpdateApplicationModel = dynamicRunsetConfigs.SelfHealingConfiguration.AutoUpdateApplicationModel;
                 runSetConfig.SelfHealingConfiguration.SaveChangesInSourceControl = dynamicRunsetConfigs.SelfHealingConfiguration.SaveChangesInSourceControl;
                 runSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators = dynamicRunsetConfigs.SelfHealingConfiguration.ReprioritizePOMLocators;
+                runSetConfig.SelfHealingConfiguration.AutoExecuteInSimulationMode = dynamicRunsetConfigs.SelfHealingConfiguration.AutoExecuteInSimulationMode;
             }
             // Set config
             runsetExecutor.RunSetConfig = runSetConfig;

@@ -59,7 +59,7 @@ namespace UIAComWrapperInternal
             return (listener != null &&
                     this._eventId == listener.EventId &&
                     this._handler == listener.Handler &&
-                    Automation.Compare(this._runtimeId, listener.RuntimeId));
+                    AutomationExtended.Compare(this._runtimeId, listener.RuntimeId));
         }
 
         public override int GetHashCode()
@@ -73,7 +73,7 @@ namespace UIAComWrapperInternal
         private AutomationFocusChangedEventHandler _focusHandler;
 
         public FocusEventListener(AutomationFocusChangedEventHandler handler) :
-            base(AutomationElement.AutomationFocusChangedEvent.Id, null, handler)
+            base(AutomationElement_Extend.AutomationFocusChangedEvent.Id, null, handler)
         {
             Debug.Assert(handler != null);
             this._focusHandler = handler;
@@ -85,8 +85,8 @@ namespace UIAComWrapperInternal
             UIAutomationClient.IUIAutomationElement sender)
         {
             // Can't set the arguments -- they come from a WinEvent handler.
-            AutomationFocusChangedEventArgs args = new AutomationFocusChangedEventArgs(0, 0);
-            _focusHandler(AutomationElement.Wrap(sender), args);
+            AutomationFocusChangedEventArgsExtended args = new AutomationFocusChangedEventArgsExtended(0, 0);
+            _focusHandler(AutomationElement_Extend.Wrap(sender), args);
         }
 
         #endregion
@@ -96,7 +96,7 @@ namespace UIAComWrapperInternal
     {
         private AutomationEventHandler _basicHandler;
 
-        public BasicEventListener(AutomationEvent eventKind, AutomationElement element, AutomationEventHandler handler) :
+        public BasicEventListener(AutomationEventExtended eventKind, AutomationElement_Extend element, AutomationEventHandler handler) :
             base(eventKind.Id, element.GetRuntimeId(), handler)
         {
             Debug.Assert(handler != null);
@@ -108,16 +108,16 @@ namespace UIAComWrapperInternal
         void  UIAutomationClient.IUIAutomationEventHandler.HandleAutomationEvent(
             UIAutomationClient.IUIAutomationElement sender, int eventId)
         {
-            AutomationEventArgs args;
+            AutomationEventArgsExtended args;
             if (eventId != WindowPatternIdentifiers.WindowClosedEvent.Id)
             {
-                args = new AutomationEventArgs(AutomationEvent.LookupById(eventId));
+                args = new AutomationEventArgsExtended(AutomationEventExtended.LookupById(eventId));
             }
             else
             {
                 args = new WindowClosedEventArgs((int[])sender.GetRuntimeId());
             }
-            _basicHandler(AutomationElement.Wrap(sender), args);
+            _basicHandler(AutomationElement_Extend.Wrap(sender), args);
         }
 
         #endregion
@@ -127,8 +127,8 @@ namespace UIAComWrapperInternal
     {
         private AutomationPropertyChangedEventHandler _propChangeHandler;
 
-        public PropertyEventListener(AutomationEvent eventKind, AutomationElement element, AutomationPropertyChangedEventHandler handler) :
-            base(AutomationElement.AutomationPropertyChangedEvent.Id, element.GetRuntimeId(), handler)
+        public PropertyEventListener(AutomationEventExtended eventKind, AutomationElement_Extend element, AutomationPropertyChangedEventHandler handler) :
+            base(AutomationElement_Extend.AutomationPropertyChangedEvent.Id, element.GetRuntimeId(), handler)
         {
             Debug.Assert(handler != null);
             this._propChangeHandler = handler;
@@ -141,13 +141,13 @@ namespace UIAComWrapperInternal
             int propertyId, 
             object newValue)
         {
-            AutomationProperty property = AutomationProperty.LookupById(propertyId);
+            AutomationPropertyExtended property = AutomationPropertyExtended.LookupById(propertyId);
             object wrappedObj = Utility.WrapObjectAsProperty(property, newValue);
-            AutomationPropertyChangedEventArgs args = new AutomationPropertyChangedEventArgs(
+            AutomationPropertyChangedEventArgsExtended args = new AutomationPropertyChangedEventArgsExtended(
                 property,
                 null,
                 wrappedObj);
-            this._propChangeHandler(AutomationElement.Wrap(sender), args);
+            this._propChangeHandler(AutomationElement_Extend.Wrap(sender), args);
         }
 
         #endregion
@@ -157,8 +157,8 @@ namespace UIAComWrapperInternal
     {
         private StructureChangedEventHandler _structureChangeHandler;
 
-        public StructureEventListener(AutomationEvent eventKind, AutomationElement element, StructureChangedEventHandler handler) :
-            base(AutomationElement.StructureChangedEvent.Id, element.GetRuntimeId(), handler)
+        public StructureEventListener(AutomationEventExtended eventKind, AutomationElement_Extend element, StructureChangedEventHandler handler) :
+            base(AutomationElement_Extend.StructureChangedEvent.Id, element.GetRuntimeId(), handler)
         {
             Debug.Assert(handler != null);
             this._structureChangeHandler = handler;
@@ -168,10 +168,10 @@ namespace UIAComWrapperInternal
 
         void UIAutomationClient.IUIAutomationStructureChangedEventHandler.HandleStructureChangedEvent(UIAutomationClient.IUIAutomationElement sender, UIAutomationClient.StructureChangeType changeType, Array runtimeId)
         {
-            StructureChangedEventArgs args = new StructureChangedEventArgs(
-                (StructureChangeType)changeType,
+            StructureChangedEventArgsExtended args = new StructureChangedEventArgsExtended(
+                (StructureChangeTypeExtended)changeType,
                 (int[])runtimeId);
-            this._structureChangeHandler(AutomationElement.Wrap(sender), args);
+            this._structureChangeHandler(AutomationElement_Extend.Wrap(sender), args);
         }
 
         #endregion
@@ -189,7 +189,7 @@ namespace UIAComWrapperInternal
             }
         }
 
-        public static EventListener Remove(AutomationEvent eventId, AutomationElement element, Delegate handler)
+        public static EventListener Remove(AutomationEventExtended eventId, AutomationElement_Extend element, Delegate handler)
         {
             // Create a prototype to seek
             int[] runtimeId = (element == null) ? null : element.GetRuntimeId();

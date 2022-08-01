@@ -1,0 +1,39 @@
+    <Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Ginger="clr-namespace:Ginger"
+    xmlns:fa="http://schemas.fontawesome.io/icons/"
+    xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls" x:Class="Ginger.SourceControl.CheckInPage" 
+      mc:Ignorable="d" 
+      Height="700" Width="700"
+	    Title="Check-In Changes to Source Control">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition/>
+            <RowDefinition Height="62.5"/>
+            <RowDefinition Height="53.5"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal">
+            <Label Content="Analyzed Local Path:"  Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"/>
+            <Label x:Name="lblAnalyzedPath" Content="C:\\aaa\bbb" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel x:Name="xSourceControlBranchPanel" Orientation="Horizontal" Grid.Row="1">
+            <Label Content="Selected Source Control Branch:"  Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"/>
+            <Label x:Name="xSourceControlBranchLabel" Content="" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center"/>
+        </StackPanel>
+        <Ginger:ucGrid x:Name="CheckInFilesGrid" Grid.Row="2" Title="Pending Check-In Items" IsReadOnly="False" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" />
+
+        <StackPanel Grid.Row="3">
+            <Label  Content="Check-In Comments:"  Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Height="28"/>
+            <TextBox x:Name="CommentsTextBox" Text="" Style="{StaticResource @MultiRowsTextBoxStyle}" HorizontalAlignment="Stretch" Height="50"/>
+        </StackPanel>
+        <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing" Grid.Row="4" Margin="10,10,0,22" HorizontalAlignment="Left" Width="29" Visibility="Visible" RenderTransformOrigin="0.314,-0.045"/>
+        
+    </Grid>
+</Page>

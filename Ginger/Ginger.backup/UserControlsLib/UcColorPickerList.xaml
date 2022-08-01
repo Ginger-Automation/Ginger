@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="Ginger.UserControlsLib.UcColorPickerList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Ginger.UserControlsLib"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="200">
+    
+    <ComboBox Name="xColorsCombo" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="XColorsCombo_SelectionChanged" PreviewMouseWheel="XColorsCombo_PreviewMouseWheel"   >
+        <ComboBox.ItemsPanel>
+            <ItemsPanelTemplate>
+                <Grid x:Name="xPanelGrid" Loaded="xPanelGrid_Loaded" />
+            </ItemsPanelTemplate>
+        </ComboBox.ItemsPanel>
+        <ComboBox.ItemTemplate>
+            <DataTemplate>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Fill="{Binding Name}" Width="16" Height="16" Margin="0,2,5,2" />
+                    <TextBlock Text="{Binding Name}" />
+                </StackPanel>
+            </DataTemplate>
+        </ComboBox.ItemTemplate>
+    </ComboBox>
+</UserControl>

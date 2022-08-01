@@ -21,7 +21,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO.Compression;
 using System.Linq;
-using ALM_Common.DataContracts;
+//using ALM_Common.DataContracts;
+using AlmDataContractsStd.Enums;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.IO;
@@ -30,7 +31,7 @@ using GingerCore.Activities;
 using GingerCore.ALM.QCRestAPI;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using QCRestClient;
+using QCRestClientStd;
 
 namespace GingerCore.ALM
 {

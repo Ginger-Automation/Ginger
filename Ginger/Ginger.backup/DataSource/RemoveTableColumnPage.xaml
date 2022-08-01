@@ -1,0 +1,23 @@
+    <Page x:Class="Ginger.DataSource.RemoveTableColumnPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      Height="28" Width="400" MinHeight="30"
+	Title="Remove Table Column">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}" Height="34" VerticalAlignment="Top">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="130"/>
+            <ColumnDefinition Width="270"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>                        
+        </Grid.RowDefinitions>
+               
+        <Label Content="Column Name:" Grid.Row="0" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
+        <ComboBox Height="24" x:Name="DSColNameComboBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}"/>
+        
+    </Grid>
+</Page>

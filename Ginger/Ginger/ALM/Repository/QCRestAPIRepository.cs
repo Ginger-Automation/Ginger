@@ -16,8 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using ALM_Common.DataContracts;
-using ALMRestClient;
+
+using AlmDataContractsStd.Enums;
+//using ALM_Common.DataContracts;
+using ALMRestClientStd;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
@@ -30,7 +32,7 @@ using GingerCore.ALM.QC;
 using GingerCore.ALM.QCRestAPI;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using QCRestClient;
+using QCRestClientStd;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -270,9 +272,9 @@ namespace Ginger.ALM.Repository
             ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>( WorkSpace.Instance.Solution.ExternalItemsFields);
             ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
 
-            ObservableList<ExternalItemFieldBase> testCaseFields = CleanUnrelvantFields(allFields, ResourceType.TEST_CASE);
-            ObservableList<ExternalItemFieldBase> designStepsFields = CleanUnrelvantFields(allFields, ResourceType.DESIGN_STEP);
-            ObservableList<ExternalItemFieldBase> designStepsParamsFields = CleanUnrelvantFields(allFields, ResourceType.DESIGN_STEP_PARAMETERS);
+            ObservableList<ExternalItemFieldBase> testCaseFields = CleanUnrelvantFields(allFields, AlmDataContractsStd.Enums.ResourceType.TEST_CASE);
+            ObservableList<ExternalItemFieldBase> designStepsFields = CleanUnrelvantFields(allFields, AlmDataContractsStd.Enums.ResourceType.DESIGN_STEP);
+            ObservableList<ExternalItemFieldBase> designStepsParamsFields = CleanUnrelvantFields(allFields, AlmDataContractsStd.Enums.ResourceType.DESIGN_STEP_PARAMETERS);
 
             bool exportRes = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, matchingTC, uploadPath, testCaseFields, designStepsFields, designStepsParamsFields, ref res);
 
@@ -311,7 +313,7 @@ namespace Ginger.ALM.Repository
                 return false;
             }
 
-            QCRestClient.QCTestSet matchingTS = null;
+            QCRestClientStd.QCTestSet matchingTS = null;
 
             Amdocs.Ginger.Common.eUserMsgSelection userSelec = Amdocs.Ginger.Common.eUserMsgSelection.None;
             //check if the businessFlow already mapped to QC Test Set
@@ -337,7 +339,7 @@ namespace Ginger.ALM.Repository
             //check if all of the business flow activities groups already exported to QC and export the ones which not
             foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
             {
-                //
+
                 matchingTC = null;
                 //check if the ActivitiesGroup already mapped to QC Test Case
                 if (String.IsNullOrEmpty(ag.ExternalID) == false)
@@ -380,7 +382,7 @@ namespace Ginger.ALM.Repository
                         }
                     }
                 }
-                
+
                 //if user selected No and want to create new testplans to selected folder path
                 if (matchingTC == null && String.IsNullOrEmpty(testPlanUploadPath))
                 {
@@ -436,8 +438,8 @@ namespace Ginger.ALM.Repository
             ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>( WorkSpace.Instance.Solution.ExternalItemsFields);
             ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
 
-            ObservableList<ExternalItemFieldBase> testSetFieldsFields = CleanUnrelvantFields(allFields, ResourceType.TEST_SET);
-            ObservableList<ExternalItemFieldBase> testInstanceFields = CleanUnrelvantFields(allFields, ResourceType.TEST_CYCLE);
+            ObservableList<ExternalItemFieldBase> testSetFieldsFields = CleanUnrelvantFields(allFields, AlmDataContractsStd.Enums.ResourceType.TEST_SET);
+            ObservableList<ExternalItemFieldBase> testInstanceFields = CleanUnrelvantFields(allFields, AlmDataContractsStd.Enums.ResourceType.TEST_CYCLE);
 
             bool exportRes = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToALM(businessFlow, matchingTS, testLabUploadPath, testSetFieldsFields, testInstanceFields, ref res);
             Reporter.HideStatusMessage();
@@ -477,7 +479,7 @@ namespace Ginger.ALM.Repository
             throw new NotImplementedException();
         }
 
-        private ObservableList<ExternalItemFieldBase> CleanUnrelvantFields(ObservableList<ExternalItemFieldBase> fields, ResourceType resourceType)
+        private ObservableList<ExternalItemFieldBase> CleanUnrelvantFields(ObservableList<ExternalItemFieldBase> fields, AlmDataContractsStd.Enums.ResourceType resourceType)
         {
             ObservableList<ExternalItemFieldBase> fieldsToReturn = new ObservableList<ExternalItemFieldBase>();
 

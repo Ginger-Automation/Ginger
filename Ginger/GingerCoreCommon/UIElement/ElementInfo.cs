@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -25,6 +25,7 @@ using Amdocs.Ginger.Common.Enums;
 using System.Text;
 using Amdocs.Ginger.Common.Repository;
 using System.Linq;
+using System.Drawing;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
@@ -40,6 +41,11 @@ namespace Amdocs.Ginger.Common.UIElement
 
         [IsSerializedForLocalRepository]
         public ObservableList<ControlProperty> Properties = new ObservableList<ControlProperty>();
+
+        string mScreenShotImage;
+        [IsSerializedForLocalRepository]
+        public string ScreenShotImage { get { return mScreenShotImage; } set { if (mScreenShotImage != value) { mScreenShotImage = value; OnPropertyChanged(nameof(ScreenShotImage)); } } }
+
 
         [IsSerializedForLocalRepository]
         public int X { get; set; }

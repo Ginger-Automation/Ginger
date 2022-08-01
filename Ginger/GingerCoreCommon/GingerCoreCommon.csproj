@@ -8,10 +8,10 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>Amdocs.Ginger.Common</RootNamespace>
-    <AssemblyVersion>4.4.1.1</AssemblyVersion>
-    <FileVersion>4.4.1.1</FileVersion>
+    <AssemblyVersion>4.5.1.1</AssemblyVersion>
+    <FileVersion>4.5.1.1</FileVersion>
     <PackageId>Ginger.Core.Common</PackageId>
     <Authors>Amdocs</Authors>
     <Company>Amdocs</Company>
@@ -36,7 +36,7 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="NJsonSchema" Version="9.13.10" />
-    <PackageReference Include="System.Drawing.Common" Version="5.0.3" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
   </ItemGroup>
 
@@ -47,6 +47,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="GingerExternal">
+      <HintPath>..\GingerCoreNET\DLLS\GingerExternal.dll</HintPath>
+    </Reference>
     <Reference Include="LiteDB">
       <HintPath>..\..\..\..\..\.nuget\packages\litedb\4.1.4\lib\net40\LiteDB.dll</HintPath>
     </Reference>

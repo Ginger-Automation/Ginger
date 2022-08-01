@@ -1,0 +1,32 @@
+    <Page x:Class="Ginger.Run.RunSetsExecutionsHistoryPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Ginger="clr-namespace:Ginger" xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+	Title="RunSetsExecutionsPage">
+
+    <Grid Name="pageGrid">
+        <Grid.Resources>
+            <DataTemplate x:Key="ReportButton">
+                <Button x:Name="ReportBtn" Click="ReportBtnClicked" ToolTip="Generate Report" Style="{StaticResource @InputImageGridCellButtonStyle}">
+                    <Image Source="{StaticResource @Report2_16x16}" Height="16" Width="16"/>
+                </Button>
+            </DataTemplate>
+        </Grid.Resources>
+        <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto"  >
+            <Ginger:ucGrid x:Name="grdExecutionsHistory" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" IsReadOnly="False" ShowTagsFilter="Collapsed" ShowTitle="Collapsed">
+                <Ginger:ucGrid.Title>
+                    <GingerCore:ucTextDicResource Text="[RunSets] Executions"/>
+                </Ginger:ucGrid.Title>
+            </Ginger:ucGrid>
+        </ScrollViewer>
+        <StackPanel x:Name="Loading" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" >
+            <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="40" Visibility="Visible"  Foreground="LightBlue" />
+            <Label x:Name="LoadingRunset"  HorizontalAlignment="Left" Content="Loading..." FontSize="20"/>
+        </StackPanel>
+    </Grid>
+</Page>

@@ -19,6 +19,7 @@ limitations under the License.
 using System.Runtime.InteropServices;
 using System.Windows.Automation.Text;
 using UIAComWrapperInternal;
+using Windows.Foundation;
 
 // Provider interfaces.
 // IRawElementProviderSimple is defined in the interop DLL,
@@ -271,7 +272,7 @@ namespace System.Windows.Automation.Providers
     public interface IToggleProvider
     {
         void Toggle();
-        ToggleState ToggleState { get; }
+        ToggleStateExtended ToggleState { get; }
     }
 
     [ComVisible(true)]
@@ -302,15 +303,15 @@ namespace System.Windows.Automation.Providers
     [ComVisible(true)]
     public interface IWindowProvider
     {
-        void SetVisualState(WindowVisualState state);
+        void SetVisualState(WindowVisualStateExtended state);
         void Close();
         [return: MarshalAs(UnmanagedType.Bool)]
         bool WaitForInputIdle(int milliseconds);
         bool Maximizable { [return: MarshalAs(UnmanagedType.Bool)] get; }
         bool Minimizable { [return: MarshalAs(UnmanagedType.Bool)] get; }
         bool IsModal { [return: MarshalAs(UnmanagedType.Bool)] get; }
-        WindowVisualState VisualState { get; }
-        WindowInteractionState InteractionState { get; }
+        WindowVisualStateExtended VisualState { get; }
+        WindowInteractionStateExtended InteractionState { get; }
         bool IsTopmost { [return: MarshalAs(UnmanagedType.Bool)] get; }
     }
 

@@ -80,7 +80,7 @@
 
                     <TextBox x:Name="txtSearch" MinWidth="120" Height="25" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="txtSearch_TextChanged" BorderBrush="White" />
                     <usercontrols:ucButton x:Name="btnClearSearch" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="btnClearSearchText_Click" BorderBrush="Transparent" Background="Transparent" Margin="-3,0,6,0" ></usercontrols:ucButton>
-                    <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" BorderBrush="Transparent" Background="Transparent" Margin="-3,0,6,0" ></usercontrols:ucButton>
+                    <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" IsEnabled="False"  VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" BorderBrush="Transparent" Background="Transparent" Margin="-3,0,6,0" ></usercontrols:ucButton>
 
                     <!--<Label x:Name="lblSearch" Style="{DynamicResource @LabelStyle}">Search:</Label>-->
                     <!--<TextBox x:Name="txtSearch" Width="100" TextChanged="txtSearch_TextChanged" Style="{DynamicResource @ToolBarTextBoxStyle}" ></TextBox>-->
@@ -109,7 +109,7 @@
                   GridLinesVisibility="None"
                   ColumnHeaderStyle="{DynamicResource @DataGridColumnHeader}"
                   CellStyle="{DynamicResource @DataGridCellStyle}" 
-                  AlternationCount="2" AlternatingRowBackground="#F6F6F6"
+                  AlternationCount="2" 
                   LoadingRow="grdMain_LoadingRow" 
                   Background="{StaticResource $BackgroundColor_White}"
                   ScrollViewer.VerticalScrollBarVisibility="Auto"                  
@@ -124,6 +124,12 @@
                         <Style.Triggers>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
+                            </Trigger>
+                            <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                <Setter Property="Background" Value="#FFE0E0E0"></Setter>
+                            </Trigger>
+                            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                <Setter Property="Background" Value="#FFBFBFBF"></Setter>
                             </Trigger>
                         </Style.Triggers>
                     </Style>

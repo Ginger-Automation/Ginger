@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -205,25 +205,25 @@ namespace GingerATS
                                             if (step.Parameters != null)
                                             {
                                                 //pull the variables section from XML- workaround because sometimes (when the Activity - Actions includes Variables Dependencies) the XmlReader is fails to get to the Variables node from some reason                                                
-                                                string step_Activity_VariablesXml= GingerATSXmlReader.GetXmlFileNodeContent(step_Activity.FilePath, GingerRepositoryItem.ActivityVariablesAttributeName);
+                                                string step_Activity_VariablesXml = GingerATSXmlReader.GetXmlFileNodeContent(step_Activity.FilePath, GingerRepositoryItem.ActivityVariablesAttributeName);
 
                                                 foreach (StepParamAutoStatus param in step.Parameters.Values)
                                                 {
                                                     if (param.SelectedValue == null || param.SelectedValue == string.Empty) //was added to support empty value as an option
                                                         param.SelectedValue = "<Empty>";
-                                                    
+
                                                     //check if the variable is known to Ginger
                                                     List<NodeAttributeValidation> variableExistsAttributes = new List<NodeAttributeValidation>();
                                                     variableExistsAttributes.Add(new NodeAttributeValidation(GingerRepositoryItem.ActivityVariableNameAttribute, param.Name));
                                                     if (GingerATSXmlReader.ValidateNodeAttributsValue(step_Activity_VariablesXml,
-                                                                                                       GingerRepositoryItem.ActivityVariablesAttributeName,variableExistsAttributes, true))
+                                                                                                       GingerRepositoryItem.ActivityVariablesAttributeName, variableExistsAttributes, true))
                                                     {
                                                         //Variable Exist
                                                         //check if it from typeSelection List
                                                         List<NodeAttributeValidation> variableIsSelectionListAttributes = new List<NodeAttributeValidation>();
                                                         variableIsSelectionListAttributes.Add(new NodeAttributeValidation(GingerRepositoryItem.VariableSelectionListNameAttribute, param.Name));
                                                         if (GingerATSXmlReader.ValidateNodeAttributsValue(step_Activity_VariablesXml,
-                                                                                                           GingerRepositoryItem.VariableSelectionListNodeName,variableIsSelectionListAttributes, true))
+                                                                                                           GingerRepositoryItem.VariableSelectionListNodeName, variableIsSelectionListAttributes, true))
                                                         {
                                                             //Selection List
                                                             //check if the parameter value is supported
@@ -253,7 +253,7 @@ namespace GingerATS
                                                     {
                                                         //Variable Not Exist
                                                         param.AutomatedByGinger = false;
-                                                    }                                                                                                       
+                                                    }
                                                 }
                                             }
                                         }

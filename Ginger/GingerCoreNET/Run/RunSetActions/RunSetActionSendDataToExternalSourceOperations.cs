@@ -61,9 +61,9 @@ namespace Ginger.Run.RunSetActions
             Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, null, "Sending Execution data to External Source");
 
             RestClient restClient = new RestClient(RunSetActionSendDataToExternalSource.EndPointUrl);
-            restClient.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+            restClient.Options.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
             RestRequest restRequest = new RestRequest();
-            restRequest.Method = Method.POST;
+            restRequest.Method = Method.Post;
             restRequest.RequestFormat = RestSharp.DataFormat.Json;
             foreach (ActInputValue actInputValue in RunSetActionSendDataToExternalSource.RequestHeaders)
             {
@@ -74,7 +74,7 @@ namespace Ginger.Run.RunSetActions
 
             try
             {
-                IRestResponse response = restClient.Execute(restRequest);
+                RestResponse response = restClient.Execute(restRequest);
                 if (response.IsSuccessful)
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Successfully sent data to External Source");

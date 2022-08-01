@@ -1,0 +1,40 @@
+<Page xmlns:Actions="clr-namespace:Ginger.Actions"  x:Class="Ginger.Actions.ActScriptEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+	Title="ActVBScriptEditPage">
+    <Grid>
+       <StackPanel Margin="0,10,0,0">
+            <DockPanel>
+                <Label Style="{StaticResource @InputFieldLabelStyle}"  Height="35" >Script Interpreter</Label>
+                <ComboBox x:Name="ScriptInterpreterComboBox" Margin="47,0,0,0" HorizontalAlignment="Left" SelectionChanged="ScriptInterpreterComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" Width="370"/>
+            </DockPanel>
+            <StackPanel >
+                <DockPanel x:Name="InterpreterPathPanel" Visibility="Collapsed">
+                    <Label x:Name="ScriptInterpreterLabel" Style="{StaticResource @InputFieldLabelStyle}" Height="35">Script Interpreter Path</Label>
+                    <Actions:UCFileBrowser HorizontalAlignment="Left" x:Name="ScriptInterPreter"  Margin="15,0,0,0" Width="370"/>
+                </DockPanel>
+                <DockPanel x:Name="ScriptActionPanel" Visibility="Visible">
+                    <Label Style="{StaticResource @InputFieldLabelStyle}"  Height="35">Script Action</Label>
+                    <ComboBox x:Name="ScriptActComboBox" HorizontalAlignment="Left"  Margin="75,0,0,0" SelectionChanged="ScriptActComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" Width="370"></ComboBox>
+                </DockPanel>
+            </StackPanel>
+
+            <DockPanel x:Name="ScriptStackPanel">
+                <Label Style="{StaticResource @InputFieldLabelStyle}" Height="35"  >Script Name</Label>
+                <ComboBox x:Name="ScriptNameComboBox" HorizontalAlignment="Left" Margin="75,0,0,0" Style="{StaticResource $FlatInputComboBoxStyle}" Width="370" ></ComboBox>
+               
+            </DockPanel>
+            <DockPanel x:Name="ScriptDescriptionPanel" Visibility="Collapsed">
+                <Label Style="{StaticResource @InputFieldLabelStyle}" x:Name="ScriptDescriptionLabel" HorizontalAlignment="Left" >Script Description: </Label>
+                <Label Style="{StaticResource @InputFieldLabelStyle}" x:Name="ScriptDescriptionContent" HorizontalAlignment="Left" Margin="30,0,0,0"></Label>
+            </DockPanel>
+          
+        </StackPanel>
+
+    </Grid>
+</Page>
+        

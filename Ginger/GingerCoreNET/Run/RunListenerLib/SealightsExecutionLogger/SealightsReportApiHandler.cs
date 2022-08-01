@@ -50,14 +50,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             mContext = context;
             mVE = new GingerCore.ValueExpression(mContext.Environment, mContext.BusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
 
-            EndPointUrl = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsURL;
-            Token = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsAgentToken;
+            EndPointUrl = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsURL;
+            Token = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsAgentToken;
 
             mVE.Value = EndPointUrl;  // Calculate the value Expression
             EndPointUrl = mVE.ValueCalculated;
 
             restClient = new RestClient(EndPointUrl);
-            restClient.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;            
+            restClient.Options.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;            
         }
            
         public void SendCreationTestSessionToSealightsAsync()
@@ -67,7 +67,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Starting execution data to Sealights"));
 
                 string message = string.Format("execution data to Sealights");
-                bool responseIsSuccess = SendRestRequestCreateSession(SEND_CREATEION_TEST_SESSION, Method.POST);
+                bool responseIsSuccess = SendRestRequestCreateSession(SEND_CREATEION_TEST_SESSION, Method.Post);
                 if (responseIsSuccess)
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Successfully sent " + message);
@@ -90,7 +90,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Starting to Send Test Events to Sealights"));
 
                 string message = string.Format("Sending Test Events to Sealights");
-                bool responseIsSuccess = await SendRestRequestTestEvents(SEND_CREATEION_TEST_SESSION, Method.POST, name, startTime, endTime, status).ConfigureAwait(false);
+                bool responseIsSuccess = await SendRestRequestTestEvents(SEND_CREATEION_TEST_SESSION, Method.Post, name, startTime, endTime, status).ConfigureAwait(false);
                 if (responseIsSuccess)
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Successfully sent " + message);
@@ -113,7 +113,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Starting sealights delete session"));
 
                 string message = string.Format("execution data to Sealights");
-                bool responseIsSuccess = await SendRestRequestDeleteSession(SEND_CREATEION_TEST_SESSION, Method.DELETE).ConfigureAwait(false);
+                bool responseIsSuccess = await SendRestRequestDeleteSession(SEND_CREATEION_TEST_SESSION, Method.Delete).ConfigureAwait(false);
                 if (responseIsSuccess)
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Successfully sent " + message);
@@ -142,10 +142,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 restRequest.AddHeader("Content-Type", "application/json");
                 restRequest.AddHeader("Authorization", "Bearer " + Token);
 
-                string labId = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLabId;
-                string testStage = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsTestStage;
-                string bsId = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsBuildSessionID;
-                string sessionTimeout = WorkSpace.Instance.Solution.LoggerConfigurations.SealightsSessionTimeout;
+                string labId = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLabId;
+                string testStage = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsTestStage;
+                string bsId = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID;
+                string sessionTimeout = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsSessionTimeout;
 
                 // Calculate the value Expression
                 mVE.Value = labId;  
@@ -193,7 +193,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
                 restRequest.AddJsonBody(new { labId = labId, testStage = testStage, bsId = bsId, sessionTimeout = sessionTimeout }); // Anonymous type object is converted to Json body
 
-                IRestResponse response = restClient.Execute(restRequest);
+                RestResponse response = restClient.Execute(restRequest);
 
                 dynamic objResponse = JsonConvert.DeserializeObject(response.Content);
                 TestSessionId = objResponse.data.testSessionId.ToString(); 
@@ -233,7 +233,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                              
                 restRequest.AddJsonBody( new[] { new { name = name, start = unixStartTime, end = unixEndTime, status = status } } ); // Anonymous type object is converted to Json body
 
-                IRestResponse response = await restClient.ExecuteAsync(restRequest);
+                RestResponse response = await restClient.ExecuteAsync(restRequest);
 
                 if (response.IsSuccessful)
                 {
@@ -265,7 +265,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 restRequest.AddHeader("Content-Type", "application/json");
                 restRequest.AddHeader("Authorization", "Bearer " + Token);
 
-                IRestResponse response = await restClient.ExecuteAsync(restRequest);
+                RestResponse response = await restClient.ExecuteAsync(restRequest);
 
                 if (response.IsSuccessful)
                 {

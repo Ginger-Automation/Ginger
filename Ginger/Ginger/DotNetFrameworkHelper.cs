@@ -43,6 +43,7 @@ using GingerCore.Drivers.PBDriver;
 using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Drivers.WindowsLib;
 using GingerCore.Environments;
+using GingerCore.GeneralLib;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using Oracle.ManagedDataAccess.Client;
@@ -58,7 +59,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
-using System.Web.UI.DataVisualization.Charting;
+using System.Windows.Forms.DataVisualization.Charting;
 using System.Windows.Threading;
 using static GingerCore.Agent;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
@@ -241,7 +242,7 @@ namespace Ginger
                 {
                     // If so, use the GetActiveObject method to obtain the process and cast it to an ApplicatioInstall-Package Microsoft.Office.Interop.Exceln object.
 
-                    objOutLook = Marshal.GetActiveObject("Outlook.Application") as Outlook.Application;
+                    objOutLook = MarshalExtension.GetActiveObject("Outlook.Application") as Outlook.Application;
                 }
                 else
                 {
@@ -552,11 +553,6 @@ namespace Ginger
         public SourceControlBase GetNewSVnRepo()
         {
             return new SVNSourceControl();
-        }
-        public DbConnection GetMSAccessConnection()
-        {
-            DbProviderFactory factory = DbProviderFactories.GetFactory("System.Data.OleDb");
-            return factory.CreateConnection();
         }
 
         public IWebserviceDriverWindow GetWebserviceDriverWindow(BusinessFlow businessFlow)

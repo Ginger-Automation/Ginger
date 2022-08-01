@@ -68,6 +68,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     ClearAutoMapElementTypesSection();
                     SetAutoMapElementTypesGridView();
                     xLearnOnlyMappedElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
+                    xLearnScreenshotsOfElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnScreenshotsOfElements));
                     SetElementLocatorsSettingsGridView();
                     UpdateConfigsBasedOnAgentStatus();
                     PlatformSpecificUIManipulations();
@@ -129,6 +130,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 {
                     mAppPlatform = selectedplatform.Platform;
                 }
+            }
+            if (mAppPlatform == ePlatformType.Web)
+            {
+                xLearnScreenshotsOfElements.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xLearnScreenshotsOfElements.Visibility = Visibility.Collapsed;
             }
             mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
             foreach (Agent agent in mWizard.OptionalAgentsList)
@@ -250,6 +259,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 ClearAutoMapElementTypesSection();
             }
             xLearnOnlyMappedElements.IsEnabled = xAgentControlUC.AgentIsRunning;
+            xLearnScreenshotsOfElements.IsEnabled = xAgentControlUC.AgentIsRunning;
             xAutoMapElementTypesExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
             xAutoMapElementTypesExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
             xElementLocatorsSettingsExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
@@ -269,7 +279,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void SetAutoMapElementTypesSection()
         {
-            xAgentControlUC.xAgentConfigsExpander.IsExpanded = false;
+            xAgentControlUC.xAgentConfigsExpander.Visibility = Visibility.Visible;
 
             SetAutoMapElementTypes();
             xAutoMapBasicElementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapBasicElementTypesList;

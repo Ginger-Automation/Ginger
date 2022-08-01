@@ -113,6 +113,7 @@ namespace GingerCore.Actions
             }
         }
 
+
         public enum eControlAction
         {
             [EnumValueDescription("Initialize Browser")]
@@ -166,7 +167,13 @@ namespace GingerCore.Actions
             [EnumValueDescription("Set AlertBox Text")]
             SetAlertBoxText,
             [EnumValueDescription("Run Java Script")]
-            RunJavaScript
+            RunJavaScript,
+            [EnumValueDescription("Start Monitoring Network Logs")]
+            StartMonitoringNetworkLog,
+            [EnumValueDescription("Get Network Logs")]
+            GetNetworkLog,
+            [EnumValueDescription("Stop Monitoring Network Logs")]
+            StopMonitoringNetworkLog
         }
 
         //TODO: For ActBroswer ObjectLocatrosConfigNeeded is false 
@@ -220,6 +227,34 @@ namespace GingerCore.Actions
         public override String ToString()
         {
             return "BrowserControl - " + ControlAction;
+        }
+
+        public bool NetworkLog
+        {
+            get
+            {
+                bool value;
+                bool.TryParse(GetOrCreateInputParam(nameof(NetworkLog)).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(NetworkLog), value.ToString());
+                OnPropertyChanged(nameof(NetworkLog));
+            }
+        }
+
+        public string NetworkUrl
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(NetworkUrl)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(NetworkUrl), value);
+                OnPropertyChanged(nameof(NetworkUrl));
+            }
         }
 
         public NewPayLoad GetActionPayload()
@@ -347,6 +382,26 @@ namespace GingerCore.Actions
             }
             return false;
         }
+
+        public enum eMonitorUrl
+        {
+            [EnumValueDescription("All URLs")]
+            AllUrl,
+            [EnumValueDescription("Selected URLs")]
+            SelectedUrl,
+        }
+
+        public enum eRequestTypes
+        {
+            [EnumValueDescription("All")]
+            All,
+            [EnumValueDescription("Fetch/XHR")]
+            FetchOrXHR,
+            
+        }
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<ActInputValue> UpdateOperationInputValues = new ObservableList<ActInputValue>();
 
     }
 }

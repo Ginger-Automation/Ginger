@@ -33,12 +33,12 @@ namespace System.Windows.Automation.Providers
             return UiaCoreProviderApi.UiaHostProviderFromHwnd(hwnd);
         }
 
-        public static void RaiseAutomationEvent(AutomationEvent eventId, IRawElementProviderSimple provider, AutomationEventArgs e)
+        public static void RaiseAutomationEvent(AutomationEventExtended eventId, IRawElementProviderSimple provider, AutomationEventArgsExtended e)
         {
             Utility.ValidateArgumentNonNull(eventId, "eventId");
             Utility.ValidateArgumentNonNull(provider, "provider");
             Utility.ValidateArgumentNonNull(e, "e");
-            if (e.EventId == AutomationElementIdentifiers.AsyncContentLoadedEvent)
+            if (e.EventId == AutomationElementIdentifiersExtended.AsyncContentLoadedEvent)
             {
                 AsyncContentLoadedEventArgs args = e as AsyncContentLoadedEventArgs;
                 if (args == null)
@@ -57,14 +57,14 @@ namespace System.Windows.Automation.Providers
             }
         }
 
-        public static void RaiseAutomationPropertyChangedEvent(IRawElementProviderSimple element, AutomationPropertyChangedEventArgs e)
+        public static void RaiseAutomationPropertyChangedEvent(IRawElementProviderSimple element, AutomationPropertyChangedEventArgsExtended e)
         {
             Utility.ValidateArgumentNonNull(element, "element");
             Utility.ValidateArgumentNonNull(e, "e");
             UiaCoreProviderApi.UiaRaiseAutomationPropertyChangedEvent(element, e.Property.Id, e.OldValue, e.NewValue);
         }
 
-        public static void RaiseStructureChangedEvent(IRawElementProviderSimple provider, StructureChangedEventArgs e)
+        public static void RaiseStructureChangedEvent(IRawElementProviderSimple provider, StructureChangedEventArgsExtended e)
         {
             Utility.ValidateArgumentNonNull(provider, "provider");
             Utility.ValidateArgumentNonNull(e, "e");

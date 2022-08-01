@@ -23,25 +23,25 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Orientation="Horizontal" x:Name="ALMRDsType">
                             <RadioButton x:Name="QCRadioButton" IsChecked="True" Content="QC" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="0" Margin="5,0,0,0"></RadioButton>
-                            <usercontrols:ImageMakerControl x:Name="xDefualtImageQC" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
+                            <usercontrols:ImageMakerControl x:Name="xDefualtImageQC" SetAsFontImageWithSize="15" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="2,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
                         
                             <RadioButton x:Name="RQMRadioButton" Content="RQM" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="1" Margin="15,0,0,0"></RadioButton>
-                            <usercontrols:ImageMakerControl x:Name="xDefualtImageRQM" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
+                            <usercontrols:ImageMakerControl x:Name="xDefualtImageRQM" SetAsFontImageWithSize="15" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="2,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
 
                             <RadioButton x:Name="JiraRadioButton" Content="JIRA" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="2" Margin="15,0,0,0"></RadioButton>
-                            <usercontrols:ImageMakerControl x:Name="xDefualtImageJIRA" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
+                            <usercontrols:ImageMakerControl x:Name="xDefualtImageJIRA" SetAsFontImageWithSize="15" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="2,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
 
                             <RadioButton x:Name="qTestRadioButton" Content="QTest" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="3" Margin="15,0,0,0"></RadioButton>
-                            <usercontrols:ImageMakerControl x:Name="xDefualtImageQTest" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
+                            <usercontrols:ImageMakerControl x:Name="xDefualtImageQTest" SetAsFontImageWithSize="15" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="2,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
 
                             <RadioButton x:Name="OctaneRadioButton" Content="Octane" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="4" Margin="15,0,0,0"></RadioButton>
-                            <usercontrols:ImageMakerControl x:Name="xDefualtImageOctane" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
+                            <usercontrols:ImageMakerControl x:Name="xDefualtImageOctane" SetAsFontImageWithSize="15" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="2,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
 
                             <RadioButton x:Name="ZephyrEntRadioButton" Content="Zephyr" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="5" Margin="15,0,0,0"></RadioButton>
-                            <usercontrols:ImageMakerControl x:Name="xDefualtImageZephyrEnt" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
+                            <usercontrols:ImageMakerControl x:Name="xDefualtImageZephyrEnt" SetAsFontImageWithSize="15" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="2,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
                             
                             <RadioButton x:Name="RallyRadioButton" Content="Rally" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="6" Margin="15,0,0,0"></RadioButton>
-                            <usercontrols:ImageMakerControl x:Name="xDefualtImageRally" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
+                            <usercontrols:ImageMakerControl x:Name="xDefualtImageRally" SetAsFontImageWithSize="15" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="2,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
                            
                         </StackPanel>
                     </Grid>
@@ -76,7 +76,7 @@
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <Label Style="{StaticResource @InputFieldLabelStyle}">Server URL:</Label>
-                                    <Label x:Name="ExampleURLHint" HorizontalAlignment="Left" FontSize="10" Foreground="Gray">Example: http://server:8080/almbin</Label>
+                                    <Label x:Name="ExampleURLHint" HorizontalAlignment="Left" FontSize="10" Foreground="Gray">Example: http://server:8080/</Label>
                                 </StackPanel>
                                 <TextBox x:Name="ServerURLTextBox" TextChanged="ServerURLTextBox_TextChanged" MouseEnter="ShowToolTip" Style="{StaticResource @TextBoxStyle}" Height="25"></TextBox>
                             </StackPanel>
@@ -89,7 +89,7 @@
                                 <PasswordBox x:Name="PasswordTextBox" Style="{StaticResource @PasswordBoxStyle}" Height="25" PasswordChanged="PasswordTextBox_PasswordChanged" ></PasswordBox>
                             </StackPanel>
                         </StackPanel>
-                        <CheckBox x:Name="RestAPICheckBox" IsChecked="True" Content="Use Rest API" Checked="RestAPICheckBox_Checked" Unchecked="RestAPICheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}" Grid.Column="0" Grid.Row ="1" Margin="5,10,0,0" ToolTip="RestApi should be Checked for QC12 and above"/>
+                        <CheckBox x:Name="RestAPICheckBox" IsChecked="True" IsEnabled="False" Content="Use Rest API" Checked="RestAPICheckBox_Checked" Unchecked="RestAPICheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}" Grid.Column="0" Grid.Row ="1" Margin="5,10,0,0" ToolTip="RestApi should be Checked for QC12 and above"/>
                         <CheckBox x:Name="TokenCheckBox" IsChecked="True" Content="Connect With Token" Visibility="Collapsed"  Checked="TokenCheckBox_Checked" Unchecked="TokenCheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}" Grid.Column="0" Grid.Row ="1" Margin="5,10,0,0" ToolTip="Select connect with token or password "/>
                         <Button x:Name="LoginServerButton" Click="GetProjectsDetails_Clicked"  Style="{StaticResource @WindowButtonStyle}" Margin="0,10,0,10" HorizontalAlignment="Center">Get Projects Details</Button>
                     </StackPanel>

@@ -59,11 +59,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Text;
 using OpenQA.Selenium.Edge;
+using OpenQA.Selenium.DevTools;
+using Newtonsoft.Json;
+using DevToolsSessionDomains = OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains;
 
 namespace GingerCore.Drivers
 {
     public class SeleniumDriver : DriverBase, IVirtualDriver, IWindowExplorer, IVisualTestingDriver, IXPath, IPOM, IRecord
     {
+        protected IDevToolsSession Session;
+        DevToolsSession devToolsSession;
+        List<Tuple<string,object>> networkResponseLogList;
+        List<Tuple<string, object>> networkRequestLogList;
+        INetwork interceptor;
+        public bool isNetworkLogMonitoringStarted = false;
+        ActBrowserElement mAct;
         public enum eBrowserType
         {
             IE,
@@ -141,6 +151,18 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Set \"true\" to Launch the Browser minimized")]
         public bool BrowserMinimized { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Only for Edge: Open Edge browser in IE Mode")]
+        public bool OpenIEModeInEdge { get; set; }
+
+
+        [UserConfigured]
+        [UserConfiguredDefault("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")]
+        [UserConfiguredDescription("Only if OpenEdgeInIEMode is set to true: location of Edge.exe file in local computer")]
+        public string EdgeExcutablePath { get; set; }
+        //"C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
 
         [UserConfigured]
         [UserConfiguredDefault("false")]//"driver is failing to launch when the mode is true"
@@ -223,21 +245,6 @@ namespace GingerCore.Drivers
         public string SeleniumUserArguments { get; set; }
 
 
-        //[UserConfigured]
-        //[UserConfiguredDefault("False")]
-        //[UserConfiguredDescription("Applitool - Set to true if you want to use Applitools for visual testing")]
-        //public Boolean UseApplitools { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Applitool View Key number")]
-        public String ApplitoolsViewKey { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Applitool Server Url")]
-        public String ApplitoolsServerUrl { get; set; }
-
         [UserConfigured]
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Change to Iframe automatically in case of POM Element execution ")]
@@ -245,7 +252,7 @@ namespace GingerCore.Drivers
 
         protected IWebDriver Driver;
 
-        public eBrowserType mBrowserTpe;
+        protected eBrowserType mBrowserTpe;
         protected NgWebDriver ngDriver;
         private String DefaultWindowHandler = null;
 
@@ -407,11 +414,11 @@ namespace GingerCore.Drivers
                         if (!(String.IsNullOrEmpty(SeleniumUserArguments) && String.IsNullOrWhiteSpace(SeleniumUserArguments)))
                             ieoptions.BrowserCommandLineArguments += "," + SeleniumUserArguments;
 
-                        if (!(String.IsNullOrEmpty(ApplitoolsViewKey) && String.IsNullOrWhiteSpace(ApplitoolsViewKey)))
-                            ieoptions.BrowserCommandLineArguments += "," + ApplitoolsViewKey;
+                        if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey)))
+                            ieoptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey;
 
-                        if (!(String.IsNullOrEmpty(ApplitoolsServerUrl) && String.IsNullOrWhiteSpace(ApplitoolsServerUrl)))
-                            ieoptions.BrowserCommandLineArguments += "," + ApplitoolsServerUrl;
+                        if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl)))
+                            ieoptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
                         InternetExplorerDriverService IEService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
                         IEService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new InternetExplorerDriver(IEService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
@@ -504,11 +511,11 @@ namespace GingerCore.Drivers
                             options.AddArgument("--user-agent=" + BrowserUserAgent.Trim());
                         }
 
-                        if (!(String.IsNullOrEmpty(ApplitoolsViewKey) && String.IsNullOrWhiteSpace(ApplitoolsViewKey)))
-                            options.AddArgument(ApplitoolsViewKey);
+                        if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey)))
+                            options.AddArgument(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey);
 
-                        if (!(String.IsNullOrEmpty(ApplitoolsServerUrl) && String.IsNullOrWhiteSpace(ApplitoolsServerUrl)))
-                            options.AddArgument(ApplitoolsServerUrl);
+                        if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl)))
+                            options.AddArgument(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl);
 
                         ChromeDriverService ChService = ChromeDriverService.CreateDefaultService(GetDriversPathPerOS());
                         if (HideConsoleWindow)
@@ -518,7 +525,8 @@ namespace GingerCore.Drivers
 
                         try
                         {
-                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));    
+                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+
                         }
                         catch (Exception ex)
                         {
@@ -558,16 +566,61 @@ namespace GingerCore.Drivers
 
                     #region EDGE
                     case eBrowserType.Edge:
-                        EdgeOptions EDOpts = new EdgeOptions();
-                        //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
-                        //EDOpts.UseChromium = true;
-                        EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
-                        if (IsUserProfileFolderPathValid())
-                            EDOpts.AddAdditionalEdgeOption("user-data-dir=" ,UserProfileFolderPath);
-                        SetCurrentPageLoadStrategy(EDOpts);
-                        EdgeDriverService EDService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
-                        EDService.HideCommandPromptWindow = HideConsoleWindow;
-                        Driver = new EdgeDriver(EDService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        if (OpenIEModeInEdge)
+                        {
+                            var ieOptions = new InternetExplorerOptions();
+                            ieOptions.AttachToEdgeChrome = true;
+                            ieOptions.EdgeExecutablePath = EdgeExcutablePath;
+
+                            if (EnsureCleanSession == true)
+                            {
+                                ieOptions.EnsureCleanSession = true;
+                            }
+
+                            ieOptions.Proxy = mProxy == null ? null : mProxy;
+                            ieOptions.IntroduceInstabilityByIgnoringProtectedModeSettings = true;
+                            if (IgnoreIEProtectedMode == true)
+                            {
+                                ieOptions.IntroduceInstabilityByIgnoringProtectedModeSettings = true;
+                                ieOptions.ElementScrollBehavior = InternetExplorerElementScrollBehavior.Bottom;
+                            }
+                            if (BrowserPrivateMode == true)
+                            {
+                                ieOptions.ForceCreateProcessApi = true;
+                                ieOptions.BrowserCommandLineArguments = "-private";
+                            }
+                            if (EnableNativeEvents == true)
+                            {
+                                ieOptions.EnableNativeEvents = true;
+                            }
+                            if (!(String.IsNullOrEmpty(SeleniumUserArguments) && String.IsNullOrWhiteSpace(SeleniumUserArguments)))
+                                ieOptions.BrowserCommandLineArguments += "," + SeleniumUserArguments;
+
+                            if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey)))
+                                ieOptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey;
+
+                            if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl)))
+                                ieOptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
+                            SetCurrentPageLoadStrategy(ieOptions);
+                            ieOptions.IgnoreZoomLevel = true;
+                            InternetExplorerDriverService IExplorerService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
+                            IExplorerService.HideCommandPromptWindow = HideConsoleWindow;
+                            Driver = new InternetExplorerDriver(IExplorerService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        }
+                        else
+
+                        {
+                            EdgeOptions EDOpts = new EdgeOptions();
+                            //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
+                            //EDOpts.UseChromium = true;
+                            EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                            if (IsUserProfileFolderPathValid())
+                                EDOpts.AddAdditionalEdgeOption("user-data-dir=", UserProfileFolderPath);
+                            SetCurrentPageLoadStrategy(EDOpts);
+                            EdgeDriverService EDService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
+                            EDService.HideCommandPromptWindow = HideConsoleWindow;
+                            Driver = new EdgeDriver(EDService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        }
 
                         break;
                     #endregion
@@ -990,29 +1043,35 @@ namespace GingerCore.Drivers
             {
                 sURL = "http://" + sURL;
             }
-
-            Uri uri = ValidateURL(sURL);
-            if (uri != null)
+            try
             {
-                Driver.Navigate().GoToUrl(uri.AbsoluteUri);
-            }
-            else
-            {
-                act.Error = "Error: Invalid URL. Give valid URL(Complete URL)";
-            }
-            string winTitle = Driver.Title;
-            if (Driver.GetType() == typeof(InternetExplorerDriver) && winTitle.IndexOf("Certificate Error", StringComparison.CurrentCultureIgnoreCase) >= 0)
-            {
-                Thread.Sleep(100);
-                try
+                Uri uri = ValidateURL(sURL);
+                if (uri != null)
                 {
-                    Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1);
-                    Driver.Navigate().GoToUrl("javascript:document.getElementById('overridelink').click()");
+                    Driver.Navigate().GoToUrl(uri.AbsoluteUri);
                 }
-                catch { }
-                Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)ImplicitWait);
+                else
+                {
+                    act.Error = "Error: Invalid URL. Give valid URL(Complete URL)";
+                }
+                string winTitle = Driver.Title;
+                if (Driver.GetType() == typeof(InternetExplorerDriver) && winTitle.IndexOf("Certificate Error", StringComparison.CurrentCultureIgnoreCase) >= 0)
+                {
+                    Thread.Sleep(100);
+                    try
+                    {
+                        Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1);
+                        Driver.Navigate().GoToUrl("javascript:document.getElementById('overridelink').click()");
+                    }
+                    catch { }
+                    Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)ImplicitWait);
+                }
             }
-
+            catch (Exception ex)
+            {
+                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                act.Error += ex.Message;
+            }
             //just to be sure the page is fully loaded
             CheckifPageLoaded();
         }
@@ -1251,6 +1310,11 @@ namespace GingerCore.Drivers
                 if (act.WindowsToCapture == Act.eWindowsToCapture.OnlyActiveWindow || TakeOnlyActiveFrameOrWindowScreenShotInCaseOfFailure)
                 {
                     AddCurrentScreenShot(act);
+                }
+                else if (act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
+                {
+                    Bitmap img = GetScreenShot(true);
+                    act.AddScreenShot(img, Driver.Title);
                 }
                 else
                 {
@@ -3278,8 +3342,8 @@ namespace GingerCore.Drivers
 
             if (locateBy == eLocateBy.POMElement)
             {
-                var pomExcutionUtil = new POMExecutionUtils(act,act is ActUIElement ? ((ActUIElement)act).ElementLocateValue : ((ActVisualTesting)act).LocateValue);
-                
+                var pomExcutionUtil = new POMExecutionUtils(act, act is ActUIElement ? ((ActUIElement)act).ElementLocateValue : ((ActVisualTesting)act).LocateValue);
+
                 var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
                 if (currentPOM != null)
@@ -3331,7 +3395,7 @@ namespace GingerCore.Drivers
             return elem;
         }
 
-        
+
 
         private void SwitchFrame(ElementInfo EI)
         {
@@ -3916,7 +3980,7 @@ namespace GingerCore.Drivers
         /// Else, it'll be skipped - Checking the performance
         /// </summary>
         public bool ExtraLocatorsRequired = true;
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
         {
             return await Task.Run(() =>
             {
@@ -3930,7 +3994,7 @@ namespace GingerCore.Drivers
                     List<ElementInfo> list = new List<ElementInfo>();
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
-                    list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, relativeXpathTemplateList));
+                    list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, relativeXpathTemplateList, LearnScreenshotsOfElements));
                     allReadElem.Clear();
                     CurrentFrame = "";
                     Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
@@ -3946,7 +4010,7 @@ namespace GingerCore.Drivers
         }
 
 
-        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, List<string> relativeXpathTemplateList = null)
+        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
@@ -4036,6 +4100,11 @@ namespace GingerCore.Drivers
                                         CreateXpathFromUserTemplate(template, foundElemntInfo);
                                     }
                                 }
+                            }
+                            //Element Screenshot
+                            if (LearnScreenshotsOfElements)
+                            {
+                                foundElemntInfo.ScreenShotImage = TakeElementScreenShot(webElement);
                             }
 
                             foundElemntInfo.IsAutoLearned = true;
@@ -5381,6 +5450,7 @@ namespace GingerCore.Drivers
 
                 foundElemntInfo.ElementObject = el;
                 foundElemntInfo.Path = string.Empty;
+                foundElemntInfo.ScreenShotImage = TakeElementScreenShot(el);
 
                 if (el.TagName == "iframe" || el.TagName == "frame")
                 {
@@ -5399,7 +5469,23 @@ namespace GingerCore.Drivers
             }
             return null;
         }
-
+        /// <summary>
+        /// Take specific element screenshot
+        /// </summary>
+        /// <param name="element">IWebElement</param>
+        /// <returns>String image base64</returns>
+        private string TakeElementScreenShot(IWebElement element)
+        {
+            var screenshot = ((ITakesScreenshot)element).GetScreenshot();
+            Bitmap image = ScreenshotToImage(screenshot);
+            byte[] byteImage;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                byteImage = ms.ToArray();
+            }
+            return Convert.ToBase64String(byteImage);
+        }
 
         private ElementInfo GetElementFromIframe(ElementInfo IframeElementInfo)
         {
@@ -6532,8 +6618,9 @@ namespace GingerCore.Drivers
             }
         }
 
-        public void ActBrowserElementHandler(ActBrowserElement act)
+        public async void ActBrowserElementHandler(ActBrowserElement act)
         {
+            string AgentType = GetAgentAppName();
             switch (act.ControlAction)
             {
                 case ActBrowserElement.eControlAction.Maximize:
@@ -6584,9 +6671,16 @@ namespace GingerCore.Drivers
                         if (!string.IsNullOrEmpty(POMGuid))
                         {
                             ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(p => p.Guid.ToString() == POMGuid).FirstOrDefault();
-                            POMUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);     // SelectedPOM?.PageURL;
+                            if (SelectedPOM != null)
+                            {
+                                POMUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);
+                                GotoURL(act, POMUrl);
+                            }
+                            else
+                            {
+                                act.Error = "Error: Selected POM was not found.";
+                            }
                         }
-                        GotoURL(act, POMUrl);
                     }
                     else
                     {
@@ -6681,7 +6775,7 @@ namespace GingerCore.Drivers
 
                     String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
                     var networkLogs = ((IJavaScriptExecutor)Driver).ExecuteScript(scriptToExecute) as ReadOnlyCollection<object>;
-
+                    act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkLogs));
                     foreach (var item in networkLogs)
                     {
                         Dictionary<string, object> dict = item as Dictionary<string, object>;
@@ -6710,6 +6804,17 @@ namespace GingerCore.Drivers
 
                     }
 
+                    break;
+                case ActBrowserElement.eControlAction.StartMonitoringNetworkLog:
+                        mAct = act;
+                        SetUPDevTools(Driver);
+                        StartMonitoringNetworkLog(Driver, act).GetAwaiter().GetResult();
+                    break;
+                case ActBrowserElement.eControlAction.GetNetworkLog:
+                        GetNetworkLogAsync(Driver, act).GetAwaiter().GetResult();
+                    break;
+                case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
+                        StopMonitoringNetworkLog(Driver, act).GetAwaiter().GetResult();
                     break;
                 case ActBrowserElement.eControlAction.NavigateBack:
                     Driver.Navigate().Back();
@@ -7476,31 +7581,10 @@ namespace GingerCore.Drivers
 
         public HtmlDocument SSPageDoc = null;
 
-        public Bitmap GetScreenShot(bool IsFullPageScreenshot = false)
+        private Bitmap CaptureFullPageScreenshot()
         {
-            switch (mBrowserTpe)
-            {
-                case eBrowserType.FireFox:
-                    if (IsFullPageScreenshot)
-                    {
-                        var screenshot = ((FirefoxDriver)Driver).GetFullPageScreenshot();
-                        return ScreenshotToImage(screenshot);
-                    }
-                    break;
-                default:
-                    //
-                    break;
-            }
             try
             {
-                // If set to false only take screenshot of whats in view and not the whole page
-                if (!IsFullPageScreenshot)
-                {
-                    // return screenshot of what's visible currently in the viewport
-                    var screenshot = ((ITakesScreenshot)Driver).GetScreenshot();
-                    return ScreenshotToImage(screenshot);
-                }
-
                 // Scroll to Top
                 ((IJavaScriptExecutor)Driver).ExecuteScript(string.Format("window.scrollTo(0,0)"));
 
@@ -7575,6 +7659,41 @@ namespace GingerCore.Drivers
                 return null;
             }
         }
+
+        public Bitmap GetScreenShot(bool IsFullPageScreenshot = false)
+        {
+            if (!IsFullPageScreenshot)
+            {
+                // return screenshot of what's visible currently in the viewport
+                var screenshot = ((ITakesScreenshot)Driver).GetScreenshot();
+                return ScreenshotToImage(screenshot);
+            }
+            Bitmap bitmapImage = null;
+            switch (mBrowserTpe)
+            {
+                case eBrowserType.FireFox:
+                    var screenShot = ((FirefoxDriver)Driver).GetFullPageScreenshot();
+                    bitmapImage = ScreenshotToImage(screenShot);
+                    break;
+                case eBrowserType.Edge:
+                case eBrowserType.Chrome:
+                    if (Driver is InternetExplorerDriver)
+                    {
+                        bitmapImage = CaptureFullPageScreenshot();
+                    }
+                    else
+                    {
+                        var screenshot = ((OpenQA.Selenium.Chromium.ChromiumDriver)Driver).GetFullPageScreenshot();
+                        bitmapImage = ScreenshotToImage(screenshot);
+                    }
+                    break;
+                default:
+                    bitmapImage = CaptureFullPageScreenshot();
+                    break;
+            }
+            return bitmapImage;
+
+        }
         private Bitmap ScreenshotToImage(Screenshot screenshot)
         {
             TypeConverter tc = TypeDescriptor.GetConverter(typeof(Bitmap));
@@ -7591,7 +7710,7 @@ namespace GingerCore.Drivers
             {
                 string s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
 
-                RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
+                IWebElement ele = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
 
                 if (ele == null)
                 {
@@ -7649,7 +7768,7 @@ namespace GingerCore.Drivers
                 parentElementLocation.X += elemInfo.X;
                 parentElementLocation.Y += elemInfo.Y;
 
-                Point p_Pos = GetElementPosition(ele);
+                Point p_Pos = GetElementPosition((RemoteWebElement)ele);
                 ptX -= p_Pos.X;
                 ptY -= p_Pos.Y;
 
@@ -7700,7 +7819,7 @@ namespace GingerCore.Drivers
                             + "} "
                             + "return new Array(X, Y);";
 
-            RemoteWebDriver i_Driver = (RemoteWebDriver)i_Elem.WrappedDriver;
+            RemoteWebDriver i_Driver = (RemoteWebDriver)((RemoteWebElement)i_Elem).WrappedDriver;
             IList<Object> i_Coord = (IList<Object>)i_Driver.ExecuteScript(s_Script);
 
             int s32_ScrollX = Convert.ToInt32(i_Coord[0]);
@@ -7738,10 +7857,87 @@ namespace GingerCore.Drivers
         public Bitmap GetElementScreenshot(Act act)
         {
             WebElement element = (WebElement)LocateElement(act, false, null, null);
-            var screenshot = ((ITakesScreenshot)element).GetScreenshot();
-            return ScreenshotToImage(screenshot);
+            return CaptureScrollableElementScreenshot(element);
         }
 
+        private Bitmap CaptureScrollableElementScreenshot(WebElement element)
+        {
+            try
+            {
+                // Get the total size of the element
+                var offsetWidth = (int)(long)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].offsetWidth", element);
+                var scrollHeight = (int)(long)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].scrollHeight", element);
+
+                // Get the size of the viewport
+                var clientWidth = (int)(long)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].clientWidth", element);
+                var clientHeihgt = (int)(long)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].clientHeight", element);
+
+                // We only care about taking multiple images together if it doesn't already fit
+                if ((offsetWidth <= clientWidth) && (scrollHeight <= clientHeihgt))
+                {
+                    // return screenshot of what's visible currently in the viewport
+                    var screenshot = ((ITakesScreenshot)element).GetScreenshot();
+                    return ScreenshotToImage(screenshot);
+                }
+                // Split the screen in multiple Rectangles
+                var rectangles = new List<Rectangle>();
+                // Loop until the totalHeight is reached
+                for (var y = 0; y < scrollHeight; y += clientHeihgt)
+                {
+                    var newHeight = clientHeihgt;
+                    // Fix if the height of the element is too big
+                    if (y + clientHeihgt > scrollHeight)
+                        newHeight = scrollHeight - y;
+                    // Loop until the totalWidth is reached
+                    for (var x = 0; x < offsetWidth; x += clientWidth)
+                    {
+                        var newWidth = clientWidth;
+                        // Fix if the Width of the Element is too big
+                        if (x + clientWidth > offsetWidth)
+                            newWidth = offsetWidth - x;
+                        // Create and add the Rectangle
+                        var currRect = new Rectangle(x, y, newWidth, newHeight);
+                        rectangles.Add(currRect);
+                    }
+                }
+                // Build the Image
+                var stitchedImage = new Bitmap(offsetWidth, scrollHeight);
+                // Get all Screenshots and stitch them together
+                var previous = Rectangle.Empty;
+                foreach (var rectangle in rectangles)
+                {
+                    // Calculate the scrolling (if needed)
+                    if (previous != Rectangle.Empty)
+                    {
+                        var xDiff = rectangle.Right - previous.Right;
+                        var yDiff = rectangle.Bottom - previous.Bottom;
+                        // Scroll
+                        ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].scrollTo(arguments[1], arguments[2])", element, xDiff, yDiff);
+                    }
+                    // Take Screenshot
+                    var screenshot = ((ITakesScreenshot)element).GetScreenshot();
+                    // Build an Image out of the Screenshot
+                    var screenshotImage = ScreenshotToImage(screenshot);
+                    // Calculate the source Rectangle
+                    var sourceRectangle = new Rectangle(clientWidth - rectangle.Width, clientHeihgt - rectangle.Height, rectangle.Width, rectangle.Height);
+                    // Copy the Image
+                    using (var graphics = Graphics.FromImage(stitchedImage))
+                    {
+                        graphics.DrawImage(screenshotImage, rectangle, sourceRectangle, GraphicsUnit.Pixel);
+                    }
+                    // Set the Previous Rectangle
+                    previous = rectangle;
+                }
+                return stitchedImage;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to capture scrollable element screenshot", ex);
+                var screenshot = ((ITakesScreenshot)element).GetScreenshot();
+                return ScreenshotToImage(screenshot);
+            }
+
+        }
         VisualElementsInfo IVisualTestingDriver.GetVisualElementsInfo()
         {
             VisualElementsInfo VEI = new VisualElementsInfo();
@@ -8500,7 +8696,7 @@ namespace GingerCore.Drivers
             {
                 options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.None;
             }
-            else 
+            else
             {
                 options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Default;
             }
@@ -8509,12 +8705,12 @@ namespace GingerCore.Drivers
 
         public string GetApplitoolServerURL()
         {
-            return this.ApplitoolsServerUrl;
+            return WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
         }
 
         public string GetApplitoolKey()
         {
-            return this.ApplitoolsViewKey;
+            return WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey;
         }
 
         public ePlatformType GetPlatform()
@@ -8525,6 +8721,187 @@ namespace GingerCore.Drivers
         public string GetEnvironment()
         {
             return this.BusinessFlow.Environment;
+        }
+
+        public Size GetWindowSize()
+        {
+            return Driver.Manage().Window.Size;
+        }
+
+        public string GetAgentAppName()
+        {
+            return GetBrowserType().ToString();
+        }
+
+        public string GetViewport()
+        {
+            return Driver.Manage().Window.Size.ToString();
+        }
+
+        private void SetUPDevTools(IWebDriver webDriver)
+        {
+            //Get DevTools
+            var devTool = webDriver as IDevTools;
+
+            //DevTool Session 
+            devToolsSession = devTool.GetDevToolsSession(101);
+            var domains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains>();
+            domains.Network.Enable(new OpenQA.Selenium.DevTools.V101.Network.EnableCommandSettings());
+        }
+        public async Task GetNetworkLogAsync(IWebDriver webDriver, ActBrowserElement act)
+        {
+            if (isNetworkLogMonitoringStarted)
+            {
+                act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x=>x.Item2).ToList()));
+                act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
+                foreach (var val in networkRequestLogList.ToList())
+                {
+                    act.AddOrUpdateReturnParamActual(act.ControlAction.ToString()+ " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                }
+                
+                foreach (var val in networkResponseLogList.ToList())
+                {
+                    act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                }
+            }
+            else
+            {
+                act.ExInfo = "Action is skipped," + ActBrowserElement.eControlAction.StartMonitoringNetworkLog.ToString() + " Action is not started";
+                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+            }
+
+        }
+
+        public async Task StartMonitoringNetworkLog(IWebDriver webDriver, ActBrowserElement act)
+        {
+
+            networkRequestLogList = new List<Tuple<string, object>>();
+            networkResponseLogList = new List<Tuple<string, object>>();
+            interceptor = webDriver.Manage().Network;
+
+            interceptor.NetworkRequestSent += OnNetworkRequestSent;
+            interceptor.NetworkResponseReceived += OnNetworkResponseReceived;
+
+            await interceptor.StartMonitoring();
+            isNetworkLogMonitoringStarted = true;
+        }
+
+        public async Task StopMonitoringNetworkLog(IWebDriver webDriver, ActBrowserElement act)
+        {
+            if (isNetworkLogMonitoringStarted)
+            {
+                await interceptor.StopMonitoring();
+
+                interceptor.NetworkRequestSent -= OnNetworkRequestSent;
+                interceptor.NetworkResponseReceived -= OnNetworkResponseReceived;
+                act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
+                act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
+                foreach (var val in networkRequestLogList.ToList())
+                {
+                    act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                }
+                foreach (var val in networkRequestLogList.ToList())
+                {
+                    act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                }
+                string requestPath = CreateNetworkLogFile("NetworklogRequest");
+                act.ExInfo = "RequestFile : " + requestPath + "\n";
+                string responsePath = CreateNetworkLogFile("NetworklogResponse");
+                act.ExInfo = act.ExInfo +  "ResponseFile : " + responsePath + "\n";
+
+            }
+            else
+            {
+                act.ExInfo = "Action is skipped," + ActBrowserElement.eControlAction.StartMonitoringNetworkLog.ToString() + " Action is not started";
+                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+
+            }
+
+        }
+
+        private string CreateNetworkLogFile(string Filename)
+        {
+            string FullFilePath = string.Empty;
+            string FullDirectoryPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, "Documents", "NetworkLog");
+            if (!System.IO.Directory.Exists(FullDirectoryPath))
+            {
+                System.IO.Directory.CreateDirectory(FullDirectoryPath);
+            }
+
+            FullFilePath = FullDirectoryPath + @"\" + Filename + DateTime.Now.Day.ToString() + "_" + DateTime.Now.Month.ToString() + "_" + DateTime.Now.Year.ToString() + "_" + DateTime.Now.Millisecond.ToString() + ".har";
+            if (!System.IO.File.Exists(FullFilePath))
+            {
+                string FileContent = Filename.Contains("Request") ? JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()) : JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList());
+                
+                using (Stream fileStream = System.IO.File.Create(FullFilePath))
+                {
+                    fileStream.Close();
+                }
+                System.IO.File.WriteAllText(FullFilePath, FileContent);
+                
+            }
+            return FullFilePath;
+        }
+
+        private void OnNetworkRequestSent(object sender, NetworkRequestSentEventArgs e)
+        {
+            if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() && mAct.UpdateOperationInputValues != null && mAct.UpdateOperationInputValues.Any(x => e.RequestUrl.ToLower().Equals(x.Param.ToLower())))
+            {
+                networkRequestLogList.Add(new Tuple<string, object>("RequestUrl:" + e.RequestUrl, JsonConvert.SerializeObject(e)));
+
+            }
+            else if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.AllUrl.ToString())
+            {
+                networkRequestLogList.Add(new Tuple<string, object>("RequestUrl:" + e.RequestUrl, JsonConvert.SerializeObject(e)));
+
+            }
+
+
+        }
+
+        private void OnNetworkResponseReceived(object sender, NetworkResponseReceivedEventArgs e)
+        {
+            try
+            {
+                if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() && mAct.UpdateOperationInputValues != null && mAct.UpdateOperationInputValues.Any(x => e.ResponseUrl.ToLower().Equals(x.Param.ToLower())))
+                {
+                    if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
+                    {
+                        if (e.ResponseResourceType == "XHR")
+                        {
+                            networkResponseLogList.Add(new Tuple<string, object>("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e)));
+                        }
+                    }
+                    else
+                    {
+                        networkResponseLogList.Add(new Tuple<string, object>("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e)));
+                    }
+
+                }
+                else if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.AllUrl.ToString())
+                {
+                    if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
+                    {
+                        if (e.ResponseResourceType == "XHR")
+                        {
+                            
+                            networkResponseLogList.Add(new Tuple<string, object>("ResponseUrl:" + e.ResponseUrl,JsonConvert.SerializeObject(e)));
+                        }
+                    }
+                    else
+                    {
+
+                        networkResponseLogList.Add(new Tuple<string, object>("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e)));
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
         }
     }
 }

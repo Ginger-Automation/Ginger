@@ -1,0 +1,17 @@
+    <UserControl x:Class="Amdocs.Ginger.UserControls.ucButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"            
+              xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="200">
+
+    <Button x:Name="xButton" Click="xButton_Click"  IsEnabledChanged="IsEnabledChangeHandler" FontSize="15" Height="30" Margin="5,5,5,5" HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand"  AutomationProperties.AutomationId="{Binding Path=ButtonAutomationId}">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock x:Name="xButtonText" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <usercontrols:ImageMakerControl x:Name="xButtonImage" SetAsFontImageWithSize="{Binding ButtonFontImageSize}" ImageType="Empty" HorizontalAlignment="Center" SetBorder="False"  VerticalAlignment="Center" />
+        </StackPanel>
+    </Button>
+
+</UserControl>

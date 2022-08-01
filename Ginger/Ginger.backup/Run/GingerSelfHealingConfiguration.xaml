@@ -1,0 +1,27 @@
+﻿<Page x:Class="Ginger.Run.GingerSelfHealingConfiguration"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.Run"
+      mc:Ignorable="d" 
+      d:DesignHeight="350" d:DesignWidth="350"
+      Title="Self Healing Configurations">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}" >
+        <Grid.RowDefinitions>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Margin="5 15 0 0">
+            <CheckBox Style="{StaticResource @CheckBoxStyle}"  x:Name="xEnableSelfHealingChkBox" Click="xEnableSelfHealingChkBox_Click" Content="Enable Self Healing Mode" />
+            <StackPanel Margin="10 10 0 0"  x:Name="xSelfHealingConfigPanel" Visibility="Collapsed">
+                <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xAutoUpdateModelChkBox" Margin="5" Content="Auto-update Application Model During Execution" />
+                <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xRePrioritizeChkBox" Margin="5" Content="Re-Prioritize Failed POM Locators" />
+                <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xAutoFixAnalyzerChkBox" Margin="5" Content="Auto Fix Analyzer Issues" />
+                <CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xAutoExecuteInSimulationChkBox" Margin="5" Content="Auto switch to simulation mode for failed actions" />
+
+                <!--<CheckBox Style="{StaticResource @CheckBoxStyle}" x:Name="xUseVirtualEnvChkBox"  Margin="5" Visibility="Collapsed" Content="Use Virtual Environment On Failure" />-->
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

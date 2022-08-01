@@ -1,0 +1,111 @@
+    <Page x:Class="Ginger.WindowExplorer.PowerBuilder.DataGridInfoPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+       xmlns:Ginger="clr-namespace:Ginger"   
+      mc:Ignorable="d"
+	Title="DataGridInfoPage" Height="400" Width="600">
+
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="300*"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <Label  Content="Select Column By:"/>
+            <ComboBox  x:Name="SelecColumnByComboBox"  SelectionChanged="SelectByCombo_SelectionChanged" Width="120" Height="21">
+                <ComboBoxItem>Name (Developer Name)</ComboBoxItem>
+                <ComboBoxItem>Title (Column Header)</ComboBoxItem>
+                <ComboBoxItem>Index</ComboBoxItem>
+                <ComboBoxItem>SQL</ComboBoxItem>
+            </ComboBox>
+            <Label>=</Label>
+            <ComboBox x:Name="ColumnValue" Width="100" Height="21">
+                <ComboBoxItem>A</ComboBoxItem>
+                <ComboBoxItem>B</ComboBoxItem>
+            </ComboBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2">
+            <Label>Select Column ByName='aaa'</Label>
+            <Label>Find Row By: Random, ByIndex=3, Where Col ByName'bbb'='aaa'</Label>
+        </StackPanel>
+        <DataGrid x:Name="GridData" Grid.Row="3" SelectionUnit="Cell"  AutoGenerateColumns="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"    />
+
+        <StackPanel Grid.Row="4">
+            <Label>Rows: 123, Columns: 22</Label>
+        </StackPanel>
+        
+        <Grid Grid.Row="1" Visibility="Collapsed" Name="grdCondition">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Content="Select Columns         " HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="124"/>
+            <Label Grid.Row="1" Grid.Column="0" Content="Select Row Where" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="106"/>
+            <TextBox Grid.Row="0" Grid.Column="1" x:Name="colFilter" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="&#xD;&#xA;" VerticalAlignment="Top" Width="120" />
+            <TextBox Grid.Row="1" Grid.Column="1" x:Name="rowFilter"  HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+
+            <Button Grid.Row="1" Grid.Column="2" Content="Filter" HorizontalAlignment="Left"   VerticalAlignment="Top" Click="Button_FilterByCondition" Height="22"/>
+
+        </Grid>
+
+        <Grid Grid.Row="1" Name="grdIndex" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Content="Select Columns         " HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="124"/>
+            <Label Grid.Row="1" Grid.Column="0" Content="Select Row Index" HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="106"/>
+            <TextBox Grid.Row="0" Grid.Column="1" x:Name="colFilterIndex" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="&#xD;&#xA;" VerticalAlignment="Top" Width="120" />
+            <TextBox Grid.Row="1" Grid.Column="1" x:Name="rowFilterIndex"  HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+
+            <Button Grid.Row="1" Grid.Column="2" Content="Filter" HorizontalAlignment="Left"   VerticalAlignment="Top"  Height="22"/>
+
+        </Grid>
+        <Grid Grid.Row="1" Visibility="Collapsed" Name="grdRandom">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Content="Select Columns         " HorizontalAlignment="Left" VerticalAlignment="Top" Height="25" Width="124"/>
+            <TextBox Grid.Row="0" Grid.Column="1" x:Name="colFilterRandom" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="&#xD;&#xA;" VerticalAlignment="Top" Width="120" />
+            <Button Grid.Row="0" Grid.Column="2" Content="Filter" HorizontalAlignment="Left"   VerticalAlignment="Top" Click="Button_FilterByColumns" Height="22"/>
+
+        </Grid>
+
+        <StackPanel Grid.Row="4" Orientation="Vertical" Visibility="Collapsed">
+            <Label Content="Select By" Grid.Row="0"/>
+            <Label x:Name="lblColumnName" Content="Where Column Name" Visibility="Hidden"/>
+            <ComboBox x:Name="GridColumnNames"  Visibility="Hidden" Grid.ColumnSpan="5"/>
+
+
+            <Label x:Name="lblWhere" Content=""  Visibility="Hidden"/>
+            <TextBox x:Name="txtMatchValue" Text=""  Visibility="Hidden" Grid.ColumnSpan="9"/>
+            <ComboBox x:Name="comboWhereValue"  Visibility="Hidden" Grid.ColumnSpan="5"/>
+
+        </StackPanel>
+    </Grid>
+
+
+</Page>
+

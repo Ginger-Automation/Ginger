@@ -44,6 +44,7 @@ namespace Ginger.ConfigurationsLib
                 {
                     mMenusPage = new TwoLevelMenuPage(GetMenu());
                      WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+                     WorkSpace.Instance.UserProfile.PropertyChanged += WorkSpacePropertyChanged;
                 }
                 return mMenusPage;
             }
@@ -52,6 +53,10 @@ namespace Ginger.ConfigurationsLib
         private static void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(WorkSpace.Solution))
+            {
+                MenusPage.Reset();
+            }
+            if (e.PropertyName == nameof(WorkSpace.UserProfile.ShowEnterpriseFeatures))
             {
                 MenusPage.Reset();
             }
@@ -71,18 +76,19 @@ namespace Ginger.ConfigurationsLib
 
             TopMenuItem reportsMenu = new TopMenuItem(eImageType.Report, "Reports", ConsoleKey.R, "Reports_AID", "Reports Templates and Configurations");
             reportsMenu.Add(eImageType.Report, "Reports Templates", ReportsList, ConsoleKey.R, "Reports Templates are used to define the HTML report content and design", "Reports AID");
-            reportsMenu.Add(eImageType.Config, "General Reports Configurations", ReportsConfig, ConsoleKey.R, "Global Reports Configurations", "Reports Config AID");
-            reportsMenu.Add(eImageType.Config, "Execution Logger Configurations", ExecutionLoggerConfig, ConsoleKey.R, "Execution Logger Configurations", "Execution Logger Config AID");
+            reportsMenu.Add(eImageType.Config, "General Reports Configurations", ReportsConfig, ConsoleKey.R, "Global Reports Configurations", "Reports Configurations AID");
+            reportsMenu.Add(eImageType.Config, "Execution Logger Configurations", ExecutionLoggerConfig, ConsoleKey.R, "Execution Logger Configurations", "Execution Logger Configurations AID");
             twoLevelMenu.Add(reportsMenu);
-
-            TopMenuItem externalConfigMenu = new TopMenuItem(eImageType.Settings, "External Integrations", ConsoleKey.X, "External Configurations AID", "List of External Configurations to be used");
-            externalConfigMenu.Add(eImageType.View, "VRT Configuration", GetExteranalConfigsPage, ConsoleKey.X, "Visual Regression Testing External Configurations", "VRT Configuration AID");
-            externalConfigMenu.Add(eImageType.Wrench, "Others", OthersPage, ConsoleKey.X, "Other External Configurations", "Other Configuration AID");
-            twoLevelMenu.Add(externalConfigMenu);
 
             TopMenuItem tagsMenu = new TopMenuItem(eImageType.Tag, "Tags", ConsoleKey.T, "Tags AID", "List of Tags to be used for marking any of the Solution items with");
             tagsMenu.Add(eImageType.Tag, "", GetTagsPage, ConsoleKey.T, "", "AID");
             twoLevelMenu.Add(tagsMenu);
+
+            TopMenuItem externalConfigMenu = new TopMenuItem(eImageType.Building, WorkSpace.Instance.Solution.ExternalIntegrationsTabName, ConsoleKey.X, "External Configurations AID", "List of External Configurations to be used");
+            externalConfigMenu.Add(eImageType.VRT, "VRT Configuration", GetVRTExteranalConfigsPage, ConsoleKey.X, "Visual Regression Testing External Configurations", "VRT Configuration AID");
+            externalConfigMenu.Add(eImageType.Applitools, "Applitools Configuration", GetApplitoolsExteranalConfigsPage, ConsoleKey.X, "Applitools External Configurations", "Applitools Configuration AID");
+            externalConfigMenu.Add(eImageType.Sealights, "Sealights Configuration", GetSealightsExteranalConfigsPage, ConsoleKey.X, "Sealights External Configurations", "Sealights Configuration AID");
+            twoLevelMenu.Add(externalConfigMenu);
 
             return twoLevelMenu;
         }
@@ -126,9 +132,17 @@ namespace Ginger.ConfigurationsLib
             return reportsPage;
         }
 
-        private static Page GetExteranalConfigsPage()
+        private static Page GetVRTExteranalConfigsPage()
         {
-            return new ExternalConfigurationsPage();
+            return new VRTExternalConfigurationsPage();
+        }
+        private static Page GetApplitoolsExteranalConfigsPage()
+        {
+            return new ApplitoolsExternalConfigurationsPage();
+        }
+        private static Page GetSealightsExteranalConfigsPage()
+        {
+            return new SealightsExternalConfigurationsPage();
         }
 
         //Remove when we add other pages

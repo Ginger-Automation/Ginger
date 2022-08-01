@@ -1171,7 +1171,7 @@ namespace Ginger.Imports.UFT
 
             BitmapImage b = new BitmapImage();
             b.BeginInit();
-            b.UriSource = new Uri("pack://application:,,,/Ginger;component/Images/" + "HELP_UFT.png");   //new Uri(Directory.GetCurrentDirectory() + @"\Help\HELP_UFT.png"); // @"C:\\Users\\Preetigu\\Desktop\\UFT_GINGER\\help_browser.png");
+            b.UriSource = new Uri(@"/Images/" + "HELP_UFT.png", UriKind.RelativeOrAbsolute);   //new Uri(Directory.GetCurrentDirectory() + @"\Help\HELP_UFT.png"); // @"C:\\Users\\Preetigu\\Desktop\\UFT_GINGER\\help_browser.png");
             b.EndInit();
             var image = sender as Image;
             image.Source = b;
@@ -1179,10 +1179,7 @@ namespace Ginger.Imports.UFT
 
         private void Image_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            System.Diagnostics.Process wordProcess = new System.Diagnostics.Process();
-            wordProcess.StartInfo.FileName = Directory.GetCurrentDirectory() + @"\Help\Import_From_ASAP.pdf";
-            wordProcess.StartInfo.UseShellExecute = true;
-            wordProcess.Start();
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = Directory.GetCurrentDirectory() + @"\Help\Import_From_ASAP.pdf", UseShellExecute = true });
         }
         
         private void TargetApplication_SelectionChanged(object sender, SelectionChangedEventArgs e)

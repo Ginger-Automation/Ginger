@@ -8,7 +8,7 @@
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,0" Background="Transparent">
         <Label x:Name="xTagsLabel" Style="{StaticResource   $LabelStyle}" Background="Transparent" VerticalAlignment="Center" Margin="0,0,0,0">Tags:</Label>
         <StackPanel x:Name="xTagsStackPanl" Orientation="Horizontal" VerticalAlignment="Center" Background="Transparent"/>
-        <usercontrols:ucButton x:Name="xAddTagBtn" ButtonType="ImageButton"  ButtonImageType="Tag" ButtonFontImageSize="12" ToolTip="Add Tag" Click="AddTagBtn_Click" Width="Auto" Margin="-10,0,0,0" HorizontalContentAlignment="Right" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <usercontrols:ucButton x:Name="xAddTagBtn" ButtonType="ImageButton"  ButtonImageType="Tag" ButtonFontImageSize="10" ToolTip="Add Tag" Click="AddTagBtn_Click" Width="Auto" Margin="-8,0,0,0" HorizontalContentAlignment="Right" HorizontalAlignment="Right" VerticalAlignment="Center" />
         
         <ComboBox x:Name="xTagsComboBox" Visibility="Collapsed" IsEditable="False" SelectionChanged="TagsComboBox_SelectionChanged" HorizontalAlignment="Right" DropDownOpened="TagsComboBox_DropDownOpened" DropDownClosed="XTagsComboBox_DropDownClosed" Style="{StaticResource  $FlatEditInputComboBoxStyle}" Margin="0" HorizontalContentAlignment="Right" Width="40">
             <ComboBox.ItemContainerStyle>

@@ -1,0 +1,226 @@
+    <Page x:Class="Ginger.Actions.ActDataSourcePage"  xmlns:Actions="clr-namespace:Ginger.Actions"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      mc:Ignorable="d" d:DesignWidth="600" Height="1040" 
+	Title="DataSource Expression Editor" >
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="UpdateVERow1" Height="0"/>
+            <RowDefinition Height="55"/>
+            <RowDefinition x:Name="ActionRow" Height="55"/>
+            <RowDefinition x:Name="TableRow" Height="35" />
+            <RowDefinition x:Name="IdentifierRow" Height="510*" />
+            <RowDefinition x:Name="MarkRow" Height="25"/>
+            <RowDefinition x:Name="VERow" Height="80" />
+            <RowDefinition x:Name="ValRow" Height="55" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80"/>
+            <ColumnDefinition Width="130"/>
+            <ColumnDefinition Width="130"/>
+            <ColumnDefinition Name="DSCol" Width="250*"/>
+        </Grid.ColumnDefinitions>
+
+
+        <StackPanel x:Name="HeaderPanel" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Margin="0,0,0.4,6.2" Grid.RowSpan="2">
+            <Grid Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="137.6"/>
+                    <ColumnDefinition Width="232.8"/>
+                    <ColumnDefinition Width="336.8"/>
+                </Grid.ColumnDefinitions>
+                <Label HorizontalAlignment="Left" Grid.Row="0" Grid.Column="0"  Style="{StaticResource @LabelStyle}">Data Source:</Label>
+                <ComboBox Name="cmbDataSourceName" HorizontalAlignment="Left" Grid.Row="0" Grid.Column="1" IsReadOnly="True" Background="#FFE8E8EC" Style="{StaticResource @InputComboBoxStyle}" Margin="0,2,0,0" Width="210" SelectionChanged="cmbDataSourceName_SelectionChanged"/>
+                <Label HorizontalAlignment="Left" Grid.Row="2" Grid.Column="0"  Style="{StaticResource @LabelStyle}">Data Source Table:</Label>
+                <ComboBox Name="cmbDataSourceTableName" HorizontalAlignment="Left" Grid.Row="2" Grid.Column="1" IsReadOnly="True" Background="#FFE8E8EC"  Style="{StaticResource @InputComboBoxStyle}" Margin="0,0,0,2" Width="210" SelectionChanged="cmbDataSourceTableName_SelectionChanged"></ComboBox>
+
+            </Grid>
+        </StackPanel>
+
+        <StackPanel x:Name="ControlActionPanel" Grid.ColumnSpan="4" Margin="0,0,0.4,0.2" Grid.Row="2">
+            <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Action Type:</Label>
+            <ComboBox x:Name="ControlActionComboBox" Style="{StaticResource @InputComboBoxStyle}"   Margin="0,0,0,0" SelectionChanged="ControlActionComboBox_SelectionChanged" RenderTransformOrigin="0.478,1.45"></ComboBox>
+        </StackPanel>
+        <Expander x:Name="TableDataExpander"  ExpandDirection="Down" IsExpanded="False" Style="{StaticResource @ExpanderLightStyle}" Expanded="TableDataExpander_Expanded"  Collapsed="TableDataExpander_Collapsed"  Grid.Row="3" Grid.ColumnSpan="4" Margin="0,0,0,0">
+            <Expander.Header>
+                <Label x:Name="TableDataExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
+                    <Label.Content>
+                        <GingerCore:ucTextDicResource Text="Table Data" Width="578"/>
+                    </Label.Content>
+                </Label>
+            </Expander.Header>
+            <Expander.Content>
+                <Ginger:ucGrid x:Name="grdTableData"  Title="Table Data" HorizontalContentAlignment="Left" IsReadOnly="True" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowRefresh="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" />
+                
+            </Expander.Content>
+        </Expander>
+        <Expander x:Name="IdentiferExpander" ExpandDirection="Down" IsExpanded="True" Grid.Row="4" Grid.ColumnSpan="4" Style="{StaticResource @ExpanderLightStyle}" Expanded="IdentiferExpander_Expanded" Collapsed="IdentiferExpander_Collapsed">
+            <Expander.Header>
+                <Label x:Name="IdentifierExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
+                    <Label.Content>
+                        <GingerCore:ucTextDicResource x:Name="ExpTableCell" Text="Table Cell Identifier" Width="585"/>
+                    </Label.Content>
+                </Label>
+            </Expander.Header>
+            <Expander.Content>
+                <StackPanel>
+                    <Grid Visibility="Collapsed" Name="ExcelGrid" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <!--<RowDefinition/>-->
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <!--<StackPanel Grid.Row="0" Grid.Column="0" Margin="0,8,0,0">
+                            <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}" VerticalAlignment="Top">Excel Path:</Label>
+                        </StackPanel>
+                        <StackPanel Grid.Row="0"  VerticalAlignment="Top" Grid.Column="1" Margin="0,8,0,0">
+                            <Actions:UCValueExpression x:Name="ExcelFilePath" Grid.Column="1" VerticalAlignment="Center" ToolTip="Excel file full path" Margin="0,0,-325,0"/>
+                            
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,8,0,0">
+                            <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}" VerticalAlignment="Top">Excel Sheet Name:</Label>
+                        </StackPanel>
+                        <StackPanel Grid.Row="1"  VerticalAlignment="Top" Grid.Column="1" Margin="0,8,0,0">
+                            <Actions:UCValueExpression x:Name="ExcelSheetName" Grid.Column="1" VerticalAlignment="Center" ToolTip="Excel Sheet Name" Margin="0,0,-325,0"/>
+                            
+                        </StackPanel>-->
+                        <Frame  Grid.Row="0" HorizontalAlignment="Left" x:Name="ExcelSpecificFrame" Content="ExcelSpecificFrame" Visibility="Collapsed" Margin="10,0,0,0" NavigationUIVisibility="Hidden"/>
+                    </Grid>
+                    
+                    <Grid Visibility="Collapsed" Name="KeyGrid" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="150"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,8,0,0">
+                            <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}" VerticalAlignment="Top">Key Name:</Label>
+                        </StackPanel>
+                        <StackPanel Grid.Row="0"  VerticalAlignment="Top" Grid.Column="1" Margin="0,8,0,0">
+                            <ComboBox x:Name="cmbKeyName" Grid.Column="1" Height="25" IsEditable="True" SelectionChanged="cmbKeyName_SelectionChanged" LostFocus="cmbKeyName_LostFocus" Margin="10,2,-95.2,0" Style="{StaticResource @InputComboBoxStyle}" LostKeyboardFocus="cmbKeyName_LostKeyboardFocus"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid Visibility="Visible" Name="CustomizedGrid" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="78"/>
+                            <RowDefinition x:Name="DataRow" Height="387"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="24.256"/>
+                            <ColumnDefinition Width="55.744"/>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="250*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel x:Name="IdentifierPanel" Grid.Column="0" Grid.ColumnSpan="4" Margin="0,0,0,0" Grid.Row="0">
+                            <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Identifier:</Label>
+                        </StackPanel>
+                        <StackPanel x:Name="IdentifierSelectorPanel" Margin="0,0,0,0" Grid.Row="0" Grid.Column="2">
+                            <RadioButton Name="SelectedCell" Content="By Selected Cell" IsEnabled="False" Checked="SelectedCell_Checked" Unchecked="SelectedCell_Unchecked" Margin="0,5,0,5" HorizontalAlignment="Right" Width="130"/>
+                            <RadioButton Name="ByQuery" Content="By Query" Checked="Query_Checked" Unchecked="ByQuery_Unchecked" Margin="0,5,0,5" HorizontalAlignment="Right" Width="130"/>
+                            <RadioButton Name="Customized" Content="Customized" IsChecked="True" Checked="Customized_Checked" Unchecked="Customized_Unchecked" Margin="0,5,0,5"/>
+                        </StackPanel>
+                        <Grid Name="QueryPanel" VerticalAlignment="Top" Visibility="Collapsed"  Margin="0,0,0,0" Grid.Row="1" Grid.ColumnSpan="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label  Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}" VerticalAlignment="Center">Query:</Label>
+                            <TextBox Grid.Row="1" x:Name="QueryVal"  Margin="0,0,28,0" LostFocus="QueryValue_LostFocus" TextChanged="QueryVal_TextChanged" ToolTip="Enter the Query which should return 1 value"/>
+                            <Button Grid.Row="1" x:Name="QueryValVE" Content="..." Click="QueryValVE_Click" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}"  Width="25" ></Button>
+                        </Grid>
+                        <StackPanel Name="CustomizedPanel" Visibility="Visible" Grid.ColumnSpan="5" Margin="0,4.6,0,0.6" Grid.Row="1">
+                            <Grid Name ="WhereGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+                                <Grid.Resources>
+                                    <DataTemplate x:Key="ValueExpressionButton">
+                                        <Button x:Name="GridVEButton" Content="..." Click="GridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+                                    </DataTemplate>
+                                </Grid.Resources>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="45" Name="ColIden"/>
+                                    <RowDefinition  Height="347" Name="WhereRow"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="264.8"/>
+                                    <ColumnDefinition Width="Auto" MinWidth="143.2"/>
+                                    <ColumnDefinition Width="110.4*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,10,1,17.8">
+                                    <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}" VerticalAlignment="Center">Column:</Label>
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,10,0.8,149.6" Grid.RowSpan="2" >
+                                    <ComboBox x:Name="cmbColumnValue" Grid.Column="1" Grid.ColumnSpan="3" Height="25" IsEditable="True" Margin="10,0,-125,0" Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="ColumnValue_SelectionChanged" LostKeyboardFocus="ColumnValue_LostKeyboardFocus"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0.2,1,0.6">
+                                    <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}" VerticalAlignment="Top">Row:</Label>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="1" x:Name="RowSelectorPanel" Margin="0,0.2,0.8,0.6">
+                                    <RadioButton Name="RowNum" Content="Row Number" IsChecked="True" Checked="RowNum_Checked" Unchecked="RowNum_Unchecked" Margin="0,5,0,5"/>
+                                    <RadioButton Name="NextAvailable" Content="Next Available Row" Checked="NextAvailable_Checked" Unchecked="NextAvailable_Unchecked" Margin="0,5,0,5"/>
+                                    <RadioButton Name="Where" Content="Where..." Checked="Where_Checked" Unchecked="Where_Unchecked" Margin="0,5,0,5"/>
+                                </StackPanel>
+                                <StackPanel Name="RowNumSelectorPanel" Grid.Column="1" Grid.ColumnSpan="3" Orientation="Horizontal" VerticalAlignment="Top" Height="30" Margin="100,0,-0.6,0" Grid.Row="1">
+                                    <DockPanel>
+                                        <ComboBox x:Name="RowSelectorValue" Height="25" Width="250" Margin="10,0,0,0" IsEditable="True" IsEnabled="True" Style="{StaticResource @InputComboBoxStyle}"  SelectionChanged="RowSelectorValue_SelectionChanged" LostKeyboardFocus="RowSelectorValue_LostKeyboardFocus"/>
+                                        <Button x:Name="RowSelectorValueVE" Content="..." Click="RowSelectorValueVE_Click" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="0,0,0,0" Width="30" Height="23"></Button>
+                                    </DockPanel>
+                                    
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="1"  x:Name="WherePanel" Visibility="Visible" Grid.ColumnSpan="4" Margin="10,80,0,0">
+                                   
+                                    <Ginger:ucGrid  x:Name="grdCondition" Height="250" Title="Where Condition(s)" ShowUpDown="Collapsed" Loaded="grdCondition_Loaded"></Ginger:ucGrid>
+                                   
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Expander.Content>
+        </Expander>
+        <StackPanel Name="MarkRowPanel"  Grid.Row="5" Grid.ColumnSpan="4" Margin="0,5,0,0">
+            <CheckBox Grid.Column="0"  Name="MarkAsDone" Content="Mark Row As Used" Checked="MarkAsDone_Checked" Unchecked="MarkAsDone_Unchecked" Margin="0,0,0,0" HorizontalAlignment="Left" Width="212"/>
+            <CheckBox Grid.Column="1"  Name="MultiRows" Content="Multi Rows" Checked="MultiRows_Checked"  Unchecked="MultiRows_Unchecked"  Margin="150,-15,-10,0" HorizontalAlignment="Left" Width="212">
+                <CheckBox.ToolTip>
+                    <ToolTip Style="{StaticResource ToolTipStyle}" >Perform the same action on multiple rows which satisfy condition</ToolTip>
+                </CheckBox.ToolTip>
+            </CheckBox>
+        </StackPanel>
+        <Label  Name="lblDescription"  Grid.Row="6" Grid.Column="0" Content="Value Expression:" Style="{StaticResource @LabelStyle}"  HorizontalAlignment="Stretch" Margin="0,0.2,90,54" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
+        <StackPanel Grid.Row="6" Grid.Column="1" x:Name="DescriptionPanel" Visibility="Visible" Margin="0.2,2.2,0.4,10" Grid.ColumnSpan="3" Grid.RowSpan="2">
+            <Grid Margin="40,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <DockPanel x:Name="ValueExpression" Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="0" >
+                    <Border Name="VEBorder" BorderThickness="1" BorderBrush="Black">
+                        
+                        <TextBlock x:Name="txtValueExpression" TextWrapping="Wrap" Style="{StaticResource @DetailsTextBlockStyle}" DockPanel.Dock="Top" Background="#FFEFEFF2" Margin="0,0,0,0" ></TextBlock>
+                    </Border>
+                </DockPanel>
+                <Label Name="ErrorLabel" Grid.Row="1" FontWeight="Bold" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top">Error</Label>
+            </Grid>
+        </StackPanel>        
+        <Label Name="ValueLabel"  Grid.Row="7" Grid.Column="0" Style="{StaticResource @SubInputFieldLabelStyle}" Content="Value:" Background="{StaticResource $BackgroundColor_LightGray}"/>        
+        <Actions:UCValueExpression x:Name="ValueUC" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" VerticalAlignment="Top" ToolTip="Value to Set"/>        
+    </Grid>
+</Page>

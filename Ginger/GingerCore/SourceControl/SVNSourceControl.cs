@@ -837,5 +837,9 @@ namespace GingerCore.SourceControl
             throw new NotImplementedException();
         }
 
+        public override bool InitializeRepository(string remoteURL)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

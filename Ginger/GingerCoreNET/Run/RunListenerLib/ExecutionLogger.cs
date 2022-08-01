@@ -125,7 +125,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 if (mVE == null)
                 {
-                    mVE = new GingerCore.ValueExpression(context.Environment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                    mVE = new GingerCore.ValueExpression(context.Environment, context.BusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
                 }
                 mVE.Value = action.RunDescription;
                 AR.RunDescription = mVE.ValueCalculated;
@@ -142,7 +142,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 if (mVE == null)
                 {
-                    mVE = new GingerCore.ValueExpression(context.Environment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                    mVE = new GingerCore.ValueExpression(context.Environment, context.BusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
 
                 }
                 mVE.Value = activity.RunDescription;
@@ -226,7 +226,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public abstract void CreateNewDirectory(string logFolder);
 
-        public virtual void SetReportRunSet(RunSetReport runSetReport, string logFolder)
+        public virtual void SetReportRunSet(RunSetReport runSetReport, string logFolder, eExecutedFrom executedFrom = eExecutedFrom.Run)
         {
             runSetReport.EndTimeStamp = DateTime.Now.ToUniversalTime();
             runSetReport.Elapsed = runSetReport.EndTimeStamp.Subtract(runSetReport.StartTimeStamp).TotalSeconds;

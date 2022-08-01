@@ -1,0 +1,46 @@
+﻿    <Page x:Class="Ginger.DataSource.AddNewDataSourcePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore" xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      xmlns:Actions="clr-namespace:Ginger.Actions"
+      xmlns:local="clr-namespace:Ginger.DataSource"
+      mc:Ignorable="d" 
+      Height="120" Width="500" MinHeight="120"
+	Title="Config Data Source">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="130"/>
+            <ColumnDefinition Width="370"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" Grid.Column="0">
+            <Label DockPanel.Dock="Left" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left">Data Source:</Label>
+            
+        </DockPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Left">
+            <RadioButton VerticalAlignment="Center" x:Name="Default" Content="Default" IsChecked="True" Margin="20,0,20,0" Checked="Default_Checked"/>
+            <RadioButton VerticalAlignment="Center" x:Name="New" Content="New" Checked="New_Checked"/>
+        </StackPanel>
+        <Label Content="Data Source Type:" Grid.Row="1" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
+       
+        <ComboBox Height="24" x:Name="DSTypeComboBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}"/>
+
+        <Label Content="Data Source Name:" Grid.Row="2" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
+        <TextBox Height="24" x:Name="DSName" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" ToolTip="Data Source Name" Style="{StaticResource @TextBoxStyle}" TextChanged="DSName_TextChanged"/>
+
+        <Label Content="Input Source File:" Grid.Row="3" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
+        <Grid Height="26" Grid.Column="1" Grid.Row="3">
+            <TextBox x:Name="FilePathTextBox" Style="{StaticResource @TextBoxStyle}" Height="25" VerticalAlignment="Top" Margin="1,2,50,-1"/>
+            <Button x:Name="FileBrowseButton" Click="FileBrowse_Click" Content="Browse" Style="{StaticResource @InputButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="50" Margin="320,2,0,-1" />
+        </Grid>
+    </Grid>
+</Page>

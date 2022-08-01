@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -87,7 +87,7 @@ namespace GingerCore.Variables
                 else
                 {
                     mInitialDateTime = value;
-                    Value = mInitialDateTime;
+                    Value = ConvertDateTimeToSpecificFormat(mDateTimeFormat);
                 }
 
                 OnPropertyChanged("InitialDateTime");
@@ -163,7 +163,7 @@ namespace GingerCore.Variables
 
         public override string GetFormula()
         {
-            return "Initial DateTime : " +  mInitialDateTime;
+            return "Initial DateTime : " + ConvertDateTimeToSpecificFormat(mDateTimeFormat);
         }
 
 

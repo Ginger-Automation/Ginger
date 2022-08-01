@@ -1,0 +1,122 @@
+﻿<Page x:Class="Ginger.SourceControl.SourceControlUploadSolutionPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      xmlns:fa="http://schemas.fontawesome.io/icons/"
+      mc:Ignorable="d"
+      Height="400" Width="800"
+	  Title="Upload Solution To Source Control">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="105"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Name="ExpenderConfigurationRow" Height="150*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Row="0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition  Height="35"/>
+                    <RowDefinition  Height="35"/>
+                    <RowDefinition  Height="35"/>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="120*"/>
+                    <ColumnDefinition Width="50*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Content="Source Control URL:" Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}"  Margin="10,5,0,0"/>
+                <TextBox x:Name="SourceControlURLTextBox" Grid.Column="1" Grid.Row="0" ToolTip="Please create a new git repository or uses an existing empty repository only." Margin="0,5,0,7"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   HorizontalAlignment="Stretch" Text=""  TextChanged="SourceControlURLTextBox_TextChanged" />
+
+                <Label Content="User Name:" Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" Grid.Row="1" Margin="10,5,0,0"/>
+                <TextBox x:Name="SourceControlUserTextBox" Grid.Column="1" Grid.Row="1" Margin="0,5,0,7" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" TextChanged="SourceControlUserTextBox_TextChanged"/>
+
+                <Label  Content="Password:" Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" Grid.Row="2" Margin="10,5,0,0"/>
+                <PasswordBox x:Name="SourceControlPassTextBox" Style="{StaticResource @PasswordBoxStyle}" Margin="0,5,0,7" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="2"/>
+            </Grid>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1">
+            <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50*"/>
+                        <ColumnDefinition Width="120*"/>
+                        <ColumnDefinition Width="50*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Branch Options:" Grid.Column="0" Margin="10,5,0,0" Style="{StaticResource @InputFieldLabelStyle}"/>
+                    <StackPanel x:Name="SourceControlBranches" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,5,0,0">
+                        <RadioButton x:Name="FetchBranchRadioBtn" Content="Fetch Existing Branches" Checked="BranchesControl_SelectionChanged" GroupName="SourceControlBranchGroup" Margin="0,5,0,7" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
+                        <RadioButton x:Name="CreateBranchRadioBtn" Content="Create New Branch" Checked="BranchesControl_SelectionChanged" GroupName="SourceControlBranchGroup" Margin="20,5,0,7" Style="{StaticResource @InputRadioButtonStyle}"></RadioButton>
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel x:Name="SP_FetchBranches" Visibility="Collapsed" Margin="0,0,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50*"/>
+                        <ColumnDefinition Width="120*"/>
+                        <ColumnDefinition Width="50*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button x:Name="xFetchBranchesButton" Click="FetchBranches_Click" Content="Fetch Branches" Grid.Column="3" HorizontalAlignment="Stretch" Style="{StaticResource $RoundTextButtonStyle_Generic}" Margin="10,0,0,0" />
+                    <Label x:Name="xSelectBranchLabel" Content="Select Branch:" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" Margin="10,5,0,0"/>
+                    <ComboBox x:Name="xBranchesCombo" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}" Margin="0,5,0,7" HorizontalAlignment="Stretch"></ComboBox>
+                </Grid>
+            </StackPanel>
+            <StackPanel x:Name="SP_CreateNewBranch" Visibility="Collapsed" Margin="0,0,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50*"/>
+                        <ColumnDefinition Width="120*"/>
+                        <ColumnDefinition Width="50*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Branch Name:" Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" Margin="10,5,0,0"/>
+                    <TextBox x:Name="SourceControlBranchTextBox" Grid.Column="1" Margin="0,5,0,7" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch"/>
+                </Grid>
+            </StackPanel>
+        </StackPanel>
+
+        <Expander x:Name="ConnectionConfigurationsExpender"  Grid.Row="2">
+            <Expander.Header>
+                <Label x:Name="ConnectionConfigurationExpenderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
+                    <Label.Content>
+                        <GingerCore:ucTextDicResource Text="Advanced Connection Configurations"/>
+                    </Label.Content>
+                </Label>
+            </Expander.Header>
+            <Expander.Content>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition  Height="40"/>
+                        <RowDefinition  Height="40"/>
+                        <RowDefinition  Height="40"/>
+                        <RowDefinition  Height="40"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="150*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <CheckBox x:Name="ConfigureProxyCheckBox" Grid.Row="0" Content="Configure Proxy" ToolTip="Configure Network Proxy For The Repository Access" Checked="ConfigureProxyCheckBoxChecked" Unchecked="ConfigureProxyCheckBoxUnchecked" HorizontalAlignment="Left" Margin="5,10,0,0"/>
+
+                    <Label x:Name="labelProxyAddress" Content="Proxy Address:" Margin="20,5,0,0" Grid.Column="0" Grid.Row="1" Style="{StaticResource @InputFieldLabelStyle}" />
+                    <TextBox x:Name="ProxyAddressTextBox" Margin="0,5,0,7" Grid.Column="1" Grid.Row="1" Width="200" HorizontalAlignment="Left" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" IsEnabled="false" />
+
+                    <Label x:Name="labelProxyPort" Content="Proxy Port:" Margin="20,5,0,0" Grid.Column="0" Grid.Row="2" Style="{StaticResource @InputFieldLabelStyle}" />
+                    <TextBox x:Name="ProxyPortTextBox" Margin="0,5,0,7" Grid.Column="1" Grid.Row="2" Width="40" HorizontalAlignment="Left" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" IsEnabled="false" />
+                </Grid>
+            </Expander.Content>
+        </Expander>
+    </Grid>
+</Page>

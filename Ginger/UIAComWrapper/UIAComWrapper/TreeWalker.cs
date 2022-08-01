@@ -21,21 +21,21 @@ using UIAComWrapperInternal;
 
 namespace System.Windows.Automation
 {
-    public sealed class TreeWalker
+    public sealed class TreeWalkerExtended
     {
         private UIAutomationClient.IUIAutomationTreeWalker _obj;
-        public static readonly TreeWalker ContentViewWalker = new TreeWalker(System.Windows.Automation.Automation.ContentViewCondition);
-        public static readonly TreeWalker ControlViewWalker = new TreeWalker(System.Windows.Automation.Automation.ControlViewCondition);
-        public static readonly TreeWalker RawViewWalker = new TreeWalker(System.Windows.Automation.Automation.RawViewCondition);
+        public static readonly TreeWalkerExtended ContentViewWalker = new TreeWalkerExtended(System.Windows.Automation.AutomationExtended.ContentViewCondition);
+        public static readonly TreeWalkerExtended ControlViewWalker = new TreeWalkerExtended(System.Windows.Automation.AutomationExtended.ControlViewCondition);
+        public static readonly TreeWalkerExtended RawViewWalker = new TreeWalkerExtended(System.Windows.Automation.AutomationExtended.RawViewCondition);
         
-        public TreeWalker(Condition condition)
+        public TreeWalkerExtended(ConditionExtended condition)
         {
             // This is an unusual situation - a direct constructor.
             // We have to go create the native tree walker, which might throw.
             Utility.ValidateArgumentNonNull(condition, "condition");
             try
             {
-                this._obj = Automation.Factory.CreateTreeWalker(condition.NativeCondition);
+                this._obj = AutomationExtended.Factory.CreateTreeWalker(condition.NativeCondition);
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
@@ -43,29 +43,29 @@ namespace System.Windows.Automation
             }
         }
 
-        internal TreeWalker(UIAutomationClient.IUIAutomationTreeWalker obj)
+        internal TreeWalkerExtended(UIAutomationClient.IUIAutomationTreeWalker obj)
         {
             Debug.Assert(obj != null);
             _obj = obj;
         }
 
-        internal TreeWalker Wrap(UIAutomationClient.IUIAutomationTreeWalker obj)
+        internal TreeWalkerExtended Wrap(UIAutomationClient.IUIAutomationTreeWalker obj)
         {
             return (obj == null) ? null : Wrap(obj);
         }
 
-        public AutomationElement GetFirstChild(AutomationElement element)
+        public AutomationElement_Extend GetFirstChild(AutomationElement_Extend element)
         {
             return GetFirstChild(element, CacheRequest.Current);
         }
 
-        public AutomationElement GetFirstChild(AutomationElement element, CacheRequest request)
+        public AutomationElement_Extend GetFirstChild(AutomationElement_Extend element, CacheRequest request)
         {
             Utility.ValidateArgumentNonNull(element, "element");
             Utility.ValidateArgumentNonNull(request, "request");
             try
             {
-                return AutomationElement.Wrap(this._obj.GetFirstChildElementBuildCache(
+                return AutomationElement_Extend.Wrap(this._obj.GetFirstChildElementBuildCache(
                     element.NativeElement,
                     request.NativeCacheRequest));
             }
@@ -75,18 +75,18 @@ namespace System.Windows.Automation
             }
         }
 
-        public AutomationElement GetLastChild(AutomationElement element)
+        public AutomationElement_Extend GetLastChild(AutomationElement_Extend element)
         {
             return GetLastChild(element, CacheRequest.Current);
         }
 
-        public AutomationElement GetLastChild(AutomationElement element, CacheRequest request)
+        public AutomationElement_Extend GetLastChild(AutomationElement_Extend element, CacheRequest request)
         {
             Utility.ValidateArgumentNonNull(element, "element");
             Utility.ValidateArgumentNonNull(request, "request");
             try
             {
-                return AutomationElement.Wrap(this._obj.GetLastChildElementBuildCache(
+                return AutomationElement_Extend.Wrap(this._obj.GetLastChildElementBuildCache(
                     element.NativeElement,
                     request.NativeCacheRequest));
             }
@@ -96,18 +96,18 @@ namespace System.Windows.Automation
             }
         }
 
-        public AutomationElement GetNextSibling(AutomationElement element)
+        public AutomationElement_Extend GetNextSibling(AutomationElement_Extend element)
         {
             return GetNextSibling(element, CacheRequest.Current);
         }
 
-        public AutomationElement GetNextSibling(AutomationElement element, CacheRequest request)
+        public AutomationElement_Extend GetNextSibling(AutomationElement_Extend element, CacheRequest request)
         {
             Utility.ValidateArgumentNonNull(element, "element");
             Utility.ValidateArgumentNonNull(request, "request");
             try
             {
-                return AutomationElement.Wrap(this._obj.GetNextSiblingElementBuildCache(
+                return AutomationElement_Extend.Wrap(this._obj.GetNextSiblingElementBuildCache(
                     element.NativeElement,
                     request.NativeCacheRequest));
             }
@@ -117,18 +117,18 @@ namespace System.Windows.Automation
             }
         }
 
-        public AutomationElement GetParent(AutomationElement element)
+        public AutomationElement_Extend GetParent(AutomationElement_Extend element)
         {
             return GetParent(element, CacheRequest.Current);
         }
 
-        public AutomationElement GetParent(AutomationElement element, CacheRequest request)
+        public AutomationElement_Extend GetParent(AutomationElement_Extend element, CacheRequest request)
         {
             Utility.ValidateArgumentNonNull(element, "element");
             Utility.ValidateArgumentNonNull(request, "request");
             try
             {
-                return AutomationElement.Wrap(this._obj.GetParentElementBuildCache(
+                return AutomationElement_Extend.Wrap(this._obj.GetParentElementBuildCache(
                     element.NativeElement,
                     request.NativeCacheRequest));
             }
@@ -138,18 +138,18 @@ namespace System.Windows.Automation
             }
         }
 
-        public AutomationElement GetPreviousSibling(AutomationElement element)
+        public AutomationElement_Extend GetPreviousSibling(AutomationElement_Extend element)
         {
             return GetPreviousSibling(element, CacheRequest.Current);
         }
 
-        public AutomationElement GetPreviousSibling(AutomationElement element, CacheRequest request)
+        public AutomationElement_Extend GetPreviousSibling(AutomationElement_Extend element, CacheRequest request)
         {
             Utility.ValidateArgumentNonNull(element, "element");
             Utility.ValidateArgumentNonNull(request, "request");
             try
             {
-                return AutomationElement.Wrap(this._obj.GetPreviousSiblingElementBuildCache(
+                return AutomationElement_Extend.Wrap(this._obj.GetPreviousSiblingElementBuildCache(
                     element.NativeElement,
                     request.NativeCacheRequest));
             }
@@ -159,18 +159,18 @@ namespace System.Windows.Automation
             }
         }
 
-        public AutomationElement Normalize(AutomationElement element)
+        public AutomationElement_Extend Normalize(AutomationElement_Extend element)
         {
             return Normalize(element, CacheRequest.Current);
         }
 
-        public AutomationElement Normalize(AutomationElement element, CacheRequest request)
+        public AutomationElement_Extend Normalize(AutomationElement_Extend element, CacheRequest request)
         {
             Utility.ValidateArgumentNonNull(element, "element");
             Utility.ValidateArgumentNonNull(request, "request");
             try
             {
-                return AutomationElement.Wrap(this._obj.NormalizeElementBuildCache(
+                return AutomationElement_Extend.Wrap(this._obj.NormalizeElementBuildCache(
                     element.NativeElement,
                     request.NativeCacheRequest));
             }
@@ -181,13 +181,13 @@ namespace System.Windows.Automation
         }
 
         
-        public Condition Condition
+        public ConditionExtended Condition
         {
             get
             {
                 try
                 {
-                    return Condition.Wrap(_obj.condition);
+                    return ConditionExtended.Wrap(_obj.condition);
                 }
                 catch (System.Runtime.InteropServices.COMException e)
                 {

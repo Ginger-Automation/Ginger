@@ -21,10 +21,10 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using PdfSharp;
-using PdfSharp.Charting;
-using PdfSharp.Drawing;
-using PdfSharp.Pdf;
+using PdfSharpCore;
+using PdfSharpCore.Charting;
+using PdfSharpCore.Drawing;
+using PdfSharpCore.Pdf;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -206,7 +206,7 @@ namespace GingerCore.Actions
                 XGraphics gfx = XGraphics.FromPdfPage(page);
                 chartFrame.Draw(gfx);
                 document.Close();
-                Process.Start(filename);
+                Process.Start(new ProcessStartInfo() { FileName = FileName, UseShellExecute = true });
             }
             catch 
             {

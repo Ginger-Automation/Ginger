@@ -23,7 +23,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using FontAwesome.WPF;
+using FontAwesome5;
 using Amdocs.Ginger.Common.Enums;
 using System.Windows.Media.Animation;
 
@@ -159,7 +159,7 @@ namespace Amdocs.Ginger.UserControls
                 //############################## General Images:
                 case eImageType.Empty:
                     // Do nothing and leave it empty
-                    // SetAsFontAwesomeIcon(FontAwesomeIcon.Ban);                    
+                    // SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Ban);                    
                     break;
                 case eImageType.Ginger:
                     SetAsStaticImage("Ginger.png");
@@ -182,6 +182,15 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.GingerSplash:
                     SetAsStaticImage("GingerSplashImageNew.png");
                     break;
+                case eImageType.VRT:
+                    SetAsStaticImage("VRTLogo.png");
+                    break;
+                case eImageType.Applitools:
+                    SetAsStaticImage("ApplitoolsLogo.png");
+                    break;
+                case eImageType.Sealights:
+                    SetAsStaticImage("SealightsLogo.png");
+                    break;
                 #endregion
 
 
@@ -189,71 +198,71 @@ namespace Amdocs.Ginger.UserControls
                 //############################## Repository Items Images:
                 case eImageType.Solution:
                 case eImageType.ApplicationModel:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ThLarge);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ThLarge);
                     break;
                 case eImageType.BusinessFlow:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Sitemap);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Sitemap);
                     break;
                 case eImageType.ActivitiesGroup:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ObjectGroup);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_ObjectGroup);
                     break;
                 case eImageType.Activity:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Bars);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Bars);
                     break;
                 case eImageType.Action:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Bolt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Bolt);
                     break;
                 case eImageType.Agent:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.User);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_User);
                     break;
                 case eImageType.RunSet:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.PlayCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_PlayCircle);
                     break;
                 case eImageType.APIModel:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Exchange);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExchangeAlt);
                     break;
                 case eImageType.Runner:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.PlayCircleOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_PlayCircle);
                     break;
                 case eImageType.Operations:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Cogs);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Cogs);
                     break;
                 case eImageType.Settings:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Gears);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Cogs);//Gears
                     break;
                 case eImageType.Environment:
                 case eImageType.Globe:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Globe);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Globe);
                     break;
                 case eImageType.Application:
                 case eImageType.ApplicationPOMModel:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.WindowMaximize);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_WindowMaximize);
                     break;
                 case eImageType.HtmlReport:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Html5);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Html5);
                     break;
                 case eImageType.SharedRepositoryItem:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Star, Brushes.Orange);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Star, Brushes.Orange);
                     break;
                 case eImageType.NonSharedRepositoryItem:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Star, Brushes.Gray);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Star, Brushes.Gray);
                     break;
                 case eImageType.SharedRepositoryItemDark:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Star);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Star);
                     break;
                 case eImageType.Tag:
                 case eImageType.Ticket:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Tag);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Tag);
                     break;
                 case eImageType.DataSource:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Database);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Database);
                     break;
                 case eImageType.PluginPackage:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Plug);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Plug);
                     break;
 
                 case eImageType.Building:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.BuildingOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Building);
                     break;
                 #endregion
 
@@ -261,22 +270,22 @@ namespace Amdocs.Ginger.UserControls
                 #region Variable Item Images
                 //############################## Variables Images:
                 case eImageType.Variable:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Code);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Code);
                     break;
                 case eImageType.VariableList:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.List);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_List);
                     break;
                 case eImageType.Password:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Key);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Key);
                     break;
                 case eImageType.Random:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Random);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Random);
                     break;
                 case eImageType.Sequence:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.AlignJustify);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AlignJustify);
                     break;
                 case eImageType.Timer:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ClockOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Clock);
                     break;
                 #endregion
 
@@ -284,46 +293,46 @@ namespace Amdocs.Ginger.UserControls
                 #region Execution Status Images
                 //############################## Execution Status Images:
                 case eImageType.Passed:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle, (SolidColorBrush)FindResource("$PassedStatusColor"), 0, "Passed");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CheckCircle, (SolidColorBrush)FindResource("$PassedStatusColor"), 0, "Passed");
                     break;
                 case eImageType.Unknown:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.QuestionCircle, null, 0, "Unknown");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_QuestionCircle, null, 0, "Unknown");
                     break;
                 case eImageType.Failed:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.TimesCircle, (SolidColorBrush)FindResource("$FailedStatusColor"), 0, "Failed");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_TimesCircle, (SolidColorBrush)FindResource("$FailedStatusColor"), 0, "Failed");
                     break;
                 case eImageType.Pending:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ClockOutline, (SolidColorBrush)FindResource("$PendingStatusColor"), 0, "Pending");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Clock, (SolidColorBrush)FindResource("$PendingStatusColor"), 0, "Pending");
                     break;
                 case eImageType.Recording:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.VideoCamera, new SolidColorBrush(Color.FromRgb(255, 0, 0)), 0, "Recording...", true);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Camera, new SolidColorBrush(Color.FromRgb(255, 0, 0)), 0, "Recording...", true);
                     break;
                 case eImageType.Processing:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Spinner, (LinearGradientBrush)FindResource("$amdocsLogoLinarGradientBrush_NewAmdocsColors"), 2);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Spinner, (LinearGradientBrush)FindResource("$amdocsLogoLinarGradientBrush_NewAmdocsColors"), 2);
                     break;
                 case eImageType.Ready:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ThumbsOutlineUp, (SolidColorBrush)FindResource("$PendingStatusColor"));
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_ThumbsUp, (SolidColorBrush)FindResource("$PendingStatusColor"));
                     break;
                 case eImageType.Stopped:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.StopCircle, (SolidColorBrush)FindResource("$StoppedStatusColor"), 0, "Stopped");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_StopCircle, (SolidColorBrush)FindResource("$StoppedStatusColor"), 0, "Stopped");
                     break;
                 case eImageType.Blocked:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Ban, (SolidColorBrush)FindResource("$BlockedStatusColor"), 0, "Blocked");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Ban, (SolidColorBrush)FindResource("$BlockedStatusColor"), 0, "Blocked");
                     break;
                 case eImageType.Skipped:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.MinusCircle, (SolidColorBrush)FindResource("$SkippedStatusColor"), 0, "Skipped");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MinusCircle, (SolidColorBrush)FindResource("$SkippedStatusColor"), 0, "Skipped");
                     break;
                 case eImageType.Running:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Spinner, (SolidColorBrush)FindResource("$RunningStatusColor"), 2, "Running");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Spinner, (SolidColorBrush)FindResource("$RunningStatusColor"), 2, "Running");
                     break;
                 case eImageType.Mapped:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CheckCircle);
                     break;
                 case eImageType.Partial:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExclamationTriangle);
                     break;
                 case eImageType.UnMapped:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.TimesCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_TimesCircle);
                     break;
                 #endregion
 
@@ -331,244 +340,244 @@ namespace Amdocs.Ginger.UserControls
                 #region Operations Images
                 //############################## Operations Images:
                 case eImageType.Add:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Plus);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Plus);
                     break;
                 case eImageType.Refresh:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Refresh);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SyncAlt);
                     break;
                 case eImageType.Config:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Cog);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Cog);
                     break;
                 case eImageType.Edit:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Pencil);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_PencilAlt);
                     break;
                 case eImageType.Save:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Save);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Save);
                     break;
                 case eImageType.Reply:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Reply);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Reply);
                     break;
 
                 case eImageType.Run:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Play);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Play);
                     break;
                 case eImageType.RunSingle:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.PlayCircleOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_PlayCircle);
                     break;
                 case eImageType.RunAll:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.PlayCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_PlayCircle);
                     break;
                 case eImageType.Stop:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Stop);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Stop);
                     break;
                 case eImageType.StopAll:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.StopCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_StopCircle);
                     break;
                 case eImageType.Close:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Close);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_WindowClose);
                     break;
                 case eImageType.Continue:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.FastForward);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FastForward);
                     break;
                 case eImageType.Open:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.FolderOutlinepenOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FolderOpen);
                     break;
                 case eImageType.New:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Magic);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Magic);
                     break;
                 case eImageType.Analyze:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Stethoscope);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Stethoscope);
                     break;
                 case eImageType.GoBack:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowLeft);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowLeft);
                     break;
                 case eImageType.GoNext:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowRight);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowRight);
                     break;
                 case eImageType.Finish:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.FlagCheckered);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FlagCheckered);
                     break;
                 case eImageType.Cancel:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Close);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_WindowClose);
                     break;
                 case eImageType.Reset:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.RotateRight);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_RedoAlt);
                     break;
                 case eImageType.Undo:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Undo);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UndoAlt);
                     break;
                 case eImageType.Simulate:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Android);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Android);
                     break;
                 case eImageType.Copy:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Copy);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Copy);
                     break;
                 case eImageType.Cut:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Cut);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Cut);
                     break;
                 case eImageType.Paste:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Paste);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Paste);
                     break;
                 case eImageType.Delete:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Trash);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TrashAlt);
                     break;
                 case eImageType.DeleteSingle:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Minus);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Minus);
                     break;
                 case eImageType.Minimize:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.WindowMinimize);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_WindowMinimize);
                     break;
                 case eImageType.MoveRight:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowRight);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowRight);
                     break;
                 case eImageType.MoveLeft:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowLeft);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowLeft);
                     break;
                 case eImageType.MoveUp:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowUp);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowUp);
                     break;
                 case eImageType.MoveDown:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowDown);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowDown);
                     break;
                 case eImageType.MoveUpDown:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowsV);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowsAltV);
                     break;
                 case eImageType.Reorder:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Reorder);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_FirstOrder);
                     break;
                 case eImageType.Retweet:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Retweet);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Retweet);
                     break;
                 case eImageType.Automate:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Cogs);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Cogs);
                     break;
                 case eImageType.Convert:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Exchange);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExchangeAlt);
                     break;
                 case eImageType.ParallelExecution:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Random);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Random);
                     break;
                 case eImageType.SequentialExecution:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.SortNumericAsc);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SortNumericDown);
                     break;
                 case eImageType.Search:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Search);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Search);
                     break;
                 case eImageType.Duplicate:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.FilesOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FileAlt);
                     break;
                 case eImageType.Merge:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ObjectGroup);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_ObjectGroup);
                     break;
                 case eImageType.Sync:
                 case eImageType.InstanceLink:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Link);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Link);
                     break;
                 case eImageType.InstanceLinkOrange:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Link,Brushes.Orange);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Link, Brushes.Orange);
                     break;
                 case eImageType.UnSync:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Unlink);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Unlink);
                     break;
                 case eImageType.Visible:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Eye);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Eye);
                     break;
                 case eImageType.Invisible:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.EyeSlash);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_EyeSlash);
                     break;
                 case eImageType.View:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Eye);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Eye);
                     break;
                 case eImageType.Download:
                 case eImageType.GetLatest:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.CloudDownload);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_CloudDownloadAlt);
                     break;
                 case eImageType.CheckIn:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.CloudUpload);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_CloudUploadAlt);
                     break;
                 case eImageType.Upload:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Upload);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Upload);
                     break;
                 case eImageType.Expand:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ChevronDown);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ChevronDown);
                     break;
                 case eImageType.Collapse:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ChevronUp);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ChevronUp);
                     break;
                 case eImageType.ExpandAll:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleDoubleDown);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleDoubleDown);
                     break;
                 case eImageType.CollapseAll:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleDoubleUp);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleDoubleUp);
                     break;
                 case eImageType.ActiveAll:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Check);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Check);
                     break;
                 case eImageType.ExpandToFullScreen:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Expand);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Expand);
                     break;
                 case eImageType.Export:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ShareAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ShareAlt);
                     break;
                 case eImageType.ImportFile:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Download);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Download);
                     break;
                 case eImageType.Times:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Times);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Times);
                     break;
                 case eImageType.Times_Red:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Times, (SolidColorBrush)FindResource("$HighlightColor_Red"), 0, "ToolTip");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Times, (SolidColorBrush)FindResource("$HighlightColor_Red"), 0, "ToolTip");
                     break;
                 case eImageType.Exchange:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Exchange);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExchangeAlt);
                     break;
                 case eImageType.Share:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ShareAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ShareAlt);
                     break;
                 case eImageType.ShareExternal:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ShareSquareOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ShareAltSquare);
                     break;
                 case eImageType.Filter:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Filter);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Filter);
                     break;
                 case eImageType.Upgrade:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowCircleUp);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowCircleUp);
                     break;
                 case eImageType.Recover:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Recycle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Recycle);
                     break;
                 case eImageType.Approve:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ThumbsOutlineUp);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_ThumbsUp);
                     break;
                 case eImageType.Reject:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ThumbsOutlineDown);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_ThumbsDown);
                     break;
                 case eImageType.Retry:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Repeat);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Retweet);
                     break;
                 case eImageType.Warn:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExclamationTriangle);
                     break;
                 case eImageType.HighWarn:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle, Brushes.Red);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExclamationTriangle, Brushes.Red);
                     break;
                 case eImageType.MediumWarn:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle, Brushes.Orange);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExclamationTriangle, Brushes.Orange);
                     break;
                 case eImageType.LowWarn:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle, Brushes.Yellow);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExclamationTriangle, Brushes.Yellow);
                     break;
                 case eImageType.EditWindow:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Edit);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Edit);
                     break;
                 case eImageType.CLI:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExternalLink);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExternalLinkAlt);
                     break;
                 case eImageType.WindowRestore:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.WindowRestore);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_WindowRestore);
                     break;
                 case eImageType.SelfHealing:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Magic);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Magic);
                     break;
                 #endregion
 
@@ -580,391 +589,391 @@ namespace Amdocs.Ginger.UserControls
                     xViewBox.Child = GetKidsDrawingShape();
                     break;
                 case eImageType.FlowDiagram:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Sitemap);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Sitemap);
                     break;
                 case eImageType.DataTable:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Table);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Table);
                     break;
                 case eImageType.Parameter:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Sliders);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SlidersH);
                     break;
                 case eImageType.File:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.FileOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FileAlt);
                     break;
                 case eImageType.Folder:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.FolderOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Folder);
                     break;
                 case eImageType.OpenFolder:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.FolderOutlinepenOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FolderOpen);
                     break;
                 case eImageType.EllipsisH:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.EllipsisH);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_EllipsisH);
                     break;
                 case eImageType.ListGroup:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ListUl);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ListUl);
                     break;
                 case eImageType.Sitemap:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Sitemap);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Sitemap);
                     break;
                 case eImageType.ItemModified:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Asterisk, Brushes.DarkOrange, 5, "Item was modified");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Asterisk, Brushes.DarkOrange, 5, "Item was modified");
                     break;
                 case eImageType.Clock:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ClockOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Clock);
                     break;
                 case eImageType.Report:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.PieChart);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ChartPie);
                     break;
                 case eImageType.Active:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ToggleOn);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ToggleOn);
                     break;
                 case eImageType.InActive:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ToggleOff);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ToggleOff);
                     break;
                 case eImageType.History:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.History);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_History);
                     break;
                 case eImageType.ChevronDown:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ChevronCircleDown);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ChevronCircleDown);
                     break;
                 case eImageType.Question:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.QuestionCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_QuestionCircle);
                     break;
                 case eImageType.Help:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.LifeRing);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_LifeRing);
                     break;
                 case eImageType.Screen:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Desktop);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Desktop);
                     break;
                 case eImageType.Info:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.InfoCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_InfoCircle);
                     break;
                 case eImageType.Service:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Headphones);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Headphones);
                     break;
                 case eImageType.FileVideo:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.FileVideoOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FileVideo);
                     break;
                 case eImageType.Email:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.EnvelopeOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Envelope);
                     break;
                 case eImageType.SourceControl:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.CodeFork);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_CodeBranch);
                     break;
                 case eImageType.SourceControlNew:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Plus, Brushes.Green, toolTip: "New");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Plus, Brushes.Green, toolTip: "New");
                     break;
                 case eImageType.SourceControlModified:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Pencil, Brushes.OrangeRed, toolTip: "Modified");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_PencilAlt, Brushes.OrangeRed, toolTip: "Modified");
                     break;
                 case eImageType.SourceControlDeleted:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Minus, Brushes.Red, toolTip: "Deleted");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Minus, Brushes.Red, toolTip: "Deleted");
                     break;
                 case eImageType.SourceControlEquel:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Check, Brushes.Gray, toolTip: "Same as Source");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Check, Brushes.Gray, toolTip: "Same as Source");
                     break;
                 case eImageType.SourceControlLockedByAnotherUser:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.Purple, toolTip: "Locked by Other User");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Lock, Brushes.Purple, toolTip: "Locked by Other User");
                     break;
                 case eImageType.SourceControlLockedByMe:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Lock, Brushes.SaddleBrown, toolTip: "Locked by You");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Lock, Brushes.SaddleBrown, toolTip: "Locked by You");
                     break;
                 case eImageType.SourceControlError:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationCircle, Brushes.Red, toolTip: "Error in checking status");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExclamationCircle, Brushes.Red, toolTip: "Error in checking status");
                     break;
                 case eImageType.Check:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircleOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CheckCircle);
                     break;
                 case eImageType.Bug:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Bug);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Bug);
                     break;
                 case eImageType.Power:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.PowerOff);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_PowerOff);
                     break;
                 case eImageType.Pointer:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.HandPointerOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_HandPointer);
                     break;
                 case eImageType.Camera:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Camera);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Camera);
                     break;
                 case eImageType.ExcelFile:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.FileExcelOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FileExcel);
                     break;
                 case eImageType.PlusSquare:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.PlusSquare);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_PlusSquare);
                     break;
                 case eImageType.Wrench:
                 case eImageType.Fix:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Wrench);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Wrench);
                     break;
 
                 case eImageType.Eraser:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Eraser);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Eraser);
                     break;
 
                 case eImageType.ArrowDown:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleDown);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleDown);
                     break;
                 case eImageType.ArrowRight:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowRight);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowRight);
                     break;
                 case eImageType.User:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.UserCircleOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_UserCircle);
                     break;
                 case eImageType.UserProfile:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.UserMd);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserMd);
                     break;
                 case eImageType.Forum:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Comment);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Comment);
                     break;
                 case eImageType.Website:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Laptop);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Laptop);
                     break;
                 case eImageType.Beta:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Android, Brushes.Orange);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Android, Brushes.Orange);
                     break;
                 case eImageType.Error:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.TimesCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_TimesCircle);
                     break;
                 case eImageType.Coffee:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Coffee, Brushes.Red);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Coffee, Brushes.Red);
                     break;
                 case eImageType.MapSigns:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.MapSigns);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MapSigns);
                     break;
                 case eImageType.Elements:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Th);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Th);
                     break;
                 case eImageType.LocationPointer:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.LocationArrow);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_LocationArrow);
                     break;
                 case eImageType.GitHub:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Github);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Github);
                     break;
                 case eImageType.Ping:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Exchange);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExchangeAlt);
                     break;
                 case eImageType.Database:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Database);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Database);
                     break;
                 case eImageType.Output:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Upload);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Upload);
                     break;
                 case eImageType.Input:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Download);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Download);
                     break;
                 case eImageType.Spy:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.UserSecret);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserSecret);
                     break;
 
                 case eImageType.CodeFile:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.FileCodeOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FileCode);
                     break;
 
                 case eImageType.Rows:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowsH);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowsAltH);
                     break;
 
                 case eImageType.Column:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ArrowsV);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ArrowsAltV);
                     break;
 
                 case eImageType.Columns:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Columns);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Columns);
                     break;
 
                 case eImageType.Browser:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Chrome);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Chrome);
                     break;
-               case eImageType.Java:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Coffee);
+                case eImageType.Java:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Coffee);
                     break;
-               case eImageType.KeyboardLayout:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.KeyboardOutline);
+                case eImageType.KeyboardLayout:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Keyboard);
                     break;
 
                 case eImageType.Linux:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Linux);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Linux);
                     break;
 
                 case eImageType.BatteryThreeQuarter:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.BatteryThreeQuarters);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_BatteryThreeQuarters);
                     break;
 
                 case eImageType.Mobile:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.MobilePhone);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Mobile);
                     break;
 
                 case eImageType.Codepen:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Codepen);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Codepen);
                     break;
 
                 case eImageType.MousePointer:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.MousePointer);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MousePointer);
                     break;
 
                 case eImageType.AudioFileOutline:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.FileAudioOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FileAudio);
                     break;
 
                 case eImageType.ChartLine:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.LineChart);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ChartLine);
                     break;
 
                 case eImageType.Suitcase:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Suitcase);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Suitcase);
                     break;
 
                 case eImageType.Paragraph:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Paragraph);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Paragraph);
                     break;
 
                 case eImageType.Graph:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.LineChart);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ChartLine);
                     break;
 
                 case eImageType.BullsEye:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Bullseye);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Bullseye);
                     break;
 
                 case eImageType.WindowsIcon:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Windows);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Windows);
                     break;
 
                 case eImageType.PDFFile:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.FilePdfOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FilePdf);
                     break;
 
                 case eImageType.CSS3Text:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Css3);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Css3);
                     break;
 
                 case eImageType.Languages:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Language);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Language);
                     break;
 
                 case eImageType.MinusSquare:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.MinusSquare);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MinusSquare);
                     break;
                 case eImageType.Mandatory:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationCircle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExclamationCircle);
                     break;
                 case eImageType.ALM:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Qrcode);//need to find better image type
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Qrcode);//need to find better image type
                     break;
                 case eImageType.MapALM:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.MapSigns);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MapSigns);
                     break;
                 case eImageType.CSV:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.FileText);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FileCsv);
                     break;
                 case eImageType.Clipboard:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Clipboard);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Clipboard);
                     break;
                 case eImageType.ID:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.IdCardOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_IdCardAlt);
                     break;
                 case eImageType.RegularExpression:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Registered);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Registered);
                     break;
                 case eImageType.DataManipulation:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Th);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Th);
                     break;
                 case eImageType.General:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Gg);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Gg);
                     break;
                 case eImageType.SignIn:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.SignIn);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SignInAlt);
                     break;
                 case eImageType.SignOut:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.SignOut);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SignOutAlt);
                     break;
                 case eImageType.AngleArrowUp:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleUp);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleUp);
                     break;
                 case eImageType.AngleArrowDown:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleDown);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleDown);
                     break;
                 case eImageType.AngleArrowLeft:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleLeft);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleLeft);
                     break;
                 case eImageType.AngleArrowRight:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.AngleRight);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleRight);
                     break;
                 case eImageType.Support:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Headphones);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Headphones);
                     break;
                 case eImageType.Asterisk:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Asterisk);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Asterisk);
                     break;
                 #endregion
 
                 #region ElementType Images
                 case eImageType.Button:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.HandPointerOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_HandPointer);
                     break;
                 case eImageType.TextBox:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.PencilSquareOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_PenSquare);
                     break;
                 case eImageType.Image:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Image);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Image);
                     break;
                 case eImageType.CheckBox:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.CheckSquareOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CheckSquare);
                     break;
                 case eImageType.RadioButton:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.DotCircleOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_DotCircle);
                     break;
                 case eImageType.Link:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExternalLink);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExternalLinkAlt);
                     break;
                 case eImageType.Element:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.SquareOutline);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Square);
                     break;
                 case eImageType.Menu:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Bars);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Bars);
                     break;
                 case eImageType.Label:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Font);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Font);
                     break;
                 case eImageType.DropList:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ListAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_ListAlt);
                     break;
                 case eImageType.List:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ListOl);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ListOl);
                     break;
                 case eImageType.Window:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.WindowMaximize);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_WindowMaximize);
                     break;
                 case eImageType.Toggle:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ToggleOn);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ToggleOn);
                     break;
                 case eImageType.Table:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Table);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Table);
                     break;
                 case eImageType.Text:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.TextWidth);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_TextWidth);
                     break;
                 case eImageType.LinkSquare:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExternalLinkSquare);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExternalLinkSquareAlt);
                     break;
                 case eImageType.DatePicker:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Calendar);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Calendar);
                     break;
                 case eImageType.TreeView:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Sitemap);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Sitemap);
                     break;
                 case eImageType.Pin:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ThumbTack);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Thumbtack);
                     break;
                 case eImageType.Square:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Square);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Square);
                     break;
                 case eImageType.Triangle:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Play);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Play);
                     break;
                 case eImageType.Circle:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Circle);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Circle);
                     break;
                 case eImageType.Ios:
                     SetAsStaticImage("ios.png");
@@ -988,24 +997,24 @@ namespace Amdocs.Ginger.UserControls
 
                 #region Comparison Status Images
                 case eImageType.Unchanged:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.CheckCircle, toolTip: "Unchanged");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CheckCircle, toolTip: "Unchanged");
                     break;
                 case eImageType.Changed:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.ExclamationTriangle, toolTip: "Changed");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ExclamationTriangle, toolTip: "Changed");
                     break;
                 case eImageType.Deleted:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.MinusCircle, toolTip: "Deleted");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MinusCircle, toolTip: "Deleted");
                     break;
                 case eImageType.Added:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.PlusCircle, toolTip: "Added");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_PlusCircle, toolTip: "Added");
                     break;
                 case eImageType.Avoided:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.EyeSlash, toolTip: "Avoided");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_EyeSlash, toolTip: "Avoided");
                     break;
                 #endregion
 
                 default:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Question, Brushes.Red);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Question, Brushes.Red);
                     this.Background = Brushes.Yellow;
                     break;
             }
@@ -1016,18 +1025,20 @@ namespace Amdocs.Ginger.UserControls
             // Reset All do defaults
             xFAImage.Visibility = Visibility.Collapsed;
             xFAImage.Spin = false;
-            xFAImage.StopSpin();
+            //xFAImage.StopSpin();
             xFAImage.Rotation = 0;
+            //xFAImage.SpinDuration = 0;
             xFAFont.Visibility = Visibility.Collapsed;
             xFAFont.Spin = false;
-            xFAFont.StopSpin();
+            //xFAFont.StopSpin();
+           // xFAFont.SpinDuration = 0;
             xFAFont.Rotation = 0;
             xStaticImage.Visibility = Visibility.Collapsed;
             xViewBox.Visibility = Visibility.Collapsed;
             this.Background = null;
         }
 
-        private void SetAsFontAwesomeIcon(FontAwesomeIcon fontAwesomeIcon, Brush foreground = null, double spinDuration = 0, string toolTip = null, bool blinkingIcon = false)
+        private void SetAsFontAwesomeIcon(EFontAwesomeIcon fontAwesomeIcon, Brush foreground = null, double spinDuration = 0, string toolTip = null, bool blinkingIcon = false)
         {
             //set the icon
             xFAFont.Icon = fontAwesomeIcon;
@@ -1061,7 +1072,7 @@ namespace Amdocs.Ginger.UserControls
                 xFAFont.SpinDuration = spinDuration;
             }
 
-            if(blinkingIcon)
+            if (blinkingIcon)
             {
                 DoubleAnimation blinkAnimation = new DoubleAnimation()
                 {
@@ -1094,7 +1105,8 @@ namespace Amdocs.Ginger.UserControls
 
         private BitmapImage GetImageBitMap(string imageName)
         {
-            return new BitmapImage(new Uri("pack://application:,,,/Ginger;component/UserControlsLib/ImageMakerLib/Images/" + imageName));
+            //return new BitmapImage(new Uri(@"/UserControlsLib/ImageMakerLib/Images/" + imageName, UriKind.RelativeOrAbsolute));
+            return new BitmapImage(new Uri("pack://application:,,,/Ginger;component/UserControlsLib/ImageMakerLib/Images/" + imageName, UriKind.RelativeOrAbsolute));
         }
 
         public static ImageSource GetImageSource(eImageType imageType, SolidColorBrush foreground = null, double spinDuration = 0, string toolTip = null, double width = 0.0, bool SetBorder = false)

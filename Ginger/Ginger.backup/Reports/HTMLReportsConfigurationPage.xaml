@@ -1,0 +1,68 @@
+    <Page x:Class="Ginger.Reports.HTMLReportsConfigurationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:h="clr-namespace:Ginger.Help"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      mc:Ignorable="d"
+      h:GingerHelpProvider.HelpString="Report"
+      MinHeight="300" MinWidth="785"
+	Title="General HTML Reports Configurations">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <StackPanel>
+            <StackPanel x:Name="htmlReportFolderPnl" Margin="10,0,0,0" HorizontalAlignment="Left">
+                <usercontrols:ucButton x:Name="xSaveButton"  ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" HorizontalAlignment="Left" Margin="-3,0,0,10"/>
+                <Label Content="HTML Report Folder" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
+                <Label  Style="{StaticResource @LabelStyle}" Content="Folder Path:"/>
+                <StackPanel Margin="5,0,0,0" Orientation="Horizontal" >
+                    <TextBox x:Name="HTMLReportFolderTextBox" Width="700" Style="{StaticResource @TextBoxStyle}" />
+                    <Button x:Name="SelectHTMLReportsFolderButton" Click="SelectHTMLReportsFolderButton_Click" Style="{StaticResource @InputButtonStyle}" Width="55" Margin="5,0,0,0" VerticalAlignment="Center" Content="Browse"/>
+                </StackPanel>
+                <Label Style="{StaticResource @LabelStyle}" FontSize="10" Content="* Target folder must exist, i.e.: 'c:/Ginger/HTML Reports/'"/>
+                <StackPanel Margin="5,0,0,0" Orientation="Horizontal" />
+            </StackPanel>
+            <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
+                <Label  Style="{StaticResource @LabelStyle}" Content="Default report template:"/>
+                <ComboBox x:Name="DefaultTemplatePickerCbx"  ContextMenu="{x:Null}" Width="250" Style="{DynamicResource $FlatInputComboBoxStyle}"></ComboBox>               
+            </StackPanel>
+            <StackPanel Name="NeedToEmptyHTMLReportFolder"  Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4" Margin="15,15,0,0">
+                
+                <CheckBox Name="LimitReportFolder" Content="Limit HTML Report Folder Size" Checked="LimitReportFolder_Checked" Unchecked="LimitReportFolder_Unchecked" Margin="0,0,0,0" HorizontalAlignment="Left" Width="212" />
+            </StackPanel>
+            <StackPanel Name="FolderMaxSize">
+            <Label  Style="{StaticResource @LabelStyle}" Content="Folder Maximal Size (in MB):" Margin="10,10,0,0" Height="30"/>
+                <StackPanel Margin="15,0,0,0" Orientation="Horizontal" >
+                <TextBox x:Name="SizeTextBox" Width="212" Style="{StaticResource @TextBoxStyle}" TextChanged="SizeTextBox_TextChanged" > 500 </TextBox>
+            </StackPanel>
+            </StackPanel>
+            <StackPanel x:Name="htmlAutoProdReportSwitchPnl" Margin="10,10,0,0" Orientation="Horizontal" Visibility="Collapsed">
+                <Label Content="Automatic Producing of HTML Reports:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
+                <StackPanel x:Name="htmlReportSwitchRadioBtnsPnl" Margin="10,0,0,0" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <RadioButton x:Name="htmlReportAutoProdOnRadioBtn" Content="On" Padding="5,0,15,0" Checked="htmlReportAutoProdOnRadioBtn_Checked"/>
+                    <RadioButton x:Name="htmlReportAutoProdOffRadioBtn" Content="Off" Padding="5,0,0,0" IsChecked="True" Checked="htmlReportAutoProdOffRadioBtn_Checked"/>
+                </StackPanel>
+            </StackPanel>
+            <Grid x:Name="xCentralizedReportSettingsGrid" Margin="10,20,10,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="700"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0" Content="Centralized Report Data Settings" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
+                <DockPanel Grid.Row="1" Margin="5 0 5 5">
+                    <Label  Style="{StaticResource @LabelStyle}" Content="Centralized Report Data Service URL:  "/>
+                    <TextBox x:Name="xCentralizedReportDataServiceURLTextBox" Style="{StaticResource @TextBoxStyle}"  />
+                </DockPanel>
+                <DockPanel Grid.Row="2" Margin="5 0 5 5">
+                    <Label  Style="{StaticResource @LabelStyle}" Content="Centralized HTML Report Service URL:"/>
+                    <TextBox x:Name="xCentralizedHtmlReportServiceURLTextBox" Style="{StaticResource @TextBoxStyle}"  />
+                </DockPanel>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Page>

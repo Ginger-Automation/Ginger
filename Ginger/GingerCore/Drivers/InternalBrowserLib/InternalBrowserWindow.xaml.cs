@@ -475,7 +475,7 @@ namespace GingerCore.Drivers
 
             foreach (mshtml.HTMLInputElement el in elements)
             { 
-                string elType = el.getAttribute("type");
+                string elType = (string)el.getAttribute("type");
                 switch (elType)
                 {
                     case "radio":
@@ -587,12 +587,12 @@ namespace GingerCore.Drivers
             string elName="";
             try{
 
-                if (e.getAttribute("type").Trim() != "")
-                    elName = e.getAttribute("type").Trim();
-                else if (e.getAttribute("Value").Trim()!="")
-                    elName = e.getAttribute("Value");
-                else if (e.getAttribute("Name").Trim()!="")
-                    elName = e.getAttribute("Name");
+                if ( e.getAttribute("type")?.ToString().Trim() != "")
+                    elName = e.getAttribute("type").ToString().Trim();
+                else if (e.getAttribute("Value")?.ToString().Trim()!="")
+                    elName = (string)e.getAttribute("Value");
+                else if (e.getAttribute("Name")?.ToString().Trim()!="")
+                    elName = (string)e.getAttribute("Name");
             }catch(Exception ex)
             { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             string elValue = (e.innerText == null) ? elName : e.innerText; 
@@ -1226,7 +1226,7 @@ namespace GingerCore.Drivers
                     }
                     else
                     {                                            
-                        val = l.getAttribute(AttributeLabel);
+                        val = (string)l.getAttribute(AttributeLabel);
                     }
                     if (!string.IsNullOrEmpty(val))
                     {                                            
@@ -1372,7 +1372,7 @@ namespace GingerCore.Drivers
         {
             if (sLocVal.IndexOf("{RE:") < 0)
                 if(mDocument.getElementsByName(sLocVal).length>=0)
-                    return mDocument.getElementsByName(sLocVal).item(Type.Missing, 0);
+                    return (IHTMLElement)mDocument.getElementsByName(sLocVal).item(Type.Missing, 0);
                 
 
             Regex reg = new Regex(sLocVal.Replace("{RE:", "").Replace("}", ""), RegexOptions.Compiled);
@@ -1389,7 +1389,7 @@ namespace GingerCore.Drivers
                         { continue; }
                         else
                         {
-                            if (reg.Matches(e.getAttribute("Name")).Count > 0)
+                            if (reg.Matches((string)e.getAttribute("Name")).Count > 0)
                                 return e;
                             else
                                 continue;
@@ -1404,7 +1404,7 @@ namespace GingerCore.Drivers
                         { continue; }
                         else
                         {
-                            if (reg.Matches(e.getAttribute("Name")).Count > 0)
+                            if (reg.Matches((string)e.getAttribute("Name")).Count > 0)
                                 return e;
                             else
                                 continue;
@@ -1414,7 +1414,7 @@ namespace GingerCore.Drivers
                         { continue; }
                         else
                         {
-                            if (reg.Matches(e.getAttribute("Name")).Count > 0)
+                            if (reg.Matches((string)e.getAttribute("Name")).Count > 0)
                                 return e;
                             else
                                 continue;
@@ -1566,7 +1566,7 @@ namespace GingerCore.Drivers
             //TODO: create windows temp file
             string filename = @"C:\temp\sc1.png"; // Path.te.GetTempFileName();
             bmpScreenShot.Save(filename);
-            System.Diagnostics.Process.Start(filename);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = filename, UseShellExecute = true });
         }
 
         private void MainRibbon_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1718,7 +1718,7 @@ namespace GingerCore.Drivers
     
         private void CreateInputAction(mshtml.HTMLInputElement element)
         {
-            string stype = element.getAttribute("type").ToUpper();
+            string stype = element.getAttribute("type")?.ToString().ToUpper();
             SetAddActionButtonForINPUT(stype, element);
         }
 
@@ -1808,7 +1808,7 @@ namespace GingerCore.Drivers
         
         private void CreateInputValidations(mshtml.HTMLInputElement element)
         {
-            string stype=element.getAttribute("type").ToUpper();
+            string stype=element.getAttribute("type")?.ToString().ToUpper();
             SetActionButtonsForINPUT(stype, element);          
         }
         
@@ -1956,7 +1956,7 @@ namespace GingerCore.Drivers
             string s = "";
 
             // Get all Drop down options
-            IHTMLElementCollection options = element.children;
+            IHTMLElementCollection options = (IHTMLElementCollection)element.children;
             foreach (IHTMLElement v in options)
             {
                 //TODO: decide on delimeter, const global for app, use same in driver when getting the value - DUP code 

@@ -22,28 +22,28 @@ using UIAComWrapperInternal;
 
 namespace System.Windows.Automation
 {
-    public class TablePattern : GridPattern
+    public class TablePattern : GridPatternExtended
     {
         private UIAutomationClient.IUIAutomationTablePattern _pattern;
-        public new static readonly AutomationPattern Pattern = TablePatternIdentifiers.Pattern;
-        public static readonly AutomationProperty ColumnHeadersProperty = TablePatternIdentifiers.ColumnHeadersProperty;
-        public static readonly AutomationProperty RowHeadersProperty = TablePatternIdentifiers.RowHeadersProperty;
-        public static readonly AutomationProperty RowOrColumnMajorProperty = TablePatternIdentifiers.RowOrColumnMajorProperty;
+        public new static readonly AutomationPatternExtended Pattern = TablePatternIdentifiers.Pattern;
+        public static readonly AutomationPropertyExtended ColumnHeadersProperty = TablePatternIdentifiers.ColumnHeadersProperty;
+        public static readonly AutomationPropertyExtended RowHeadersProperty = TablePatternIdentifiers.RowHeadersProperty;
+        public static readonly AutomationPropertyExtended RowOrColumnMajorProperty = TablePatternIdentifiers.RowOrColumnMajorProperty;
         
-        private TablePattern(AutomationElement el, UIAutomationClient.IUIAutomationTablePattern tablePattern, UIAutomationClient.IUIAutomationGridPattern gridPattern, bool cached)
+        private TablePattern(AutomationElement_Extend el, UIAutomationClient.IUIAutomationTablePattern tablePattern, UIAutomationClient.IUIAutomationGridPattern gridPattern, bool cached)
             : base(el, gridPattern, cached)
         {
             Debug.Assert(tablePattern != null);
             this._pattern = tablePattern;
         }
 
-        internal new static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal new static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
             TablePattern result = null;
             if (pattern != null)
             {
                 UIAutomationClient.IUIAutomationGridPattern gridPattern =
-                    (UIAutomationClient.IUIAutomationGridPattern)el.GetRawPattern(GridPattern.Pattern, cached);
+                    (UIAutomationClient.IUIAutomationGridPattern)el.GetRawPattern(GridPatternExtended.Pattern, cached);
                 if (gridPattern != null)
                 {
                     result = new TablePattern(el, (UIAutomationClient.IUIAutomationTablePattern)pattern,
@@ -73,22 +73,22 @@ namespace System.Windows.Automation
         [StructLayout(LayoutKind.Sequential)]
         public struct TablePatternInformation
         {
-            private AutomationElement _el;
+            private AutomationElement_Extend _el;
             private bool _isCached;
-            internal TablePatternInformation(AutomationElement element, bool isCached)
+            internal TablePatternInformation(AutomationElement_Extend element, bool isCached)
             {
                 this._el = element;
                 this._isCached = isCached;
             }
 
-            public AutomationElement[] GetRowHeaders()
+            public AutomationElement_Extend[] GetRowHeaders()
             {
-                return (AutomationElement[])this._el.GetPropertyValue(TablePattern.RowHeadersProperty, _isCached);
+                return (AutomationElement_Extend[])this._el.GetPropertyValue(TablePattern.RowHeadersProperty, _isCached);
             }
 
-            public AutomationElement[] GetColumnHeaders()
+            public AutomationElement_Extend[] GetColumnHeaders()
             {
-                return (AutomationElement[])this._el.GetPropertyValue(TablePattern.ColumnHeadersProperty, _isCached);
+                return (AutomationElement_Extend[])this._el.GetPropertyValue(TablePattern.ColumnHeadersProperty, _isCached);
             }
 
             public int RowCount
@@ -118,18 +118,18 @@ namespace System.Windows.Automation
     public class TableItemPattern : GridItemPattern
     {
         private UIAutomationClient.IUIAutomationTableItemPattern _pattern;
-        public new static readonly AutomationPattern Pattern = TableItemPatternIdentifiers.Pattern;
-        public static readonly AutomationProperty ColumnHeaderItemsProperty = TableItemPatternIdentifiers.ColumnHeaderItemsProperty;
-        public static readonly AutomationProperty RowHeaderItemsProperty = TableItemPatternIdentifiers.RowHeaderItemsProperty;
+        public new static readonly AutomationPatternExtended Pattern = TableItemPatternIdentifiers.Pattern;
+        public static readonly AutomationPropertyExtended ColumnHeaderItemsProperty = TableItemPatternIdentifiers.ColumnHeaderItemsProperty;
+        public static readonly AutomationPropertyExtended RowHeaderItemsProperty = TableItemPatternIdentifiers.RowHeaderItemsProperty;
         
-        private TableItemPattern(AutomationElement el, UIAutomationClient.IUIAutomationTableItemPattern tablePattern, UIAutomationClient.IUIAutomationGridItemPattern gridPattern, bool cached)
+        private TableItemPattern(AutomationElement_Extend el, UIAutomationClient.IUIAutomationTableItemPattern tablePattern, UIAutomationClient.IUIAutomationGridItemPattern gridPattern, bool cached)
             : base(el, gridPattern, cached)
         {
             Debug.Assert(tablePattern != null);
             this._pattern = tablePattern;
         }
 
-        internal new static object Wrap(AutomationElement el, object pattern, bool cached)
+        internal new static object Wrap(AutomationElement_Extend el, object pattern, bool cached)
         {
             TableItemPattern result = null;
             if (pattern != null)
@@ -165,9 +165,9 @@ namespace System.Windows.Automation
         [StructLayout(LayoutKind.Sequential)]
         public struct TableItemPatternInformation
         {
-            private AutomationElement _el;
+            private AutomationElement_Extend _el;
             private bool _isCached;
-            internal TableItemPatternInformation(AutomationElement element, bool isCached)
+            internal TableItemPatternInformation(AutomationElement_Extend element, bool isCached)
             {
                 this._el = element;
                 this._isCached = isCached;
@@ -201,22 +201,22 @@ namespace System.Windows.Automation
                     return (int)this._el.GetPropertyValue(TableItemPattern.ColumnSpanProperty, _isCached);
                 }
             }
-            public AutomationElement ContainingGrid
+            public AutomationElement_Extend ContainingGrid
             {
                 get
                 {
-                    return (AutomationElement)this._el.GetPropertyValue(TableItemPattern.ContainingGridProperty, _isCached);
+                    return (AutomationElement_Extend)this._el.GetPropertyValue(TableItemPattern.ContainingGridProperty, _isCached);
                 }
             }
 
-            public AutomationElement[] GetRowHeaderItems()
+            public AutomationElement_Extend[] GetRowHeaderItems()
             {
-                return (AutomationElement[])this._el.GetPropertyValue(TableItemPattern.RowHeaderItemsProperty, _isCached);
+                return (AutomationElement_Extend[])this._el.GetPropertyValue(TableItemPattern.RowHeaderItemsProperty, _isCached);
             }
 
-            public AutomationElement[] GetColumnHeaderItems()
+            public AutomationElement_Extend[] GetColumnHeaderItems()
             {
-                return (AutomationElement[])this._el.GetPropertyValue(TableItemPattern.ColumnHeaderItemsProperty, _isCached);
+                return (AutomationElement_Extend[])this._el.GetPropertyValue(TableItemPattern.ColumnHeaderItemsProperty, _isCached);
             }
         }
     }

@@ -1,0 +1,60 @@
+<!--//# Status=Cleaned; Comment=Cleaned on 05/23/18-->
+    <Page x:Class="Ginger.Run.ExportResultsToALMConfigPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Actions="clr-namespace:Ginger.Actions"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"    
+      mc:Ignorable="d" 
+      d:DesignHeight="210" d:DesignWidth="600"
+	Title="RunSetActionPublishToQCEditPage">
+
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <StackPanel>
+                <Label Style="{StaticResource @LabelStyle}">ALM Type:</Label>
+                <DockPanel>
+                    <UserControlsLib:UCComboBox x:Name="xALMTypeCbx" ContextMenu="{x:Null}" Margin="10,0,0,0" Width="300" HorizontalAlignment="Left" ></UserControlsLib:UCComboBox>
+                    <usercontrols:ucButton x:Name="xSetFieldsBtn" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Left" Margin="20,0,0,0" ButtonText="Set Fields" ButtonImageType="ALM" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Click="xSetFieldsBtn_Click"/>
+                </DockPanel>
+            </StackPanel>
+            <StackPanel>
+                <Label Style="{StaticResource @LabelStyle}">ALM Test Set Level:</Label>
+                <UserControlsLib:UCComboBox x:Name="xALMTestSetLevelCbx" Margin="10,0,0,0" Width="300" HorizontalAlignment="Left"></UserControlsLib:UCComboBox>
+            </StackPanel>
+            <StackPanel x:Name="xExportTypePanel" Visibility="Collapsed">
+                <Label Style="{StaticResource @LabelStyle}">Export Type:</Label>
+                <UserControlsLib:UCComboBox x:Name="xExportTypeCbx" ContextMenu="{x:Null}" Margin="10,0,0,0" Width="300" HorizontalAlignment="Left"></UserControlsLib:UCComboBox>
+            </StackPanel>
+            <StackPanel x:Name="xExportDestinationFolder" Visibility="Collapsed">
+                <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Export Test Set Destination Folder:</Label>
+                <Actions:UCValueExpression x:Name="xTestSetFolderDestination" Margin="10,10,0,0" Width="300" HorizontalAlignment="Left"/>
+
+                <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Export Test Cases Destination Folder:</Label>
+                <Actions:UCValueExpression x:Name="xTestCaseFolderDestination" Margin="10,10,0,0" Width="300" HorizontalAlignment="Left"/>
+            </StackPanel>
+            <StackPanel>
+                <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Test Cases Results to Export : </Label>
+                <ComboBox x:Name="xFilterByStatusDroplist"  ContextMenu="{x:Null}" Width="300" HorizontalAlignment="Left" Margin="10,0,0,0" Style="{DynamicResource $FlatEditInputComboBoxStyle}"></ComboBox>
+            </StackPanel>
+            <CheckBox x:Name="AttachActivitiesGroupReportCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5" Checked="AttachActivitiesGroupReportCbx_Checked" Unchecked="AttachActivitiesGroupReportCbx_Unchecked">
+                <CheckBox.Content>
+                    <GingerCore:ucTextDicResource Text="Attach [ActivitiesGroups] Report To The TC's Run Iteration"/>
+                </CheckBox.Content>
+            </CheckBox>
+            <CheckBox x:Name="UseVariableInTCRunNameCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5" Checked="UseVariableInTCRunNameCbx_Checked" Unchecked="UseVariableInTCRunNameCbx_Unchecked">
+                <CheckBox.Content>
+                    <GingerCore:ucTextDicResource Text="Use User [Variable] In TC Run Instance Name"/>
+                </CheckBox.Content>
+            </CheckBox>
+            <StackPanel Margin="5,0,0,15" x:Name="VariableForTCRunNamePanel" Orientation="Vertical" IsEnabled="False">
+                <Actions:UCValueExpression x:Name="VariableForTCRunName" ToolTip="From" />
+            </StackPanel>
+            <Button x:Name="xExportToALMBtn" Content="Export To ALM" Style="{StaticResource @WindowButtonStyle}" Width="100" Margin="5 0 0 0" HorizontalAlignment="Left" Visibility="Collapsed" Click="xExportToALMBtn_Click"></Button>
+            <usercontrols:ImageMakerControl x:Name="xExportToALMLoadingIcon" Grid.Row="1" ImageType="Processing"  HorizontalAlignment="Left" Width="25" Height="25" Visibility="Collapsed" />
+        </StackPanel>
+    </Grid>
+</Page>

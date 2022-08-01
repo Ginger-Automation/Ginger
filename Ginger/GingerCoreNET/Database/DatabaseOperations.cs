@@ -37,6 +37,7 @@ using GingerCore.Actions;
 using System.Runtime.InteropServices;
 using amdocs.ginger.GingerCoreNET;
 using static GingerCore.Environments.Database;
+using System.Data.OleDb;
 
 namespace GingerCore.Environments
 {
@@ -284,7 +285,7 @@ namespace GingerCore.Environments
                     case eDBTypes.MSAccess:
 
 
-                        oConn = WorkSpace.Instance.TargetFrameworkHelper.GetMSAccessConnection();
+                        oConn = new OleDbConnection();
                         oConn.ConnectionString = connectConnectionString;
                         oConn.Open();
                         break;

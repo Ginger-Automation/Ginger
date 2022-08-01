@@ -43,8 +43,6 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         DriverConfigParam mAppType;
         DriverConfigParam mAppiumCapabilities;
         DriverConfigParam mDeviceAutoScreenshotRefreshMode;
-        DriverConfigParam mApplitoolKey;
-        DriverConfigParam mApplitoolURL;
 
         public AppiumDriverEditPage(Agent appiumAgent)
         {
@@ -67,15 +65,6 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             xProxyTextBox.Init(null, proxy, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xProxyTextBox, TextBox.ToolTipProperty, proxy, nameof(DriverConfigParam.Description));
             xUseProxyChkBox.IsChecked = !string.IsNullOrEmpty(proxy.Value);
-
-            mApplitoolKey = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ApplitoolsViewKey));
-            xApplitoolKeyTxtBox.Init(null, mApplitoolKey, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xApplitoolKeyTxtBox, TextBox.ToolTipProperty, mApplitoolKey, nameof(DriverConfigParam.Description));
-
-            mApplitoolURL = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.ApplitoolsServerUrl));
-            xApplitoolURLTxtBox.Init(null, mApplitoolURL, nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xApplitoolURLTxtBox, TextBox.ToolTipProperty, mApplitoolURL, nameof(DriverConfigParam.Description));
-
 
             xLoadTimeoutTxtbox.Init(null, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Description));           
@@ -150,9 +139,9 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void SetApplicationCapabilities(bool init=false)
         {
-            DriverConfigParam appPackage = new DriverConfigParam() { Parameter = "appPackage", Description = "Java package of the Android app you want to run", Value = "com.android.settings" };
+            DriverConfigParam appPackage = new DriverConfigParam() { Parameter = "appPackage", Description = "Java package of the Android application you want to run", Value = "com.android.settings" };
             DriverConfigParam appActivity = new DriverConfigParam() { Parameter = "appActivity", Description = "Activity name for the Android activity you want to launch from your package", Value = "com.android.settings.Settings" };
-            DriverConfigParam bundleId = new DriverConfigParam() { Parameter = "bundleId", Description = "Bundle ID of the app under test", Value = "com.apple.Preferences" };
+            DriverConfigParam bundleId = new DriverConfigParam() { Parameter = "bundleId", Description = "Bundle ID of the application under test", Value = "com.apple.Preferences" };
             DriverConfigParam browserName = new DriverConfigParam() { Parameter = "browserName", Description = "Name of mobile web browser to automate" };
             DriverConfigParam defualtURL = new DriverConfigParam() { Parameter = "defaultURL", Description = "Ginger Capability | Default URL to load on browser connection", Value= "https://ginger.amdocs.com/" };
             if (mAppType.Value == eAppType.NativeHybride.ToString())
@@ -296,7 +285,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void AppiumCapabilities_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            Process.Start(new ProcessStartInfo() { FileName = e.Uri.AbsoluteUri, UseShellExecute = true });
             e.Handled = true;
         }
 

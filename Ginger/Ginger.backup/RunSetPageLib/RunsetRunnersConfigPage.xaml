@@ -1,0 +1,32 @@
+<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:h="clr-namespace:Ginger.Help"
+    x:Class="Ginger.Run.RunsetRunnersConfigPage"
+    mc:Ignorable="d"
+    h:GingerHelpProvider.HelpString="Run"
+      Height="350" Width="500"
+	Title="Runners Execution Configurations">
+
+    <ScrollViewer Background="{StaticResource $BackgroundColor_LightGray}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <DockPanel Margin="10">
+            <CheckBox x:Name="xRunAnalyzerChkbox" DockPanel.Dock="Top" Margin="0,10,0,0" Content="Analyze Runners Before Execution" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Top" />
+            <StackPanel Orientation="Horizontal"  DockPanel.Dock="Top" Margin="0,20,0,0">
+                <Label HorizontalAlignment="Left"  VerticalAlignment="Center" Style="{StaticResource $LabelStyle}" Content="Runners Execution Order:"/>
+                <StackPanel x:Name="xRunnersExecutionOrderPnl" Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,0">
+                    <RadioButton x:Name="xParallelOptionRdBtn" Content="Parallel" GroupName="RunnersExecutionOrderOptions" Style="{StaticResource $InputRadioButtonStyle}" VerticalAlignment="Center" ToolTip = "Runners configured to run in parallel" Checked="xParallelOptionRdBtn_Checked"/>
+                    <RadioButton x:Name="xSequentiallyOptionRdBtn" Content="Sequentially" GroupName="RunnersExecutionOrderOptions" Style="{StaticResource $InputRadioButtonStyle}" VerticalAlignment="Center" Margin="10,0,0,0" ToolTip = "Runners configured to run one after the other" Checked="xSequentiallyOptionRdBtn_Checked"/>
+                </StackPanel>
+            </StackPanel>
+
+            <CheckBox x:Name="xStopRunnersExecutionOnFailureChkbox" DockPanel.Dock="Top" Margin="0,5,0,0" Content="Stop Runners Execution on Failure" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Top" />
+
+            <!--<StackPanel x:Name="xRunOptionPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
+                <Label Content="Run Option:" Style="{StaticResource $LabelStyle}" Width="100"/>
+                <ComboBox x:Name="xRunOptionComboBox"  Style="{StaticResource $FlatInputComboBoxStyle}" Width="250"/>
+            </StackPanel>-->
+        </DockPanel>
+    </ScrollViewer>
+</Page>

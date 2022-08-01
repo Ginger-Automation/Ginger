@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+extern alias UIAComWrapperNetstandard;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
@@ -23,7 +25,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.UIAutomation;
 using mshtml;
 using GingerCore.Drivers.PBDriver;
-using System.Windows.Automation;
+
 using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Drivers.Common
@@ -212,9 +214,9 @@ namespace GingerCore.Drivers.Common
             if (obj == null) return null;
             ElementInfo EI = null;
 
-            if (obj.GetType().Equals(typeof(AutomationElement)))
+            if (obj.GetType().Equals(typeof(UIAuto.AutomationElement)))
             {
-                EI = mUIAutomationHelper.GetElementInfoFor((AutomationElement)obj);
+                EI = mUIAutomationHelper.GetElementInfoFor((UIAuto.AutomationElement)obj);
             }
 
             else

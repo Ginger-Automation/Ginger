@@ -260,19 +260,19 @@ namespace Ginger
             Ellipse e = new Ellipse();
             if (count.Length == 1)
             {
-                xAxis = 147;
+                xAxis = 101;
             }
             else if (count.Length == 2)
             {
-                xAxis = 143;
+                xAxis = 99;
             }
             else if (count.Length == 3)
             {
-                xAxis = 141;
+                xAxis = 97;
             }
             else if (count.Length == 4)
             {
-                xAxis = 138;
+                xAxis = 95;
             }
             viewbox = new Viewbox();
             Grid grd = new Grid();
@@ -284,24 +284,24 @@ namespace Ginger
 
             grd.Children.Add(control);
             grd.Children.Add(CreateAnEllipse());
-            TextBlock txt = new TextBlock { Margin = new Thickness(xAxis, 168, 0, 0) };
-            // if(typ==0)
-            // {
-            //     App.RunsetBFTextbox = txt;
-            // }
-            //else if(typ==1)
-            // {
-            //     App.RunsetActivityTextbox = txt;
-            // }
-            // else
-            // {
-            //     App.RunsetActionTextbox = txt;
-            // }        
+            TextBlock txt = new TextBlock { Margin = new Thickness(xAxis, 125, 0, 0), FontWeight = FontWeights.Bold };
+            //if (typ == 0)
+            //{
+            //    App.RunsetBFTextbox = txt;
+            //}
+            //else if (typ == 1)
+            //{
+            //    App.RunsetActivityTextbox = txt;
+            //}
+            //else
+            //{
+            //    App.RunsetActionTextbox = txt;
+            //}
             txt.Text = count.ToString();
             grd.Children.Add(txt);
             viewbox.Child = grd;
             viewbox.Measure(new System.Windows.Size(400, 200));
-            viewbox.Arrange(new Rect(0, 0, 400, 200));
+            viewbox.Arrange(new Rect(0, 0, 500, 200));
             viewbox.UpdateLayout();
             return viewbox;
         }
@@ -320,7 +320,7 @@ namespace Ginger
             blueRectangle.Stroke = blueBrush;
             // Fill rectangle with blue color
             blueRectangle.Fill = blueBrush;
-            blueRectangle.Margin = new Thickness(0, 35, 0, 0);
+            blueRectangle.Margin = new Thickness(0, 30, 40, 25);
             return blueRectangle;
         }
 
@@ -332,7 +332,7 @@ namespace Ginger
         /// <returns></returns>
         public static BitmapImage GetResourceImage(string resourceImageName)
         {
-            return new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + resourceImageName));
+            return new BitmapImage(new Uri(@"/Images/" + resourceImageName, UriKind.RelativeOrAbsolute));
         }
 
         public static void DoEvents()
@@ -417,7 +417,7 @@ namespace Ginger
         {
             //TODO: replace all places where we have pack://application:,,,/Ginger;component/Images/ with below function
             System.Windows.Controls.Image img = new System.Windows.Controls.Image();
-            img.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + imageName));
+            img.Source = new BitmapImage(new Uri(@"/Images/" + imageName, UriKind.RelativeOrAbsolute));
             if (width > 0)
                 img.Width = width;
             if (height > 0)

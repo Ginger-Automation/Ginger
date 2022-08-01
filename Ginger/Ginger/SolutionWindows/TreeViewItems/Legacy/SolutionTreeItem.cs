@@ -63,7 +63,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             // create Image
             Image image = new Image();
             string ImageFile = "@Solution_16x16.png";
-            image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + ImageFile));
+            image.Source = new BitmapImage(new Uri(@"/Images/" + ImageFile, UriKind.RelativeOrAbsolute));
 
              // Source Control Image
              Image SCimage = new Image();

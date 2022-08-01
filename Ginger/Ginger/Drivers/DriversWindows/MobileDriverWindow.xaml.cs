@@ -22,17 +22,29 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.UserControls;
+using FontAwesome5;
+using Ginger.Agents;
+using Ginger.UserControls;
+using Ginger.UserControlsLib.TextEditor;
 using GingerCore;
 using GingerCore.Drivers;
+using OpenQA.Selenium;
+using RestSharp;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using OpenQA.Selenium.Appium;
+using OpenQA.Selenium.Appium.Android;
+using System.Text;
 
 namespace Ginger.Drivers.DriversWindows
 {
@@ -56,6 +68,13 @@ namespace Ginger.Drivers.DriversWindows
         eAutoScreenshotRefreshMode mDeviceAutoScreenshotRefreshMode;
         bool mWindowIsOpen = true;
         bool IsRecording = false;
+        bool mIsMetricsClickedOnce = false;
+
+
+
+        ObservableList<DeviceInfo> mDeviceDetails = new ObservableList<DeviceInfo>();
+
+
 
         public MobileDriverWindow(DriverBase driver, Agent agent)
         {
@@ -66,6 +85,68 @@ namespace Ginger.Drivers.DriversWindows
 
             ((DriverBase)mDriver).DriverMessageEvent += MobileDriverWindow_DriverMessageEvent;
             ((DriverBase)mDriver).SpyingElementEvent += CurrentMousePosToSpy;
+        }
+
+        private async void RefreshDetailsTable(object sender, RoutedEventArgs e)
+        {
+            await this.Dispatcher.InvokeAsync(async () =>
+            {
+                xDeviceDetailsGrid.Visibility = Visibility.Collapsed;
+                xDetailsLoadingPnl.Visibility = Visibility.Visible;
+                await SetDeviceDetailsGridData();
+                xDeviceDetailsGrid.Visibility = Visibility.Visible;
+                xDetailsLoadingPnl.Visibility = Visibility.Collapsed;
+            });
+
+        }
+        private async void RefreshMetricsTable(object sender, RoutedEventArgs e)
+        {
+            await this.Dispatcher.InvokeAsync(async () =>
+            {
+                xDeviceMetricsGrid.Visibility = Visibility.Collapsed;
+                xMetricsLoadingPnl.Visibility = Visibility.Visible;
+                await SetDeviceMetricsGridData();
+                xDeviceMetricsGrid.Visibility = Visibility.Visible;
+                xMetricsLoadingPnl.Visibility = Visibility.Collapsed;
+            });
+
+        }
+
+        private void SetDeviceDetailsGridView()
+        {
+            //# Default View
+
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+
+
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Name", WidthWeight = 4.5, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailValue), Header = "Value", WidthWeight = 7, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.ExtraInfo), Header = "Extra Info", WidthWeight = 2.5, MaxWidth = 70, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xWindowGrid.Resources["ExtraInfo"] });
+
+            xDeviceDetailsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshDetailsTable));
+
+            xDeviceDetailsGrid.SetAllColumnsDefaultView(view);
+            xDeviceDetailsGrid.InitViewItems();
+            xDeviceDetailsGrid.SetTitleLightStyle = true;
+        }
+
+        private void SetDeviceMetricsGridView()
+        {
+            //# Default View
+
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailName), Header = "Name", WidthWeight = 4.5, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.DetailValue), Header = "Value", WidthWeight = 7, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeviceInfo.ExtraInfo), Header = "Extra Info", WidthWeight = 2.6, MaxWidth = 70, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xWindowGrid.Resources["ExtraInfo"] });
+
+            xDeviceMetricsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshMetricsTable));
+
+            xDeviceMetricsGrid.SetAllColumnsDefaultView(view);
+            xDeviceMetricsGrid.InitViewItems();
+            xDeviceMetricsGrid.SetTitleLightStyle = true;
         }
 
         private object CurrentMousePosToSpy()
@@ -128,7 +209,7 @@ namespace Ginger.Drivers.DriversWindows
         {
             Dispatcher.Invoke(() =>
             {
-                if(ShowRecordIcon)
+                if (ShowRecordIcon)
                     xRecordingImage.Visibility = Visibility.Visible;
                 else
                     xRecordingImage.Visibility = Visibility.Collapsed;
@@ -148,10 +229,17 @@ namespace Ginger.Drivers.DriversWindows
                             xMessagePnl.Visibility = Visibility.Collapsed;
                             xDeviceScreenshotCanvas.Visibility = Visibility.Visible;
                             xMessageLbl.Content = "Loading Device Screenshot...";
+
                             await RefreshDeviceScreenshotAsync();
                             SetOrientationButton();
                             DoContinualDeviceScreenshotRefresh();
+
+                            Dictionary<string, object> mDeviceGeneralInfo;
+                            mDeviceGeneralInfo = mDriver.GetDeviceGeneralInfo();
+
+                            SetTitle(mDeviceGeneralInfo);
                         });
+
                     }
                     else
                     {
@@ -171,7 +259,7 @@ namespace Ginger.Drivers.DriversWindows
 
                 case DriverBase.eDriverMessageType.RecordingEvent:
                     IsRecording = (sender == null) ? false : (bool)sender;
-                    
+
                     UpdateRecordingImage(IsRecording);
 
                     break;
@@ -188,6 +276,333 @@ namespace Ginger.Drivers.DriversWindows
                     UnHighlightElementEvent();
                     break;
             }
+        }
+
+        private void SetTitle(Dictionary<string, object> mDeviceGeneralInfo)
+        {
+            object value, platformVersion;
+            if (mDeviceGeneralInfo.Count > 0)
+            {
+                if (mDeviceGeneralInfo.TryGetValue("manufacturer", out value) || mDeviceGeneralInfo.TryGetValue("model", out value))
+                {
+                    if ((string)value != "iPhone")
+                    {
+                        this.Title = " Android";
+                    }
+                    else
+                    {
+                        this.Title = " iOS";
+                    }
+                }
+
+                if (mDeviceGeneralInfo.TryGetValue("platformVersion", out platformVersion))
+                {
+                    this.Title += " [" + (string)platformVersion + "] ";
+                }
+
+                if (mDeviceGeneralInfo.TryGetValue("manufacturer", out value))
+                {
+                    this.Title += (string)value;
+                }
+
+                if (mDeviceGeneralInfo.TryGetValue("model", out value))
+                {
+                    this.Title += " " + (string)value;
+                }
+                if (!string.IsNullOrEmpty(mDriver.GetDeviceUDID()))
+                {
+                    this.Title += " [" + mDriver.GetDeviceUDID() + "]";
+                }
+
+            }
+        }
+
+        private async Task<bool> SetDeviceMetricsGridData()
+        {
+            string mDeviceNetworkInfo = string.Empty;
+            Dictionary<string, string> mDeviceMemoryInfo = null;
+            Dictionary<string, string> mDeviceCPUInfo = null;
+
+            await Task.Run(() =>
+            {
+                mDeviceCPUInfo = mDriver.GetDeviceCPUInfo();
+                mDeviceMemoryInfo = mDriver.GetDeviceMemoryInfo();
+                mDeviceNetworkInfo = mDriver.GetDeviceNetworkInfo().Result;
+            });
+
+
+            mDeviceDetails = new ObservableList<DeviceInfo>(mDeviceDetails.Where(x => x.Category == DeviceInfo.eDeviceInfoCategory.Detail).ToList());
+
+            #region setting device metrics grid
+            if (mDeviceCPUInfo != null && mDeviceCPUInfo.Count > 0)
+            {
+                double userCpuUsage = 0, kernelCpuUsage = 0;
+                double.TryParse(mDeviceCPUInfo["user"], out userCpuUsage);
+                userCpuUsage = Math.Round(userCpuUsage, 2);
+                double.TryParse(mDeviceCPUInfo["kernel"], out kernelCpuUsage);
+                kernelCpuUsage = Math.Round(kernelCpuUsage, 2);
+
+                string cpuUsage = (userCpuUsage + kernelCpuUsage).ToString() + " %";
+                mDeviceDetails.Add(new DeviceInfo("App CPU Usage:", cpuUsage, DeviceInfo.eDeviceInfoCategory.Metric, DictionaryToString(mDeviceCPUInfo)));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("App CPU Usage:", "N/A", DeviceInfo.eDeviceInfoCategory.Metric));
+            }
+
+            if (mDeviceMemoryInfo != null && mDeviceMemoryInfo.Count > 0)
+            {
+                double totalPss = 0;
+                double.TryParse(mDeviceMemoryInfo["totalPss"], out totalPss);
+                totalPss = Math.Round(totalPss / 1024, 2);
+                string ramUsage = (totalPss).ToString() + " Mb";
+                mDeviceDetails.Add(new DeviceInfo("App RAM Usage:", ramUsage, DeviceInfo.eDeviceInfoCategory.Metric, DictionaryToString(mDeviceMemoryInfo)));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("App RAM Usage:", "N/A", DeviceInfo.eDeviceInfoCategory.Metric));
+            }
+
+            if (!string.IsNullOrEmpty(mDeviceNetworkInfo))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Networks:", "Press info to view", DeviceInfo.eDeviceInfoCategory.Metric, mDeviceNetworkInfo));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Networks:", "N/A", DeviceInfo.eDeviceInfoCategory.Metric));
+            }
+            #endregion
+            xDeviceMetricsGrid.DataSourceList = new ObservableList<DeviceInfo>(mDeviceDetails.Where(x => x.Category == DeviceInfo.eDeviceInfoCategory.Metric).ToList());
+            return false;
+        }
+
+        private string DictionaryToString(Dictionary<string, string> dict)
+        {
+            string returnString = string.Empty;
+            foreach (KeyValuePair<string, string> entry in dict)
+            {
+                returnString = new StringBuilder(returnString + entry.Key + ": " + entry.Value + ", ").ToString();
+            }
+            returnString = returnString.Substring(0, returnString.Length - 2);
+            return returnString;
+        }
+
+        private async Task<bool> SetDeviceDetailsGridData()
+        {
+
+            bool isPhysicalDevice = false;
+            Dictionary<string, object> mDeviceGeneralInfo = null;
+            Dictionary<string, string> mDeviceBatteryInfo = null;
+
+            await Task.Run(() =>
+            {
+                mDeviceGeneralInfo = mDriver.GetDeviceGeneralInfo();
+                if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
+                {
+                    object value;
+                    mDeviceGeneralInfo.TryGetValue("isSimulator", out value);
+                    if (value is bool)
+                    {
+                        isPhysicalDevice = !(bool)value;
+                    }
+                }
+                else
+                {
+                    isPhysicalDevice = mDriver.IsRealDeviceAsync().Result;
+                }
+
+                mDeviceBatteryInfo = mDriver.GetDeviceBatteryInfo();
+            });
+
+            mDeviceDetails = new ObservableList<DeviceInfo>(mDeviceDetails.Where(x => x.Category == DeviceInfo.eDeviceInfoCategory.Metric).ToList());
+
+            #region setting device details grid
+            object value, apiVersion, platformVersion;
+            string battery;
+
+            if (!string.IsNullOrEmpty(mDriver.GetDeviceUDID()))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Device ID:", mDriver.GetDeviceUDID(), DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Device ID:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+            //Check if device is real device or emulator
+            if (isPhysicalDevice)
+            {
+                mDeviceDetails.Add(new DeviceInfo("Physical/emulator:", "Physical", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Physical/emulator:", "Emulator", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+            if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
+            {
+                mDeviceDetails.Add(new DeviceInfo("Manufacture:", "Apple", DeviceInfo.eDeviceInfoCategory.Detail));
+                mDeviceDetails.Add(new DeviceInfo("Brand:", "Apple", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                if ((mDeviceGeneralInfo.TryGetValue("manufacturer", out value) && !string.IsNullOrEmpty((string)value)))
+                {
+                    mDeviceDetails.Add(new DeviceInfo("Manufacture:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
+                }
+                else
+                {
+                    mDeviceDetails.Add(new DeviceInfo("Manufacture:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+
+                }
+
+                if (mDeviceGeneralInfo.TryGetValue("brand", out value) && !string.IsNullOrEmpty((string)value))
+                {
+                    mDeviceDetails.Add(new DeviceInfo("Brand:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
+                }
+                else
+                {
+                    mDeviceDetails.Add(new DeviceInfo("Brand:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+                }
+            }
+
+
+
+            if (mDeviceGeneralInfo.TryGetValue("model", out value) && !string.IsNullOrEmpty((string)value))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Model:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Model:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+            if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
+            {
+                mDeviceDetails.Add(new DeviceInfo("OS Type:", "iOS", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                if (mDeviceGeneralInfo.TryGetValue("manufacturer", out value) && !string.IsNullOrEmpty((string)value))
+                {
+                    if ((string)value != "apple")
+                    {
+                        mDeviceDetails.Add(new DeviceInfo("OS Type:", "Android", DeviceInfo.eDeviceInfoCategory.Detail));
+                    }
+                    else
+                    {
+                        mDeviceDetails.Add(new DeviceInfo("OS Type:", "iOS", DeviceInfo.eDeviceInfoCategory.Detail));
+                    }
+                }
+                else
+                {
+                    mDeviceDetails.Add(new DeviceInfo("OS Type:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+                }
+            }
+
+
+            if (mDeviceGeneralInfo.TryGetValue("platformVersion", out platformVersion))
+            {
+                string version;
+                version = (string)platformVersion;
+                if (mDeviceGeneralInfo.TryGetValue("apiVersion", out apiVersion))
+                {
+                    version += " [" + (string)apiVersion + "]";
+                    mDeviceDetails.Add(new DeviceInfo("OS Version:", version, DeviceInfo.eDeviceInfoCategory.Detail));
+                }
+                if (string.IsNullOrEmpty((string)platformVersion) || string.IsNullOrEmpty((string)apiVersion))
+                {
+                    mDeviceDetails.Add(new DeviceInfo("OS Version:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+                }
+            }
+
+            if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS && mDeviceGeneralInfo.TryGetValue("currentLocale", out value))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Language:", ((string)value).Replace("_", "/"), DeviceInfo.eDeviceInfoCategory.Detail));
+
+            }
+            else
+            {
+                if (mDeviceGeneralInfo.TryGetValue("locale", out value) && !string.IsNullOrEmpty((string)value))
+                {
+                    mDeviceDetails.Add(new DeviceInfo("Language:", ((string)value).Replace("_", "/"), DeviceInfo.eDeviceInfoCategory.Detail));
+                }
+                else
+                {
+                    mDeviceDetails.Add(new DeviceInfo("Language:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+                }
+            }
+
+            
+
+            if (mDeviceGeneralInfo.TryGetValue("timeZone", out value) && !string.IsNullOrEmpty((string)value))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Time zone:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Time zone:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+            if (mDeviceGeneralInfo.TryGetValue("realDisplaySize", out value) && !string.IsNullOrEmpty((string)value))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Screen resolution:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Screen resolution:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+            if (mDeviceGeneralInfo.TryGetValue("displayDensity", out value) && !string.IsNullOrEmpty(value.ToString()))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Display density:", value.ToString(), DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Display density:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+            if (mDeviceGeneralInfo.TryGetValue("carrierName", out value) && !string.IsNullOrEmpty((string)value))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Carrier name:", (string)value, DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Carrier name:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+            if (mDeviceGeneralInfo.TryGetValue("bluetooth", out value) && ((Dictionary<string, object>)value).Count > 0)
+            {
+                mDeviceDetails.Add(new DeviceInfo("Bluetooth:", ((Dictionary<string, object>)value)["state"].ToString(), DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Bluetooth:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+
+            if (mDeviceBatteryInfo.TryGetValue("power", out battery))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Device Battery:", battery + "%", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Battery:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+
+            if (string.IsNullOrEmpty(mAgent.Name))
+            {
+                mDeviceDetails.Add(new DeviceInfo("Ginger Agent:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                mDeviceDetails.Add(new DeviceInfo("Ginger Agent:", mAgent.Name, DeviceInfo.eDeviceInfoCategory.Detail, "Has extra info"));
+            }
+            #endregion
+
+            xDeviceDetailsGrid.DataSourceList = new ObservableList<DeviceInfo>(mDeviceDetails.Where(x => x.Category == DeviceInfo.eDeviceInfoCategory.Detail));
+            return false;
         }
 
         private void xDeviceScreenshotImage_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -301,6 +716,59 @@ namespace Ginger.Drivers.DriversWindows
             SetConfigurationsPanelView(!mConfigIsOn);
         }
 
+        bool mMeticsIsOn = false;
+        private async void xMetricsBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+            if (mDriver.IsDeviceConnected)
+            {
+                if (!mIsMetricsClickedOnce)
+                {
+                    //Setting up the detail and metic grids
+                    SetDeviceDetailsGridView();
+                    SetDeviceMetricsGridView();
+
+                    mIsMetricsClickedOnce = true;
+                }
+                //Setting the with of the metrics panel
+                SetMeticsPanelView(!mMeticsIsOn);
+
+                if (mMeticsIsOn)
+                {
+
+                    await this.Dispatcher.InvokeAsync(async () =>
+                    {
+                        xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
+                        //Loading the device details and metrics
+                        xDeviceDetailsGrid.Visibility = Visibility.Collapsed;
+                        xDeviceMetricsGrid.Visibility = Visibility.Collapsed;
+
+                        xDetailsLoadingPnl.Visibility = Visibility.Visible;
+                        xMetricsLoadingPnl.Visibility = Visibility.Visible;
+
+                        await SetDeviceDetailsGridData();
+                        xDeviceDetailsGrid.Visibility = Visibility.Visible;
+                        xDetailsLoadingPnl.Visibility = Visibility.Collapsed;
+
+                        await SetDeviceMetricsGridData();
+                        xDeviceMetricsGrid.Visibility = Visibility.Visible;
+                        xMetricsLoadingPnl.Visibility = Visibility.Collapsed;
+                    });
+
+                }
+                else
+                {
+                    xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
+                }
+
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.MobileDriverNotConnected);
+            }
+        }
+
+
         bool mPinIsOn = false;
         private void xPinBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -308,14 +776,14 @@ namespace Ginger.Drivers.DriversWindows
             {
                 //undock
                 this.Topmost = false;
-                xPinBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
+                xPinBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
                 xPinBtn.ToolTip = "Dock Window";
             }
             else
             {
                 //dock
                 this.Topmost = true;
-                xPinBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
+                xPinBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xPinBtn.ToolTip = "Undock Window";
             }
 
@@ -582,7 +1050,7 @@ namespace Ginger.Drivers.DriversWindows
                     {
                         string key = e.Key.ToString();
 
-                        if(key.Contains("NumPad"))
+                        if (key.Contains("NumPad"))
                         {
                             key = key.Replace("NumPad", "");
                         }
@@ -595,7 +1063,7 @@ namespace Ginger.Drivers.DriversWindows
                         {
                             mDriver.PerformSendKey(key.TrimStart('D'));
                         }
-                        else if(!(key.Contains("Ctrl") || key.Contains("Shift")))
+                        else if (!(key.Contains("Ctrl") || key.Contains("Shift")))
                         {
                             mDriver.PerformSendKey(key);
                         }
@@ -647,22 +1115,26 @@ namespace Ginger.Drivers.DriversWindows
         {
             try
             {
+                ImageMakerControl image = new ImageMakerControl();
                 //General
                 if (mDriver.GetDevicePlatformType() == eDevicePlatformType.Android)
                 {
-                    this.Icon = ImageMakerControl.GetImageSource(eImageType.AndroidOutline);
+                    this.Icon = ImageMakerControl.GetImageSource(eImageType.Android);
                 }
                 else
                 {
-                    this.Icon = ImageMakerControl.GetImageSource(eImageType.IosOutline);
+                    this.Icon = ImageMakerControl.GetImageSource(eImageType.Ios);
                 }
-                this.Title = string.Format("Ginger {0} Device View", mAgent.Name);
+
                 this.Width = 320;
                 this.Height = 650;
                 xMessageLbl.Content = "Connecting to Device...";
 
                 //Configurations
                 SetConfigurationsPanelView(false);
+                //Metrics
+                SetMeticsPanelView(false);
+
                 //set refresh mode by what configured on driver      
                 mDeviceAutoScreenshotRefreshMode = mDriver.DeviceAutoScreenshotRefreshMode;
                 switch (mDeviceAutoScreenshotRefreshMode)
@@ -681,6 +1153,8 @@ namespace Ginger.Drivers.DriversWindows
                 xConfigurationsFrame.Visibility = System.Windows.Visibility.Collapsed;
                 xConfigurationsCol.Width = new GridLength(0);
 
+                xMeticsCol.Width = new GridLength(0);
+
                 //Main tool bar
                 xRefreshButton.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xPinBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
@@ -688,6 +1162,7 @@ namespace Ginger.Drivers.DriversWindows
                 xSwipeBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xPortraiteBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xLandscapeBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
+                xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xPinBtn_Click(null, null);
 
                 //Loading Pnl
@@ -811,7 +1286,7 @@ namespace Ginger.Drivers.DriversWindows
                     {
                         this.Dispatcher.Invoke(() =>
                         {
-                            waitingRatio = int.Parse(xRefreshWaitingRateCombo.Text.ToString());
+                            waitingRatio = int.Parse(xRefreshWaitingRateCombo.Text);
                         });
                         Thread.Sleep(waitingTimeInMiliSeconds * (waitingRatio));
                     }
@@ -840,11 +1315,11 @@ namespace Ginger.Drivers.DriversWindows
                             }
                             image.Freeze();
                             this.Dispatcher.Invoke(() =>
-                                {
-                                    xDeviceScreenshotCanvas.Visibility = Visibility.Visible;
-                                    xMessagePnl.Visibility = Visibility.Collapsed;
-                                    xDeviceScreenshotImage.Source = image;
-                                });
+                            {
+                                xDeviceScreenshotCanvas.Visibility = Visibility.Visible;
+                                xMessagePnl.Visibility = Visibility.Collapsed;
+                                xDeviceScreenshotImage.Source = image;
+                            });
                         }
 
                         return true;
@@ -939,7 +1414,7 @@ namespace Ginger.Drivers.DriversWindows
 
                 return pointOnMobile;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to get point on device", ex);
                 return new Point(0, 0);
@@ -985,7 +1460,8 @@ namespace Ginger.Drivers.DriversWindows
                 endPoint = GetPointOnMobile(endPoint);
 
                 //Perform drag
-                await Task.Run(() => {
+                await Task.Run(() =>
+                {
                     mDriver.PerformDrag(new System.Drawing.Point((int)startPoint.X, (int)startPoint.Y), new System.Drawing.Point((int)endPoint.X, (int)endPoint.Y));
                 });
 
@@ -1024,6 +1500,24 @@ namespace Ginger.Drivers.DriversWindows
             mConfigIsOn = show;
         }
 
+        private void SetMeticsPanelView(bool show)
+        {
+            if (show)
+            {
+                xMeticsCol.Width = new GridLength(350);
+                this.Width = this.Width + Convert.ToDouble(xMeticsCol.Width.ToString());
+            }
+            else
+            {
+                xMeticsCol.Width = new GridLength(0);
+                if (this.Width - xMeticsCol.ActualWidth > 0)
+                {
+                    this.Width = this.Width - xMeticsCol.ActualWidth;
+                }
+            }
+            mMeticsIsOn = show;
+        }
+
         private void DoSelfClose()
         {
             mSelfClosing = true;
@@ -1054,9 +1548,57 @@ namespace Ginger.Drivers.DriversWindows
         }
         #endregion Functions
 
-        private void xRecordingImage_Click(object sender, RoutedEventArgs e)
-        {
+        GenericWindow genWin;
 
+        private void OpenPopUpWindow(string content, string title)
+        {
+            string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(content);
+            if (System.IO.File.Exists(tempFilePath))
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
+                    docPage.Width = 800;
+                    docPage.Height = 800;
+                    GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Free, title, docPage);
+
+                });
+
+                System.IO.File.Delete(tempFilePath);
+                return;
+            }
+        }
+
+
+
+        private void xExtraInfoBtn_ExtraInfo_Click(object sender, RoutedEventArgs e)
+        {
+            DeviceInfo deviceInfo = (DeviceInfo)((ucButton)sender).DataContext;
+            switch (deviceInfo.DetailName)
+            {
+                case "App RAM Usage:":
+                    OpenPopUpWindow(deviceInfo.ExtraInfo.Replace(", ", Environment.NewLine), "Full device's Memory Information");
+                    break;
+                case "Networks:":
+                    OpenPopUpWindow(deviceInfo.ExtraInfo, "Full device's Network Information");
+                    break;
+                case "App CPU Usage:":
+                    OpenPopUpWindow(deviceInfo.ExtraInfo.Replace(", ", Environment.NewLine), "Full device's CPU Information");
+                    break;
+                case "Ginger Agent:":
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        AgentEditPage agentEditPage = new AgentEditPage(mAgent, true);
+                        agentEditPage.Width = 800;
+                        agentEditPage.Height = 800;
+
+                        GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Free, mAgent.Name, agentEditPage);
+                    });
+                    break;
+                default:
+                    Reporter.ToUser(eUserMsgKey.MobileDriverNotConnected);
+                    break;
+            }
         }
     }
 }

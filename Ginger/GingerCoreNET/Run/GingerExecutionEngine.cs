@@ -269,7 +269,7 @@ namespace Ginger.Run
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
 
-            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes)
+            if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes)
             {
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
@@ -296,7 +296,7 @@ namespace Ginger.Run
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
 
-            if (ExecutedFrom != eExecutedFrom.Automation && mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.SealightsLog == eSealightsLog.Yes)
+            if (ExecutedFrom != eExecutedFrom.Automation && mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes)
             {
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
@@ -1098,7 +1098,7 @@ namespace Ginger.Run
 
         private void SelfHealingExecuteInSimulationMode(Act act)
         {
-            if (act.Status == eRunStatus.Failed && act.SupportSimulation && ((ExecutedFrom == eExecutedFrom.Automation && WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoExecuteInSimulateionMode) || (ExecutedFrom == eExecutedFrom.Run && WorkSpace.Instance.RunsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoExecuteInSimulateionMode)))
+            if (act.Status == eRunStatus.Failed && act.SupportSimulation && ((ExecutedFrom == eExecutedFrom.Automation && WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoExecuteInSimulationMode) || (ExecutedFrom == eExecutedFrom.Run && WorkSpace.Instance.RunsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoExecuteInSimulationMode)))
             {
                 var isSimulationModeTemp = mGingerRunner.RunInSimulationMode;
                 var actErrorBeforeSimulation = act.Error;
@@ -1157,23 +1157,18 @@ namespace Ginger.Run
                 {
                     if (!act.Active)
                     {
-                        ResetAction(act);
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
-                        {
-                            NotifyActionEnd(act);
-                        }
+                        SkipActionAndNotifyEnd(act);
                         act.ExInfo = "Action is not active.";
                         return;
                     }
-                    if ((act is ActVisualTesting) && !mGingerRunner.RunInVisualTestingMode)
+                    if (!CheckRunInVisualTestingMode(act))
                     {
-                        act.Status = eRunStatus.Skipped;
-                        if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
-                        {
-                            NotifyActionEnd(act);
-                        }
-                        act.ExInfo = "Visual Testing Action Run Mode is  Inactive.";
+                        SkipActionAndNotifyEnd(act);
+                        act.ExInfo = "Visual Testing Action Run Mode is Inactive.";
+                    }
+                    if (!CheckRunInNetworkLog(act))
+                    {
+                        SkipActionAndNotifyEnd(act);
                         return;
                     }
                     if (act.CheckIfVaribalesDependenciesAllowsToRun((Activity)(CurrentBusinessFlow.CurrentActivity), true) == false)
@@ -2874,7 +2869,11 @@ namespace Ginger.Run
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             }
 
-            if (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
+            if(act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
+            {
+                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+            }
+            else if (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
             {
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
             }
@@ -3311,7 +3310,7 @@ namespace Ginger.Run
                         CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
 
                         GiveUserFeedback();
-                        if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true)
+                        if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true && CheckRunInVisualTestingMode(act) && CheckRunInNetworkLog(act))
                         {
                             RunAction(act, false);
                             GiveUserFeedback();
@@ -3370,13 +3369,17 @@ namespace Ginger.Run
                         {
                             if (!act.Active)
                             {
-                                ResetAction(act);
-                                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                                if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
-                                {
-                                    NotifyActionEnd(act);
-                                }
+                                SkipActionAndNotifyEnd(act);
                                 act.ExInfo = "Action is not active.";
+                            }
+                            if (!CheckRunInVisualTestingMode(act))
+                            {
+                                SkipActionAndNotifyEnd(act);
+                                act.ExInfo = "Visual Testing Action Run Mode is Inactive.";
+                            }
+                            if (!CheckRunInNetworkLog(act))
+                            {
+                                SkipActionAndNotifyEnd(act);
                             }
                             if (!activity.Acts.IsLastItem())
                             {
@@ -3472,7 +3475,48 @@ namespace Ginger.Run
             }
         }
 
+        private void SkipActionAndNotifyEnd(Act act)
+        {
+            ResetAction(act);
+            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+            if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+            {
+                NotifyActionEnd(act);
+            }
+        }
 
+        private bool CheckRunInVisualTestingMode(Act act)
+        {
+            if ((act is ActVisualTesting) && !mGingerRunner.RunInVisualTestingMode)
+            {
+                return false;
+            }
+            else { return true; }
+        }
+
+        private bool CheckRunInNetworkLog(Act act)
+        {
+            if (act is ActBrowserElement)
+            {
+                ActBrowserElement actBrowserElement = (ActBrowserElement)act;
+                if (actBrowserElement.ControlAction == ActBrowserElement.eControlAction.StartMonitoringNetworkLog || actBrowserElement.ControlAction == ActBrowserElement.eControlAction.GetNetworkLog || actBrowserElement.ControlAction == ActBrowserElement.eControlAction.StopMonitoringNetworkLog)
+                {
+                    GingerCore.Drivers.DriverBase driver = ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Driver;
+
+                    if (driver is GingerCore.Drivers.SeleniumDriver)
+                    {
+                        GingerCore.Drivers.SeleniumDriver.eBrowserType browserType = ((GingerCore.Drivers.SeleniumDriver)driver).GetBrowserType();
+                        if (browserType != GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome)
+                        {
+                            SkipActionAndNotifyEnd(act);
+                            act.ExInfo = "Action is skipped, Selected browser operation:" + actBrowserElement.ControlAction + "  is not supported for browser type:" + browserType;
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
 
         private void ContinueTimerVariables(ObservableList<VariableBase> variableList)
         {
@@ -4060,6 +4104,14 @@ namespace Ginger.Run
                     if (avoidCurrentStatus || a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
                     {
                         a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                    }
+                }
+
+                foreach (ActivitiesGroup group in  businessFlow.ActivitiesGroups)
+                {
+                    if (avoidCurrentStatus || group.ActivitiesIdentifiers.Where(x=>x.IdentifiedActivity.Status == eRunStatus.Skipped).ToList().Count == group.ActivitiesIdentifiers.Count)
+                    {
+                        group.RunStatus = eActivitiesGroupRunStatus.Skipped;
                     }
                 }
             }

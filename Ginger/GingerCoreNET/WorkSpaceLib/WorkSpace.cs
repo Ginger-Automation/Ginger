@@ -51,6 +51,7 @@ using Ginger.Run.RunSetActions;
 using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Ginger.Reports;
+using Ginger.Configurations;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -357,7 +358,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
 
             // Configuration Logger - Sealights
-            if (WorkSpace.Instance.Solution.LoggerConfigurations.SealightsLog == ExecutionLoggerConfiguration.eSealightsLog.Yes)
+            if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == SealightsConfiguration.eSealightsLog.Yes)
             {
                 WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
             }
@@ -515,6 +516,9 @@ namespace amdocs.ginger.GingerCoreNET
 
                 CheckForExistingEnterpriseFeaturesConfiguration(); // Auto set the ExistingEnterprise's flag to true if needed
 
+                //Change sealights configurations object
+                Solution.SetSealightsOldConifurationsToNewObject();
+
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
                 return true;
             }
@@ -537,7 +541,8 @@ namespace amdocs.ginger.GingerCoreNET
 
             if (solution.SourceControl != null && WorkSpace.Instance.UserProfile != null)
             {
-                if (string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlPass))
+                if (string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlUser) || string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SolutionSourceControlPass) ||
+                    solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
                     if (WorkSpace.Instance.UserProfile.SourceControlUser != null && WorkSpace.Instance.UserProfile.SourceControlPass != null)
                     {

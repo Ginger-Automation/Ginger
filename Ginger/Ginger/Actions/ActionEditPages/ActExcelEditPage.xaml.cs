@@ -231,7 +231,7 @@ namespace Ginger.Actions
                 Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
                 return;
             }
-            Process.Start(mAct.CalculatedFileName);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = mAct.CalculatedFileName, UseShellExecute = true });
         }
 
     }

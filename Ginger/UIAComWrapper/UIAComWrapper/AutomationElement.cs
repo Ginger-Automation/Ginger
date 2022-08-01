@@ -19,6 +19,7 @@ limitations under the License.
 using System.Collections.Generic;
 using System.Diagnostics;
 using UIAComWrapperInternal;
+using Windows.Foundation;
 
 namespace System.Windows.Automation
 {
@@ -28,103 +29,103 @@ namespace System.Windows.Automation
         Full
     }
 
-    public sealed class AutomationElement
+    public sealed class AutomationElement_Extend
     {
         private UIAutomationClient.IUIAutomationElement _obj;
-        public static readonly AutomationProperty AcceleratorKeyProperty = AutomationElementIdentifiers.AcceleratorKeyProperty;
-        public static readonly AutomationProperty AccessKeyProperty = AutomationElementIdentifiers.AccessKeyProperty;
-        public static readonly AutomationEvent AsyncContentLoadedEvent = AutomationElementIdentifiers.AsyncContentLoadedEvent;
-        public static readonly AutomationEvent AutomationFocusChangedEvent = AutomationElementIdentifiers.AutomationFocusChangedEvent;
-        public static readonly AutomationProperty AutomationIdProperty = AutomationElementIdentifiers.AutomationIdProperty;
-        public static readonly AutomationEvent AutomationPropertyChangedEvent = AutomationElementIdentifiers.AutomationPropertyChangedEvent;
-        public static readonly AutomationProperty BoundingRectangleProperty = AutomationElementIdentifiers.BoundingRectangleProperty;
-        public static readonly AutomationProperty ClassNameProperty = AutomationElementIdentifiers.ClassNameProperty;
-        public static readonly AutomationProperty ClickablePointProperty = AutomationElementIdentifiers.ClickablePointProperty;
-        public static readonly AutomationProperty ControlTypeProperty = AutomationElementIdentifiers.ControlTypeProperty;
-        public static readonly AutomationProperty CultureProperty = AutomationElementIdentifiers.CultureProperty;
-        public static readonly AutomationProperty FrameworkIdProperty = AutomationElementIdentifiers.FrameworkIdProperty;
-        public static readonly AutomationProperty HasKeyboardFocusProperty = AutomationElementIdentifiers.HasKeyboardFocusProperty;
-        public static readonly AutomationProperty HelpTextProperty = AutomationElementIdentifiers.HelpTextProperty;
-        public static readonly AutomationProperty IsContentElementProperty = AutomationElementIdentifiers.IsContentElementProperty;
-        public static readonly AutomationProperty IsControlElementProperty = AutomationElementIdentifiers.IsControlElementProperty;
-        public static readonly AutomationProperty IsDockPatternAvailableProperty = AutomationElementIdentifiers.IsDockPatternAvailableProperty;
-        public static readonly AutomationProperty IsEnabledProperty = AutomationElementIdentifiers.IsEnabledProperty;
-        public static readonly AutomationProperty IsExpandCollapsePatternAvailableProperty = AutomationElementIdentifiers.IsExpandCollapsePatternAvailableProperty;
-        public static readonly AutomationProperty IsGridItemPatternAvailableProperty = AutomationElementIdentifiers.IsGridItemPatternAvailableProperty;
-        public static readonly AutomationProperty IsGridPatternAvailableProperty = AutomationElementIdentifiers.IsGridPatternAvailableProperty;
-        public static readonly AutomationProperty IsInvokePatternAvailableProperty = AutomationElementIdentifiers.IsInvokePatternAvailableProperty;
-        public static readonly AutomationProperty IsKeyboardFocusableProperty = AutomationElementIdentifiers.IsKeyboardFocusableProperty;
-        public static readonly AutomationProperty IsMultipleViewPatternAvailableProperty = AutomationElementIdentifiers.IsMultipleViewPatternAvailableProperty;
-        public static readonly AutomationProperty IsOffscreenProperty = AutomationElementIdentifiers.IsOffscreenProperty;
-        public static readonly AutomationProperty IsPasswordProperty = AutomationElementIdentifiers.IsPasswordProperty;
-        public static readonly AutomationProperty IsRangeValuePatternAvailableProperty = AutomationElementIdentifiers.IsRangeValuePatternAvailableProperty;
-        public static readonly AutomationProperty IsRequiredForFormProperty = AutomationElementIdentifiers.IsRequiredForFormProperty;
-        public static readonly AutomationProperty IsScrollItemPatternAvailableProperty = AutomationElementIdentifiers.IsScrollItemPatternAvailableProperty;
-        public static readonly AutomationProperty IsScrollPatternAvailableProperty = AutomationElementIdentifiers.IsScrollPatternAvailableProperty;
-        public static readonly AutomationProperty IsSelectionItemPatternAvailableProperty = AutomationElementIdentifiers.IsSelectionItemPatternAvailableProperty;
-        public static readonly AutomationProperty IsSelectionPatternAvailableProperty = AutomationElementIdentifiers.IsSelectionPatternAvailableProperty;
-        public static readonly AutomationProperty IsTableItemPatternAvailableProperty = AutomationElementIdentifiers.IsTableItemPatternAvailableProperty;
-        public static readonly AutomationProperty IsTablePatternAvailableProperty = AutomationElementIdentifiers.IsTablePatternAvailableProperty;
-        public static readonly AutomationProperty IsTextPatternAvailableProperty = AutomationElementIdentifiers.IsTextPatternAvailableProperty;
-        public static readonly AutomationProperty IsTogglePatternAvailableProperty = AutomationElementIdentifiers.IsTogglePatternAvailableProperty;
-        public static readonly AutomationProperty IsTransformPatternAvailableProperty = AutomationElementIdentifiers.IsTransformPatternAvailableProperty;
-        public static readonly AutomationProperty IsValuePatternAvailableProperty = AutomationElementIdentifiers.IsValuePatternAvailableProperty;
-        public static readonly AutomationProperty IsWindowPatternAvailableProperty = AutomationElementIdentifiers.IsWindowPatternAvailableProperty;
-        public static readonly AutomationProperty ItemStatusProperty = AutomationElementIdentifiers.ItemStatusProperty;
-        public static readonly AutomationProperty ItemTypeProperty = AutomationElementIdentifiers.ItemTypeProperty;
-        public static readonly AutomationProperty LabeledByProperty = AutomationElementIdentifiers.LabeledByProperty;
-        public static readonly AutomationEvent LayoutInvalidatedEvent = AutomationElementIdentifiers.LayoutInvalidatedEvent;
-        public static readonly AutomationProperty LocalizedControlTypeProperty = AutomationElementIdentifiers.LocalizedControlTypeProperty;
-        public static readonly AutomationEvent MenuClosedEvent = AutomationElementIdentifiers.MenuClosedEvent;
-        public static readonly AutomationEvent MenuOpenedEvent = AutomationElementIdentifiers.MenuOpenedEvent;
-        public static readonly AutomationProperty NameProperty = AutomationElementIdentifiers.NameProperty;
-        public static readonly AutomationProperty NativeWindowHandleProperty = AutomationElementIdentifiers.NativeWindowHandleProperty;
-        public static readonly object NotSupported = AutomationElementIdentifiers.NotSupported;
-        public static readonly AutomationProperty OrientationProperty = AutomationElementIdentifiers.OrientationProperty;
-        public static readonly AutomationProperty ProcessIdProperty = AutomationElementIdentifiers.ProcessIdProperty;
-        public static readonly AutomationProperty RuntimeIdProperty = AutomationElementIdentifiers.RuntimeIdProperty;
-        public static readonly AutomationEvent StructureChangedEvent = AutomationElementIdentifiers.StructureChangedEvent;
-        public static readonly AutomationEvent ToolTipClosedEvent = AutomationElementIdentifiers.ToolTipClosedEvent;
-        public static readonly AutomationEvent ToolTipOpenedEvent = AutomationElementIdentifiers.ToolTipOpenedEvent;
+        public static readonly AutomationPropertyExtended AcceleratorKeyProperty = AutomationElementIdentifiersExtended.AcceleratorKeyProperty;
+        public static readonly AutomationPropertyExtended AccessKeyProperty = AutomationElementIdentifiersExtended.AccessKeyProperty;
+        public static readonly AutomationEventExtended AsyncContentLoadedEvent = AutomationElementIdentifiersExtended.AsyncContentLoadedEvent;
+        public static readonly AutomationEventExtended AutomationFocusChangedEvent = AutomationElementIdentifiersExtended.AutomationFocusChangedEvent;
+        public static readonly AutomationPropertyExtended AutomationIdProperty = AutomationElementIdentifiersExtended.AutomationIdProperty;
+        public static readonly AutomationEventExtended AutomationPropertyChangedEvent = AutomationElementIdentifiersExtended.AutomationPropertyChangedEvent;
+        public static readonly AutomationPropertyExtended BoundingRectangleProperty = AutomationElementIdentifiersExtended.BoundingRectangleProperty;
+        public static readonly AutomationPropertyExtended ClassNameProperty = AutomationElementIdentifiersExtended.ClassNameProperty;
+        public static readonly AutomationPropertyExtended ClickablePointProperty = AutomationElementIdentifiersExtended.ClickablePointProperty;
+        public static readonly AutomationPropertyExtended ControlTypeProperty = AutomationElementIdentifiersExtended.ControlTypeProperty;
+        public static readonly AutomationPropertyExtended CultureProperty = AutomationElementIdentifiersExtended.CultureProperty;
+        public static readonly AutomationPropertyExtended FrameworkIdProperty = AutomationElementIdentifiersExtended.FrameworkIdProperty;
+        public static readonly AutomationPropertyExtended HasKeyboardFocusProperty = AutomationElementIdentifiersExtended.HasKeyboardFocusProperty;
+        public static readonly AutomationPropertyExtended HelpTextProperty = AutomationElementIdentifiersExtended.HelpTextProperty;
+        public static readonly AutomationPropertyExtended IsContentElementProperty = AutomationElementIdentifiersExtended.IsContentElementProperty;
+        public static readonly AutomationPropertyExtended IsControlElementProperty = AutomationElementIdentifiersExtended.IsControlElementProperty;
+        public static readonly AutomationPropertyExtended IsDockPatternAvailableProperty = AutomationElementIdentifiersExtended.IsDockPatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsEnabledProperty = AutomationElementIdentifiersExtended.IsEnabledProperty;
+        public static readonly AutomationPropertyExtended IsExpandCollapsePatternAvailableProperty = AutomationElementIdentifiersExtended.IsExpandCollapsePatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsGridItemPatternAvailableProperty = AutomationElementIdentifiersExtended.IsGridItemPatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsGridPatternAvailableProperty = AutomationElementIdentifiersExtended.IsGridPatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsInvokePatternAvailableProperty = AutomationElementIdentifiersExtended.IsInvokePatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsKeyboardFocusableProperty = AutomationElementIdentifiersExtended.IsKeyboardFocusableProperty;
+        public static readonly AutomationPropertyExtended IsMultipleViewPatternAvailableProperty = AutomationElementIdentifiersExtended.IsMultipleViewPatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsOffscreenProperty = AutomationElementIdentifiersExtended.IsOffscreenProperty;
+        public static readonly AutomationPropertyExtended IsPasswordProperty = AutomationElementIdentifiersExtended.IsPasswordProperty;
+        public static readonly AutomationPropertyExtended IsRangeValuePatternAvailableProperty = AutomationElementIdentifiersExtended.IsRangeValuePatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsRequiredForFormProperty = AutomationElementIdentifiersExtended.IsRequiredForFormProperty;
+        public static readonly AutomationPropertyExtended IsScrollItemPatternAvailableProperty = AutomationElementIdentifiersExtended.IsScrollItemPatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsScrollPatternAvailableProperty = AutomationElementIdentifiersExtended.IsScrollPatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsSelectionItemPatternAvailableProperty = AutomationElementIdentifiersExtended.IsSelectionItemPatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsSelectionPatternAvailableProperty = AutomationElementIdentifiersExtended.IsSelectionPatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsTableItemPatternAvailableProperty = AutomationElementIdentifiersExtended.IsTableItemPatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsTablePatternAvailableProperty = AutomationElementIdentifiersExtended.IsTablePatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsTextPatternAvailableProperty = AutomationElementIdentifiersExtended.IsTextPatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsTogglePatternAvailableProperty = AutomationElementIdentifiersExtended.IsTogglePatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsTransformPatternAvailableProperty = AutomationElementIdentifiersExtended.IsTransformPatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsValuePatternAvailableProperty = AutomationElementIdentifiersExtended.IsValuePatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsWindowPatternAvailableProperty = AutomationElementIdentifiersExtended.IsWindowPatternAvailableProperty;
+        public static readonly AutomationPropertyExtended ItemStatusProperty = AutomationElementIdentifiersExtended.ItemStatusProperty;
+        public static readonly AutomationPropertyExtended ItemTypeProperty = AutomationElementIdentifiersExtended.ItemTypeProperty;
+        public static readonly AutomationPropertyExtended LabeledByProperty = AutomationElementIdentifiersExtended.LabeledByProperty;
+        public static readonly AutomationEventExtended LayoutInvalidatedEvent = AutomationElementIdentifiersExtended.LayoutInvalidatedEvent;
+        public static readonly AutomationPropertyExtended LocalizedControlTypeProperty = AutomationElementIdentifiersExtended.LocalizedControlTypeProperty;
+        public static readonly AutomationEventExtended MenuClosedEvent = AutomationElementIdentifiersExtended.MenuClosedEvent;
+        public static readonly AutomationEventExtended MenuOpenedEvent = AutomationElementIdentifiersExtended.MenuOpenedEvent;
+        public static readonly AutomationPropertyExtended NameProperty = AutomationElementIdentifiersExtended.NameProperty;
+        public static readonly AutomationPropertyExtended NativeWindowHandleProperty = AutomationElementIdentifiersExtended.NativeWindowHandleProperty;
+        public static readonly object NotSupported = AutomationElementIdentifiersExtended.NotSupported;
+        public static readonly AutomationPropertyExtended OrientationProperty = AutomationElementIdentifiersExtended.OrientationProperty;
+        public static readonly AutomationPropertyExtended ProcessIdProperty = AutomationElementIdentifiersExtended.ProcessIdProperty;
+        public static readonly AutomationPropertyExtended RuntimeIdProperty = AutomationElementIdentifiersExtended.RuntimeIdProperty;
+        public static readonly AutomationEventExtended StructureChangedEvent = AutomationElementIdentifiersExtended.StructureChangedEvent;
+        public static readonly AutomationEventExtended ToolTipClosedEvent = AutomationElementIdentifiersExtended.ToolTipClosedEvent;
+        public static readonly AutomationEventExtended ToolTipOpenedEvent = AutomationElementIdentifiersExtended.ToolTipOpenedEvent;
 
-        public static readonly AutomationProperty IsLegacyIAccessiblePatternAvailableProperty = AutomationElementIdentifiers.IsLegacyIAccessiblePatternAvailableProperty;
-        public static readonly AutomationProperty IsItemContainerPatternAvailableProperty = AutomationElementIdentifiers.IsItemContainerPatternAvailableProperty;
-        public static readonly AutomationProperty IsVirtualizedItemPatternAvailableProperty = AutomationElementIdentifiers.IsVirtualizedItemPatternAvailableProperty;
-        public static readonly AutomationProperty IsSynchronizedInputPatternAvailableProperty = AutomationElementIdentifiers.IsSynchronizedInputPatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsLegacyIAccessiblePatternAvailableProperty = AutomationElementIdentifiersExtended.IsLegacyIAccessiblePatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsItemContainerPatternAvailableProperty = AutomationElementIdentifiersExtended.IsItemContainerPatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsVirtualizedItemPatternAvailableProperty = AutomationElementIdentifiersExtended.IsVirtualizedItemPatternAvailableProperty;
+        public static readonly AutomationPropertyExtended IsSynchronizedInputPatternAvailableProperty = AutomationElementIdentifiersExtended.IsSynchronizedInputPatternAvailableProperty;
 
-        public static readonly AutomationProperty AriaRoleProperty = AutomationElementIdentifiers.AriaRoleProperty;
-        public static readonly AutomationProperty AriaPropertiesProperty = AutomationElementIdentifiers.AriaPropertiesProperty;
-        public static readonly AutomationProperty IsDataValidForFormProperty = AutomationElementIdentifiers.IsDataValidForFormProperty;
-        public static readonly AutomationProperty ControllerForProperty = AutomationElementIdentifiers.ControllerForProperty;
-        public static readonly AutomationProperty DescribedByProperty = AutomationElementIdentifiers.DescribedByProperty;
-        public static readonly AutomationProperty FlowsToProperty = AutomationElementIdentifiers.FlowsToProperty;
-        public static readonly AutomationProperty ProviderDescriptionProperty = AutomationElementIdentifiers.ProviderDescriptionProperty;
+        public static readonly AutomationPropertyExtended AriaRoleProperty = AutomationElementIdentifiersExtended.AriaRoleProperty;
+        public static readonly AutomationPropertyExtended AriaPropertiesProperty = AutomationElementIdentifiersExtended.AriaPropertiesProperty;
+        public static readonly AutomationPropertyExtended IsDataValidForFormProperty = AutomationElementIdentifiersExtended.IsDataValidForFormProperty;
+        public static readonly AutomationPropertyExtended ControllerForProperty = AutomationElementIdentifiersExtended.ControllerForProperty;
+        public static readonly AutomationPropertyExtended DescribedByProperty = AutomationElementIdentifiersExtended.DescribedByProperty;
+        public static readonly AutomationPropertyExtended FlowsToProperty = AutomationElementIdentifiersExtended.FlowsToProperty;
+        public static readonly AutomationPropertyExtended ProviderDescriptionProperty = AutomationElementIdentifiersExtended.ProviderDescriptionProperty;
 
-        public static readonly AutomationEvent MenuModeStartEvent = AutomationElementIdentifiers.MenuModeStartEvent;
-        public static readonly AutomationEvent MenuModeEndEvent = AutomationElementIdentifiers.MenuModeEndEvent;
+        public static readonly AutomationEventExtended MenuModeStartEvent = AutomationElementIdentifiersExtended.MenuModeStartEvent;
+        public static readonly AutomationEventExtended MenuModeEndEvent = AutomationElementIdentifiersExtended.MenuModeEndEvent;
         
-        internal AutomationElement(UIAutomationClient.IUIAutomationElement obj)
+        internal AutomationElement_Extend(UIAutomationClient.IUIAutomationElement obj)
         {
             Debug.Assert(obj != null);
             this._obj = obj;
         }
 
-        internal static AutomationElement Wrap(UIAutomationClient.IUIAutomationElement obj)
+        internal static AutomationElement_Extend Wrap(UIAutomationClient.IUIAutomationElement obj)
         {
-            return (obj == null) ? null : new AutomationElement(obj);
+            return (obj == null) ? null : new AutomationElement_Extend(obj);
         }
 
         public override bool Equals(object obj)
         {
-            AutomationElement element = obj as AutomationElement;
-            return (((obj != null) && (element != null)) && (Automation.Factory.CompareElements(this._obj, element._obj) != 0));
+            AutomationElement_Extend element = obj as AutomationElement_Extend;
+            return (((obj != null) && (element != null)) && (AutomationExtended.Factory.CompareElements(this._obj, element._obj) != 0));
         }
 
-        ~AutomationElement()
+        ~AutomationElement_Extend()
         {
         }
 
-        public AutomationElementCollection FindAll(TreeScope scope, Condition condition)
+        public AutomationElementCollectionExtended FindAll(TreeScopeExtended scope, ConditionExtended condition)
         {
             Utility.ValidateArgumentNonNull(condition, "condition");
 
@@ -135,7 +136,7 @@ namespace System.Windows.Automation
                         (UIAutomationClient.TreeScope)scope,
                         condition.NativeCondition,
                         CacheRequest.CurrentNativeCacheRequest);
-                return AutomationElementCollection.Wrap(elemArray);
+                return AutomationElementCollectionExtended.Wrap(elemArray);
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
@@ -143,7 +144,7 @@ namespace System.Windows.Automation
             }
         }
 
-        public AutomationElement FindFirst(TreeScope scope, Condition condition)
+        public AutomationElement_Extend FindFirst(TreeScopeExtended scope, ConditionExtended condition)
         {
             Utility.ValidateArgumentNonNull(condition, "condition");
             try
@@ -153,7 +154,7 @@ namespace System.Windows.Automation
                         (UIAutomationClient.TreeScope)scope,
                         condition.NativeCondition,
                         CacheRequest.CurrentNativeCacheRequest);
-                return AutomationElement.Wrap(elem);
+                return AutomationElement_Extend.Wrap(elem);
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
@@ -161,14 +162,14 @@ namespace System.Windows.Automation
             }
         }
 
-        public static AutomationElement FromHandle(IntPtr hwnd)
+        public static AutomationElement_Extend FromHandle(IntPtr hwnd)
         {
             Utility.ValidateArgument(hwnd != IntPtr.Zero, "Hwnd cannot be null");
             try
             {
                 UIAutomationClient.IUIAutomationElement element =
-                    Automation.Factory.ElementFromHandleBuildCache(hwnd, CacheRequest.CurrentNativeCacheRequest);
-                return AutomationElement.Wrap(element);
+                    AutomationExtended.Factory.ElementFromHandleBuildCache(hwnd, CacheRequest.CurrentNativeCacheRequest);
+                return AutomationElement_Extend.Wrap(element);
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
@@ -176,18 +177,18 @@ namespace System.Windows.Automation
             }
         }
 
-        public static AutomationElement FromIAccessible(Accessibility.IAccessible acc, int childId)
+        public static AutomationElement_Extend FromIAccessible(Accessibility.IAccessible acc, int childId)
         {
             Utility.ValidateArgumentNonNull(acc, "acc");
 
             try
             {
                 UIAutomationClient.IUIAutomationElement element =
-                    Automation.Factory.ElementFromIAccessibleBuildCache(
+                    AutomationExtended.Factory.ElementFromIAccessibleBuildCache(
                         (UIAutomationClient.IAccessible)acc, 
                         childId,
                         CacheRequest.CurrentNativeCacheRequest);
-                return AutomationElement.Wrap(element);
+                return AutomationElement_Extend.Wrap(element);
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
@@ -195,7 +196,7 @@ namespace System.Windows.Automation
             }
         }
 
-        public static AutomationElement FromLocalProvider(object /* IRawElementProviderSimple */ localImpl)
+        public static AutomationElement_Extend FromLocalProvider(object /* IRawElementProviderSimple */ localImpl)
         {
             Utility.ValidateArgumentNonNull(localImpl, "localImpl");
 
@@ -204,15 +205,15 @@ namespace System.Windows.Automation
             throw new NotImplementedException();
         }
 
-        public static AutomationElement FromPoint(Point pt)
+        public static AutomationElement_Extend FromPoint(Point pt)
         {
             try
             {
                 UIAutomationClient.IUIAutomationElement element =
-                    Automation.Factory.ElementFromPointBuildCache(
+                    AutomationExtended.Factory.ElementFromPointBuildCache(
                         Utility.PointManagedToNative(pt),
                         CacheRequest.CurrentNativeCacheRequest);
-                return AutomationElement.Wrap(element);
+                return AutomationElement_Extend.Wrap(element);
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
@@ -220,7 +221,7 @@ namespace System.Windows.Automation
             }
         }
 
-        public object GetCachedPattern(AutomationPattern pattern)
+        public object GetCachedPattern(AutomationPatternExtended pattern)
         {
             object patternObj;
             if (!this.TryGetCachedPattern(pattern, out patternObj))
@@ -230,12 +231,12 @@ namespace System.Windows.Automation
             return patternObj;
         }
 
-        public object GetCachedPropertyValue(AutomationProperty property)
+        public object GetCachedPropertyValue(AutomationPropertyExtended property)
         {
             return this.GetCachedPropertyValue(property, false);
         }
 
-        public object GetCachedPropertyValue(AutomationProperty property, bool ignoreDefaultValue)
+        public object GetCachedPropertyValue(AutomationPropertyExtended property, bool ignoreDefaultValue)
         {
             Utility.ValidateArgumentNonNull(property, "property");
 
@@ -260,7 +261,7 @@ namespace System.Windows.Automation
             return point;
         }
 
-        public object GetCurrentPattern(AutomationPattern pattern)
+        public object GetCurrentPattern(AutomationPatternExtended pattern)
         {
             object patternObj;
             if (!this.TryGetCurrentPattern(pattern, out patternObj))
@@ -270,12 +271,12 @@ namespace System.Windows.Automation
             return patternObj;
         }
 
-        public object GetCurrentPropertyValue(AutomationProperty property)
+        public object GetCurrentPropertyValue(AutomationPropertyExtended property)
         {
             return this.GetCurrentPropertyValue(property, false);
         }
 
-        public object GetCurrentPropertyValue(AutomationProperty property, bool ignoreDefaultValue)
+        public object GetCurrentPropertyValue(AutomationPropertyExtended property, bool ignoreDefaultValue)
         {
             Utility.ValidateArgumentNonNull(property, "property");
             try
@@ -290,7 +291,7 @@ namespace System.Windows.Automation
 
         }
 
-        internal object GetPropertyValue(AutomationProperty property, bool cached)
+        internal object GetPropertyValue(AutomationPropertyExtended property, bool cached)
         {
             if (cached)
             {
@@ -317,7 +318,7 @@ namespace System.Windows.Automation
             return num;
         }
 
-        internal object GetRawPattern(AutomationPattern pattern, bool isCached)
+        internal object GetRawPattern(AutomationPatternExtended pattern, bool isCached)
         {
             try
             {
@@ -350,13 +351,13 @@ namespace System.Windows.Automation
             }
         }
 
-        public AutomationPattern[] GetSupportedPatterns()
+        public AutomationPatternExtended[] GetSupportedPatterns()
         {
             Array rawPatternIds;
             Array rawPatternNames;
             try
             {
-                Automation.Factory.PollForPotentialSupportedPatterns(this._obj, out rawPatternIds, out rawPatternNames);
+                AutomationExtended.Factory.PollForPotentialSupportedPatterns(this._obj, out rawPatternIds, out rawPatternNames);
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
@@ -367,10 +368,10 @@ namespace System.Windows.Automation
 
             // This element may support patterns that are not registered for this 
             // client.  Filter them out.
-            List<AutomationPattern> patterns = new List<AutomationPattern>();
+            List<AutomationPatternExtended> patterns = new List<AutomationPatternExtended>();
             foreach (int patternId in patternIds)
             {
-                AutomationPattern pattern = AutomationPattern.LookupById(patternId);
+                AutomationPatternExtended pattern = AutomationPatternExtended.LookupById(patternId);
                 if (pattern != null)
                 {
                     patterns.Add(pattern);
@@ -379,13 +380,13 @@ namespace System.Windows.Automation
             return patterns.ToArray();
         }
 
-        public AutomationProperty[] GetSupportedProperties()
+        public AutomationPropertyExtended[] GetSupportedProperties()
         {
             Array rawPropertyIds;
             Array rawPropertyNames;
             try
             {
-                Automation.Factory.PollForPotentialSupportedProperties(this._obj, out rawPropertyIds, out rawPropertyNames);
+                AutomationExtended.Factory.PollForPotentialSupportedProperties(this._obj, out rawPropertyIds, out rawPropertyNames);
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
@@ -395,10 +396,10 @@ namespace System.Windows.Automation
 
             // This element may support properties that are not registered for this 
             // client.  Filter them out.
-            List<AutomationProperty> properties = new List<AutomationProperty>();
+            List<AutomationPropertyExtended> properties = new List<AutomationPropertyExtended>();
             foreach (int propertyId in propertyIds)
             {
-                AutomationProperty property = AutomationProperty.LookupById(propertyId);
+                AutomationPropertyExtended property = AutomationPropertyExtended.LookupById(propertyId);
                 if (property != null)
                 {
                     properties.Add(property);
@@ -407,11 +408,11 @@ namespace System.Windows.Automation
             return properties.ToArray();
         }
 
-        public AutomationElement GetUpdatedCache(CacheRequest request)
+        public AutomationElement_Extend GetUpdatedCache(CacheRequest request)
         {
             try
             {
-                return AutomationElement.Wrap(this._obj.BuildUpdatedCache(request.NativeCacheRequest));
+                return AutomationElement_Extend.Wrap(this._obj.BuildUpdatedCache(request.NativeCacheRequest));
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
@@ -419,7 +420,7 @@ namespace System.Windows.Automation
             }
         }
 
-        public static bool operator ==(AutomationElement left, AutomationElement right)
+        public static bool operator ==(AutomationElement_Extend left, AutomationElement_Extend right)
         {
             if (object.Equals(left, null))
             {
@@ -432,7 +433,7 @@ namespace System.Windows.Automation
             return left.Equals(right);
         }
 
-        public static bool operator !=(AutomationElement left, AutomationElement right)
+        public static bool operator !=(AutomationElement_Extend left, AutomationElement_Extend right)
         {
             return !(left == right);
         }
@@ -450,7 +451,7 @@ namespace System.Windows.Automation
 
         }
 
-        public bool TryGetCachedPattern(AutomationPattern pattern, out object patternObject)
+        public bool TryGetCachedPattern(AutomationPatternExtended pattern, out object patternObject)
         {
             patternObject = null;
             Utility.ValidateArgumentNonNull(pattern, "pattern");
@@ -488,7 +489,7 @@ namespace System.Windows.Automation
 
         }
 
-        public bool TryGetCurrentPattern(AutomationPattern pattern, out object patternObject)
+        public bool TryGetCurrentPattern(AutomationPatternExtended pattern, out object patternObject)
         {
             patternObject = null;
             Utility.ValidateArgumentNonNull(pattern, "pattern");
@@ -514,13 +515,13 @@ namespace System.Windows.Automation
             }
         }
 
-        public AutomationElementCollection CachedChildren
+        public AutomationElementCollectionExtended CachedChildren
         {
             get
             {
                 try
                 {
-                    return AutomationElementCollection.Wrap(this._obj.GetCachedChildren());
+                    return AutomationElementCollectionExtended.Wrap(this._obj.GetCachedChildren());
                 }
                 catch (System.Runtime.InteropServices.COMException e)
                 {
@@ -530,14 +531,14 @@ namespace System.Windows.Automation
             }
         }
 
-        public AutomationElement CachedParent
+        public AutomationElement_Extend CachedParent
         {
             get
             {
                 try
                 {
 
-                    return AutomationElement.Wrap(this._obj.GetCachedParent());
+                    return AutomationElement_Extend.Wrap(this._obj.GetCachedParent());
                 }
                 catch (System.Runtime.InteropServices.COMException e)
                 {
@@ -563,13 +564,13 @@ namespace System.Windows.Automation
             }
         }
 
-        public static AutomationElement FocusedElement
+        public static AutomationElement_Extend FocusedElement
         {
             get
             {
                 try
                 {
-                    return AutomationElement.Wrap(Automation.Factory.GetFocusedElement());
+                    return AutomationElement_Extend.Wrap(AutomationExtended.Factory.GetFocusedElement());
                 }
                 catch (System.Runtime.InteropServices.COMException e)
                 {
@@ -579,16 +580,16 @@ namespace System.Windows.Automation
             }
         }
 
-        public static AutomationElement RootElement
+        public static AutomationElement_Extend RootElement
         {
             get
             {
                 try
                 {
                     UIAutomationClient.IUIAutomationElement element =
-                        Automation.Factory.GetRootElementBuildCache(
+                        AutomationExtended.Factory.GetRootElementBuildCache(
                             CacheRequest.CurrentNativeCacheRequest);
-                    return AutomationElement.Wrap(element);
+                    return AutomationElement_Extend.Wrap(element);
                 }
                 catch (System.Runtime.InteropServices.COMException e)
                 {
@@ -601,229 +602,229 @@ namespace System.Windows.Automation
         [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
         public struct AutomationElementInformation
         {
-            private AutomationElement _el;
+            private AutomationElement_Extend _el;
             private bool _isCached;
-            internal AutomationElementInformation(AutomationElement el, bool isCached)
+            internal AutomationElementInformation(AutomationElement_Extend el, bool isCached)
             {
                 this._el = el;
                 this._isCached = isCached;
             }
 
-            public ControlType ControlType
+            public ControlTypeExtended ControlType
             {
                 get
                 {
-                    return (ControlType)this._el.GetPropertyValue(AutomationElement.ControlTypeProperty, _isCached);
+                    return (ControlTypeExtended)this._el.GetPropertyValue(AutomationElement_Extend.ControlTypeProperty, _isCached);
                 }
             }
             public string LocalizedControlType
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(AutomationElement.LocalizedControlTypeProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(AutomationElement_Extend.LocalizedControlTypeProperty, _isCached);
                 }
             }
             public string Name
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(AutomationElement.NameProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(AutomationElement_Extend.NameProperty, _isCached);
                 }
             }
             public string AcceleratorKey
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(AutomationElement.AcceleratorKeyProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(AutomationElement_Extend.AcceleratorKeyProperty, _isCached);
                 }
             }
             public string AccessKey
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(AutomationElement.AccessKeyProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(AutomationElement_Extend.AccessKeyProperty, _isCached);
                 }
             }
             public bool HasKeyboardFocus
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(AutomationElement.HasKeyboardFocusProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(AutomationElement_Extend.HasKeyboardFocusProperty, _isCached);
                 }
             }
             public bool IsKeyboardFocusable
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(AutomationElement.IsKeyboardFocusableProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(AutomationElement_Extend.IsKeyboardFocusableProperty, _isCached);
                 }
             }
             public bool IsEnabled
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(AutomationElement.IsEnabledProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(AutomationElement_Extend.IsEnabledProperty, _isCached);
                 }
             }
             public Rect BoundingRectangle
             {
                 get
                 {
-                    return (Rect)this._el.GetPropertyValue(AutomationElement.BoundingRectangleProperty, _isCached);
+                    return (Rect)this._el.GetPropertyValue(AutomationElement_Extend.BoundingRectangleProperty, _isCached);
                 }
             }
             public string HelpText
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(AutomationElement.HelpTextProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(AutomationElement_Extend.HelpTextProperty, _isCached);
                 }
             }
             public bool IsControlElement
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(AutomationElement.IsControlElementProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(AutomationElement_Extend.IsControlElementProperty, _isCached);
                 }
             }
             public bool IsContentElement
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(AutomationElement.IsContentElementProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(AutomationElement_Extend.IsContentElementProperty, _isCached);
                 }
             }
-            public AutomationElement LabeledBy
+            public AutomationElement_Extend LabeledBy
             {
                 get
                 {
-                    return (AutomationElement)this._el.GetPropertyValue(AutomationElement.LabeledByProperty, _isCached);
+                    return (AutomationElement_Extend)this._el.GetPropertyValue(AutomationElement_Extend.LabeledByProperty, _isCached);
                 }
             }
             public string AutomationId
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(AutomationElement.AutomationIdProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(AutomationElement_Extend.AutomationIdProperty, _isCached);
                 }
             }
             public string ItemType
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(AutomationElement.ItemTypeProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(AutomationElement_Extend.ItemTypeProperty, _isCached);
                 }
             }
             public bool IsPassword
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(AutomationElement.IsPasswordProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(AutomationElement_Extend.IsPasswordProperty, _isCached);
                 }
             }
             public string ClassName
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(AutomationElement.ClassNameProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(AutomationElement_Extend.ClassNameProperty, _isCached);
                 }
             }
             public int NativeWindowHandle
             {
                 get
                 {
-                    return (int)this._el.GetPropertyValue(AutomationElement.NativeWindowHandleProperty, _isCached);
+                    return (int)this._el.GetPropertyValue(AutomationElement_Extend.NativeWindowHandleProperty, _isCached);
                 }
             }
             public int ProcessId
             {
                 get
                 {
-                    return (int)this._el.GetPropertyValue(AutomationElement.ProcessIdProperty, _isCached);
+                    return (int)this._el.GetPropertyValue(AutomationElement_Extend.ProcessIdProperty, _isCached);
                 }
             }
             public bool IsOffscreen
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(AutomationElement.IsOffscreenProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(AutomationElement_Extend.IsOffscreenProperty, _isCached);
                 }
             }
-            public OrientationType Orientation
+            public OrientationTypeExtended Orientation
             {
                 get
                 {
-                    return (OrientationType)this._el.GetPropertyValue(AutomationElement.OrientationProperty, _isCached);
+                    return (OrientationTypeExtended)this._el.GetPropertyValue(AutomationElement_Extend.OrientationProperty, _isCached);
                 }
             }
             public string FrameworkId
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(AutomationElement.FrameworkIdProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(AutomationElement_Extend.FrameworkIdProperty, _isCached);
                 }
             }
             public bool IsRequiredForForm
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(AutomationElement.IsRequiredForFormProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(AutomationElement_Extend.IsRequiredForFormProperty, _isCached);
                 }
             }
             public string ItemStatus
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(AutomationElement.ItemStatusProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(AutomationElement_Extend.ItemStatusProperty, _isCached);
                 }
             }
             public string AriaRole
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(AutomationElement.AriaRoleProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(AutomationElement_Extend.AriaRoleProperty, _isCached);
                 }
             }
             public string AriaProperties
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(AutomationElement.AriaPropertiesProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(AutomationElement_Extend.AriaPropertiesProperty, _isCached);
                 }
             }
             public bool IsDataValidForForm
             {
                 get
                 {
-                    return (bool)this._el.GetPropertyValue(AutomationElement.IsDataValidForFormProperty, _isCached);
+                    return (bool)this._el.GetPropertyValue(AutomationElement_Extend.IsDataValidForFormProperty, _isCached);
                 }
             }
-            public AutomationElement ControllerFor
+            public AutomationElement_Extend ControllerFor
             {
                 get
                 {
-                    return (AutomationElement)this._el.GetPropertyValue(AutomationElement.ControllerForProperty, _isCached);
+                    return (AutomationElement_Extend)this._el.GetPropertyValue(AutomationElement_Extend.ControllerForProperty, _isCached);
                 }
             }
-            public AutomationElement DescribedBy
+            public AutomationElement_Extend DescribedBy
             {
                 get
                 {
-                    return (AutomationElement)this._el.GetPropertyValue(AutomationElement.DescribedByProperty, _isCached);
+                    return (AutomationElement_Extend)this._el.GetPropertyValue(AutomationElement_Extend.DescribedByProperty, _isCached);
                 }
             }
-            public AutomationElement FlowsTo
+            public AutomationElement_Extend FlowsTo
             {
                 get
                 {
-                    return (AutomationElement)this._el.GetPropertyValue(AutomationElement.FlowsToProperty, _isCached);
+                    return (AutomationElement_Extend)this._el.GetPropertyValue(AutomationElement_Extend.FlowsToProperty, _isCached);
                 }
             }
             public string ProviderDescription
             {
                 get
                 {
-                    return (string)this._el.GetPropertyValue(AutomationElement.ProviderDescriptionProperty, _isCached);
+                    return (string)this._el.GetPropertyValue(AutomationElement_Extend.ProviderDescriptionProperty, _isCached);
                 }
             }
         }

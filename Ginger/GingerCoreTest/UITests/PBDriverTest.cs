@@ -34,11 +34,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace UnitTest
-{    
+{
     [Level3]
     [TestClass]
-    public class PBDriverTest 
-    {        
+    public class PBDriverTest
+    {
 
         public static BusinessFlow mBF;
         static System.Diagnostics.Process proc;
@@ -55,55 +55,54 @@ namespace UnitTest
             // launch PB Test App
             if (proc == null || proc.HasExited)
             {
-                proc = new System.Diagnostics.Process();
-                proc.StartInfo.FileName = @"pb_test_app.exe";
-                proc.StartInfo.WorkingDirectory = TestResources.GetTestResourcesFolder("PBTestApp");
-                Console.WriteLine(proc.StartInfo.WorkingDirectory);
-                Console.WriteLine(proc.StartInfo.FileName);
-                proc.Start();
+                Console.WriteLine(TestResources.GetTestResourcesFolder("PBTestApp"));
+                Console.WriteLine("pb_test_app.exe");
+
+
+                proc = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "pb_test_app.exe", WorkingDirectory = TestResources.GetTestResourcesFolder("PBTestApp"), UseShellExecute = true });
                 GingerCore.General.DoEvents();
                 GingerCore.General.DoEvents();
             }
-            
-                mGR = new GingerRunner();
+
+            mGR = new GingerRunner();
             mGR.Executor = new GingerExecutionEngine(mGR);
 
             mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
-                mBF = new BusinessFlow();
-                mBF.Activities = new ObservableList<Activity>();
-                mBF.Name = "BF Test PB Driver";
-                Platform p = new Platform();
-                p.PlatformType = ePlatformType.PowerBuilder;                
-                mBF.TargetApplications.Add(new TargetApplication() { AppName = "PBTestAPP" });
-                Activity activity = new Activity();
-                activity.TargetApplication = "PBTestApp";
-                mBF.Activities.Add(activity);
-                mBF.CurrentActivity = activity;
+            mBF = new BusinessFlow();
+            mBF.Activities = new ObservableList<Activity>();
+            mBF.Name = "BF Test PB Driver";
+            Platform p = new Platform();
+            p.PlatformType = ePlatformType.PowerBuilder;
+            mBF.TargetApplications.Add(new TargetApplication() { AppName = "PBTestAPP" });
+            Activity activity = new Activity();
+            activity.TargetApplication = "PBTestApp";
+            mBF.Activities.Add(activity);
+            mBF.CurrentActivity = activity;
 
-                mDriver = new PBDriver(mBF);                              
-                mDriver.StartDriver();
-                Agent a = new Agent();
+            mDriver = new PBDriver(mBF);
+            mDriver.StartDriver();
+            Agent a = new Agent();
             AgentOperations agentOperations = new AgentOperations(a);
             a.AgentOperations = agentOperations;
-                a.Active = true;
+            a.Active = true;
             ((AgentOperations)a.AgentOperations).Driver = mDriver;
-                a.DriverType = Agent.eDriverType.PowerBuilder;
+            a.DriverType = Agent.eDriverType.PowerBuilder;
 
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
 
-                ApplicationAgent AA = new ApplicationAgent();
-                AA.AppName = "PBTestApp";                
-                AA.Agent = a;
-                mGR.ApplicationAgents.Add(AA);
-                mGR.Executor.CurrentBusinessFlow = mBF;
-                mGR.Executor.SetCurrentActivityAgent();
-                // Do Switch Window, to be ready for actions
-                ActSwitchWindow c = new ActSwitchWindow();
-                c.LocateBy = eLocateBy.ByTitle;                
-                c.LocateValue = "Simple Page";
-                c.WaitTime = 10;
-                mGR.Executor.RunAction(c,false);
+            ApplicationAgent AA = new ApplicationAgent();
+            AA.AppName = "PBTestApp";
+            AA.Agent = a;
+            mGR.ApplicationAgents.Add(AA);
+            mGR.Executor.CurrentBusinessFlow = mBF;
+            mGR.Executor.SetCurrentActivityAgent();
+            // Do Switch Window, to be ready for actions
+            ActSwitchWindow c = new ActSwitchWindow();
+            c.LocateBy = eLocateBy.ByTitle;
+            c.LocateValue = "Simple Page";
+            c.WaitTime = 10;
+            mGR.Executor.RunAction(c, false);
         }
 
         [ClassCleanup()]
@@ -122,35 +121,36 @@ namespace UnitTest
             }
             finally
             {
-                
-            }
-            
 
-        
-    }
+            }
+
+
+
+        }
 
         #region Text box field
-        [TestMethod]  [Timeout(60000)]        
+        [TestMethod]
+        [Timeout(60000)]
         public void SetTextField_tb_lastname()
-        {           
+        {
             //Arrange                        
             ActPBControl c = new ActPBControl();
-            c.LocateBy = eLocateBy.ByName;            
+            c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.AddNewReturnParams = true;                   
+            c.AddNewReturnParams = true;
             c.LocateValue = "sle_acc_text";
-            c.Value =  "Jenny";
+            c.Value = "Jenny";
             c.Active = true;
 
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
-            mGR.Executor.RunAction(c,false);
+            mGR.Executor.RunAction(c, false);
 
 
             ActPBControl act = new ActPBControl();
             act.LocateBy = eLocateBy.ByName;
-            act.ControlAction = ActPBControl.eControlAction.GetValue;          
+            act.ControlAction = ActPBControl.eControlAction.GetValue;
             act.LocateValue = "sle_acc_text";
             act.AddNewReturnParams = true;
             act.Active = true;
@@ -168,10 +168,11 @@ namespace UnitTest
 
             //Assert
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
-           Assert.AreEqual(c.Error, null, "Act.Error");
+            Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetTextField_tb_lastname()
         {
             //Arrange                        
@@ -179,7 +180,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.LocateValue = "sle_acc_text";            
+            c.LocateValue = "sle_acc_text";
             c.Value = "ABCDEF";
             mGR.Executor.RunAction(c);
 
@@ -189,7 +190,7 @@ namespace UnitTest
             ActPBControl act = new ActPBControl();
             act.LocateBy = eLocateBy.ByName;
             act.ControlAction = ActPBControl.eControlAction.GetValue;
-            act.LocateValue = "sle_acc_text";            
+            act.LocateValue = "sle_acc_text";
             act.Active = true;
 
             mBF.CurrentActivity.Acts.Add(act);
@@ -198,9 +199,9 @@ namespace UnitTest
             mGR.Executor.RunAction(act, false);
 
             //Assert
-           Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
+            Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             //Assert.AreEqual(act.ExInfo, txt, "ExInfo");
-           Assert.AreEqual(act.Error, null, "Act.Error");
+            Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
         [Ignore]
@@ -211,7 +212,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByXPath;
             c.ControlAction = ActPBControl.eControlAction.SendKeys;
             c.AddNewReturnParams = true;
-            c.LocateValue = "/mle_acc_notes";            
+            c.LocateValue = "/mle_acc_notes";
             c.Value = "Ginger";
             c.Active = true;
 
@@ -224,7 +225,7 @@ namespace UnitTest
             ActPBControl act = new ActPBControl();
             act.LocateBy = eLocateBy.ByXPath;
             act.ControlAction = ActPBControl.eControlAction.GetValue;
-            act.LocateValue = "/mle_acc_notes";           
+            act.LocateValue = "/mle_acc_notes";
             act.AddNewReturnParams = true;
             act.Active = true;
 
@@ -244,7 +245,8 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetControlProperty_Value()
         {
             ActPBControl c = new ActPBControl();
@@ -270,7 +272,8 @@ namespace UnitTest
         #endregion
 
         #region Windows
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void WindowVisualStateCheck()
         {
 
@@ -280,7 +283,7 @@ namespace UnitTest
             actWinMax.LocateValue = "Simple Page";
             actWinMax.WindowActionType = ActWindow.eWindowActionType.Maximize;
             actWinMax.Active = true;
-            
+
             mBF.CurrentActivity.Acts.Add(actWinMax);
             mBF.CurrentActivity.Acts.CurrentItem = actWinMax;
             mGR.Executor.RunAction(actWinMax, false);
@@ -323,10 +326,11 @@ namespace UnitTest
         #endregion
         #region Button
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ClickButton_ByText()
         {
-            
+
             // click click me button
             ActPBControl act = new ActPBControl();
             act.LocateBy = eLocateBy.ByName;
@@ -347,18 +351,18 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
-         
+
             //Assert
-           Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
-           Assert.AreEqual(act.Error, null, "Act.Error");
+            Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
+            Assert.AreEqual(act.Error, null, "Act.Error");
             //Assert.AreEqual(act.ExInfo, "", "act.ExInfo");
 
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
             mGR.Executor.RunAction(c, false);
 
-           Assert.AreEqual(c.Status, eRunStatus.Passed, "c.Status");
-           Assert.AreEqual(c.Error, null, "c.Error");
+            Assert.AreEqual(c.Status, eRunStatus.Passed, "c.Status");
+            Assert.AreEqual(c.Error, null, "c.Error");
         }
 
         [Ignore]
@@ -438,7 +442,8 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "c.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetControlProperty_AutomationId_Button()
         {
             ActPBControl c = new ActPBControl();
@@ -461,7 +466,8 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetControlProperty_ClassName_Button()
         {
             ActPBControl c = new ActPBControl();
@@ -484,7 +490,8 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetControlProperty_IsKeyboardFocusable_Button()
         {
             ActPBControl c = new ActPBControl();
@@ -507,14 +514,15 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void IsExist_Button()
         {
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.IsExist;
             c.AddNewReturnParams = true;
-            c.LocateValue = "Tabbed";            
+            c.LocateValue = "Tabbed";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -525,17 +533,18 @@ namespace UnitTest
 
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
             string actual = c.GetReturnParam("Actual");
-            Assert.AreEqual(actual, "True", "True");            
+            Assert.AreEqual(actual, "True", "True");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SmartSync_WaitUntilDisplay_Button()
-        {            
+        {
             ActSmartSync act = new ActSmartSync();
             act.LocateBy = eLocateBy.ByName;
             act.SmartSyncAction = ActSmartSync.eSmartSyncAction.WaitUntilDisplay;
-            act.LocateValue = "Click Me";            
-            act.Active = true;            
+            act.LocateValue = "Click Me";
+            act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
@@ -549,7 +558,8 @@ namespace UnitTest
         #endregion
 
         #region CheckBox
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SetCheckboxValue_ByName()
         {
             //Arrange                        
@@ -588,11 +598,12 @@ namespace UnitTest
 
             //Assert
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
-           //Assert.AreEqual(c.ExInfo, "Checked set", "ExInfo");
-           Assert.AreEqual(c.Error, null, "Act.Error");
+            //Assert.AreEqual(c.ExInfo, "Checked set", "ExInfo");
+            Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetCheckboxValue_ByName()
         {
             //Arrange      
@@ -605,7 +616,7 @@ namespace UnitTest
             c.AddNewReturnParams = true;
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.Executor.RunAction(c,false);
+            mGR.Executor.RunAction(c, false);
 
             // Prep Get Value Action
             ActPBControl act = new ActPBControl();
@@ -621,13 +632,14 @@ namespace UnitTest
             mGR.Executor.RunAction(act, false);
 
             //Assert
-           Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
+            Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
-           Assert.AreEqual(actual, "Checked", "Ret Param Actual");
-           Assert.AreEqual(act.Error, null, "Act.Error");
+            Assert.AreEqual(actual, "Checked", "Ret Param Actual");
+            Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ToggleCheckboxValue_ByName()
         {//Arrange                        
 
@@ -641,7 +653,7 @@ namespace UnitTest
             c.AddNewReturnParams = true;
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
-            mGR.Executor.RunAction(c,false);  
+            mGR.Executor.RunAction(c, false);
 
             //toggle
             ActPBControl c1 = new ActPBControl();
@@ -651,7 +663,7 @@ namespace UnitTest
             c1.AddNewReturnParams = true;
             c1.ItemName = "Toggle Checkbox cbx_acc_check";
             c1.Active = true;
-            
+
             mBF.CurrentActivity.Acts.Add(c1);
             mBF.CurrentActivity.Acts.CurrentItem = c1;
 
@@ -674,14 +686,15 @@ namespace UnitTest
             mGR.Executor.RunAction(act, false);
 
             //Assert
-           Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
+            Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
-           Assert.AreEqual(actual, "Unchecked", "Ret Param Actual");
-           Assert.AreEqual(act.Error, null, "Act.Error");
-      
+            Assert.AreEqual(actual, "Unchecked", "Ret Param Actual");
+            Assert.AreEqual(act.Error, null, "Act.Error");
+
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void IsCheckboxEnabled_ByName()
         {
             //Arrange                        
@@ -698,11 +711,12 @@ namespace UnitTest
             mGR.Executor.RunAction(c, false);
 
             //Assert
-           Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
-           Assert.AreEqual(c.Error, null, "Act.Error");
+            Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
+            Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetControlProperty_ToggleState()
         {
             ActPBControl act = new ActPBControl();
@@ -736,13 +750,14 @@ namespace UnitTest
                 //Act
                 mGR.Executor.RunAction(act, false);
 
-            }            
+            }
         }
 
         #endregion
 
         #region radio button
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SelectRadioButton_Bachelors()
         {
             //Select the radio button
@@ -773,13 +788,14 @@ namespace UnitTest
             string actual = act.GetReturnParam("Actual");
             Assert.AreEqual(actual, "True", "Ret Param Actual");
             Assert.AreEqual(act.Error, null, "Act.Error");
-            
+
             //Assert
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
-           Assert.AreEqual(c.Error, null, "Act.Error");
+            Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetValueRadioButton_Bachelors()
         {
             ActPBControl c1 = new ActPBControl();
@@ -792,7 +808,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.CurrentItem = c1;
             //Act
             mGR.Executor.RunAction(c1, false);
-            
+
             //Select the radio button
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
@@ -812,7 +828,8 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void IsSelectedRadioButton_Masters()
         {
             //Select the radio button
@@ -836,8 +853,8 @@ namespace UnitTest
 
             mGR.Executor.RunAction(c, false);
             //Assert
-           Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
-           Assert.AreEqual(c.Error, null, "Act.Error");
+            Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
+            Assert.AreEqual(c.Error, null, "Act.Error");
         }
         #endregion
 
@@ -846,7 +863,8 @@ namespace UnitTest
         #endregion
 
         #region Title Bar
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetTitleBarText_SimplePage()
         {
             ActPBControl c = new ActPBControl();
@@ -862,12 +880,13 @@ namespace UnitTest
             mGR.Executor.RunAction(c, false);
 
             //Assert
-           Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
-           Assert.AreEqual(c.Error, null, "Act.Error");
+            Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
+            Assert.AreEqual(c.Error, null, "Act.Error");
 
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetTextByName_name()
         {
             ActPBControl c = new ActPBControl();
@@ -881,8 +900,8 @@ namespace UnitTest
             mGR.Executor.RunAction(c, false);
 
             //Assert
-           Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
-           Assert.AreEqual(c.Error, null, "Act.Error");
+            Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
+            Assert.AreEqual(c.Error, null, "Act.Error");
         }
         #endregion
 
@@ -890,7 +909,7 @@ namespace UnitTest
         [Ignore]
         public void SelectComboBoxItem_Indian()
         {
-            
+
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Select;
@@ -905,8 +924,8 @@ namespace UnitTest
             mGR.Executor.RunAction(c, false);
 
             //Assert
-           Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
-           Assert.AreEqual(c.Error, null, "Act.Error");
+            Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
+            Assert.AreEqual(c.Error, null, "Act.Error");
 
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
@@ -924,7 +943,8 @@ namespace UnitTest
 
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetSelectedItem_ComboBox()
         {
 
@@ -956,7 +976,8 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetAllItems_ComboBox()
         {
 
@@ -971,13 +992,14 @@ namespace UnitTest
             mGR.Executor.RunAction(c, false);
 
             //Assert
-           Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
-           Assert.AreEqual(c.Error, null, "Act.Error");
+            Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
+            Assert.AreEqual(c.Error, null, "Act.Error");
         }
         #endregion
 
         #region List box
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ClickListBoxItem_English()
         {
             ActPBControl c = new ActPBControl();
@@ -991,7 +1013,7 @@ namespace UnitTest
             //Act
             mGR.Executor.RunAction(c, false);
 
-            ActPBControl act= new ActPBControl();
+            ActPBControl act = new ActPBControl();
             act.LocateBy = eLocateBy.ByName;
             act.ControlAction = ActPBControl.eControlAction.GetSelected;
             act.LocateValue = "lb_acc_language";
@@ -1010,7 +1032,7 @@ namespace UnitTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-                     
+
         [Ignore]
         public void GetSelectedItems_ListBox()
         {
@@ -1023,7 +1045,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.CurrentItem = c;
             //Act
             mGR.Executor.RunAction(c, false);
-             
+
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetSelected;
@@ -1042,7 +1064,8 @@ namespace UnitTest
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetAllItems_ListBox()
         {
 
@@ -1057,13 +1080,14 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.CurrentItem = c;
             mGR.Executor.RunAction(c, false);
 
-           Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
+            Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
             string actual = c.GetReturnParam("Actual");
             Assert.AreEqual(actual, "Vertical, English, French, Hebrew, Hindi, Russian, Spanish", "Ret Param Actual");
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetControlProperty_IsOffScreen_ListBox()
         {
             ActPBControl c = new ActPBControl();
@@ -1086,7 +1110,8 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetControlProperty_NameProperty_ListBox()
         {
             ActPBControl c = new ActPBControl();
@@ -1109,7 +1134,8 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetControlProperty_LocalizedControlType_ListBox()
         {
             ActPBControl c = new ActPBControl();
@@ -1132,7 +1158,8 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetControlProperty_IsPassword_ListBox()
         {
             ActPBControl c = new ActPBControl();
@@ -1155,7 +1182,8 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetControlProperty_IsEnabled_ListBox()
         {
             ActPBControl c = new ActPBControl();
@@ -1178,7 +1206,8 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetControlProperty_IsSelected_ListBox()
         {
             ActPBControl c = new ActPBControl();
@@ -1201,7 +1230,8 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetControlProperty_Xpath_ListBox()
         {
             ActPBControl c = new ActPBControl();
@@ -1224,7 +1254,8 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetControlProperty_GetFieldValue_ListBox()
         {
             ActPBControl c = new ActPBControl();
@@ -1249,7 +1280,8 @@ namespace UnitTest
         #endregion
 
         #region Dialog control
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetDialogTitle_ClickMeButton()
         {
 
@@ -1278,7 +1310,7 @@ namespace UnitTest
             string actual = c.GetReturnParam("Dialog Title");
             Assert.AreEqual(actual, "MsgBox Test", "Ret Param Actual");
             Assert.AreEqual(c.Error, null, "Act.Error");
-            
+
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Click;
             c.LocateValue = "OK";
@@ -1287,7 +1319,8 @@ namespace UnitTest
             mGR.Executor.RunAction(c, false);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetDialogText_ClickMeButton()
         {
             ActPBControl c = new ActPBControl();
@@ -1311,7 +1344,7 @@ namespace UnitTest
             mBF.CurrentActivity.Acts.CurrentItem = c;
             mGR.Executor.RunAction(c, false);
 
-            
+
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
             string actual = c.GetReturnParam("Actual");
             Assert.AreEqual(actual, "Button is Clicked", "Ret Param Actual");
@@ -1328,7 +1361,8 @@ namespace UnitTest
         #endregion
 
         #region Menu bar
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetAllMenuBarElements()
         {
             ActPBControl c = new ActPBControl();
@@ -1354,7 +1388,7 @@ namespace UnitTest
             ActMenuItem c = new ActMenuItem();
             c.LocateBy = eLocateBy.ByName;
             c.MenuAction = ActMenuItem.eMenuAction.Click;
-            c.LocateValue = "File|New";            
+            c.LocateValue = "File|New";
             c.AddNewReturnParams = true;
             c.Active = true;
 
@@ -1380,7 +1414,7 @@ namespace UnitTest
             Assert.AreEqual(pbAct.Status, eRunStatus.Passed, "c.Status");
             Assert.AreEqual(pbAct.Error, null, "c.Error");
 
-           
+
         }
 
         [Ignore]
@@ -1415,13 +1449,14 @@ namespace UnitTest
 
             Assert.AreEqual(pbAct.Status, eRunStatus.Passed, "Action Status");
             string actual = pbAct.GetReturnParam("Actual");
-            Assert.AreEqual("True", actual,  "Ret Param Actual");            
+            Assert.AreEqual("True", actual, "Ret Param Actual");
         }
 
         #endregion
 
         #region XPath locator
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SetTextBoxValue_ByXpath()
         {
             ActPBControl c = new ActPBControl();
@@ -1454,7 +1489,8 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetTextBoxValue_ByXpath()
         {
             ActPBControl c = new ActPBControl();
@@ -1486,7 +1522,8 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetTextBoxValue_ByXpathWithValueProperty()
         {
             ActPBControl c = new ActPBControl();
@@ -1551,11 +1588,12 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetText_TableActionGrid()
-        {            
+        {
             ActTableElement actGrid = new ActTableElement();
-            actGrid.ByRandRow = false;            
+            actGrid.ByRandRow = false;
             actGrid.BySelectedRow = false;
             actGrid.ByWhere = true;
             actGrid.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle;
@@ -1574,16 +1612,17 @@ namespace UnitTest
             actGrid.LocateBy = eLocateBy.ByName;
             actGrid.Active = true;
             mBF.CurrentActivity.Acts.Add(actGrid);
-            mBF.CurrentActivity.Acts.CurrentItem = actGrid;            
+            mBF.CurrentActivity.Acts.CurrentItem = actGrid;
             mGR.Executor.RunAction(actGrid, false);
-           Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");            
+            Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             string actual = actGrid.GetReturnParam("Actual");
-           Assert.AreEqual(actual, "2109 Fox Dr, Champaign IL ", "Ret Param Actual");
-           Assert.AreEqual(actGrid.Error, null, "Act.Error");
+            Assert.AreEqual(actual, "2109 Fox Dr, Champaign IL ", "Ret Param Actual");
+            Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-         
-         [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void SetText_TableActionGrid()
         {
             ActTableElement actGrid1 = new ActTableElement();
@@ -1594,20 +1633,20 @@ namespace UnitTest
             actGrid1.ControlAction = ActTableElement.eTableAction.SetValue;
             actGrid1.LocateColTitle = "address";
 
-            actGrid1.WhereColumnTitle="name";
+            actGrid1.WhereColumnTitle = "name";
             actGrid1.WhereColumnValue = "Ravi";
             actGrid1.LocateRowType = "Where";
             actGrid1.LocateRowValue = "";
             actGrid1.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
             actGrid1.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
-            
+
             actGrid1.WhereOperator = ActTableElement.eRunColOperator.Equals;
             actGrid1.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
             actGrid1.LocateValue = "dw_acc_grd";
             actGrid1.LocateBy = eLocateBy.ByName;
             actGrid1.Value = "3909 Inverness Rd";
             actGrid1.Active = true;
-            
+
             mBF.CurrentActivity.Acts.Add(actGrid1);
 
             mBF.CurrentActivity.Acts.CurrentItem = actGrid1;
@@ -1646,48 +1685,50 @@ namespace UnitTest
 
             Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             string actual = actGrid.GetReturnParam("Actual");
-            Assert.AreEqual("3909 Inverness Rd",actual, "Ret Param Actual");
+            Assert.AreEqual("3909 Inverness Rd", actual, "Ret Param Actual");
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
-         public void Click_TableAction()
+        [TestMethod]
+        [Timeout(60000)]
+        public void Click_TableAction()
         {
-             ActTableElement actGrid = new ActTableElement();
-             actGrid.ByRandRow = false;             
-             actGrid.BySelectedRow = false;
-             actGrid.ByWhere = true;
-             actGrid.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle;
-             actGrid.ControlAction = ActTableElement.eTableAction.Click;
-             actGrid.LocateColTitle = "address";
+            ActTableElement actGrid = new ActTableElement();
+            actGrid.ByRandRow = false;
+            actGrid.BySelectedRow = false;
+            actGrid.ByWhere = true;
+            actGrid.ColSelectorValue = ActTableElement.eRunColSelectorValue.ColTitle;
+            actGrid.ControlAction = ActTableElement.eTableAction.Click;
+            actGrid.LocateColTitle = "address";
 
-             actGrid.WhereColumnTitle = "name";
-             actGrid.WhereColumnValue = "Ravi";
-             actGrid.LocateRowType = "Where";
-             actGrid.LocateRowValue = "";
-             actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
-             actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
-             actGrid.WhereColumnTitle = "name";
+            actGrid.WhereColumnTitle = "name";
+            actGrid.WhereColumnValue = "Ravi";
+            actGrid.LocateRowType = "Where";
+            actGrid.LocateRowValue = "";
+            actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
+            actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
+            actGrid.WhereColumnTitle = "name";
 
-             actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
-             actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-             actGrid.LocateValue = "dw_acc_grd";
-             actGrid.LocateBy = eLocateBy.ByName;
-             actGrid.Value = "Amdocs - Pune, India";
-             actGrid.Active = true;
+            actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
+            actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
+            actGrid.LocateValue = "dw_acc_grd";
+            actGrid.LocateBy = eLocateBy.ByName;
+            actGrid.Value = "Amdocs - Pune, India";
+            actGrid.Active = true;
 
 
-             mBF.CurrentActivity.Acts.Add(actGrid);
+            mBF.CurrentActivity.Acts.Add(actGrid);
 
-             mBF.CurrentActivity.Acts.CurrentItem = actGrid;
-             //Act
-             mGR.Executor.RunAction(actGrid, false);
+            mBF.CurrentActivity.Acts.CurrentItem = actGrid;
+            //Act
+            mGR.Executor.RunAction(actGrid, false);
             //Assert
             Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void DoubleClick_TableAction()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1709,7 +1750,7 @@ namespace UnitTest
             actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
             actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
             actGrid.LocateValue = "dw_acc_grd";
-            actGrid.LocateBy = eLocateBy.ByName;            
+            actGrid.LocateBy = eLocateBy.ByName;
             actGrid.Active = true;
 
 
@@ -1723,7 +1764,8 @@ namespace UnitTest
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ClickXY_TableAction()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1763,9 +1805,10 @@ namespace UnitTest
 
         #region Table Action on Grid
         //For Xpath with only name property
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetText_TableActionGrid_OnRowNumColNum()
-        { 
+        {
             ActTableElement actGrid = new ActTableElement();
             actGrid.AddNewReturnParams = true;
             actGrid.ByRandRow = false;
@@ -1778,7 +1821,7 @@ namespace UnitTest
             actGrid.LocateColTitle = "0";
             actGrid.LocateRowType = "Row Number";//
             actGrid.LocateRowValue = "1";//
-            actGrid.LocateValue = "none";           
+            actGrid.LocateValue = "none";
 
             actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
             actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
@@ -1794,11 +1837,12 @@ namespace UnitTest
             mGR.Executor.RunAction(actGrid, false);
             Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             string actual = actGrid.GetReturnParam("Actual");
-            Assert.AreEqual("Ravi",actual, "Ret Param Actual");
+            Assert.AreEqual("Ravi", actual, "Ret Param Actual");
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetText_TableActionGrid_OnRowNumColTitle()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1833,7 +1877,8 @@ namespace UnitTest
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetText_TableActionGrid_OnAnyRowColNum()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1863,7 +1908,7 @@ namespace UnitTest
             mGR.Executor.RunAction(actGrid, false);
             Assert.AreEqual(actGrid.Status, eRunStatus.Passed, "Action Status");
             string actual = actGrid.GetReturnParam("Actual");
-            if(actual!=null)
+            if (actual != null)
             {
                 actual = "pass";
             }
@@ -1871,7 +1916,8 @@ namespace UnitTest
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetText_TableActionGrid_OnAnyRowColtitle()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1910,7 +1956,8 @@ namespace UnitTest
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
 
         public void GetText_TableActionGrid_OnColNumwhereColTitle()
         {
@@ -1943,7 +1990,8 @@ namespace UnitTest
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetText_TableActionGrid_OnColTitlewhereColTitle()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -1974,7 +2022,8 @@ namespace UnitTest
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetText_TableActionGrid_OnColNumwhereColNum()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -2005,7 +2054,8 @@ namespace UnitTest
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetText_TableActionGrid_OnColTitlewhereColNum()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -2036,7 +2086,8 @@ namespace UnitTest
             Assert.AreEqual(actGrid.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetRowCount_TableActionGrid()
         {
             ActTableElement actGrid = new ActTableElement();
@@ -2074,7 +2125,8 @@ namespace UnitTest
         #endregion
 
         #region UIElement Action- Click and Validate
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestClickAndValidate_isExist()
         {
             ActUIElement actUI = new ActUIElement();
@@ -2140,7 +2192,8 @@ namespace UnitTest
             Assert.AreEqual(actUI.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestClickAndValidate_NotExist()
         {
             ActPBControl c = new ActPBControl();
@@ -2204,7 +2257,7 @@ namespace UnitTest
             iv.Value = "false";
             iv.ValueForDriver = "false";
             actUI.ActInputValues.Add(iv);
-            
+
             mBF.CurrentActivity.Acts.Add(actUI);
             mBF.CurrentActivity.Acts.CurrentItem = actUI;
             mGR.Executor.RunAction(actUI, false);
@@ -2214,7 +2267,8 @@ namespace UnitTest
             Assert.AreEqual(actUI.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestClickAndValidate_isEnabled()
         {
             ActUIElement actUI = new ActUIElement();
@@ -2291,7 +2345,8 @@ namespace UnitTest
             Assert.AreEqual(actUI.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestClickAndValidate_LoopThroughClicks()
         {
             ActPBControl c = new ActPBControl();
@@ -2369,7 +2424,8 @@ namespace UnitTest
         #endregion
 
         #region Text
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetControlProperty_Text_Text()
         {
             ActPBControl c = new ActPBControl();
@@ -2392,14 +2448,15 @@ namespace UnitTest
             Assert.AreEqual(c.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetTitle_Text()
         {
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
             c.ControlAction = ActPBControl.eControlAction.GetTitle;
             c.AddNewReturnParams = true;
-            c.LocateValue = "/st_acc_label";            
+            c.LocateValue = "/st_acc_label";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -2416,7 +2473,8 @@ namespace UnitTest
         #endregion
 
         #region Tab Control
-        [TestMethod]  [Timeout(60000)]        
+        [TestMethod]
+        [Timeout(60000)]
         public void SelectByIndex_Tab()
         {
             ActPBControl c = new ActPBControl();
@@ -2443,7 +2501,7 @@ namespace UnitTest
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
             string actual = c.GetReturnParam("Actual");
 
-            if(actual.Equals("True"))
+            if (actual.Equals("True"))
             {
                 c = new ActPBControl();
                 c.LocateBy = eLocateBy.ByXPath;
@@ -2461,7 +2519,7 @@ namespace UnitTest
                 c.LocateBy = eLocateBy.ByName;
                 c.ControlAction = ActPBControl.eControlAction.IsExist;
                 c.AddNewReturnParams = true;
-                c.LocateValue = "none";                
+                c.LocateValue = "none";
                 c.Active = true;
                 mBF.CurrentActivity.Acts.Add(c);
                 mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -2469,7 +2527,7 @@ namespace UnitTest
                 mGR.Executor.RunAction(c, false);
                 Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
                 actual = c.GetReturnParam("Actual");
-                Assert.AreEqual(actual, "True", "True");                
+                Assert.AreEqual(actual, "True", "True");
             }
             else
             {
@@ -2480,10 +2538,10 @@ namespace UnitTest
             c1.LocateBy = eLocateBy.ByName;
             c1.ControlAction = ActPBControl.eControlAction.Click;
             c1.LocateValue = "Exit";
-            c1.AddNewReturnParams = true;            
+            c1.AddNewReturnParams = true;
             c1.Active = true;
             mBF.CurrentActivity.Acts.Add(c1);
-            mBF.CurrentActivity.Acts.CurrentItem = c1;            
+            mBF.CurrentActivity.Acts.CurrentItem = c1;
             mGR.Executor.RunAction(c1, false);
 
         }

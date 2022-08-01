@@ -1,0 +1,17 @@
+    <UserControl x:Class="Ginger.UserControlsLib.VisualFlow.ZoomPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Ginger.UserControlsLib.VisualFlow"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <StackPanel x:Name="ZoomPanelC" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" >
+            <Label x:Name="ZoomPercentLabel" FontSize="14" Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Center">100%</Label>
+            <Button x:Name="ZoomMinus" Click="ZoomMinus_Click"  Width="25" ClickMode="Press" Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Center" >-</Button>
+            <Slider x:Name="ZoomSlider" Width="100" Minimum="0.1" Maximum="1" Value="1" Margin="0,0,0,0"  Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Center"/>
+            <Button x:Name="ZoomPlus" Click="ZoomPlus_Click"  Width="25" Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Center">+</Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

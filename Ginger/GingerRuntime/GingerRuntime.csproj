@@ -9,8 +9,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RuntimeFrameworkVersion>3.1.0</RuntimeFrameworkVersion>
+    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>Amdocs.Ginger.Runtime</RootNamespace>
   </PropertyGroup>
 
@@ -31,6 +30,7 @@
   <PropertyGroup>
     <GeckoDriverPlatform>linux64</GeckoDriverPlatform>
     <PublishGeckoDriver>true</PublishGeckoDriver>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,13 +40,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="4.3.3" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="4.4.1" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.1" />
     <PackageReference Include="runtime.osx.10.10-x64.CoreCompat.System.Drawing" Version="5.8.64" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="102.0.5005.6102" />
-    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.31.0" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="103.0.5060.5300" />
+    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.31.0.1" />
     <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
-    <PackageReference Include="System.Security.Permissions" Version="5.0.0" />
+    <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>

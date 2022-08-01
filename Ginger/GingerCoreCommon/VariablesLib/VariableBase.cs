@@ -190,7 +190,7 @@ namespace GingerCore.Variables
                 {
                     mFormula = formula;
 
-                    OnPropertyChanged(nameof(Formula));
+                    OnPropertyChanged(formula);
                 }
                 return mFormula;
             }
@@ -216,6 +216,7 @@ namespace GingerCore.Variables
         public virtual eImageType Image { get { return eImageType.Variable; } }
         public override string GetNameForFileName() { return Name; }
         public abstract string VariableEditPage { get; }
+        public virtual bool IsObsolete { get { return false; } }
 
         public abstract bool SupportResetValue { get; }
         public abstract bool SupportAutoValue { get; }
