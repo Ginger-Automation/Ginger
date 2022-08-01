@@ -13,76 +13,91 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
         <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
             <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition  Height="50"/>
-                <RowDefinition  Height="30"/>
-                <RowDefinition  Height="1*"/>
-            </Grid.RowDefinitions>
-            <usercontrols:ucButton x:Name="xSaveButton" DockPanel.Dock="Top" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" HorizontalAlignment="Left" Margin="0,0,0,0"/>
-            <StackPanel Orientation="Horizontal" Grid.Row="1">
-                <Label Content="Visual Regression Testing(VRT) Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
-            </StackPanel>
+                <Grid.RowDefinitions>
+                    <RowDefinition  Height="50"/>
+                    <RowDefinition  Height="30"/>
+                    <RowDefinition  Height="1*"/>
+                </Grid.RowDefinitions>
+                <usercontrols:ucButton x:Name="xSaveButton" DockPanel.Dock="Top" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+                <StackPanel Orientation="Horizontal" Grid.Row="1">
+                    <Label Content="Visual Regression Testing(VRT) Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
+                </StackPanel>
                 <StackPanel Orientation="Vertical" Grid.Row="2">
-                <Grid Margin="10,10,0,0" x:Name="xVRTGrid" >
-                    <Grid.RowDefinitions>
-                        <RowDefinition  Height="50"/>
-                        <RowDefinition  Height="0"/>
-                        <RowDefinition  Height="50"/>
-                        <RowDefinition  Height="0"/>
-                        <RowDefinition  Height="0"/>
-                        <RowDefinition  Height="0"/>
-                        <RowDefinition  Height="50"/>
-                        <RowDefinition  Height="0"/>
-                        <RowDefinition  Height="50"/>
-                        <RowDefinition  Height="0"/>
-                        <RowDefinition  Height="50"/>
-                        <RowDefinition  Height="0"/>
+                    <Grid Margin="10,10,0,0" x:Name="xVRTGrid" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition  Height="50"/>
+                            <RowDefinition  Height="0"/>
+                            <RowDefinition  Height="50"/>
+                            <RowDefinition  Height="0"/>
+                            <RowDefinition  Height="0"/>
+                            <RowDefinition  Height="0"/>
+                            <RowDefinition  Height="50"/>
+                            <RowDefinition  Height="0"/>
+                            <RowDefinition  Height="50"/>
+                            <RowDefinition  Height="0"/>
+                            <RowDefinition  Height="50"/>
+                            <RowDefinition  Height="0"/>
+                            <RowDefinition  Height="50"/>
+                            <RowDefinition  Height="0"/>
+                            <RowDefinition  Height="50"/>
+                            <RowDefinition  Height="0"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="230"/>
+                            <ColumnDefinition Width="350*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
+                            <Label x:Name="xAPIURLLabel" Content="API URL:"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>
+                            <Label x:Name="xAPIURLLabelValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
+                        </StackPanel>
+                        <Activities:UCValueExpression x:Name="xAPIURLTextBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="VRT API URL" Margin="10,0,0,0"  Width="400"/>
 
-                    </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
+                            <Label x:Name="xAPIKeyLabel" Content="API Key:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
+                            <Label x:Name="xAPIKeyLabelValidation" Content="*" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
+                        </StackPanel>
+                        <Activities:UCValueExpression x:Name="xAPIKeyTextBox" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="API Key" Margin="10,0,0,0"  Width="400"/>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="230"/>
-                        <ColumnDefinition Width="350*"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0">
-                        <Label x:Name="xAPIURLLabel" Content="API URL:"   Style="{StaticResource @InputFieldLabelStyle}"  VerticalAlignment="Center" FontSize="12"/>
-                        <Label x:Name="xAPIURLLabelValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
-                    </StackPanel>
-                    <Activities:UCValueExpression x:Name="xAPIURLTextBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="VRT API URL" Margin="10,0,0,0"  Width="400"/>
-
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
-                        <Label x:Name="xAPIKeyLabel" Content="API Key:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
-                        <Label x:Name="xAPIKeyLabelValidation" Content="*" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
-                    </StackPanel>
-                    <Activities:UCValueExpression x:Name="xAPIKeyTextBox" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="API Key" Margin="10,0,0,0"  Width="400"/>
-
-                    <!--<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="4">
+                        <!--<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="4">
                                 <Label x:Name="xTestNameLabel" Content="TestName:"   Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
                                 <Label x:Name="xTestNameLabelValidation" Content="*"  Style="{StaticResource @InputFieldLabelStyle}"  Foreground="Red" FontWeight="Bold" FontSize="12"/>
                             </StackPanel>
                             <Activities:UCValueExpression x:Name="xTestNameTextBox" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" ToolTip="CiBuildId" Margin="10,0,0,0"  Width="400"/>-->
 
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="6">
-                        <Label x:Name="xProjectLabel" Content="Project:"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
-                        <Label x:Name="xProjectLabelValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
-                    </StackPanel>
-                    <Activities:UCValueExpression x:Name="xProjectTextBox" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Project" Margin="10,0,0,0"  Width="400"/>
+                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="6">
+                            <Label x:Name="xProjectLabel" Content="Project:"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
+                            <Label x:Name="xProjectLabelValidation" Content="*"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
+                        </StackPanel>
+                        <Activities:UCValueExpression x:Name="xProjectTextBox" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Project" Margin="10,0,0,0"  Width="400"/>
 
-                    <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="8">
-                        <Label x:Name="xBranchNameLabel" Content="Branch Name:"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
-                    </StackPanel>
-                    <Activities:UCValueExpression x:Name="xBranchNameTextBox" Grid.Column="1" Grid.Row="8" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Branch Name" Margin="10,0,0,0"  Width="400"/>
+                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="8">
+                            <Label x:Name="xBranchNameLabel" Content="Branch Name:" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
+                            <Label x:Name="xBranchNameLabelValidation" Content="*" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" Foreground="Red" FontWeight="Bold" FontSize="12"/>
+                        </StackPanel>
+                        <Activities:UCValueExpression x:Name="xBranchNameTextBox" Grid.Column="1" Grid.Row="8" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Branch Name" Margin="10,0,0,0"  Width="400"/>
 
-                        <Label  Content="Fail Checkpoint Action on mismatch:" Grid.Row="10" Grid.Column="0"  Style="{StaticResource @LabelStyle}" VerticalAlignment="Center" FontSize="12"></Label>
-                        <StackPanel x:Name="xEnableSoftAssertPanel" Margin="-15,0,0,0" Orientation="Horizontal" ToolTip="Select 'No' to ignore mismatches on checkpoint actions." VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="10" Grid.Column="1">
-                        <UserControlsLib:UCRadioButtons x:Name="xEnableSoftAssertRadioButton" ></UserControlsLib:UCRadioButtons>
-                    </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="10">
+                            <Label x:Name="xDifferenceTolerenceLabel" Content="Difference Tolerance %:"   Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"  FontSize="12"/>
+                        </StackPanel>
+                        <Activities:UCValueExpression x:Name="xDiffToleranceTextBox" Grid.Column="1" Grid.Row="10" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Difference Tolerance %" Margin="10,0,0,0" Width="400"/>
 
-                </Grid>
-            </StackPanel>
+                        <Label  Content="Fail Checkpoint Action on mismatch:" Grid.Row="12" Grid.Column="0"  Style="{StaticResource @LabelStyle}" VerticalAlignment="Center" FontSize="12"></Label>
+                        <StackPanel x:Name="xEnableSoftAssertPanel" Margin="-15,0,0,0" Orientation="Horizontal" ToolTip="Select 'No' to ignore mismatches on checkpoint actions." VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="12" Grid.Column="1">
+                            <UserControlsLib:UCRadioButtons x:Name="xEnableSoftAssertRadioButton" ></UserControlsLib:UCRadioButtons>
+                        </StackPanel>
+
+                        <Label  Content="Checkpoint Tags:" Grid.Row="14" Grid.Column="0" ToolTip="Add checked tags on all checkpoint images." Style="{StaticResource @LabelStyle}" VerticalAlignment="Center" FontSize="12"></Label>
+                        <StackPanel Margin="0,0,0,0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Row="14" Grid.Column="1">
+                            <CheckBox x:Name="xOsCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="OS" ToolTip="Add execution machine OS as tag on checkpoint images."/>
+                            <CheckBox x:Name="xAgentCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Agent" ToolTip="Add agent type as tag on checkpoint images."/>
+                            <CheckBox x:Name="xEnvironmentCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Environment" ToolTip="Add execution Environment as tag on checkpoint images." />
+                            <CheckBox x:Name="xViewportCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Viewport" ToolTip="Add current viewport as tag on checkpoint images." />
+                            <CheckBox x:Name="xActivityTagsCheckBox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Activity Tags" ToolTip="Add activity tags as tag on checkpoint images." />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
             </Grid>
         </DockPanel>
     </ScrollViewer>

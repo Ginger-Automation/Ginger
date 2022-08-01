@@ -549,14 +549,21 @@ namespace GingerCore.SourceControl
             Console.WriteLine("GITHub - TestConnection");
             try
             {
-                if (SourceControlUser.Length != 0)
+                if (IsPublicRepo)
                 {
-                    IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL, GetSourceCredentialsHandler());
+                    IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL);
                 }
                 else
                 {
-                    error = "Username cannot be empty";
-                    return false;
+                    if (SourceControlUser.Length != 0)
+                    {
+                        IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL, GetSourceCredentialsHandler());
+                    }
+                    else
+                    {
+                        error = "Username cannot be empty";
+                        return false;
+                    }
                 }
             }
             catch (Exception ex)
