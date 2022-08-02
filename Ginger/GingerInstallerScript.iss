@@ -90,6 +90,7 @@ begin
   Result := ShellExec('', ExpandConstant('{tmp}{\}') + 'netcorecheck_x64.exe', Version, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) and (ResultCode = 0);
 end;
 
+
 procedure DetectAndInstallPrerequisites;
 var
   StatusText: string;
@@ -139,45 +140,44 @@ begin
   if (  FileExists(ExpandConstant('C:\Program Files (x86)\Amdocs\Amdocs BEAT Ginger Automation\ginger.exe')))      then
   begin
   result :=true;
-  end
-end
+  end;
+end;
 if ( not FileExists(ExpandConstant('C:\Program Files\Amdocs\Amdocs BEAT Ginger Automation\unins000.exe')))  then
 begin
   if (  FileExists(ExpandConstant('C:\Program Files\Amdocs\Amdocs BEAT Ginger Automation\ginger.exe')))      then
   begin
   result :=true;
-  end
-end
+  end;
+end;
 if ( not FileExists(ExpandConstant('C:\Program Files (x86)\Amdocs\Ginger by amdocs\unins000.exe')))  then
 begin
   if (  FileExists(ExpandConstant('C:\Program Files (x86)\Amdocs\Ginger by amdocs\ginger.exe')))      then
   begin
   result :=true;
-  end
-end
+  end;
+end;                                                                
 if ( not FileExists(ExpandConstant('C:\Program Files\Amdocs\Ginger by amdocs\unins000.exe')))  then
 begin
   if (  FileExists(ExpandConstant('C:\Program Files\Amdocs\Ginger by amdocs\ginger.exe')))      then
   begin
   result :=true;
-  end
-end
-
+  end;
+end;
 end;
 
 function InitializeSetup: boolean;
 begin
-
   if  CheckIfGingerInstalled then
-     Begin
-        result :=false;
-    MsgBox('Please Uninstall Ginger by amdocs Before Proceeding '#13#10''#13#10'Note: If you already uninstall Ginger and still getting this message please menually delete the Ginger installation folder under the path:' + ExpandConstant('{app}') , mbError, MB_OK);
+    Begin
+      result :=false;
+      MsgBox('Please Uninstall Ginger by amdocs Before Proceeding '#13#10''#13#10'Note: If you already uninstall Ginger and still getting this message please menually delete the Ginger installation folder under the path:' + ExpandConstant('{app}') , mbError, MB_OK);
     end
-       else 
-       begin
-   result:=true
-            end
+  else 
+    begin
+      result:=true
+    end;
 end;
+
 
 Procedure InitializeWizard();
 Var
@@ -200,46 +200,44 @@ Begin
 	if (IDispatch(XMLNode) = nil) then
     begin
     XMLNode := XMLDocument.selectSingleNode('//Ginger.UserProfile');
-    end
+    end;
     if (XMLNode.getAttribute('UserType') = null) then 
     begin
         ChosenUserType := 'Regular';
     end else
     begin
         ChosenUserType := XMLNode.getAttribute('UserType');
-    end
+    end;
     ChosenUserTerminology := XMLNode.getAttribute('TerminologyDictionaryType');
 
   Except
     MsgBox('An error occured while updating the User Profile XML file' + #13#10 + GetExceptionMessage, mbError, MB_OK);
-  End;
+  end;
 
 
-  End
+  end
   Else
   Begin
     ChosenUserType := 'Regular';
     ChosenUserTerminology := 'Default';
     _IsCustomizeSettingSelected := True;
-  End;
+  end;
 
   if (ChosenUserType = 'Regular') Then
   Begin
     _strUserTypeLable:='Automation (Technical) user';
-  End
+  end
   Else if (ChosenUserType = 'Business') Then
   Begin
     _strUserTypeLable:='Business user';
-  End
-
-
+  end;
   
   _wizpSettingsTypeSelectionPage :=  CreateInputOptionPage(wpSelectDir, 'Ginger Profile Settings', '','Your current profile settings are:  User type: '+_strUserTypeLable +', Terminology: '+ ChosenUserTerminology  +' '#13#10'Choose your configuration preference and then click Next.' , True, False);
   if (_IsUserProfileExist) then
   Begin
     _wizpSettingsTypeSelectionPage.Add('Keep Current Settings');
     _IsUserProfileExist := true;
-  End
+  end;
   _wizpSettingsTypeSelectionPage.Add('Customize Settings');
   _wizpSettingsTypeSelectionPage.Values[0] := True;   
 
@@ -257,11 +255,11 @@ Begin
   Else  
   begin
     _wizpUserTypeSelectionPage.Values[0] := True;
-  end
+  end;
 
     //Terminology type selection Page Init 
   _strTerminologyType:='Default';
-  _wizpTerminologyTypePage:= CreateInputOptionPage(_wizpUserTypeSelectionPage.ID, 'Ginger Default Terminology', '','Please select the preferred default terminology type to be used. '#13#10''#13#10'Available Terminologies: '#13#10'1. Default- Ginger default items names: Run Set/Business Flow/Activities Group/Activity/Variable '#13#10'2. Testing- Testing (ALM applications) related terms like: Calendar/Test Set/Test Case/Step/Parameter '#13#10'3. Gherkin- BDD related terms like: Business Flow Feature/Scenario/Step '#13#10' '#13#10'Note: the terminology type can be changed at any time from Ginger UI. '#13#10'Please Select: ', True, False);
+  _wizpTerminologyTypePage:= CreateInputOptionPage(_wizpUserTypeSelectionPage.ID, 'Ginger Default Terminology', '','Please select the preferred default terminology type to be used. '#13#10''#13#10'Available Terminologies: '#13#10'1. Default- Ginger default items names: Run Set/Business Flow/Activities Group/Activity/Variable '#13#10'2. Testing- Testing (ALM applications) related terms like: Calend;ar/Test Set/Test Case/Step/Parameter '#13#10'3. Gherkin- BDD related terms like: Business Flow Feature/Scenario/Step '#13#10' '#13#10'Note: the terminology type can be changed at any time from Ginger UI. '#13#10'Please Select: ', True, False);
   _wizpTerminologyTypePage.Add('Default');
   _wizpTerminologyTypePage.Add('Testing');
   _wizpTerminologyTypePage.Add('Gherkin');
@@ -278,9 +276,8 @@ Begin
   Else 
   begin
     _wizpTerminologyTypePage.Values[0] := True;
-  end;
-
-End;
+  end;  
+end;
 
 Function ShouldSkipPage(PageID: Integer): Boolean;
 Begin
@@ -304,8 +301,8 @@ Begin
 
     wpReady:
       Result := False;
-  End;
-End;
+  end;
+end;
 
 
 Function NextButtonClick(CurPageID: Integer): Boolean;
@@ -325,21 +322,21 @@ Case CurPageID Of
         _strUserType := ChosenUserType;
         _strTerminologyType := ChosenUserTerminology;
         _IsCustomizeSettingSelected := False;
-     End Else If (_wizpSettingsTypeSelectionPage.Values[1] = True) Then
+     end Else If (_wizpSettingsTypeSelectionPage.Values[1] = True) Then
      Begin
         _IsCustomizeSettingSelected := True;
-     End;  
-  End //Else 
+     end;  
+  end; //Else 
   if (_strUserType = 'Regular') Then
   Begin
     _strUserTypeLable:='Automation (Technical) user';
-  End
+  end
   Else if (_strUserType = 'Business') Then
   Begin
     _strUserTypeLable:='Business user';
-  End
+  end;
 
- End;
+ end;
 
 
   _wizpUserTypeSelectionPage.ID:
@@ -348,32 +345,31 @@ Case CurPageID Of
       Begin
         _strUserType:= 'Regular';
         _strUserTypeLable:='Automation (Technical) user';
-      End Else 
+      end Else 
       Begin
         _strUserType:= 'Business';
         _strUserTypeLable:='Business user';
-      End;
+      end;
       Result := True;
-    End;
+    end;
 
       _wizpTerminologyTypePage.ID:
     Begin
       If _wizpTerminologyTypePage.Values[0] = True Then
       Begin
         _strTerminologyType:= 'Default';
-      End Else If  _wizpTerminologyTypePage.Values[1] = True Then
+      end Else If  _wizpTerminologyTypePage.Values[1] = True Then
       Begin
         _strTerminologyType:= 'Testing';
-      End Else If  _wizpTerminologyTypePage.Values[2] = True Then
+      end Else If  _wizpTerminologyTypePage.Values[2] = True Then
       Begin
         _strTerminologyType:= 'Gherkin';
-      End;
+      end;
       Result := True;
-    End;
- End;
+    end;
+ end;
  Result := True;
-End;
-
+end;
 
 
 Procedure CurStepChanged(CurStep: TSetupStep);
@@ -390,26 +386,27 @@ strWizardDirValue: String;
      Begin
       strWizardDirValue:= AddBackslash(WizardDirValue);
       SaveStringToFile( strWizardDirValue + '\Ginger.InstallationConfiguration.Json', #13#10 + '{ "UserType" : "'+_strUserType+'", "TerminologyDictionaryType": "'+_strTerminologyType+'"}' + #13#10, False);
-     End
+     end;
      Except
       MsgBox('An error occured while updating the User Profile XML file' + #13#10 + GetExceptionMessage, mbError, MB_OK);
-     End ;
- End ;
-End ;
+     end;
+ end;
+end;
 
 Procedure CurPageChanged(CurPageID: Integer);
 Begin
-  //Next button always available
-  Wizardform.NextButton.Enabled := True;
+    //Next button always available
+    Wizardform.NextButton.Enabled := True;
 
-  //Add summary page info
-  If CurPageID=wpReady Then
-  Begin
+    //Add summary page info
+    If CurPageID=wpReady Then
+      Begin
 
-   //Summary info
-   Wizardform.ReadyMemo.Lines.Add('');
-   Wizardform.ReadyMemo.Lines.Add('User Type:'#13#10'      "' + _strUserTypeLable + '"');
-   Wizardform.ReadyMemo.Lines.Add('');
-   Wizardform.ReadyMemo.Lines.Add('Terminology Type:'#13#10'      "' + _strTerminologyType + '"');
-  End;
-End;
+       //Summary info
+       Wizardform.ReadyMemo.Lines.Add('');
+       Wizardform.ReadyMemo.Lines.Add('User Type:'#13#10'      "' + _strUserTypeLable + '"');
+       Wizardform.ReadyMemo.Lines.Add('');
+       Wizardform.ReadyMemo.Lines.Add('Terminology Type:'#13#10'      "' + _strTerminologyType + '"');
+    end;
+end;
+
