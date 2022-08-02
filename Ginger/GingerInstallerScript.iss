@@ -33,8 +33,11 @@ UsePreviousTasks=no
 DisableReadyPage=no
 DisableReadyMemo=no
 AlwaysShowGroupOnReadyPage=yes
+WizardStyle=modern
+
 [InstallDelete]
 Type: filesandordirs; Name: {app}\*
+
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
@@ -42,8 +45,11 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 
 [Files]
-Source: "D:\BuildConfigs\ReleaseOutput\BuildOutput\Ginger.exe"; DestDir: "{app}"; Flags: ignoreversion; 
+Source: "D:\BuildConfigs\ReleaseOutput\BuildOutput\Ginger.exe"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall:DetectAndInstallPrerequisites;
 Source: "D:\BuildConfigs\ReleaseOutput\BuildOutput\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;
+Source: "D:\BuildConfigs\DotnetDependencies\netcorecheck_x64.exe"; Flags: dontcopy deleteafterinstall noencryption
+Source: "D:\BuildConfigs\DotnetDependencies\windowsdesktop-runtime-6.0.6-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
+Source: "D:\BuildConfigs\DotnetDependencies\aspnetcore-runtime-6.0.6-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
 ;NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 
@@ -73,6 +79,58 @@ var
   strUserProfileXMLFilePath: String;
 
 //################################################### Functions & Procedures #######################################
+function Dependency_IsNetCoreInstalled(const Version: String): Boolean;
+var
+  ResultCode: Integer;
+begin
+  // source code: https://github.com/dotnet/deployment-tools/tree/master/src/clickonce/native/projects/NetCoreCheck
+  if not FileExists(ExpandConstant('{tmp}{\}') + 'netcorecheck_x64.exe') then begin
+    ExtractTemporaryFile('netcorecheck_x64.exe');
+  end;
+  Result := ShellExec('', ExpandConstant('{tmp}{\}') + 'netcorecheck_x64.exe', Version, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) and (ResultCode = 0);
+end;
+
+procedure DetectAndInstallPrerequisites;
+var
+  StatusText: string;
+  ResultCode: Integer;
+begin
+  StatusText := WizardForm.StatusLabel.Caption;   
+  WizardForm.StatusLabel.Caption := 'Detecting required .Net runtimes...';
+  WizardForm.ProgressGauge.Style := npbstMarquee;
+  try
+    If not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 6.0.6') then
+    begin
+      WizardForm.StatusLabel.Caption := 'Installing Microsoft.WindowsDesktop.App Runtime 6.0.6...';
+      if not FileExists(ExpandConstant('{tmp}\windowsdesktop-runtime-6.0.6-win-x64.exe')) then begin
+        ExtractTemporaryFile('windowsdesktop-runtime-6.0.6-win-x64.exe');
+      end;
+      if not Exec(ExpandConstant('{tmp}\windowsdesktop-runtime-6.0.6-win-x64.exe'), '/q /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
+        begin
+          { you can interact with the user that the installation failed }
+          MsgBox('.NET Desktop runtime 6.0.6 installation failed with code: ' + IntToStr(ResultCode) + '. Please install it manually.',
+            mbError, MB_OK);
+      end;
+    end;
+    If not Dependency_IsNetCoreInstalled('Microsoft.AspNetCore.App 6.0.6') then 
+    begin
+      WizardForm.StatusLabel.Caption := 'Installing Microsoft.AspNetCore.App Runtime 6.0.6...';
+      if not FileExists(ExpandConstant('{tmp}\aspnetcore-runtime-6.0.6-win-x64.exe')) then begin
+        ExtractTemporaryFile('aspnetcore-runtime-6.0.6-win-x64.exe');
+      end;
+      if not Exec(ExpandConstant('{tmp}\aspnetcore-runtime-6.0.6-win-x64.exe'), '/q /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
+        begin
+          { you can interact with the user that the installation failed }
+          MsgBox('.NET ASP Net Core 6.0.6 installation failed with code: ' + IntToStr(ResultCode) + '. Please install it manually.',
+            mbError, MB_OK);
+      end;
+    end;
+
+  finally
+    WizardForm.StatusLabel.Caption := StatusText;
+    WizardForm.ProgressGauge.Style := npbstNormal;
+  end;
+end;
 
 function CheckIfGingerInstalled: boolean;
 begin
@@ -113,7 +171,7 @@ begin
   if  CheckIfGingerInstalled then
      Begin
         result :=false;
-    MsgBox('Please Uninstall Ginger by amdocs Before Proceeding '#13#10''#13#10'Note: If you already uninstall Ginger and still getting this message lease menually delete the Ginger installation folder under the path:' + ExpandConstant('{app}') , mbError, MB_OK);
+    MsgBox('Please Uninstall Ginger by amdocs Before Proceeding '#13#10''#13#10'Note: If you already uninstall Ginger and still getting this message please menually delete the Ginger installation folder under the path:' + ExpandConstant('{app}') , mbError, MB_OK);
     end
        else 
        begin
