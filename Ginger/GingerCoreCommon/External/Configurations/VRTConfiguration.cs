@@ -123,7 +123,7 @@ namespace Ginger.Configurations
         public override string ItemName { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
         private bool? mOS;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool OS
         {
             get
@@ -141,7 +141,7 @@ namespace Ginger.Configurations
             }
         }
         private bool? mAgent;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool Agent
         {
             get
@@ -159,7 +159,7 @@ namespace Ginger.Configurations
             }
         }
         private bool? mEnvironment;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool Environment
         {
             get
@@ -177,7 +177,7 @@ namespace Ginger.Configurations
             }
         }
         private bool? mViewport;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool Viewport
         {
             get
@@ -195,7 +195,7 @@ namespace Ginger.Configurations
             }
         }
         private bool? mActivityTags;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool ActivityTags
         {
             get
