@@ -376,7 +376,15 @@ namespace GingerCore.Actions.WebAPI
                 }
                 else
                 {
-                    rawMsg += JsonConvert.DeserializeObject(ResponseMessage);
+                    try
+                    {
+                        rawMsg += JsonConvert.DeserializeObject(ResponseMessage);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Response is not valid json",ex);
+                        rawMsg += ResponseMessage;
+                    }
                 }
             }
 
