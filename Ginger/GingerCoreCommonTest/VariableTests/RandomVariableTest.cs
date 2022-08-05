@@ -93,7 +93,8 @@ namespace GingerCoreCommonTest.VariableTests
             variableRandomNumber.Interval = 1;
 
             //Act
-            variableRandomNumber.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableRandomNumber.GenerateAutoValue(ref errorMsg);
 
             //Assert
             Assert.IsTrue(decimal.Parse(variableRandomNumber.Value) >= 5, "vn.Value>=5");
@@ -116,11 +117,12 @@ namespace GingerCoreCommonTest.VariableTests
             variableRandomNumber.Interval = interval;
 
             //Act
-            variableRandomNumber.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableRandomNumber.GenerateAutoValue(ref errorMsg);
             decimal num1 = decimal.Parse(variableRandomNumber.Value);
-            variableRandomNumber.GenerateAutoValue();
+            variableRandomNumber.GenerateAutoValue(ref errorMsg);
             decimal num2 = decimal.Parse(variableRandomNumber.Value);
-            variableRandomNumber.GenerateAutoValue();
+            variableRandomNumber.GenerateAutoValue(ref errorMsg);
             decimal num3 = decimal.Parse(variableRandomNumber.Value);
 
             //first verify all 3 numbers are in range
@@ -142,10 +144,11 @@ namespace GingerCoreCommonTest.VariableTests
             VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
             variableRandomNumber.Min = 500;
             variableRandomNumber.Max = 100;
-            variableRandomNumber.Interval = 40;            
+            variableRandomNumber.Interval = 40;
 
             //Act
-            variableRandomNumber.GenerateAutoValue();          
+            string errorMsg = string.Empty;
+            variableRandomNumber.GenerateAutoValue(ref errorMsg);          
 
             //Assert
             Assert.AreEqual(variableRandomNumber.Value, "Error: Min > Max", "Error: Min > Max");
@@ -163,7 +166,8 @@ namespace GingerCoreCommonTest.VariableTests
             variableRandomNumber.Interval = 40;
 
             //Act
-            variableRandomNumber.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableRandomNumber.GenerateAutoValue(ref errorMsg);
             decimal num1 = decimal.Parse(variableRandomNumber.Value);
             
             //Verify numbers areof mutlipliers of 40 starting with 0
@@ -178,9 +182,10 @@ namespace GingerCoreCommonTest.VariableTests
             VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
             variableRandomNumber.Min = -10;
             variableRandomNumber.Max = -5;
-            
+
             //Act
-            variableRandomNumber.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableRandomNumber.GenerateAutoValue(ref errorMsg);
             decimal num1 = decimal.Parse(variableRandomNumber.Value);
 
             //Verify numbers areof mutlipliers of 40 starting with 0
@@ -194,9 +199,10 @@ namespace GingerCoreCommonTest.VariableTests
             VariableRandomString variableRandomString = new VariableRandomString();
             variableRandomString.Max = 15;
             variableRandomString.IsLowerCase = true;
-            
+
             //Act
-            variableRandomString.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableRandomString.GenerateAutoValue(ref errorMsg);
 
             //Assert
            Assert.AreEqual(variableRandomString.Value, variableRandomString.Value.ToLower(), "variableRandomString.Value, variableRandomString.Value.ToLower()");
@@ -209,9 +215,10 @@ namespace GingerCoreCommonTest.VariableTests
             VariableRandomString variableRandomString = new VariableRandomString();
             variableRandomString.Max = 15;
             variableRandomString.IsUpperCase = true;
-            
+
             //Act
-            variableRandomString.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableRandomString.GenerateAutoValue(ref errorMsg);
 
             //Assert
            Assert.AreEqual(variableRandomString.Value.ToUpper(), variableRandomString.Value, "variableRandomString.Value, variableRandomString.Value.ToUpper()");
@@ -228,7 +235,8 @@ namespace GingerCoreCommonTest.VariableTests
             //Act
             //When the user change to lower case make sure the Isupper case get turned off
             variableRandomString.IsLowerCase = true;
-            variableRandomString.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableRandomString.GenerateAutoValue(ref errorMsg);
 
             //Assert
             Assert.AreEqual(false, variableRandomString.IsUpperCase, "variableRandomString.IsUpperCase=false");
@@ -254,7 +262,8 @@ namespace GingerCoreCommonTest.VariableTests
             // Run until we hit all numbers or 10 seconds
             while (!(Hit0 && Hit5 && Hit10) && stopwatch.ElapsedMilliseconds < 10000)            
             {
-                variableRandomString.GenerateAutoValue();
+                string errorMsg = string.Empty;
+                variableRandomString.GenerateAutoValue(ref errorMsg);
                 Assert.IsTrue(variableRandomString.Value.Length >= 0 && variableRandomString.Value.Length <= 10, "variableRandomString.Value.Length >= 0 && variableRandomString.Value.Length <= 10");                
                 if (variableRandomString.Value.Length == 0) Hit0 = true;
                 if (variableRandomString.Value.Length == 5) Hit5 = true;
@@ -274,9 +283,10 @@ namespace GingerCoreCommonTest.VariableTests
             VariableRandomString variableRandomString = new VariableRandomString();
             variableRandomString.Max = 15;            
             variableRandomString.IsDigit = true;
-            
+
             //Act
-            variableRandomString.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableRandomString.GenerateAutoValue(ref errorMsg);
 
             //Assert
             string curValue = variableRandomString.Value;
@@ -291,9 +301,10 @@ namespace GingerCoreCommonTest.VariableTests
             VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
             variableRandomNumber.Min = 1111111111111;
             variableRandomNumber.Max = 9999999999999;
-            
+
             //Act
-            variableRandomNumber.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableRandomNumber.GenerateAutoValue(ref errorMsg);
             decimal num1 = decimal.Parse(variableRandomNumber.Value);
 
             //Assert            
@@ -310,7 +321,8 @@ namespace GingerCoreCommonTest.VariableTests
             variableRandomNumber.IsInteger = true;
 
             //Act
-            variableRandomNumber.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableRandomNumber.GenerateAutoValue(ref errorMsg);
             decimal num1 = decimal.Parse(variableRandomNumber.Value);
 
             //Assert            
@@ -328,7 +340,8 @@ namespace GingerCoreCommonTest.VariableTests
             variableRandomNumber.Max = decimal.Parse("1.7");
 
             //Act
-            variableRandomNumber.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableRandomNumber.GenerateAutoValue(ref errorMsg);
             decimal num1 = decimal.Parse(variableRandomNumber.Value);
 
             //Assert            
@@ -355,7 +368,8 @@ namespace GingerCoreCommonTest.VariableTests
             // Run until we hit all numbers or 10 seconds
             while (!CheckHits(numbers) && stopwatch.ElapsedMilliseconds < 10000)
             {
-                variableRandomNumber.GenerateAutoValue();
+                string errorMsg = string.Empty;
+                variableRandomNumber.GenerateAutoValue(ref errorMsg);
                 int num1 = int.Parse(variableRandomNumber.Value);
                 numbers[num1 - 21]++;
             }
@@ -380,7 +394,8 @@ namespace GingerCoreCommonTest.VariableTests
             variableRandomString.Max = 8;
             variableRandomString.IsDigit = true;
             //Act
-            variableRandomString.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableRandomString.GenerateAutoValue(ref errorMsg);
             decimal num1 = decimal.Parse(variableRandomString.Value);
 
             //Assert                        
@@ -400,10 +415,10 @@ namespace GingerCoreCommonTest.VariableTests
 
             //Act
             Stopwatch stopwatch = Stopwatch.StartNew();
-
+            string errorMsg = string.Empty;
             while (stopwatch.ElapsedMilliseconds < 5000 && !CheckHits(a))   // max 5 seconds
             {
-                variableRandomString.GenerateAutoValue();
+                variableRandomString.GenerateAutoValue(ref errorMsg);
                 decimal num1 = decimal.Parse(variableRandomString.Value);
                 Assert.IsTrue(variableRandomString.Value.Length >= 6 && variableRandomString.Value.Length <= 10, "variableRandomString.Value.Length >= 6 && variableRandomString.Value.Length <= 10");
                 a[variableRandomString.Value.Length-6]++;                
@@ -438,11 +453,12 @@ namespace GingerCoreCommonTest.VariableTests
             VariableRandomString variableRandomString = new VariableRandomString();
             variableRandomString.Min = 0;
             variableRandomString.Max = 5;
-            
+
             //Act
+            string errorMsg = string.Empty;
             for (int i = 0; i < 100; i++)
             {
-                variableRandomString.GenerateAutoValue();
+                variableRandomString.GenerateAutoValue(ref errorMsg);
                 if (variableRandomString.Value.Length == 0)
                 {
                     Hit0 = true;
@@ -463,10 +479,11 @@ namespace GingerCoreCommonTest.VariableTests
             variableRandomString.Max = 13;
             variableRandomString.IsDigit = true;
 
+            string errorMsg = string.Empty;
             for (int i = 0; i < 100; i++)
             {
                 //Act
-                variableRandomString.GenerateAutoValue();
+                variableRandomString.GenerateAutoValue(ref errorMsg);
                 decimal num1 = decimal.Parse(variableRandomString.Value);
 
                 //Assert            
