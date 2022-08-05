@@ -376,7 +376,15 @@ namespace GingerCore.Actions.WebAPI
                 }
                 else
                 {
-                    rawMsg += JsonConvert.DeserializeObject(ResponseMessage);
+                    try
+                    {
+                        rawMsg += JsonConvert.DeserializeObject(ResponseMessage);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Response is not valid json",ex);
+                        rawMsg += ResponseMessage;
+                    }
                 }
             }
 
@@ -844,7 +852,10 @@ namespace GingerCore.Actions.WebAPI
 
             for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
             {
-                KeyValues.Add(new KeyValuePair<string, string>(mAct.RequestKeyValues[i].ItemName.ToString(), mAct.RequestKeyValues[i].ValueForDriver));
+                if (i == mAct.RequestKeyValues.Count() - 1)
+                    KeyValues.Add(new KeyValuePair<string, string>(Uri.EscapeDataString(mAct.RequestKeyValues[i].ItemName.ToString()), Uri.EscapeDataString(mAct.RequestKeyValues[i].ValueForDriver)));
+                else
+                    KeyValues.Add(new KeyValuePair<string, string>(Uri.EscapeDataString(mAct.RequestKeyValues[i].ItemName.ToString()), Uri.EscapeDataString(mAct.RequestKeyValues[i].ValueForDriver) + "&"));
             }
 
             return KeyValues;
