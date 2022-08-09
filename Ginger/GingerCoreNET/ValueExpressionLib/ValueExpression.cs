@@ -93,6 +93,11 @@ namespace GingerCore
 
         // ^{} = exclude { inside or } inside - so we don't want to get var if there are 2 { - like VBS calc of 2 vars or if the } at the end
         public static Regex rxVarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
+        //public static Regex rxVarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}].*(?= .*=)", RegexOptions.Compiled);
+        public static Regex rxExtraParamPattern = new Regex(@"(?<={(\bVar Name=)\w+\b[^{}].*)[A-Za-z0-9]*=.*(?=})", RegexOptions.Compiled);
+        public static Regex rxExtraParamSecondPattern = new Regex(@"[A-Za-z]*=[A-Za-z0-9]*", RegexOptions.Compiled);
+
+        private List<KeyValuePair<string, string>> extraParamKeyValueList = new List<KeyValuePair<string, string>>();
 
         public static Regex rxGlobalParamPattern = new Regex(@"({GlobalAppsModelsParam Name=(\D*\d*\s*)}})|({GlobalAppsModelsParam Name=(\D*\d*\s*)})", RegexOptions.Compiled);
 
@@ -207,7 +212,6 @@ namespace GingerCore
 
             //Do the operation based on order
             //First replace Vars - since they can appear in other func like VBS v1+v2 or VBS mid(v1,1,4);
-            ReplaceVars();
 
             ReplaceGlobalParameters();
 
@@ -1113,17 +1117,22 @@ namespace GingerCore
             ProcessGeneralFuncations();
         }
 
-        private void ReplaceVars()
+        private void GetExtraParam(string p)
         {
-            MatchCollection matches = rxVarPattern.Matches(mValueCalculated);
-            if (matches.Count == 0)
+            extraParamKeyValueList = new List<KeyValuePair<string, string>>();
+            MatchCollection matches = rxExtraParamSecondPattern.Matches(p);
+            for (int i = 1; i < matches.Count; i++)
             {
-                return;
-            }
-
-            foreach (Match match in matches)
-            {
-                ReplaceVar(match.Value);
+                Match match = matches[i];
+                KeyValuePair<string, string> extraParamKeyValue = new KeyValuePair<string, string>();
+                string key, value;
+                if (!string.IsNullOrEmpty(match.Value))
+                {
+                    key = match.Value.Substring(0, match.Value.IndexOf('='));
+                    value = match.Value.Substring(match.Value.IndexOf('=') + 1);
+                    extraParamKeyValue = new KeyValuePair<string, string>(key, value);
+                    extraParamKeyValueList.Add(extraParamKeyValue);
+                }
             }
         }
 
@@ -1136,41 +1145,6 @@ namespace GingerCore
             MatchCollection envUrlMatches = rxEnvUrlPattern.Matches(mValueCalculated);
             foreach (Match match2 in envUrlMatches)
                 ReplaceEnvURLWithValue(match2.Value, null);
-        }
-
-        private void ReplaceVar(string p)
-        {
-            string VarName = p.Replace("{Var Name=", "");
-            VarName = VarName.Replace("}", "");
-
-            VariableBase vb = null;
-            if (BF != null)
-            {
-                vb = BF.GetHierarchyVariableByName(VarName);
-            }
-            else
-            {
-                vb = (from v1 in WorkSpace.Instance.Solution.Variables where v1.Name == VarName select v1).FirstOrDefault();
-            }
-
-            if (vb != null)
-            {
-                if (DecryptFlag == true && vb is VariablePasswordString)
-                {
-                    string strValuetoPass;
-                    strValuetoPass = EncryptionHandler.DecryptwithKey(vb.Value);
-                    if (!string.IsNullOrEmpty(strValuetoPass)) { mValueCalculated = mValueCalculated.Replace(p, strValuetoPass); }
-                    else { mValueCalculated = mValueCalculated.Replace(p, vb.Value); }
-                }
-                else
-                {
-                    mValueCalculated = mValueCalculated.Replace(p, vb.Value);
-                }
-            }
-            else
-            {
-                mValueCalculated = mValueCalculated.Replace(p, string.Format("ERROR: The {0} '{1}' was not found", GingerDicser.GetTermResValue(eTermResKey.Variable), VarName));
-            }
         }
 
         private void ProcessFunction(string p)
@@ -1467,13 +1441,14 @@ namespace GingerCore
             }
         }
 
+
         private void ReplaceVarWithValue(string p, string[] a)
         {
             string VarName = null;
             string tmp = mValueCalculated;
 
             string suba = string.Join(" ", new ArraySegment<string>(a, 1, a.Length - 1));
-
+            GetExtraParam(p);
             string[] ParamVal = suba.Split('=');
             {
                 string ParamName = ParamVal[0];
@@ -1481,7 +1456,9 @@ namespace GingerCore
                 switch (ParamName)
                 {
                     case "Name":
-                        VarName = Val;
+                        {
+                            VarName = RemoveExtraParamFromName(Val);
+                        }
                         break;
                     default:
                         // TODO err unknown param
@@ -1502,7 +1479,27 @@ namespace GingerCore
 
             if (vb != null)
             {
-                VarValue = vb.Value;
+                if (vb is VariablePasswordString)
+                {
+                    string strValuetoPass;
+                    strValuetoPass = EncryptionHandler.DecryptwithKey(vb.Value);
+                    if (!string.IsNullOrEmpty(strValuetoPass))
+                    {
+                        VarValue = strValuetoPass;
+                    }
+                    else
+                    {
+                        VarValue = vb.Value;
+                    }
+                }
+                else if (extraParamKeyValueList.Count > 0)
+                {
+                    VarValue = vb.GetValueWithParam(extraParamKeyValueList);
+                }
+                else
+                {
+                    VarValue = vb.Value;
+                }
                 mValueCalculated = tmp.Replace(p, VarValue);
             }
 
@@ -1513,6 +1510,15 @@ namespace GingerCore
                 VarValue = "!!!" + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Not found!!! - " + a[1] + " <<<<<<<<<";
                 mValueCalculated = VarValue;
             }
+        }
+
+        private string RemoveExtraParamFromName(string val)
+        {
+            foreach(KeyValuePair<string,string> keyValuePair in extraParamKeyValueList)
+            {
+                val = val.Replace($" {keyValuePair.Key}={keyValuePair.Value}", "");
+            }
+            return val;
         }
 
         /// <summary>

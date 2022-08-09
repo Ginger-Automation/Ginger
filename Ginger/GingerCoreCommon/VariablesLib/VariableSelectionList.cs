@@ -120,6 +120,50 @@ namespace GingerCore.Variables
             }
         }
 
+        public override string GetValueWithParam(List<KeyValuePair<string, string>> extraParamKeyValueList) 
+        {
+            string param = string.Empty;
+            int index;
+            if (extraParamKeyValueList.Count == 0)
+            {
+                return Value;
+            }
+            foreach(KeyValuePair<string,string> keyValuePair in extraParamKeyValueList)
+            {
+                switch (keyValuePair.Key)
+                {
+                    case "Index":
+                        {
+                            bool isNumber = Int32.TryParse(keyValuePair.Value, out index);
+                            if (isNumber)
+                            {
+                                if (OptionalValuesList.Count <= index)
+                                {
+                                    Reporter.ToUser(eUserMsgKey.ListOutOfBounds, "Index is out of bounds");
+                                }
+                                else
+                                {
+                                    param = OptionalValuesList[index].Value;
+                                }
+                            }
+                            else
+                            {
+                                param = Value;
+                            }
+                            break;
+                        }
+                }
+            }
+            
+            return param;
+        }
+
+        public override string GetValueExperssionParams() 
+        {
+            return Name + " Index=current";
+        }
+
+
         public override void ResetValue()
         {
             if (OptionalValuesList.Count > 0)

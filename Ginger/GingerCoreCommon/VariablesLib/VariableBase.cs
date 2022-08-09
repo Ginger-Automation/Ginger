@@ -218,6 +218,9 @@ namespace GingerCore.Variables
         public abstract string VariableEditPage { get; }
         public virtual bool IsObsolete { get { return false; } }
 
+        public virtual string GetValueWithParam(List<KeyValuePair<string, string>> extraParamKeyValueList) {return Value;}
+        public virtual string GetValueExperssionParams() { return Name; }
+
         public abstract bool SupportResetValue { get; }
         public abstract bool SupportAutoValue { get; }
 

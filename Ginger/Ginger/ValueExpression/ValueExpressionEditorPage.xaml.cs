@@ -794,12 +794,10 @@ namespace Ginger
             else if (typeof(VariableBase).IsInstanceOfType(tvi.Tag))
             {
 
-                AddExpToValue("{Var Name=" + tvi.Tag + "}");
+                AddExpToValue("{Var Name=" + ((VariableBase)(tvi.Tag)).GetValueExperssionParams() + "}");
             }
             else
             {
-
-
                 AddExpToValue(tvi.Tag + "");
             }
         }
