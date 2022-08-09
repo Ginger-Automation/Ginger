@@ -1507,7 +1507,7 @@ namespace GingerCore
             else
             {
                 //TODO: throw excpetion, log handler
-                VarValue = "!!!" + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Not found!!! - " + a[1] + " <<<<<<<<<";
+                VarValue = "ERROR!!!" + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Not found!!! - " + a[1] + " <<<<<<<<<";
                 mValueCalculated = VarValue;
             }
         }

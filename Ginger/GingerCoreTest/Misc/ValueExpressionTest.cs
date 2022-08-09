@@ -308,8 +308,8 @@ namespace UnitTests.NonUITests
 
             //due to Dicser Variable can eb soemthing else
             //TODO: make dicser working for UT - load the dict
-            Assert.IsTrue(v.Contains("ERROR:"), "v.Contains 'ERROR:'");
-            Assert.IsTrue(v.Contains("'v99' was not found"), "v.Contains 'v99' was not found");            
+            Assert.IsTrue(v.Contains("ERROR"), "v.Contains 'ERROR:'");
+            Assert.IsTrue(v.Contains("Variable Not found!!! - Name=v99 <<<<<<<<<"), "v.Contains Variable Not found!!! - Name=v99 <<<<<<<<<");            
         }
 
         //[TestMethod]  [Timeout(60000)]
