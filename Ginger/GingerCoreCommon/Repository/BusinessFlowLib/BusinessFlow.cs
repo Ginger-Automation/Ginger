@@ -28,6 +28,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
+using Ginger.Variables;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.FlowControlLib;
@@ -1501,6 +1502,8 @@ namespace GingerCore
         [IsSerializedForLocalRepository]
         public ObservableList<FlowControl> BFFlowControls { get; set; } = new ObservableList<FlowControl>();
 
+        [IsSerializedForLocalRepository]
+        public ObservableList<InputVariableRule> inputVariableRules { get; set; } = new ObservableList<InputVariableRule>();
 
         public string Applications
         {
