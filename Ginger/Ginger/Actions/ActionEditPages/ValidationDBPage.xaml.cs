@@ -418,7 +418,7 @@ namespace Ginger.Actions
                         FreeSQLLabel.Content = "Update DB SQL:";
                         DoCommit.Visibility = Visibility.Visible;
                         Keyspace.Visibility = Visibility.Collapsed;
-                        if (db.DBType == Database.eDBTypes.CosmosDb)
+                        if (db != null && db.DBType == Database.eDBTypes.CosmosDb)
                         {
                             FreeSQLStackPanel.Visibility = Visibility.Collapsed;
                             TableColWhereStackPanel.Visibility = Visibility.Visible;
