@@ -130,8 +130,9 @@ namespace Ginger.SourceControl
                     Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide valid value for connection timeout");
                     return;
                 }
-                WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
             }
+            WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
+
         }
 
         private void Close_Click(object sender, RoutedEventArgs e)

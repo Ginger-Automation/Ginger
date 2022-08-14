@@ -22,44 +22,48 @@
         <!--Choose Visual Testing Engine - First Line-->
 
         <StackPanel Orientation="Vertical">
-            <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
+            <Grid Margin="10,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="175" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
                 <Label Style="{StaticResource @LabelStyle}" Grid.Column="0" VerticalAlignment="Center" FontWeight="SemiBold">Visual Testing Analyzer:</Label>
-                <UserControlsLib:UCComboBox x:Name="VisualTestingEngineComboBox" Grid.Column="1" Width="600" HorizontalAlignment="Left" Margin="40,0,0,0"/>
-            </StackPanel>
-            <StackPanel Margin="10,0,0,0" x:Name="xCompareOrCreateBaselinesRadioButtons">
-                <Label Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left" FontWeight="SemiBold">Action</Label>
-                <RadioButton x:Name="CompareRadioButton" Margin="10,0,0,0" Content="Compare Baseline vs. Target" Checked="CompareRadioButton_Checked" GroupName="CompareOrBaseline" VerticalAlignment="Center" ></RadioButton>
-                <RadioButton x:Name="CreateBaselineRadioButton" Margin="10,0,0,0" Content="Create baseline at runtime" Checked="CreateBaselineRadioButton_Checked" GroupName="CompareOrBaseline" VerticalAlignment="Center" ></RadioButton>
-            </StackPanel>
-            <!--<Border BorderBrush="LightGray" BorderThickness="1" Margin="10,0,0,0" x:Name="xLightGrayVerticalBorder">
-                    <DockPanel x:Name="xSetApplicationScreenSize">
-                    <Label Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left">Change Application Screen Size:</Label>
-                        <StackPanel Orientation="Horizontal">
-                            <UserControlsLib:UCComboBox x:Name="ChangeAppScreenSizeComboBox" Width="250" Margin="0,0,0,0"/>
-                        <StackPanel x:Name="WidthHeightStackPanel" Orientation="Horizontal">
-                            <Label Style="{StaticResource @InputFieldLabelStyle}" FontSize="12">Width</Label>
+                <UserControlsLib:UCComboBox x:Name="VisualTestingEngineComboBox" Grid.Column="1" Width="Auto" HorizontalAlignment="Stretch" />
+                <StackPanel Margin="0,10,0,0" x:Name="xCompareOrCreateBaselinesRadioButtons" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
+                    <Label Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left" FontWeight="SemiBold">Action</Label>
+                    <RadioButton x:Name="CompareRadioButton" Margin="10,0,0,0" Content="Compare Baseline vs. Target" Checked="CompareRadioButton_Checked" GroupName="CompareOrBaseline" VerticalAlignment="Center" ></RadioButton>
+                    <RadioButton x:Name="CreateBaselineRadioButton" Margin="10,0,0,0" Content="Create baseline at runtime" Checked="CreateBaselineRadioButton_Checked" GroupName="CompareOrBaseline" VerticalAlignment="Center" ></RadioButton>
+                </StackPanel>
+
+                <StackPanel x:Name="xSetApplicationScreenSize" Margin="0,10,0,0" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="175"/>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+                        <Label Style="{StaticResource @LabelStyle}" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" FontWeight="SemiBold">Application Screen Size:</Label>
+                        <UserControlsLib:UCComboBox x:Name="ChangeAppScreenSizeComboBox" Grid.Column="1" Grid.Row="0" Width="Auto" HorizontalAlignment="Stretch"/>
+                        <StackPanel x:Name="WidthHeightStackPanel" Orientation="Horizontal" Grid.Column="1" Grid.Row="1" Margin="0,10,0,0">
+                            <Label Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" FontWeight="SemiBold">Width</Label>
                             <Actions:UCValueExpression x:Name="WidthUCVE" Width="100"/>
-                            <Label Style="{StaticResource @InputFieldLabelStyle}" FontSize="12">Height</Label>
+                            <Label Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" FontWeight="SemiBold">Height</Label>
                             <Actions:UCValueExpression x:Name="HeightUCVE" Width="100"/>
                         </StackPanel>
-                    </StackPanel>
-                    </DockPanel>
-                                    
-            </Border>-->
-            <DockPanel x:Name="xSetApplicationScreenSize" Margin="10,10,0,0">
-                <Label Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left" FontWeight="SemiBold">Application Screen Size:</Label>
-                <StackPanel Orientation="Horizontal">
-                    <UserControlsLib:UCComboBox x:Name="ChangeAppScreenSizeComboBox" Width="600" Margin="40,0,0,0"/>
-                    <StackPanel x:Name="WidthHeightStackPanel" Orientation="Horizontal">
-                        <Label Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" FontWeight="SemiBold">Width</Label>
-                        <Actions:UCValueExpression x:Name="WidthUCVE" Width="100"/>
-                        <Label Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" FontWeight="SemiBold">Height</Label>
-                        <Actions:UCValueExpression x:Name="HeightUCVE" Width="100"/>
-                    </StackPanel>
+                        <CheckBox x:Name="xFullPageScreenshotCheckbox" Grid.Column="2" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Capture full page screenshot" />
+                    </Grid>
                 </StackPanel>
-                <CheckBox x:Name="xFullPageScreenshotCheckbox" VerticalAlignment="Center" Margin="10,0,0,0" Style="{StaticResource @InputCheckBoxStyle}" Content="Capture full page screenshot" />
-            </DockPanel>
-
+            </Grid>
         </StackPanel>
 
         <Frame x:Name="EngineConfigFrame" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Auto"></Frame>

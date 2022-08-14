@@ -33,6 +33,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.UserControls;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 
@@ -44,6 +45,8 @@ namespace Ginger.SourceControl
     public partial class SourceControlUploadSolutionPage : Page
     {
         GenericWindow genWin = null;
+
+        ImageMakerControl loaderElement;
 
         public static SourceControlBase mSourceControl;
 
@@ -141,7 +144,7 @@ namespace Ginger.SourceControl
 
         private void FetchBranches_Click(object sender, RoutedEventArgs e)
         {
-            xProcessingIcon.Visibility = Visibility.Visible;
+            loaderElement.Visibility = Visibility.Visible;
             xBranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
             if (xBranchesCombo.Items.Count > 0)
             {
@@ -151,7 +154,7 @@ namespace Ginger.SourceControl
             {
                 mSourceControl.SourceControlBranch = "";
             }
-            xProcessingIcon.Visibility = Visibility.Collapsed;
+            loaderElement.Visibility = Visibility.Collapsed;
         }
 
         private void SourceControlURLTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -165,7 +168,14 @@ namespace Ginger.SourceControl
             testConnBtn.Content = "Upload Solution";
             testConnBtn.Click += new RoutedEventHandler(UploadSolution_Click);
 
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { testConnBtn }, true, "Close", new RoutedEventHandler(Close_Click));
+            loaderElement = new ImageMakerControl();
+            loaderElement.Name = "xProcessingImage";
+            loaderElement.Height = 30;
+            loaderElement.Width = 30;
+            loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
+            loaderElement.Visibility = Visibility.Collapsed;
+
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { testConnBtn }, true, "Close", new RoutedEventHandler(Close_Click), false, loaderElement);
         }
 
         private void PopProcessIsBusyMsg()
@@ -176,7 +186,7 @@ namespace Ginger.SourceControl
         {
             try
             {
-                xProcessingIcon.Visibility = Visibility.Visible;
+                loaderElement.Visibility = Visibility.Visible;
                 if (SourceControlIntegration.BusyInProcessWhileDownloading)
                 {
                     PopProcessIsBusyMsg();
@@ -190,11 +200,11 @@ namespace Ginger.SourceControl
                         UploadSolutionToSourceControl(sender, e);
                     });
                 }
-                xProcessingIcon.Visibility = Visibility.Collapsed;
+                loaderElement.Visibility = Visibility.Collapsed;
             }
             finally
             {
-                xProcessingIcon.Visibility = Visibility.Collapsed;
+                loaderElement.Visibility = Visibility.Collapsed;
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
             }
         }
