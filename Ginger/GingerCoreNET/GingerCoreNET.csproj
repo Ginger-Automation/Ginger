@@ -232,7 +232,9 @@
   
     <PackageReference Include="EPPlus" Version="6.0.4" />
   
-    <PackageReference Include="Eyes.Selenium4" Version="3.9.0" />
+    <PackageReference Include="Eyes.Images" Version="2.33.0" />
+  
+    <PackageReference Include="Eyes.Selenium4" Version="2.59.0" />
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.1" />
   

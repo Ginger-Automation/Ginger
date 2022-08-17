@@ -91,7 +91,15 @@ namespace Ginger.Actions.VisualTesting
                     xDoNotFailActionOnMismatchPanel.Visibility = Visibility.Collapsed;
                     xLocateByAndValuePanel.Visibility = Visibility.Collapsed;
                     xActionByPanel.Visibility = Visibility.Collapsed;
-                    visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility, eVisualTestingVisibility.Visible);
+                    if (mAct.Platform == ePlatformType.Web)
+                    {
+                        visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility, eVisualTestingVisibility.Visible);
+                    }
+                    else
+                    {
+                        visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility, eVisualTestingVisibility.Collapsed);
+                        mAct.ChangeAppWindowSize = ActVisualTesting.eChangeAppWindowSize.None;
+                    }
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetBaselineSectionVisibility, eVisualTestingVisibility.Collapsed);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetTargetSectionVisibility, eVisualTestingVisibility.Collapsed);
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetResultsSectionVisibility, eVisualTestingVisibility.Collapsed);
