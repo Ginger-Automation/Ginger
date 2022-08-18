@@ -196,7 +196,6 @@ namespace GingerCore.Actions.VisualTesting
                 mEyes = new Applitools.Images.Eyes();
 
                 //TODO: set the proxy
-                // IWebProxy p = WebRequest.DefaultWebProxy; // .GetSystemWebProxy();
 
                 mAppName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
                 mTestName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
@@ -234,7 +233,6 @@ namespace GingerCore.Actions.VisualTesting
             }
 
             SetEyesMatchLevel();
-            //AppImage response = mEyes.CheckImage(mDriver.GetScreenShot());
             mEyes.Check(mAct.ItemName, Applitools.Images.Target.Image(mDriver.GetScreenShot()).Fully());
             mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
 
@@ -247,7 +245,6 @@ namespace GingerCore.Actions.VisualTesting
             {
                 TestResults TR = mEyes.AbortIfNotClosed(); ;
                 //Update results info into outputs
-
                 SaveApplitoolsImages(TR);
                 mAct.ExInfo = "URL to view results: " + TR.Url;
                 mAct.AddOrUpdateReturnParamActual("ResultsURL", TR.Url + "");
@@ -319,8 +316,7 @@ namespace GingerCore.Actions.VisualTesting
                 }
                 WebEyes = new Eyes(runner);
                 mAppName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
-                mTestName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
-                
+                mTestName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamTestName);                
                 SetUp(WebEyes, mDriver.GetApplitoolServerURL(), mDriver.GetApplitoolKey(), ((SeleniumDriver)mDriver).GetBrowserType(), mDriver.GetEnvironment());
                 mAct.CheckSetAppWindowSize();
                 mResolution = mAct.GetWindowResolution();
