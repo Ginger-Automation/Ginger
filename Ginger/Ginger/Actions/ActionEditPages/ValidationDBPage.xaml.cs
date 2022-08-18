@@ -244,11 +244,8 @@ namespace Ginger.Actions
             ComboAutoSelectIfOneItemOnly(DBNameComboBox);
         }
 
-        private void DBNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void AddDBOperationTypeInsert(object sender, SelectionChangedEventArgs e)
         {
-            KeySpaceComboBox.Items.Clear();
-            TablesComboBox.Items.Clear();
-            ColumnComboBox.Items.Clear();
             if (((ComboBox)sender) != null && ((ComboBox)sender).SelectedItem != null)
             {
                 string dbName = ((ComboBox)sender).SelectedItem.ToString();
@@ -274,6 +271,15 @@ namespace Ginger.Actions
                     }
                 }
             }
+        }
+
+        private void DBNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            KeySpaceComboBox.Items.Clear();
+            TablesComboBox.Items.Clear();
+            ColumnComboBox.Items.Clear();
+
+            AddDBOperationTypeInsert(sender, e);
             SetVisibleControlsForAction();
         }
 
@@ -379,13 +385,12 @@ namespace Ginger.Actions
         {
             if (ValidationCfgComboBox.SelectedItem == null)
             {
-                RadioButtonsSection.Visibility = System.Windows.Visibility.Visible;
-                FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                SqlFile.Visibility = System.Windows.Visibility.Collapsed;
-                FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                DoCommit.Visibility = System.Windows.Visibility.Collapsed;
-                Keyspace.Visibility = System.Windows.Visibility.Collapsed;
-                TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                RadioButtonsSection.Visibility = Visibility.Visible;
+                FreeSQLStackPanel.Visibility = Visibility.Collapsed;
+                SqlFile.Visibility = Visibility.Collapsed;
+                DoCommit.Visibility = Visibility.Collapsed;
+                Keyspace.Visibility = Visibility.Collapsed;
+                TableColWhereStackPanel.Visibility = Visibility.Collapsed;
                 return;
             }
             if (!string.IsNullOrEmpty(AppNameComboBox.Text))
@@ -397,192 +402,200 @@ namespace Ginger.Actions
             //Ugly code but working, find way to make it simple use the enum val from combo
             ActDBValidation.eDBValidationType validationType = (ActDBValidation.eDBValidationType)ValidationCfgComboBox.SelectedValue;
 
-            if (EA != null)
-            {
-                txtInsertJson.Visibility = Visibility.Collapsed;
-                lblInsertJson.Visibility = Visibility.Collapsed;
-                gridInsertJson.Visibility = Visibility.Collapsed;
-                imgHelpSql.Visibility = Visibility.Collapsed;
-                xPrimaryKeyStackPanel.Visibility = Visibility.Collapsed;
-                xPartitionKeyStackPanel.Visibility = Visibility.Collapsed;
-                //SQLUCValueExpression.ValueTextBox.Text = string.Empty;
-                UpdateDbParametersHeadersGrid.Visibility = Visibility.Collapsed;
-                switch (validationType)
-                {
-                    case ActDBValidation.eDBValidationType.UpdateDB:
-                        string dbName = DBNameComboBox.Text;
-                        db = (Database)(from d in EA.Dbs where d.Name == dbName select d).FirstOrDefault();
-                        RadioButtonsSection.Visibility = System.Windows.Visibility.Visible;
-                        checkQueryType();
-                        TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                        FreeSQLLabel.Content = "Update DB SQL:";
-                        DoCommit.Visibility = Visibility.Visible;
-                        Keyspace.Visibility = Visibility.Collapsed;
-                        if (db != null && db.DBType == Database.eDBTypes.CosmosDb)
-                        {
-                            FreeSQLStackPanel.Visibility = Visibility.Collapsed;
-                            TableColWhereStackPanel.Visibility = Visibility.Visible;
-                            txtWhere.Visibility = Visibility.Collapsed;
-                            lblWhere.Visibility = Visibility.Hidden;
-                            TableColWhereStackPanel.Height = 40;
-                            DoCommit.Visibility = Visibility.Collapsed;
-                            FreeSQLStackPanel.Visibility = Visibility.Collapsed;
-                            DoUpdate.Visibility = Visibility.Visible;
-                            RadioButtonsSection.Visibility = Visibility.Collapsed;
-                            UpdateDbParametersGrid.Visibility = Visibility.Visible;
-                            xPrimaryKeyStackPanel.Visibility = Visibility.Visible;
-                            xPartitionKeyStackPanel.Visibility = Visibility.Visible;
-                            UpdateDbParametersHeadersGrid.Visibility = Visibility.Visible;
-                            SetGridView();
-                        }
-                        else
-                        {
-                            FreeSQLStackPanel.Visibility = Visibility.Visible;
-                            TableColWhereStackPanel.Visibility = Visibility.Collapsed;
-                            txtWhere.Visibility = Visibility.Visible;
-                            lblWhere.Visibility = Visibility.Visible;
-                            TableColWhereStackPanel.Height = 244;
-                            DoCommit.Visibility = Visibility.Visible;
-                            DoUpdate.Visibility = Visibility.Collapsed;
-                            FreeSQLStackPanel.Visibility = Visibility.Visible;
-                            RadioButtonsSection.Visibility = Visibility.Visible;
-                        }
-                        break;
-                    case ActDBValidation.eDBValidationType.FreeSQL:
-                        TableColWhereStackPanel.Visibility = Visibility.Collapsed;
-                        txtWhere.Visibility = Visibility.Visible;
-                        lblWhere.Visibility = Visibility.Visible;
-                        TableColWhereStackPanel.Height = 244;
-                        checkQueryType();
-                        RadioButtonsSection.Visibility = System.Windows.Visibility.Visible;
-                        if (mAct.GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.FreeSQL.ToString())
-                        {
-                            FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
-                            SqlFile.Visibility = System.Windows.Visibility.Collapsed;
-                        }
-                        else
-                        {
-                            SqlFile.Visibility = System.Windows.Visibility.Visible;
-                            FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+            txtInsertJson.Visibility = Visibility.Collapsed;
+            lblInsertJson.Visibility = Visibility.Collapsed;
+            gridInsertJson.Visibility = Visibility.Collapsed;
+            imgHelpSql.Visibility = Visibility.Collapsed;
+            xPrimaryKeyStackPanel.Visibility = Visibility.Collapsed;
+            xPartitionKeyStackPanel.Visibility = Visibility.Collapsed;
+            //SQLUCValueExpression.ValueTextBox.Text = string.Empty;
+            UpdateDbParametersHeadersGrid.Visibility = Visibility.Collapsed;
 
-                            if (mAct.QueryParams != null)
-                            {
-                                if (mAct.QueryParams.Count > 0)
-                                    QueryParamsPanel.Visibility = Visibility.Visible;
-                                else
-                                    QueryParamsPanel.Visibility = Visibility.Collapsed;
-                                QueryParamsGrid.DataSourceList = mAct.QueryParams;
-                            }
-                        }
-                        DoCommit.Visibility = System.Windows.Visibility.Collapsed;
-                        DoUpdate.Visibility = Visibility.Collapsed;
-                        TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                        FreeSQLLabel.Content = "Free SQL:";
-                        Keyspace.Visibility = System.Windows.Visibility.Collapsed;
-                        break;
-                    case ActDBValidation.eDBValidationType.SimpleSQLOneValue:
-                        checkQueryType();
-                        try
-                        {
-                            string DBName = DBNameComboBox.Text;
-                            db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
-                            if (!(db == null))
-                            {
-                                if (db.DBType == Database.eDBTypes.Cassandra)
-                                {
-                                    Keyspace.Visibility = System.Windows.Visibility.Visible;
-                                }
-                                else
-                                {
-                                    Keyspace.Visibility = System.Windows.Visibility.Collapsed;
-                                }
-                            }
-                        }
-                        catch { }
-                        FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                        RadioButtonsSection.Visibility = System.Windows.Visibility.Collapsed;
-                        TableColWhereStackPanel.Visibility = System.Windows.Visibility.Visible;
-                        DoCommit.Visibility = System.Windows.Visibility.Collapsed;
-                        DoUpdate.Visibility = Visibility.Collapsed;
-                        SqlFile.Visibility = System.Windows.Visibility.Collapsed;
-                        txtWhere.Visibility = Visibility.Visible;
-                        lblWhere.Visibility = Visibility.Visible;
-                        TableColWhereStackPanel.Height = 244;
-                        break;
-                    case ActDBValidation.eDBValidationType.RecordCount:
-                        TableColWhereStackPanel.Visibility = Visibility.Collapsed;
-                        txtWhere.Visibility = Visibility.Visible;
-                        lblWhere.Visibility = Visibility.Visible;
-                        TableColWhereStackPanel.Height = 244;
-                        imgHelpSql.Visibility = Visibility.Visible;
-                        checkQueryType();
-                        try
-                        {
-                            string DBName = DBNameComboBox.Text;
-                            db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
-                            if (!(db == null))
-                            {
-                                if (db.DBType == Database.eDBTypes.Cassandra)
-                                {
-                                    Keyspace.Visibility = System.Windows.Visibility.Visible;
-                                }
-                                else
-                                {
-                                    Keyspace.Visibility = System.Windows.Visibility.Collapsed;
-                                }
-                            }
-                        }
-                        catch { }
-                        RadioButtonsSection.Visibility = System.Windows.Visibility.Collapsed;
-                        FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
-                        TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                        DoCommit.Visibility = System.Windows.Visibility.Collapsed;
-                        DoUpdate.Visibility = Visibility.Collapsed;
-                        SqlFile.Visibility = System.Windows.Visibility.Collapsed;
-                        FreeSQLLabel.Content = @"Record count";
-                        break;
-                    case eDBValidationType.Insert:
-                        DoUpdate.Visibility = Visibility.Visible;
-                        txtInsertJson.Visibility = Visibility.Visible;
-                        lblInsertJson.Visibility = Visibility.Visible;
-                        gridInsertJson.Visibility = Visibility.Visible;
-                        lblColumn.Visibility = Visibility.Collapsed;
-                        Keyspace.Visibility = Visibility.Collapsed;
-                        KeyspaceCmbStack.Visibility = Visibility.Collapsed;
-                        ColumnStack.Visibility = Visibility.Collapsed;
-                        UpdateDbParametersGrid.Visibility = Visibility.Collapsed;
+            switch (validationType)
+            {
+                case ActDBValidation.eDBValidationType.UpdateDB:
+                    string dbName = DBNameComboBox.Text;
+                    if (EA != null)
+                    {
+                        db = (Database)(from d in EA.Dbs where d.Name == dbName select d).FirstOrDefault();
+                    }
+                    RadioButtonsSection.Visibility = System.Windows.Visibility.Visible;
+                    checkQueryType();
+                    TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                    FreeSQLLabel.Content = "Update DB SQL:";
+                    DoCommit.Visibility = Visibility.Visible;
+                    Keyspace.Visibility = Visibility.Collapsed;
+                    if (db != null && db.DBType == Database.eDBTypes.CosmosDb)
+                    {
                         FreeSQLStackPanel.Visibility = Visibility.Collapsed;
                         TableColWhereStackPanel.Visibility = Visibility.Visible;
-                        TableColWhereStackPanel.Height = 40;
                         txtWhere.Visibility = Visibility.Collapsed;
                         lblWhere.Visibility = Visibility.Hidden;
+                        TableColWhereStackPanel.Height = 40;
                         DoCommit.Visibility = Visibility.Collapsed;
                         FreeSQLStackPanel.Visibility = Visibility.Collapsed;
+                        DoUpdate.Visibility = Visibility.Visible;
                         RadioButtonsSection.Visibility = Visibility.Collapsed;
-                        break;
-                }
-                if (db != null)
-                {
-                    if (db.DBType == Database.eDBTypes.CosmosDb)
-                    {
-                        SQLUCValueExpression.ToolTip = "Container Name is case-sensitive";
-                        lblColumn.Visibility = Visibility.Collapsed;
-                        if (ColumnsVEButton != null)
-                        {
-                            ColumnsVEButton.Visibility = Visibility.Collapsed;
-                        }
-                        ColumnComboBox.Visibility = Visibility.Collapsed;
+                        UpdateDbParametersGrid.Visibility = Visibility.Visible;
+                        xPrimaryKeyStackPanel.Visibility = Visibility.Visible;
+                        xPartitionKeyStackPanel.Visibility = Visibility.Visible;
+                        UpdateDbParametersHeadersGrid.Visibility = Visibility.Visible;
+                        SetGridView();
                     }
                     else
                     {
-                        SQLUCValueExpression.ToolTip = string.Empty;
-                        lblColumn.Visibility = Visibility.Visible;
-                        if (ColumnsVEButton != null)
-                        {
-                            ColumnsVEButton.Visibility = Visibility.Visible;
-                        }
-                        ColumnComboBox.Visibility = Visibility.Visible;
+                        FreeSQLStackPanel.Visibility = Visibility.Visible;
+                        TableColWhereStackPanel.Visibility = Visibility.Collapsed;
+                        txtWhere.Visibility = Visibility.Visible;
+                        lblWhere.Visibility = Visibility.Visible;
+                        TableColWhereStackPanel.Height = 244;
+                        DoCommit.Visibility = Visibility.Visible;
+                        DoUpdate.Visibility = Visibility.Collapsed;
+                        FreeSQLStackPanel.Visibility = Visibility.Visible;
+                        RadioButtonsSection.Visibility = Visibility.Visible;
                     }
+                    break;
+                case ActDBValidation.eDBValidationType.FreeSQL:
+                    TableColWhereStackPanel.Visibility = Visibility.Collapsed;
+                    txtWhere.Visibility = Visibility.Visible;
+                    lblWhere.Visibility = Visibility.Visible;
+                    TableColWhereStackPanel.Height = 244;
+                    checkQueryType();
+                    RadioButtonsSection.Visibility = System.Windows.Visibility.Visible;
+                    if (mAct.GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.FreeSQL.ToString())
+                    {
+                        FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
+                        SqlFile.Visibility = System.Windows.Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        SqlFile.Visibility = System.Windows.Visibility.Visible;
+                        FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+
+                        if (mAct.QueryParams != null)
+                        {
+                            if (mAct.QueryParams.Count > 0)
+                                QueryParamsPanel.Visibility = Visibility.Visible;
+                            else
+                                QueryParamsPanel.Visibility = Visibility.Collapsed;
+                            QueryParamsGrid.DataSourceList = mAct.QueryParams;
+                        }
+                    }
+                    DoCommit.Visibility = System.Windows.Visibility.Collapsed;
+                    DoUpdate.Visibility = Visibility.Collapsed;
+                    TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                    FreeSQLLabel.Content = "Free SQL:";
+                    Keyspace.Visibility = System.Windows.Visibility.Collapsed;
+                    break;
+                case ActDBValidation.eDBValidationType.SimpleSQLOneValue:
+                    checkQueryType();
+                    try
+                    {
+                        string DBName = DBNameComboBox.Text;
+                        if (EA != null)
+                        {
+                            db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
+                        }
+
+                        if (!(db == null))
+                        {
+                            if (db.DBType == Database.eDBTypes.Cassandra)
+                            {
+                                Keyspace.Visibility = System.Windows.Visibility.Visible;
+                            }
+                            else
+                            {
+                                Keyspace.Visibility = System.Windows.Visibility.Collapsed;
+                            }
+                        }
+                    }
+                    catch { }
+                    FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                    RadioButtonsSection.Visibility = System.Windows.Visibility.Collapsed;
+                    TableColWhereStackPanel.Visibility = System.Windows.Visibility.Visible;
+                    DoCommit.Visibility = System.Windows.Visibility.Collapsed;
+                    DoUpdate.Visibility = Visibility.Collapsed;
+                    SqlFile.Visibility = System.Windows.Visibility.Collapsed;
+                    txtWhere.Visibility = Visibility.Visible;
+                    lblWhere.Visibility = Visibility.Visible;
+                    TableColWhereStackPanel.Height = 244;
+                    break;
+                case ActDBValidation.eDBValidationType.RecordCount:
+                    TableColWhereStackPanel.Visibility = Visibility.Collapsed;
+                    txtWhere.Visibility = Visibility.Visible;
+                    lblWhere.Visibility = Visibility.Visible;
+                    TableColWhereStackPanel.Height = 244;
+                    imgHelpSql.Visibility = Visibility.Visible;
+                    checkQueryType();
+                    try
+                    {
+                        string DBName = DBNameComboBox.Text;
+                        if (EA != null)
+                        {
+                            db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
+                        }
+                        if (!(db == null))
+                        {
+                            if (db.DBType == Database.eDBTypes.Cassandra)
+                            {
+                                Keyspace.Visibility = System.Windows.Visibility.Visible;
+                            }
+                            else
+                            {
+                                Keyspace.Visibility = System.Windows.Visibility.Collapsed;
+                            }
+                        }
+                    }
+                    catch { }
+                    RadioButtonsSection.Visibility = System.Windows.Visibility.Collapsed;
+                    FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
+                    TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                    DoCommit.Visibility = System.Windows.Visibility.Collapsed;
+                    DoUpdate.Visibility = Visibility.Collapsed;
+                    SqlFile.Visibility = System.Windows.Visibility.Collapsed;
+                    FreeSQLLabel.Content = @"Record count";
+                    break;
+                case eDBValidationType.Insert:
+                    DoUpdate.Visibility = Visibility.Visible;
+                    txtInsertJson.Visibility = Visibility.Visible;
+                    lblInsertJson.Visibility = Visibility.Visible;
+                    gridInsertJson.Visibility = Visibility.Visible;
+                    lblColumn.Visibility = Visibility.Collapsed;
+                    Keyspace.Visibility = Visibility.Collapsed;
+                    KeyspaceCmbStack.Visibility = Visibility.Collapsed;
+                    ColumnStack.Visibility = Visibility.Collapsed;
+                    UpdateDbParametersGrid.Visibility = Visibility.Collapsed;
+                    FreeSQLStackPanel.Visibility = Visibility.Collapsed;
+                    TableColWhereStackPanel.Visibility = Visibility.Visible;
+                    TableColWhereStackPanel.Height = 40;
+                    txtWhere.Visibility = Visibility.Collapsed;
+                    lblWhere.Visibility = Visibility.Hidden;
+                    DoCommit.Visibility = Visibility.Collapsed;
+                    FreeSQLStackPanel.Visibility = Visibility.Collapsed;
+                    RadioButtonsSection.Visibility = Visibility.Collapsed;
+                    break;
+            }
+            if (db != null)
+            {
+                if (db.DBType == Database.eDBTypes.CosmosDb)
+                {
+                    SQLUCValueExpression.ToolTip = "Container Name is case-sensitive";
+                    lblColumn.Visibility = Visibility.Collapsed;
+                    if (ColumnsVEButton != null)
+                    {
+                        ColumnsVEButton.Visibility = Visibility.Collapsed;
+                    }
+                    ColumnComboBox.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    SQLUCValueExpression.ToolTip = string.Empty;
+                    lblColumn.Visibility = Visibility.Visible;
+                    if (ColumnsVEButton != null)
+                    {
+                        ColumnsVEButton.Visibility = Visibility.Visible;
+                    }
+                    ColumnComboBox.Visibility = Visibility.Visible;
                 }
             }
         }
@@ -681,7 +694,7 @@ namespace Ginger.Actions
 
         private void NewAutomatePage_RaiseEnvComboBoxChanged(object sender, EventArgs e)
         {
-            FillAppComboBox();
+            //FillAppComboBox();
         }
 
         private void TablesComboBox_SelectionChanged(object sender, RoutedEventArgs e)
