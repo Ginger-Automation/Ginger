@@ -59,9 +59,16 @@ namespace Ginger.Actions.VisualTesting
             xImageNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.ImageName, mAct.Description));
 
             InitLayout();
-
+            
             DiffTollerancePercentUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.VRTParamDiffTollerancePercent, "0.0"), true, false);
-            xTestNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.VRTParamBuildName, (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
+
+            string buildTestName = string.Empty;
+            if (Context.GetAsContext(mAct.Context) != null && (Context.GetAsContext(mAct.Context)).Activity != null)
+            {
+                buildTestName = (Context.GetAsContext(mAct.Context)).Activity.ActivityName;
+            }
+            xTestNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.VRTParamBuildName, buildTestName), true, false);
+
 
             List<eLocateBy> locatorsTypeList = mAct.AvailableLocateBy().Where(e => e != eLocateBy.iOSClassChain && e != eLocateBy.iOSPredicateString).ToList();
             if (mAct.Platform == ePlatformType.NA)
