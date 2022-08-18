@@ -115,8 +115,6 @@ namespace Ginger.Actions
             ComboAutoSelectIfOneItemOnly(ColumnComboBox);
             SetVisibleControlsForAction();
             SetQueryParamsGrid();
-            NewAutomatePage.RaiseEnvComboBoxChanged -= NewAutomatePage_RaiseEnvComboBoxChanged;
-            NewAutomatePage.RaiseEnvComboBoxChanged += NewAutomatePage_RaiseEnvComboBoxChanged;
         }
 
         private async void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -690,11 +688,6 @@ namespace Ginger.Actions
             ActInputValue AIV = (ActInputValue)QueryParamsGrid.CurrentItem;
             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), Context.GetAsContext(mAct.Context));
             VEEW.ShowAsWindow();
-        }
-
-        private void NewAutomatePage_RaiseEnvComboBoxChanged(object sender, EventArgs e)
-        {
-            //FillAppComboBox();
         }
 
         private void TablesComboBox_SelectionChanged(object sender, RoutedEventArgs e)
