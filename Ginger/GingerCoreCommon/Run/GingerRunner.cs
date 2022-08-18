@@ -212,7 +212,7 @@ namespace Ginger.Run
         }
 
         private bool mRunInVisualTestingMode = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool RunInVisualTestingMode
         {
             get
