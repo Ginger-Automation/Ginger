@@ -119,6 +119,8 @@ namespace GingerCore.Variables
         public override bool SupportResetValue { get { return true; } }
 
         public override bool SupportAutoValue { get { return false; } }
+        public override bool SupportDynamicValueDeletion { get { return false; } }
+        public override bool SupportDeleteAllValues { get { return false; } }
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {

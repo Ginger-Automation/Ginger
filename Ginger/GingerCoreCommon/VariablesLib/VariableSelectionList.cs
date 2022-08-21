@@ -44,6 +44,10 @@ namespace GingerCore.Variables
         [IsSerializedForLocalRepository(true)]
         public bool IsLoopEnabled { get; set; } = true;
 
+        [IsSerializedForLocalRepository(false)]
+        public bool IsDynamicValueModificationEnabled { get; set; } = false;
+
+
         //DO NOT REMOVE! Used for conversion of old OptionalValues which were kept in one string with delimiter
         public string OptionalValues
         {
@@ -80,9 +84,70 @@ namespace GingerCore.Variables
                 Value = value;
                 return true;
             }
+            else if (IsDynamicValueModificationEnabled)
+            {
+                OptionalValuesList.Add(new OptionalValue(value));
+                Value = OptionalValuesList[OptionalValuesList.Count - 1].Value;
+                return true;
+            }
             else
             {
                 return false;
+            }
+        }
+
+        public void DynamicDeleteValue(string value, ref string errorMsg)
+        {
+            if (IsDynamicValueModificationEnabled)
+            {
+                OptionalValue op;
+                if (OptionalValuesList.Where(pv => pv.Value == value).FirstOrDefault() != null)
+                {
+                    op = OptionalValuesList.Where(pv => pv.Value == value).FirstOrDefault();
+                }
+                else
+                {
+                    errorMsg = "Could not found the value entered for deletion";
+                    return;
+                }
+                int index = OptionalValuesList.IndexOf(op);
+
+                OptionalValuesList.Remove(op);
+
+                if (OptionalValuesList.Count == 0)
+                {
+                    Value = string.Empty;
+                }
+                else if (Value == op.Value && index == 0)
+                {
+                    Value = OptionalValuesList[index].Value;
+                }
+                else if (Value == op.Value && index > 0)
+                {
+                    Value = OptionalValuesList[index - 1].Value;
+                }
+            }
+            else
+            {
+                errorMsg = "Dynamic value modification is not allowed";
+            }
+        }
+
+        public void DeleteAllValues(ref string errorMsg)
+        {
+            if (IsDynamicValueModificationEnabled)
+            {
+                OptionalValuesList.ClearAll();
+                if (OptionalValuesList.Count > 0)
+                {
+                    errorMsg = "Could not delete all optional values, please try again.";
+                    return;
+                }
+                Value = string.Empty;
+            }
+            else
+            {
+                errorMsg = "Dynamic value modification is not allowed";
             }
         }
 
@@ -120,22 +185,22 @@ namespace GingerCore.Variables
             }
         }
 
-        public override string GetValueWithParam(List<KeyValuePair<string, string>> extraParamKeyValueList) 
+        public override string GetValueWithParam(Dictionary<string, string> extraParamDict)
         {
             string param = string.Empty;
             int index;
-            if (extraParamKeyValueList.Count == 0)
+            if (extraParamDict.Count == 0)
             {
                 return Value;
             }
-            foreach(KeyValuePair<string,string> keyValuePair in extraParamKeyValueList)
+            foreach (KeyValuePair<string, string> keyValuePair in extraParamDict)
             {
                 switch (keyValuePair.Key)
                 {
                     case "Index":
                         {
                             bool isNumber = Int32.TryParse(keyValuePair.Value, out index);
-                            if (isNumber)
+                            if (keyValuePair.Value == "Current" || keyValuePair.Value == "current")
                             {
                                 if (OptionalValuesList.Count <= index)
                                 {
@@ -152,13 +217,15 @@ namespace GingerCore.Variables
                             }
                             break;
                         }
+                    case "Name":
+                        continue;
                 }
             }
-            
+
             return param;
         }
 
-        public override string GetValueExperssionParams() 
+        public override string GetValueExperssionParams()
         {
             return Name + " Index=current";
         }
@@ -231,12 +298,19 @@ namespace GingerCore.Variables
             supportedOperations.Add(VariableBase.eSetValueOptions.SetValue);
             supportedOperations.Add(VariableBase.eSetValueOptions.AutoGenerateValue);
             supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
+            supportedOperations.Add(VariableBase.eSetValueOptions.DynamicValueDeletion);
+            supportedOperations.Add(VariableBase.eSetValueOptions.DeleteAllValues);
             return supportedOperations;
         }
 
         public override bool SupportResetValue { get { return true; } }
 
         public override bool SupportAutoValue { get { return true; } }
+
+        public override bool SupportDynamicValueDeletion { get { return true; } }
+
+        public override bool SupportDeleteAllValues { get { return true; } }
+
 
         public override void SetInitialSetup()
         {
@@ -247,5 +321,6 @@ namespace GingerCore.Variables
             OptionalValue newVal2 = new OptionalValue("Value2");
             OptionalValuesList.Add(newVal2);
         }
+
     }
 }

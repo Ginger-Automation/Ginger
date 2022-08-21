@@ -22,7 +22,9 @@
       <Word>WROWVAL=</Word>
       <Word>KEY=</Word>
       <Word>COND=</Word>
-    </Keywords>
+	  <Word>Index=</Word>
+
+	</Keywords>
 
     <Keywords fontWeight="bold" fontStyle="italic" foreground="Brown">
       <Word>EnvURL App=</Word>

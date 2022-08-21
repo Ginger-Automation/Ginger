@@ -84,7 +84,15 @@ namespace UnitTests.NonUITests
             v4.Value = v4Value;
             //mBF.Variables.Add(v4);
             mBF.AddVariable(v4);
-            
+
+            VariableSelectionList v5 = new VariableSelectionList();
+            v5.Name = "v5";
+            v5.OptionalValuesList.Add(new OptionalValue("value1"));
+            v5.OptionalValuesList.Add(new OptionalValue("value2"));
+            v5.Value = v5.OptionalValuesList[0].Value;
+            //mBF.Variables.Add(v4);
+            mBF.AddVariable(v5);
+
         }
 
         [TestMethod]  [Timeout(60000)]
@@ -308,8 +316,8 @@ namespace UnitTests.NonUITests
 
             //due to Dicser Variable can eb soemthing else
             //TODO: make dicser working for UT - load the dict
-            Assert.IsTrue(v.Contains("ERROR"), "v.Contains 'ERROR:'");
-            Assert.IsTrue(v.Contains("Variable Not found!!! - Name=v99 <<<<<<<<<"), "v.Contains Variable Not found!!! - Name=v99 <<<<<<<<<");            
+            Assert.IsTrue(v.Contains("ERROR:"), "v.Contains 'ERROR:'");
+            Assert.IsTrue(v.Contains("'v99' was not found"), "v.Contains 'v99' was not found");
         }
 
         //[TestMethod]  [Timeout(60000)]
@@ -771,6 +779,26 @@ namespace UnitTests.NonUITests
            // string date = DateTime.Now.ToString("b");
            //Assert.AreEqual(v, dt.);
         }
-        
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void SelectionListWithIndexBasedAccess()
+        {
+            //Arrange
+
+            ValueExpression VE1 = new ValueExpression(mEnv, mBF);
+            VE1.Value = @"{Var Name=v5 Index=current}";
+
+            ValueExpression VE2 = new ValueExpression(mEnv, mBF);
+            VE2.Value = @"{Var Name=v5 Index=1}";
+
+            //Act
+            string v1 = VE1.ValueCalculated;
+            string v2 = VE2.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v1, "value1");
+            Assert.AreEqual(v2, "value2");
+        }
     }
 }

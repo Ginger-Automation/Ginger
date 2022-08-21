@@ -93,11 +93,12 @@ namespace GingerCore
 
         // ^{} = exclude { inside or } inside - so we don't want to get var if there are 2 { - like VBS calc of 2 vars or if the } at the end
         public static Regex rxVarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
-        //public static Regex rxVarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}].*(?= .*=)", RegexOptions.Compiled);
-        public static Regex rxExtraParamPattern = new Regex(@"(?<={(\bVar Name=)\w+\b[^{}].*)[A-Za-z0-9]*=.*(?=})", RegexOptions.Compiled);
-        public static Regex rxExtraParamSecondPattern = new Regex(@"[A-Za-z]*=[A-Za-z0-9]*", RegexOptions.Compiled);
 
-        private List<KeyValuePair<string, string>> extraParamKeyValueList = new List<KeyValuePair<string, string>>();
+        public static Regex rxVarNameMultipleParamPattern = new Regex(@"(\bName=)\w+\b[^{}]*(?= [A-Za-z0-9]*=[A-Za-z0-9]* )", RegexOptions.Compiled);
+        public static Regex rxVarNameSingleParamPattern = new Regex(@"(\bName=)\w+\b[^{}]*(?= [A-Za-z0-9]*=[A-Za-z0-9]*)", RegexOptions.Compiled);
+        public static Regex rxVarNameNoParamPattern = new Regex(@"(\bName=)\w+\b[^{}]*", RegexOptions.Compiled);
+
+        public static Regex rxVarFormulaParams = new Regex(@"(?<=(\bVar Name=)\w+\b[^{}].*)[A-Za-z0-9]*=[A-Za-z0-9]*", RegexOptions.Compiled);
 
         public static Regex rxGlobalParamPattern = new Regex(@"({GlobalAppsModelsParam Name=(\D*\d*\s*)}})|({GlobalAppsModelsParam Name=(\D*\d*\s*)})", RegexOptions.Compiled);
 
@@ -1081,7 +1082,7 @@ namespace GingerCore
                 {
                     foreach (Match m in ms)
                     {
-                        ProcessFunction(m.Value);
+                        HandleComplexFormula(m.Value);
                     }
                     ms = VBSRegex.Matches(mValueCalculated);
                     iCount++;
@@ -1094,7 +1095,7 @@ namespace GingerCore
             {
                 foreach (Match match in matches)
                 {
-                    ProcessFunction(match.Value);
+                    HandleComplexFormula(match.Value);
                 }
 
             }
@@ -1112,28 +1113,42 @@ namespace GingerCore
             }
             foreach (Match m in mc)
             {
-                ProcessFunction(m.Value);
+                HandleComplexFormula(m.Value);
             }
             ProcessGeneralFuncations();
         }
 
-        private void GetExtraParam(string p)
+        private Dictionary<string, string> GetExtraParam(string p)
         {
-            extraParamKeyValueList = new List<KeyValuePair<string, string>>();
-            MatchCollection matches = rxExtraParamSecondPattern.Matches(p);
-            for (int i = 1; i < matches.Count; i++)
+            Dictionary<string, string> extraParamDict = new Dictionary<string, string>();
+            List<Match> matches = rxVarFormulaParams.Matches(p).ToList();
+            switch (matches.Count)
+            {
+                case 0:
+                    matches.Add(rxVarNameNoParamPattern.Match(p));
+                    break;
+                case 1:
+                    matches.Add(rxVarNameSingleParamPattern.Match(p));
+                    break;
+                default:
+                    matches.Add(rxVarNameMultipleParamPattern.Match(p));
+                    break;
+            }
+
+            string key, value;
+            for (int i = 0; i < matches.Count; i++)
             {
                 Match match = matches[i];
-                KeyValuePair<string, string> extraParamKeyValue = new KeyValuePair<string, string>();
-                string key, value;
+                
                 if (!string.IsNullOrEmpty(match.Value))
                 {
-                    key = match.Value.Substring(0, match.Value.IndexOf('='));
-                    value = match.Value.Substring(match.Value.IndexOf('=') + 1);
-                    extraParamKeyValue = new KeyValuePair<string, string>(key, value);
-                    extraParamKeyValueList.Add(extraParamKeyValue);
+                    key = match.Value.Substring(0, match.Value.IndexOf('=')).Trim();
+                    value = match.Value.Substring(match.Value.IndexOf('=') + 1).Trim();
+                    extraParamDict.TryAdd(key, value);
                 }
             }
+
+            return extraParamDict;
         }
 
         private void ReplaceEnvVars()
@@ -1147,7 +1162,7 @@ namespace GingerCore
                 ReplaceEnvURLWithValue(match2.Value, null);
         }
 
-        private void ProcessFunction(string p)
+        private void HandleComplexFormula(string p)
         {
             string pc = p.Substring(1, p.Length - 2);
             string[] a = pc.Split(' ');
@@ -1447,26 +1462,17 @@ namespace GingerCore
             string VarName = null;
             string tmp = mValueCalculated;
 
-            string suba = string.Join(" ", new ArraySegment<string>(a, 1, a.Length - 1));
-            GetExtraParam(p);
-            string[] ParamVal = suba.Split('=');
-            {
-                string ParamName = ParamVal[0];
-                string Val = suba.Substring(suba.IndexOf('=') + 1);
-                switch (ParamName)
-                {
-                    case "Name":
-                        {
-                            VarName = RemoveExtraParamFromName(Val);
-                        }
-                        break;
-                    default:
-                        // TODO err unknown param
-                        break;
-                }
-            }
+            Dictionary<string, string> extraParamDict = GetExtraParam(p);
 
             string VarValue;
+
+            bool isNameExist = extraParamDict.TryGetValue("Name", out VarName);
+            if (!isNameExist)
+            {
+                VarValue = "ERROR!!! Variable name does not exist, or does not written correctly.";
+            }
+
+
             VariableBase vb = null;
             if (BF != null)
             {
@@ -1492,9 +1498,9 @@ namespace GingerCore
                         VarValue = vb.Value;
                     }
                 }
-                else if (extraParamKeyValueList.Count > 0)
+                else if (extraParamDict.Count > 1)
                 {
-                    VarValue = vb.GetValueWithParam(extraParamKeyValueList);
+                    VarValue = vb.GetValueWithParam(extraParamDict);
                 }
                 else
                 {
@@ -1507,19 +1513,11 @@ namespace GingerCore
             else
             {
                 //TODO: throw excpetion, log handler
-                VarValue = "ERROR!!!" + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Not found!!! - " + a[1] + " <<<<<<<<<";
+                VarValue = "!!!" + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Not found!!! - " + a[1] + " <<<<<<<<<";
                 mValueCalculated = VarValue;
             }
         }
 
-        private string RemoveExtraParamFromName(string val)
-        {
-            foreach(KeyValuePair<string,string> keyValuePair in extraParamKeyValueList)
-            {
-                val = val.Replace($" {keyValuePair.Key}={keyValuePair.Value}", "");
-            }
-            return val;
-        }
 
         /// <summary>
         /// Static function to calculate string Expression like: "{Var Name=v1}"

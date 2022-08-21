@@ -125,15 +125,22 @@ namespace GingerCore.Actions
                 }
                 else if (Var.GetType() == typeof(VariableSelectionList))
                 {
-                    if (((VariableSelectionList)Var).OptionalValuesList.Where(pv => pv.Value == calculatedValue).SingleOrDefault() != null)
-                    {
-                        ((VariableSelectionList)Var).Value = calculatedValue;
-                    }
-                    else
+
+                    bool isSetValue = Var.SetValue(calculatedValue);
+                    if (!isSetValue)
                     {
                         Error = "The value '" + calculatedValue + "' is not part of the possible values of the '" + Var.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ".";
                         return;
                     }
+                    //if (((VariableSelectionList)Var).OptionalValuesList.Where(pv => pv.Value == calculatedValue).SingleOrDefault() != null)
+                    //{
+                    //    ((VariableSelectionList)Var).Value = calculatedValue;
+                    //}
+                    //else
+                    //{
+                    //    Error = "The value '" + calculatedValue + "' is not part of the possible values of the '" + Var.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ".";
+                    //    return;
+                    //}
                 }
                 else if (Var.GetType() == typeof(VariableList))
                 {
@@ -261,6 +268,44 @@ namespace GingerCore.Actions
                 if (Var.GetType() == typeof(VariableTimer))
                 {
                     ((VariableTimer)Var).ContinueTimer();
+                }
+                else
+                {
+                    Error = "Operation type " + SetVariableValueOption + " is not supported for variable of type " + Var.GetType();
+                    return;
+                }
+            }
+            else if (SetVariableValueOption == VariableBase.eSetValueOptions.DynamicValueDeletion)
+            {
+                if (Var.GetType() == typeof(VariableSelectionList))
+                {
+                    string errorMsg = String.Empty;
+                    ((VariableSelectionList)Var).DynamicDeleteValue(calculatedValue, ref errorMsg);
+                    if (!string.IsNullOrEmpty(errorMsg))
+                    {
+                        Error = errorMsg;
+                    }
+                }
+                else
+                {
+                    Error = "Operation type " + SetVariableValueOption + " is not supported for variable of type " + Var.GetType();
+                    return;
+                }
+            }
+            else if (SetVariableValueOption == VariableBase.eSetValueOptions.DeleteAllValues)
+            {
+                if (Var.GetType() == typeof(VariableSelectionList))
+                {
+                    string errorMsg = String.Empty;
+                    ((VariableSelectionList)Var).DeleteAllValues(ref errorMsg);
+                    if (!string.IsNullOrEmpty(errorMsg))
+                    {
+                        Error = errorMsg;
+                    }
+                    else
+                    {
+                        calculatedValue = string.Empty;
+                    }
                 }
                 else
                 {

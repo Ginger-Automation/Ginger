@@ -210,5 +210,8 @@ namespace GingerCore.Variables
         public override bool SupportResetValue { get { return false; } }
 
         public override bool SupportAutoValue { get { return true; } }
+        public override bool SupportDynamicValueDeletion { get { return false; } }
+        public override bool SupportDeleteAllValues { get { return false; } }
+
     }
 }
