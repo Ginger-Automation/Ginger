@@ -408,11 +408,11 @@ namespace GingerCore.Actions.WebAPI
                 else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "XwwwFormUrlEncoded"))
                 {
                     HttpContent UrlEncoded = new FormUrlEncodedContent(ConstructURLEncoded((ActWebAPIRest)mAct));
-                    RequestFileContent = CreateRawRequestAndResponse("request");
-                    StringBuilder str = new StringBuilder();
+                    RequestFileContent = CreateRawRequestAndResponse("request");                  
+                    string str = "";
                     foreach(KeyValuePair<string, string> keyValue in ConstructURLEncoded((ActWebAPIRest)mAct))
                     {
-                        str.AppendLine(keyValue.Key + "=" + keyValue.Value);
+                        str += string.Format("{0}={1}", keyValue.Key, keyValue.Value);
                     }
                     RequestFileContent += str;
 
@@ -849,13 +849,13 @@ namespace GingerCore.Actions.WebAPI
         private List<KeyValuePair<string, string>> ConstructURLEncoded(ActWebAPIRest act)
         {
             List<KeyValuePair<string, string>> KeyValues = new List<KeyValuePair<string, string>>();
-
+            
             for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
             {
                 if (i == mAct.RequestKeyValues.Count() - 1)
                     KeyValues.Add(new KeyValuePair<string, string>(Uri.EscapeDataString(mAct.RequestKeyValues[i].ItemName.ToString()), Uri.EscapeDataString(mAct.RequestKeyValues[i].ValueForDriver)));
                 else
-                    KeyValues.Add(new KeyValuePair<string, string>(Uri.EscapeDataString(mAct.RequestKeyValues[i].ItemName.ToString()), Uri.EscapeDataString(mAct.RequestKeyValues[i].ValueForDriver) + "&"));
+                    KeyValues.Add(new KeyValuePair<string, string>(Uri.EscapeDataString(mAct.RequestKeyValues[i].ItemName.ToString()), Uri.EscapeDataString(mAct.RequestKeyValues[i].ValueForDriver) + "&"));               
             }
 
             return KeyValues;
