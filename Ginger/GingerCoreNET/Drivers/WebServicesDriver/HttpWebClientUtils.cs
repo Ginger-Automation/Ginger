@@ -409,10 +409,10 @@ namespace GingerCore.Actions.WebAPI
                 {
                     HttpContent UrlEncoded = new FormUrlEncodedContent(ConstructURLEncoded((ActWebAPIRest)mAct));
                     RequestFileContent = CreateRawRequestAndResponse("request");
-                    StringBuilder str = new StringBuilder();
+                    string str = "";
                     foreach(KeyValuePair<string, string> keyValue in ConstructURLEncoded((ActWebAPIRest)mAct))
                     {
-                        str.AppendLine(keyValue.Key + "=" + keyValue.Value);
+                        str += string.Format("{0}={1}", keyValue.Key, keyValue.Value);
                     }
                     RequestFileContent += str;
 
