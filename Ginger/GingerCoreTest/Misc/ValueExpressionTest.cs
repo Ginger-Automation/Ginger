@@ -316,8 +316,7 @@ namespace UnitTests.NonUITests
 
             //due to Dicser Variable can eb soemthing else
             //TODO: make dicser working for UT - load the dict
-            Assert.IsTrue(v.Contains("ERROR:"), "v.Contains 'ERROR:'");
-            Assert.IsTrue(v.Contains("'v99' was not found"), "v.Contains 'v99' was not found");
+            Assert.IsTrue(v.Contains("!!!Variable Not found!!! - Name=v99"), "v.Contains !!!Variable Not found!!! - Name=v99");
         }
 
         //[TestMethod]  [Timeout(60000)]
@@ -787,10 +786,10 @@ namespace UnitTests.NonUITests
             //Arrange
 
             ValueExpression VE1 = new ValueExpression(mEnv, mBF);
-            VE1.Value = @"{Var Name=v5 Index=current}";
+            VE1.Value = @"{Var Name=v5, Index=1}";
 
             ValueExpression VE2 = new ValueExpression(mEnv, mBF);
-            VE2.Value = @"{Var Name=v5 Index=1}";
+            VE2.Value = @"{Var Name=v5, Index=2}";
 
             //Act
             string v1 = VE1.ValueCalculated;
