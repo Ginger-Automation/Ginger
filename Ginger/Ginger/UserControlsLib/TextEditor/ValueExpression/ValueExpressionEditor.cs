@@ -41,7 +41,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
         private Page p=null;
 
-        public static Regex rxVarFormulaParams = new Regex(@"[A-Za-z]*=[ A-Za-z0-9]*", RegexOptions.Compiled);
+        public static readonly Regex rxVarFormulaParams = new Regex(@"[A-Za-z]*=[ A-Za-z0-9]*", RegexOptions.Compiled);
 
         public override List<string> Extensions
         {
