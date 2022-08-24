@@ -247,7 +247,7 @@ namespace Ginger.Actions
 
         private void AddDBOperationTypeInsert(object sender, SelectionChangedEventArgs e)
         {
-                if (((ComboBox)sender) != null && ((ComboBox)sender).SelectedItem != null)
+            if (((ComboBox)sender) != null && ((ComboBox)sender).SelectedItem != null)
             {
                 string dbName = ((ComboBox)sender).SelectedItem.ToString();
                 db = (Database)EA.Dbs.First(m => m.Name == dbName);
