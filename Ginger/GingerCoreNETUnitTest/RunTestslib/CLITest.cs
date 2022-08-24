@@ -446,7 +446,7 @@ namespace WorkspaceHold
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].Name, "Calculator_Test", "Validating correct Business Flow was executed");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "DoDivide?").FirstOrDefault().Value, "No", "Validating Customized BF level Selection List Variable");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "SecondNum_ForDivide").FirstOrDefault().Value, "1", "Validating Customized Activity level String Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].RunStatus, eRunStatus.Stopped, "Validating BF execution Stopped");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
 
             Assert.AreEqual(((RunSetActionHTMLReportSendEmail)(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions[0])).MailTo, "menik@amdocs.com", "Validating report mail Address");
             Assert.AreEqual(((RunSetActionHTMLReportSendEmail)(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions[0])).Subject, "AAA", "Validating report mail Subject");
@@ -491,7 +491,7 @@ namespace WorkspaceHold
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].Name, "Calculator_Test", "Validating correct Business Flow was executed");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "DoDivide?").FirstOrDefault().Value, "No", "Validating Customized BF level Selection List Variable");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "SecondNum_ForDivide").FirstOrDefault().Value, "1", "Validating Customized Activity level String Variable");
-            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].RunStatus, eRunStatus.Stopped, "Validating BF execution Stopped");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Executor.BusinessFlows[2].RunStatus, eRunStatus.Passed, "Validating BF execution Stopped");
 
             Assert.AreEqual(((RunSetActionHTMLReportSendEmail)(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions[0])).MailTo, "menik@amdocs.com", "Validating report mail Address");
             Assert.AreEqual(((RunSetActionHTMLReportSendEmail)(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions[0])).Subject, "AAA", "Validating report mail Subject");
