@@ -78,9 +78,7 @@ namespace Ginger.Actions
 
             QueryFile.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
 
-            //OLD binding and UI 
-            List<dynamic> operationToExclude = new List<dynamic>();
-            operationToExclude.Add(ActDBValidation.eDBValidationType.Insert);
+            //OLD binding and UI
             GingerCore.General.FillComboFromEnumObj(ValidationCfgComboBox, act.DBValidationType);
 
             //TODO: fix hard coded
