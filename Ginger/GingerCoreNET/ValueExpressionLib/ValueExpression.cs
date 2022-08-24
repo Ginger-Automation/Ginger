@@ -94,12 +94,7 @@ namespace GingerCore
         // ^{} = exclude { inside or } inside - so we don't want to get var if there are 2 { - like VBS calc of 2 vars or if the } at the end
         public static Regex rxVarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
 
-        //public static Regex rxVarNameMultipleParamPattern = new Regex(@"(\bName=)\w+\b[^{}]*(?= [A-Za-z0-9]*=[A-Za-z0-9]* )", RegexOptions.Compiled);
-        //public static Regex rxVarNameSingleParamPattern = new Regex(@"(\bName=)\w+\b[^{}]*(?= [A-Za-z0-9]*=[A-Za-z0-9]*)", RegexOptions.Compiled);
-        //public static Regex rxVarNameNoParamPattern = new Regex(@"(\bName=)\w+\b[^{}]*", RegexOptions.Compiled);
-
-        //public static Regex rxVarFormulaParams = new Regex(@"(?<=(\bVar Name=)\w+\b[^{}].*)[A-Za-z0-9]*=[A-Za-z0-9]*", RegexOptions.Compiled);
-        public static Regex rxVarFormulaParams = new Regex(@"[A-Za-z]*=[ A-Za-z0-9]*", RegexOptions.Compiled);
+        public static readonly Regex rxVarFormulaParams = new Regex(@"[A-Za-z]*=[ A-Za-z0-9]*", RegexOptions.Compiled);
 
         public static Regex rxGlobalParamPattern = new Regex(@"({GlobalAppsModelsParam Name=(\D*\d*\s*)}})|({GlobalAppsModelsParam Name=(\D*\d*\s*)})", RegexOptions.Compiled);
 
