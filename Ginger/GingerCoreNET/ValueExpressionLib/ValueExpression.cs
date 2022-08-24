@@ -94,11 +94,12 @@ namespace GingerCore
         // ^{} = exclude { inside or } inside - so we don't want to get var if there are 2 { - like VBS calc of 2 vars or if the } at the end
         public static Regex rxVarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
 
-        public static Regex rxVarNameMultipleParamPattern = new Regex(@"(\bName=)\w+\b[^{}]*(?= [A-Za-z0-9]*=[A-Za-z0-9]* )", RegexOptions.Compiled);
-        public static Regex rxVarNameSingleParamPattern = new Regex(@"(\bName=)\w+\b[^{}]*(?= [A-Za-z0-9]*=[A-Za-z0-9]*)", RegexOptions.Compiled);
-        public static Regex rxVarNameNoParamPattern = new Regex(@"(\bName=)\w+\b[^{}]*", RegexOptions.Compiled);
+        //public static Regex rxVarNameMultipleParamPattern = new Regex(@"(\bName=)\w+\b[^{}]*(?= [A-Za-z0-9]*=[A-Za-z0-9]* )", RegexOptions.Compiled);
+        //public static Regex rxVarNameSingleParamPattern = new Regex(@"(\bName=)\w+\b[^{}]*(?= [A-Za-z0-9]*=[A-Za-z0-9]*)", RegexOptions.Compiled);
+        //public static Regex rxVarNameNoParamPattern = new Regex(@"(\bName=)\w+\b[^{}]*", RegexOptions.Compiled);
 
-        public static Regex rxVarFormulaParams = new Regex(@"(?<=(\bVar Name=)\w+\b[^{}].*)[A-Za-z0-9]*=[A-Za-z0-9]*", RegexOptions.Compiled);
+        //public static Regex rxVarFormulaParams = new Regex(@"(?<=(\bVar Name=)\w+\b[^{}].*)[A-Za-z0-9]*=[A-Za-z0-9]*", RegexOptions.Compiled);
+        public static Regex rxVarFormulaParams = new Regex(@"[A-Za-z]*=[ A-Za-z0-9]*", RegexOptions.Compiled);
 
         public static Regex rxGlobalParamPattern = new Regex(@"({GlobalAppsModelsParam Name=(\D*\d*\s*)}})|({GlobalAppsModelsParam Name=(\D*\d*\s*)})", RegexOptions.Compiled);
 
@@ -1122,29 +1123,15 @@ namespace GingerCore
         {
             Dictionary<string, string> extraParamDict = new Dictionary<string, string>();
             List<Match> matches = rxVarFormulaParams.Matches(p).ToList();
-            switch (matches.Count)
-            {
-                case 0:
-                    matches.Add(rxVarNameNoParamPattern.Match(p));
-                    break;
-                case 1:
-                    matches.Add(rxVarNameSingleParamPattern.Match(p));
-                    break;
-                default:
-                    matches.Add(rxVarNameMultipleParamPattern.Match(p));
-                    break;
-            }
 
-            string key, value;
             for (int i = 0; i < matches.Count; i++)
             {
                 Match match = matches[i];
                 
                 if (!string.IsNullOrEmpty(match.Value))
                 {
-                    key = match.Value.Substring(0, match.Value.IndexOf('=')).Trim();
-                    value = match.Value.Substring(match.Value.IndexOf('=') + 1).Trim();
-                    extraParamDict.TryAdd(key, value);
+                    string[] keyValue = match.Value.Split('=');
+                    extraParamDict.TryAdd(keyValue[0].Trim(), keyValue[1].Trim());
                 }
             }
 
@@ -1471,7 +1458,10 @@ namespace GingerCore
             {
                 VarValue = "ERROR!!! Variable name does not exist, or does not written correctly.";
             }
-
+            else
+            {
+                extraParamDict.Remove("Name");
+            }
 
             VariableBase vb = null;
             if (BF != null)
@@ -1485,27 +1475,31 @@ namespace GingerCore
 
             if (vb != null)
             {
-                if (vb is VariablePasswordString)
+                if (extraParamDict.Count > 0)
                 {
-                    string strValuetoPass;
-                    strValuetoPass = EncryptionHandler.DecryptwithKey(vb.Value);
-                    if (!string.IsNullOrEmpty(strValuetoPass))
+                    VarValue = vb.GetValueWithParam(extraParamDict);
+                }
+                else
+                {
+                    if (vb is VariablePasswordString)
                     {
-                        VarValue = strValuetoPass;
+                        string strValuetoPass;
+                        strValuetoPass = EncryptionHandler.DecryptwithKey(vb.Value);
+                        if (!string.IsNullOrEmpty(strValuetoPass))
+                        {
+                            VarValue = strValuetoPass;
+                        }
+                        else
+                        {
+                            VarValue = vb.Value;
+                        }
                     }
                     else
                     {
                         VarValue = vb.Value;
                     }
                 }
-                else if (extraParamDict.Count > 1)
-                {
-                    VarValue = vb.GetValueWithParam(extraParamDict);
-                }
-                else
-                {
-                    VarValue = vb.Value;
-                }
+                
                 mValueCalculated = tmp.Replace(p, VarValue);
             }
 

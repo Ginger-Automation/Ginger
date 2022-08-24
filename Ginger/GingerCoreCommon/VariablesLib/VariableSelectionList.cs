@@ -185,6 +185,15 @@ namespace GingerCore.Variables
             }
         }
 
+        public override List<string> GetExtraParamsDescription() 
+        {
+            List<string> extraParamsDescription = new List<string>();
+            extraParamsDescription.Add("Index=1");
+            extraParamsDescription.Add("GetLength=True");
+            return extraParamsDescription;
+        }
+
+
         public override string GetValueWithParam(Dictionary<string, string> extraParamDict)
         {
             string param = string.Empty;
@@ -200,24 +209,25 @@ namespace GingerCore.Variables
                     case "Index":
                         {
                             bool isNumber = Int32.TryParse(keyValuePair.Value, out index);
-                            if (keyValuePair.Value == "Current" || keyValuePair.Value == "current")
+                            if (isNumber && index > 0 && OptionalValuesList.Count >= index)
                             {
-                                if (OptionalValuesList.Count <= index)
-                                {
-                                    Reporter.ToUser(eUserMsgKey.ListOutOfBounds, "Index is out of bounds");
-                                }
-                                else
-                                {
-                                    param = OptionalValuesList[index].Value;
-                                }
+                                return OptionalValuesList[index - 1].Value;
                             }
                             else
                             {
-                                param = Value;
+                                Reporter.ToUser(eUserMsgKey.ListOutOfBounds, "Index is out of bounds");
                             }
                             break;
                         }
-                    case "Name":
+                    case "GetLength":
+                        {
+                            if (keyValuePair.Value == "True" || keyValuePair.Value == "true")
+                            {
+                                return OptionalValuesList.Count.ToString();
+                            }
+                            break;
+                        }
+                    default:
                         continue;
                 }
             }
@@ -225,10 +235,6 @@ namespace GingerCore.Variables
             return param;
         }
 
-        public override string GetValueExperssionParams()
-        {
-            return Name + " Index=current";
-        }
 
 
         public override void ResetValue()
@@ -306,10 +312,6 @@ namespace GingerCore.Variables
         public override bool SupportResetValue { get { return true; } }
 
         public override bool SupportAutoValue { get { return true; } }
-
-        public override bool SupportDynamicValueDeletion { get { return true; } }
-
-        public override bool SupportDeleteAllValues { get { return true; } }
 
 
         public override void SetInitialSetup()

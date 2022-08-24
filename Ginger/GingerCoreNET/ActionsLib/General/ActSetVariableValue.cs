@@ -132,15 +132,6 @@ namespace GingerCore.Actions
                         Error = "The value '" + calculatedValue + "' is not part of the possible values of the '" + Var.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ".";
                         return;
                     }
-                    //if (((VariableSelectionList)Var).OptionalValuesList.Where(pv => pv.Value == calculatedValue).SingleOrDefault() != null)
-                    //{
-                    //    ((VariableSelectionList)Var).Value = calculatedValue;
-                    //}
-                    //else
-                    //{
-                    //    Error = "The value '" + calculatedValue + "' is not part of the possible values of the '" + Var.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ".";
-                    //    return;
-                    //}
                 }
                 else if (Var.GetType() == typeof(VariableList))
                 {

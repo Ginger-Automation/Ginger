@@ -21,13 +21,16 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Plugin.Core;
 using Ginger.Actions;
 using Ginger.UserControlsLib.TextEditor.Common;
+using GingerCore;
 using GingerCore.Variables;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Highlighting;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.Text.RegularExpressions;
 
 namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 {
@@ -37,6 +40,9 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
         public override Image Icon { get { throw new NotImplementedException(); } }
 
         private Page p=null;
+
+        public static Regex rxVarFormulaParams = new Regex(@"[A-Za-z]*=[ A-Za-z0-9]*", RegexOptions.Compiled);
+
         public override List<string> Extensions
         {
             get
@@ -168,7 +174,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             p = null;
             if (txt.StartsWith("{Var Name="))
             {
-                p= new ValueExpressionVariableEditorPage(mContext, SelectedContentArgs);
+                p= new ValueExpressionVariableEditorPage(mContext, SelectedContentArgs, GetVariableFromText(txt));
             }
             
             if (txt.StartsWith("{DS Name="))
@@ -193,6 +199,22 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             // TODO: if we are on {Actual}  - show help to explain...
 
             return p;
+        }
+
+        private VariableBase? GetVariableFromText(string VarName)
+        {
+            string[] var = rxVarFormulaParams.Match(VarName).Value.Split('=');
+            VarName = var[1].Trim();
+            VariableBase vb = WorkSpace.Instance.Solution.Variables.Where<VariableBase>(var => var.Name == VarName).FirstOrDefault();
+            if (vb == null && mContext.BusinessFlow != null)
+            {
+                vb = mContext.BusinessFlow.Variables.Where<VariableBase>(var => var.Name == VarName).FirstOrDefault();
+            }
+            else if (vb == null && mContext.BusinessFlow != null && mContext.BusinessFlow.CurrentActivity != null)
+            {
+                vb = mContext.BusinessFlow.CurrentActivity.Variables.Where<VariableBase>(var => var.Name == VarName).FirstOrDefault();
+            }
+            return vb;
         }
 
         public override void UpdateSelectedContent()

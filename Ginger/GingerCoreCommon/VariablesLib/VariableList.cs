@@ -129,8 +129,6 @@ namespace GingerCore.Variables
 
         public override bool IsObsolete { get { return true; } }
 
-        public override bool SupportDynamicValueDeletion { get { return false; } }
-        public override bool SupportDeleteAllValues { get { return false; } }
 
         public override bool SetValue(string value)
         {

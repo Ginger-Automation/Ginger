@@ -223,12 +223,11 @@ namespace GingerCore.Variables
         public virtual bool IsObsolete { get { return false; } }
 
         public virtual string GetValueWithParam(Dictionary<string,string> extraParamDict) {return Value;}
-        public virtual string GetValueExperssionParams() { return Name; }
+
+        public virtual List<string> GetExtraParamsDescription() { return null; }
 
         public abstract bool SupportResetValue { get; }
         public abstract bool SupportAutoValue { get; }
-        public abstract bool SupportDynamicValueDeletion { get; }
-        public abstract bool SupportDeleteAllValues { get; }
 
 
         //all below used to describe the variable owner in a specific Business Flow
