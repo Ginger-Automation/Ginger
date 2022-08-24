@@ -36,7 +36,7 @@ namespace Ginger.GingerGridLib
     public partial class GingerGridPage : Page
     {
         GingerGrid mGingerGrid;
-        
+
         public GingerGridPage(GingerGrid GingerGrid)
         {
             InitializeComponent();
@@ -49,11 +49,12 @@ namespace Ginger.GingerGridLib
             InitRemoteServiceGrid();
         }
 
-        
+
 
         private void PluginProcesses_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            this.Dispatcher.Invoke(() => {
+            this.Dispatcher.Invoke(() =>
+            {
                 ShowProcesses();
             });
         }
@@ -65,12 +66,13 @@ namespace Ginger.GingerGridLib
 
         private void NodeList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            this.Dispatcher.Invoke(()=> {
+            this.Dispatcher.Invoke(() =>
+            {
                 ShowNodes();
 
                 if (WorkSpace.Instance.BetaFeatures.ShowSocketMonitor)
                 {
-                    ShowSocketMonitor();                    
+                    ShowSocketMonitor();
                 }
 
             });
@@ -133,7 +135,7 @@ namespace Ginger.GingerGridLib
         private void ShowNodeList()
         {
             DataGrid DG = new DataGrid();
-            DG.IsReadOnly = true;            
+            DG.IsReadOnly = true;
             DG.ItemsSource = mGingerGrid.NodeList.ToList();
             xServicesGrid.Children.Add(DG);
         }
@@ -174,7 +176,7 @@ namespace Ginger.GingerGridLib
             //First we decide how many rows columns
             int rows = (int)Math.Round(Math.Sqrt(total));
             int columns = (int)Math.Round((decimal)total / rows);
-            
+
 
             for (int r = 0; r < rows; r++)
             {
@@ -204,13 +206,13 @@ namespace Ginger.GingerGridLib
 
         private void xTableButton_Click(object sender, RoutedEventArgs e)
         {
-            ClearGingersGrid();            
+            ClearGingersGrid();
             ShowNodes();
         }
 
         private void xPingButton_Click(object sender, RoutedEventArgs e)
-        {            
-            foreach  (GingerNodeInfo GNI in  mGingerGrid.NodeList)
+        {
+            foreach (GingerNodeInfo GNI in mGingerGrid.NodeList)
             {
                 GingerNodeProxy GNA = mGingerGrid.GetNodeProxy(GNI);
                 GNA.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
@@ -234,13 +236,33 @@ namespace Ginger.GingerGridLib
         ObservableList<RemoteServiceGrid> mRemoteServiceGrids;
         private void InitRemoteServiceGrid()
         {
-            mRemoteServiceGrids= WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
+            mRemoteServiceGrids = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
             xRemoteServiceGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
             xRemoteServiceGrid.ShowRefresh = Visibility.Collapsed;
             xRemoteServiceGrid.btnSaveAllChanges.Click += BtnSaveAllChanges_Click;
             xRemoteServiceGrid.ShowSaveAllChanges = Visibility.Visible;
-            xRemoteServiceGrid.btnAdd.Click += BtnAdd_Click; 
+            xRemoteServiceGrid.btnAdd.Click += BtnAdd_Click;
+            xRemoteServiceGrid.SetbtnClearAllHandler(BtnClearAll_Click);
             SetRemoteGridView();
+        }
+
+        private void BtnClearAll_Click(object sender, RoutedEventArgs e)
+        {
+            if (mRemoteServiceGrids.Count == 0)
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemToDelete);
+                return;
+            }
+
+            if ((Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll)) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            {
+                do
+                {
+                    // using repeated function calls below instead of usual iteration
+                    //because list changes every time delete is called
+                    WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>()[0]);
+                } while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>().Count != 0);
+            }
         }
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
@@ -250,7 +272,7 @@ namespace Ginger.GingerGridLib
 
         private void BtnSaveAllChanges_Click(object sender, RoutedEventArgs e)
         {
-            foreach(RemoteServiceGrid remoteServiceGrid in mRemoteServiceGrids)
+            foreach (RemoteServiceGrid remoteServiceGrid in mRemoteServiceGrids)
             {
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(remoteServiceGrid);
             }
@@ -277,12 +299,12 @@ namespace Ginger.GingerGridLib
             view.GridColsView.Add(new GridColView() { Field = nameof(RemoteServiceGrid.Name), Header = "Name" });
             view.GridColsView.Add(new GridColView() { Field = nameof(RemoteServiceGrid.Host), Header = "Host" });
             view.GridColsView.Add(new GridColView() { Field = nameof(RemoteServiceGrid.HostPort), Header = "Port" });
-            view.GridColsView.Add(new GridColView() { Field = nameof(RemoteServiceGrid.Active), Header = "Active" });            
+            view.GridColsView.Add(new GridColView() { Field = nameof(RemoteServiceGrid.Active), Header = "Active" });
 
             xRemoteServiceGrid.SetAllColumnsDefaultView(view);
             xRemoteServiceGrid.InitViewItems();
         }
 
-        }
     }
+}
 
