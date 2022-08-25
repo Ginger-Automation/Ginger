@@ -412,7 +412,7 @@ namespace GingerCore.Actions.WebAPI
                     StringBuilder str = new StringBuilder();
                     foreach(KeyValuePair<string, string> keyValue in ConstructURLEncoded((ActWebAPIRest)mAct))
                     {
-                        str.AppendLine(keyValue.Key + "=" + keyValue.Value);
+                        str.Append(keyValue.Key + "=" + keyValue.Value);
                     }
                     RequestFileContent += str;
 
