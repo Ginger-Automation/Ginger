@@ -852,7 +852,7 @@ namespace Ginger
             base.OnClosed(e);
             if (mRestartApplication)
             {
-                Process.Start(new ProcessStartInfo() { FileName = Application.ResourceAssembly.Location, UseShellExecute = true });
+                Process.Start(new ProcessStartInfo() { FileName = System.AppDomain.CurrentDomain.FriendlyName, UseShellExecute = true });
             }
 
             Application.Current.Shutdown();
