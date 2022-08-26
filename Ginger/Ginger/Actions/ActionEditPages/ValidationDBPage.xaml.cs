@@ -78,7 +78,7 @@ namespace Ginger.Actions
 
             QueryFile.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
 
-            //OLD binding and UI 
+            //OLD binding and UI
             GingerCore.General.FillComboFromEnumObj(ValidationCfgComboBox, act.DBValidationType);
 
             //TODO: fix hard coded
@@ -115,6 +115,9 @@ namespace Ginger.Actions
             ComboAutoSelectIfOneItemOnly(ColumnComboBox);
             SetVisibleControlsForAction();
             SetQueryParamsGrid();
+            NewAutomatePage.RaiseEnvComboBoxChanged -= NewAutomatePage_RaiseEnvComboBoxChanged;
+            NewAutomatePage.RaiseEnvComboBoxChanged += NewAutomatePage_RaiseEnvComboBoxChanged;
+
         }
 
         private async void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -269,6 +272,40 @@ namespace Ginger.Actions
                     }
                 }
             }
+        }
+
+        private void NewAutomatePage_RaiseEnvComboBoxChanged(object sender, EventArgs e)
+        {
+            string selectedAppName = mAct.AppName;
+            string selectedDBName = mAct.DBName;
+
+            object selectAppNameObject = AppNameComboBox.SelectedItem;
+            object selectDBNameObject = DBNameComboBox.SelectedItem;
+
+            AppNameComboBox.Items.Clear();
+            DBNameComboBox.Items.Clear();
+
+            if (Context.GetAsContext(mAct.Context) != null && Context.GetAsContext(mAct.Context).Environment != null)
+            {
+                pe = (from env in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>() where env.Name == Context.GetAsContext(mAct.Context).Environment.Name select env).FirstOrDefault();
+
+                if (pe == null)
+                {
+                    return;
+                }
+                foreach (EnvApplication ea in pe.Applications)
+                {
+                    AppNameComboBox.Items.Add(ea.Name);
+                }
+            }
+
+            AppNameComboBox.SelectedItem = selectAppNameObject;
+            mAct.AppName = selectedAppName;
+            AppNameComboBox.Text = selectedAppName;
+
+            DBNameComboBox.SelectedItem = selectDBNameObject;
+            mAct.DBName = selectedDBName;
+            DBNameComboBox.Text = selectedDBName;
         }
 
         private void DBNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
