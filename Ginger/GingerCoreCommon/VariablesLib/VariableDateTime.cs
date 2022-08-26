@@ -76,7 +76,7 @@ namespace GingerCore.Variables
                 if (string.IsNullOrEmpty(mInitialDateTime))
                 {
                     var currentDate = DateTime.Today.Date;
-                    return currentDate.ToString("dd-MMM-yyyy hh:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture);
+                    return currentDate.ToString("MM/dd/yyyy hh:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture);
                 }
                 return mInitialDateTime;
             }
@@ -145,7 +145,7 @@ namespace GingerCore.Variables
             {
                 if(string.IsNullOrEmpty(mDateTimeFormat))
                 {
-                    return @"dd-MMM-yyyy hh:mm:ss tt";
+                    return @"MM/dd/yyyy hh:mm:ss tt";
                 }
                 return mDateTimeFormat;
             }
