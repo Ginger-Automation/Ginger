@@ -253,7 +253,7 @@ namespace GingerCore.Actions.VisualTesting
                 string viewport = string.Empty;
                 if (WorkSpace.Instance.Solution.VRTConfiguration.Viewport)
                 {
-                    mDriver.GetViewport();
+                    viewport = mDriver.GetViewport();
                 }
                 //device
                 string device = null;
@@ -318,10 +318,11 @@ namespace GingerCore.Actions.VisualTesting
         private string GetTags()
         {
             string tags = string.Empty;
-            var activityTagsList = Context.GetAsContext(mAct.Context).Activity.Tags.Select(x => x.ToString());
-            if (activityTagsList != null)
+           // var activityTagsList = Context.GetAsContext(mAct.Context).Activity.Tags.Select(x => x).ToList();
+            var tagNames = WorkSpace.Instance.Solution.Tags.Where(f => Context.GetAsContext(mAct.Context).Activity.Tags.Contains(f.Guid)).Select(f=>f.Name);
+            if (tagNames != null)
             {
-                tags = string.Join(",", activityTagsList);
+                tags = string.Join(",", tagNames);
             }
             return tags;
         }
