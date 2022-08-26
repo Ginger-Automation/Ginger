@@ -1197,9 +1197,17 @@ namespace GingerWPF.BusinessFlowsLib
         private async void xSaveBusinessFlowBtn_Click(object sender, RoutedEventArgs e)
         {
             //warn in case dynamic shared repository Activities are included and going to be deleted
-            if (mBusinessFlow.Activities.Where(x => x.AddDynamicly == true).FirstOrDefault() != null)
+            if (mBusinessFlow.Activities.Any(x => x.AddDynamicly))
             {
                 if (Reporter.ToUser(eUserMsgKey.WarnOnDynamicActivities) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                {
+                    return;
+                }
+            }
+
+            if (mBusinessFlow.Activities.Any(x => x.IsLinkedItem))
+            {
+                if (Reporter.ToUser(eUserMsgKey.WarnOnLinkSharedActivities) == Amdocs.Ginger.Common.eUserMsgSelection.No)
                 {
                     return;
                 }
