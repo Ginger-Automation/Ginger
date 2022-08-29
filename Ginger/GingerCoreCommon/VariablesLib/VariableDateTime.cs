@@ -21,7 +21,6 @@ using System.Text;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using System.Globalization;
 
 namespace GingerCore.Variables
 {
@@ -104,10 +103,8 @@ namespace GingerCore.Variables
             get
             {
                 if (string.IsNullOrEmpty(mMinDateTime))
-                {
-                    var mindate = DateTime.Today.Date;
-                    mindate = mindate.AddYears(-1);
-                    return mindate.ToString(mDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
+                {                    
+                    return DateTime.Now.AddYears(-1).ToString(mDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
 
                 }
                 return mMinDateTime;
@@ -128,9 +125,7 @@ namespace GingerCore.Variables
             {
                 if (string.IsNullOrEmpty(mMaxDateTime))
                 {
-                     var maxdate = DateTime.Today.Date;
-                    maxdate = maxdate.AddYears(1);
-                    return maxdate.ToString(mDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
+                    return DateTime.Now.AddYears(1).ToString(mDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
                 }
                 return mMaxDateTime;
             }
