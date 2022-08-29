@@ -132,7 +132,7 @@ namespace Ginger.Variables
             //}
             //if (await UserKeepsTyping() || dtpInitialDate.CustomFormat == txtDateFormat.Text) return;
             //dtpInitialDate.CustomFormat = txtDateFormat.Text;
-            variableDateTime.DateTimeFormat = ((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedItem).Content.ToString();
+            variableDateTime.DateTimeFormat = txtDateFormat.Text;
             UpdateIntialDateTimePicker();
         }
     }
