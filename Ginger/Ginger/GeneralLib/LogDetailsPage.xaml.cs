@@ -35,7 +35,7 @@ namespace Ginger.GeneralLib
     /// </summary>
     public partial class LogDetailsPage : Page
     {
-        public const int NoOfLinesToShow = 3500;
+        public const int NoOfLinesToShow = 1000;
         public enum eLogShowLevel
         {
             ALL, DEBUG, INFO, WARN, ERROR, FATAL
@@ -101,42 +101,47 @@ namespace Ginger.GeneralLib
             mTextBlockHelper = new TextBlockHelper(xLogDetailsTextBlock);
             bool allowLogDetailsWrite = true;
             int start = logs.Length > NoOfLinesToShow ? logs.Length - NoOfLinesToShow : 0;
-            for (int i = start; i < logs.Length; i++)
+            await Task.Run(() =>
             {
-                if (logs[i] == string.Empty)
+                for (int i = start; i < logs.Length; i++)
                 {
-                    if (allowLogDetailsWrite)
+                    Dispatcher.Invoke(() =>
                     {
-                        mTextBlockHelper.AddLineBreak();
-                    }
-                    continue;
+                        if (logs[i] == string.Empty)
+                        {
+                            if (allowLogDetailsWrite)
+                            {
+                                mTextBlockHelper.AddLineBreak();
+                            }
+                        }
+                        else if (logs[i].Contains("#### Application version"))
+                        {
+                            mTextBlockHelper.AddFormattedText(logs[i], Brushes.Black, true);
+                        }
+                        else if (IsLogHeader(logs[i]))
+                        {
+                            if (mLogLevel == eLogShowLevel.ALL || logs[i].Contains("| " + mLogLevel.ToString()))
+                            {
+                                mTextBlockHelper.AddFormattedText(logs[i], GetProperLogTypeBrush(logs[i]), isBold: true);
+                                mTextBlockHelper.AddLineBreak();
+                                allowLogDetailsWrite = true;
+                            }
+                            else
+                            {
+                                allowLogDetailsWrite = false;
+                            }
+                        }
+                        else
+                        {
+                            if (allowLogDetailsWrite)
+                            {
+                                mTextBlockHelper.AddText(logs[i]);
+                                mTextBlockHelper.AddLineBreak();
+                            }
+                        }
+                    });
                 }
-                else if (logs[i].Contains("#### Application version"))
-                {
-                    mTextBlockHelper.AddFormattedText(logs[i], Brushes.Black, true);
-                }
-                else if (IsLogHeader(logs[i]))
-                {
-                    if (mLogLevel == eLogShowLevel.ALL || logs[i].Contains("| " + mLogLevel.ToString()))
-                    {
-                        mTextBlockHelper.AddFormattedText(logs[i], GetProperLogTypeBrush(logs[i]), isBold: true);
-                        mTextBlockHelper.AddLineBreak();
-                        allowLogDetailsWrite = true;
-                    }
-                    else
-                    {
-                        allowLogDetailsWrite = false;
-                    }
-                }
-                else
-                {
-                    if (allowLogDetailsWrite)
-                    {
-                        mTextBlockHelper.AddText(logs[i]);
-                        mTextBlockHelper.AddLineBreak();
-                    }
-                }
-            }
+            });
         }
 
         private bool IsLogHeader(string log)
