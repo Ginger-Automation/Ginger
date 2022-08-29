@@ -240,8 +240,12 @@ namespace GingerCore.Actions.VisualTesting
                     }
                     else
                     {
-                        tags += ",Environment:" + mDriver.GetEnvironment();
+                        tags = "Tags:" + tags + ", Environment:" + mDriver.GetEnvironment();
                     }
+                }
+                else
+                {
+                    tags = "Tags:" + tags;
                 }
                 //Browser/agent/app name 
                 string browser = string.Empty;
@@ -317,14 +321,16 @@ namespace GingerCore.Actions.VisualTesting
 
         private string GetTags()
         {
-            string tags = string.Empty;
-           // var activityTagsList = Context.GetAsContext(mAct.Context).Activity.Tags.Select(x => x).ToList();
-            var tagNames = WorkSpace.Instance.Solution.Tags.Where(f => Context.GetAsContext(mAct.Context).Activity.Tags.Contains(f.Guid)).Select(f=>f.Name);
-            if (tagNames != null)
+            try
             {
-                tags = string.Join(",", tagNames);
+                var tagNames = WorkSpace.Instance.Solution.Tags.Where(f => Context.GetAsContext(mAct.Context).Activity.Tags.Contains(f.Guid)).Select(f => f.Name);
+                return string.Join(",", tagNames);
             }
-            return tags;
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when getting Tags from activity", ex);
+                return null;
+            }
         }
 
         private string GetImageName()
