@@ -24,6 +24,7 @@ using Ginger.Drivers.CommunicationProtocol;
 using Ginger.UserControls;
 using GingerCoreNET.RunLib;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -243,7 +244,22 @@ namespace Ginger.GingerGridLib
             xRemoteServiceGrid.ShowSaveAllChanges = Visibility.Visible;
             xRemoteServiceGrid.btnAdd.Click += BtnAdd_Click;
             xRemoteServiceGrid.SetbtnClearAllHandler(BtnClearAll_Click);
+            xRemoteServiceGrid.SetbtnDeleteHandler(btnDeleteSelected_Click);
             SetRemoteGridView();
+        }
+
+        private void btnDeleteSelected_Click(object sender, RoutedEventArgs e)
+        {
+            if (mRemoteServiceGrids.Count == 0)
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemToDelete);
+                return;
+            }
+            List<RemoteServiceGrid> SelectedItemsList = xRemoteServiceGrid.grdMain.SelectedItems.Cast<RemoteServiceGrid>().ToList();
+            foreach (RemoteServiceGrid selectedItem in SelectedItemsList)
+            {
+                WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(selectedItem);
+            }
         }
 
         private void BtnClearAll_Click(object sender, RoutedEventArgs e)
