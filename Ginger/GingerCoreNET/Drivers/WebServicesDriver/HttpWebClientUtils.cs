@@ -21,9 +21,12 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Platform;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
+using Ginger.Run.RunSetActions;
 using GingerCore.Actions.WebServices;
+using GingerCore.GeneralLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Org.BouncyCastle.Asn1.X509;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -232,7 +235,7 @@ namespace GingerCore.Actions.WebAPI
 
             if (CertificateTypeRadioButton == ApplicationAPIUtils.eCretificateType.AllSSL.ToString())
             {
-                ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+                ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;               
             }
             else if (CertificateTypeRadioButton == ApplicationAPIUtils.eCretificateType.Custom.ToString())
             {
@@ -244,11 +247,31 @@ namespace GingerCore.Actions.WebAPI
                 if (!string.IsNullOrEmpty(path))
                 {
                     string CertificateKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
-                    if (!string.IsNullOrEmpty(CertificateKey))
+                    string CertificateName = Path.GetFileName(ActWebAPIBase.Fields.CertificatePath);
+                    if (!string.IsNullOrEmpty(CertificateName))
                     {
                         X509Certificate2 customCertificate = new X509Certificate2(path, CertificateKey);
-                        Handler.ClientCertificates.Add(customCertificate);
+                        X509Certificate2Collection collection1 = new X509Certificate2Collection();
                         ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
+                        Handler.ClientCertificates.Add(customCertificate);
+                        ServicePointManager.ServerCertificateValidationCallback = delegate (object s,X509Certificate certificate,X509Chain chain,System.Net.Security.SslPolicyErrors sslPolicyErrors)
+                        {
+                            bool ret = true;
+                            Reporter.ToLog(eLogLevel.DEBUG,String.Format("{0}: File Certificate Validating:'{1}'", CertificateName));
+                            if (!string.IsNullOrEmpty(CertificateName))//need to add a condition if the vertificate validation required if   isCertificateValidationRequired  function is not avaialable
+                            {
+                                string basepath = Path.Combine(Path.GetDirectoryName(ActWebAPIBase.Fields.CertificatePath), CertificateName);
+                                var actualCertificate = X509Certificate.CreateFromCertFile(basepath);
+                                ret = certificate.Equals(actualCertificate);
+                                Reporter.ToLog(eLogLevel.DEBUG, String.Format("{0}: File Certificate Validated:'{1}'", ret));
+                            }
+                            else
+                            {
+                                ret = true;
+                                Reporter.ToLog(eLogLevel.DEBUG, String.Format("{0}: Certificte validation bypassed"));
+                            }
+                            return ret;
+                        };                       
                     }
                     else
                     { 

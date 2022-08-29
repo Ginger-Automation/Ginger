@@ -24,6 +24,10 @@ using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Actions.Communication;
 using GingerCore.GeneralLib;
+using CheckBox = System.Windows.Controls.CheckBox;
+using Amdocs.Ginger.Repository;
+using NPOI.HPSF;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace Ginger.Actions.Communication
 {
@@ -57,6 +61,9 @@ namespace Ginger.Actions.Communication
             xSMTPMailHostTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Host));
             xSMTPUserTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.User));                                           
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.EnableSSL, "true"));
+            BindingHandler.ObjFieldBinding(IsValidationRequired, CheckBox.IsCheckedProperty, mAct, nameof(ActeMail.IsValidationRequired));
+            BindingHandler.ObjFieldBinding(xcbCertificatePathTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.CertificatePath));
+            BindingHandler.ObjFieldBinding(CertificatePasswordUCValueExpression, TextBox.TextProperty, mAct, nameof(ActeMail.CertificatePasswordUCValueExpression));
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.ConfigureCredential,"false"));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AttachmentFilename, TextBox.TextProperty, mAct, nameof(ActeMail.AttachmentFileName));
 
@@ -74,7 +81,59 @@ namespace Ginger.Actions.Communication
             }
             ShowDisplayNameOption();
         }
+        private void xcbValidationRequired_checked(object sender, RoutedEventArgs e)
+        {
+            IsValidationRequired.IsChecked = true;
+            CertificateStackPanel.Visibility = Visibility.Visible;
+        }
+        private void xcbValidationRequired_unchecked(object sender, RoutedEventArgs e)
+        {
+            IsValidationRequired.IsChecked = false;
+            CertificateStackPanel.Visibility = Visibility.Collapsed;
+        }
+        private void BrowseButton_Certificate(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
 
+            dlg.DefaultExt = "*.crt";
+            dlg.Filter = "CRT Files (*.crt)|*.crt";
+            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+
+                string FileName = dlg.FileName.ToUpper();
+                if (FileName.Contains(SolutionFolder))
+                {
+                    FileName = FileName.Replace(SolutionFolder, @"~\");
+                }
+                FileName = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(FileName);
+                xcbCertificatePathTextBox.Text = FileName;
+                string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\EmailCertificates\Certificates");
+                if (!System.IO.Directory.Exists(targetPath))
+                {
+                    System.IO.Directory.CreateDirectory(targetPath);
+                }
+
+                string destFile = System.IO.Path.Combine(targetPath, System.IO.Path.GetFileName(FileName));
+
+                int fileNum = 1;
+                string copySufix = "_Copy";
+                while (System.IO.File.Exists(destFile))
+                {
+                    fileNum++;
+                    string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
+                    if (newFileName.IndexOf(copySufix) != -1)
+                        newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
+                    newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
+                    destFile = System.IO.Path.Combine(targetPath, newFileName);
+                }
+
+                System.IO.File.Copy(FileName, destFile, true);
+                xcbCertificatePathTextBox.Text = @"~\Documents\EmailCertificates\Certificates\" + System.IO.Path.GetFileName(destFile);
+                xcbCertificatePathTextBox.AcceptsReturn = true;
+                xcbCertificatePathTextBox.Visibility = Visibility.Visible;
+            }
+        }
         private void ShowDisplayNameOption()
         {
             if (mAct.MailOption != null && mAct.MailOption == Email.eEmailMethod.SMTP.ToString())
@@ -91,15 +150,15 @@ namespace Ginger.Actions.Communication
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new System.Windows.Forms.OpenFileDialog();          
+            var dlg = new System.Windows.Forms.OpenFileDialog();
             System.Windows.Forms.DialogResult result = dlg.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)
             {
                 mAct.AttachmentFileName = dlg.FileName;
             }
         }
-        //update screen on select of Outlook Radio Button
-        private void RadioOutlookMailOption_Checked(object sender, RoutedEventArgs e)
+            //update screen on select of Outlook Radio Button
+            private void RadioOutlookMailOption_Checked(object sender, RoutedEventArgs e)
         {
             try
             {

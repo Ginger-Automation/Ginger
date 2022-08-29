@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -20,8 +20,10 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.DataSource;
+using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Mail;
 
@@ -207,7 +209,47 @@ namespace GingerCore.GeneralLib
                 }
             }
         }
-
+        private string mCertificatePath;
+        [IsSerializedForLocalRepository]
+        public string CertificatePath
+        {
+            get { return mCertificatePath; }
+            set
+            {
+                if (mCertificatePath != value)
+                {
+                    TextChange.Equals(mCertificatePath, value);
+                    mCertificatePath = value;
+                }
+            }
+        }
+        private bool mIsValidationRequired = false;
+        [IsSerializedForLocalRepository(false)]
+        public bool IsValidationRequired
+        {
+            get { return mIsValidationRequired; }
+            set
+            {
+                if (mIsValidationRequired != value)
+                {
+                    mIsValidationRequired = value;
+                }
+            }
+        }
+        private static bool mImportRequestFile = false;
+        [IsSerializedForLocalRepository(false)]
+        public static bool ImportRequestFile
+        {
+            get { return mImportRequestFile; }
+            set
+            {
+                if (mImportRequestFile != value)
+                {
+                    mImportRequestFile = value;
+                }
+            }
+        }
+        public static string CertificatePasswordUCValueExpression { get; set; }
         private bool mConfigureCredential = false;
         [IsSerializedForLocalRepository(false)]
         public bool ConfigureCredential
@@ -236,9 +278,9 @@ namespace GingerCore.GeneralLib
                 mItemName = value;
             }
         }
-
-
+       
         
+
 
     }
 }

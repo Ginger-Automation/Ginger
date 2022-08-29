@@ -171,9 +171,9 @@
                         <StackPanel>
                             <Frame x:Name="Certificates"/>
                             <StackPanel Orientation="Horizontal">
-                                <Label Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Left" Margin="0,0,0,0">SSL Certificates:</Label>
+                                <Label Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Left" Margin="0,0,0,0">SSL and TLS Certificates:</Label>
                                 <StackPanel Orientation="Horizontal" x:Name="CertificateSelection">
-                                    <UserControlsLib:UCRadioButtons x:Name="CertificateTypeRadioButton" Margin="0,0,0,0"></UserControlsLib:UCRadioButtons>
+                                    <UserControlsLib:UCRadioButtons x:Name="CertificateTypeRadioButton" Margin="0,0,-20,0"></UserControlsLib:UCRadioButtons>
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>

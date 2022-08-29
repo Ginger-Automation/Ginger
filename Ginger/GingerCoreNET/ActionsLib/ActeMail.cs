@@ -21,13 +21,23 @@ using System.Collections.Generic;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
+using GingerCore.Actions.WebServices;
+using System.Net.Http;
+using System.Net.Security;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using System.IO;
+
 namespace GingerCore.Actions.Communication
 {
     public class ActeMail : ActWithoutDriver
     {
         public override string ActionDescription { get { return "Email Action"; } }
         public override string ActionUserDescription { get { return "Email Action"; } }
-
+        HttpClientHandler Handler = null;
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Email Action let you send email");
@@ -61,6 +71,34 @@ namespace GingerCore.Actions.Communication
         {
             public static string EnableSSL = "EnableSSL";
             public static string ConfigureCredential = "ConfigureCredential";
+            public static bool IsValidationRequired = false;
+        }
+        public static string CertificatePasswordUCValueExpression { get; set; }
+        private string mCertificatePath;
+        [IsSerializedForLocalRepository]
+        public string CertificatePath
+        {
+            get { return mCertificatePath; }
+            set
+            {
+                if (mCertificatePath != value)
+                {
+                    mCertificatePath = value;
+                }
+            }
+        }
+        private bool mIsValidationRequired = false;
+        [IsSerializedForLocalRepository(false)]
+        public bool IsValidationRequired
+        {
+            get { return mIsValidationRequired; }
+            set
+            {
+                if (mIsValidationRequired != value)
+                {
+                    mIsValidationRequired = value;
+                }
+            }
         }
 
         #region Action Fields 
@@ -251,7 +289,55 @@ namespace GingerCore.Actions.Communication
             email.ConfigureCredential = (bool)this.GetInputParamValue<bool>(Fields.ConfigureCredential);
             email.SMTPUser = this.GetInputParamCalculatedValue(nameof(User));
             email.SMTPPass = this.GetInputParamCalculatedValue(nameof(Pass));
+            if( IsValidationRequired==true)
+            {
+                Handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+                //string path = (mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath).ToString().Replace(@"~\", mAct.SolutionFolder));
+                string path = CertificatePath;
+                //string path1 = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath();
 
+                if (!string.IsNullOrEmpty(path))
+                {
+                    string CertificateKey = CertificatePasswordUCValueExpression;
+                    string CertificateName = Path.GetFileName(CertificatePath);
+                    if (!string.IsNullOrEmpty(CertificateName))
+                    {
+                        X509Certificate2 customCertificate = new X509Certificate2(path, CertificateKey);
+                        X509Certificate2Collection collection1 = new X509Certificate2Collection();
+                        ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
+                        Handler.ClientCertificates.Add(customCertificate);
+                        ServicePointManager.ServerCertificateValidationCallback = delegate (object s, X509Certificate certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+                        {
+                            bool ret = true;
+                            Reporter.ToLog(eLogLevel.DEBUG, String.Format("{0}: File Certificate Validating:'{1}'", CertificateName));
+                            if (!string.IsNullOrEmpty(CertificateName))//need to add a condition if the vertificate validation required if   isCertificateValidationRequired  function is not avaialable
+                            {
+                                string basepath = Path.Combine(Path.GetDirectoryName(ActWebAPIBase.Fields.CertificatePath), CertificateName);
+                                var actualCertificate = X509Certificate.CreateFromCertFile(basepath);
+                                ret = certificate.Equals(actualCertificate);
+                                Reporter.ToLog(eLogLevel.DEBUG, String.Format("{0}: File Certificate Validated:'{1}'", ret));
+                            }
+                            else
+                            {
+                                ret = true;
+                                Reporter.ToLog(eLogLevel.DEBUG, String.Format("{0}: Certificte validation bypassed"));
+                            }
+                            return ret;
+                        };
+                    }
+                    else
+                    {
+                        //Case Certifacte key/password is not required
+                        X509Certificate2 customCertificate = new X509Certificate2(path);
+                        Handler.ClientCertificates.Add(customCertificate);//SSL certificate is being added  into client certificates
+                    }
+                }
+                else
+                {
+                    Error = "Request setup Failed because of missing/wrong input";
+                    ExInfo = "Certificate path is missing";
+                }
+            }
             if (email.EmailMethod == Email.eEmailMethod.SMTP)
             {
                 email.MailFromDisplayName = this.GetInputParamCalculatedValue(nameof(MailFromDisplayName));

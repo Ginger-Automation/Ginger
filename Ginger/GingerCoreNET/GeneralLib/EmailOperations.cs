@@ -19,18 +19,27 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Applitools;
+using Ginger.Run.RunSetActions;
+using GingerCore.Actions.WebServices;
 using GingerCore.DataSource;
+using Renci.SshNet.Messages;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Net.Mail;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Windows;
 
 namespace GingerCore.GeneralLib
 {
     public class EmailOperations : IEmailOperations
     {
         public Email Email;
-
+        HttpClientHandler Handler = null;
         static bool InitSmtpAuthenticationManagerDone = false;
         public EmailOperations(Email email)
         {
@@ -130,6 +139,51 @@ namespace GingerCore.GeneralLib
                     else
                     {
                         smtp.Credentials = new NetworkCredential(Email.SMTPUser, Email.SMTPPass);
+                    }
+                }
+                if (Email.IsValidationRequired)
+                {
+                    string path = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(Email.CertificatePath);
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        string CertificateName = Email.CertificatePath;
+                        string CertificateKey = Email.CertificatePasswordUCValueExpression;
+                        if (!string.IsNullOrEmpty(CertificateName))
+                        {
+                            X509Certificate2 customCertificate = new X509Certificate2(path, CertificateKey);
+                            X509Certificate2Collection collection1 = new X509Certificate2Collection();
+                            ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
+                            Handler.ClientCertificates.Add(customCertificate);
+                            ServicePointManager.ServerCertificateValidationCallback = delegate (object s, X509Certificate certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+                            {
+                                bool ret = true;
+                                Reporter.ToLog(eLogLevel.DEBUG, String.Format("{0}: File Certificate Validating:'{1}'", CertificateName));
+                                if (!string.IsNullOrEmpty(CertificateName))//need to add a condition if the vertificate validation required if   isCertificateValidationRequired  function is not avaialable
+                                {
+                                    string basepath = Path.Combine(Path.GetDirectoryName(Email.CertificatePath), CertificateName);
+                                    var actualCertificate = X509Certificate.CreateFromCertFile(basepath);
+                                    ret = certificate.Equals(actualCertificate);
+                                    Reporter.ToLog(eLogLevel.INFO, String.Format("{0}: File Certificate Validated:'{1}'", ret));
+                                }
+                                else
+                                {
+                                    ret = true;
+                                    Reporter.ToLog(eLogLevel.INFO, String.Format("{0}: Certificte validation bypassed"));
+                                }
+                                return ret;
+                            };
+                        }
+
+                        else
+                        {
+                            X509Certificate2 customCertificate = new X509Certificate2(path);
+                            Handler.ClientCertificates.Add(customCertificate);
+                        }
+                    }
+                    else
+                    {
+                        Email.Event = "Request setup Failed because of missing/wrong input";
+                        return false;
                     }
                 }
                 mVE.Value = Email.MailTo;

@@ -22,13 +22,25 @@
                 </StackPanel>
                 <StackPanel x:Name="xSMTPConfig">
                     <Label Style="{StaticResource @LabelStyle}" x:Name="LabelMailHost">SMTP Mail Host:</Label>
-                    <Actions:UCValueExpression x:Name="xSMTPMailHostTextBox"  ToolTip="SMTP Host" Width="235" HorizontalAlignment="Left" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                    <Actions:UCValueExpression x:Name="xSMTPMailHostTextBox"  ToolTip="SMTP Host" Width="265" Height="25" HorizontalAlignment="Left" ScrollViewer.VerticalScrollBarVisibility="Auto" />
                     <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelPort">SMTP Port:</Label>
-                    <TextBox x:Name="xSMTPPortTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left"/>
+                    <TextBox x:Name="xSMTPPortTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" Height="25" HorizontalAlignment="Left"/>
                     <DockPanel>
-                        <CheckBox x:Name="xcbEnableSSL" Style="{StaticResource @InputCheckBoxStyle}"  VerticalAlignment="Center" Content="Enable SSL" Margin="10"/>
+                        <CheckBox x:Name="xcbEnableSSL" Style="{StaticResource @InputCheckBoxStyle}"  VerticalAlignment="Center" Content="Enable SSL/TLS" Margin="10"/>
+                        <CheckBox x:Name="xcbIsValidationRequired" Style="{StaticResource @InputCheckBoxStyle}"  VerticalAlignment="Center" Content="Add Custom Certificate" Checked="CertificateSelection_Changed" Unchecked="CertificateSelection_Unchecked" Margin="10"/>
                         <CheckBox x:Name="xcbConfigureCredential" Style="{StaticResource @InputCheckBoxStyle}"  VerticalAlignment="Center" Content="Configure Credential" Margin="10" Checked="xcbConfigureCredential_Checked" Unchecked="xcbConfigureCredential_Unchecked"/>
                     </DockPanel>
+                    <StackPanel Orientation="Vertical" x:Name="CertificateStackPanel" Visibility="Collapsed"  >
+                        <StackPanel Orientation="Horizontal">
+                            <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,5,0,0" FontSize="13">Certificate Path:</Label>
+                            <TextBox x:Name="xcbCertificatePathTextBox" TextWrapping="Wrap" Style="{StaticResource @TextBoxStyle}" HorizontalAlignment="Left" Margin="30,0,0,0" Width="235" Height="25" AcceptsReturn="True"/>
+                            <Button Width="50" Height="25" x:Name="xcBrowseFile" Click="BrowseButton_Click" Margin="1,0,0,0" Content="Upload Certificate" Style="{StaticResource  $InputButtonStyle}" HorizontalAlignment="Left" Command="{Binding Path=File}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <Label Style="{StaticResource @InputFieldLabelStyle}" FontSize="13" VerticalAlignment="Center">Certificate Password:</Label>
+                            <TextBox  x:Name="CertificatePasswordUCValueExpression" HorizontalAlignment="Left" Width="235" VerticalContentAlignment="Center" Height="25" AcceptsReturn="True" Margin="2,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
                     <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelUser" Visibility="Collapsed">SMTP User:</Label>
                     <Actions:UCValueExpression x:Name="xSMTPUserTextBox"  ToolTip="SMTP User" Width="235" HorizontalAlignment="Left" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Auto" />
                     <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelPass" Visibility="Collapsed">SMTP Password:</Label>
