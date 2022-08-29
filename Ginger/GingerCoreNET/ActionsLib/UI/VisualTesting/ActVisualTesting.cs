@@ -354,7 +354,7 @@ namespace GingerCore.Actions
                     mDriver.ChangeAppWindowSize(640, 480);
                     break;
                 case eChangeAppWindowSize.Resolution800x600:
-                    mDriver.ChangeAppWindowSize(800, 800);
+                    mDriver.ChangeAppWindowSize(800, 600);
                     break;
                 case eChangeAppWindowSize.Resolution1024x768:
                     mDriver.ChangeAppWindowSize(1024, 768);
