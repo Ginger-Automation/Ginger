@@ -54,7 +54,7 @@ namespace Ginger.Variables
         {
             InitializeComponent();
             mBusinessFlow = businessFlow;
-            ((RepositoryItemBase)mBusinessFlow).SaveBackup();          
+           // ((RepositoryItemBase)mBusinessFlow).SaveBackup();          
             SetGridView();
             GenerateStoreToVarsList();
             VariableRulesGrid.DataSourceList = mBusinessFlow.inputVariableRules;
@@ -87,8 +87,8 @@ namespace Ginger.Variables
             view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.SourceVariableGuid), Header = "Source Variable", WidthWeight = 50, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCSourceVariable.GetTemplate(nameof(InputVariableRule.SourceVariableList), nameof(InputVariableRule.SourceVariableGuid)) });
             view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.TriggerValue), Header = "Trigger Value", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCTriggerValue.GetTemplate(nameof(InputVariableRule.SelectedSourceVariable), nameof(InputVariableRule.TriggerValue)) });
             view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.TargetVariableGuid), Header = "Target Variable", WidthWeight = 50, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCTargetVariable.GetTemplate(nameof(InputVariableRule.TargetVariableList), nameof(InputVariableRule.TargetVariableGuid), nameof(InputVariableRule.SourceVariableGuid)) });
-            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.OperationType), Header = "Operation Type", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCOperationType.GetTemplate(nameof(InputVariableRule.SelectedTargetVariable), nameof(InputVariableRule.OperationType)) });
-            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.OperationValue), Header = "Operation Value", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCOperationValue.GetTemplate(nameof(InputVariableRule.SelectedTargetVariable), nameof(InputVariableRule.OperationType), nameof(InputVariableRule.OperationValue), nameof(InputVariableRule.OperationValueList)) });
+            //view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.OperationType), Header = "Operation Type", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCOperationType.GetTemplate(nameof(InputVariableRule.SelectedTargetVariable), nameof(InputVariableRule.OperationType)) });
+            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.OperationType), Header = "Operation Configuration", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCOperationValue.GetTemplate(nameof(InputVariableRule.SelectedTargetVariable), nameof(InputVariableRule.OperationType), nameof(InputVariableRule.OperationValue), nameof(InputVariableRule.OperationValueList)) });
            // view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.OperationValue), Header = "Operation Values List", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCMultiSelectCombobox.GetTemplate(nameof(InputVariableRule.OperationSelectedValues)) });
             //GridColView operationType = new GridColView()
             //{
@@ -109,7 +109,7 @@ namespace Ginger.Variables
         {            
             if (mBusinessFlow != null)
             {
-                variableList = mBusinessFlow.GetBFandActivitiesVariabeles(true, true);                                
+                variableList = mBusinessFlow.GetBFandActivitiesVariabeles(includeParentDetails:true, includeOnlySetAsInputValue:true);                                
             }
 
             foreach (InputVariableRule ivr in mBusinessFlow.inputVariableRules)

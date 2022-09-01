@@ -74,11 +74,16 @@ namespace Ginger.Variables
             }           
         }
 
+        public VariableBase mSelectedTargetVariable;
         public VariableBase SelectedTargetVariable
         {
             get
             {
-                return TargetVariableList.Where(x => x.Guid== TargetVariableGuid).FirstOrDefault();
+                return TargetVariableList.Where(x => x.Guid== TargetVariableGuid).FirstOrDefault();                
+            }
+            set
+            {
+                mSelectedTargetVariable = value;
             }
         }
 
@@ -133,16 +138,40 @@ namespace Ginger.Variables
             set
             {
                 mOperationType = value;
-                OnPropertyChanged(nameof(OperationType));                
+
+                OnPropertyChanged(nameof(OperationType));
             }
         }
 
-
+        private string mOperationValue;
         [IsSerializedForLocalRepository]
-        public string OperationValue { get; set; }
+        public string OperationValue 
+        { 
+            get
+            {
+                return mOperationValue;
+            }
+            set
+            {
+                mOperationValue = value;
+                OnPropertyChanged(nameof(OperationValue));
+            }
+        }
 
+        private ObservableList<OperationValues> mOperationValueList;
         [IsSerializedForLocalRepository]
-        public ObservableList<string> OperationValueList { get; set; }
+        public ObservableList<OperationValues> OperationValueList 
+        { 
+            get
+            {
+                return mOperationValueList;
+            }
+            set
+            {
+                mOperationValueList = value;
+                OnPropertyChanged(nameof(OperationValueList));
+            }
+        }
         
        // public ObservableList<SelectableObject<string>> OperationSelectedValues { get; set; }        
 
