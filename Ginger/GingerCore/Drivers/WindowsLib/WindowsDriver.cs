@@ -41,6 +41,7 @@ using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using OpenQA.Selenium;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Drivers.WindowsLib
 {
@@ -1794,12 +1795,12 @@ namespace GingerCore.Drivers.WindowsLib
 
         public string GetApplitoolServerURL()
         {
-            return this.ApplitoolsServerUrl;
+            return WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
         }
 
         public string GetApplitoolKey()
         {
-            return this.ApplitoolsViewKey;
+            return WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey;
         }
 
         public ePlatformType GetPlatform()
