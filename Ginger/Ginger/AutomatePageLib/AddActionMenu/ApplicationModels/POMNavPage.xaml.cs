@@ -25,10 +25,12 @@ using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.BusinessFlowPages.AddActionMenu;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.BusinessFlowWindows;
+using Ginger.Repository;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using GingerCore;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -45,6 +47,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         ITreeViewItem mItemTypeRootNode;
         SingleItemTreeViewSelectionPage mPOMPage;
         ElementInfoListViewHelper mPOMListHelper;
+        ActivitiesRepositoryPage mActivitiesRepositoryViewPage;
 
         private Agent mAgent;
 
@@ -157,6 +160,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     xPomElementsListView.DataSourceList = mPOM.MappedUIElements;
                     xPomElementsListView.Visibility = Visibility.Visible;
                     xPOMSplitter.IsEnabled = true;
+                    //filre POM Activities to show
+                    ObservableList<Activity> sharedActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                    ObservableList<Activity> pomActivities = GingerCore.General.ConvertListToObservableList(sharedActivities.Where(x => x.Guid == mPOM.ActivitiesGuid.FirstOrDefault(y => y == x.Guid)).ToList());
+                    mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(pomActivities, mContext);
+                    xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
                 }
             }
             else

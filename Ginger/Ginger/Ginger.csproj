@@ -2494,4 +2494,10 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Update="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMAutoLearnedActivitiesWizardPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+  </ItemGroup>
+
 </Project>

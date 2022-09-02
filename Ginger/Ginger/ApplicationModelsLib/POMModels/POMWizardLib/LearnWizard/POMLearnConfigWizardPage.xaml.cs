@@ -69,6 +69,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     SetAutoMapElementTypesGridView();
                     xLearnOnlyMappedElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
                     xLearnScreenshotsOfElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnScreenshotsOfElements));
+                    xAutoGenerateFlows.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.AutoGenerateFlows));
                     SetElementLocatorsSettingsGridView();
                     UpdateConfigsBasedOnAgentStatus();
                     PlatformSpecificUIManipulations();
@@ -134,10 +135,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (mAppPlatform == ePlatformType.Web)
             {
                 xLearnScreenshotsOfElements.Visibility = Visibility.Visible;
+                xAutoGenerateFlows.Visibility = Visibility.Visible;
             }
             else
             {
                 xLearnScreenshotsOfElements.Visibility = Visibility.Collapsed;
+                xAutoGenerateFlows.Visibility = Visibility.Collapsed;
             }
             mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
             foreach (Agent agent in mWizard.OptionalAgentsList)
@@ -260,6 +263,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
             xLearnOnlyMappedElements.IsEnabled = xAgentControlUC.AgentIsRunning;
             xLearnScreenshotsOfElements.IsEnabled = xAgentControlUC.AgentIsRunning;
+            xAutoGenerateFlows.IsEnabled = xAgentControlUC.AgentIsRunning;
             xAutoMapElementTypesExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
             xAutoMapElementTypesExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
             xElementLocatorsSettingsExpander.IsExpanded = xAgentControlUC.AgentIsRunning;

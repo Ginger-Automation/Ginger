@@ -45,6 +45,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             AddPage(Name: "Learned Objects Mapping", Title: "Learned Objects Mapping", SubTitle: "Map Learned Page Objects", Page: new POMObjectsMappingWizardPage());
 
+            AddPage(Name: "Auto Learned Activities", Title: "Auto Learned Activities", SubTitle: "Auto Learned Activities", Page: new POMAutoLearnedActivitiesWizardPage());
+
             AddPage(Name: "General Details", Title: "General Details", SubTitle: "New Page Objects Model General Details", Page: new POMGeneralDetailsWizardPage());
         }
 

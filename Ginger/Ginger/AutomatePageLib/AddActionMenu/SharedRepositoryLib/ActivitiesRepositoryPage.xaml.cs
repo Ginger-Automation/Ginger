@@ -42,7 +42,8 @@ namespace Ginger.Repository
     /// </summary>
     public partial class ActivitiesRepositoryPage : Page
     {
-        readonly RepositoryFolder<Activity> mActivitiesFolder;        
+        readonly RepositoryFolder<Activity> mActivitiesFolder;
+        ObservableList<Activity> mActivities;
         bool mInTreeModeView = false;
         ObservableList<Guid> mTags = new ObservableList<Guid>();
         RoutedEventHandler mAddActivityHandler;
@@ -89,6 +90,17 @@ namespace Ginger.Repository
             SetGridAndTreeData();
         }
 
+        public ActivitiesRepositoryPage(ObservableList<Activity> activities, Context context, ObservableList<Guid> Tags = null, RoutedEventHandler AddActivityHandler = null, ePageViewMode viewMode = ePageViewMode.Default)
+        {
+            InitializeComponent();
+
+            mActivities = activities;
+            mContext = context;
+
+            SetActivitiesRepositoryListView();
+            SetGridAndTreeData();
+        }
+
         private void SetGridAndTreeData()
         {
             xActivitiesRepositoryListView.ListTitleVisibility = Visibility.Hidden;
@@ -98,6 +110,11 @@ namespace Ginger.Repository
             xActivitiesRepositoryListView.ListSelectionMode = SelectionMode.Extended;
             mActionsListHelper.ListView = xActivitiesRepositoryListView;
 
+            if (mActivities != null)//to show pom specific activities
+            {
+                xActivitiesRepositoryListView.DataSourceList = mActivities;
+                return;
+            }
             if (mActivitiesFolder.IsRootFolder)
             {
                 xActivitiesRepositoryListView.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();

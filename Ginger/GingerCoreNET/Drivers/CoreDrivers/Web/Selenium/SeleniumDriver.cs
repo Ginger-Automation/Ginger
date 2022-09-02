@@ -3980,7 +3980,7 @@ namespace GingerCore.Drivers
         /// Else, it'll be skipped - Checking the performance
         /// </summary>
         public bool ExtraLocatorsRequired = true;
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, bool AutoGenerateFlows = true, ObservableList<Activity> PomActivityList = null)
         {
             return await Task.Run(() =>
             {
@@ -3994,7 +3994,7 @@ namespace GingerCore.Drivers
                     List<ElementInfo> list = new List<ElementInfo>();
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
-                    list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, relativeXpathTemplateList, LearnScreenshotsOfElements));
+                    list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, relativeXpathTemplateList, LearnScreenshotsOfElements, AutoGenerateFlows, PomActivityList));
                     allReadElem.Clear();
                     CurrentFrame = "";
                     Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
@@ -4010,10 +4010,13 @@ namespace GingerCore.Drivers
         }
 
 
-        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
+        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, bool AutoGenerateFlows = true, ObservableList<Activity> PomActivityList = null)
         {
             if (foundElementsList == null)
+            {
                 foundElementsList = new ObservableList<ElementInfo>();
+            }
+            List<HtmlNode> formElementsList = new List<HtmlNode>();
 
             string documentContents = Driver.PageSource;
             HtmlDocument htmlDoc = new HtmlDocument();
@@ -4130,8 +4133,13 @@ namespace GingerCore.Drivers
                             {
                                 newPath = path + "," + xpath;
                             }
-                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, relativeXpathTemplateList);
+                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, relativeXpathTemplateList, LearnScreenshotsOfElements, AutoGenerateFlows, PomActivityList);
                             Driver.SwitchTo().ParentFrame();
+                        }
+                        //get list of all form tags from the page to learn activities
+                        if (AutoGenerateFlows && eElementType.Form == elementTypeEnum.Item2)
+                        {
+                            formElementsList.Add(htmlElemNode);
                         }
                     }
                     catch (Exception ex)
@@ -4140,8 +4148,144 @@ namespace GingerCore.Drivers
                     }
                 }
             }
+            //TODO: Move this block outside the function
+            if (AutoGenerateFlows && formElementsList.Count() != 0)
+            {
+                int activityIndex = 1;
+                foreach (HtmlNode formElement in formElementsList)
+                {
+                    var formNameOrID = formElement.GetAttributeValue("name", "") != string.Empty ? formElement.GetAttributeValue("name", "") : formElement.GetAttributeValue("id", "");
+
+                    //Generate Activity
+                    Activity activity = new Activity();
+                    if (string.IsNullOrEmpty(formNameOrID))
+                    {
+                        activity.ActivityName = "POM Activity " + Driver.Title + activityIndex + " -Auto";
+                        activityIndex++;
+                    }
+                    else
+                    {
+                        string activityName = formNameOrID + " " + Driver.Title + " -Auto";
+                        if (PomActivityList.Any(x => x.ActivityName == activityName))
+                        {
+                            activity.ActivityName = formNameOrID + " " + Driver.Title + activityIndex + " -Auto";
+                        }
+                        else
+                        {
+                            activity.ActivityName = formNameOrID + " " + Driver.Title + " -Auto";
+                        }
+                    }
+                    activity.Active = true;
+
+                    //2. Generate actions from input elements
+                    IEnumerable<HtmlNode> formInputElements = ((HtmlNode)formElement).Descendants().Where(x => x.Name.StartsWith("input"));
+                    CreateActionFromElementAndAddToActivity(foundElementsList, formInputElements, activity);
+
+                    //3. Generate actions from button elements
+                    IEnumerable<HtmlNode> formButtonElements = ((HtmlNode)formElement).Descendants().Where(x => x.Name.StartsWith("button"));
+                    CreateActionFromElementAndAddToActivity(foundElementsList, formButtonElements, activity);
+
+                    PomActivityList.Add(activity);
+                }
+                //generate activity from found element actions
+            }
 
             return foundElementsList;
+        }
+
+        private void CreateActionFromElementAndAddToActivity(ObservableList<ElementInfo> foundElementsList, IEnumerable<HtmlNode> formChildElements, Activity activity)
+        {
+            string radioButtoNameOrID = string.Empty;
+            foreach (HtmlNode formChildElement in formChildElements)
+            {
+                IWebElement childElement = null;
+                if (formChildElement.Attributes.Contains("type"))
+                {
+                    if (formChildElement.GetAttributeValue("type", "hidden") == "hidden")
+                    {
+                        continue;
+                    }
+                    // Add only one action for each radio group
+                    if (formChildElement.GetAttributeValue("type", "radio") == "radio")
+                    {
+                        string radioName = formChildElement.GetAttributeValue("name", "") != null ? formChildElement.GetAttributeValue("name", "") : formChildElement.GetAttributeValue("id", "");
+                        
+                        if (radioButtoNameOrID != radioName)
+                        {
+                            radioButtoNameOrID = radioName;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                }
+                childElement = Driver.FindElement(By.XPath(formChildElement.XPath));
+                if (childElement == null)
+                {
+                    continue;
+                }
+                Tuple<string, eElementType> elementTypeEnum = GetElementTypeEnum(htmlNode: formChildElement);
+                HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
+                foundElemntInfo.ElementType = elementTypeEnum.Item1;
+                foundElemntInfo.ElementTypeEnum = elementTypeEnum.Item2;
+                foundElemntInfo.ElementObject = childElement;
+                foundElemntInfo.Path = String.Empty;
+                foundElemntInfo.XPath = formChildElement.XPath;
+                foundElemntInfo.HTMLElementObject = formChildElement;
+
+                ElementInfo matchingOriginalElement = ((IWindowExplorer)this).GetMatchingElement(foundElemntInfo, foundElementsList);
+                if (matchingOriginalElement == null)
+                {
+                    ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
+                    matchingOriginalElement = ((IWindowExplorer)this).GetMatchingElement(foundElemntInfo, foundElementsList);
+                }
+
+                if (!foundElementsList.Contains(matchingOriginalElement))
+                {
+                    foundElementsList.Add(foundElemntInfo);
+                }
+                //generate the action from found element
+                string elementVal = string.Empty;
+                if (foundElemntInfo.OptionalValuesObjectsList.Count > 0)
+                {
+                    elementVal = Convert.ToString(foundElemntInfo.OptionalValuesObjectsList.Where(v => v.IsDefault).FirstOrDefault().Value);
+                }
+                Platforms.PlatformsInfo.WebPlatform webPlatform = new Platforms.PlatformsInfo.WebPlatform();
+                ElementActionCongifuration actConfigurations = null;
+                if (matchingOriginalElement == null)
+                {
+                    actConfigurations = new ElementActionCongifuration
+                    {
+                        LocateBy = eLocateBy.POMElement,
+                        LocateValue = foundElemntInfo.ParentGuid.ToString() + "_" + foundElemntInfo.Guid.ToString(),
+                        ElementValue = elementVal,
+                        AddPOMToAction = true,
+                        POMGuid = foundElemntInfo.ParentGuid.ToString(),
+                        ElementGuid = foundElemntInfo.Guid.ToString(),
+                        LearnedElementInfo = foundElemntInfo,
+                        Type = foundElemntInfo.ElementTypeEnum
+                    };
+                }
+                else
+                {
+                    actConfigurations = new ElementActionCongifuration
+                    {
+                        LocateBy = eLocateBy.POMElement,
+                        LocateValue = matchingOriginalElement.ParentGuid.ToString() + "_" + matchingOriginalElement.Guid.ToString(),
+                        ElementValue = elementVal,
+                        AddPOMToAction = true,
+                        POMGuid = matchingOriginalElement.ParentGuid.ToString(),
+                        ElementGuid = matchingOriginalElement.Guid.ToString(),
+                        LearnedElementInfo = matchingOriginalElement,
+                        Type = matchingOriginalElement.ElementTypeEnum
+                    };
+                }
+                Act pomAction = (webPlatform as Amdocs.Ginger.CoreNET.IPlatformInfo).GetPlatformAction(matchingOriginalElement ?? foundElemntInfo, actConfigurations);
+
+                pomAction.Active = true;
+                activity.Acts.Add(pomAction);
+            }
         }
 
         Regex AttRegex = new Regex("@[a-zA-Z]*", RegexOptions.Compiled);

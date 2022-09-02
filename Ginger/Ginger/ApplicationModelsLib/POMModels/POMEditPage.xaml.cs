@@ -23,6 +23,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.Agents;
 using Ginger.BusinessFlowWindows;
+using Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
@@ -48,6 +49,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
     {
         ApplicationPOMModel mPOM;
         ScreenShotViewPage mScreenShotViewPage;
+        ActivitiesRepositoryPage mActivitiesRepositoryViewPage;
         GenericWindow mWin;
         public bool IsPageSaved = false;
         public eRIPageViewMode mEditMode { get; set; }
@@ -125,6 +127,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
             xUIElementsFrame.Content = mPomAllElementsPage;
+            //filre POM Activities to show
+            ObservableList<Activity> sharedActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            ObservableList<Activity> pomActivities = GingerCore.General.ConvertListToObservableList(sharedActivities.Where(x => x.Guid == POM.ActivitiesGuid.FirstOrDefault(y => y == x.Guid)).ToList());
+
+            mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(pomActivities, new Context());
+            xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
 
             mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
             UIElementTabTextBlockUpdate();

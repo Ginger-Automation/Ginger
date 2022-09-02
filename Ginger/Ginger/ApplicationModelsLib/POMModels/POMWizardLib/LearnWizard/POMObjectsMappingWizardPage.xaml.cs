@@ -80,6 +80,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         mPomAllElementsPage.StopSpy();
                     }
                     mWizard.mPomLearnUtils.ClearStopLearning();
+                    mWizard.mPomLearnUtils.AddAutoLearnedGotoURLPomActionToActivities();
+                    mWizard.mPomLearnUtils.AddAutoLearnedActivitiesToPOM();
                     break;
                 case EventType.Cancel:
                     if (mPomAllElementsPage != null)

@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Activities;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -255,5 +256,8 @@ namespace Amdocs.Ginger.Repository
                 OnPropertyChanged(nameof(this.IsCollapseDetailsExapander));
             }
         }
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<Guid> ActivitiesGuid { get; set; } = new ObservableList<Guid>();
     }
 }
