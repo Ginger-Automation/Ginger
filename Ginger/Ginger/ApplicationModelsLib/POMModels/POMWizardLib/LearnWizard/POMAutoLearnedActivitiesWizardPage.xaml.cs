@@ -65,6 +65,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 case EventType.LeavingForNextPage:
                     DeleteTemporaryPOM();
                     break;
+                default:
+                    //nothing to do
+                    break;
             }
         }
 
