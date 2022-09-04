@@ -310,7 +310,7 @@ namespace GingerCore.Actions.VisualTesting
             try
             {
                 runner = new ClassicRunner();
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any() && ((GingerExecutionEngine)WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners[0].Executor).ExecutedFrom == eExecutedFrom.Run)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any(x=>x.Executor.IsRunning == true))
                 {
                     runner.DontCloseBatches = true;
                 }
@@ -466,7 +466,7 @@ namespace GingerCore.Actions.VisualTesting
         private void SetUp(Eyes eyes,string AppilToolServerUrl,string AppilToolsApiKey, eBrowserType BrowserType,string Environment)
         {
             Applitools.Selenium.Configuration config = new Applitools.Selenium.Configuration();
-            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any() && ((GingerExecutionEngine)WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners[0].Executor).ExecutedFrom == eExecutedFrom.Run)
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any(x => x.Executor.IsRunning == true))
             {
                 BatchInfo batchInfo = new BatchInfo(WorkSpace.Instance.RunsetExecutor.RunSetConfig.ItemName);
 
