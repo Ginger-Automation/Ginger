@@ -151,7 +151,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
                 if (statusItem.Count > 0)
                 {
-                    await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(businessFlow.Name, businessFlow.StartTimeStamp, businessFlow.EndTimeStamp, statusItem[0].Type);
+                    await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(businessFlow.Name, businessFlow.Guid, businessFlow.StartTimeStamp, businessFlow.EndTimeStamp, statusItem[0].Type);
                 }
             }
         }
@@ -160,7 +160,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         {
             if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel == SealightsConfiguration.eSealightsEntityLevel.BusinessFlow)
             {
-                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(businessFlow.Name, businessFlow.StartTimeStamp, businessFlow.EndTimeStamp, "Skipped");
+                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(businessFlow.Name, businessFlow.Guid, businessFlow.StartTimeStamp, businessFlow.EndTimeStamp, "Skipped");
             }
         }
 
@@ -190,7 +190,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
                 if (statusItem.Count > 0)
                 {
-                    await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activity.ActivityName, activity.StartTimeStamp, activity.EndTimeStamp, statusItem[0].Type);
+                    await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activity.ActivityName, activity.Guid, activity.StartTimeStamp, activity.EndTimeStamp, statusItem[0].Type);
                 }
             }
         }
@@ -223,7 +223,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
                 if (statusItem.Count > 0)
                 {
-                    await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activityGroup.Name, activityGroup.StartTimeStamp, activityGroup.EndTimeStamp, statusItem[0].Type);
+                    await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activityGroup.Name, activityGroup.Guid, activityGroup.StartTimeStamp, activityGroup.EndTimeStamp, statusItem[0].Type);
                 }
             }
         }
@@ -232,7 +232,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         {
             if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel == SealightsConfiguration.eSealightsEntityLevel.ActivitiesGroup)
             {
-                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activityGroup.Name, activityGroup.StartTimeStamp, activityGroup.EndTimeStamp, "Skipped");
+                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activityGroup.Name, activityGroup.Guid, activityGroup.StartTimeStamp, activityGroup.EndTimeStamp, "Skipped");
             }
         }
 
@@ -259,7 +259,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         {
             if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel == SealightsConfiguration.eSealightsEntityLevel.Activity)
             {
-                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activity.ActivityName, activity.StartTimeStamp, activity.EndTimeStamp, "Skipped");
+                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activity.ActivityName, activity.Guid, activity.StartTimeStamp, activity.EndTimeStamp, "Skipped");
             }
         }
     }

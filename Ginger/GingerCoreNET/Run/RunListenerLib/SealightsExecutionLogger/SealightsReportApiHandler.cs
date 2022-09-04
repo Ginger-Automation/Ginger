@@ -83,14 +83,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             }
         }
 
-        public async Task SendingTestEventsToSealightsAsync(string name, DateTime startTime, DateTime endTime, string status)
+        public async Task SendingTestEventsToSealightsAsync(string name, Guid externalId, DateTime startTime, DateTime endTime, string status)
         {
             if (restClient != null)
             {                
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Starting to Send Test Events to Sealights"));
 
                 string message = string.Format("Sending Test Events to Sealights");
-                bool responseIsSuccess = await SendRestRequestTestEvents(SEND_CREATEION_TEST_SESSION, Method.Post, name, startTime, endTime, status).ConfigureAwait(false);
+                bool responseIsSuccess = await SendRestRequestTestEvents(SEND_CREATEION_TEST_SESSION, Method.Post, name, externalId, startTime, endTime, status).ConfigureAwait(false);
                 if (responseIsSuccess)
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Successfully sent " + message);
@@ -158,16 +158,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 sessionTimeout = mVE.ValueCalculated;
 
                 //  Check Sealights's values on run-set levels
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId != null)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId != null)
                 {
-                    labId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId;
+                    labId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId;
 
                     mVE.Value = labId;
                     labId = mVE.ValueCalculated;
                 }
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID != null)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID != null)
                 {
-                    bsId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID;
+                    bsId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID;
 
                     mVE.Value = bsId;
                     bsId = mVE.ValueCalculated;
@@ -217,7 +217,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         }
 
 
-        private async Task<bool> SendRestRequestTestEvents(string api, Method apiMethod, string name, DateTime startTime, DateTime endTime, string status)
+        private async Task<bool> SendRestRequestTestEvents(string api, Method apiMethod, string name, Guid externalId, DateTime startTime, DateTime endTime, string status)
         {
             try
             {
@@ -231,7 +231,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 long unixStartTime = new DateTimeOffset(startTime).ToUnixTimeMilliseconds();
                 long unixEndTime = new DateTimeOffset(endTime).ToUnixTimeMilliseconds();
                              
-                restRequest.AddJsonBody( new[] { new { name = name, start = unixStartTime, end = unixEndTime, status = status } } ); // Anonymous type object is converted to Json body
+                restRequest.AddJsonBody( new[] { new { name = name, externalId = externalId, start = unixStartTime, end = unixEndTime, status = status } } ); // Anonymous type object is converted to Json body
 
                 RestResponse response = await restClient.ExecuteAsync(restRequest);
 

@@ -102,32 +102,32 @@ namespace Ginger.Run
             }
         }
 
-        private string mSealighsLabId;
+        private string mSealightsLabId;
         [IsSerializedForLocalRepository]
-        public string SealighsLabId
+        public string SealightsLabId
         {
-            get { return mSealighsLabId; }
+            get { return mSealightsLabId; }
             set
             {
-                if (mSealighsLabId != value)
+                if (mSealightsLabId != value)
                 {
-                    mSealighsLabId = value;
-                    OnPropertyChanged(nameof(SealighsLabId));
+                    mSealightsLabId = value;
+                    OnPropertyChanged(nameof(SealightsLabId));
                 }
             }
         }
 
-        private string mSealighsBuildSessionID;
+        private string mSealightsBuildSessionID;
         [IsSerializedForLocalRepository]
-        public string SealighsBuildSessionID
+        public string SealightsBuildSessionID
         {
-            get { return mSealighsBuildSessionID; }
+            get { return mSealightsBuildSessionID; }
             set
             {
-                if (mSealighsBuildSessionID != value)
+                if (mSealightsBuildSessionID != value)
                 {
-                    mSealighsBuildSessionID = value;
-                    OnPropertyChanged(nameof(SealighsBuildSessionID));
+                    mSealightsBuildSessionID = value;
+                    OnPropertyChanged(nameof(SealightsBuildSessionID));
                 }
             }
         }

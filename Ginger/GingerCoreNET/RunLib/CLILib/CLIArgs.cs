@@ -90,13 +90,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 options.SealightsAgentToken = solution.SealightsConfiguration.SealightsAgentToken;
 
                 //  Check Sealights's values on run-set levels
-                if (runsetExecutor.RunSetConfig.SealighsLabId != null)
+                if (runsetExecutor.RunSetConfig.SealightsLabId != null)
                 {
-                    options.SealightsLabID = runsetExecutor.RunSetConfig.SealighsLabId;
+                    options.SealightsLabID = runsetExecutor.RunSetConfig.SealightsLabId;
                 }
-                if (runsetExecutor.RunSetConfig.SealighsBuildSessionID != null)
+                if (runsetExecutor.RunSetConfig.SealightsBuildSessionID != null)
                 {
-                    options.SealightsSessionID = runsetExecutor.RunSetConfig.SealighsBuildSessionID;
+                    options.SealightsSessionID = runsetExecutor.RunSetConfig.SealightsBuildSessionID;
                 }
                 if (runsetExecutor.RunSetConfig.SealightsTestStage != null)
                 {

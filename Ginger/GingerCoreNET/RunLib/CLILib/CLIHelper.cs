@@ -362,6 +362,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public bool SetSealights()
         {
             WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog = SealightsEnable ? SealightsConfiguration.eSealightsLog.Yes : SealightsConfiguration.eSealightsLog.No;
+            SealightsUrl = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsURL;
 
             if (SealightsEnable) 
             {
@@ -379,8 +380,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     if (SealightsEntityLevel != null) WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel = (SealightsConfiguration.eSealightsEntityLevel)Enum.Parse(typeof(SealightsConfiguration.eSealightsEntityLevel), SealightsEntityLevel);
 
                     // Override the Sealights RunSet's settings with the CLI's settings
-                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId = SealightsLabID;
-                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID = SealightsSessionID;
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId = SealightsLabID;
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID = SealightsSessionID;
                     WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage = SealightsTestStage;
 
                     if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsSessionTimeout == null)
@@ -578,6 +579,43 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to Check-in self healing changes in source control");
             }
+        }
+
+        internal void SetSealightsEnable(bool value)
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsEnable: '" + value + "'");
+            SealightsEnable = value;
+        }
+        internal void SetSealightsAgentToken(string value)
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsAgentToken: '" + value + "'");
+            SealightsAgentToken = value;
+        }
+        internal void SetSealightsLabID(string value)
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsLabID: '" + value + "'");
+            SealightsLabID = value;
+        }
+        internal void SetSealightsBuildSessionID(string value)
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsBSId: '" + value + "'");
+            SealightsSessionID = value;
+        }
+        internal void SetSealightsSessionTimeout(int value)
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsSessionTimeout: '" + value.ToString() + "'");
+            SealightsSessionTimeOut = value.ToString();
+        }
+        internal void SetSealightsTestStage(string value)
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsTestStage: '" + value + "'");
+            SealightsTestStage = value;
+        }
+
+        internal void SetSealightsEntityLevel(string value)
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsEntityLevel: '" + value + "'");
+            SealightsEntityLevel = value;
         }
     }
 }

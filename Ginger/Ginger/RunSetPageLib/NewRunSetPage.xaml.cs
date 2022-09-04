@@ -623,12 +623,12 @@ namespace Ginger.Run
 
             // Value expression textboxes
             xSealightsTestStageTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealightsTestStage));
-            xSealighsLabIdTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealighsLabId));
-            xSealighsBuildSessionIDTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID));
+            xSealighsLabIdTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealightsLabId));
+            xSealighsBuildSessionIDTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealightsBuildSessionID));
                       
             // check if fields have been populated (font-end validation)
-            xSealighsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID), "Lab ID or Build Session ID must be provided"));
-            xSealighsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealighsLabId), "Lab ID or Build Session ID must be provided"));
+            xSealighsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
+            xSealighsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsLabId), "Lab ID or Build Session ID must be provided"));
             xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
 
             mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsLabId));
@@ -655,7 +655,7 @@ namespace Ginger.Run
             }
 
 
-            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId == null)
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId == null)
             {
                 xDefaultLabIdRadioBtn.IsChecked = true;
                 xSealighsLabIdTextBox.Visibility = Visibility.Collapsed;
@@ -666,7 +666,7 @@ namespace Ginger.Run
                 XCustomLabIdRadioBtn_Checked(null, null);
             }
 
-            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null)
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID == null)
             {
                 xDefaultSessionIdRadioBtn.IsChecked = true;
                 xSealighsBuildSessionIDTextBox.Visibility = Visibility.Collapsed;
@@ -683,8 +683,8 @@ namespace Ginger.Run
             {
                 xSealighsExpander.Visibility = Visibility.Collapsed;
             }
-            else if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null &&
-                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId == null &&
+            else if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID == null &&
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId == null &&
                 WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage == null)
             {
                 xSealighsExpander.IsExpanded = false; //Sealight expand control should collapsed if all 3 Sealights' settings are in ‘Default’ mode.
@@ -700,9 +700,9 @@ namespace Ginger.Run
         {
             xSealighsBuildSessionIDTextBox.Visibility = Visibility.Visible;
 
-            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID.Trim() == "")
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID.Trim() == "")
             {
-                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID;
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID;
             }
         }
 
@@ -710,9 +710,9 @@ namespace Ginger.Run
         {
             xSealighsLabIdTextBox.Visibility = Visibility.Visible;
 
-            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId.Trim() == "")
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId.Trim() == "")
             {
-                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLabId;
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLabId;
             }
         }
 
@@ -737,13 +737,13 @@ namespace Ginger.Run
         private void XDefaultLabIdRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
             xSealighsLabIdTextBox.Visibility = Visibility.Collapsed;
-            WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId = null;
+            WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId = null;
         }
 
         private void XDefaultSessionIdRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
             xSealighsBuildSessionIDTextBox.Visibility = Visibility.Collapsed;
-            WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID = null;
+            WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID = null;
         }
 
         void InitRunSetInfoSection()

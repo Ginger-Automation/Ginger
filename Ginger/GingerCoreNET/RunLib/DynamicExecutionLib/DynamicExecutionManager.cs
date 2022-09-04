@@ -519,13 +519,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 sealightsDetails.SealightsAgentToken = solution.SealightsConfiguration.SealightsAgentToken;
 
                 //  Check Sealights's values on run-set levels
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId != null)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId != null)
                 {
-                    sealightsDetails.SealightsLabId = runsetExecutor.RunSetConfig.SealighsLabId;
+                    sealightsDetails.SealightsLabId = runsetExecutor.RunSetConfig.SealightsLabId;
                 }
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID != null)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID != null)
                 {
-                    sealightsDetails.SealightsBSId = runsetExecutor.RunSetConfig.SealighsBuildSessionID;
+                    sealightsDetails.SealightsBSId = runsetExecutor.RunSetConfig.SealightsBuildSessionID;
                 }
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage != null)
                 {
@@ -891,6 +891,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 runSetConfig.ExecutionID = (Guid)gingerExecConfig.ExecutionID;
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Using provided ExecutionID '{0}'.", runSetConfig.ExecutionID.ToString()));
+            }
+
+            if (gingerExecConfig.SealightsDetails != null)
+            {
+                runSetConfig.SealightsBuildSessionID = gingerExecConfig.SealightsDetails.SealightsBSId;
+                runSetConfig.SealightsLabId = gingerExecConfig.SealightsDetails.SealightsLabId;
+                runSetConfig.SealightsTestStage = gingerExecConfig.SealightsDetails.SealightsTestStage;
             }
 
             if (!String.IsNullOrEmpty(gingerExecConfig.Runset.Description))
