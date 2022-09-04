@@ -37,7 +37,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public enum eCLIType
     {
-        Config,Dynamic,Script,Arguments
+        Config, Dynamic, Script, Arguments
     }
 
     public class CLIHelper : INotifyPropertyChanged
@@ -62,7 +62,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SealightsSessionTimeOut;
         public string SealightsTestStage;
         public string SealightsEntityLevel;
-        
+
 
         public bool SelfHealingCheckInConfigured;
 
@@ -122,7 +122,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        
+
 
         bool mRunAnalyzer;
         public bool RunAnalyzer
@@ -362,9 +362,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public bool SetSealights()
         {
             WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog = SealightsEnable ? SealightsConfiguration.eSealightsLog.Yes : SealightsConfiguration.eSealightsLog.No;
-            SealightsUrl = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsURL;
+            if (String.IsNullOrEmpty(SealightsUrl) && !String.IsNullOrEmpty(WorkSpace.Instance.Solution.SealightsConfiguration.SealightsURL))
+            {
+                SealightsUrl = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsURL;
+            }
 
-            if (SealightsEnable) 
+            if (SealightsEnable)
             {
                 // Validation
                 if (SealightsUrl != null && SealightsAgentToken != null && (SealightsLabID != null || SealightsSessionID != null) &&
@@ -389,7 +392,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID = "14400"; // Default setting
                     }
                     return true;
-                }  
+                }
                 else
                 {
                     return false;
@@ -421,7 +424,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     pswd = EncryptionHandler.DecryptwithKey(WorkSpace.Instance.UserProfile.SourceControlPass, EncryptionKey);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     string mess = ex.Message; //To avoid warning of ex not used
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to decrypt the source control password");//not showing ex details for not showing the password by mistake in log
@@ -462,7 +465,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     value = "http://" + value;
                 }
-            }        
+            }
 
             WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress = value;
         }
@@ -506,7 +509,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
             else if (value.Equals("SVN"))
             {
-               WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
+                WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.SVN;
             }
             else
             {
@@ -536,7 +539,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 WorkSpace.Instance.CloseSolution();
             }
             catch (Exception ex)
-            { 
+            {
                 Reporter.ToLog(eLogLevel.ERROR, "Unexpected Error occurred while closing the Solution", ex);
             }
         }
@@ -556,13 +559,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution();
 
             //TODO: We don't have save all option yet. iterating each item then save it. So, need to add save all option on solution level
-            var POMs =WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
+            var POMs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
 
-            foreach(ApplicationPOMModel pom in POMs)
+            foreach (ApplicationPOMModel pom in POMs)
             {
-                if(pom.DirtyStatus == Common.Enums.eDirtyStatus.Modified)
+                if (pom.DirtyStatus == Common.Enums.eDirtyStatus.Modified)
                 {
-                   WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(pom);
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(pom);
                 }
             }
 
@@ -581,35 +584,57 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        internal void SetSealightsEnable(bool value)
+        internal void SetSealightsEnable(bool? value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsEnable: '" + value + "'");
-            SealightsEnable = value;
+            if (value != null)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsEnable: '" + value + "'");
+                SealightsEnable = (bool)value;
+            }
         }
         internal void SetSealightsAgentToken(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsAgentToken: '" + value + "'");
-            SealightsAgentToken = value;
+            if (!String.IsNullOrEmpty(value))
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsAgentToken: '" + value + "'");
+                SealightsAgentToken = value;
+            }
         }
         internal void SetSealightsLabID(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsLabID: '" + value + "'");
-            SealightsLabID = value;
+            if (!String.IsNullOrEmpty(value))
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsLabID: '" + value + "'");
+                SealightsLabID = value;
+            }
         }
         internal void SetSealightsBuildSessionID(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsBSId: '" + value + "'");
-            SealightsSessionID = value;
+            if (!String.IsNullOrEmpty(value))
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsBSId: '" + value + "'");
+                SealightsSessionID = value;
+            }
         }
-        internal void SetSealightsSessionTimeout(int value)
+        internal void SetSealightsSessionTimeout(int? value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsSessionTimeout: '" + value.ToString() + "'");
-            SealightsSessionTimeOut = value.ToString();
+            if (value != null)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsSessionTimeout: '" + value.ToString() + "'");
+                SealightsSessionTimeOut = value.ToString();
+            }
+            else
+            {
+                SealightsSessionTimeOut = "14400";
+            }
         }
         internal void SetSealightsTestStage(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsTestStage: '" + value + "'");
-            SealightsTestStage = value;
+            if (!String.IsNullOrEmpty(value))
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsTestStage: '" + value + "'");
+                SealightsTestStage = value;
+            }
         }
 
         internal void SetSealightsEntityLevel(string value)

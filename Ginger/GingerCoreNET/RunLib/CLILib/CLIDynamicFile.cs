@@ -149,13 +149,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
                 if (exeConfiguration.SealightsDetails != null)
                 {
-                    cliHelper.SetSealightsEnable((bool)exeConfiguration.SealightsDetails.SealightsEnable);
+                    cliHelper.SetSealightsEnable(exeConfiguration.SealightsDetails.SealightsEnable);
                     cliHelper.SetSealightsAgentToken(exeConfiguration.SealightsDetails.SealightsAgentToken);
                     cliHelper.SetSealightsBuildSessionID(exeConfiguration.SealightsDetails.SealightsBSId);
                     cliHelper.SetSealightsLabID(exeConfiguration.SealightsDetails.SealightsLabId);
-                    cliHelper.SetSealightsSessionTimeout((int)exeConfiguration.SealightsDetails.SealightsSessionTimeout);
+                    cliHelper.SetSealightsSessionTimeout(exeConfiguration.SealightsDetails.SealightsSessionTimeout);
                     cliHelper.SetSealightsTestStage(exeConfiguration.SealightsDetails.SealightsTestStage);
-                    cliHelper.SetSealightsEntityLevel(Enum.GetName(typeof(SealightsDetails.eSealightsEntityLevel), exeConfiguration.SealightsDetails.SealightsEntityLevel));
+                    if(exeConfiguration.SealightsDetails.SealightsEntityLevel != null) cliHelper.SetSealightsEntityLevel(Enum.GetName(typeof(SealightsDetails.eSealightsEntityLevel), exeConfiguration.SealightsDetails.SealightsEntityLevel));
                 }
             }
             else
