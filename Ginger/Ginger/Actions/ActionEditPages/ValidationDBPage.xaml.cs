@@ -428,7 +428,7 @@ namespace Ginger.Actions
                 TableColWhereStackPanel.Visibility = Visibility.Collapsed;
                 return;
             }
-            if (!string.IsNullOrEmpty(AppNameComboBox.Text))
+            if (!string.IsNullOrEmpty(AppNameComboBox.Text) && AppNameComboBox.Items.Count > 0)
             {
                 EA = pe.Applications.FirstOrDefault(m => m.Name.Equals(AppNameComboBox.Text));
             }
