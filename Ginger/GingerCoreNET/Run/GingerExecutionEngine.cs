@@ -4317,29 +4317,36 @@ namespace Ginger.Run
 
         public void CloseAgents()
         {
-            foreach (ApplicationAgent p in mGingerRunner.ApplicationAgents)
+            if (mGingerRunner.KeepAgentOn && !WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunModeParallel)
             {
-                if (p.Agent != null)
-                {
-                    if (p.Agent.AgentOperations == null)
-                    {
-                        p.Agent.AgentOperations = new AgentOperations(p.Agent);
-                    }
-                    try
-                    {
-                        ((Agent)p.Agent).AgentOperations.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        if (p.Agent.Name != null)
-                            Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Close the '{0}' Agent", p.Agent.Name), ex);
-                        else
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to Close the Agent", ex);
-                    }
-                    ((AgentOperations)((Agent)p.Agent).AgentOperations).IsFailedToStart = false;
-                }
+                return;
             }
-            AgentsRunning = false;
+            else 
+            { 
+                foreach (ApplicationAgent p in mGingerRunner.ApplicationAgents)
+                {
+                    if (p.Agent != null)
+                    {
+                        if (p.Agent.AgentOperations == null)
+                        {
+                            p.Agent.AgentOperations = new AgentOperations(p.Agent);
+                        }
+                        try
+                        {
+                            ((Agent)p.Agent).AgentOperations.Close();
+                        }
+                        catch (Exception ex)
+                        {
+                            if (p.Agent.Name != null)
+                                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Close the '{0}' Agent", p.Agent.Name), ex);
+                            else
+                                Reporter.ToLog(eLogLevel.ERROR, "Failed to Close the Agent", ex);
+                        }
+                        ((AgentOperations)((Agent)p.Agent).AgentOperations).IsFailedToStart = false;
+                    }
+                }
+                AgentsRunning = false;
+            }
         }
 
         public void ResetFailedToStartFlagForAgents()

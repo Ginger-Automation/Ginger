@@ -211,6 +211,21 @@ namespace Ginger.Run
             }
         }
 
+        private bool mKeepAgentOn;
+        [IsSerializedForLocalRepository]
+        public bool KeepAgentOn
+        {
+            get
+            {
+                return mKeepAgentOn;
+            }
+            set
+            {
+                mKeepAgentOn = value;
+                OnPropertyChanged(nameof(GingerRunner.KeepAgentOn));
+            }
+        }
+
         private bool mRunInVisualTestingMode = true;
         [IsSerializedForLocalRepository(true)]
         public bool RunInVisualTestingMode

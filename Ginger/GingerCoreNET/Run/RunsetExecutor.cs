@@ -829,24 +829,31 @@ namespace Ginger.Run
         {
             lock (locker)
             {
-                var appAgents = runner.GingerRunner.ApplicationAgents.Where(x => x.Agent != null && ((Agent)x.Agent).IsVirtual).ToList();
-
-                if (appAgents.Count > 0)
+                if (runner.GingerRunner.KeepAgentOn && !WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunModeParallel)
                 {
-                    for (var i = 0; i < appAgents.Count; i++)
+                    return;
+                }
+                else
+                {
+                    var appAgents = runner.GingerRunner.ApplicationAgents.Where(x => x.Agent != null && ((Agent)x.Agent).IsVirtual).ToList();
+
+                    if (appAgents.Count > 0)
                     {
-                        var virtualAgent = (Agent)appAgents[i].Agent;
-
-                        var realAgent = runset.ActiveAgentList.Where(x => ((Agent)x).Guid.ToString() == virtualAgent.ParentGuid.ToString()).FirstOrDefault();
-
-                        if (realAgent != null)
+                        for (var i = 0; i < appAgents.Count; i++)
                         {
-                            var runsetVirtualAgent = runset.ActiveAgentList.Where(x => ((Agent)x).Guid == ((Agent)virtualAgent).Guid).FirstOrDefault();
-                            appAgents[i].Agent = realAgent;
+                            var virtualAgent = (Agent)appAgents[i].Agent;
 
-                            if (runsetVirtualAgent != null)
+                            var realAgent = runset.ActiveAgentList.Where(x => ((Agent)x).Guid.ToString() == virtualAgent.ParentGuid.ToString()).FirstOrDefault();
+
+                            if (realAgent != null)
                             {
-                                runset.ActiveAgentList.Remove(runsetVirtualAgent);
+                                var runsetVirtualAgent = runset.ActiveAgentList.Where(x => ((Agent)x).Guid == ((Agent)virtualAgent).Guid).FirstOrDefault();
+                                appAgents[i].Agent = realAgent;
+
+                                if (runsetVirtualAgent != null)
+                                {
+                                    runset.ActiveAgentList.Remove(runsetVirtualAgent);
+                                }
                             }
                         }
                     }

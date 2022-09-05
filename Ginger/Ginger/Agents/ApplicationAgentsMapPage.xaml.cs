@@ -60,6 +60,13 @@ namespace Ginger.Agents
             AllowAgentsManipulation = allowAgentsManipulation;
             xAppAgentsListBox.Tag = AllowAgentsManipulation;//Placed here for binding with list dataTemplate- need better place
             mRunner.GingerRunner.PropertyChanged += MGR_PropertyChanged;
+
+            xKeepAgentOn.Visibility = Visibility.Collapsed;
+            if (!AllowAgentsManipulation && !WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunModeParallel)
+            {
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xKeepAgentOn, CheckBox.IsCheckedProperty, mRunner.GingerRunner, nameof(GingerRunner.KeepAgentOn));
+                xKeepAgentOn.Visibility = Visibility.Visible;
+            }
             
             RefreshApplicationAgentsList();
         }
@@ -144,6 +151,7 @@ namespace Ginger.Agents
                 }
             }
         }
+       
     }
 
     public class AgentForgroundTypeConverter : IValueConverter
