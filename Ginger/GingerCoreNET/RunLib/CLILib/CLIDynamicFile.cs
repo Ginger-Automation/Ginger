@@ -155,7 +155,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     cliHelper.SetSealightsLabID(exeConfiguration.SealightsDetails.SealightsLabId);
                     cliHelper.SetSealightsSessionTimeout(exeConfiguration.SealightsDetails.SealightsSessionTimeout);
                     cliHelper.SetSealightsTestStage(exeConfiguration.SealightsDetails.SealightsTestStage);
-                    if(exeConfiguration.SealightsDetails.SealightsEntityLevel != null) cliHelper.SetSealightsEntityLevel(Enum.GetName(typeof(SealightsDetails.eSealightsEntityLevel), exeConfiguration.SealightsDetails.SealightsEntityLevel));
+                    cliHelper.SetSealightsEntityLevel(Enum.GetName(typeof(SealightsDetails.eSealightsEntityLevel), exeConfiguration.SealightsDetails.SealightsEntityLevel));
                 }
             }
             else
