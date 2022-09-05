@@ -530,5 +530,63 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
             Assert.AreEqual(setErrorMsgExpectedResult, errorMsg, "Error Msg Result");
         }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void SelectionListVar_TestGetLength()
+        {
+            //Arrange
+            VariableSelectionList variableSelectionList = new VariableSelectionList();
+            OptionalValue newVal1 = new OptionalValue("One");
+            variableSelectionList.OptionalValuesList.Add(newVal1);
+            OptionalValue newVal2 = new OptionalValue("Two");
+            variableSelectionList.OptionalValuesList.Add(newVal2);
+
+            Dictionary<string, string> extraParamsDict = new Dictionary<string, string>();
+            extraParamsDict.TryAdd("GetLength", "True");
+            //Todo Add no loop ticker
+
+            // Act
+            string errorMsg = string.Empty;
+            string setValueResult = variableSelectionList.GetValueWithParam(extraParamsDict); ;
+
+            string setValueExpectedResult = "2";
+            string setErrorMsgExpectedResult = string.Empty;
+
+
+            //Assert
+            Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
+            Assert.AreEqual(setErrorMsgExpectedResult, errorMsg, "Error Msg Result");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void SelectionListVar_TestGetLengthWithError()
+        {
+            //Arrange
+            VariableSelectionList variableSelectionList = new VariableSelectionList();
+            OptionalValue newVal1 = new OptionalValue("One");
+            variableSelectionList.OptionalValuesList.Add(newVal1);
+            OptionalValue newVal2 = new OptionalValue("Two");
+            variableSelectionList.OptionalValuesList.Add(newVal2);
+
+            string errorMsg = string.Empty;
+            variableSelectionList.Value = variableSelectionList.OptionalValuesList[0].Value;
+
+            Dictionary<string, string> extraParamsDict = new Dictionary<string, string>();
+            extraParamsDict.TryAdd("GetLength", "False");
+            //Todo Add no loop ticker
+
+            // Act
+            string setValueResult = variableSelectionList.GetValueWithParam(extraParamsDict); ;
+
+            string setValueExpectedResult = "One";
+            string setErrorMsgExpectedResult = string.Empty;
+
+
+            //Assert
+            Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
+            Assert.AreEqual(setErrorMsgExpectedResult, errorMsg, "Error Msg Result");
+        }
     }
 }

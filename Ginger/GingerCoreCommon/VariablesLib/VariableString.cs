@@ -96,7 +96,5 @@ namespace GingerCore.Variables
         public override bool SupportResetValue { get { return true; } }
 
         public override bool SupportAutoValue { get { return false; } }
-
-
     }
 }

@@ -216,7 +216,8 @@ namespace GingerCore
             ReplaceEnvVars();
             ReplaceDataSources();
 
-            CalculateFunctions();
+            CalculateComplexFormulas();
+            ProcessGeneralFuncations();
             EvaluateFlowDetails();
             EvaluateCSharpFunctions();
             if (!string.IsNullOrEmpty(SolutionFolder))
@@ -1048,7 +1049,7 @@ namespace GingerCore
 
 
 
-        private void CalculateFunctions()
+        private void CalculateComplexFormulas()
         {
             string value = mValueCalculated;
             MatchCollection matches = rxe.Matches(value);
@@ -1095,7 +1096,6 @@ namespace GingerCore
                 }
 
             }
-            ProcessGeneralFuncations();
 
         }
 
@@ -1123,7 +1123,7 @@ namespace GingerCore
             {
                 Match match = matches[i];
                 
-                if (!string.IsNullOrEmpty(match.Value))
+                if (!string.IsNullOrEmpty(match.Value) && match.Value.Contains('='))
                 {
                     string[] keyValue = match.Value.Split('=');
                     extraParamDict.TryAdd(keyValue[0].Trim(), keyValue[1].Trim());
@@ -1148,9 +1148,9 @@ namespace GingerCore
         {
             string pc = p.Substring(1, p.Length - 2);
             string[] a = pc.Split(' ');
-            string Function = a[0];
+            string expressionType = a[0];
 
-            switch (Function)
+            switch (expressionType)
             {
                 case "Var":
                     ReplaceVarWithValue(p, a);
@@ -1442,7 +1442,6 @@ namespace GingerCore
         private void ReplaceVarWithValue(string p, string[] a)
         {
             string VarName = null;
-            string tmp = mValueCalculated;
 
             Dictionary<string, string> extraParamDict = GetExtraParam(p);
 
@@ -1452,10 +1451,6 @@ namespace GingerCore
             if (!isNameExist)
             {
                 VarValue = "ERROR!!! Variable name does not exist, or does not written correctly.";
-            }
-            else
-            {
-                extraParamDict.Remove("Name");
             }
 
             VariableBase vb = null;
@@ -1470,6 +1465,8 @@ namespace GingerCore
 
             if (vb != null)
             {
+                extraParamDict.Remove("Name");
+
                 if (extraParamDict.Count > 0)
                 {
                     VarValue = vb.GetValueWithParam(extraParamDict);
@@ -1495,14 +1492,14 @@ namespace GingerCore
                     }
                 }
                 
-                mValueCalculated = tmp.Replace(p, VarValue);
+                mValueCalculated = mValueCalculated.Replace(p, VarValue);
             }
 
             //Use VBS instead of below
             else
             {
                 //TODO: throw excpetion, log handler
-                VarValue = "!!!" + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Not found!!! - " + a[1] + " <<<<<<<<<";
+                VarValue = "ERROR: The " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " " + a[1] + " was not found";
                 mValueCalculated = VarValue;
             }
         }

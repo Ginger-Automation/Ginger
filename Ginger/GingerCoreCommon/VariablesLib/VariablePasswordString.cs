@@ -88,23 +88,5 @@ namespace GingerCore.Variables
         public override bool SupportResetValue { get { return true; } }
 
         public override bool SupportAutoValue { get { return false; } }
-
-
-        //public override string GetValueWithParam(List<KeyValuePair<string, string>> extraParamDict)
-        //{
-        //    string strValuetoPass;
-        //    if (!EncryptionHandler.IsStringEncrypted(Value))
-        //    {
-        //        strValuetoPass = EncryptionHandler.EncryptwithKey(Value);
-        //    }
-        //    //strValuetoPass = EncryptionHandler.DecryptwithKey(Value);
-        //    if (!string.IsNullOrEmpty(strValuetoPass)) {
-        //        return strValuetoPass;
-        //    }
-        //    else 
-        //    { 
-        //        return Value; 
-        //    }
-        //}
     }
 }

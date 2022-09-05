@@ -224,7 +224,7 @@ namespace GingerCore.Variables
 
         public virtual string GetValueWithParam(Dictionary<string,string> extraParamDict) {return Value;}
 
-        public virtual List<string> GetExtraParamsDescription() { return null; }
+        public virtual List<string> GetExtraParamsList() { return null; }
 
         public abstract bool SupportResetValue { get; }
         public abstract bool SupportAutoValue { get; }

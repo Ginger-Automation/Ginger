@@ -110,7 +110,6 @@ namespace GingerCore.Variables
                     errorMsg = "Could not found the value entered for deletion";
                     return;
                 }
-                int index = OptionalValuesList.IndexOf(op);
 
                 OptionalValuesList.Remove(op);
 
@@ -118,13 +117,9 @@ namespace GingerCore.Variables
                 {
                     Value = string.Empty;
                 }
-                else if (Value == op.Value && index == 0)
+                else if (Value == op.Value)
                 {
-                    Value = OptionalValuesList[index].Value;
-                }
-                else if (Value == op.Value && index > 0)
-                {
-                    Value = OptionalValuesList[index - 1].Value;
+                    Value = OptionalValuesList[0].Value;
                 }
             }
             else
@@ -185,7 +180,7 @@ namespace GingerCore.Variables
             }
         }
 
-        public override List<string> GetExtraParamsDescription() 
+        public override List<string> GetExtraParamsList() 
         {
             List<string> extraParamsDescription = new List<string>();
             extraParamsDescription.Add("Index=1");
@@ -215,9 +210,9 @@ namespace GingerCore.Variables
                             }
                             else
                             {
-                                Reporter.ToUser(eUserMsgKey.ListOutOfBounds, "Index is out of bounds");
+                                Reporter.ToLog(eLogLevel.ERROR, "Error!! variable " + Name +": index is out of bounds");
+                                return "Error!! variable index is out of bounds";
                             }
-                            break;
                         }
                     case "GetLength":
                         {
@@ -225,7 +220,10 @@ namespace GingerCore.Variables
                             {
                                 return OptionalValuesList.Count.ToString();
                             }
-                            break;
+                            else
+                            {
+                                return Value;
+                            }
                         }
                     default:
                         continue;
@@ -304,15 +302,17 @@ namespace GingerCore.Variables
             supportedOperations.Add(VariableBase.eSetValueOptions.SetValue);
             supportedOperations.Add(VariableBase.eSetValueOptions.AutoGenerateValue);
             supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
-            supportedOperations.Add(VariableBase.eSetValueOptions.DynamicValueDeletion);
-            supportedOperations.Add(VariableBase.eSetValueOptions.DeleteAllValues);
+            if (IsDynamicValueModificationEnabled)
+            {
+                supportedOperations.Add(VariableBase.eSetValueOptions.DynamicValueDeletion);
+                supportedOperations.Add(VariableBase.eSetValueOptions.DeleteAllValues);
+            }
             return supportedOperations;
         }
 
         public override bool SupportResetValue { get { return true; } }
 
         public override bool SupportAutoValue { get { return true; } }
-
 
         public override void SetInitialSetup()
         {
@@ -323,6 +323,5 @@ namespace GingerCore.Variables
             OptionalValue newVal2 = new OptionalValue("Value2");
             OptionalValuesList.Add(newVal2);
         }
-
     }
 }

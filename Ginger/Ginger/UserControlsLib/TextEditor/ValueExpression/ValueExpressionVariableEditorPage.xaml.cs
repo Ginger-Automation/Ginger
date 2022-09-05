@@ -43,7 +43,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             var = variable;
 
             List<string> lst = new List<string>();
-            List<string> lstExtraParams = new List<string>();
+            List<string> lstExtraParams;
 
 
             // Add the variables from solution, current BF and current activity
@@ -73,7 +73,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             {
                 VarsListExtraParams.Visibility = System.Windows.Visibility.Visible;
                 lblExtraParams.Visibility = System.Windows.Visibility.Visible;
-                lstExtraParams = variable.GetExtraParamsDescription();
+                lstExtraParams = variable.GetExtraParamsList();
                 VarsListExtraParams.ItemsSource = lstExtraParams;
             }
             else
