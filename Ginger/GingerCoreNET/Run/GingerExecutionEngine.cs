@@ -4317,7 +4317,7 @@ namespace Ginger.Run
 
         public void CloseAgents()
         {
-            if (mGingerRunner.KeepAgentOn && !WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunModeParallel)
+            if (mGingerRunner.KeepAgentsOn && !WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunModeParallel)
             {
                 return;
             }

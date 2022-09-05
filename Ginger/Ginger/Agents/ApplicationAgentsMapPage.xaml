@@ -6,7 +6,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
-      d:DesignHeight="400" d:DesignWidth="600" ShowsNavigationUI="False"
+      d:DesignHeight="300" d:DesignWidth="600" ShowsNavigationUI="False"
 	Title="ApplicationAgentsMapPage">
 
     <Page.Resources>
@@ -33,6 +33,6 @@
             </ListBox.ItemTemplate>
 
         </ListBox>
-        <CheckBox x:Name="xKeepAgentOn" DockPanel.Dock="Top" Margin="5,10,0,0" Content="Keep Agents On, After Execution" ToolTip="Keep Agents on even after runner or runset execution completed." Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center"/>
+        <CheckBox x:Name="xKeepAgentsOn" DockPanel.Dock="Top" Margin="5,10,0,0" Content="Keep Agents On" ToolTip="Keep Agents on even after runner or runset execution completed." Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center"/>
     </StackPanel>
 </Page>

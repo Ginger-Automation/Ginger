@@ -829,7 +829,7 @@ namespace Ginger.Run
         {
             lock (locker)
             {
-                if (runner.GingerRunner.KeepAgentOn && !WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunModeParallel)
+                if (runner.GingerRunner.KeepAgentsOn && !WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunModeParallel)
                 {
                     return;
                 }

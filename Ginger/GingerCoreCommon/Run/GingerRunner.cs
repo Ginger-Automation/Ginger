@@ -211,18 +211,18 @@ namespace Ginger.Run
             }
         }
 
-        private bool mKeepAgentOn;
+        private bool mKeepAgentsOn;
         [IsSerializedForLocalRepository]
-        public bool KeepAgentOn
+        public bool KeepAgentsOn
         {
             get
             {
-                return mKeepAgentOn;
+                return mKeepAgentsOn;
             }
             set
             {
-                mKeepAgentOn = value;
-                OnPropertyChanged(nameof(GingerRunner.KeepAgentOn));
+                mKeepAgentsOn = value;
+                OnPropertyChanged(nameof(GingerRunner.KeepAgentsOn));
             }
         }
 
