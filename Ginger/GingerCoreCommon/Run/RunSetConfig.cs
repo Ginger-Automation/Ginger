@@ -430,5 +430,23 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
                 }
             }
         }
+
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {
+            if (errorType == SerializationErrorType.PropertyNotFound)
+            {
+                if (name == "SealighsLabId")
+                {
+                    this.mSealightsLabId = value;
+                    return true;
+                }
+                if (name == "SealighsBuildSessionID")
+                {
+                    this.mSealightsBuildSessionID = value;
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

@@ -596,7 +596,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             if (!String.IsNullOrEmpty(value))
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Selected SealightsAgentToken: '" + value + "'");
                 SealightsAgentToken = value;
             }
         }
