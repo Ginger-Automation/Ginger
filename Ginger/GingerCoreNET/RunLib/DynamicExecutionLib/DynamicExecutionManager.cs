@@ -612,6 +612,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 //
                 runner.RunInSimulationMode = gingerRunner.RunInSimulationMode;
                 runner.RunInVisualTestingMode = gingerRunner.RunInVisualTestingMode;
+                runner.KeepAgentsOpen = gingerRunner.KeepAgentsOn;
 
                 if (gingerRunner.BusinessFlowsRunList.Count > 0)
                 {
@@ -948,6 +949,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     if (runnerConfig.RunInVisualTestingMode.HasValue)
                     {
                         gingerRunner.RunInVisualTestingMode = runnerConfig.RunInVisualTestingMode.Value;
+                    }
+                    if (runnerConfig.KeepAgentsOpen.HasValue)
+                    {
+                        gingerRunner.KeepAgentsOn = runnerConfig.KeepAgentsOpen.Value;
                     }
 
                     if (runnerConfig.EnvironmentName != null || runnerConfig.EnvironmentID != null)
