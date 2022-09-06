@@ -436,12 +436,18 @@ namespace Ginger.ALM
             bool isExportSucc = true;
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
-                string testPlanUploadPath = AlmRepo.SelectALMTestPlanPath();
-                if (testPlanUploadPath == null)
-                    return false;
-                string testLabUploadPath = AlmRepo.SelectALMTestLabPath();
-                if (testLabUploadPath == null)
-                    return false;
+                string testPlanUploadPath = null;
+                string testLabUploadPath = null;
+                if (ALMCore.GetDefaultAlmConfig().AlmType != eALMType.Jira)
+                {
+                    testPlanUploadPath = AlmRepo.SelectALMTestPlanPath();
+                    if (testPlanUploadPath == null)
+                        return false;
+                    testLabUploadPath = AlmRepo.SelectALMTestLabPath();
+                    if (testLabUploadPath == null)
+                        return false;
+                }
+                
                 foreach (BusinessFlow bf in bfToExport)
                 {
                     if (!AlmRepo.ExportBusinessFlowToALM(bf, performSaveAfterExport, almConectStyle, testPlanUploadPath, testLabUploadPath))
