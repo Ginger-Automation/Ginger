@@ -17,17 +17,15 @@ limitations under the License.
 #endregion
 
 using System.Collections.Generic;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using GingerCore;
 
 namespace GingerCore.Variables
 {
     public class VariablePasswordString : VariableBase
     {
         public VariablePasswordString()
-        {
+        {       
         }
 
         public override string VariableUIType
@@ -39,10 +37,10 @@ namespace GingerCore.Variables
 
         private string mPassword;
         [IsSerializedForLocalRepository]
-        public string Password
+        public string Password 
         {
             set { mPassword = value; Value = value; OnPropertyChanged(nameof(this.Password)); OnPropertyChanged("Formula"); }
-            get
+            get 
             {
                 if (!string.IsNullOrEmpty(mPassword))
                 {
@@ -53,7 +51,7 @@ namespace GingerCore.Variables
                     mPassword = Value;
                 }
                 return mPassword;
-            }
+            } 
         }
 
         public override string GetFormula()
@@ -63,7 +61,7 @@ namespace GingerCore.Variables
 
         public override void ResetValue()
         {
-            Value = Password;
+            Value = Password; 
         }
 
         public override bool GenerateAutoValue(ref string errorMsg)
