@@ -4176,7 +4176,7 @@ namespace GingerCore.Drivers
                         }
                     }
                     activity.Active = true;
-
+                    activity.IsAutoLearned = true;
                     //2. Generate actions from input elements
                     IEnumerable<HtmlNode> formInputElements = ((HtmlNode)formElement).Descendants().Where(x => x.Name.StartsWith("input"));
                     CreateActionFromElementAndAddToActivity(foundElementsList, formInputElements, activity);

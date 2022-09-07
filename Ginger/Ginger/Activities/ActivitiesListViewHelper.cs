@@ -150,9 +150,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public ListItemUniqueIdentifier GetItemUniqueIdentifier(object item)
         {
             SetItem(item);
-
             if (mActivity.AddDynamicly)
-            {//Brushes.MediumPurple
+            {
                 return new ListItemUniqueIdentifier() { Color = "MediumPurple", Tooltip = "Added Dynamically from Shared Repository" };
             }
             else if (!mActivity.IsNotGherkinOptimizedActivity)
@@ -289,6 +288,16 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(item);
             List<ListItemNotification> notificationsList = new List<ListItemNotification>();
+
+            ListItemNotification autoLearned = new ListItemNotification();
+            autoLearned.AutomationID = "autoLearned";
+            autoLearned.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Retweet;
+            autoLearned.ToolTip = string.Format("{0} is auto learned activity", GingerDicser.GetTermResValue(eTermResKey.Activity));
+            autoLearned.ImageSize = 14;
+            autoLearned.BindingObject = mActivity;
+            autoLearned.BindingFieldName = nameof(Activity.IsAutoLearned);
+            autoLearned.BindingConverter = new BoolVisibilityConverter();
+            notificationsList.Add(autoLearned);
 
             ListItemNotification activitiesVarsDepInd = new ListItemNotification();
             activitiesVarsDepInd.AutomationID = "activitiesVarsDepInd";

@@ -974,6 +974,9 @@ namespace GingerCore
             }
         }
 
+        [IsSerializedForLocalRepository]
+        public bool IsAutoLearned { get; set; }
+
         public override eImageType ItemImageType
         {
             get
