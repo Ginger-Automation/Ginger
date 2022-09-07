@@ -428,6 +428,11 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         {
             if (AutoGenerateFlows && PomActivityList.Count > 0)
             {
+                var pom = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(POM.Guid);
+                if (pom != null)
+                {
+                    WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(POM);
+                }
                 if (mPomModelsFolder != null)
                 {
                     mPomModelsFolder.AddRepositoryItem(POM);
@@ -447,11 +452,8 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         {
             if (AutoGenerateFlows && PomActivityList.Count > 0)
             {
-                if (mPomModelsFolder != null)
-                {
-                    mPomModelsFolder.DeleteRepositoryItem(POM);
-                }
-                else
+                var pom = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(POM.Guid);
+                if (pom != null)
                 {
                     WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(POM);
                 }

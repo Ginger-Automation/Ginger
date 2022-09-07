@@ -44,6 +44,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
     {
         Activity mActivity;
         Context mContext;
+        ObservableList<Activity> mActivities;
 
         public General.eRIPageViewMode PageViewMode { get; set; }
 
@@ -78,10 +79,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public bool ExpandItemOnLoad { get; set; } = false;
 
-        public ActivitiesListViewHelper(Context context, General.eRIPageViewMode pageViewMode)
+        public ActivitiesListViewHelper(Context context, General.eRIPageViewMode pageViewMode, ObservableList<Activity> mActivities = null)
         {
             mContext = context;
             PageViewMode = pageViewMode;
+            this.mActivities = mActivities;
         }
 
         public void SetItem(object item)
@@ -373,7 +375,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             operationsList.Add(moveDown);
 
             ListItemOperation delete = new ListItemOperation();
-            delete.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            delete.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone, General.eRIPageViewMode.AllowOnlyDeleteRepository };
             delete.AutomationID = "delete";
             delete.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
             delete.ToolTip = "Delete";
@@ -873,7 +875,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(sender);
             if (Reporter.ToUser(eUserMsgKey.SureWantToDelete, mActivity.ActivityName) == eUserMsgSelection.Yes)
             {
-                mContext.BusinessFlow.DeleteActivity(mActivity);
+                if (mActivities != null)
+                {
+                    mActivities.Remove(mActivity);
+                }
+                else
+                {
+                    mContext.BusinessFlow.DeleteActivity(mActivity);
+                }
             }
         }
 

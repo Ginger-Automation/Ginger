@@ -89,6 +89,11 @@ namespace Ginger
             /// List of items in model to add  
             /// </summary>
             AddFromModel = 9,
+
+            /// <summary>
+            /// List of items in Shared Repository to Delete
+            /// </summary>
+            AllowOnlyDeleteRepository = 10,
         }
 
         public static bool isDesignMode()

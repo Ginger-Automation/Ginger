@@ -59,10 +59,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     break;
                 case EventType.Active:
                     //save pom and activities temporary
-                    SaveActivitiesAndPOMTemporary();
+                    SaveTemporaryPOM();
                     ShowAutoLearnedActivities();
                     break;
                 case EventType.LeavingForNextPage:
+                    DeleteTemporaryPOM();
+                    break;
+                case EventType.Cancel:
                     DeleteTemporaryPOM();
                     break;
                 default:
@@ -73,10 +76,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public void ShowAutoLearnedActivities()
         {
-            mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(mWizard.mPomLearnUtils.GetAutoLearnedActivities(), new Context());
+            mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(mWizard.mPomLearnUtils.GetAutoLearnedActivities(), new Context(), true);
             xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
         }
-        public void SaveActivitiesAndPOMTemporary()
+        public void SaveTemporaryPOM()
         {
             mWizard.mPomLearnUtils.SaveTemporaryPOM();
         }

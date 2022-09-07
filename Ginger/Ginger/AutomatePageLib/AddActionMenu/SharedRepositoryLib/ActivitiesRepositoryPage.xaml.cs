@@ -45,6 +45,7 @@ namespace Ginger.Repository
         readonly RepositoryFolder<Activity> mActivitiesFolder;
         ObservableList<Activity> mActivities;
         bool mInTreeModeView = false;
+        bool mAllowDelete = false;
         ObservableList<Guid> mTags = new ObservableList<Guid>();
         RoutedEventHandler mAddActivityHandler;
         Context mContext;
@@ -90,13 +91,13 @@ namespace Ginger.Repository
             SetGridAndTreeData();
         }
 
-        public ActivitiesRepositoryPage(ObservableList<Activity> activities, Context context, ObservableList<Guid> Tags = null, RoutedEventHandler AddActivityHandler = null, ePageViewMode viewMode = ePageViewMode.Default)
+        public ActivitiesRepositoryPage(ObservableList<Activity> activities, Context context, bool AllowDelete = false)
         {
             InitializeComponent();
 
             mActivities = activities;
             mContext = context;
-
+            mAllowDelete = AllowDelete;
             SetActivitiesRepositoryListView();
             SetGridAndTreeData();
         }
@@ -104,8 +105,15 @@ namespace Ginger.Repository
         private void SetGridAndTreeData()
         {
             xActivitiesRepositoryListView.ListTitleVisibility = Visibility.Hidden;
-            ActivitiesListViewHelper mActionsListHelper = new ActivitiesListViewHelper(mContext, General.eRIPageViewMode.AddFromShardRepository);
-
+            ActivitiesListViewHelper mActionsListHelper = null;
+            if (mAllowDelete)
+            {
+                mActionsListHelper = new ActivitiesListViewHelper(mContext, General.eRIPageViewMode.AllowOnlyDeleteRepository, mActivities);
+            }
+            else
+            {
+                mActionsListHelper = new ActivitiesListViewHelper(mContext, General.eRIPageViewMode.AddFromShardRepository);
+            }
             xActivitiesRepositoryListView.SetDefaultListDataTemplate(mActionsListHelper);
             xActivitiesRepositoryListView.ListSelectionMode = SelectionMode.Extended;
             mActionsListHelper.ListView = xActivitiesRepositoryListView;
