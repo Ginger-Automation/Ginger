@@ -68,7 +68,7 @@ namespace GingerCore.Actions
             }
         }
 
-
+        
 
         public override String ActionType
         {
@@ -165,11 +165,12 @@ namespace GingerCore.Actions
                     }
                 }
             }
-            string filePath = SaveToFileName + "\\" + FileName + ".jpg";
-            Dictionary<string, object> outFilePath = new Dictionary<string, object>();
-            outFilePath.Add("FileName", filePath);
-            this.AddToOutputValues(outFilePath);
             
+            string filePath = Path.Combine(SaveToFileName, FileName);
+            Dictionary<string, object> outFilePath = new Dictionary<string, object>();
+            outFilePath.Add("ScreenshotFilePath", filePath+".jpg");
+            this.AddToOutputValues(outFilePath);
+
         }
     }
 }
