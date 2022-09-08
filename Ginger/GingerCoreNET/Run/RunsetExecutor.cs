@@ -41,6 +41,7 @@ using System.IO;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
+using Ginger.Configurations;
 
 namespace Ginger.Run
 {
@@ -475,7 +476,11 @@ namespace Ginger.Run
 
                 if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes && Runners.Count > 0)
                 {
-                    ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetStart(RunSetConfig);
+                    string[] testsToExclude = ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetStart(RunSetConfig);
+                    if (testsToExclude != null)
+                    {
+                        DisableTestsExecution(testsToExclude, RunSetConfig);
+                    }
                 }
 
                 //Start Run 
@@ -860,7 +865,81 @@ namespace Ginger.Run
                 }
             }
         }
-
+        private void DisableTestsExecution(string[] testsToExclude, RunSetConfig runsetConfig)
+        {
+            switch (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel)
+            {
+                case SealightsConfiguration.eSealightsEntityLevel.BusinessFlow:
+                    {
+                        foreach (GingerRunner GR in runsetConfig.GingerRunners)
+                        {
+                            if (GR.Active)
+                            {
+                                foreach (BusinessFlow BF in GR.Executor.BusinessFlows)
+                                {
+                                    if (testsToExclude.Contains(BF.Guid.ToString()) && BF.Active)
+                                    {
+                                        BF.Active = false;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    }
+                case SealightsConfiguration.eSealightsEntityLevel.ActivitiesGroup:
+                    {
+                        foreach (GingerRunner GR in runsetConfig.GingerRunners)
+                        {
+                            if (GR.Active)
+                            {
+                                foreach (BusinessFlow BF in GR.Executor.BusinessFlows)
+                                {
+                                    if (BF.Active)
+                                    {
+                                        foreach (GingerCore.Activities.ActivitiesGroup AG in BF.ActivitiesGroups)
+                                        {
+                                            if (testsToExclude.Contains(AG.Guid.ToString()))
+                                            {
+                                                foreach (GingerCore.Activities.ActivityIdentifiers AI in AG.ActivitiesIdentifiers)
+                                                {
+                                                    if (AI.IdentifiedActivity.Active)
+                                                    {
+                                                        AI.IdentifiedActivity.Active = false;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    }
+                case SealightsConfiguration.eSealightsEntityLevel.Activity:
+                    {
+                        foreach (GingerRunner GR in runsetConfig.GingerRunners)
+                        {
+                            if (GR.Active)
+                            {
+                                foreach (BusinessFlow BF in GR.Executor.BusinessFlows)
+                                {
+                                    if (BF.Active)
+                                    {
+                                        foreach (GingerCore.Activity Activity in BF.Activities)
+                                        {
+                                            if (testsToExclude.Contains(Activity.Guid.ToString()) && Activity.Active)
+                                            {
+                                                Activity.Active = false;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    }
+            }
+        }
     }
 }
 
