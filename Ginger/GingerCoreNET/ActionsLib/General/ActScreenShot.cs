@@ -128,11 +128,10 @@ namespace GingerCore.Actions
 
             }
 
-            String FileName = "";
-            String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff");
+            String FileName = this.Description;
+            String timeStamp = DateTime.Now.ToString("ddMMyyyyHHmmss");
 
             FileName += timeStamp;
-            FileName += this.Description;
 
 
             if (ScreenShots.Count == 0)
@@ -166,6 +165,11 @@ namespace GingerCore.Actions
                     }
                 }
             }
+            string filePath = SaveToFileName + "\\" + FileName + ".jpg";
+            Dictionary<string, object> outFilePath = new Dictionary<string, object>();
+            outFilePath.Add("FileName", filePath);
+            this.AddToOutputValues(outFilePath);
+            
         }
     }
 }
