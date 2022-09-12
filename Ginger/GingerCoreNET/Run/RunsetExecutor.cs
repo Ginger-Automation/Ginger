@@ -482,9 +482,7 @@ namespace Ginger.Run
                     string[] testsToExclude = ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetStart(RunSetConfig);
                     if (testsToExclude != null)
                     {
-                        string[] testData = { "cfbcb0ce-02bf-41a3-9001-7135f6f402e3" };
-                        //DisableTestsExecution(testsToExclude, RunSetConfig);
-                        DisableTestsExecution(testData, RunSetConfig);
+                        DisableTestsExecution(testsToExclude, RunSetConfig);
                     }
                 }
 
