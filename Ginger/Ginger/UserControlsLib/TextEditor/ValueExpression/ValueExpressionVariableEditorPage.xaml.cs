@@ -32,15 +32,19 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
     {
         SelectedContentArgs mSelectedContentArgs;
         Context mContext;
+        VariableBase var;
 
-        public ValueExpressionVariableEditorPage(Context context, SelectedContentArgs SelectedContentArgs)
+        public ValueExpressionVariableEditorPage(Context context, SelectedContentArgs SelectedContentArgs, VariableBase? variable = null)
         {
             InitializeComponent();
 
             mContext = context;
             mSelectedContentArgs = SelectedContentArgs;
-            
+            var = variable;
+
             List<string> lst = new List<string>();
+            List<string> lstExtraParams;
+
 
             // Add the variables from solution, current BF and current activity
             foreach (VariableBase v in  WorkSpace.Instance.Solution.Variables)
@@ -65,7 +69,18 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                
             }
            
-
+            if (variable != null && variable.GetType() == typeof(VariableSelectionList))
+            {
+                VarsListExtraParams.Visibility = System.Windows.Visibility.Visible;
+                lblExtraParams.Visibility = System.Windows.Visibility.Visible;
+                lstExtraParams = variable.GetExtraParamsList();
+                VarsListExtraParams.ItemsSource = lstExtraParams;
+            }
+            else
+            {
+                VarsListExtraParams.Visibility = System.Windows.Visibility.Collapsed;
+                lblExtraParams.Visibility = System.Windows.Visibility.Collapsed;
+            }
 
             VarsList.ItemsSource = lst;
         }
@@ -73,10 +88,23 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
         public void UpdateContent()
         {
             string v = (string)VarsList.SelectedItem;
-            string txt = mSelectedContentArgs.TextEditor.Text.Substring(0, mSelectedContentArgs.StartPos);
-            txt += "{Var Name=" + v + "}";
-            txt += mSelectedContentArgs.TextEditor.Text.Substring(mSelectedContentArgs.EndPos + 1);
-            mSelectedContentArgs.TextEditor.Text = txt;
+            if (!string.IsNullOrEmpty(v))
+            {
+                string txt = mSelectedContentArgs.TextEditor.Text.Substring(0, mSelectedContentArgs.StartPos);
+                txt += "{Var Name=" + v + "}";
+                txt += mSelectedContentArgs.TextEditor.Text.Substring(mSelectedContentArgs.EndPos + 1);
+                mSelectedContentArgs.TextEditor.Text = txt;
+            }
+            else
+            {
+                v = (string)VarsListExtraParams.SelectedItem;
+                string txt = mSelectedContentArgs.TextEditor.Text.Substring(0, mSelectedContentArgs.StartPos);
+                txt += "{Var Name=" + var.Name + ", " + v + "}";
+                txt += mSelectedContentArgs.TextEditor.Text.Substring(mSelectedContentArgs.EndPos + 1);
+                mSelectedContentArgs.TextEditor.Text = txt;
+            }
+
+
         }        
     }
 }
