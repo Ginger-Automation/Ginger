@@ -157,7 +157,7 @@ namespace Ginger.Run
             foreach (GingerRunner gingerRunner in Runners)
             {
                 GingerExecutionEngine ExecutorEngine = new GingerExecutionEngine(gingerRunner);
-                InitRunner(gingerRunner,ExecutorEngine);
+                InitRunner(gingerRunner, ExecutorEngine);
             }
         }
 
@@ -588,7 +588,7 @@ namespace Ginger.Run
 
                 if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution && Runners.Count > 0)
                 {
-                   await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetEnd(RunSetConfig);
+                    await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetEnd(RunSetConfig);
                 }
 
                 if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes && Runners.Count > 0)
@@ -937,6 +937,10 @@ namespace Ginger.Run
                             }
                         }
                         break;
+                    }
+                default:
+                    {
+                        throw new Exception("Not a valid value");
                     }
             }
         }

@@ -290,9 +290,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         {
             if (restClient != null)
             {
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Getting a list of tests that should be excluded from Sealights"));
+                Reporter.ToLog(eLogLevel.INFO, "Getting a list of tests that should be excluded from Sealights");
 
-                string message = string.Format("a list of tests that should be excluded from Sealights");
+                string message = "a list of tests that should be excluded from Sealights";
                 bool responseIsSuccess = SendRestRequestTestsToExclude(SEND_CREATEION_TEST_SESSION, Method.Get);
                 if (responseIsSuccess)
                 {
