@@ -41,6 +41,8 @@ using System.IO;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
+using Ginger.Configurations;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Ginger.Run
 {
@@ -101,6 +103,8 @@ namespace Ginger.Run
         public List<LiteDbRunner> liteDbRunnerList = new List<LiteDbRunner>();
         private ProjEnvironment mRunsetExecutionEnvironment = null;
 
+        private List<BusinessFlow> deactivatedBF = new List<BusinessFlow>();
+
 
 
         public ProjEnvironment RunsetExecutionEnvironment
@@ -156,7 +160,7 @@ namespace Ginger.Run
             foreach (GingerRunner gingerRunner in Runners)
             {
                 GingerExecutionEngine ExecutorEngine = new GingerExecutionEngine(gingerRunner);
-                InitRunner(gingerRunner,ExecutorEngine);
+                InitRunner(gingerRunner, ExecutorEngine);
             }
         }
 
@@ -475,7 +479,11 @@ namespace Ginger.Run
 
                 if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes && Runners.Count > 0)
                 {
-                    ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetStart(RunSetConfig);
+                    string[] testsToExclude = ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetStart(RunSetConfig);
+                    if (testsToExclude != null)
+                    {
+                        DisableTestsExecution(testsToExclude, RunSetConfig);
+                    }
                 }
 
                 //Start Run 
@@ -583,11 +591,16 @@ namespace Ginger.Run
 
                 if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution && Runners.Count > 0)
                 {
-                   await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetEnd(RunSetConfig);
+                    await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetEnd(RunSetConfig);
                 }
 
                 if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes && Runners.Count > 0)
                 {
+                    if(deactivatedBF != null && deactivatedBF.Count > 0)
+                    {
+                        ReactivateBF(deactivatedBF);
+                        deactivatedBF.Clear();
+                    }
                     await ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetEnd(RunSetConfig);
                 }
 
@@ -860,7 +873,106 @@ namespace Ginger.Run
                 }
             }
         }
+        private void DisableTestsExecution(string[] testsToExclude, RunSetConfig runsetConfig)
+        {
+            switch (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel)
+            {
+                case SealightsConfiguration.eSealightsEntityLevel.BusinessFlow:
+                    {
+                        DisableBFExecution(testsToExclude, runsetConfig);
+                        break;
+                    }
+                case SealightsConfiguration.eSealightsEntityLevel.ActivitiesGroup:
+                    {
+                        DisableActivitiesGroupExecution(testsToExclude, runsetConfig);
+                        break;
+                    }
+                case SealightsConfiguration.eSealightsEntityLevel.Activity:
+                    {
+                        DisableActivitiesExecution(testsToExclude, runsetConfig);
+                        break;
+                    }
+                default:
+                    {
+                        throw new InvalidEnumArgumentException("Not a valid value");
+                    }
+            }
+        }
 
+        private void DisableBFExecution(string[] testsToExclude, RunSetConfig runsetConfig)
+        {
+            foreach (GingerRunner GR in runsetConfig.GingerRunners)
+            {
+                if (GR.Active)
+                {
+                    foreach (BusinessFlow BF in GR.Executor.BusinessFlows)
+                    {
+                        if (testsToExclude.Contains(BF.Guid.ToString()) && BF.Active)
+                        {
+                            BF.Active = false;
+                            deactivatedBF.Add(BF);
+                        }
+                    }
+                }
+            }
+        }
+        private void DisableActivitiesGroupExecution(string[] testsToExclude, RunSetConfig runsetConfig)
+        {
+            foreach (GingerRunner GR in runsetConfig.GingerRunners)
+            {
+                if (GR.Active)
+                {
+                    foreach (BusinessFlow BF in GR.Executor.BusinessFlows)
+                    {
+                        if (BF.Active)
+                        {
+                            foreach (GingerCore.Activities.ActivitiesGroup AG in BF.ActivitiesGroups)
+                            {
+                                if (testsToExclude.Contains(AG.Guid.ToString()))
+                                {
+                                    foreach (GingerCore.Activities.ActivityIdentifiers AI in AG.ActivitiesIdentifiers)
+                                    {
+                                        if (AI.IdentifiedActivity.Active)
+                                        {
+                                            AI.IdentifiedActivity.Active = false;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        private void DisableActivitiesExecution(string[] testsToExclude, RunSetConfig runsetConfig)
+        {
+            foreach (GingerRunner GR in runsetConfig.GingerRunners)
+            {
+                if (GR.Active)
+                {
+                    foreach (BusinessFlow BF in GR.Executor.BusinessFlows)
+                    {
+                        if (BF.Active)
+                        {
+                            foreach (GingerCore.Activity Activity in BF.Activities)
+                            {
+                                if (testsToExclude.Contains(Activity.Guid.ToString()) && Activity.Active)
+                                {
+                                    Activity.Active = false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        private void ReactivateBF(List<BusinessFlow> deactivatedBF)
+        {
+                foreach (BusinessFlow BF in deactivatedBF)
+                {
+                    BF.Active = true;
+                }
+        }
     }
 }
 
