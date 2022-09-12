@@ -69,6 +69,7 @@ namespace Ginger.AnalyzerLib
 
             // Check all GRs BFS
             //foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
+            List<Guid> checkedGuidList = new List<Guid>();
             Parallel.ForEach(mRunSetConfig.GingerRunners, new ParallelOptions { MaxDegreeOfParallelism = 5 }, GR =>
             {
                 foreach (AnalyzerItemBase issue in AnalyzeGingerRunner.Analyze(GR, WorkSpace.Instance.Solution.ApplicationPlatforms))
@@ -77,7 +78,6 @@ namespace Ginger.AnalyzerLib
                 }
 
                 //Code to analyze Runner Unique Businessflow with Source BF
-                List<Guid> checkedGuidList = new List<Guid>();
                 Parallel.ForEach(GR.Executor.BusinessFlows, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
                 {
                     if (!checkedGuidList.Contains(BF.Guid))//check if it already was analyzed
