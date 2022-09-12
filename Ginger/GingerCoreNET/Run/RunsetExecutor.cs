@@ -42,6 +42,7 @@ using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Ginger.Configurations;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Ginger.Run
 {
@@ -101,6 +102,8 @@ namespace Ginger.Run
         }
         public List<LiteDbRunner> liteDbRunnerList = new List<LiteDbRunner>();
         private ProjEnvironment mRunsetExecutionEnvironment = null;
+
+        private List<BusinessFlow> deactivatedBF = new List<BusinessFlow>();
 
 
 
@@ -479,7 +482,9 @@ namespace Ginger.Run
                     string[] testsToExclude = ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetStart(RunSetConfig);
                     if (testsToExclude != null)
                     {
-                        DisableTestsExecution(testsToExclude, RunSetConfig);
+                        string[] testData = { "cfbcb0ce-02bf-41a3-9001-7135f6f402e3" };
+                        //DisableTestsExecution(testsToExclude, RunSetConfig);
+                        DisableTestsExecution(testData, RunSetConfig);
                     }
                 }
 
@@ -593,6 +598,7 @@ namespace Ginger.Run
 
                 if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes && Runners.Count > 0)
                 {
+                    ReactivateBF(deactivatedBF);
                     await ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetEnd(RunSetConfig);
                 }
 
@@ -871,78 +877,100 @@ namespace Ginger.Run
             {
                 case SealightsConfiguration.eSealightsEntityLevel.BusinessFlow:
                     {
-                        foreach (GingerRunner GR in runsetConfig.GingerRunners)
-                        {
-                            if (GR.Active)
-                            {
-                                foreach (BusinessFlow BF in GR.Executor.BusinessFlows)
-                                {
-                                    if (testsToExclude.Contains(BF.Guid.ToString()) && BF.Active)
-                                    {
-                                        BF.Active = false;
-                                    }
-                                }
-                            }
-                        }
+                        DisableBFExecution(testsToExclude, runsetConfig);
                         break;
                     }
                 case SealightsConfiguration.eSealightsEntityLevel.ActivitiesGroup:
                     {
-                        foreach (GingerRunner GR in runsetConfig.GingerRunners)
-                        {
-                            if (GR.Active)
-                            {
-                                foreach (BusinessFlow BF in GR.Executor.BusinessFlows)
-                                {
-                                    if (BF.Active)
-                                    {
-                                        foreach (GingerCore.Activities.ActivitiesGroup AG in BF.ActivitiesGroups)
-                                        {
-                                            if (testsToExclude.Contains(AG.Guid.ToString()))
-                                            {
-                                                foreach (GingerCore.Activities.ActivityIdentifiers AI in AG.ActivitiesIdentifiers)
-                                                {
-                                                    if (AI.IdentifiedActivity.Active)
-                                                    {
-                                                        AI.IdentifiedActivity.Active = false;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        DisableActivitiesGroupExecution(testsToExclude, runsetConfig);
                         break;
                     }
                 case SealightsConfiguration.eSealightsEntityLevel.Activity:
                     {
-                        foreach (GingerRunner GR in runsetConfig.GingerRunners)
+                        DisableActivitiesExecution(testsToExclude, runsetConfig);
+                        break;
+                    }
+                default:
+                    {
+                        throw new InvalidEnumArgumentException("Not a valid value");
+                    }
+            }
+        }
+
+        private void DisableBFExecution(string[] testsToExclude, RunSetConfig runsetConfig)
+        {
+            foreach (GingerRunner GR in runsetConfig.GingerRunners)
+            {
+                if (GR.Active)
+                {
+                    foreach (BusinessFlow BF in GR.Executor.BusinessFlows)
+                    {
+                        if (testsToExclude.Contains(BF.Guid.ToString()) && BF.Active)
                         {
-                            if (GR.Active)
+                            BF.Active = false;
+                            deactivatedBF.Add(BF);
+                        }
+                    }
+                }
+            }
+        }
+        private void DisableActivitiesGroupExecution(string[] testsToExclude, RunSetConfig runsetConfig)
+        {
+            foreach (GingerRunner GR in runsetConfig.GingerRunners)
+            {
+                if (GR.Active)
+                {
+                    foreach (BusinessFlow BF in GR.Executor.BusinessFlows)
+                    {
+                        if (BF.Active)
+                        {
+                            foreach (GingerCore.Activities.ActivitiesGroup AG in BF.ActivitiesGroups)
                             {
-                                foreach (BusinessFlow BF in GR.Executor.BusinessFlows)
+                                if (testsToExclude.Contains(AG.Guid.ToString()))
                                 {
-                                    if (BF.Active)
+                                    foreach (GingerCore.Activities.ActivityIdentifiers AI in AG.ActivitiesIdentifiers)
                                     {
-                                        foreach (GingerCore.Activity Activity in BF.Activities)
+                                        if (AI.IdentifiedActivity.Active)
                                         {
-                                            if (testsToExclude.Contains(Activity.Guid.ToString()) && Activity.Active)
-                                            {
-                                                Activity.Active = false;
-                                            }
+                                            AI.IdentifiedActivity.Active = false;
                                         }
                                     }
                                 }
                             }
                         }
-                        break;
                     }
-                default:
-                    {
-                        throw new Exception("Not a valid value");
-                    }
+                }
             }
+        }
+        private void DisableActivitiesExecution(string[] testsToExclude, RunSetConfig runsetConfig)
+        {
+            foreach (GingerRunner GR in runsetConfig.GingerRunners)
+            {
+                if (GR.Active)
+                {
+                    foreach (BusinessFlow BF in GR.Executor.BusinessFlows)
+                    {
+                        if (BF.Active)
+                        {
+                            foreach (GingerCore.Activity Activity in BF.Activities)
+                            {
+                                if (testsToExclude.Contains(Activity.Guid.ToString()) && Activity.Active)
+                                {
+                                    Activity.Active = false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        private void ReactivateBF(List<BusinessFlow> deactivatedBF)
+        {
+            foreach(BusinessFlow BF in deactivatedBF)
+            {
+                BF.Active = true;
+            }
+            deactivatedBF.Clear();
         }
     }
 }
