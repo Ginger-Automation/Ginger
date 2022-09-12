@@ -79,6 +79,7 @@ namespace GingerCore.SourceControl
             catch (Exception e)
             {
                 error = e.Message + Environment.NewLine + e.InnerException;
+                Reporter.ToLog(eLogLevel.ERROR, error, e);
 
             }
             finally
@@ -96,6 +97,8 @@ namespace GingerCore.SourceControl
                 {
 
                     error = error + Environment.NewLine + e.Message + Environment.NewLine + e.InnerException;
+                    Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, e.Message);
+                    Reporter.ToLog(eLogLevel.ERROR, error, e);
                     try
                     {
                         Pull();
