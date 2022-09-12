@@ -799,5 +799,26 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(v1, "value1");
             Assert.AreEqual(v2, "value2");
         }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void SelectionListGetLength()
+        {
+            //Arrange
+
+            ValueExpression VE1 = new ValueExpression(mEnv, mBF);
+            VE1.Value = @"{Var Name=v5, GetLength=True}";
+
+            ValueExpression VE2 = new ValueExpression(mEnv, mBF);
+            VE2.Value = @"{Var Name=v5, GetLength=False}";
+
+            //Act
+            string v1 = VE1.ValueCalculated;
+            string v2 = VE2.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v1, "2");
+            Assert.AreEqual(v2, "value1");
+        }
     }
 }
