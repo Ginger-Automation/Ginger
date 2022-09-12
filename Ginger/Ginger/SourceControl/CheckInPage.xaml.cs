@@ -273,9 +273,10 @@ namespace Ginger.SourceControl
 
                     AfterCommitProcess(CommitSuccess, conflictHandled);
 
-
-                    TriggerSourceControlIconChanged(SelectedFiles);
-
+                    if (CommitSuccess && conflictHandled)
+                    {
+                        TriggerSourceControlIconChanged(SelectedFiles);
+                    }
                 });
                 xProcessingIcon.Visibility = Visibility.Collapsed;
                 if (SourceControlIntegration.conflictFlag)
@@ -325,7 +326,12 @@ namespace Ginger.SourceControl
                         });
                         return false;
                     }
+                    else
+                    {
+                        return true;
+                    }
                 }
+                return false;
             }
             return result;
         }
