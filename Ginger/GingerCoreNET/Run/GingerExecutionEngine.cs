@@ -2282,6 +2282,11 @@ namespace Ginger.Run
 
             ((Agent)AA.Agent).BusinessFlow = CurrentBusinessFlow;
             ((Agent)AA.Agent).ProjEnvironment = mGingerRunner.ProjEnvironment;
+            //check for null agent operations, found it was null in CLI dynamic file case
+            if (AA.Agent.AgentOperations == null)
+            {
+                AA.Agent.AgentOperations = new AgentOperations(AA.Agent);
+            }
             // Verify the Agent for the action is running 
             Agent.eStatus agentStatus = ((AgentOperations)((Agent)AA.Agent).AgentOperations).Status;
             if (agentStatus != Agent.eStatus.Running && agentStatus != Agent.eStatus.Starting && agentStatus != Agent.eStatus.FailedToStart)
