@@ -376,7 +376,15 @@ namespace GingerCore.Actions.WebAPI
                 }
                 else
                 {
-                    rawMsg += JsonConvert.DeserializeObject(ResponseMessage);
+                    try
+                    {
+                        rawMsg += JsonConvert.DeserializeObject(ResponseMessage);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Response is not valid json",ex);
+                        rawMsg += ResponseMessage;
+                    }
                 }
             }
 
@@ -404,7 +412,7 @@ namespace GingerCore.Actions.WebAPI
                     StringBuilder str = new StringBuilder();
                     foreach(KeyValuePair<string, string> keyValue in ConstructURLEncoded((ActWebAPIRest)mAct))
                     {
-                        str.AppendLine(keyValue.Key + "=" + keyValue.Value);
+                        str.Append(keyValue.Key + "=" + keyValue.Value);
                     }
                     RequestFileContent += str;
 

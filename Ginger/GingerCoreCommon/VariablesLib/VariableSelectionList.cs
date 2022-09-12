@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -40,6 +40,9 @@ namespace GingerCore.Variables
         {
             get { return "Selection List"; }
         }
+
+        [IsSerializedForLocalRepository(true)]
+        public bool IsLoopEnabled { get; set; } = true;
 
         //DO NOT REMOVE! Used for conversion of old OptionalValues which were kept in one string with delimiter
         public string OptionalValues
@@ -85,7 +88,7 @@ namespace GingerCore.Variables
 
         public override void PostDeserialization()
         {
-           //Note: we need to reset all variables postserialization except variableSelectionList, thats why empty overriden method. 
+            //Note: we need to reset all variables postserialization except variableSelectionList, thats why empty overriden method. 
         }
 
         public override string GetFormula()
@@ -126,9 +129,54 @@ namespace GingerCore.Variables
 
         }
 
-        public override void GenerateAutoValue()
+        public override bool GenerateAutoValue(ref string errorMsg)
         {
-            //NA
+            if (OptionalValuesList.Count == 0)
+            {
+                Value = string.Empty;
+                errorMsg = "Generate Auto Value is not possible because Selection List is empty";
+                return false;
+            }
+
+            //Finding the index of the current Optional Value
+            OptionalValue currentOptionalValue = OptionalValuesList.Where<OptionalValue>(op => op.Value == Value).FirstOrDefault();
+            if (currentOptionalValue == null)
+            {
+                errorMsg = "Failed to generate auto value because current value is not part of the list of values";
+                return false;
+            }
+            int index = OptionalValuesList.IndexOf(currentOptionalValue);
+
+            if (index == -1)
+            {
+                errorMsg = "Failed to generate auto value because current value is not part of the list of values";
+                return false;
+            }
+
+            //Check if the current OptionalValue is last
+            if (index == OptionalValuesList.Count - 1)
+            {
+                //If loop chechbox is disabled so return a proper message.
+                if (!IsLoopEnabled)
+                {
+                    errorMsg = "Generate Auto Value is not possible because current value is last and looping is not allowed";
+                    return false;
+                }
+                else
+                {
+                    Value = OptionalValuesList[0].Value;
+                    errorMsg = string.Empty;
+                    return true;
+                }
+            }
+            else
+            {
+                Value = OptionalValuesList[++index].Value;
+                errorMsg = string.Empty;
+                return true;
+            }
+
+
         }
 
         public override bool SupportSetValue { get { return true; } }
@@ -137,13 +185,14 @@ namespace GingerCore.Variables
         {
             List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
             supportedOperations.Add(VariableBase.eSetValueOptions.SetValue);
+            supportedOperations.Add(VariableBase.eSetValueOptions.AutoGenerateValue);
             supportedOperations.Add(VariableBase.eSetValueOptions.ResetValue);
             return supportedOperations;
         }
 
         public override bool SupportResetValue { get { return true; } }
 
-        public override bool SupportAutoValue { get { return false; } }
+        public override bool SupportAutoValue { get { return true; } }
 
         public override void SetInitialSetup()
         {

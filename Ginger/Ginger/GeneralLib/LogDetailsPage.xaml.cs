@@ -35,7 +35,7 @@ namespace Ginger.GeneralLib
     /// </summary>
     public partial class LogDetailsPage : Page
     {
-        public const int NoOfLinesToShow = 5000;
+        public const int NoOfLinesToShow = 3500;
         public enum eLogShowLevel
         {
             ALL, DEBUG, INFO, WARN, ERROR, FATAL

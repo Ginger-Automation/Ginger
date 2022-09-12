@@ -336,7 +336,12 @@ namespace Ginger.Variables
 
         private void AutoValueBtn_Click(object sender, RoutedEventArgs e)
         {
-            mVariable.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            mVariable.GenerateAutoValue(ref errorMsg);
+            if (!string.IsNullOrEmpty(errorMsg))
+            {
+                Reporter.ToUser(eUserMsgKey.VariablesAssignError, errorMsg);
+            }
         }
 
         private void SetLinkedVarCombo()

@@ -230,6 +230,10 @@ namespace GingerCore.Actions.VisualTesting
                 if (WorkSpace.Instance.Solution.VRTConfiguration.ActivityTags)
                 {
                     tags = GetTags();
+                    if (!string.IsNullOrEmpty(tags))
+                    {
+                        tags = "Tags:" + tags;
+                    }
                 }
                 //Environment tag
                 if (WorkSpace.Instance.Solution.VRTConfiguration.Environment)
@@ -240,9 +244,10 @@ namespace GingerCore.Actions.VisualTesting
                     }
                     else
                     {
-                        tags += ",Environment:" + mDriver.GetEnvironment();
+                        tags += ", Environment:" + mDriver.GetEnvironment();
                     }
                 }
+                
                 //Browser/agent/app name 
                 string browser = string.Empty;
                 if (WorkSpace.Instance.Solution.VRTConfiguration.Agent)
@@ -253,7 +258,7 @@ namespace GingerCore.Actions.VisualTesting
                 string viewport = string.Empty;
                 if (WorkSpace.Instance.Solution.VRTConfiguration.Viewport)
                 {
-                    mDriver.GetViewport();
+                    viewport = mDriver.GetViewport();
                 }
                 //device
                 string device = null;
@@ -317,13 +322,16 @@ namespace GingerCore.Actions.VisualTesting
 
         private string GetTags()
         {
-            string tags = string.Empty;
-            var activityTagsList = Context.GetAsContext(mAct.Context).Activity.Tags.Select(x => x.ToString());
-            if (activityTagsList != null)
+            try
             {
-                tags = string.Join(",", activityTagsList);
+                var tagNames = WorkSpace.Instance.Solution.Tags.Where(f => Context.GetAsContext(mAct.Context).Activity.Tags.Contains(f.Guid)).Select(f => f.Name);
+                return string.Join(",", tagNames);
             }
-            return tags;
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when getting Tags from activity", ex);
+                return null;
+            }
         }
 
         private string GetImageName()
