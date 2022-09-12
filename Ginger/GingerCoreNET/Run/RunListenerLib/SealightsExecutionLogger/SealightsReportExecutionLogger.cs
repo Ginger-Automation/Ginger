@@ -267,8 +267,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 return;
             }
         }
-
-
         #endregion Action
     }
 }

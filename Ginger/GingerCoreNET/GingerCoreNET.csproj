@@ -237,6 +237,8 @@
     <PackageReference Include="Eyes.Selenium4" Version="2.59.0" />
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.1" />
+  
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="4.5.3" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.21" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
   
@@ -308,9 +310,6 @@
     </Reference>
     <Reference Include="ALM_Common">
       <HintPath>..\GingerCore\DLLs\ALM_Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Ginger.ExecuterService.Contracts">
-      <HintPath>..\..\..\..\Ginger.ExecuterService.Contracts\Ginger.ExecuterService.Contracts\bin\Debug\netstandard2.0\Ginger.ExecuterService.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>

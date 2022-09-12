@@ -596,7 +596,11 @@ namespace Ginger.Run
 
                 if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes && Runners.Count > 0)
                 {
-                    ReactivateBF(deactivatedBF);
+                    if(deactivatedBF != null && deactivatedBF.Count > 0)
+                    {
+                        ReactivateBF(deactivatedBF);
+                        deactivatedBF.Clear();
+                    }
                     await ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetEnd(RunSetConfig);
                 }
 
@@ -964,11 +968,10 @@ namespace Ginger.Run
         }
         private void ReactivateBF(List<BusinessFlow> deactivatedBF)
         {
-            foreach(BusinessFlow BF in deactivatedBF)
-            {
-                BF.Active = true;
-            }
-            deactivatedBF.Clear();
+                foreach (BusinessFlow BF in deactivatedBF)
+                {
+                    BF.Active = true;
+                }
         }
     }
 }
