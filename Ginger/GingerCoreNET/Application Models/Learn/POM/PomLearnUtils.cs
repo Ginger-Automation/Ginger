@@ -380,7 +380,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 // update target application for each activity
                 activity.TargetApplication = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey).ToString();
-                POM.ActivitiesGuid.Add(activity.Guid);
+                POM.LearnedActivitiesGuid.Add(activity.Guid);
             }
         }
 

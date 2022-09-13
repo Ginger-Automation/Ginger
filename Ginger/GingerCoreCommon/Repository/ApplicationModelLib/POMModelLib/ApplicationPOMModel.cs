@@ -258,6 +258,6 @@ namespace Amdocs.Ginger.Repository
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<Guid> ActivitiesGuid { get; set; } = new ObservableList<Guid>();
+        public ObservableList<Guid> LearnedActivitiesGuid { get; set; } = new ObservableList<Guid>();
     }
 }

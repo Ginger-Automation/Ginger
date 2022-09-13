@@ -162,7 +162,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     xPOMSplitter.IsEnabled = true;
                     //filre POM Activities to show
                     ObservableList<Activity> sharedActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                    ObservableList<Activity> pomActivities = GingerCore.General.ConvertListToObservableList(sharedActivities.Where(x => x.Guid == mPOM.ActivitiesGuid.FirstOrDefault(y => y == x.Guid)).ToList());
+                    ObservableList<Activity> pomActivities = GingerCore.General.ConvertListToObservableList(sharedActivities.Where(x => x.Guid == mPOM.LearnedActivitiesGuid.FirstOrDefault(y => y == x.Guid)).ToList());
                     mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(pomActivities, mContext);
                     xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
                 }
