@@ -4110,7 +4110,6 @@ namespace Ginger.Run
                     {
                         a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                     }
-                    NotifyActivitySkipped(a);
                 }
 
                 foreach (ActivitiesGroup group in  businessFlow.ActivitiesGroups)
@@ -4119,7 +4118,6 @@ namespace Ginger.Run
                     {
                         group.RunStatus = eActivitiesGroupRunStatus.Skipped;
                     }
-                    NotifyActivityGroupSkipped(group);
                 }
             }
             catch (Exception ex)
@@ -4195,7 +4193,7 @@ namespace Ginger.Run
                 CurrentBusinessFlow = bf;
                 CurrentBusinessFlow.CurrentActivity = bf.Activities.FirstOrDefault();
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
-                NotifyBusinessFlowSkipped(bf);
+                NotifyBusinessFlowSkippedInactiveBusinessFlow(bf);
                 SetBusinessFlowActivitiesAndActionsSkipStatus(bf);
 
             }
@@ -4967,6 +4965,40 @@ namespace Ginger.Run
             {
                 runnerListener.BusinessFlowSkipped(evetTime, businessFlow, ContinueRun);
             }
+        }
+        private void NotifyBusinessFlowSkippedInactiveBusinessFlow(BusinessFlow businessFlow, bool ContinueRun = false)
+        {
+            uint evetTime = RunListenerBase.GetEventTime();
+
+            businessFlow.StartTimeStamp = DateTime.UtcNow;
+            businessFlow.EndTimeStamp = DateTime.UtcNow;
+
+            foreach (RunListenerBase runnerListener in mRunListeners)
+            {
+                runnerListener.BusinessFlowSkipped(evetTime, businessFlow, ContinueRun);
+            }
+
+            foreach (Activity a in businessFlow.Activities)
+            {
+                if (mStopRun)
+                    break;
+
+                if (a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
+                {
+                    a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                    NotifyActivitySkipped(a);
+                }
+            }
+
+            foreach (ActivitiesGroup group in businessFlow.ActivitiesGroups)
+            {
+                if (group.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == eRunStatus.Skipped).ToList().Count == group.ActivitiesIdentifiers.Count)
+                {
+                    group.RunStatus = eActivitiesGroupRunStatus.Skipped;
+                    NotifyActivityGroupSkipped(group);
+                }
+            }
+
         }
 
         private void NotifyBusinessflowWasReset(BusinessFlow businessFlow)
