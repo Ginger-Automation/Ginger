@@ -1284,6 +1284,10 @@ namespace Ginger.Actions
                     fram.VerticalAlignment = VerticalAlignment.Center;
                     fram.SetContent(screenShotPage);
                     xScreenShotsViewPnl.Children.Add(fram);
+
+                    Dictionary<string, object> outFilePath = new Dictionary<string, object>();
+                    outFilePath.Add("ScreenshotFilePath", mAction.ScreenShots[i]);
+                    mAction.AddToOutputValues(outFilePath);
                 }
             }
             else
