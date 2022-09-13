@@ -1727,6 +1727,7 @@ namespace Ginger.Run
             finally
             {
                 UpdateRunButtonIcon();
+                UpdateRunnersChartPie();
             }
         }
 
@@ -1771,6 +1772,7 @@ namespace Ginger.Run
             finally
             {
                 UpdateRunButtonIcon();
+                UpdateRunnersChartPie();
             }
         }
 
@@ -2876,6 +2878,10 @@ namespace Ginger.Run
 
             GingerSelfHealingConfiguration selfHealingConfiguration = new GingerSelfHealingConfiguration(mRunSetConfig);
             selfHealingConfiguration.ShowAsWindow();
+        }
+        private void UpdateRunnersChartPie()
+        {
+            mCurrentSelectedRunner.UpdateExecutionStats();
         }
     }
 }

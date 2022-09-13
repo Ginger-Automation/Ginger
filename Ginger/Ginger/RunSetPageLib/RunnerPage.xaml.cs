@@ -667,6 +667,7 @@ namespace Ginger.Run
             WorkSpace.Instance.RunsetExecutor.ConfigureRunnerForExecution(mExecutorEngine);
             await mExecutorEngine.RunRunnerAsync();
             GingerCore.General.DoEvents();   //needed?  
+            UpdateExecutionStats();
         }
         public void UpdateRunnerInfo()
         {

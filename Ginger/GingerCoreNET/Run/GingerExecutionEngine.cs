@@ -4110,6 +4110,7 @@ namespace Ginger.Run
                     {
                         a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                     }
+                    NotifyActivitySkipped(a);
                 }
 
                 foreach (ActivitiesGroup group in  businessFlow.ActivitiesGroups)
@@ -4118,6 +4119,7 @@ namespace Ginger.Run
                     {
                         group.RunStatus = eActivitiesGroupRunStatus.Skipped;
                     }
+                    NotifyActivityGroupSkipped(group);
                 }
             }
             catch (Exception ex)
@@ -4193,7 +4195,7 @@ namespace Ginger.Run
                 CurrentBusinessFlow = bf;
                 CurrentBusinessFlow.CurrentActivity = bf.Activities.FirstOrDefault();
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
-
+                NotifyBusinessFlowSkipped(bf);
                 SetBusinessFlowActivitiesAndActionsSkipStatus(bf);
 
             }
