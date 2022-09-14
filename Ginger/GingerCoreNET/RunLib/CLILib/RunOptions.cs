@@ -112,6 +112,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option("sealightsEntityLevel", Required = false, HelpText = "Set Sealights Entity Level")]
         public string SealightsEntityLevel { get; set; }
 
+        [Option("sealightsTestRecommendations", Required = false, HelpText = "Set Sealights Test Recommendations")]
+        public bool SealightsTestRecommendations { get; set; }
+
     }
 
 }
