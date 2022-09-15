@@ -25,7 +25,6 @@ using GingerCore.Helpers;
 using System.IO;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
-using DocumentFormat.OpenXml.Office.CustomUI;
 
 namespace GingerCore.Actions
 {
