@@ -25,6 +25,7 @@ using GingerCore.Helpers;
 using System.IO;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using DocumentFormat.OpenXml.Office.CustomUI;
 
 namespace GingerCore.Actions
 {
@@ -147,12 +148,15 @@ namespace GingerCore.Actions
                 Bitmap bmp = Ginger.Utils.BitmapManager.FileToBitmapImage(path);
                 Bitmp.Add(bmp);
             }
+            
+            Dictionary<string, object> outFilePath = new Dictionary<string, object>();
 
             foreach (Bitmap Bitmap in Bitmp)
             {
                 using (Bitmap)
                 {
                     string filePath = "";
+                    string indexBitmp="";
                     if (Bitmp.IndexOf(Bitmap) == 0)
                     {
                         filePath += DirectoryPath + @"\" + FileName + ".jpg";
@@ -161,15 +165,16 @@ namespace GingerCore.Actions
                     else
                     {
                         int i = Bitmp.IndexOf(Bitmap);
+                        indexBitmp = i.ToString();
                         filePath += DirectoryPath + @"\" + FileName + "_" + i.ToString() + ".jpg";
                         Bitmap.Save(filePath, System.Drawing.Imaging.ImageFormat.Jpeg);
                     }
 
-                    Dictionary<string, object> outFilePath = new Dictionary<string, object>();
-                    outFilePath.Add("ScreenshotFilePath", filePath);
-                    this.AddToOutputValues(outFilePath);
+                    outFilePath.Add("ScreenshotFilePath"+indexBitmp, filePath);
                 }
             }
+
+            this.AddToOutputValues(outFilePath);
 
         }
     }
