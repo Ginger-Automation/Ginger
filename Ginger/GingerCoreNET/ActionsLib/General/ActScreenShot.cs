@@ -152,24 +152,24 @@ namespace GingerCore.Actions
             {
                 using (Bitmap)
                 {
+                    string filePath = "";
                     if (Bitmp.IndexOf(Bitmap) == 0)
                     {
-                        Bitmap.Save(DirectoryPath + @"\" + FileName + ".jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-
+                        filePath += DirectoryPath + @"\" + FileName + ".jpg";
+                        Bitmap.Save(filePath, System.Drawing.Imaging.ImageFormat.Jpeg);
                     }
                     else
                     {
                         int i = Bitmp.IndexOf(Bitmap);
-                        Bitmap.Save(DirectoryPath + @"\" + FileName + "_" + i.ToString() + ".jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-
+                        filePath += DirectoryPath + @"\" + FileName + "_" + i.ToString() + ".jpg";
+                        Bitmap.Save(filePath, System.Drawing.Imaging.ImageFormat.Jpeg);
                     }
+
+                    Dictionary<string, object> outFilePath = new Dictionary<string, object>();
+                    outFilePath.Add("ScreenshotFilePath", filePath);
+                    this.AddToOutputValues(outFilePath);
                 }
             }
-            
-            string filePath = Path.Combine(SaveToFileName, FileName);
-            Dictionary<string, object> outFilePath = new Dictionary<string, object>();
-            outFilePath.Add("ScreenshotFilePath", filePath+".jpg");
-            this.AddToOutputValues(outFilePath);
 
         }
     }
