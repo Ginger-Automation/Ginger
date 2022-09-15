@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Configurations;
+using Amdocs.Ginger.Common.External.Configurations;
 using Ginger.Reports;
 using GingerCore;
 using GingerCore.Platforms;
@@ -297,6 +298,9 @@ namespace Ginger.SolutionGeneral
 
         [IsSerializedForLocalRepository]
         public VRTConfiguration VRTConfiguration { get; set; } = new VRTConfiguration();
+
+        [IsSerializedForLocalRepository]
+        public VariableConfiguration VariableConfiguration { get; set; } = new VariableConfiguration();
 
         [IsSerializedForLocalRepository]
         public ApplitoolsConfiguration ApplitoolsConfiguration { get; set; } = new ApplitoolsConfiguration();

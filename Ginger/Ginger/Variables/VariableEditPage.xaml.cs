@@ -19,8 +19,10 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.Reports.ValidationRules;
 using Ginger.Repository;
 using Ginger.SolutionGeneral;
+using Ginger.ValidationRules;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
@@ -34,6 +36,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using Amdocs.Ginger.Common.External.Configurations;
 
 namespace Ginger.Variables
 {
@@ -46,6 +49,7 @@ namespace Ginger.Variables
         private RepositoryItemBase mParent;
         bool saveWasDone = false;
         static bool ExpandDetails = false;
+        VariableConfiguration _VariableConfiguration = null;
 
         GenericWindow _pageGenericWin = null;
 
@@ -87,7 +91,9 @@ namespace Ginger.Variables
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xMandatoryInputCheckBox, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.MandatoryInput));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetAsOutputValueCheckBox, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsOutputValue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mVariable, nameof(RepositoryItemBase.Publish));
-          
+
+            ApplyValidationRules();
+
             if (mode ==eEditMode.Global)
             {
                 xSetAsInputValueCheckBox.Visibility = Visibility.Hidden;
@@ -149,6 +155,15 @@ namespace Ginger.Variables
             xTagsViewer.Init(mVariable.Tags);
 
             xDetailsExpander.IsExpanded = ExpandDetails;
+        }
+
+        private void ApplyValidationRules()
+        {
+            _VariableConfiguration = WorkSpace.Instance.Solution.VariableConfiguration;
+            _VariableConfiguration.StartDirtyTracking();
+            xVarNameTxtBox.Init(mContext, _VariableConfiguration, nameof(VariableConfiguration.VarName));
+            xVarNameTxtBox.ValueTextBox.AddValidationRule(new ValidateNotContainSpecificChar());
+
         }
 
         private void XVarNameTxtBox_GotFocus(object sender, RoutedEventArgs e)
