@@ -102,39 +102,68 @@ namespace Ginger.Run
             }
         }
 
-        private string mSealighsLabId;
+        private string mSealightsLabId;
         [IsSerializedForLocalRepository]
-        public string SealighsLabId
+        public string SealightsLabId
         {
-            get { return mSealighsLabId; }
+            get { return mSealightsLabId; }
             set
             {
-                if (mSealighsLabId != value)
+                if (mSealightsLabId != value)
                 {
-                    mSealighsLabId = value;
-                    OnPropertyChanged(nameof(SealighsLabId));
+                    mSealightsLabId = value;
+                    OnPropertyChanged(nameof(SealightsLabId));
                 }
             }
         }
 
-        private string mSealighsBuildSessionID;
+        private string mSealightsBuildSessionID;
         [IsSerializedForLocalRepository]
-        public string SealighsBuildSessionID
+        public string SealightsBuildSessionID
         {
-            get { return mSealighsBuildSessionID; }
+            get { return mSealightsBuildSessionID; }
             set
             {
-                if (mSealighsBuildSessionID != value)
+                if (mSealightsBuildSessionID != value)
                 {
-                    mSealighsBuildSessionID = value;
-                    OnPropertyChanged(nameof(SealighsBuildSessionID));
+                    mSealightsBuildSessionID = value;
+                    OnPropertyChanged(nameof(SealightsBuildSessionID));
+                }
+            }
+        }
+
+        private bool mSealightsTestRecommendationsRunsetOverrideFlag;
+        public bool SealightsTestRecommendationsRunsetOverrideFlag
+        {
+            get { return mSealightsTestRecommendationsRunsetOverrideFlag; }
+            set
+            {
+                if (mSealightsTestRecommendationsRunsetOverrideFlag != value)
+                {
+                    mSealightsTestRecommendationsRunsetOverrideFlag = value;
+                    OnPropertyChanged(nameof(mSealightsTestRecommendationsRunsetOverrideFlag));
+                }
+            }
+        }
+
+        private Configurations.SealightsConfiguration.eSealightsTestRecommendations mSealightsTestRecommendations = Configurations.SealightsConfiguration.eSealightsTestRecommendations.No;
+        [IsSerializedForLocalRepository]
+        public Configurations.SealightsConfiguration.eSealightsTestRecommendations SealightsTestRecommendations
+        {
+            get { return mSealightsTestRecommendations; }
+            set
+            {
+                if (mSealightsTestRecommendations != value)
+                {
+                    mSealightsTestRecommendations = value;
+                    OnPropertyChanged(nameof(mSealightsTestRecommendations));
                 }
             }
         }
 
         //-------------------
 
-        
+
 
         private string mRunDescription;
         /// <summary>
@@ -429,6 +458,23 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
                     mGingerRunners.LazyLoadDetails.XmlFilePath = Path.Combine(folderName, fileName);
                 }
             }
+        }
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {
+            if (errorType == SerializationErrorType.PropertyNotFound)
+            {
+                if (name == "SealighsLabId")
+                {
+                    this.mSealightsLabId = value;
+                    return true;
+                }
+                if (name == "SealighsBuildSessionID")
+                {
+                    this.mSealightsBuildSessionID = value;
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
