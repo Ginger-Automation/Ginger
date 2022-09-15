@@ -4148,12 +4148,13 @@ namespace GingerCore.Drivers
                     }
                 }
             }
-            //TODO: Move this block outside the function
+            //AutoGenerateFlows - Activities
             if (AutoGenerateFlows && formElementsList.Count() != 0)
             {
                 int activityIndex = 1;
-                foreach (HtmlNode formElement in formElementsList)
+                for (int i=0; i < formElementsList.Count; i++)
                 {
+                    HtmlNode formElement = formElementsList[i];
                     var formNameOrID = formElement.GetAttributeValue("name", "") != string.Empty ? formElement.GetAttributeValue("name", "") : formElement.GetAttributeValue("id", "");
 
                     //Generate Activity
@@ -4179,11 +4180,11 @@ namespace GingerCore.Drivers
                     activity.IsAutoLearned = true;
                     //2. Generate actions from input elements
                     IEnumerable<HtmlNode> formInputElements = ((HtmlNode)formElement).Descendants().Where(x => x.Name.StartsWith("input"));
-                    CreateActionFromElementAndAddToActivity(foundElementsList, formInputElements, activity);
+                    CreateActionFromElementAndAddToActivity(foundElementsList, formInputElements.ToList(), activity);
 
                     //3. Generate actions from button elements
                     IEnumerable<HtmlNode> formButtonElements = ((HtmlNode)formElement).Descendants().Where(x => x.Name.StartsWith("button"));
-                    CreateActionFromElementAndAddToActivity(foundElementsList, formButtonElements, activity);
+                    CreateActionFromElementAndAddToActivity(foundElementsList, formButtonElements.ToList(), activity);
 
                     PomActivityList.Add(activity);
                 }
@@ -4193,11 +4194,12 @@ namespace GingerCore.Drivers
             return foundElementsList;
         }
 
-        private void CreateActionFromElementAndAddToActivity(ObservableList<ElementInfo> foundElementsList, IEnumerable<HtmlNode> formChildElements, Activity activity)
+        private void CreateActionFromElementAndAddToActivity(ObservableList<ElementInfo> foundElementsList, List<HtmlNode> formChildElements, Activity activity)
         {
             string radioButtoNameOrID = string.Empty;
-            foreach (HtmlNode formChildElement in formChildElements)
+            for (int i = 0; i < formChildElements.Count; i++)
             {
+                HtmlNode formChildElement = formChildElements[i];
                 IWebElement childElement = null;
                 if (formChildElement.Attributes.Contains("type"))
                 {
