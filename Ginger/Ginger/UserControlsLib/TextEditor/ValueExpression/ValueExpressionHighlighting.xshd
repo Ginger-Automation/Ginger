@@ -77,6 +77,7 @@
       <Word>Var Name=</Word>
 	  <Word>Index=</Word>
 	  <Word>GetLength=</Word>
+	  <Word>IsContain=</Word>
 	</Keywords>
 
     <Keywords fontWeight="bold" fontStyle="italic" foreground="#964D91">
