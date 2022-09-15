@@ -183,8 +183,14 @@ namespace GingerCore.Drivers.Common
                 string val1 = mDriver.GetElementProperty(EI11, prop);
                 if (val1 == val) 
                 {
-                    if (index ==null) index = 0;
-                    index++;
+                    if (index == null)
+                    {
+                        index = 0; 
+                    }
+                    else
+                    {
+                        index++;
+                    }
                 }
                 EI11 = mDriver.GetPreviousSibling(EI11);
             }
