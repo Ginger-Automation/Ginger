@@ -918,14 +918,14 @@ namespace GingerCore
                 for (int indx = 0; indx < group.ActivitiesIdentifiers.Count;)
                 {
                     ActivityIdentifiers actIdentifis = (ActivityIdentifiers)group.ActivitiesIdentifiers[indx];
-                    Activity activ = activitiesList.Where(x => x.ActivityName == actIdentifis.ActivityName && x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
+                    Activity activ = activitiesList.Where(x => x.ActivityName == actIdentifis.ActivityName && x.Guid == actIdentifis.ActivityGuid && x.ActivitiesGroupID == group.Name).FirstOrDefault();
                     if (activ == null)
                     {
-                        activ = activitiesList.Where(x => x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
+                        activ = activitiesList.Where(x => x.Guid == actIdentifis.ActivityGuid && x.ActivitiesGroupID == group.Name).FirstOrDefault();
                     }
                     if (activ == null)
                     {
-                        activ = activitiesList.Where(x => x.ParentGuid == actIdentifis.ActivityGuid).FirstOrDefault();
+                        activ = activitiesList.Where(x => x.ParentGuid == actIdentifis.ActivityGuid && x.ActivitiesGroupID == group.Name).FirstOrDefault();
                     }
                     if (activ != null)
                     {
@@ -935,7 +935,8 @@ namespace GingerCore
                     }
                     else
                     {
-                        group.ActivitiesIdentifiers.RemoveAt(indx);//Activity not exist in BF anymore
+                        group.RemoveActivityFromGroup(activitiesList[indx]);
+                        indx++;
                     }
                 }
 
