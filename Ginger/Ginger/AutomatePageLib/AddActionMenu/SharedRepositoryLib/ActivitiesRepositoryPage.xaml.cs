@@ -48,7 +48,7 @@ namespace Ginger.Repository
         RoutedEventHandler mAddActivityHandler;
         Context mContext;
         GenericWindow _pageGenericWin = null;
-
+        ObservableList<Activity> mActivities;
         public enum ePageViewMode { Default, Selection }
 
         public enum eActivityType 
@@ -88,16 +88,35 @@ namespace Ginger.Repository
             SetActivitiesRepositoryListView();            
             SetGridAndTreeData();
         }
+        public ActivitiesRepositoryPage(ObservableList<Activity> activities, Context context)
+        {
+            InitializeComponent();
 
+            mActivities = activities;
+            mContext = context;
+            SetActivitiesRepositoryListView();
+            SetGridAndTreeData();
+        }
         private void SetGridAndTreeData()
         {
             xActivitiesRepositoryListView.ListTitleVisibility = Visibility.Hidden;
-            ActivitiesListViewHelper mActionsListHelper = new ActivitiesListViewHelper(mContext, General.eRIPageViewMode.AddFromShardRepository);
-
+            ActivitiesListViewHelper mActionsListHelper = null;
+            if (mActivities != null)
+            {
+                mActionsListHelper = new ActivitiesListViewHelper(mContext, General.eRIPageViewMode.Explorer);
+            }
+            else
+            {
+                mActionsListHelper = new ActivitiesListViewHelper(mContext, General.eRIPageViewMode.AddFromShardRepository);
+            }
             xActivitiesRepositoryListView.SetDefaultListDataTemplate(mActionsListHelper);
             xActivitiesRepositoryListView.ListSelectionMode = SelectionMode.Extended;
             mActionsListHelper.ListView = xActivitiesRepositoryListView;
-
+            if (mActivities != null)//to show pom specific activities
+            {
+                xActivitiesRepositoryListView.DataSourceList = mActivities;
+                return;
+            }
             if (mActivitiesFolder.IsRootFolder)
             {
                 xActivitiesRepositoryListView.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();

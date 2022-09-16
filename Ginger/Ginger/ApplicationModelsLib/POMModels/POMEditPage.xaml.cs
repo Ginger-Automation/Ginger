@@ -18,16 +18,21 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.Agents;
 using Ginger.BusinessFlowWindows;
+using Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.Drivers.Common;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using OpenQA.Selenium.DevTools.V100.DOM;
 using System;
 using System.Drawing;
 using System.IO;
@@ -48,6 +53,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
     {
         ApplicationPOMModel mPOM;
         ScreenShotViewPage mScreenShotViewPage;
+        ActivitiesRepositoryPage mActivitiesRepositoryViewPage;
         GenericWindow mWin;
         public bool IsPageSaved = false;
         public eRIPageViewMode mEditMode { get; set; }
@@ -126,6 +132,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
             xUIElementsFrame.Content = mPomAllElementsPage;
 
+            ObservableList<Activity> pomActivities = CreatePOMActivitiesFromMetadata();
+             
+            mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(pomActivities, new Context());
+            xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
+
             mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
             UIElementTabTextBlockUpdate();
 
@@ -138,6 +149,70 @@ namespace Ginger.ApplicationModelsLib.POMModels
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEditPageExpander, Expander.IsExpandedProperty, mPOM, nameof(mPOM.IsCollapseDetailsExapander));
 
             SetDefaultPage();
+        }
+
+        public ObservableList<Activity> CreatePOMActivitiesFromMetadata()
+        {
+            ObservableList<Activity> activities = new ObservableList<Activity>();
+            foreach (POMMetaData metaData in mPOM.ApplicationPOMMetaData)
+            {
+                Activity activity = new Activity();
+                activity.Active = true;
+                activity.ActivityName = metaData.Name;
+
+                //add GoTo url action
+                WebPlatform webPlatform = new WebPlatform();
+
+                ElementActionCongifuration actConfigurations = null;
+                actConfigurations = new ElementActionCongifuration()
+                {
+                    Description = "Go to Url - " + mPOM.Name,
+                    Operation = "GotoURL",
+                    ElementValue = mPOM.PageURL,
+                    LocateBy = "NA"
+                };
+                ElementInfo einfo = new ElementInfo();
+                einfo.ElementTypeEnum = eElementType.Iframe;
+                Act gotoAction = (webPlatform as Amdocs.Ginger.CoreNET.IPlatformInfo).GetPlatformAction(einfo, actConfigurations);
+                gotoAction.Active = true;
+                activity.Acts.Add(gotoAction);
+
+                //generate the action from found element
+                foreach (ElementMetaData elementMetaData in metaData.ElementsMetaData)//we can use orderby if needed
+                {
+                    ElementInfo foundElemntInfo = (ElementInfo)mPOM.MappedUIElements.Where(z => z.Guid == elementMetaData.ElementGuid).FirstOrDefault();
+                    if (foundElemntInfo == null)
+                    {
+                        foundElemntInfo = (ElementInfo)mPOM.UnMappedUIElements.Where(z => z.Guid == elementMetaData.ElementGuid).FirstOrDefault();
+                    }
+                    if (foundElemntInfo != null)
+                    {
+                        string elementVal = string.Empty;
+                        if (foundElemntInfo.OptionalValuesObjectsList.Count > 0)
+                        {
+                            elementVal = Convert.ToString(foundElemntInfo.OptionalValuesObjectsList.Where(v => v.IsDefault).FirstOrDefault().Value);
+                        }
+                        //ElementActionCongifuration actConfigurations = null;
+                        actConfigurations = new ElementActionCongifuration
+                        {
+                            LocateBy = eLocateBy.POMElement,
+                            LocateValue = foundElemntInfo.ParentGuid.ToString() + "_" + foundElemntInfo.Guid.ToString(),
+                            ElementValue = elementVal,
+                            AddPOMToAction = true,
+                            POMGuid = foundElemntInfo.ParentGuid.ToString(),
+                            ElementGuid = foundElemntInfo.Guid.ToString(),
+                            LearnedElementInfo = foundElemntInfo,
+                            Type = foundElemntInfo.ElementTypeEnum
+                        };
+                        Act pomAction = (webPlatform as Amdocs.Ginger.CoreNET.IPlatformInfo).GetPlatformAction(foundElemntInfo, actConfigurations);
+                        pomAction.Active = true;
+                        activity.Acts.Add(pomAction);
+                    }
+                }
+                activities.Add(activity);//check activity has actions
+            }
+
+            return activities;
         }
 
         private void SetDefaultPage()
