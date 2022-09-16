@@ -606,12 +606,13 @@ namespace GingerCore.Actions
         private void SetProcessAsPerVE()
         {
             int countSimilar = ActiveProcessWindows.Where(p => p.Contains(ProcessNameVEForSikuliOperation)).Count();
-            if (countSimilar > 0)
+            if (countSimilar == 1)
             {
-                if (countSimilar == 1)
-                {
-                    ProcessNameForSikuliOperation = ActiveProcessWindows.First(p => p.Contains(ProcessNameVEForSikuliOperation));
-                }
+                ProcessNameForSikuliOperation = ActiveProcessWindows.First(p => p.Contains(ProcessNameVEForSikuliOperation));
+            }
+            else
+            {
+                ProcessNameForSikuliOperation = String.Empty;
             }
         }
     }

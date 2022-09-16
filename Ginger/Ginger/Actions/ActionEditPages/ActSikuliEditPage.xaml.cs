@@ -92,7 +92,6 @@ namespace Ginger.Actions
             ElementImageSourceChanged(true);
             SetJavaRelatedDetails();
             xProcessValueEditor.ShowTextBox(false);
-            xProcessValueEditor.BindControl(Context.GetAsContext(actSikuli.Context), actSikuli, nameof(ActSikuli.ProcessNameVEForSikuliOperation));
             xProcessValueEditor.Init(Context.GetAsContext(actSikuli.Context), actSikuli.GetOrCreateInputParam(nameof(actSikuli.ProcessNameVEForSikuliOperation),
                (Context.GetAsContext(actSikuli.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
             xProcessValueEditor.ValueTextBox.TextChanged -= ProcessValueTextBox_TextChanged;
@@ -124,7 +123,6 @@ namespace Ginger.Actions
                 mVE.Value = xProcessValueEditor.ValueTextBox.Text;
                 string calculateValue = mVE.ValueCalculated;
                 actSikuli.ProcessNameVEForSikuliOperation = calculateValue;
-                xActiveProcessesTitlesComboBox.Text = actSikuli.ProcessNameForSikuliOperation;
                 for (int i = 0; i < xActiveProcessesTitlesComboBox.Items.Count; i++)
                 {
                     ComboEnumItem item = xActiveProcessesTitlesComboBox.Items[i] as ComboEnumItem;
@@ -134,6 +132,7 @@ namespace Ginger.Actions
                         break;
                     }
                 }
+                xActiveProcessesTitlesComboBox.SelectedIndex = -1;
             }
         }
 
