@@ -569,6 +569,7 @@ namespace Ginger.Run
                 }
                 else
                 {
+                    NotifySkippedEntitiesWhenRunnerExecutionSkipped();
                     Status = RunsetStatus;
                 }
             }
@@ -603,7 +604,30 @@ namespace Ginger.Run
                     NotifyActivitySkipped(activity);
                 }
             }
+        }
+        private void NotifySkippedEntitiesWhenRunnerExecutionSkipped()
+        {
+            // Get all 'Skipped' BF
+            List<BusinessFlow> businessFlowList = BusinessFlows.Where(x => x.RunStatus == eRunStatus.Skipped).ToList();
 
+            foreach (BusinessFlow businessFlow in businessFlowList)
+            {
+                NotifyBusinessFlowSkipped(businessFlow);
+                // Saarch for Activities-Groups and Activities in All BF
+
+                // 'Skipped' Activities Group
+                List<ActivitiesGroup> activitiesGroupList = businessFlow.ActivitiesGroups.Where(x => x.RunStatus == eActivitiesGroupRunStatus.Skipped).ToList();
+                foreach (ActivitiesGroup activitiesGroup in activitiesGroupList)
+                {
+                    NotifyActivityGroupSkipped(activitiesGroup);
+                }
+                // 'Skipped' Activities
+                List<Activity> activitiesList = businessFlow.Activities.Where(x => x.Status == eRunStatus.Skipped).ToList();
+                foreach (Activity activity in activitiesList)
+                {
+                    NotifyActivitySkipped(activity);
+                }
+            }
         }
 
 
@@ -4193,9 +4217,7 @@ namespace Ginger.Run
                 CurrentBusinessFlow = bf;
                 CurrentBusinessFlow.CurrentActivity = bf.Activities.FirstOrDefault();
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
-
                 SetBusinessFlowActivitiesAndActionsSkipStatus(bf);
-
             }
         }
 
@@ -4966,7 +4988,6 @@ namespace Ginger.Run
                 runnerListener.BusinessFlowSkipped(evetTime, businessFlow, ContinueRun);
             }
         }
-
         private void NotifyBusinessflowWasReset(BusinessFlow businessFlow)
         {
             uint eventTime = RunListenerBase.GetEventTime();

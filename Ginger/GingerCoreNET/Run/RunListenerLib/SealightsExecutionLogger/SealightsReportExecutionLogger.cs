@@ -38,7 +38,18 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         public Context mContext;
         private long StartTime;
         private long EndTime;
-        private bool RunningInRunsetMode = false;
+        private bool mRunningInRunsetMode;
+        public bool RunningInRunsetMode
+        {
+            get { return mRunningInRunsetMode; }
+            set
+            {
+                if (mRunningInRunsetMode != value)
+                {
+                    mRunningInRunsetMode = value;
+                }
+            }
+        }
 
         private IEnumerable<dynamic> statusItemList;
 
@@ -85,15 +96,30 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         {
             try
             {
-                RunningInRunsetMode = true;
-
                 Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, "Sealights Session Creation");
 
                 SealightsReportApiHandler.SendCreationTestSessionToSealightsAsync();
 
+                // set each runner's sealights execution logger running in runset mode to true & set for each runner's sealights execution logger the test session id
+                foreach (GingerRunner GR in runsetConfig.GingerRunners)
+                {
+                    if (GR == null || GR.Executor == null || ((GingerExecutionEngine)GR.Executor).Sealights_Logger == null || ((GingerExecutionEngine)GR.Executor).Sealights_Logger.SealightsReportApiHandler == null)
+                    {
+                        continue;
+                    }
+                    // only relevant incase the runner is active and meant to be executed
+                    if (GR.Active)
+                    {
+                        ((GingerExecutionEngine)GR.Executor).Sealights_Logger.RunningInRunsetMode = true;
+                        ((GingerExecutionEngine)GR.Executor).Sealights_Logger.SealightsReportApiHandler.TestSessionId = SealightsReportApiHandler.TestSessionId;
+                    }
+                }
+
+                // check if test recommendations settings is set to yes on the runset level or on the solution level
                 if ((runsetConfig.SealightsTestRecommendationsRunsetOverrideFlag && runsetConfig.SealightsTestRecommendations == SealightsConfiguration.eSealightsTestRecommendations.Yes) ||
                     (!runsetConfig.SealightsTestRecommendationsRunsetOverrideFlag && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsTestRecommendations == SealightsConfiguration.eSealightsTestRecommendations.Yes))
                 {
+                    // get the list of tests to exclude from execution during this runset execution
                     string[] testsToExclude = SealightsReportApiHandler.GetTestsToExclude(runsetConfig);
                     if (testsToExclude != null)
                     {
@@ -111,9 +137,21 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
         public async Task RunSetEnd(RunSetConfig runsetConfig)
         {
-            RunningInRunsetMode = false;
-
             await SealightsReportApiHandler.SendDeleteSessionToSealightsAsync(); // Delete Sealights session
+            
+            // set each runner's sealights execution logger running in runset mode to false & set the test session id to null as the session has been closed
+            foreach (GingerRunner GR in runsetConfig.GingerRunners)
+            {
+                if (GR == null || GR.Executor == null || ((GingerExecutionEngine)GR.Executor).Sealights_Logger == null || ((GingerExecutionEngine)GR.Executor).Sealights_Logger.SealightsReportApiHandler == null)
+                {
+                    continue; 
+                }
+                if (GR.Active)
+                {
+                    ((GingerExecutionEngine)GR.Executor).Sealights_Logger.RunningInRunsetMode = false;
+                    ((GingerExecutionEngine)GR.Executor).Sealights_Logger.SealightsReportApiHandler.TestSessionId = null;
+                }
+            }
         }
 
         #endregion RunSet   
