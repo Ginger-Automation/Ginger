@@ -163,6 +163,19 @@ namespace GingerCore.Actions
             }
         }
 
+        public string ProcessNameVEForSikuliOperation
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ProcessNameVEForSikuliOperation)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ProcessNameVEForSikuliOperation), value);
+                SetProcessAsPerVE();
+            }
+        }
+
         public string PatternSimilarity
         {
             get
@@ -391,6 +404,11 @@ namespace GingerCore.Actions
                     lstWindows.Add(process);
                 }
             }
+            if (!string.IsNullOrEmpty(ProcessNameForSikuliOperation) &&
+                !ActiveProcessWindowsList.Contains(ProcessNameForSikuliOperation))
+            {
+                ActiveProcessWindowsList.Add(ProcessNameForSikuliOperation);
+            }
         }
 
         public override int ClickX
@@ -583,6 +601,18 @@ namespace GingerCore.Actions
             }
 
             return lstVal;
+        }
+
+        private void SetProcessAsPerVE()
+        {
+            int countSimilar = ActiveProcessWindows.Where(p => p.Contains(ProcessNameVEForSikuliOperation)).Count();
+            if (countSimilar > 0)
+            {
+                if (countSimilar == 1)
+                {
+                    ProcessNameForSikuliOperation = ActiveProcessWindows.First(p => p.Contains(ProcessNameVEForSikuliOperation));
+                }
+            }
         }
     }
 }
