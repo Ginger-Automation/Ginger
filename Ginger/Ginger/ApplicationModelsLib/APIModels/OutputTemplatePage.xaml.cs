@@ -46,7 +46,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             mPageViewMode = pageViewMode;
 
-            if (pageViewMode == Ginger.General.eRIPageViewMode.View)
+            if (pageViewMode == Ginger.General.eRIPageViewMode.View || pageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
             {
                 xOutputValuesGrid.ShowAdd = Visibility.Collapsed;
                 xOutputValuesGrid.ShowUpDown = Visibility.Collapsed;
@@ -135,7 +135,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             GridViewDef SimView = new GridViewDef(eGridView.All.ToString());
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             SimView.GridColsView = viewCols;
-            bool setColumnsReadOnly = (mPageViewMode == Ginger.General.eRIPageViewMode.View);
+            bool setColumnsReadOnly = (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute);
 
             //Simulation view
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Active, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox, ReadOnly = setColumnsReadOnly });

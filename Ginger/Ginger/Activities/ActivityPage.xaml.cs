@@ -78,6 +78,13 @@ namespace GingerWPF.BusinessFlowsLib
             BindControlsToActivity();
         }
 
+        private void UpdateActivityViewMode(Ginger.General.eRIPageViewMode pageViewMod)
+        {
+            mPageViewMode = pageViewMod;
+            SetUIView();
+           
+        }
+
         public void SetUIElementsBehaverBasedOnRunnerStatus(bool IsRunning)
         {
             Dispatcher.Invoke(() =>
@@ -95,16 +102,40 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void SetUIView()
         {
-            if (mPageViewMode != Ginger.General.eRIPageViewMode.Automation)
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.Automation)
+            {
+                xOperationsPnl.Visibility = Visibility.Visible;
+                xUndoBtn.Visibility = Visibility.Visible;
+                xEditButton.Visibility = Visibility.Collapsed;                
+                xUploadToShareRepoMenuItem.Visibility = Visibility.Visible;
+
+            }
+            else if (mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
+            {
+                xOperationsPnl.Visibility = Visibility.Visible;
+                xUndoBtn.Visibility = Visibility.Collapsed;
+                xEditButton.Visibility = Visibility.Visible;    //???            
+                xUploadToShareRepoMenuItem.Visibility = Visibility.Collapsed;
+            }
+            else if (mPageViewMode == Ginger.General.eRIPageViewMode.View)
             {
                 xOperationsPnl.Visibility = Visibility.Collapsed;
-            }
+                xUndoBtn.Visibility = Visibility.Collapsed;
+                xEditButton.Visibility = Visibility.Collapsed;              
+                xUploadToShareRepoMenuItem.Visibility = Visibility.Collapsed;
+            }      
 
-            if (mPageViewMode == Ginger.General.eRIPageViewMode.SharedReposiotry)
+            else if (mPageViewMode == Ginger.General.eRIPageViewMode.SharedReposiotry)
             {
+                xOperationsPnl.Visibility = Visibility.Collapsed;
+                xUndoBtn.Visibility = Visibility.Collapsed;
+                xEditButton.Visibility = Visibility.Collapsed;
                 xUploadToShareRepoMenuItem.Visibility = Visibility.Collapsed;
                 //xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;
             }
+            mActionsPage?.UpdatePageViewMode(mPageViewMode);
+            mVariabelsPage?.UpdatePageViewMode(mPageViewMode);
+            mConfigurationsPage?.UpdatePageViewMode(mPageViewMode);
 
             //if (mPageViewMode == Ginger.General.eRIPageViewMode.View)
             //{
@@ -116,7 +147,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void BindControlsToActivity()
         {
-            if (mPageViewMode != Ginger.General.eRIPageViewMode.View && mActivity.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange)
+            if (mPageViewMode != Ginger.General.eRIPageViewMode.View && mPageViewMode != Ginger.General.eRIPageViewMode.ViewAndExecute  && mActivity.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange)
             {
                 mActivity.SaveBackup();
             }
@@ -162,6 +193,15 @@ namespace GingerWPF.BusinessFlowsLib
                 mActivity = activity;
                 if (mActivity != null)
                 {
+                    if (mActivity.Type == eSharedItemType.Link)//Check if this is callled when opening activity from runset?
+                    {
+                        UpdateActivityViewMode(Ginger.General.eRIPageViewMode.ViewAndExecute);                      
+                    }
+                    else
+                    {
+                        UpdateActivityViewMode(Ginger.General.eRIPageViewMode.Automation);                     
+                    }
+
                     BindControlsToActivity();
                 }
             }
@@ -225,7 +265,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void MActionsPage_ShiftToActionsListEvent(object sender, RoutedEventArgs e)
         {
-            if (mPageViewMode == Ginger.General.eRIPageViewMode.Automation)
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.Automation || mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
             {
                 xRunSelectedActionBtn.Visibility = Visibility.Visible;
             }
@@ -233,7 +273,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void MActionsPage_ShiftToActionEditEvent(object sender, RoutedEventArgs e)
         {
-            if (mPageViewMode == Ginger.General.eRIPageViewMode.Automation)
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.Automation|| mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
             {
                 xRunSelectedActionBtn.Visibility = Visibility.Collapsed;
             }
@@ -246,7 +286,7 @@ namespace GingerWPF.BusinessFlowsLib
             mActivity.Acts.CollectionChanged -= Acts_CollectionChanged;
             mActivity.Variables.CollectionChanged -= Variables_CollectionChanged;
 
-            if (mActivity != null && mPageViewMode != Ginger.General.eRIPageViewMode.View && mActivity.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange)
+            if (mActivity != null && mPageViewMode != Ginger.General.eRIPageViewMode.View  && mPageViewMode != Ginger.General.eRIPageViewMode.ViewAndExecute && mActivity.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange)
             {
                 mActivity.ClearBackup();
             }
@@ -443,6 +483,7 @@ namespace GingerWPF.BusinessFlowsLib
                     break;
 
                 case Ginger.General.eRIPageViewMode.View:
+                case Ginger.General.eRIPageViewMode.ViewAndExecute:
                     title = "View " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     winButtons.Add(okBtn);
                     CloseHandler = new RoutedEventHandler(OkBtn_Click);
@@ -517,6 +558,13 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
+        private void xEditBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mActivity.EnableEdit = true;
+            //create back up
+            UpdateActivityViewMode(Ginger.General.eRIPageViewMode.Automation);
+        }
+
         private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
@@ -525,6 +573,8 @@ namespace GingerWPF.BusinessFlowsLib
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
-        }       
+        }
+
+  
     }
 }

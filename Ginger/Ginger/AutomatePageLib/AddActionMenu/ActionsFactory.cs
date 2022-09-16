@@ -299,12 +299,11 @@ namespace Ginger.BusinessFlowPages
             {
                 parentGroup = businessFlow.ActivitiesGroups.Where(g => g.Name == ActivitiesGroupID).FirstOrDefault();
             }
-            else
-            {
-                var activitiesGroupSelectionPage = new ActivitiesGroupSelectionPage(businessFlow);
+          
+                var activitiesGroupSelectionPage = new ActivitiesGroupSelectionPage(businessFlow, parentGroup);
                 parentGroup = activitiesGroupSelectionPage.ShowAsWindow();
                 copyAsLink = activitiesGroupSelectionPage.xLinkedInstance.IsChecked.Value;
-            }
+          
 
             if (parentGroup != null)
             {

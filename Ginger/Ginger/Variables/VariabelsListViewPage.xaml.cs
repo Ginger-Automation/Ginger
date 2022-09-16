@@ -70,6 +70,13 @@ namespace Ginger.BusinessFlowPages
             ShowHideEditPage(null);
         }
 
+        public void UpdatePageViewMode(Ginger.General.eRIPageViewMode pageViewMode)
+        {
+            mPageViewMode = pageViewMode;
+            SetListView();
+            ShowHideEditPage(null);
+        }
+
         private ObservableList<VariableBase> GetVariablesList()
         {
             if (mVariabelsParent is Solution)
@@ -120,7 +127,7 @@ namespace Ginger.BusinessFlowPages
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.ToolTipProperty, mVarBeenEdit, nameof(VariableBase.Name));
                                 
                 bool showAsReadOnly = false;
-                if (mPageViewMode == General.eRIPageViewMode.View)
+                if (mPageViewMode == General.eRIPageViewMode.View || mPageViewMode == General.eRIPageViewMode.ViewAndExecute)
                 {
                     showAsReadOnly = true;
                     xEditAndValueChangeOperationsPnl.Visibility = Visibility.Collapsed;
@@ -143,10 +150,10 @@ namespace Ginger.BusinessFlowPages
                 }
                 else if (mVariabelsParent is Activity)
                 {
-                    if(mPageViewMode== General.eRIPageViewMode.View)
+                    if(mPageViewMode== General.eRIPageViewMode.View || mPageViewMode == General.eRIPageViewMode.ViewAndExecute)
                     {
                         mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.View, parent: mVariabelsParent);
-                    }
+                    }                   
                     else if (mPageViewMode == General.eRIPageViewMode.SharedReposiotry)
                     {
                         mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.SharedRepository);
@@ -219,10 +226,15 @@ namespace Ginger.BusinessFlowPages
 
                 mVariabelsListView.List.SetValue(ScrollViewer.CanContentScrollProperty, true);
 
-                if (mPageViewMode == Ginger.General.eRIPageViewMode.View)
+                if (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
                 {
                     mVariabelsListView.IsDragDropCompatible = false;
                 }
+            }
+            else
+            {            
+                mVariabelListHelper.UpdatePageViewMode(mPageViewMode);
+                mVariabelsListView.SetDefaultListDataTemplate(mVariabelListHelper);
             }
 
             if (mVariabelsParent != null)

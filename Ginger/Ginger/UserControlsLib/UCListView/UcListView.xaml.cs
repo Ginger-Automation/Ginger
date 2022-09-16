@@ -428,6 +428,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void xListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //TODO:Create a event for Activity list selection changed and reload linked activity from SR
             if (mObjList != null && mObjList.SyncCurrentItemWithViewSelectedItem)
             {
                 SetSourceCurrentItemAsListSelectedItem();
@@ -488,6 +489,7 @@ namespace Ginger.UserControlsLib.UCListView
             List<ListItemOperation> listOperations = mListViewHelper.GetListOperations();
             if (listOperations != null && listOperations.Count > 0)
             {
+                xListOperationsPnl.Children.Clear();
                 xListOperationsPnl.Visibility = Visibility.Visible;
 
                 foreach (ListItemOperation operation in listOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)).ToList())
@@ -540,6 +542,7 @@ namespace Ginger.UserControlsLib.UCListView
             List<ListItemOperation> extraOperations = mListViewHelper.GetListExtraOperations();
             if (extraOperations != null && extraOperations.Count > 0)
             {
+                ((MenuItem)(xListExtraOperationsMenu.Items[0])).Items.Clear();
                 xListExtraOperationsMenu.Visibility = Visibility.Visible;
                 foreach (ListItemOperation operation in extraOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)).ToList())
                 {

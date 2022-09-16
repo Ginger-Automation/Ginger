@@ -38,6 +38,7 @@ using Ginger.Extensions;
 using Ginger.Functionalities;
 using Ginger.GherkinLib;
 using Ginger.Reports;
+using Ginger.Repository;
 using Ginger.Run;
 using Ginger.TimeLineLib;
 using Ginger.UserControlsLib.TextEditor;
@@ -580,7 +581,8 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     if (mActivityPage == null)
                     {
-                        mActivityPage = new ActivityPage(mContext.Activity, mContext, Ginger.General.eRIPageViewMode.Automation);
+                        var pageViewMode= mContext.Activity.Type==Amdocs.Ginger.Repository.eSharedItemType.Regular ? Ginger.General.eRIPageViewMode.Automation:  Ginger.General.eRIPageViewMode.ViewAndExecute;
+                        mActivityPage = new ActivityPage(mContext.Activity, mContext, pageViewMode);
                     }
                     else
                     {
@@ -1204,9 +1206,17 @@ namespace GingerWPF.BusinessFlowsLib
                     return;
                 }
             }
-
-            if (mBusinessFlow.Activities.Any(x => x.IsLinkedItem))
+            var dirtyLinkedActivities = mBusinessFlow.Activities.Where(x => x.IsLinkedItem && x.EnableEdit);
+            if (dirtyLinkedActivities.Count() > 0)
             {
+                foreach(Activity dirtyLinkedActivity in dirtyLinkedActivities)
+                {
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, dirtyLinkedActivity.ActivityName,
+                                    "Linked "+GingerDicser.GetTermResValue(eTermResKey.Activity));
+                    SwapLoadingPrefixText("Saving", false);
+                    //TODO: Overite matching shared repo activity
+                    //SharedRepositoryOperations.GetMatchingRepoItem
+                }
                 if (Reporter.ToUser(eUserMsgKey.WarnOnLinkSharedActivities) == Amdocs.Ginger.Common.eUserMsgSelection.No)
                 {
                     return;
@@ -1215,6 +1225,7 @@ namespace GingerWPF.BusinessFlowsLib
 
             try
             {
+
                 Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mBusinessFlow.Name,
                                       GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                 SwapLoadingPrefixText("Saving", false);

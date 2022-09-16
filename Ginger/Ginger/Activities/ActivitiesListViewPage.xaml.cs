@@ -82,7 +82,7 @@ namespace Ginger.BusinessFlowPages
             // Disable ScrollViewer's CanContentScroll property for smooth scrolling 
             xActivitiesListView.List.SetValue(ScrollViewer.CanContentScrollProperty, false);
 
-            if (mPageViewMode == Ginger.General.eRIPageViewMode.View)
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.View|| mPageViewMode == General.eRIPageViewMode.ViewAndExecute)
             {
                 xActivitiesListView.IsDragDropCompatible = false;
             }

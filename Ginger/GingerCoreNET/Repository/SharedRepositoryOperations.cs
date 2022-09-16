@@ -446,6 +446,8 @@ namespace Ginger.Repository
             //TODO - find better way to get unique name
         }
 
+
+        //TODO: Not a good solution. Each time we make changes to Linked Activity, we traverse all the flows in the solution
         private static readonly object saveLock = new object();
         public static async Task UpdateLinkedInstances(Activity mActivity)
         {

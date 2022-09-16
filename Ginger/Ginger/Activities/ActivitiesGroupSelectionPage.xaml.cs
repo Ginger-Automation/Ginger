@@ -35,7 +35,7 @@ namespace Ginger.BusinessFlowPages
         GenericWindow mPageGenericWin = null;
         ActivitiesGroup mSelectedAG = null;
 
-        public ActivitiesGroupSelectionPage(BusinessFlow businessFlow )
+        public ActivitiesGroupSelectionPage(BusinessFlow businessFlow, ActivitiesGroup parentGroup =null)
         {
             InitializeComponent();
 
@@ -47,7 +47,15 @@ namespace Ginger.BusinessFlowPages
             xGroupComboBox.DisplayMemberPath = nameof(ActivitiesGroup.Name);
             if (businessFlow.ActivitiesGroups.Count > 0)
             {
-                xGroupComboBox.SelectedItem = businessFlow.ActivitiesGroups[0];
+                if(parentGroup==null)
+                {
+                    xGroupComboBox.SelectedItem = businessFlow.ActivitiesGroups[0];
+                }
+                else
+                {
+                    xGroupComboBox.SelectedItem = parentGroup;
+                }
+              
             }
         }
 
@@ -73,8 +81,8 @@ namespace Ginger.BusinessFlowPages
         }
 
         public ActivitiesGroup ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
-        {            
-            string title = "Select " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
+        {
+            string title = "Configurations";// + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
 
             ObservableList<Button> winButtons = new ObservableList<Button>();          
             Button selectBtn = new Button();
