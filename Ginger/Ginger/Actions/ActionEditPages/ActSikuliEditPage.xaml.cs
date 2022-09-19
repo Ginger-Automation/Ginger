@@ -129,7 +129,7 @@ namespace Ginger.Actions
                     if (item.Value.Equals(actSikuli.ProcessNameForSikuliOperation))
                     {
                         xActiveProcessesTitlesComboBox.SelectedIndex = i;
-                        break;
+                        return;
                     }
                 }
                 xActiveProcessesTitlesComboBox.SelectedIndex = -1;
