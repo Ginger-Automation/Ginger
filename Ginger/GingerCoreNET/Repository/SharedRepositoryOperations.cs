@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+//using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -449,7 +450,7 @@ namespace Ginger.Repository
 
         //TODO: Not a good solution. Each time we make changes to Linked Activity, we traverse all the flows in the solution
         private static readonly object saveLock = new object();
-        public static async Task UpdateLinkedInstances(Activity mActivity)
+        public static async Task UpdateLinkedInstances(Activity mActivity, string ExculdeBusinessFlowGuid = null)
         {
             try
             {
@@ -457,12 +458,15 @@ namespace Ginger.Repository
                 await Task.Run(() =>
                 {
                     ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-
+                    if (!string.IsNullOrEmpty(ExculdeBusinessFlowGuid))
+                    {
+                        BizFlows.Remove(BizFlows.FirstOrDefault(x => x.Guid.ToString() == ExculdeBusinessFlowGuid));
+                    }
                     Parallel.ForEach(BizFlows, BF =>
                     {
                         try
                         {
-                            if (BF.Activities.Any(f => f.IsLinkedItem && f.ParentGuid == mActivity.Guid))
+                            if (!BF.Activities.LazyLoad && BF.Activities.Any(f => f.IsLinkedItem && f.ParentGuid == mActivity.Guid))
                             {
                                 for (int i = 0; i < BF.Activities.Count(); i++)
                                 {
@@ -495,5 +499,28 @@ namespace Ginger.Repository
             }
         }
 
+        /// <summary>
+        /// Save a Linked activity
+        /// </summary>
+        /// <param name="LinkedActivity">Linked activity used in the flow to save</param>
+        /// <returns></returns>
+        public static async Task SaveLinkedActivity(Activity LinkedActivity, string ExculdeBusinessFlowGuid)
+        {
+            Activity sharedActivity = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(LinkedActivity.ParentGuid);
+            if (sharedActivity != null)
+            {
+                WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(sharedActivity);
+                sharedActivity = (Activity)LinkedActivity.CreateInstance(true);
+                sharedActivity.Guid = LinkedActivity.ParentGuid;
+                sharedActivity.Type = eSharedItemType.Regular;
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(sharedActivity);
+                LinkedActivity.EnableEdit = false;
+                await UpdateLinkedInstances(sharedActivity, ExculdeBusinessFlowGuid);
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Activity not found in shared repository.");
+            }
+        }
     }
 }

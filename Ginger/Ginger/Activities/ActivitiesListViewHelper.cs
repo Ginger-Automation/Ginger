@@ -23,6 +23,7 @@ using Ginger.ALM;
 using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
 using Ginger.Repository.AddItemToRepositoryWizard;
+using Ginger.Repository.ItemToRepositoryWizard;
 using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
@@ -494,6 +495,29 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             addToSR.OperationHandler = AddToSRHandler;
             extraOperationsList.Add(addToSR);
 
+            if (mActivity.IsSharedRepositoryInstance && mActivity.Type == eSharedItemType.Link)
+            {
+                ListItemOperation convertToSR = new ListItemOperation();
+                convertToSR.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+                convertToSR.AutomationID = "ConvertToSR";
+                convertToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
+                convertToSR.Header = "Convert to Shared Repository";
+                convertToSR.ToolTip = "Convert to Regular Shared Repository";
+                convertToSR.OperationHandler = ConvertToRegularSRHandler;
+                extraOperationsList.Add(convertToSR);
+            }
+            if (mActivity.IsSharedRepositoryInstance && mActivity.Type == eSharedItemType.Regular)
+            {
+                ListItemOperation convertToLSR = new ListItemOperation();
+                convertToLSR.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+                convertToLSR.AutomationID = "ConvertToLink";
+                convertToLSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.InstanceLink;
+                convertToLSR.Header = "Convert to Linked Repository";
+                convertToLSR.ToolTip = "Convert to Linked Shared Repository";
+                convertToLSR.OperationHandler = ConvertToLinkedSRHandler;
+                extraOperationsList.Add(convertToLSR);
+            }
+
             return extraOperationsList;
         }
 
@@ -807,6 +831,16 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(sender);
             WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mActivity));
+        }
+        private void ConvertToRegularSRHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mActivity, true, UploadItemSelection.eActivityInstanceType.RegularInstance));
+        }
+        private void ConvertToLinkedSRHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mActivity, true, UploadItemSelection.eActivityInstanceType.LinkInstance));
         }
 
         private void ResetHandler(object sender, RoutedEventArgs e)

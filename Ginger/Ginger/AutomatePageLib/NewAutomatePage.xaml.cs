@@ -1214,8 +1214,8 @@ namespace GingerWPF.BusinessFlowsLib
                     Reporter.ToStatus(eStatusMsgKey.SaveItem, null, dirtyLinkedActivity.ActivityName,
                                     "Linked "+GingerDicser.GetTermResValue(eTermResKey.Activity));
                     SwapLoadingPrefixText("Saving", false);
-                    //TODO: Overite matching shared repo activity
-                    //SharedRepositoryOperations.GetMatchingRepoItem
+
+                    await SharedRepositoryOperations.SaveLinkedActivity(dirtyLinkedActivity, mBusinessFlow.Guid.ToString());
                 }
                 if (Reporter.ToUser(eUserMsgKey.WarnOnLinkSharedActivities) == Amdocs.Ginger.Common.eUserMsgSelection.No)
                 {

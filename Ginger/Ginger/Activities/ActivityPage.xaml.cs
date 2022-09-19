@@ -97,7 +97,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xResetBtn.IsEnabled = IsRunning;
             });
 
-            mActionsPage.SetUIElementsBehaverBasedOnRunnerStatus(IsRunning);
+            mActionsPage?.SetUIElementsBehaverBasedOnRunnerStatus(IsRunning);
         }
 
         private void SetUIView()
@@ -106,7 +106,11 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 xOperationsPnl.Visibility = Visibility.Visible;
                 xUndoBtn.Visibility = Visibility.Visible;
-                xEditButton.Visibility = Visibility.Collapsed;                
+                xEditButton.Visibility = Visibility.Collapsed;
+                if (mActivity.EnableEdit)
+                {
+                    xSaveButton.Visibility = Visibility.Visible;
+                }
                 xUploadToShareRepoMenuItem.Visibility = Visibility.Visible;
 
             }
@@ -115,13 +119,18 @@ namespace GingerWPF.BusinessFlowsLib
                 xOperationsPnl.Visibility = Visibility.Visible;
                 xUndoBtn.Visibility = Visibility.Collapsed;
                 xEditButton.Visibility = Visibility.Visible;    //???            
+                if (!mActivity.EnableEdit)
+                {
+                    xSaveButton.Visibility = Visibility.Collapsed;
+                }
                 xUploadToShareRepoMenuItem.Visibility = Visibility.Collapsed;
             }
             else if (mPageViewMode == Ginger.General.eRIPageViewMode.View)
             {
                 xOperationsPnl.Visibility = Visibility.Collapsed;
                 xUndoBtn.Visibility = Visibility.Collapsed;
-                xEditButton.Visibility = Visibility.Collapsed;              
+                xEditButton.Visibility = Visibility.Collapsed;
+                xSaveButton.Visibility = Visibility.Collapsed;
                 xUploadToShareRepoMenuItem.Visibility = Visibility.Collapsed;
             }      
 
@@ -130,6 +139,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xOperationsPnl.Visibility = Visibility.Collapsed;
                 xUndoBtn.Visibility = Visibility.Collapsed;
                 xEditButton.Visibility = Visibility.Collapsed;
+                xSaveButton.Visibility = Visibility.Collapsed;
                 xUploadToShareRepoMenuItem.Visibility = Visibility.Collapsed;
                 //xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;
             }
@@ -561,7 +571,12 @@ namespace GingerWPF.BusinessFlowsLib
         private void xEditBtn_Click(object sender, RoutedEventArgs e)
         {
             mActivity.EnableEdit = true;
+            if (Reporter.ToUser(eUserMsgKey.WarnOnLinkSharedActivities) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+            {
+                return;
+            }
             //create back up
+            mActivity.SaveBackup();
             UpdateActivityViewMode(Ginger.General.eRIPageViewMode.Automation);
         }
 
@@ -575,6 +590,11 @@ namespace GingerWPF.BusinessFlowsLib
             ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
 
-  
+        private async void xSaveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            await SharedRepositoryOperations.SaveLinkedActivity(mActivity, mContext.BusinessFlow.Guid.ToString());
+
+            UpdateActivityViewMode(Ginger.General.eRIPageViewMode.ViewAndExecute);
+        }
     }
 }

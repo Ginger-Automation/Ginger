@@ -29,14 +29,16 @@
                     </Label.Content>
                 </Label>
                 <StackPanel Orientation="Horizontal">
-                    <RadioButton x:Name="xLinkedInstance" IsChecked="True" HorizontalAlignment="Left"  Margin="10,10,0,0" >
-                        <GingerCore:ucTextDicResource Text="Link Instance"/>
+                    <RadioButton x:Name="xLinkedInstance" IsChecked="True" HorizontalAlignment="Left" Checked="xLinkedInstance_Checked" Margin="10,10,0,0" >
+                        <GingerCore:ucTextDicResource Text="Link Instance" ToolTip="If we update any instance of this type, all the flows having this instance will be updated."/>
                     </RadioButton>
-                    <RadioButton x:Name="xRegularInstance" IsChecked="False" HorizontalAlignment="Left"  Margin="10,10,0,0" >
-                        <GingerCore:ucTextDicResource Text="Regular Instance"/>
+                    <RadioButton x:Name="xRegularInstance" IsChecked="False" HorizontalAlignment="Left" Checked="xRegularInstance_Checked"  Margin="10,10,0,0" >
+                        <GingerCore:ucTextDicResource Text="Regular Instance" ToolTip="If we update any instance of this type, we need to manually updated all the flows with this instance."/>
                     </RadioButton>
                 </StackPanel>
             </StackPanel>
+            <Label x:Name="xNoteLable" Content="Note- * If we update any instance of this type, all the flows having this instance will be updated." Style="{StaticResource @LabelStyle}" VerticalAlignment="Bottom" Margin="0,20,0,0"/>
+
         </StackPanel>
     </Grid>
 </Page>

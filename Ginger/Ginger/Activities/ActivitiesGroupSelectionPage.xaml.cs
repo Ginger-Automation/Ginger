@@ -91,7 +91,7 @@ namespace Ginger.BusinessFlowPages
             winButtons.Add(selectBtn);
 
             this.Height = 200;
-            this.Width = 500;
+            this.Width = 600;
 
             GingerCore.General.LoadGenericWindow(ref mPageGenericWin, App.MainWindow, windowStyle, title, this, winButtons);
             return mSelectedAG;
@@ -108,6 +108,24 @@ namespace Ginger.BusinessFlowPages
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " was not selected.");
             }
             mPageGenericWin.Close();
+        }
+
+        private void xLinkedInstance_Checked(object sender, RoutedEventArgs e)
+        {
+            if (xNoteLable == null)
+            {
+                return;
+            }
+            xNoteLable.Content = "Note- * If we update any instance of this type, all the flows having this instance will be updated.";
+        }
+
+        private void xRegularInstance_Checked(object sender, RoutedEventArgs e)
+        {
+            if (xNoteLable == null)
+            {
+                return;
+            }
+            xNoteLable.Content = "Note- * If we update any instance of this type, we need to manually updated all the flows with this instance.";
         }
     }
 }
