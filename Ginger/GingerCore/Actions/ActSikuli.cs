@@ -391,6 +391,11 @@ namespace GingerCore.Actions
                     lstWindows.Add(process);
                 }
             }
+            if (!string.IsNullOrEmpty(ProcessNameForSikuliOperation) &&
+                !ActiveProcessWindowsList.Contains(ProcessNameForSikuliOperation))
+            {
+                ActiveProcessWindowsList.Add(ProcessNameForSikuliOperation);
+            }
         }
 
         public override int ClickX
