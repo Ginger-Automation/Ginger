@@ -185,7 +185,7 @@ namespace GingerCore.Variables
             List<string> extraParamsDescription = new List<string>();
             extraParamsDescription.Add("Index=1");
             extraParamsDescription.Add("GetLength=True");
-            extraParamsDescription.Add("IsContain=");
+            extraParamsDescription.Add("IsContains=");
             return extraParamsDescription;
         }
 

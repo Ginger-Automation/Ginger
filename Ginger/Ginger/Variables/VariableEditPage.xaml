@@ -6,7 +6,6 @@
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       xmlns:Ginger="clr-namespace:Ginger"
       xmlns:h="clr-namespace:Ginger.Help"
-      xmlns:Activities="clr-namespace:Ginger.BusinessFlowWindows"
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       xmlns:usercontrols1="clr-namespace:Ginger.UserControlsLib" h:GingerHelpProvider.HelpString="Variable"
       mc:Ignorable="d" 
@@ -37,10 +36,7 @@
                                 <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
                                 <usercontrols1:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
                             </StackPanel>
-
-                            <TextBox x:Name="xVarNameTxtBox" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch" Margin="0,0,0,10"/>
-
-
+                            <TextBox x:Name="xVarNameTxtBox" AutomationProperties.AutomationId="Variable Name AID" Style="{StaticResource $MultiRowsTextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch"/>
                             <Label Style="{StaticResource $LabelStyle}">Description:</Label>
                             <TextBox x:Name="xVarDescritpiontxtBox" Style="{StaticResource $MultiRowsTextBoxStyle}" Height="50" Margin="0,0,0,0"/>
                             <Ginger:ucTagsViewer x:Name="xTagsViewer" Margin="0,0,0,0" HorizontalAlignment="Left" />
