@@ -226,7 +226,7 @@ namespace GingerCore.Variables
                                 return Value;
                             }
                         }
-                    case "IsContain":
+                    case "IsContains":
                         {
                             if (OptionalValuesList.Where<OptionalValue>(x=> x.Value == keyValuePair.Value).FirstOrDefault() != null)
                             {

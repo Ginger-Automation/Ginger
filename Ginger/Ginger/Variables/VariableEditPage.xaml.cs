@@ -37,6 +37,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Amdocs.Ginger.Common.External.Configurations;
+using Ginger.Activities;
+using Ginger.Agents;
 
 namespace Ginger.Variables
 {
@@ -49,7 +51,7 @@ namespace Ginger.Variables
         private RepositoryItemBase mParent;
         bool saveWasDone = false;
         static bool ExpandDetails = false;
-        VariableConfiguration _VariableConfiguration = null;
+        //VariableConfiguration _VariableConfiguration = null;
 
         GenericWindow _pageGenericWin = null;
 
@@ -78,6 +80,8 @@ namespace Ginger.Variables
             mContext = context;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTypeLbl, Label.ContentProperty, mVariable, nameof(VariableBase.VariableType), BindingMode: BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xVarNameTxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Name));
+            xVarNameTxtBox.AddValidationRule(new ValidateNotContainSpecificChar());
+
             xShowIDUC.Init(mVariable);
             mVariable.NameBeforeEdit = mVariable.Name;            
             xVarNameTxtBox.GotFocus += XVarNameTxtBox_GotFocus;
@@ -92,7 +96,7 @@ namespace Ginger.Variables
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetAsOutputValueCheckBox, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsOutputValue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mVariable, nameof(RepositoryItemBase.Publish));
 
-            ApplyValidationRules();
+            //ApplyValidationRules();
 
             if (mode ==eEditMode.Global)
             {
@@ -157,14 +161,14 @@ namespace Ginger.Variables
             xDetailsExpander.IsExpanded = ExpandDetails;
         }
 
-        private void ApplyValidationRules()
-        {
-            _VariableConfiguration = WorkSpace.Instance.Solution.VariableConfiguration;
-            _VariableConfiguration.StartDirtyTracking();
-            xVarNameTxtBox.Init(mContext, _VariableConfiguration, nameof(VariableConfiguration.VarName));
-            xVarNameTxtBox.ValueTextBox.AddValidationRule(new ValidateNotContainSpecificChar());
+        //private void ApplyValidationRules()
+        //{
+        //    _VariableConfiguration = WorkSpace.Instance.Solution.VariableConfiguration;
+        //    _VariableConfiguration.StartDirtyTracking();
+        //    xVarNameTxtBox.Init(mContext, _VariableConfiguration, nameof(VariableConfiguration.VarName));
+        //    xVarNameTxtBox.ValueTextBox.AddValidationRule(new ValidateNotContainSpecificChar());
 
-        }
+        //}
 
         private void XVarNameTxtBox_GotFocus(object sender, RoutedEventArgs e)
         {
@@ -513,5 +517,6 @@ namespace Ginger.Variables
                 xMandatoryInputCheckBox.Visibility = Visibility.Collapsed;
             }
         }
+
     }
 }

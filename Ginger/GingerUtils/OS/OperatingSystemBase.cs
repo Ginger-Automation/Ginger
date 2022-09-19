@@ -36,6 +36,12 @@ namespace Amdocs.Ginger.Common.OS
 
         public abstract string GetFirstLocalHostIPAddress();
 
+        public virtual string GetClipboardText()
+        {
+            return String.Empty;
+            //not required on Linux/Mac
+        }
+
         public virtual void InitSmtpAuthenticationManager()
         {
             //not required on windows

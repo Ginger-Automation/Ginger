@@ -57,6 +57,9 @@ namespace Amdocs.Ginger.Common.OS
             return LocalHostIP;
         }
 
- 
+        public override string GetClipboardText()
+        {
+            return string.Empty;
+        }
     }
 }

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using System;
 using System.Security.Cryptography;
@@ -48,6 +49,17 @@ namespace Amdocs.Ginger.CoreNET.ValueExpression
         public string GetGUID()
         {
             return Guid.NewGuid().ToString();
+        }
+
+        [ValueExpressionFunctionAttribute]
+        [ValueExpressionFunctionDescription("Get Clipboard Text")]
+        [ValueExpressionFunctionExpression("{Function Fun=GetClipboardText()}")]
+        [ValueExpressionFunctionCategory("Data")]
+        [ValueExpressionFunctionSubCategory("Functions")]
+        public string GetClipboardText()
+        {
+            return WorkSpace.Instance.OSHelper.GetClipboardText();
+
         }
 
         [ValueExpressionFunctionAttribute]

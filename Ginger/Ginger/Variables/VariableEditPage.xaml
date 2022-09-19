@@ -38,7 +38,7 @@
                                 <usercontrols1:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
                             </StackPanel>
 
-                            <Activities:UCValueExpression x:Name="xVarNameTxtBox" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch" Margin="0,0,0,10"/>
+                            <TextBox x:Name="xVarNameTxtBox" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch" Margin="0,0,0,10"/>
 
 
                             <Label Style="{StaticResource $LabelStyle}">Description:</Label>
