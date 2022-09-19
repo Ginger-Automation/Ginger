@@ -93,11 +93,6 @@ namespace UnitTests.NonUITests
             //mBF.Variables.Add(v4);
             mBF.AddVariable(v5);
 
-            VariableString v6 = new VariableString();
-            v6.Name = "v6 ";
-            v6.Value = "OK";
-            //mBF.Variables.Add(v1);
-            mBF.AddVariable(v6);
         }
 
         [TestMethod]  [Timeout(60000)]
@@ -824,22 +819,6 @@ namespace UnitTests.NonUITests
             //Assert
             Assert.AreEqual(v1, "2");
             Assert.AreEqual(v2, "value1");
-        }
-
-        [TestMethod]
-        [Timeout(60000)]
-        public void IdentifyVaraibleNameWithSpaces()
-        {
-            //Arrange
-
-            ValueExpression VE1 = new ValueExpression(mEnv, mBF);
-            VE1.Value = @"{Var Name=v6 }";
-
-            //Act
-            string v1 = VE1.ValueCalculated;
-
-            //Assert
-            Assert.AreEqual(v1, "OK");
         }
     }
 }

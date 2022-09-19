@@ -1126,7 +1126,7 @@ namespace GingerCore
                 if (!string.IsNullOrEmpty(match.Value) && match.Value.Contains('='))
                 {
                     string[] keyValue = match.Value.Split('=');
-                    extraParamDict.TryAdd(keyValue[0].Trim(), keyValue[1]);
+                    extraParamDict.TryAdd(keyValue[0].Trim(), keyValue[1].Trim());
                 }
             }
 
