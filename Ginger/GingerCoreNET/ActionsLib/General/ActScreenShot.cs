@@ -68,7 +68,7 @@ namespace GingerCore.Actions
             }
         }
 
-
+        
 
         public override String ActionType
         {
@@ -128,11 +128,10 @@ namespace GingerCore.Actions
 
             }
 
-            String FileName = "";
-            String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff");
+            String FileName = this.Description;
+            String timeStamp = DateTime.Now.ToString("ddMMyyyyHHmmss");
 
             FileName += timeStamp;
-            FileName += this.Description;
 
 
             if (ScreenShots.Count == 0)
@@ -148,24 +147,34 @@ namespace GingerCore.Actions
                 Bitmap bmp = Ginger.Utils.BitmapManager.FileToBitmapImage(path);
                 Bitmp.Add(bmp);
             }
+            
+            Dictionary<string, object> outFilePath = new Dictionary<string, object>();
 
             foreach (Bitmap Bitmap in Bitmp)
             {
                 using (Bitmap)
                 {
+                    string filePath = "";
+                    string indexBitmp="";
                     if (Bitmp.IndexOf(Bitmap) == 0)
                     {
-                        Bitmap.Save(DirectoryPath + @"\" + FileName + ".jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-
+                        filePath += DirectoryPath + @"\" + FileName + ".jpg";
+                        Bitmap.Save(filePath, System.Drawing.Imaging.ImageFormat.Jpeg);
                     }
                     else
                     {
                         int i = Bitmp.IndexOf(Bitmap);
-                        Bitmap.Save(DirectoryPath + @"\" + FileName + "_" + i.ToString() + ".jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-
+                        indexBitmp = i.ToString();
+                        filePath += DirectoryPath + @"\" + FileName + "_" + i.ToString() + ".jpg";
+                        Bitmap.Save(filePath, System.Drawing.Imaging.ImageFormat.Jpeg);
                     }
+
+                    outFilePath.Add("ScreenshotFilePath"+indexBitmp, filePath);
                 }
             }
+
+            this.AddToOutputValues(outFilePath);
+
         }
     }
 }

@@ -163,6 +163,27 @@ namespace Ginger.Configurations
                 OnPropertyChanged(nameof(SealightsReportedEntityLevel));
             }
         }
+        public enum eSealightsTestRecommendations
+        {
+            Yes,
+            No
+        }
+
+        private eSealightsTestRecommendations mSealightsTestRecommendations = eSealightsTestRecommendations.No;
+
+        [IsSerializedForLocalRepository]
+        public eSealightsTestRecommendations SealightsTestRecommendations
+        {
+            get
+            {
+                return mSealightsTestRecommendations;
+            }
+            set
+            {
+                mSealightsTestRecommendations = value;
+            }
+        }
+
         public override string ItemName { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
 
