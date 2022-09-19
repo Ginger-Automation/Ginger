@@ -91,6 +91,11 @@ namespace Ginger.Actions
 
             ElementImageSourceChanged(true);
             SetJavaRelatedDetails();
+            xProcessValueEditor.ShowTextBox(false);
+            xProcessValueEditor.Init(Context.GetAsContext(actSikuli.Context), actSikuli.GetOrCreateInputParam(nameof(actSikuli.ProcessNameVEForSikuliOperation),
+               (Context.GetAsContext(actSikuli.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
+            xProcessValueEditor.ValueTextBox.TextChanged -= ProcessValueTextBox_TextChanged;
+            xProcessValueEditor.ValueTextBox.TextChanged += ProcessValueTextBox_TextChanged;
         }
 
         private void SetJavaRelatedDetails()
@@ -107,6 +112,27 @@ namespace Ginger.Actions
                 JavaPathHomeRdb.IsChecked = true;
                 JavaPathOtherRdb.IsChecked = false;
                 JavaPathTextBox.ValueTextBox.Text = string.Empty;
+            }
+        }
+
+        private void ProcessValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(xProcessValueEditor.ValueTextBox.Text))
+            {
+                ValueExpression mVE = new ValueExpression(Context.GetAsContext(actSikuli.Context).Environment, Context.GetAsContext(actSikuli.Context), WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
+                mVE.Value = xProcessValueEditor.ValueTextBox.Text;
+                string calculateValue = mVE.ValueCalculated;
+                actSikuli.ProcessNameVEForSikuliOperation = calculateValue;
+                for (int i = 0; i < xActiveProcessesTitlesComboBox.Items.Count; i++)
+                {
+                    ComboEnumItem item = xActiveProcessesTitlesComboBox.Items[i] as ComboEnumItem;
+                    if (item.Value.Equals(actSikuli.ProcessNameForSikuliOperation))
+                    {
+                        xActiveProcessesTitlesComboBox.SelectedIndex = i;
+                        return;
+                    }
+                }
+                xActiveProcessesTitlesComboBox.SelectedIndex = -1;
             }
         }
 
@@ -230,13 +256,6 @@ namespace Ginger.Actions
 
         void RefreshProcessesCombo()
         {
-            if (!string.IsNullOrEmpty(actSikuli.ProcessNameForSikuliOperation))
-            {
-                if (!actSikuli.ActiveProcessWindows.Contains(actSikuli.ProcessNameForSikuliOperation))
-                {
-                    actSikuli.ActiveProcessWindows.Add(actSikuli.ProcessNameForSikuliOperation);
-                }
-            }
             GingerCore.General.FillComboFromList(xActiveProcessesTitlesComboBox, actSikuli.ActiveProcessWindows);
         }
 
