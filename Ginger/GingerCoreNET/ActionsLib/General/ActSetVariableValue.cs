@@ -33,7 +33,6 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Set " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Action"; } }
         public override string ActionUserDescription { get { return "Allows to set the value of a " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " in run time"; } }
 
-        private string errorMsg;
         private bool isAutoGenerateValuesucceed;
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
@@ -51,7 +50,7 @@ namespace GingerCore.Actions
             TBH.AddText("The 'Value' field is relevant only for 'SetValue' operation.");
         }
 
-      
+
         public override string ActionEditPage { get { return "ActSetVariableValuePage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return true; } }
@@ -74,7 +73,7 @@ namespace GingerCore.Actions
             get { return "Set " + GingerDicser.GetTermResValue(eTermResKey.Variable); }
         }
 
-        public string VariableName 
+        public string VariableName
         {
             get
             {
@@ -87,7 +86,7 @@ namespace GingerCore.Actions
         }
 
 
-        public VariableBase.eSetValueOptions SetVariableValueOption 
+        public VariableBase.eSetValueOptions SetVariableValueOption
         {
             get
             {
@@ -98,7 +97,7 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue(nameof(SetVariableValueOption), value.ToString());
             }
         }
-               
+
         public override void Execute()
         {
             VariableBase Var = RunOnBusinessFlow.GetHierarchyVariableByName(VariableName);
@@ -108,36 +107,34 @@ namespace GingerCore.Actions
                 return;
             }
             string calculatedValue = string.Empty;
-            if (ValueExpression!=null)
+            if (ValueExpression != null)
             {
                 ValueExpression.DecryptFlag = false;
-                 calculatedValue = ValueExpression.Calculate(this.Value);
+                calculatedValue = ValueExpression.Calculate(this.Value);
             }
             else
             {
                 calculatedValue = this.Value;
             }
-            
+
             if (SetVariableValueOption == VariableBase.eSetValueOptions.SetValue)
-            {                
+            {
                 if (Var.GetType() == typeof(VariableString))
                 {
                     ((VariableString)Var).Value = calculatedValue;
                 }
                 else if (Var.GetType() == typeof(VariableSelectionList))
-                {                     
-                    if (((VariableSelectionList)Var).OptionalValuesList.Where(pv => pv.Value == calculatedValue).SingleOrDefault() != null)
-                    {
-                        ((VariableSelectionList)Var).Value = calculatedValue;
-                    }
-                    else
+                {
+
+                    bool isSetValue = Var.SetValue(calculatedValue);
+                    if (!isSetValue)
                     {
                         Error = "The value '" + calculatedValue + "' is not part of the possible values of the '" + Var.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ".";
                         return;
                     }
                 }
                 else if (Var.GetType() == typeof(VariableList))
-                {                    
+                {
                     string[] possibleVals = ((VariableList)Var).Formula.Split(',');
                     if (possibleVals != null && possibleVals.Contains(calculatedValue))
                     {
@@ -164,18 +161,18 @@ namespace GingerCore.Actions
                         }
                         else
                         {
-                            Error = $"The value {calculatedValue} is not in the range, {Var.Name}:-[Min value: {varNumber.MinValue}, Max value: {varNumber.MaxValue}]   {GingerDicser.GetTermResValue(eTermResKey.Variable) }.";
+                            Error = $"The value {calculatedValue} is not in the range, {Var.Name}:-[Min value: {varNumber.MinValue}, Max value: {varNumber.MaxValue}]   {GingerDicser.GetTermResValue(eTermResKey.Variable)}.";
                             return;
                         }
                     }
                     catch (System.Exception ex)
                     {
-                        Error= $"Error occurred during SetValue for Variable number type..:- {ex.Message}";
+                        Error = $"Error occurred during SetValue for Variable number type..:- {ex.Message}";
                         return;
                     }
 
                 }
-                else if(Var.GetType() == typeof(VariableDateTime))
+                else if (Var.GetType() == typeof(VariableDateTime))
                 {
                     var varDateTime = ((VariableDateTime)Var);
                     try
@@ -198,23 +195,23 @@ namespace GingerCore.Actions
                     }
                     catch (Exception ex)
                     {
-                        Error= $"Invalid DateTimeFormat,{Var.Name}:-[DateTimeFormat:{varDateTime.DateTimeFormat}] :- {ex.Message}";
+                        Error = $"Invalid DateTimeFormat,{Var.Name}:-[DateTimeFormat:{varDateTime.DateTimeFormat}] :- {ex.Message}";
                         return;
                     }
                 }
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.ResetValue)
-            {                  
-                    (Var).ResetValue();
+            {
+                (Var).ResetValue();
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.ClearSpecialChar)
             {
                 string specChar = ValueExpression.Calculate(this.Value);
-                if(string.IsNullOrEmpty(specChar))
+                if (string.IsNullOrEmpty(specChar))
                 {
                     specChar = @"{}(),\""";
                 }
-                if(!string.IsNullOrEmpty(((VariableString)Var).Value))
+                if (!string.IsNullOrEmpty(((VariableString)Var).Value))
                 {
                     foreach (char c in specChar)
                     {
@@ -224,20 +221,18 @@ namespace GingerCore.Actions
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.AutoGenerateValue)
             {
+                string errorMsg = String.Empty;
                 isAutoGenerateValuesucceed = ((VariableBase)Var).GenerateAutoValue(ref errorMsg);
                 if (!isAutoGenerateValuesucceed)
                 {
                     Error = errorMsg;
-                }
-                else
-                {
                 }
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.StartTimer)
             {
                 if (Var.GetType() == typeof(VariableTimer))
                 {
-                    ((VariableTimer)Var).StartTimer();                   
+                    ((VariableTimer)Var).StartTimer();
                 }
                 else
                 {
@@ -264,6 +259,44 @@ namespace GingerCore.Actions
                 if (Var.GetType() == typeof(VariableTimer))
                 {
                     ((VariableTimer)Var).ContinueTimer();
+                }
+                else
+                {
+                    Error = "Operation type " + SetVariableValueOption + " is not supported for variable of type " + Var.GetType();
+                    return;
+                }
+            }
+            else if (SetVariableValueOption == VariableBase.eSetValueOptions.DynamicValueDeletion)
+            {
+                if (Var.GetType() == typeof(VariableSelectionList))
+                {
+                    string errorMsg = String.Empty;
+                    ((VariableSelectionList)Var).DynamicDeleteValue(calculatedValue, ref errorMsg);
+                    if (!string.IsNullOrEmpty(errorMsg))
+                    {
+                        Error = errorMsg;
+                    }
+                }
+                else
+                {
+                    Error = "Operation type " + SetVariableValueOption + " is not supported for variable of type " + Var.GetType();
+                    return;
+                }
+            }
+            else if (SetVariableValueOption == VariableBase.eSetValueOptions.DeleteAllValues)
+            {
+                if (Var.GetType() == typeof(VariableSelectionList))
+                {
+                    string errorMsg = String.Empty;
+                    ((VariableSelectionList)Var).DeleteAllValues(ref errorMsg);
+                    if (!string.IsNullOrEmpty(errorMsg))
+                    {
+                        Error = errorMsg;
+                    }
+                    else
+                    {
+                        calculatedValue = string.Empty;
+                    }
                 }
                 else
                 {

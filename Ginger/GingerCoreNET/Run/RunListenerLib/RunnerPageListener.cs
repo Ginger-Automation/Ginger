@@ -58,6 +58,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             UpdateBusinessflowActivities.Invoke(businessFlow, null);
         }
 
+        public override void BusinessFlowSkipped(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
+        {
+            UpdateStat.Invoke(this, null);
+        }
+
         public override void ActivityStart(uint eventTime, Activity activity, bool continuerun=false)
         {
             UpdateStat.Invoke(this, null);

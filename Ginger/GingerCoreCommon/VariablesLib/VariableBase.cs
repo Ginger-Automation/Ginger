@@ -52,7 +52,11 @@ namespace GingerCore.Variables
             [EnumValueDescription("Continue Timer")]
             ContinueTimer,
             [EnumValueDescription("Clear Special Characters")]
-            ClearSpecialChar
+            ClearSpecialChar,
+            [EnumValueDescription("Delete Specific Optional Value")]
+            DynamicValueDeletion,
+            [EnumValueDescription("Delete All Optional Values")]
+            DeleteAllValues
         }
 
         public enum eItemParts
@@ -218,8 +222,13 @@ namespace GingerCore.Variables
         public abstract string VariableEditPage { get; }
         public virtual bool IsObsolete { get { return false; } }
 
+        public virtual string GetValueWithParam(Dictionary<string,string> extraParamDict) {return Value;}
+
+        public virtual List<string> GetExtraParamsList() { return null; }
+
         public abstract bool SupportResetValue { get; }
         public abstract bool SupportAutoValue { get; }
+
 
         //all below used to describe the variable owner in a specific Business Flow
         [IsSerializedForLocalRepository]
