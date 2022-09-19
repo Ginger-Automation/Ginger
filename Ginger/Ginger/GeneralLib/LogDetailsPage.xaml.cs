@@ -77,28 +77,7 @@ namespace Ginger.GeneralLib
             mLogLevel = (eLogShowLevel)xLogTypeCombo.SelectedValue;
             await FillLogData();
         }
-       /* private void StartProcessingIcon()
-        {
-            xProcessingIcon.Dispatcher.BeginInvoke(
-               System.Windows.Threading.DispatcherPriority.Normal,
-                   new Action(
-                       delegate ()
-                       {
-                           xProcessingIcon.Visibility = Visibility.Visible;
-                       }
-           ));
-        }*/
-       /* private void StopProcessingIcon()
-        {
-            xProcessingIcon.Dispatcher.BeginInvoke(
-               System.Windows.Threading.DispatcherPriority.Normal,
-                   new Action(
-                       delegate ()
-                       {
-                           xProcessingIcon.Visibility = Visibility.Collapsed;
-                       }
-           ));
-        }*/
+        
         private async Task FillLogData()
         {
             //get the log file text            
@@ -137,7 +116,6 @@ namespace Ginger.GeneralLib
                         {
                             mTextBlockHelper.AddLineBreak();
                         }
-                       // continue;
                     }
                     else if (logs[i].Contains("#### Application version"))
                     {
