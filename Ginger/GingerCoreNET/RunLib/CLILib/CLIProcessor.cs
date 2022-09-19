@@ -392,6 +392,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.SealightsSessionTimeOut = runOptions.SealightsSessionTimeOut;
             mCLIHelper.SealightsTestStage = runOptions.SealightsTestStage;
             mCLIHelper.SealightsEntityLevel = runOptions.SealightsEntityLevel?.ToString() == "None" ? null : runOptions.SealightsEntityLevel?.ToString();
+            mCLIHelper.SealightsTestRecommendations = runOptions.SealightsTestRecommendations;
 
             if (!string.IsNullOrEmpty(runOptions.RunSetExecutionId))
             {
