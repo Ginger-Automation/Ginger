@@ -390,8 +390,13 @@ namespace Ginger.ALM.Repository
                         //no path to upload to
                         return false;
                     }
+                    ExportActivitiesGroupToALM(ag, testCaseParentObjectId);
                 }
-                ExportActivitiesGroupToALM(ag, testCaseParentObjectId);
+                else
+                {
+                    ExportActivitiesGroupToALM(ag, parentObjectId);
+                }
+
             }
 
             if (matchingTS == null && string.IsNullOrEmpty(parentObjectId))
@@ -406,6 +411,10 @@ namespace Ginger.ALM.Repository
                     //no path to upload to
                     return false;
                 }
+            }
+            else
+            {
+                parentObjectId = testCaseParentObjectId;
             }
 
             //upload the business flow

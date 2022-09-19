@@ -2282,6 +2282,11 @@ namespace Ginger.Run
 
             ((Agent)AA.Agent).BusinessFlow = CurrentBusinessFlow;
             ((Agent)AA.Agent).ProjEnvironment = mGingerRunner.ProjEnvironment;
+            //check for null agent operations, found it was null in CLI dynamic file case
+            if (AA.Agent.AgentOperations == null)
+            {
+                AA.Agent.AgentOperations = new AgentOperations(AA.Agent);
+            }
             // Verify the Agent for the action is running 
             Agent.eStatus agentStatus = ((AgentOperations)((Agent)AA.Agent).AgentOperations).Status;
             if (agentStatus != Agent.eStatus.Running && agentStatus != Agent.eStatus.Starting && agentStatus != Agent.eStatus.FailedToStart)
@@ -4317,29 +4322,36 @@ namespace Ginger.Run
 
         public void CloseAgents()
         {
-            foreach (ApplicationAgent p in mGingerRunner.ApplicationAgents)
+            if (mGingerRunner.KeepAgentsOn && !WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunModeParallel)
             {
-                if (p.Agent != null)
-                {
-                    if (p.Agent.AgentOperations == null)
-                    {
-                        p.Agent.AgentOperations = new AgentOperations(p.Agent);
-                    }
-                    try
-                    {
-                        ((Agent)p.Agent).AgentOperations.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        if (p.Agent.Name != null)
-                            Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Close the '{0}' Agent", p.Agent.Name), ex);
-                        else
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to Close the Agent", ex);
-                    }
-                    ((AgentOperations)((Agent)p.Agent).AgentOperations).IsFailedToStart = false;
-                }
+                return;
             }
-            AgentsRunning = false;
+            else 
+            { 
+                foreach (ApplicationAgent p in mGingerRunner.ApplicationAgents)
+                {
+                    if (p.Agent != null)
+                    {
+                        if (p.Agent.AgentOperations == null)
+                        {
+                            p.Agent.AgentOperations = new AgentOperations(p.Agent);
+                        }
+                        try
+                        {
+                            ((Agent)p.Agent).AgentOperations.Close();
+                        }
+                        catch (Exception ex)
+                        {
+                            if (p.Agent.Name != null)
+                                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Close the '{0}' Agent", p.Agent.Name), ex);
+                            else
+                                Reporter.ToLog(eLogLevel.ERROR, "Failed to Close the Agent", ex);
+                        }
+                        ((AgentOperations)((Agent)p.Agent).AgentOperations).IsFailedToStart = false;
+                    }
+                }
+                AgentsRunning = false;
+            }
         }
 
         public void ResetFailedToStartFlagForAgents()

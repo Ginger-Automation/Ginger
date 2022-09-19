@@ -230,6 +230,10 @@ namespace GingerCore.Actions.VisualTesting
                 if (WorkSpace.Instance.Solution.VRTConfiguration.ActivityTags)
                 {
                     tags = GetTags();
+                    if (!string.IsNullOrEmpty(tags))
+                    {
+                        tags = "Tags:" + tags;
+                    }
                 }
                 //Environment tag
                 if (WorkSpace.Instance.Solution.VRTConfiguration.Environment)
@@ -240,13 +244,10 @@ namespace GingerCore.Actions.VisualTesting
                     }
                     else
                     {
-                        tags = "Tags:" + tags + ", Environment:" + mDriver.GetEnvironment();
+                        tags += ", Environment:" + mDriver.GetEnvironment();
                     }
                 }
-                else
-                {
-                    tags = "Tags:" + tags;
-                }
+                
                 //Browser/agent/app name 
                 string browser = string.Empty;
                 if (WorkSpace.Instance.Solution.VRTConfiguration.Agent)
