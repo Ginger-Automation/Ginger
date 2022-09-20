@@ -1217,10 +1217,6 @@ namespace GingerWPF.BusinessFlowsLib
 
                     await SharedRepositoryOperations.SaveLinkedActivity(dirtyLinkedActivity, mBusinessFlow.Guid.ToString());
                 }
-                if (Reporter.ToUser(eUserMsgKey.WarnOnLinkSharedActivities) == Amdocs.Ginger.Common.eUserMsgSelection.No)
-                {
-                    return;
-                }
             }
 
             try

@@ -116,7 +116,7 @@ namespace Ginger.BusinessFlowPages
             {
                 return;
             }
-            xNoteLable.Content = "Note - Any updation to instance of this type, will update all the flows having this instance.";
+            xNoteLable.Text = "Note - Linked instance will create a read only copy of Shared activity, any updates in this instance will be automatically saved on Shared Repository as well as all of its usage across solution.";
         }
 
         private void xRegularInstance_Checked(object sender, RoutedEventArgs e)
@@ -125,7 +125,7 @@ namespace Ginger.BusinessFlowPages
             {
                 return;
             }
-            xNoteLable.Content = "Note - Any updation to instance of this type, needs manual updation of all the flows with this instance.";
+            xNoteLable.Text = "Note - Regular instance will create a copy of Shared Activity, Any updates in this instance needs explicit update to Shared repository instance and other instances in the solution.";
         }
     }
 }

@@ -37,8 +37,7 @@
                     </RadioButton>
                 </StackPanel>
             </StackPanel>
-            <Label x:Name="xNoteLable" Content="Note - Any updation to instance of this type, will update all the flows having this instance." Style="{StaticResource @LabelStyle}" VerticalAlignment="Bottom" Margin="0,20,0,0"/>
-
+            <TextBlock x:Name="xNoteLable" Text="Note - Linked instance will create a read only copy of Shared activity, any updates in this instance will be automatically saved on Shared Repository as well as all of its usage across solution." TextWrapping="WrapWithOverflow" Style="{StaticResource $TextBlockStyle}" FontSize="10" VerticalAlignment="Bottom" Margin="0,40,0,0" />
         </StackPanel>
     </Grid>
 </Page>

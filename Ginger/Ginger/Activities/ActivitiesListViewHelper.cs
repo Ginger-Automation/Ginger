@@ -501,7 +501,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 convertToSR.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
                 convertToSR.AutomationID = "ConvertToSR";
                 convertToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
-                convertToSR.Header = "Convert to Shared Repository";
+                convertToSR.Header = "Convert to Regular Instance";
                 convertToSR.ToolTip = "Convert to Regular Shared Repository";
                 convertToSR.OperationHandler = ConvertToRegularSRHandler;
                 extraOperationsList.Add(convertToSR);
@@ -512,8 +512,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 convertToLSR.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
                 convertToLSR.AutomationID = "ConvertToLink";
                 convertToLSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.InstanceLink;
-                convertToLSR.Header = "Convert to Linked Repository";
-                convertToLSR.ToolTip = "Convert to Linked Shared Repository";
+                convertToLSR.Header = "Convert to Link Instance";
+                convertToLSR.ToolTip = "Convert to Link Shared Repository";
                 convertToLSR.OperationHandler = ConvertToLinkedSRHandler;
                 extraOperationsList.Add(convertToLSR);
             }

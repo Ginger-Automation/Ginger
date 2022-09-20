@@ -571,7 +571,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void xEditBtn_Click(object sender, RoutedEventArgs e)
         {
             mActivity.EnableEdit = true;
-            if (Reporter.ToUser(eUserMsgKey.WarnOnLinkSharedActivities) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+            if (Reporter.ToUser(eUserMsgKey.WarnOnEditLinkSharedActivities) == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
                 return;
             }
