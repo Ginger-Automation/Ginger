@@ -22,10 +22,10 @@ using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Variables
 {
-    public class VariablePasswordString : VariableBase 
+    public class VariablePasswordString : VariableBase
     {
         public VariablePasswordString()
-        {            
+        {       
         }
 
         public override string VariableUIType
@@ -39,7 +39,7 @@ namespace GingerCore.Variables
         [IsSerializedForLocalRepository]
         public string Password 
         {
-            set { mPassword = value; Value = value; OnPropertyChanged(nameof(this.Password));  OnPropertyChanged("Formula"); }
+            set { mPassword = value; Value = value; OnPropertyChanged(nameof(this.Password)); OnPropertyChanged("Formula"); }
             get 
             {
                 if (!string.IsNullOrEmpty(mPassword))
@@ -53,7 +53,7 @@ namespace GingerCore.Variables
                 return mPassword;
             } 
         }
-        
+
         public override string GetFormula()
         {
             return Password;

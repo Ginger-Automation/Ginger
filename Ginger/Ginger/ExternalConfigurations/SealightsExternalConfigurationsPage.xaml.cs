@@ -69,6 +69,7 @@ namespace Ginger.Configurations
             {
                 xSealighsSessionTimeoutTextBox.ValueTextBox.Text = "14400";
             }
+            xSealightsTestRecommendationsRadioButton.Init(typeof(SealightsConfiguration.eSealightsTestRecommendations), xSealightsTestRecommendationsPanel, _SealightsConfiguration, nameof(SealightsConfiguration.SealightsTestRecommendations), SealightsTestRecommendationRadioButton_CheckedHandler);
         }
 
         private void ApplyValidationRules()
@@ -130,6 +131,22 @@ namespace Ginger.Configurations
                 xSealightsExecutionLoggerGrid.Visibility = Visibility.Collapsed;
             }
         }
+        private void SealightsTestRecommendationRadioButton_CheckedHandler(object sender, RoutedEventArgs e)
+        {
+            string value = ((RadioButton)sender).Tag?.ToString();
 
+            SealightsConfiguration.eSealightsTestRecommendations sealightsTestRecommendations;
+
+            Enum.TryParse(value, out sealightsTestRecommendations);
+
+            if (sealightsTestRecommendations == SealightsConfiguration.eSealightsTestRecommendations.Yes)
+            {
+                _SealightsConfiguration.SealightsTestRecommendations = SealightsConfiguration.eSealightsTestRecommendations.Yes;
+            }
+            else
+            {
+                _SealightsConfiguration.SealightsTestRecommendations = SealightsConfiguration.eSealightsTestRecommendations.No;
+            }
+        }
     }
 }
