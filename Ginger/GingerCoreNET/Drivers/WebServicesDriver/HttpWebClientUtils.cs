@@ -241,7 +241,6 @@ namespace GingerCore.Actions.WebAPI
             {
                 //Use Custom Certificate:
                 Handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                //string path = (mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath).ToString().Replace(@"~\", mAct.SolutionFolder));
                 string path = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath));
 
                 if (!string.IsNullOrEmpty(path))
@@ -257,20 +256,20 @@ namespace GingerCore.Actions.WebAPI
                         ServicePointManager.ServerCertificateValidationCallback = delegate (object s,X509Certificate certificate,X509Chain chain,System.Net.Security.SslPolicyErrors sslPolicyErrors)
                         {
                             bool ret = true;
-                            Reporter.ToLog(eLogLevel.DEBUG,String.Format("{0}: File Certificate Validating:'{1}'", CertificateName));
-                            if (!string.IsNullOrEmpty(CertificateName))//need to add a condition if the vertificate validation required if   isCertificateValidationRequired  function is not avaialable
+                            string basepath = Path.Combine(Path.GetDirectoryName(ActWebAPIBase.Fields.CertificatePath), CertificateName);
+                            var actualCertificate = X509Certificate.CreateFromCertFile(basepath);
+                            Reporter.ToLog(eLogLevel.DEBUG, String.Format(actualCertificate + ": File Certificate Validating: " + certificate, CertificateName));
+                            if (!string.IsNullOrEmpty(CertificateName))
                             {
-                                string basepath = Path.Combine(Path.GetDirectoryName(ActWebAPIBase.Fields.CertificatePath), CertificateName);
-                                var actualCertificate = X509Certificate.CreateFromCertFile(basepath);
                                 ret = certificate.Equals(actualCertificate);
-                                Reporter.ToLog(eLogLevel.DEBUG, String.Format("{0}: File Certificate Validated:'{1}'", ret));
+                                Reporter.ToLog(eLogLevel.INFO, String.Format(actualCertificate + ": File Certificate Validated:" + certificate, ret));
                             }
                             else
                             {
                                 ret = true;
-                                Reporter.ToLog(eLogLevel.DEBUG, String.Format("{0}: Certificte validation bypassed"));
+                                Reporter.ToLog(eLogLevel.INFO, String.Format(actualCertificate + ": Certificte validation bypassed"));                              
                             }
-                            return ret;
+                            return ret;                            
                         };                       
                     }
                     else

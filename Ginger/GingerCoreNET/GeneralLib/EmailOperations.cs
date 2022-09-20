@@ -157,18 +157,18 @@ namespace GingerCore.GeneralLib
                             ServicePointManager.ServerCertificateValidationCallback = delegate (object s, X509Certificate certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
                             {
                                 bool ret = true;
-                                Reporter.ToLog(eLogLevel.DEBUG, String.Format("{0}: File Certificate Validating:'{1}'", CertificateName));
-                                if (!string.IsNullOrEmpty(CertificateName))//need to add a condition if the vertificate validation required if   isCertificateValidationRequired  function is not avaialable
+                                string basepath = Path.Combine(Path.GetDirectoryName(Email.CertificatePath), CertificateName);
+                                var actualCertificate = X509Certificate.CreateFromCertFile(basepath);
+                                Reporter.ToLog(eLogLevel.DEBUG, String.Format(actualCertificate+": File Certificate Validating: "+certificate, CertificateName));
+                                if (!string.IsNullOrEmpty(CertificateName))
                                 {
-                                    string basepath = Path.Combine(Path.GetDirectoryName(Email.CertificatePath), CertificateName);
-                                    var actualCertificate = X509Certificate.CreateFromCertFile(basepath);
                                     ret = certificate.Equals(actualCertificate);
-                                    Reporter.ToLog(eLogLevel.INFO, String.Format("{0}: File Certificate Validated:'{1}'", ret));
+                                    Reporter.ToLog(eLogLevel.INFO, String.Format(actualCertificate+": File Certificate Validated:"+certificate, ret));
                                 }
                                 else
                                 {
                                     ret = true;
-                                    Reporter.ToLog(eLogLevel.INFO, String.Format("{0}: Certificte validation bypassed"));
+                                    Reporter.ToLog(eLogLevel.INFO, String.Format(actualCertificate+": Certificte validation bypassed"));                                    
                                 }
                                 return ret;
                             };

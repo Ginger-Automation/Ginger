@@ -71,9 +71,9 @@ namespace GingerCore.Actions.Communication
         {
             public static string EnableSSL = "EnableSSL";
             public static string ConfigureCredential = "ConfigureCredential";
-            public static bool IsValidationRequired = false;
+            public static readonly bool  IsValidationRequired = false;
         }
-        public static string CertificatePasswordUCValueExpression { get; set; }
+        public static string  CertificatePasswordUCValueExpression { get; set; }
         private string mCertificatePath;
         [IsSerializedForLocalRepository]
         public string CertificatePath
@@ -88,7 +88,7 @@ namespace GingerCore.Actions.Communication
             }
         }
         private bool mIsValidationRequired = false;
-        [IsSerializedForLocalRepository(false)]
+        [IsSerializedForLocalRepository]
         public bool IsValidationRequired
         {
             get { return mIsValidationRequired; }
@@ -291,11 +291,8 @@ namespace GingerCore.Actions.Communication
             email.SMTPPass = this.GetInputParamCalculatedValue(nameof(Pass));
             if( IsValidationRequired==true)
             {
-                Handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                //string path = (mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath).ToString().Replace(@"~\", mAct.SolutionFolder));
-                string path = CertificatePath;
-                //string path1 = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath();
-
+                Handler.ClientCertificateOptions = ClientCertificateOption.Manual;               
+                string path = CertificatePath;                
                 if (!string.IsNullOrEmpty(path))
                 {
                     string CertificateKey = CertificatePasswordUCValueExpression;
@@ -309,27 +306,26 @@ namespace GingerCore.Actions.Communication
                         ServicePointManager.ServerCertificateValidationCallback = delegate (object s, X509Certificate certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
                         {
                             bool ret = true;
-                            Reporter.ToLog(eLogLevel.DEBUG, String.Format("{0}: File Certificate Validating:'{1}'", CertificateName));
-                            if (!string.IsNullOrEmpty(CertificateName))//need to add a condition if the vertificate validation required if   isCertificateValidationRequired  function is not avaialable
+                            string basepath = Path.Combine(Path.GetDirectoryName(ActWebAPIBase.Fields.CertificatePath), CertificateName);
+                            var actualCertificate = X509Certificate.CreateFromCertFile(basepath);
+                            Reporter.ToLog(eLogLevel.DEBUG, String.Format(actualCertificate + ": File Certificate Validating: " + certificate, CertificateName));
+                            if (!string.IsNullOrEmpty(CertificateName))
                             {
-                                string basepath = Path.Combine(Path.GetDirectoryName(ActWebAPIBase.Fields.CertificatePath), CertificateName);
-                                var actualCertificate = X509Certificate.CreateFromCertFile(basepath);
                                 ret = certificate.Equals(actualCertificate);
-                                Reporter.ToLog(eLogLevel.DEBUG, String.Format("{0}: File Certificate Validated:'{1}'", ret));
+                                Reporter.ToLog(eLogLevel.INFO, String.Format(actualCertificate + ": File Certificate Validated:" + certificate, ret));
                             }
                             else
                             {
                                 ret = true;
-                                Reporter.ToLog(eLogLevel.DEBUG, String.Format("{0}: Certificte validation bypassed"));
+                                Reporter.ToLog(eLogLevel.INFO, String.Format(actualCertificate + ": Certificte validation bypassed"));                               
                             }
                             return ret;
-                        };
+                        };                       
                     }
                     else
-                    {
-                        //Case Certifacte key/password is not required
+                    {                       
                         X509Certificate2 customCertificate = new X509Certificate2(path);
-                        Handler.ClientCertificates.Add(customCertificate);//SSL certificate is being added  into client certificates
+                        Handler.ClientCertificates.Add(customCertificate);
                     }
                 }
                 else

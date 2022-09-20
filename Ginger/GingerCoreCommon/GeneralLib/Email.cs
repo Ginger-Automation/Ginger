@@ -218,13 +218,12 @@ namespace GingerCore.GeneralLib
             {
                 if (mCertificatePath != value)
                 {
-                    TextChange.Equals(mCertificatePath, value);
                     mCertificatePath = value;
                 }
             }
         }
         private bool mIsValidationRequired = false;
-        [IsSerializedForLocalRepository(false)]
+        [IsSerializedForLocalRepository]
         public bool IsValidationRequired
         {
             get { return mIsValidationRequired; }
@@ -235,20 +234,7 @@ namespace GingerCore.GeneralLib
                     mIsValidationRequired = value;
                 }
             }
-        }
-        private static bool mImportRequestFile = false;
-        [IsSerializedForLocalRepository(false)]
-        public static bool ImportRequestFile
-        {
-            get { return mImportRequestFile; }
-            set
-            {
-                if (mImportRequestFile != value)
-                {
-                    mImportRequestFile = value;
-                }
-            }
-        }
+        }       
         public static string CertificatePasswordUCValueExpression { get; set; }
         private bool mConfigureCredential = false;
         [IsSerializedForLocalRepository(false)]

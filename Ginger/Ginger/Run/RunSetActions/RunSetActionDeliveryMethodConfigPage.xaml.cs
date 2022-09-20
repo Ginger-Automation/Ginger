@@ -74,10 +74,9 @@ namespace Ginger.Run.RunSetActions
                 {
                     FileName = FileName.Replace(SolutionFolder, @"~\");
                 }
-                FileName = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(FileName);// can also Normalizepath method
-                //WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath));
+                FileName = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(FileName);
                 xcbCertificatePathTextBox.Text = FileName;
-                string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\CustomCertificates\Certificates");
+                string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\EmailCertificates");
                 if (!System.IO.Directory.Exists(targetPath))
                 {
                     System.IO.Directory.CreateDirectory(targetPath);
@@ -98,8 +97,7 @@ namespace Ginger.Run.RunSetActions
                 }
 
                 System.IO.File.Copy(FileName, destFile, true);
-                xcbCertificatePathTextBox.Text = @"~\Documents\EmailCertificates\Certificates\" +  System.IO.Path.GetFileName(destFile);
-                TextChange.Equals(xcbCertificatePathTextBox, "@\"~\\Documents\\EmailCertificates\\Certificates\\\" +  System.IO.Path.GetFileName(destFile)");
+                xcbCertificatePathTextBox.Text = @"~\Documents\EmailCertificates\" +  System.IO.Path.GetFileName(destFile);
                 xcbCertificatePathTextBox.AcceptsReturn = true;
                 xcbCertificatePathTextBox.Visibility = Visibility.Visible;
             }
