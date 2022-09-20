@@ -107,12 +107,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                     {
                         continue;
                     }
-                    // only relevant incase the runner is active and meant to be executed
-                    if (GR.Active)
-                    {
-                        ((GingerExecutionEngine)GR.Executor).Sealights_Logger.RunningInRunsetMode = true;
-                        ((GingerExecutionEngine)GR.Executor).Sealights_Logger.SealightsReportApiHandler.TestSessionId = SealightsReportApiHandler.TestSessionId;
-                    }
+                    ((GingerExecutionEngine)GR.Executor).Sealights_Logger.RunningInRunsetMode = true;
+                    ((GingerExecutionEngine)GR.Executor).Sealights_Logger.SealightsReportApiHandler.TestSessionId = SealightsReportApiHandler.TestSessionId;
                 }
 
                 // check if test recommendations settings is set to yes on the runset level or on the solution level
@@ -146,11 +142,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 {
                     continue; 
                 }
-                if (GR.Active)
-                {
-                    ((GingerExecutionEngine)GR.Executor).Sealights_Logger.RunningInRunsetMode = false;
-                    ((GingerExecutionEngine)GR.Executor).Sealights_Logger.SealightsReportApiHandler.TestSessionId = null;
-                }
+                ((GingerExecutionEngine)GR.Executor).Sealights_Logger.RunningInRunsetMode = false;
+                ((GingerExecutionEngine)GR.Executor).Sealights_Logger.SealightsReportApiHandler.TestSessionId = null;
             }
         }
 

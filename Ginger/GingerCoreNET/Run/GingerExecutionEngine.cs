@@ -589,7 +589,7 @@ namespace Ginger.Run
             foreach (BusinessFlow businessFlow in BusinessFlows)
             {
                 // 'Skipped' Activities Group
-                List<ActivitiesGroup> activitiesGroupList = businessFlow.ActivitiesGroups.Where(x => x.RunStatus == eActivitiesGroupRunStatus.Skipped).ToList();
+                List<ActivitiesGroup> activitiesGroupList = businessFlow.ActivitiesGroups.Where(x => x.RunStatus == eActivitiesGroupRunStatus.Skipped && x.ActivitiesIdentifiers.Count > 0).ToList();
 
                 foreach (ActivitiesGroup activitiesGroup in activitiesGroupList)
                 {
@@ -613,10 +613,10 @@ namespace Ginger.Run
             foreach (BusinessFlow businessFlow in businessFlowList)
             {
                 NotifyBusinessFlowSkipped(businessFlow);
-                // Saarch for Activities-Groups and Activities in All BF
+                // Search for Activities-Groups and Activities in All BF
 
                 // 'Skipped' Activities Group
-                List<ActivitiesGroup> activitiesGroupList = businessFlow.ActivitiesGroups.Where(x => x.RunStatus == eActivitiesGroupRunStatus.Skipped).ToList();
+                List<ActivitiesGroup> activitiesGroupList = businessFlow.ActivitiesGroups.Where(x => x.RunStatus == eActivitiesGroupRunStatus.Skipped && x.ActivitiesIdentifiers.Count > 0).ToList();
                 foreach (ActivitiesGroup activitiesGroup in activitiesGroupList)
                 {
                     NotifyActivityGroupSkipped(activitiesGroup);
