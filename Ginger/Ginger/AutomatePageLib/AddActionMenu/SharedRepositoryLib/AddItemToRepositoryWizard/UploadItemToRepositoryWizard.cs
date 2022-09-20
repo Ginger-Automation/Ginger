@@ -61,7 +61,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             UploadItemSelection.mSelectedItems.Clear();
             Context = context;
             isConvert = IsConvert;
-            UploadItemSelection.mSelectedItems.Add(CreateUploadItem((RepositoryItemBase)item, IsConvert, ConvertType));
+            UploadItemSelection.mSelectedItems.Add(CreateUploadItem(item, IsConvert, ConvertType));
             InitializeWizardPages();
         }
 

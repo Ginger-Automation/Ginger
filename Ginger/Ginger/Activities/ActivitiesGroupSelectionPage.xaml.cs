@@ -82,7 +82,7 @@ namespace Ginger.BusinessFlowPages
 
         public ActivitiesGroup ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
-            string title = "Configurations";// + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
+            string title = "Configurations";
 
             ObservableList<Button> winButtons = new ObservableList<Button>();          
             Button selectBtn = new Button();
@@ -116,7 +116,7 @@ namespace Ginger.BusinessFlowPages
             {
                 return;
             }
-            xNoteLable.Content = "Note- * If we update any instance of this type, all the flows having this instance will be updated.";
+            xNoteLable.Content = "Note - Any updation to instance of this type, will update all the flows having this instance.";
         }
 
         private void xRegularInstance_Checked(object sender, RoutedEventArgs e)
@@ -125,7 +125,7 @@ namespace Ginger.BusinessFlowPages
             {
                 return;
             }
-            xNoteLable.Content = "Note- * If we update any instance of this type, we need to manually updated all the flows with this instance.";
+            xNoteLable.Content = "Note - Any updation to instance of this type, needs manual updation of all the flows with this instance.";
         }
     }
 }

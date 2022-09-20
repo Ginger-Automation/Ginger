@@ -8,7 +8,7 @@
       xmlns:h="clr-namespace:Ginger.Help"
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       h:GingerHelpProvider.HelpString="Activities Group"
-      d:DesignHeight="100" d:DesignWidth="500"
+      d:DesignHeight="200" d:DesignWidth="600"
       Title="Select Activities Group">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
@@ -30,14 +30,14 @@
                 </Label>
                 <StackPanel Orientation="Horizontal">
                     <RadioButton x:Name="xLinkedInstance" IsChecked="True" HorizontalAlignment="Left" Checked="xLinkedInstance_Checked" Margin="10,10,0,0" >
-                        <GingerCore:ucTextDicResource Text="Link Instance" ToolTip="If we update any instance of this type, all the flows having this instance will be updated."/>
+                        <GingerCore:ucTextDicResource Text="Link Instance" ToolTip="Any updation to instance of this type, will update all the flows having this instance."/>
                     </RadioButton>
                     <RadioButton x:Name="xRegularInstance" IsChecked="False" HorizontalAlignment="Left" Checked="xRegularInstance_Checked"  Margin="10,10,0,0" >
-                        <GingerCore:ucTextDicResource Text="Regular Instance" ToolTip="If we update any instance of this type, we need to manually updated all the flows with this instance."/>
+                        <GingerCore:ucTextDicResource Text="Regular Instance" ToolTip="Any updation to instance of this type, needs manual updation of all the flows with this instance."/>
                     </RadioButton>
                 </StackPanel>
             </StackPanel>
-            <Label x:Name="xNoteLable" Content="Note- * If we update any instance of this type, all the flows having this instance will be updated." Style="{StaticResource @LabelStyle}" VerticalAlignment="Bottom" Margin="0,20,0,0"/>
+            <Label x:Name="xNoteLable" Content="Note - Any updation to instance of this type, will update all the flows having this instance." Style="{StaticResource @LabelStyle}" VerticalAlignment="Bottom" Margin="0,20,0,0"/>
 
         </StackPanel>
     </Grid>
