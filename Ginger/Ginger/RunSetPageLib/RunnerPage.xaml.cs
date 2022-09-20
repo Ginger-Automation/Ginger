@@ -477,6 +477,7 @@ namespace Ginger.Run
         {
             //TODO: break to smaller funcs            
             List<GingerCoreNET.GeneralLib.StatItem> allItems = new List<GingerCoreNET.GeneralLib.StatItem>();
+            int totalBusinessFlowCount = 0;
             int totalActivityCount = 0;
             int totalActionCount = 0;
 
@@ -498,6 +499,7 @@ namespace Ginger.Run
                     foreach (var v in bizGroups)
                     {
                         bizsList.Add(new GingerCoreNET.GeneralLib.StatItem() { Description = v.Status, Count = v.Count });
+                        totalBusinessFlowCount += v.Count;
                     }
                     BizFlowsPieChartLayout.DataContext = bizsList;
                     CreateStatistics(bizsList, eObjectType.BusinessFlow);
@@ -535,6 +537,7 @@ namespace Ginger.Run
                     }
                     ActionsPieChartLayout.DataContext = actionsList;
                     CreateStatistics(actionsList, eObjectType.Action);
+                    xBusinessflowsTotalCount.Content = totalBusinessFlowCount;
                     xActivitiesTotalCount.Content = totalActivityCount;
                     xActionsTotalCount.Content = totalActionCount;
                     allItems = bizsList.Concat(activitiesList.Concat(actionsList)).GroupBy(n => n.Description)
