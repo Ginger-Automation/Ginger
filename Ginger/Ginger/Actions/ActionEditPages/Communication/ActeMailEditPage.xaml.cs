@@ -108,7 +108,7 @@ namespace Ginger.Actions.Communication
                 }
                 FileName = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(FileName);
                 xcbCertificatePathTextBox.Text = FileName;
-                string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\EmailCertificates\Certificates");
+                string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\EmailCertificates");
                 if (!System.IO.Directory.Exists(targetPath))
                 {
                     System.IO.Directory.CreateDirectory(targetPath);
@@ -129,7 +129,7 @@ namespace Ginger.Actions.Communication
                 }
 
                 System.IO.File.Copy(FileName, destFile, true);
-                xcbCertificatePathTextBox.Text = @"~\Documents\EmailCertificates\Certificates\" + System.IO.Path.GetFileName(destFile);
+                xcbCertificatePathTextBox.Text = @"~\Documents\EmailCertificates\" + System.IO.Path.GetFileName(destFile);
                 xcbCertificatePathTextBox.AcceptsReturn = true;
                 xcbCertificatePathTextBox.Visibility = Visibility.Visible;
             }
