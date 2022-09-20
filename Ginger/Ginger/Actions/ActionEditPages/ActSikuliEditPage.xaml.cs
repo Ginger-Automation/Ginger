@@ -92,8 +92,8 @@ namespace Ginger.Actions
             ElementImageSourceChanged(true);
             SetJavaRelatedDetails();
             xProcessValueEditor.ShowTextBox(false);
-            xProcessValueEditor.Init(Context.GetAsContext(actSikuli.Context), actSikuli.GetOrCreateInputParam(nameof(actSikuli.ProcessNameVEForSikuliOperation),
-               (Context.GetAsContext(actSikuli.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
+            xProcessValueEditor.Init(Context.GetAsContext(actSikuli.Context), actSikuli.GetOrCreateInputParam(nameof(actSikuli.ProcessNameForSikuliOperation),
+               actSikuli.ProcessNameForSikuliOperation), true, false);
             xProcessValueEditor.ValueTextBox.TextChanged -= ProcessValueTextBox_TextChanged;
             xProcessValueEditor.ValueTextBox.TextChanged += ProcessValueTextBox_TextChanged;
         }
@@ -119,10 +119,6 @@ namespace Ginger.Actions
         {
             if (!string.IsNullOrEmpty(xProcessValueEditor.ValueTextBox.Text))
             {
-                ValueExpression mVE = new ValueExpression(Context.GetAsContext(actSikuli.Context).Environment, Context.GetAsContext(actSikuli.Context), WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
-                mVE.Value = xProcessValueEditor.ValueTextBox.Text;
-                string calculateValue = mVE.ValueCalculated;
-                actSikuli.ProcessNameVEForSikuliOperation = calculateValue;
                 for (int i = 0; i < xActiveProcessesTitlesComboBox.Items.Count; i++)
                 {
                     ComboEnumItem item = xActiveProcessesTitlesComboBox.Items[i] as ComboEnumItem;
@@ -132,7 +128,13 @@ namespace Ginger.Actions
                         return;
                     }
                 }
-                xActiveProcessesTitlesComboBox.SelectedIndex = -1;
+                ComboEnumItem newItem = new ComboEnumItem()
+                {
+                    text = actSikuli.ProcessNameForSikuliOperation,
+                    Value = actSikuli.ProcessNameForSikuliOperation
+                };
+                int index = xActiveProcessesTitlesComboBox.Items.Add(newItem);
+                xActiveProcessesTitlesComboBox.SelectedIndex = index;
             }
         }
 
