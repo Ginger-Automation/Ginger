@@ -361,5 +361,232 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
             Assert.AreEqual(setErrorMsgExpectedResult, errorMsg, "Set Error Message Result");
         }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void SelectionListVar_TestDynamicValueAddition()
+        {
+            //Arrange
+            VariableSelectionList variableSelectionList = new VariableSelectionList();
+            OptionalValue newVal1 = new OptionalValue("One");
+            variableSelectionList.OptionalValuesList.Add(newVal1);
+            OptionalValue newVal2 = new OptionalValue("Two");
+            variableSelectionList.OptionalValuesList.Add(newVal2);
+            variableSelectionList.IsDynamicValueModificationEnabled = true;
+            //Todo Add no loop ticker
+
+            // Act
+            variableSelectionList.SetValue("Three");
+
+            string setValueResult = variableSelectionList.Value;
+
+            string setValueExpectedResult = "Three";
+
+            //Assert
+            Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void SelectionListVar_TestDynamicValueDeletion()
+        {
+            //Arrange
+            VariableSelectionList variableSelectionList = new VariableSelectionList();
+            OptionalValue newVal1 = new OptionalValue("One");
+            variableSelectionList.OptionalValuesList.Add(newVal1);
+            OptionalValue newVal2 = new OptionalValue("Two");
+            variableSelectionList.OptionalValuesList.Add(newVal2);
+            variableSelectionList.IsDynamicValueModificationEnabled = true;
+            variableSelectionList.Value = variableSelectionList.OptionalValuesList[0].Value;
+            //Todo Add no loop ticker
+
+            // Act
+            string errorMsg = string.Empty;
+            variableSelectionList.DynamicDeleteValue("Two", ref errorMsg);
+
+            string setValueResult = variableSelectionList.Value;
+
+            string setValueExpectedResult = "One";
+            string setErrorMsgExpectedResult = string.Empty;
+
+
+            //Assert
+            Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
+            Assert.AreEqual(setErrorMsgExpectedResult, errorMsg, "Error Msg Result");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void SelectionListVar_TestDynamicValueDeleteCurrentValue()
+        {
+            //Arrange
+            VariableSelectionList variableSelectionList = new VariableSelectionList();
+            OptionalValue newVal1 = new OptionalValue("One");
+            variableSelectionList.OptionalValuesList.Add(newVal1);
+            OptionalValue newVal2 = new OptionalValue("Two");
+            variableSelectionList.OptionalValuesList.Add(newVal2);
+            variableSelectionList.IsDynamicValueModificationEnabled = true;
+            variableSelectionList.Value = variableSelectionList.OptionalValuesList[1].Value;
+            //Todo Add no loop ticker
+
+            // Act
+            string errorMsg = string.Empty;
+            variableSelectionList.DynamicDeleteValue("Two", ref errorMsg);
+
+            string setValueResult = variableSelectionList.Value;
+
+            string setValueExpectedResult = "One";
+            string setErrorMsgExpectedResult = string.Empty;
+
+
+            //Assert
+            Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
+            Assert.AreEqual(setErrorMsgExpectedResult, errorMsg, "Error Msg Result");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void SelectionListVar_TestDynamicValueDeleteNotAllowed()
+        {
+            //Arrange
+            VariableSelectionList variableSelectionList = new VariableSelectionList();
+            OptionalValue newVal1 = new OptionalValue("One");
+            variableSelectionList.OptionalValuesList.Add(newVal1);
+            OptionalValue newVal2 = new OptionalValue("Two");
+            variableSelectionList.OptionalValuesList.Add(newVal2);
+            variableSelectionList.IsDynamicValueModificationEnabled = false;
+            variableSelectionList.Value = variableSelectionList.OptionalValuesList[0].Value;
+            //Todo Add no loop ticker
+
+            // Act
+            string errorMsg = string.Empty;
+            variableSelectionList.DynamicDeleteValue("Two", ref errorMsg);
+
+            string setValueResult = variableSelectionList.Value;
+
+            string setValueExpectedResult = "One";
+            string setErrorMsgExpectedResult = "Dynamic value modification is not allowed";
+
+
+            //Assert
+            Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
+            Assert.AreEqual(setErrorMsgExpectedResult, errorMsg, "Error Msg Result");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void SelectionListVar_TestDynamicValueDeleteNotFound()
+        {
+            //Arrange
+            VariableSelectionList variableSelectionList = new VariableSelectionList();
+            OptionalValue newVal1 = new OptionalValue("One");
+            variableSelectionList.OptionalValuesList.Add(newVal1);
+            OptionalValue newVal2 = new OptionalValue("Two");
+            variableSelectionList.OptionalValuesList.Add(newVal2);
+            variableSelectionList.IsDynamicValueModificationEnabled = true;
+            variableSelectionList.Value = variableSelectionList.OptionalValuesList[0].Value;
+            //Todo Add no loop ticker
+
+            // Act
+            string errorMsg = string.Empty;
+            variableSelectionList.DynamicDeleteValue("Three", ref errorMsg);
+
+            string setValueResult = variableSelectionList.Value;
+
+            string setValueExpectedResult = "One";
+            string setErrorMsgExpectedResult = "Could not found the value entered for deletion";
+
+
+            //Assert
+            Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
+            Assert.AreEqual(setErrorMsgExpectedResult, errorMsg, "Error Msg Result");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void SelectionListVar_TestDeleteAllValues()
+        {
+            //Arrange
+            VariableSelectionList variableSelectionList = new VariableSelectionList();
+            OptionalValue newVal1 = new OptionalValue("One");
+            variableSelectionList.OptionalValuesList.Add(newVal1);
+            OptionalValue newVal2 = new OptionalValue("Two");
+            variableSelectionList.OptionalValuesList.Add(newVal2);
+            variableSelectionList.IsDynamicValueModificationEnabled = true;
+            variableSelectionList.Value = variableSelectionList.OptionalValuesList[0].Value;
+            //Todo Add no loop ticker
+
+            // Act
+            string errorMsg = string.Empty;
+            variableSelectionList.DeleteAllValues(ref errorMsg);
+
+            string setValueResult = variableSelectionList.Value;
+
+            string setValueExpectedResult = string.Empty;
+            string setErrorMsgExpectedResult = string.Empty;
+
+
+            //Assert
+            Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
+            Assert.AreEqual(setErrorMsgExpectedResult, errorMsg, "Error Msg Result");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void SelectionListVar_TestGetLength()
+        {
+            //Arrange
+            VariableSelectionList variableSelectionList = new VariableSelectionList();
+            OptionalValue newVal1 = new OptionalValue("One");
+            variableSelectionList.OptionalValuesList.Add(newVal1);
+            OptionalValue newVal2 = new OptionalValue("Two");
+            variableSelectionList.OptionalValuesList.Add(newVal2);
+
+            Dictionary<string, string> extraParamsDict = new Dictionary<string, string>();
+            extraParamsDict.TryAdd("GetLength", "True");
+            //Todo Add no loop ticker
+
+            // Act
+            string errorMsg = string.Empty;
+            string setValueResult = variableSelectionList.GetValueWithParam(extraParamsDict); ;
+
+            string setValueExpectedResult = "2";
+            string setErrorMsgExpectedResult = string.Empty;
+
+
+            //Assert
+            Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
+            Assert.AreEqual(setErrorMsgExpectedResult, errorMsg, "Error Msg Result");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void SelectionListVar_TestGetLengthWithError()
+        {
+            //Arrange
+            VariableSelectionList variableSelectionList = new VariableSelectionList();
+            OptionalValue newVal1 = new OptionalValue("One");
+            variableSelectionList.OptionalValuesList.Add(newVal1);
+            OptionalValue newVal2 = new OptionalValue("Two");
+            variableSelectionList.OptionalValuesList.Add(newVal2);
+
+            string errorMsg = string.Empty;
+            variableSelectionList.Value = variableSelectionList.OptionalValuesList[0].Value;
+
+            Dictionary<string, string> extraParamsDict = new Dictionary<string, string>();
+            extraParamsDict.TryAdd("GetLength", "False");
+            //Todo Add no loop ticker
+
+            // Act
+            string setValueResult = variableSelectionList.GetValueWithParam(extraParamsDict); ;
+
+            string setValueExpectedResult = "One";
+            string setErrorMsgExpectedResult = string.Empty;
+
+
+            //Assert
+            Assert.AreEqual(setValueExpectedResult, setValueResult, "Set Value Result");
+            Assert.AreEqual(setErrorMsgExpectedResult, errorMsg, "Error Msg Result");
+        }
     }
 }
