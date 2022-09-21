@@ -1576,8 +1576,7 @@ namespace Ginger.Run
                     index = mRunSetConfig.GingerRunners.IndexOf(mCurrentSelectedRunner.ExecutorEngine.GingerRunner) + 1;
                 }
                 GingerRunner newRunner = new GingerRunner();
-                GingerExecutionEngine executionEngine = new GingerExecutionEngine(newRunner);
-                //newRunner.Executor = new GingerExecutionEngine(newRunner);
+                newRunner.Executor = new GingerExecutionEngine(newRunner);
                 if (gingerRunner != null)
                 {
                     newRunner = gingerRunner;
@@ -1595,7 +1594,7 @@ namespace Ginger.Run
                 newRunner.PropertyChanged += Runner_PropertyChanged;
                 newRunner.ApplicationAgents.CollectionChanged -= RunnerApplicationAgents_CollectionChanged;
                 newRunner.ApplicationAgents.CollectionChanged += RunnerApplicationAgents_CollectionChanged;
-                WorkSpace.Instance.RunsetExecutor.InitRunner(newRunner, executionEngine);
+                WorkSpace.Instance.RunsetExecutor.InitRunner(newRunner,(GingerExecutionEngine)newRunner.Executor);
                 if (Count != index && index > 0) //TODO : Check if need to add in between runner.
                 {
                     mRunSetConfig.GingerRunners.Insert(index, newRunner);
@@ -2558,7 +2557,7 @@ namespace Ginger.Run
         private void duplicateRunner(GingerExecutionEngine runner)
         {
             if (CheckIfExecutionIsInProgress()) { return; }
-
+             
             if (runner != null)
             {
                 GingerRunner GR = runner.GingerRunner;
