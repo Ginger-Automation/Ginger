@@ -50,9 +50,14 @@ namespace Ginger.BusinessFlowPages
             BindControls();
         }
 
+        public void UpdatePageViewMode(Ginger.General.eRIPageViewMode pageViewMode)
+        {
+            mPageViewMode = pageViewMode;
+            SetUI();
+        }
         private void SetUI()
         {
-            if (mPageViewMode == General.eRIPageViewMode.View)
+            if (mPageViewMode == General.eRIPageViewMode.View || mPageViewMode== General.eRIPageViewMode.ViewAndExecute)
             {
                 xActivityNameTxtBox.IsEnabled = false;
                 xActivityDescriptionTxt.IsEnabled = false;
@@ -69,6 +74,24 @@ namespace Ginger.BusinessFlowPages
                 xErrorHandlerMappingCmb.IsEnabled = false;
                 xSpecificErrorHandlerBtn.IsEnabled = false;
                 xSharedRepoInstanceUC.IsEnabled = false;
+            }
+            else
+            {
+                xActivityNameTxtBox.IsEnabled = true;
+                xActivityDescriptionTxt.IsEnabled = true;
+                xTagsViewer.IsEnabled = true;
+                xRunDescritpion.IsEnabled = true;
+                xScreenTxt.IsEnabled = true;
+                xExpectedTxt.IsEnabled = true;
+                xMandatoryActivityCB.IsEnabled = true;
+                xPublishcheckbox.IsEnabled = true;
+                xTargetApplicationComboBox.IsEnabled = true;
+                xRunOptionCombo.IsEnabled = true;
+                xAutomationStatusCombo.IsEnabled = true;
+                xHandlerTypeCombo.IsEnabled = true;
+                xErrorHandlerMappingCmb.IsEnabled = true;
+                xSpecificErrorHandlerBtn.IsEnabled = true;
+                xSharedRepoInstanceUC.IsEnabled = true;
             }
 
 

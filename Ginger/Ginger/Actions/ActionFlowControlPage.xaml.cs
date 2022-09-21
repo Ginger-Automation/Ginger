@@ -57,7 +57,7 @@ namespace Ginger.Actions
             FlowControlGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddFlowControl));
 
             // TODO:  open new edit page -  FlowControlGrid.btnEdit.AddHandler(Button.ClickEvent, new RoutedEventHandler(EditAction));                      
-            if (editMode == General.eRIPageViewMode.View)
+            if (editMode == General.eRIPageViewMode.View || editMode== General.eRIPageViewMode.ViewAndExecute)
             {
                 SetViewMode();
             }

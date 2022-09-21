@@ -39,6 +39,16 @@
                             <GingerCore:ucTextDicResource Text="Undo [Activity] Changes"/>
                         </usercontrols:ucButton.ToolTip>
                     </usercontrols:ucButton>
+                    <usercontrols:ucButton x:Name="xEditButton" ButtonType="ImageButton" Click="xEditBtn_Click" Visibility="Collapsed"  ButtonFontImageSize="17"  ButtonImageType="Edit" >
+                        <usercontrols:ucButton.ToolTip>
+                            <GingerCore:ucTextDicResource Text="Edit [Activity]"/>
+                        </usercontrols:ucButton.ToolTip>
+                    </usercontrols:ucButton>
+                    <usercontrols:ucButton x:Name="xSaveButton" ButtonType="ImageButton" Click="xSaveBtn_Click" Visibility="Collapsed"  ButtonFontImageSize="20"  ButtonImageType="Save" >
+                        <usercontrols:ucButton.ToolTip>
+                            <GingerCore:ucTextDicResource Text="Save [Activity]"/>
+                        </usercontrols:ucButton.ToolTip>
+                    </usercontrols:ucButton>
                     <Menu x:Name="xExtraOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Extra Operations">
                         <MenuItem Cursor="Hand">
                             <MenuItem.Header>
