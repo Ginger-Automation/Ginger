@@ -743,7 +743,7 @@ namespace Ginger
         {
             if (mLogDetailsPage == null)
             {
-                mLogDetailsPage = new LogDetailsPage(LogDetailsPage.eLogShowLevel.ALL);
+                mLogDetailsPage = new LogDetailsPage(LogDetailsPage.eLogShowLevel.ERROR);
             }
             else
             {
