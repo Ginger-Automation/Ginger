@@ -132,6 +132,10 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 childPagesMode = Ginger.General.eRIPageViewMode.View;
             }
+            else if (mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
+            {
+                childPagesMode = Ginger.General.eRIPageViewMode.ViewAndExecute;
+            }
             else
             {
                 childPagesMode = Ginger.General.eRIPageViewMode.Child;
@@ -354,6 +358,7 @@ namespace GingerWPF.BusinessFlowsLib
                     break;
 
                 case Ginger.General.eRIPageViewMode.View:
+                case Ginger.General.eRIPageViewMode.ViewAndExecute:
                     title = "View " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                     Button okBtnView = new Button();
                     okBtnView.Content = "Ok";

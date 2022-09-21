@@ -110,7 +110,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void BindControls()
         {
-            if (mPageViewMode == Ginger.General.eRIPageViewMode.View)
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
             {
                 xNameTxtBox.IsEnabled = false;
                 xDescriptionTxt.IsEnabled = false;
@@ -122,6 +122,19 @@ namespace GingerWPF.BusinessFlowsLib
                 xTargetsListBox.IsEnabled = false;
                 xAddTargetBtn.IsEnabled = false;
                 xPublishcheckbox.IsEnabled = false;
+            }
+            else
+            {
+                xNameTxtBox.IsEnabled = true;
+                xDescriptionTxt.IsEnabled = true;
+                xTagsViewer.IsEnabled = true;
+                xRunDescritpion.IsEnabled = true;
+                xStatusComboBox.IsEnabled = true;
+                xCreatedByTextBox.IsEnabled = true;
+                xAutoPrecentageTextBox.IsEnabled = true;
+                xTargetsListBox.IsEnabled = true;
+                xAddTargetBtn.IsEnabled = true;
+                xPublishcheckbox.IsEnabled = true;
             }
 
             BindingHandler.ObjFieldBinding(xNameTxtBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));

@@ -97,6 +97,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             PageViewMode = pageViewMode;
         }
 
+        public void UpdatePageViewMode(Ginger.General.eRIPageViewMode pageViewMode)
+        {
+            PageViewMode = pageViewMode;
+        }
+
         public void SetItem(object item)
         {
             if (item is VariableBase)
@@ -215,7 +220,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             extraOperationsList.Add(resetAll);
 
             ListItemOperation copyAllList = new ListItemOperation();
-            copyAllList.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.View, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            copyAllList.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             copyAllList.AutomationID = "copyAllList";
             copyAllList.Group = "Clipboard";
             copyAllList.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Clipboard;
@@ -234,7 +239,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             extraOperationsList.Add(cutAllList);
 
             ListItemOperation copySelected = new ListItemOperation();
-            copySelected.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.View, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            copySelected.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             copySelected.AutomationID = "copySelected";
             copySelected.Group = "Clipboard";
             copySelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy;
@@ -438,7 +443,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             extraOperationsList.Add(output);
 
             ListItemOperation copy = new ListItemOperation();
-            copy.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.View, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            copy.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute,  General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             copy.AutomationID = "copy";
             copy.Group = "Clipboard";
             copy.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Clipboard;
