@@ -268,6 +268,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             foreach (Act act in SelectedItemsList)
             {
                 list.Add(act);
+                if (!mContext.Activity.EnableEdit && mContext.Activity.IsLinkedItem)
+                {
+                    Reporter.ToUser(eUserMsgKey.EditLinkSharedActivities);
+                    continue;
+                }
                 ActionsFactory.AddActionsHandler(act, mContext);
             }
 

@@ -116,6 +116,8 @@ namespace Amdocs.Ginger.Common
         CopiedVariableSuccessfully, AskIfShareVaribalesInRunner, ShareVariableNotSelected,
         WarnOnDynamicActivities,
         WarnOnLinkSharedActivities,
+        WarnOnEditLinkSharedActivities,
+        EditLinkSharedActivities,
         QcConnectFailureRestAPI,
         ExportedExecDetailsToALMIsInProcess,
         RenameItemError,
@@ -692,6 +694,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.WarnOnDynamicActivities, new UserMsg(eUserMsgType.QUESTION, "Dynamic " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " Warning", "The dynamically added Shared Repository " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " will not be saved (but they will continue to appear on the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString:")") + System.Environment.NewLine + System.Environment.NewLine + "To continue with Save?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.WarnOnLinkSharedActivities, new UserMsg(eUserMsgType.QUESTION, "Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " Warning", "The Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " are readonly and any changes done will not be saved." + System.Environment.NewLine + System.Environment.NewLine + "Do you want to save other changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.WarnOnEditLinkSharedActivities, new UserMsg(eUserMsgType.QUESTION, "Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " Warning", "Any updates to linked shared repository auto update the shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " and all it's usage in other flows." + System.Environment.NewLine + System.Environment.NewLine + "Do you want to proceed with Edit?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.EditLinkSharedActivities, new UserMsg(eUserMsgType.INFO, "Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities), "Linked shared repository " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " by default read only." + System.Environment.NewLine + System.Environment.NewLine + "If you want to change open it in edit mode.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.QcConnectFailureRestAPI, new UserMsg(eUserMsgType.WARN, "QC/ALM Connection Failed", "QC/ALM connection failed." + System.Environment.NewLine + "Please make sure that the server url and the credentials you use are correct.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExportedExecDetailsToALMIsInProcess, new UserMsg(eUserMsgType.INFO, "Export Execution Details", "Please Wait, Exporting Execution Details is in process.", eUserMsgOption.OK, eUserMsgSelection.None));
