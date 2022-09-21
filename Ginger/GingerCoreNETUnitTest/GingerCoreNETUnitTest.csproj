@@ -456,6 +456,9 @@
     <None Update="TestResources\Repository\DS_SkipWhereConditions_Flow.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\Repository\Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Repository\SampleAPIModels\Create_User.Ginger.ApplicationAPIModel.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
