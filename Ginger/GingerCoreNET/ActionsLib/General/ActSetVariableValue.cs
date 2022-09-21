@@ -121,7 +121,15 @@ namespace GingerCore.Actions
             {
                 if (Var.GetType() == typeof(VariableString))
                 {
-                    ((VariableString)Var).Value = calculatedValue;
+                    if (calculatedValue.Contains("ERROR"))
+                    {
+                        Error = calculatedValue;
+                        return;
+                    }
+                    else
+                    {
+                        ((VariableString)Var).Value = calculatedValue;
+                    }
                 }
                 else if (Var.GetType() == typeof(VariableSelectionList))
                 {
