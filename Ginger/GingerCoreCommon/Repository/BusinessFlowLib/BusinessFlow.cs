@@ -915,9 +915,9 @@ namespace GingerCore
             //Attach mapped activities to groups and clear missing Activities
             foreach (ActivitiesGroup group in ActivitiesGroups)
             {
-                for (int index = 0; index < group.ActivitiesIdentifiers.Count;)
+                for (int AIindex = 0; AIindex < group.ActivitiesIdentifiers.Count;)
                 {
-                    ActivityIdentifiers actIdentifis = (ActivityIdentifiers)group.ActivitiesIdentifiers[index];
+                    ActivityIdentifiers actIdentifis = (ActivityIdentifiers)group.ActivitiesIdentifiers[AIindex];
                     Activity activ = activitiesList.Where(x => x.ActivityName == actIdentifis.ActivityName && x.Guid == actIdentifis.ActivityGuid && x.ActivitiesGroupID == group.Name).FirstOrDefault();
                     if (activ == null)
                     {
@@ -930,11 +930,11 @@ namespace GingerCore
                     if (activ != null)
                     {
                         activ.ActivitiesGroupID = group.Name;
-                        index++;
+                        AIindex++;
                     }
                     else
                     {
-                        group.ActivitiesIdentifiers.RemoveAt(index);//Activity not exist in BF anymore
+                        group.ActivitiesIdentifiers.RemoveAt(AIindex);//Activity not exist in BF anymore
                     }
                 }
 
