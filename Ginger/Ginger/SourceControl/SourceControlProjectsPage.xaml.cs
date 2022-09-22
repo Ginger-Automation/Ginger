@@ -44,7 +44,7 @@ namespace Ginger.SourceControl
 
         SolutionInfo solutionInfo = null;
 
-        ImageMakerControl loaderElement = new ImageMakerControl();;
+        ImageMakerControl loaderElement = new ImageMakerControl();
 
         GenericWindow genWin = null;
         Button downloadProjBtn = null;
