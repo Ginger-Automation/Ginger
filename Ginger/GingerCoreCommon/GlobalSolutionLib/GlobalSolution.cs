@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -59,7 +59,9 @@ namespace Amdocs.Ginger.Common.GlobalSolutionLib
             [EnumValueDescription("~\\Ginger.Solution.xml")]
             TargetApplication,
             [EnumValueDescription("~\\Ginger.Solution.xml")]
-            Variables
+            Variables,
+            [EnumValueDescription("~\\Ginger.Solution.xml")]
+            ExtrnalIntegrationConfigurations
         }
         
         public static IEnumerable<T> GetEnumValues<T>()
