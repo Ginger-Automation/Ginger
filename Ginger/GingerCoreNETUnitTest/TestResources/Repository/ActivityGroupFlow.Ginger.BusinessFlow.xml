@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="cf613b63-26ae-47e0-8d3a-0808163e0dce" ItemType="BusinessFlow" CreatedBy="pravishe" Created="202209160601" GingerVersion="4.5.0.0" Version="9" LastUpdateBy="pravishe" LastUpdate="202209210524" />
+<BusinessFlow Guid="cf613b63-26ae-47e0-8d3a-0808163e0dce" Name="test1" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group2" ActivityName="Activity 1" AutomationStatus="Automated" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="eeda1e41-b8f8-4336-9c85-ebf7493678e0" ParentGuid="d7790228-4f97-4c92-9a43-c80991a971ab" PercentAutomated="100%" TargetApplication="MyWebApp" Type="Regular">
+<Acts>
+<ActDummy Active="True" Description="Dummy Action" Guid="9c007e0c-0086-47ef-a6f5-641359904d4d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+</Acts>
+</Activity>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group2" ActivityName="New Activity 2" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="d7a05b2f-1cb4-45c4-a8d1-9e79019ec8e1" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="0%" TargetApplication="MyWebApp" Type="Regular" />
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group2" ActivityName="New Activity 3" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="0fad9774-b18f-41a7-b94b-02ddd44606db" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="0%" TargetApplication="MyWebApp" Type="Regular" />
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group3" ActivityName="New Activity" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="92252a63-d6c9-4280-b6d8-1a84695eece0" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="0%" TargetApplication="MyWebApp" Type="Regular" />
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group3" ActivityName="New Activity 4" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="45760304-8b55-4cc7-a23c-589da3a43498" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="0%" TargetApplication="MyWebApp" Type="Regular" />
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group3" ActivityName="New Activity 5" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="f897b794-1c13-4619-a6b0-f5d445ba4d1c" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="0%" TargetApplication="MyWebApp" Type="Regular" />
+</Activities>
+
+<ActivitiesGroups>
+<ActivitiesGroup Guid="f76b601d-5cde-4cd7-97ea-2d19df1d9e2c" Name="Group2" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Automated" ActivityGuid="eeda1e41-b8f8-4336-9c85-ebf7493678e0" ActivityName="Activity 1" Guid="f6ea5cde-9e43-4c88-8451-0ffa55082620" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="d7a05b2f-1cb4-45c4-a8d1-9e79019ec8e1" ActivityName="New Activity 2" Guid="db1747b1-64e5-4a62-9b81-a367983dcfa5" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="0fad9774-b18f-41a7-b94b-02ddd44606db" ActivityName="New Activity 3" Guid="b3a8ca44-60f3-47df-95b0-28c6a4807bae" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="92252a63-d6c9-4280-b6d8-1a84695eece0" ActivityName="New Activity" Guid="1cf56860-0e78-429b-90b0-b10be324619c" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="45760304-8b55-4cc7-a23c-589da3a43498" ActivityName="New Activity 4" Guid="62d5c9b2-6844-4f1b-90a0-f4abafbe38b2" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+<ActivitiesGroup Guid="9333b1d7-d8e1-4439-bf08-6d1b2a061c43" Name="Group3" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="92252a63-d6c9-4280-b6d8-1a84695eece0" ActivityName="New Activity" Guid="1cf56860-0e78-429b-90b0-b10be324619c" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="45760304-8b55-4cc7-a23c-589da3a43498" ActivityName="New Activity 4" Guid="62d5c9b2-6844-4f1b-90a0-f4abafbe38b2" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="f897b794-1c13-4619-a6b0-f5d445ba4d1c" ActivityName="New Activity 5" Guid="6e17ad89-e922-4c14-a43f-e75bf362e6cf" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+</ActivitiesGroups>
+
+<TargetApplications>
+<TargetApplication AppName="MyWebApp" Guid="80b26389-a6eb-4da5-af74-1837dc63fac3" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+</BusinessFlow></GingerRepositoryItem>
