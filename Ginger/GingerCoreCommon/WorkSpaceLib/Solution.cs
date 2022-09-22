@@ -22,7 +22,6 @@ using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Configurations;
-using Amdocs.Ginger.Common.External.Configurations;
 using Ginger.Reports;
 using GingerCore;
 using GingerCore.Platforms;
