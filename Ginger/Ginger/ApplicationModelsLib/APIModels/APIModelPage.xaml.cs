@@ -67,7 +67,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             mPageViewMode = viewMode;
 
-            if (mPageViewMode == General.eRIPageViewMode.View)
+            if (mPageViewMode == General.eRIPageViewMode.View || mPageViewMode == General.eRIPageViewMode.ViewAndExecute)
                 UpdatePageAsReadOnly();
 
             if (mPageViewMode == General.eRIPageViewMode.Add)
@@ -366,7 +366,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void SetHTTPHeadersGrid()
         {
-            bool isFieldReadOnly = (mPageViewMode == Ginger.General.eRIPageViewMode.View);
+            bool isFieldReadOnly = (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode==General.eRIPageViewMode.ViewAndExecute);
 
             HttpHeadersGrid.Title = "Request Headers";
             HttpHeadersGrid.SetTitleStyle((Style)TryFindResource("@ucGridTitleLightStyle"));

@@ -119,7 +119,7 @@ namespace Ginger.Actions
             EditMode = editMode;
 
             mAction = act;
-            if (editMode != General.eRIPageViewMode.View && editMode != General.eRIPageViewMode.Explorer)
+            if (editMode != General.eRIPageViewMode.View && editMode != General.eRIPageViewMode.ViewAndExecute && editMode != General.eRIPageViewMode.Explorer)
             {
                 mAction.SaveBackup();
             }
@@ -174,7 +174,7 @@ namespace Ginger.Actions
                 mAction.AddNewReturnParams = true;
             }
 
-            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View || EditMode == General.eRIPageViewMode.Explorer)
+            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View || EditMode == General.eRIPageViewMode.ViewAndExecute || EditMode == General.eRIPageViewMode.Explorer)
             {
                 BindingHandler.ObjFieldBinding(xExecutionStatusTabImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
             }
@@ -183,7 +183,7 @@ namespace Ginger.Actions
                 xExecutionStatusTabImage.Visibility = Visibility.Collapsed;
             }
 
-            if (EditMode == General.eRIPageViewMode.View)
+            if (EditMode == General.eRIPageViewMode.View || EditMode == General.eRIPageViewMode.ViewAndExecute)
             {
                 SetViewMode();
             }
@@ -192,7 +192,7 @@ namespace Ginger.Actions
                 SetExplorerMode();
             }
 
-            if ((EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View) &&
+            if ((EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View || EditMode == General.eRIPageViewMode.ViewAndExecute) &&
                        (mAction.Status != null && mAction.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending))
             {
                 xActionTabs.SelectedItem = xExecutionReportTab;
@@ -285,6 +285,10 @@ namespace Ginger.Actions
             {
                 mAFCP = new ActionFlowControlPage(mAction, mActParentBusinessFlow, mActParentActivity, General.eRIPageViewMode.View);
             }
+            if (EditMode == General.eRIPageViewMode.ViewAndExecute)
+            {
+                mAFCP = new ActionFlowControlPage(mAction, mActParentBusinessFlow, mActParentActivity, General.eRIPageViewMode.ViewAndExecute);
+            }
             else if (EditMode == General.eRIPageViewMode.SharedReposiotry)
             {
                 mAFCP = new ActionFlowControlPage(mAction, mActParentBusinessFlow, mActParentActivity, General.eRIPageViewMode.SharedReposiotry);
@@ -347,7 +351,7 @@ namespace Ginger.Actions
                 xOutputValuesExpander.IsExpanded = true;
             }
 
-            if (EditMode == General.eRIPageViewMode.View)
+            if (EditMode == General.eRIPageViewMode.View || EditMode == General.eRIPageViewMode.ViewAndExecute)
             {
                 xOutputValuesGrid.DisableGridColoumns();
             }
@@ -366,7 +370,7 @@ namespace Ginger.Actions
             InitActionLog();
 
             //execution details section
-            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View || EditMode == General.eRIPageViewMode.Explorer)
+            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View || EditMode == General.eRIPageViewMode.ViewAndExecute || EditMode == General.eRIPageViewMode.Explorer)
             {
                 BindingHandler.ObjFieldBinding(xExecutionStatusImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
                 BindingHandler.ObjFieldBinding(xExecutionStatusLabel, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
@@ -1071,6 +1075,7 @@ namespace Ginger.Actions
                     break;
 
                 case General.eRIPageViewMode.View:
+                case General.eRIPageViewMode.ViewAndExecute:
                     title = "View " + RemoveActionWord(mAction.ActionDescription) + " Action";
                     winButtons.Add(okBtn);
                     closeHandler = new RoutedEventHandler(okBtn_Click);

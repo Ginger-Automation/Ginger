@@ -499,9 +499,9 @@ namespace GingerWPFUnitTest.POMs
                         lv.SelectedItem = topMenuItem;
                         SleepWithDoEvents(100);
                         Frame f1 = (Frame)FindElementByName(resourcesPage, "xSelectedItemFrame");
-                        VariablesPage variablesPage = (VariablesPage)f1.Content;
+                        //VariablesPage variablesPage = (VariablesPage)f1.Content;
                         
-                        GlobalVariables = new GlobalVariablesPOM(variablesPage);
+                       // GlobalVariables = new GlobalVariablesPOM(variablesPage);
                         break;
                     }
                 }
