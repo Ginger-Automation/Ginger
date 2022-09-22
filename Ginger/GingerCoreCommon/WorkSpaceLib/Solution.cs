@@ -300,9 +300,6 @@ namespace Ginger.SolutionGeneral
         public VRTConfiguration VRTConfiguration { get; set; } = new VRTConfiguration();
 
         [IsSerializedForLocalRepository]
-        public VariableConfiguration VariableConfiguration { get; set; } = new VariableConfiguration();
-
-        [IsSerializedForLocalRepository]
         public ApplitoolsConfiguration ApplitoolsConfiguration { get; set; } = new ApplitoolsConfiguration();
 
         [IsSerializedForLocalRepository]

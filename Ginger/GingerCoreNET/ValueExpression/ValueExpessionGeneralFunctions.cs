@@ -51,16 +51,16 @@ namespace Amdocs.Ginger.CoreNET.ValueExpression
             return Guid.NewGuid().ToString();
         }
 
-        [ValueExpressionFunctionAttribute]
-        [ValueExpressionFunctionDescription("Get Clipboard Text")]
-        [ValueExpressionFunctionExpression("{Function Fun=GetClipboardText()}")]
-        [ValueExpressionFunctionCategory("Data")]
-        [ValueExpressionFunctionSubCategory("Functions")]
-        public string GetClipboardText()
-        {
-            return WorkSpace.Instance.OSHelper.GetClipboardText();
+        //[ValueExpressionFunctionAttribute]
+        //[ValueExpressionFunctionDescription("Get Clipboard Text")]
+        //[ValueExpressionFunctionExpression("{Function Fun=GetClipboardText()}")]
+        //[ValueExpressionFunctionCategory("Data")]
+        //[ValueExpressionFunctionSubCategory("Functions")]
+        //public string GetClipboardText()
+        //{
+        //    return WorkSpace.Instance.OSHelper.GetClipboardText();
 
-        }
+        //}
 
         [ValueExpressionFunctionAttribute]
         [ValueExpressionFunctionDescription("Generate HashCode")]

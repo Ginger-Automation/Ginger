@@ -8,15 +8,14 @@ using System.Windows.Controls;
 
 namespace Ginger.Reports.ValidationRules
 {
-    public class ValidateNotContainSpecificChar : ValidationRule
+    public class ValidateNotContainSpacesBeforeAfter: ValidationRule
     {
-        private string _Message = string.Empty;
-        private char _CharToDetect;
 
-        public ValidateNotContainSpecificChar(char charToDetect, string message)
+        private string _Message = string.Empty;
+
+        public ValidateNotContainSpacesBeforeAfter(string message = "Name can't contains spaces before and\\or after")
         {
             _Message = message;
-            _CharToDetect = charToDetect;
 
             //this.ValidatesOnTargetUpdated = true; // Trigger the validation on init binding (load/init form)
             //this.ValidationStep = ValidationStep.UpdatedValue; // force the rule to run after the new value is converted and written back (fix for issue: property not updated/binded on empty value)
@@ -25,7 +24,7 @@ namespace Ginger.Reports.ValidationRules
         {
             string validateValue = value.ToString();
 
-            if (validateValue.Contains(_CharToDetect))
+            if (validateValue.StartsWith(' ') || validateValue.EndsWith(' '))
             {
                 return new ValidationResult(false, _Message);
             }

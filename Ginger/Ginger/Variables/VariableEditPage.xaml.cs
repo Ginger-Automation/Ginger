@@ -75,7 +75,8 @@ namespace Ginger.Variables
             mContext = context;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTypeLbl, Label.ContentProperty, mVariable, nameof(VariableBase.VariableType), BindingMode: BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xVarNameTxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Name));
-            xVarNameTxtBox.AddValidationRule(new ValidateNotContainSpecificChar());
+            xVarNameTxtBox.AddValidationRule(new ValidateNotContainSpecificChar(',', "Variable name can't contain a comma (', ')"));
+            xVarNameTxtBox.AddValidationRule(new ValidateNotContainSpacesBeforeAfter());
 
             xShowIDUC.Init(mVariable);
             mVariable.NameBeforeEdit = mVariable.Name;            
