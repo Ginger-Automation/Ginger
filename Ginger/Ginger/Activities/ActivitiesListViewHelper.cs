@@ -23,6 +23,7 @@ using Ginger.ALM;
 using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
 using Ginger.Repository.AddItemToRepositoryWizard;
+using Ginger.Repository.ItemToRepositoryWizard;
 using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
@@ -151,7 +152,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(item);
 
-            if (mActivity.AddDynamicly)
+            if(mActivity.Type==eSharedItemType.Link)
+            {
+                return new ListItemUniqueIdentifier() { Color = "Orange", Tooltip = "Linked Shared Activity" };
+            }
+            else if (mActivity.AddDynamicly)
             {//Brushes.MediumPurple
                 return new ListItemUniqueIdentifier() { Color = "MediumPurple", Tooltip = "Added Dynamically from Shared Repository" };
             }
@@ -236,7 +241,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             extraOperationsList.Add(activitiesVarsDep);
 
             ListItemOperation copyAllList = new ListItemOperation();
-            copyAllList.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            copyAllList.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             copyAllList.AutomationID = "copyAllList";
             copyAllList.Group = "Clipboard";
             copyAllList.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Clipboard;
@@ -255,7 +260,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             extraOperationsList.Add(cutAllList);
 
             ListItemOperation copySelected = new ListItemOperation();
-            copySelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            copySelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute,General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             copySelected.AutomationID = "copySelected";
             copySelected.Group = "Clipboard";
             copySelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy;
@@ -433,7 +438,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             extraOperationsList.Add(resetRest);
 
             ListItemOperation copy = new ListItemOperation();
-            copy.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            copy.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute,  General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             copy.AutomationID = "copy";
             copy.Group = "Clipboard";
             copy.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Clipboard;
@@ -489,6 +494,29 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             addToSR.ToolTip = "Add to Shared Repository";
             addToSR.OperationHandler = AddToSRHandler;
             extraOperationsList.Add(addToSR);
+
+            if (mActivity.IsSharedRepositoryInstance && mActivity.Type == eSharedItemType.Link)
+            {
+                ListItemOperation convertToSR = new ListItemOperation();
+                convertToSR.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+                convertToSR.AutomationID = "ConvertToSR";
+                convertToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
+                convertToSR.Header = "Convert to Regular Instance";
+                convertToSR.ToolTip = "Convert to Regular Shared Repository";
+                convertToSR.OperationHandler = ConvertToRegularSRHandler;
+                extraOperationsList.Add(convertToSR);
+            }
+            if (mActivity.IsSharedRepositoryInstance && mActivity.Type == eSharedItemType.Regular)
+            {
+                ListItemOperation convertToLSR = new ListItemOperation();
+                convertToLSR.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+                convertToLSR.AutomationID = "ConvertToLink";
+                convertToLSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.InstanceLink;
+                convertToLSR.Header = "Convert to Link Instance";
+                convertToLSR.ToolTip = "Convert to Link Shared Repository";
+                convertToLSR.OperationHandler = ConvertToLinkedSRHandler;
+                extraOperationsList.Add(convertToLSR);
+            }
 
             return extraOperationsList;
         }
@@ -637,7 +665,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             groupOperationsList.Add(activate);
 
             ListItemGroupOperation copyGroup = new ListItemGroupOperation();
-            copyGroup.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            copyGroup.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             copyGroup.AutomationID = "copyGroup";
             copyGroup.Group = "Clipboard";
             copyGroup.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Clipboard;
@@ -803,6 +831,16 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(sender);
             WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mActivity));
+        }
+        private void ConvertToRegularSRHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mActivity, true, UploadItemSelection.eActivityInstanceType.RegularInstance));
+        }
+        private void ConvertToLinkedSRHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mActivity, true, UploadItemSelection.eActivityInstanceType.LinkInstance));
         }
 
         private void ResetHandler(object sender, RoutedEventArgs e)

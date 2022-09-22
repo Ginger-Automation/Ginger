@@ -58,8 +58,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             mVE.Value = EndPointUrl;  // Calculate the value Expression
             EndPointUrl = mVE.ValueCalculated;
 
-            restClient = new RestClient(EndPointUrl);
-            restClient.Options.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;            
+            if(!String.IsNullOrEmpty(EndPointUrl))
+            {
+                restClient = new RestClient(EndPointUrl);
+                restClient.Options.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+            }       
         }
            
         public void SendCreationTestSessionToSealightsAsync()

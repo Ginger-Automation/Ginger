@@ -98,7 +98,6 @@ namespace UnitTests.NonUITests
             v6.Value = "OK";
             //mBF.Variables.Add(v1);
             mBF.AddVariable(v6);
-
         }
 
         [TestMethod]  [Timeout(60000)]

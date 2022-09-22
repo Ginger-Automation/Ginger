@@ -19,8 +19,10 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
+using OpenQA.Selenium.DevTools.V101.SystemInfo;
 using System;
 using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,7 +37,7 @@ namespace Ginger.GeneralLib
     /// </summary>
     public partial class LogDetailsPage : Page
     {
-        public const int NoOfLinesToShow = 3500;
+        public const int NoOfLinesToShow = 5000;
         public enum eLogShowLevel
         {
             ALL, DEBUG, INFO, WARN, ERROR, FATAL
@@ -44,19 +46,19 @@ namespace Ginger.GeneralLib
         eLogShowLevel mLogLevel { get; set; }
         string mLogText;
         TextBlockHelper mTextBlockHelper;
-        GenericWindow mPageGenericWin;                
+        GenericWindow mPageGenericWin;
 
         /// <summary>
         /// Log Details Page
         /// </summary>
-        /// <param name="logLevelToShow">Selecte Log level to show</param>
-        public LogDetailsPage(eLogShowLevel logLevelToShow = eLogShowLevel.ALL)
+        /// <param name="logLevelToShow">Selecte Log level to show</param> 
+        public LogDetailsPage(eLogShowLevel logLevelToShow = eLogShowLevel.ERROR)
         {
             InitializeComponent();
 
             mLogLevel = logLevelToShow;
             GingerCore.General.FillComboFromEnumType(xLogTypeCombo, typeof(eLogShowLevel));
-           
+            xLogTypeCombo.SelectedValue = eLogLevel.ERROR;
             xLogTypeCombo.SelectedValue = mLogLevel;
             xLogTypeCombo.SelectionChanged += XLogTypeCombo_SelectionChanged;
 
@@ -75,7 +77,7 @@ namespace Ginger.GeneralLib
             mLogLevel = (eLogShowLevel)xLogTypeCombo.SelectedValue;
             await FillLogData();
         }
-
+        
         private async Task FillLogData()
         {
             //get the log file text            
@@ -101,42 +103,51 @@ namespace Ginger.GeneralLib
             mTextBlockHelper = new TextBlockHelper(xLogDetailsTextBlock);
             bool allowLogDetailsWrite = true;
             int start = logs.Length > NoOfLinesToShow ? logs.Length - NoOfLinesToShow : 0;
-            for (int i = start; i < logs.Length; i++)
+            xProcessingIcon.Visibility = Visibility.Visible;
+            xLogDetailsBorder.Visibility = Visibility.Collapsed;
+            await Task.Run(() =>
             {
-                if (logs[i] == string.Empty)
+                for (int i = start; i < logs.Length; i++)
                 {
-                    if (allowLogDetailsWrite)
+                    Dispatcher.Invoke(() => { 
+                    if (logs[i] == string.Empty)
                     {
-                        mTextBlockHelper.AddLineBreak();
+                        if (allowLogDetailsWrite)
+                        {
+                            mTextBlockHelper.AddLineBreak();
+                        }
                     }
-                    continue;
-                }
-                else if (logs[i].Contains("#### Application version"))
-                {
-                    mTextBlockHelper.AddFormattedText(logs[i], Brushes.Black, true);
-                }
-                else if (IsLogHeader(logs[i]))
-                {
-                    if (mLogLevel == eLogShowLevel.ALL || logs[i].Contains("| " + mLogLevel.ToString()))
+                    else if (logs[i].Contains("#### Application version"))
                     {
-                        mTextBlockHelper.AddFormattedText(logs[i], GetProperLogTypeBrush(logs[i]), isBold: true);
-                        mTextBlockHelper.AddLineBreak();
-                        allowLogDetailsWrite = true;
+                        mTextBlockHelper.AddFormattedText(logs[i], Brushes.Black, true);
+                    }
+                    else if (IsLogHeader(logs[i]))
+                    {
+                        if (mLogLevel == eLogShowLevel.ALL || logs[i].Contains("| " + mLogLevel.ToString()))
+                        {
+                            
+                            mTextBlockHelper.AddFormattedText(logs[i], GetProperLogTypeBrush(logs[i]), isBold: true);
+                            mTextBlockHelper.AddLineBreak();
+                            allowLogDetailsWrite = true;
+                        }
+                        else
+                        {
+                            allowLogDetailsWrite = false;
+                        }
                     }
                     else
                     {
-                        allowLogDetailsWrite = false;
+                        if (allowLogDetailsWrite)
+                        {
+                            mTextBlockHelper.AddText(logs[i]);
+                            mTextBlockHelper.AddLineBreak();
+                        }
                     }
+                    });
                 }
-                else
-                {
-                    if (allowLogDetailsWrite)
-                    {
-                        mTextBlockHelper.AddText(logs[i]);
-                        mTextBlockHelper.AddLineBreak();
-                    }
-                }
-            }
+            });
+            xProcessingIcon.Visibility = Visibility.Collapsed;
+            xLogDetailsBorder.Visibility = Visibility.Visible;
         }
 
         private bool IsLogHeader(string log)
@@ -183,6 +194,8 @@ namespace Ginger.GeneralLib
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
+            
+            
             Button CopyToClipboradBtn = new Button();
             CopyToClipboradBtn.Content = "Copy to Clipboard";
             CopyToClipboradBtn.Click += new RoutedEventHandler(CopyToClipboradBtn_Click);

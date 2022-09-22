@@ -79,6 +79,13 @@ namespace GingerWPF.BusinessFlowsLib
             ShowHideEditPage(null);
         }
 
+        public void UpdatePageViewMode(Ginger.General.eRIPageViewMode pageViewMode)
+        {
+            mPageViewMode = pageViewMode;
+            SetListView();
+            ShowHideEditPage(null);
+        }
+
         private void ShowHideEditPage(Act actionToEdit)
         {
             if (actionToEdit != null)
@@ -90,11 +97,18 @@ namespace GingerWPF.BusinessFlowsLib
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.ToolTipProperty, mActionBeenEdit, nameof(Act.Description));
                 if(mPageViewMode == Ginger.General.eRIPageViewMode.View)
                 {
-                    xEditAndRunOperationsPnl.Visibility = Visibility.Collapsed;
+                    xEditOperationsPnl.Visibility = Visibility.Collapsed;
+                    xRunOperationsPnl.Visibility = Visibility.Collapsed;
+                }
+                else if (mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
+                {
+                    xEditOperationsPnl.Visibility = Visibility.Collapsed;
+                    xRunOperationsPnl.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    xEditAndRunOperationsPnl.Visibility = Visibility.Visible;
+                    xEditOperationsPnl.Visibility = Visibility.Visible;
+                    xRunOperationsPnl.Visibility = Visibility.Visible;
                     mActionBeenEdit.SaveBackup();
                     BindingHandler.ObjFieldBinding(xActiveBtn, ucButton.ButtonImageTypeProperty, mActionBeenEdit, nameof(Act.Active), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
                     BindingHandler.ObjFieldBinding(xBreakPointMenuItemIcon, ImageMaker.ContentProperty, mActionBeenEdit, nameof(Act.BreakPoint), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
@@ -183,10 +197,15 @@ namespace GingerWPF.BusinessFlowsLib
                 // Enable Virtualization for Actions ListView to improve the loading time/performance
                 mActionsListView.List.SetValue(ScrollViewer.CanContentScrollProperty, true);
 
-                if(mPageViewMode == Ginger.General.eRIPageViewMode.View)
+                if(mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
                 {
                     mActionsListView.IsDragDropCompatible = false;
                 }
+            }
+            else
+            {
+                mActionsListHelper.UpdatePageViewMode(mPageViewMode);
+                mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
             }
 
             if (mActivity != null)
