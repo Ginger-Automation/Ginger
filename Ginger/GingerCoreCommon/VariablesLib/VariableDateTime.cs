@@ -61,9 +61,11 @@ namespace GingerCore.Variables
             get { return GingerDicser.GetTermResValue(eTermResKey.Variable) + " DateTime"; }
         }
 
-        public override void GenerateAutoValue()
+        public override bool GenerateAutoValue(ref string errorMsg)
         {
             //NA
+            errorMsg = "Generate Auto Value is not supported";
+            return false;
         }
 
         [IsSerializedForLocalRepository]
@@ -74,7 +76,7 @@ namespace GingerCore.Variables
                 if (string.IsNullOrEmpty(mInitialDateTime))
                 {
                     var currentDate = DateTime.Today.Date;
-                    return currentDate.ToString("dd-MMM-yyyy hh:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture);
+                    return currentDate.ToString("MM/dd/yyyy hh:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture);
                 }
                 return mInitialDateTime;
             }
@@ -102,7 +104,7 @@ namespace GingerCore.Variables
             {
                 if (string.IsNullOrEmpty(mMinDateTime))
                 {
-                    return DateTime.Now.AddYears(-1).ToString();
+                    return DateTime.Now.AddYears(-1).ToString(mDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
                 }
                 return mMinDateTime;
             }
@@ -122,7 +124,7 @@ namespace GingerCore.Variables
             {
                 if (string.IsNullOrEmpty(mMaxDateTime))
                 {
-                    return DateTime.Now.AddYears(1).ToString();
+                    return DateTime.Now.AddYears(1).ToString(mDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
                 }
                 return mMaxDateTime;
             }
@@ -143,7 +145,7 @@ namespace GingerCore.Variables
             {
                 if(string.IsNullOrEmpty(mDateTimeFormat))
                 {
-                    return @"dd-MMM-yyyy hh:mm:ss tt";
+                    return @"MM/dd/yyyy hh:mm:ss tt";
                 }
                 return mDateTimeFormat;
             }
@@ -214,7 +216,7 @@ namespace GingerCore.Variables
 
         public bool CheckDateTimeWithInRange(string dateTimeValue)
         {
-            if (DateTime.Parse(dateTimeValue) >= DateTime.Parse(MinDateTime) && DateTime.Parse(dateTimeValue) <= DateTime.Parse(MaxDateTime))
+            if (DateTime.Parse(dateTimeValue) >= DateTime.Parse(Convert.ToDateTime(MinDateTime).ToString(mDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture)) && DateTime.Parse(dateTimeValue) <= DateTime.Parse(Convert.ToDateTime(MaxDateTime).ToString(mDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture)))
             {
                 return true;
             }

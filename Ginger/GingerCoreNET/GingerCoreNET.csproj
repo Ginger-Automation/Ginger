@@ -9,8 +9,8 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <AssemblyVersion>4.1.0.0</AssemblyVersion>
-    <FileVersion>4.1.0.0</FileVersion>
+    <AssemblyVersion>4.5.1.1</AssemblyVersion>
+    <FileVersion>4.5.1.1</FileVersion>
     <RootNamespace>Amdocs.Ginger.CoreNET</RootNamespace>
     <GenerateResourceUsePreserializedResources>True</GenerateResourceUsePreserializedResources>
     <Version>4.1.0</Version>
@@ -232,11 +232,13 @@
   
     <PackageReference Include="EPPlus" Version="6.0.4" />
   
-    <PackageReference Include="Eyes.Selenium4" Version="3.9.0" />
+    <PackageReference Include="Eyes.Images" Version="2.33.0" />
+  
+    <PackageReference Include="Eyes.Selenium4" Version="2.59.0" />
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.1" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="4.4.1" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="4.5.3" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.21" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
   

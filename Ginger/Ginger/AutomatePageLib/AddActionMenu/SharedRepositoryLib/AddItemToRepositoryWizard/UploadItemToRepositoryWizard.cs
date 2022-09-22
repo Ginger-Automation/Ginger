@@ -28,6 +28,7 @@ using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Variables;
 using GingerWPF.WizardLib;
+using static Ginger.Repository.ItemToRepositoryWizard.UploadItemSelection;
 
 namespace Ginger.Repository.AddItemToRepositoryWizard
 {
@@ -35,6 +36,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
     {
         public override string Title { get { return "Add Items to Shared Repository"; } }
         public Context Context;
+        bool isConvert = false;
         /// <summary>
         /// Constructor For Uploading List of Repository items
         /// </summary>
@@ -54,23 +56,24 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
         /// Constructor For Uploading Single Repository Item
         /// <param name="context"></param>
         /// <param name="item"></param>
-        public UploadItemToRepositoryWizard(Context context, RepositoryItemBase item)
+        public UploadItemToRepositoryWizard(Context context, RepositoryItemBase item, bool IsConvert = false, eActivityInstanceType ConvertType = eActivityInstanceType.LinkInstance)
         {
             UploadItemSelection.mSelectedItems.Clear();
             Context = context;
-            UploadItemSelection.mSelectedItems.Add(CreateUploadItem((RepositoryItemBase)item));
+            isConvert = IsConvert;
+            UploadItemSelection.mSelectedItems.Add(CreateUploadItem(item, IsConvert, ConvertType));
             InitializeWizardPages();
         }
 
         private void InitializeWizardPages()
         {           
-            AddPage(Name: "Items Selection", Title: "Item/s Selection", SubTitle: "Selected items to be added to Shared Repository", Page: new UploadItemsSelectionPage(UploadItemSelection.mSelectedItems));
+            AddPage(Name: "Items Selection", Title: "Item/s Selection", SubTitle: "Selected items to be added to Shared Repository", Page: new UploadItemsSelectionPage(UploadItemSelection.mSelectedItems, isConvert));
             AddPage(Name: "Items Validation", Title: "Item/s Validation", SubTitle: "Validate the items to be added to Shared Repository", Page: new UploadItemsValidationPage());
             AddPage(Name: "Items Status", Title: "Item/s Status", SubTitle: "Upload Item Status", Page: new UploadStatusPage());
             DisableBackBtnOnLastPage = true;
         }
 
-        private UploadItemSelection CreateUploadItem(RepositoryItemBase item)
+        private UploadItemSelection CreateUploadItem(RepositoryItemBase item, bool IsConvert = false, eActivityInstanceType ConvertType = eActivityInstanceType.LinkInstance)
         {
             string strComment = "";
             UploadItemSelection uploadItem = new UploadItemSelection();
@@ -83,7 +86,9 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
                 uploadItem.ExistingItem = existingItem;
                 uploadItem.ExistingItemType = existingItemType;
                 uploadItem.Comment = strComment;
-                if (item.IsLinkedItem) { uploadItem.ReplaceType = UploadItemSelection.eActivityInstanceType.LinkInstance; }
+                if (IsConvert)
+                { uploadItem.ReplaceType = ConvertType; }
+                else if (item.IsLinkedItem) { uploadItem.ReplaceType = UploadItemSelection.eActivityInstanceType.LinkInstance; }
                 else { uploadItem.ReplaceType = UploadItemSelection.eActivityInstanceType.RegularInstance; }
 
             }

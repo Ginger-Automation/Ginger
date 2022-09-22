@@ -1,1 +1,0 @@
-﻿ClickElement("ByID", "button1");

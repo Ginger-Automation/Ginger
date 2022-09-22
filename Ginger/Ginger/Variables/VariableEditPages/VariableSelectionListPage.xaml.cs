@@ -51,6 +51,8 @@ namespace Ginger.Variables
             comboSelectedValue.ItemsSource = mVar.OptionalValuesList;
             comboSelectedValue.DisplayMemberPath = nameof(OptionalValue.Value);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(comboSelectedValue, ComboBox.TextProperty, mVar, nameof(VariableSelectionList.SelectedValue));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEnableAutoLoopCheckbox, CheckBox.IsCheckedProperty, mVar, nameof(VariableSelectionList.IsLoopEnabled));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEnableDynamicValueModificationCheckbox, CheckBox.IsCheckedProperty, mVar, nameof(VariableSelectionList.IsDynamicValueModificationEnabled));
             //comboSelectedValue.BindControl(mVar, nameof(VariableSelectionList.SelectedValue), mVar.OptionalValuesList.ToList<OptionalValue>());
         }
 

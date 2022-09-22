@@ -120,7 +120,6 @@
         <Button x:Name="BrowseButton" Click="BrowseButton_Click"  Grid.Row="4" Grid.Column="1" Content="Browse"  HorizontalAlignment="Left" Style="{StaticResource @InputButtonStyle}" Height="Auto"/>
         <Ginger:ucGrid x:Name="SolutionsGrid" Title="Source Control Solutions" Grid.Row="5" Grid.ColumnSpan="2" ShowEdit="Collapsed" ShowUpDown="Collapsed" Margin="0,10,0,0" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowTagsFilter="Collapsed"/>
 
-        <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing" Grid.Row="6" Margin="19,9,0,9" HorizontalAlignment="Left" Width="35" Visibility="Collapsed"/>
         <Button x:Name="DownloadButton" Click="DownloadButton_Click"  Grid.Row="6" Grid.Column="1" Content="Download Solution"  HorizontalAlignment="Right" Style="{StaticResource @InputButtonStyle}" Visibility="Collapsed"/>
 
     </Grid>

@@ -42,6 +42,7 @@ using System.Diagnostics;
 using System.Linq;
 using Amdocs.Ginger.Common.UIElement;
 using amdocs.ginger.GingerCoreNET;
+using GingerCore.DataSource;
 
 namespace GingerCore.Actions
 {
@@ -391,6 +392,11 @@ namespace GingerCore.Actions
                     lstWindows.Add(process);
                 }
             }
+            if (!string.IsNullOrEmpty(ProcessNameForSikuliOperation) &&
+                !ActiveProcessWindowsList.Contains(ProcessNameForSikuliOperation))
+            {
+                ActiveProcessWindowsList.Add(ProcessNameForSikuliOperation);
+            }
         }
 
         public override int ClickX
@@ -482,6 +488,7 @@ namespace GingerCore.Actions
 
         private bool CheckIfImageValidAndIfPercentageValidAndSelectedApplicationValid()
         {
+            SetProcessAsPerVE();
             if (string.IsNullOrEmpty(ValueExpression.Calculate(PatternPath)))
             {
                 Error = "File Path is Empty";
@@ -583,6 +590,22 @@ namespace GingerCore.Actions
             }
 
             return lstVal;
+        }
+
+        private void SetProcessAsPerVE()
+        {
+            ValueExpression mVE = new ValueExpression(Amdocs.Ginger.Common.Context.GetAsContext(Context).Environment, Amdocs.Ginger.Common.Context.GetAsContext(Context), WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
+            mVE.Value = ProcessNameForSikuliOperation;
+            string calculateValue = mVE.ValueCalculated;
+            bool bSimilar = ActiveProcessWindows.Any(p => p.Contains(calculateValue));
+            if (bSimilar)
+            {
+                ProcessNameForSikuliOperation = ActiveProcessWindows.First(p => p.Contains(calculateValue));
+            }
+            else
+            {
+                ProcessNameForSikuliOperation = String.Empty;
+            }
         }
     }
 }

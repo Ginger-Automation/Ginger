@@ -79,6 +79,7 @@ namespace GingerCore.SourceControl
             catch (Exception e)
             {
                 error = e.Message + Environment.NewLine + e.InnerException;
+                Reporter.ToLog(eLogLevel.ERROR, error, e);
 
             }
             finally
@@ -96,6 +97,8 @@ namespace GingerCore.SourceControl
                 {
 
                     error = error + Environment.NewLine + e.Message + Environment.NewLine + e.InnerException;
+                    Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, e.Message);
+                    Reporter.ToLog(eLogLevel.ERROR, error, e);
                     try
                     {
                         Pull();
@@ -299,7 +302,7 @@ namespace GingerCore.SourceControl
                             continue;
                         }
 
-                        if (System.IO.Path.GetExtension(item.FilePath) == ".ldb" || System.IO.Path.GetExtension(item.FilePath) == ".ignore")
+                        if (System.IO.Path.GetExtension(item.FilePath) == ".ldb" || System.IO.Path.GetExtension(item.FilePath) == ".ignore" || System.IO.Path.GetExtension(item.FilePath) == ".db")
                             continue;
 
 
@@ -549,14 +552,21 @@ namespace GingerCore.SourceControl
             Console.WriteLine("GITHub - TestConnection");
             try
             {
-                if (SourceControlUser.Length != 0)
+                if (IsPublicRepo)
                 {
-                    IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL, GetSourceCredentialsHandler());
+                    IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL);
                 }
                 else
                 {
-                    error = "Username cannot be empty";
-                    return false;
+                    if (SourceControlUser.Length != 0)
+                    {
+                        IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL, GetSourceCredentialsHandler());
+                    }
+                    else
+                    {
+                        error = "Username cannot be empty";
+                        return false;
+                    }
                 }
             }
             catch (Exception ex)

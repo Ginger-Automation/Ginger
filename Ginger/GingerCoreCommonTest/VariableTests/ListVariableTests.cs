@@ -109,7 +109,8 @@ namespace GingerCoreCommonTest.VariableTests
 
             //Act
             variableList.RandomOrder = false;
-            variableList.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableList.GenerateAutoValue(ref errorMsg);
             string strValue = variableList.Value;
 
             //Assert
@@ -131,7 +132,8 @@ namespace GingerCoreCommonTest.VariableTests
             for (int iVar=0; iVar<lstTemp.Count; iVar++)
             {
                 //Act
-                variableList.GenerateAutoValue();
+                string errorMsg = string.Empty;
+                variableList.GenerateAutoValue(ref errorMsg);
                 string strValue = variableList.Value;
 
                 //Assert
@@ -150,7 +152,8 @@ namespace GingerCoreCommonTest.VariableTests
             variableList.RandomOrder = true;
 
             //Act
-            variableList.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableList.GenerateAutoValue(ref errorMsg);
             string strValue = variableList.Value;
 
             //Assert
@@ -166,7 +169,8 @@ namespace GingerCoreCommonTest.VariableTests
             variableList.RandomOrder = true;
 
             //Act
-            variableList.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableList.GenerateAutoValue(ref errorMsg);
 
             //Assert
             Assert.IsFalse(lstTemp.Contains("Dummy"), "Random GenerateAutoValue");

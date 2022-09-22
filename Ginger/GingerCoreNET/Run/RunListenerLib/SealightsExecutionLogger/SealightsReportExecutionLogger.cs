@@ -38,7 +38,18 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         public Context mContext;
         private long StartTime;
         private long EndTime;
-        private bool RunningInRunsetMode = false;
+        private bool mRunningInRunsetMode;
+        public bool RunningInRunsetMode
+        {
+            get { return mRunningInRunsetMode; }
+            set
+            {
+                if (mRunningInRunsetMode != value)
+                {
+                    mRunningInRunsetMode = value;
+                }
+            }
+        }
 
         private IEnumerable<dynamic> statusItemList;
 
@@ -81,29 +92,59 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         }
 
         #region RunSet
-        public void RunSetStart(RunSetConfig runsetConfig)
+        public string[] RunSetStart(RunSetConfig runsetConfig)
         {
             try
             {
-                RunningInRunsetMode = true;
-
                 Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, "Sealights Session Creation");
 
                 SealightsReportApiHandler.SendCreationTestSessionToSealightsAsync();
+
+                // set each runner's sealights execution logger running in runset mode to true & set for each runner's sealights execution logger the test session id
+                foreach (GingerRunner GR in runsetConfig.GingerRunners)
+                {
+                    if (GR == null || GR.Executor == null || ((GingerExecutionEngine)GR.Executor).Sealights_Logger == null || ((GingerExecutionEngine)GR.Executor).Sealights_Logger.SealightsReportApiHandler == null)
+                    {
+                        continue;
+                    }
+                    ((GingerExecutionEngine)GR.Executor).Sealights_Logger.RunningInRunsetMode = true;
+                    ((GingerExecutionEngine)GR.Executor).Sealights_Logger.SealightsReportApiHandler.TestSessionId = SealightsReportApiHandler.TestSessionId;
+                }
+
+                // check if test recommendations settings is set to yes on the runset level or on the solution level
+                if ((runsetConfig.SealightsTestRecommendationsRunsetOverrideFlag && runsetConfig.SealightsTestRecommendations == SealightsConfiguration.eSealightsTestRecommendations.Yes) ||
+                    (!runsetConfig.SealightsTestRecommendationsRunsetOverrideFlag && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsTestRecommendations == SealightsConfiguration.eSealightsTestRecommendations.Yes))
+                {
+                    // get the list of tests to exclude from execution during this runset execution
+                    string[] testsToExclude = SealightsReportApiHandler.GetTestsToExclude(runsetConfig);
+                    if (testsToExclude != null)
+                    {
+                        return testsToExclude;
+                    }
+                }
+                return null;
             }
             catch (Exception err)
             {
                 string error = err.Message;
+                return null;
             }
         }
 
-
-
         public async Task RunSetEnd(RunSetConfig runsetConfig)
         {
-            RunningInRunsetMode = false;
-
             await SealightsReportApiHandler.SendDeleteSessionToSealightsAsync(); // Delete Sealights session
+            
+            // set each runner's sealights execution logger running in runset mode to false & set the test session id to null as the session has been closed
+            foreach (GingerRunner GR in runsetConfig.GingerRunners)
+            {
+                if (GR == null || GR.Executor == null || ((GingerExecutionEngine)GR.Executor).Sealights_Logger == null || ((GingerExecutionEngine)GR.Executor).Sealights_Logger.SealightsReportApiHandler == null)
+                {
+                    continue; 
+                }
+                ((GingerExecutionEngine)GR.Executor).Sealights_Logger.RunningInRunsetMode = false;
+                ((GingerExecutionEngine)GR.Executor).Sealights_Logger.SealightsReportApiHandler.TestSessionId = null;
+            }
         }
 
         #endregion RunSet   
@@ -151,7 +192,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
                 if (statusItem.Count > 0)
                 {
-                    await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(businessFlow.Name, businessFlow.StartTimeStamp, businessFlow.EndTimeStamp, statusItem[0].Type);
+                    await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(businessFlow.Name, businessFlow.Guid, businessFlow.StartTimeStamp, businessFlow.EndTimeStamp, statusItem[0].Type);
                 }
             }
         }
@@ -160,7 +201,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         {
             if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel == SealightsConfiguration.eSealightsEntityLevel.BusinessFlow)
             {
-                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(businessFlow.Name, businessFlow.StartTimeStamp, businessFlow.EndTimeStamp, "Skipped");
+                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(businessFlow.Name, businessFlow.Guid, businessFlow.StartTimeStamp, businessFlow.EndTimeStamp, "Skipped");
             }
         }
 
@@ -170,7 +211,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         public override async void ActivityStart(uint eventTime, Activity activity, bool continuerun = false)
         {
         }
-
 
         public override async void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
         {
@@ -190,8 +230,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
                 if (statusItem.Count > 0)
                 {
-                    await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activity.ActivityName, activity.StartTimeStamp, activity.EndTimeStamp, statusItem[0].Type);
+                    await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activity.ActivityName, activity.Guid, activity.StartTimeStamp, activity.EndTimeStamp, statusItem[0].Type);
                 }
+            }
+        }
+        public override async void ActivitySkipped(uint eventTime, Activity activity, bool offlineMode = false)
+        {
+            if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel == SealightsConfiguration.eSealightsEntityLevel.Activity)
+            {
+                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activity.ActivityName, activity.Guid, activity.StartTimeStamp, activity.EndTimeStamp, "Skipped");
             }
         }
 
@@ -223,7 +270,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
                 if (statusItem.Count > 0)
                 {
-                    await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activityGroup.Name, activityGroup.StartTimeStamp, activityGroup.EndTimeStamp, statusItem[0].Type);
+                    await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activityGroup.Name, activityGroup.Guid, activityGroup.StartTimeStamp, activityGroup.EndTimeStamp, statusItem[0].Type);
                 }
             }
         }
@@ -232,7 +279,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         {
             if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel == SealightsConfiguration.eSealightsEntityLevel.ActivitiesGroup)
             {
-                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activityGroup.Name, activityGroup.StartTimeStamp, activityGroup.EndTimeStamp, "Skipped");
+                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activityGroup.Name, activityGroup.Guid, activityGroup.StartTimeStamp, activityGroup.EndTimeStamp, "Skipped");
             }
         }
 
@@ -251,16 +298,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 return;
             }
         }
-
-
-        #endregion Action  
-
-        public override async void ActivitySkipped(uint eventTime, Activity activity, bool offlineMode = false)
-        {
-            if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel == SealightsConfiguration.eSealightsEntityLevel.Activity)
-            {
-                await SealightsReportApiHandler.SendingTestEventsToSealightsAsync(activity.ActivityName, activity.StartTimeStamp, activity.EndTimeStamp, "Skipped");
-            }
-        }
+        #endregion Action
     }
 }

@@ -100,7 +100,8 @@ namespace GingerCoreCommonTest.VariableTests
             VariableSequence variableSequence = new VariableSequence();
 
             //Act
-            variableSequence.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableSequence.GenerateAutoValue(ref errorMsg);
             int curSeqVal = Convert.ToInt32(variableSequence.Value);
 
             //Assert            
@@ -117,9 +118,10 @@ namespace GingerCoreCommonTest.VariableTests
             variableSequence.Interval = 2;
 
             //Act
-            variableSequence.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            variableSequence.GenerateAutoValue(ref errorMsg);
             decimal num1 = decimal.Parse(variableSequence.Value);
-            variableSequence.GenerateAutoValue();
+            variableSequence.GenerateAutoValue(ref errorMsg);
             decimal num2 = decimal.Parse(variableSequence.Value);
 
             //Assert
@@ -140,7 +142,8 @@ namespace GingerCoreCommonTest.VariableTests
             for (int i = 0; i < 10; i++)
             {
                 //Act
-                variableSequence.GenerateAutoValue();
+                string errorMsg = string.Empty;
+                variableSequence.GenerateAutoValue(ref errorMsg);
                 decimal decNum = decimal.Parse(variableSequence.Value);
 
                 //Assert            
@@ -163,7 +166,8 @@ namespace GingerCoreCommonTest.VariableTests
             for (int i = 0; i < 100; i++)
             {
                 //Act
-                variableSequence.GenerateAutoValue();
+                string errorMsg = string.Empty;
+                variableSequence.GenerateAutoValue(ref errorMsg);
                 decimal num1 = decimal.Parse(variableSequence.Value);
 
                 //Assert            
@@ -186,9 +190,10 @@ namespace GingerCoreCommonTest.VariableTests
             variableSequence.Interval = 1;
 
             //Act
+            string errorMsg = string.Empty;
             for (int i = 0; i < itrCount; i++)
             {
-                variableSequence.GenerateAutoValue();
+                variableSequence.GenerateAutoValue(ref errorMsg);
                 numArr[i] = Convert.ToInt32(variableSequence.Value);
             }
 

@@ -38,6 +38,7 @@ using Ginger.Extensions;
 using Ginger.Functionalities;
 using Ginger.GherkinLib;
 using Ginger.Reports;
+using Ginger.Repository;
 using Ginger.Run;
 using Ginger.TimeLineLib;
 using Ginger.UserControlsLib.TextEditor;
@@ -580,7 +581,8 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     if (mActivityPage == null)
                     {
-                        mActivityPage = new ActivityPage(mContext.Activity, mContext, Ginger.General.eRIPageViewMode.Automation);
+                        var pageViewMode= mContext.Activity.Type==Amdocs.Ginger.Repository.eSharedItemType.Regular ? Ginger.General.eRIPageViewMode.Automation:  Ginger.General.eRIPageViewMode.ViewAndExecute;
+                        mActivityPage = new ActivityPage(mContext.Activity, mContext, pageViewMode);
                     }
                     else
                     {
@@ -1197,16 +1199,29 @@ namespace GingerWPF.BusinessFlowsLib
         private async void xSaveBusinessFlowBtn_Click(object sender, RoutedEventArgs e)
         {
             //warn in case dynamic shared repository Activities are included and going to be deleted
-            if (mBusinessFlow.Activities.Where(x => x.AddDynamicly == true).FirstOrDefault() != null)
+            if (mBusinessFlow.Activities.Any(x => x.AddDynamicly))
             {
                 if (Reporter.ToUser(eUserMsgKey.WarnOnDynamicActivities) == Amdocs.Ginger.Common.eUserMsgSelection.No)
                 {
                     return;
                 }
             }
+            var dirtyLinkedActivities = mBusinessFlow.Activities.Where(x => x.IsLinkedItem && x.EnableEdit);
+            if (dirtyLinkedActivities.Count() > 0)
+            {
+                foreach(Activity dirtyLinkedActivity in dirtyLinkedActivities)
+                {
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, dirtyLinkedActivity.ActivityName,
+                                    "Linked "+GingerDicser.GetTermResValue(eTermResKey.Activity));
+                    SwapLoadingPrefixText("Saving", false);
+
+                    await SharedRepositoryOperations.SaveLinkedActivity(dirtyLinkedActivity, mBusinessFlow.Guid.ToString());
+                }
+            }
 
             try
             {
+
                 Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mBusinessFlow.Name,
                                       GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                 SwapLoadingPrefixText("Saving", false);

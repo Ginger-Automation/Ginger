@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -171,23 +171,25 @@ namespace GingerCore.Variables
         public override void ResetValue()
         {
             ////TODO: fixme should be = or give user error - do not change
-                      
+
             ////TODO: get the range
-            GenerateAutoValue();
+            string errorMsg = string.Empty;
+            GenerateAutoValue(ref errorMsg);
         }
 
-        public override void GenerateAutoValue()
+        public override bool GenerateAutoValue(ref string errorMsg)
         {
             if (Min > Max)
             {
                 Value = "Error: Min > Max";
-                return;
+                return false;
             }
             
             int c = 0;
             System.Threading.Thread.Sleep(1);
             c = (int)((random.NextDouble() * (double)(Max - Min + 1)) + Min);
             Value = RandomString(c);
+            return true;
         }
 
         public override eImageType Image { get { return eImageType.Languages; } }

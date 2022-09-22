@@ -975,7 +975,7 @@ namespace Amdocs.Ginger.CoreNET
                         act.RawResponseValues = GetDeviceMetricsString("memoryinfo").Result;
                         break;
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceGeneralInfo:
-                        foreach(KeyValuePair<string,object> entry in GetDeviceGeneralInfo())
+                        foreach (KeyValuePair<string, object> entry in GetDeviceGeneralInfo())
                         {
                             act.AddOrUpdateReturnParamActual(entry.Key, entry.Value.ToString());
                         }
@@ -1001,7 +1001,7 @@ namespace Amdocs.Ginger.CoreNET
             return returnString;
         }
 
-        private void AddReturnParamFromDict(Dictionary<string, string>dict, ActMobileDevice act)
+        private void AddReturnParamFromDict(Dictionary<string, string> dict, ActMobileDevice act)
         {
             foreach (KeyValuePair<string, string> entry in dict)
             {
@@ -1242,17 +1242,17 @@ namespace Amdocs.Ginger.CoreNET
         {
             string Pagesource = String.Empty;
             await Task.Run(() =>
-             {
-                 try
-                 {
-                     Pagesource = Driver.PageSource;
-                 }
-                 catch (Exception ex)
-                 {
-                     Reporter.ToLog(eLogLevel.ERROR, "Failed to get the mobile application page source", ex);
-                     Pagesource = string.Empty;//failed to get the Page Source
-                 }
-             });
+            {
+                try
+                {
+                    Pagesource = Driver.PageSource;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the mobile application page source", ex);
+                    Pagesource = string.Empty;//failed to get the Page Source
+                }
+            });
             return Pagesource;
         }
 
@@ -3050,6 +3050,10 @@ namespace Amdocs.Ginger.CoreNET
             string requestBody = "{\"packageName\": \"" + GetCurrentPackage() + "\", \"dataType\": \"networkinfo\"}";
             restClient = new RestClient(url);
             string response = await SendRestRequestAndGetResponse(url, requestBody).ConfigureAwait(false);
+            if (response.Contains("error"))
+            {
+                return null;
+            }
 
             return response;
         }
@@ -3092,7 +3096,7 @@ namespace Amdocs.Ginger.CoreNET
         public string GetDeviceUDID()
         {
             object udid = null;
-            if(Driver.SessionDetails != null)
+            if (Driver.SessionDetails != null)
             {
                 Driver.SessionDetails.TryGetValue("udid", out udid);
             }

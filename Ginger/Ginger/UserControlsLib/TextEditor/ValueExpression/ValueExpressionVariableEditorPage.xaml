@@ -13,6 +13,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="3*"/>
             <RowDefinition Height="15*"/>
+            <RowDefinition x:Name="rowLblExtraParams" Height="3*"/>
+            <RowDefinition x:Name="rowVarsListExtraParams" Height="15*"/>
         </Grid.RowDefinitions>
         
         
@@ -21,6 +23,13 @@
         </Label>
         <ListView x:Name="VarsList" Grid.Row="1" Style="{StaticResource $ListBoxStyle}" Foreground="{StaticResource $SelectionColor_Pink}" BorderThickness="0">
             
+        </ListView>
+
+        <Label x:Name="lblExtraParams" Grid.Row="2" Style="{StaticResource $LabelStyle}" Visibility="Visible">
+            <GingerCore:ucTextDicResource Text="Select Variable's Extra Params:"/>
+        </Label>
+        <ListView x:Name="VarsListExtraParams" Grid.Row="3" Visibility="Visible" Style="{StaticResource $ListBoxStyle}" Foreground="{StaticResource $SelectionColor_Pink}" BorderThickness="0">
+
         </ListView>
     </Grid>
 </Page>

@@ -569,6 +569,7 @@ namespace Ginger.Run
                 }
                 else
                 {
+                    NotifySkippedEntitiesWhenRunnerExecutionSkipped();
                     Status = RunsetStatus;
                 }
             }
@@ -588,7 +589,7 @@ namespace Ginger.Run
             foreach (BusinessFlow businessFlow in BusinessFlows)
             {
                 // 'Skipped' Activities Group
-                List<ActivitiesGroup> activitiesGroupList = businessFlow.ActivitiesGroups.Where(x => x.RunStatus == eActivitiesGroupRunStatus.Skipped).ToList();
+                List<ActivitiesGroup> activitiesGroupList = businessFlow.ActivitiesGroups.Where(x => x.RunStatus == eActivitiesGroupRunStatus.Skipped && x.ActivitiesIdentifiers.Count > 0).ToList();
 
                 foreach (ActivitiesGroup activitiesGroup in activitiesGroupList)
                 {
@@ -603,7 +604,30 @@ namespace Ginger.Run
                     NotifyActivitySkipped(activity);
                 }
             }
+        }
+        private void NotifySkippedEntitiesWhenRunnerExecutionSkipped()
+        {
+            // Get all 'Skipped' BF
+            List<BusinessFlow> businessFlowList = BusinessFlows.Where(x => x.RunStatus == eRunStatus.Skipped).ToList();
 
+            foreach (BusinessFlow businessFlow in businessFlowList)
+            {
+                NotifyBusinessFlowSkipped(businessFlow);
+                // Search for Activities-Groups and Activities in All BF
+
+                // 'Skipped' Activities Group
+                List<ActivitiesGroup> activitiesGroupList = businessFlow.ActivitiesGroups.Where(x => x.RunStatus == eActivitiesGroupRunStatus.Skipped && x.ActivitiesIdentifiers.Count > 0).ToList();
+                foreach (ActivitiesGroup activitiesGroup in activitiesGroupList)
+                {
+                    NotifyActivityGroupSkipped(activitiesGroup);
+                }
+                // 'Skipped' Activities
+                List<Activity> activitiesList = businessFlow.Activities.Where(x => x.Status == eRunStatus.Skipped).ToList();
+                foreach (Activity activity in activitiesList)
+                {
+                    NotifyActivitySkipped(activity);
+                }
+            }
         }
 
 
@@ -1165,6 +1189,11 @@ namespace Ginger.Run
                     {
                         SkipActionAndNotifyEnd(act);
                         act.ExInfo = "Visual Testing Action Run Mode is Inactive.";
+                    }
+                    if (!CheckRunInNetworkLog(act))
+                    {
+                        SkipActionAndNotifyEnd(act);
+                        return;
                     }
                     if (act.CheckIfVaribalesDependenciesAllowsToRun((Activity)(CurrentBusinessFlow.CurrentActivity), true) == false)
                         return;
@@ -2277,6 +2306,11 @@ namespace Ginger.Run
 
             ((Agent)AA.Agent).BusinessFlow = CurrentBusinessFlow;
             ((Agent)AA.Agent).ProjEnvironment = mGingerRunner.ProjEnvironment;
+            //check for null agent operations, found it was null in CLI dynamic file case
+            if (AA.Agent.AgentOperations == null)
+            {
+                AA.Agent.AgentOperations = new AgentOperations(AA.Agent);
+            }
             // Verify the Agent for the action is running 
             Agent.eStatus agentStatus = ((AgentOperations)((Agent)AA.Agent).AgentOperations).Status;
             if (agentStatus != Agent.eStatus.Running && agentStatus != Agent.eStatus.Starting && agentStatus != Agent.eStatus.FailedToStart)
@@ -2864,7 +2898,11 @@ namespace Ginger.Run
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             }
 
-            if (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
+            if(act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
+            {
+                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+            }
+            else if (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
             {
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
             }
@@ -3301,7 +3339,7 @@ namespace Ginger.Run
                         CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
 
                         GiveUserFeedback();
-                        if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true && CheckRunInVisualTestingMode(act))
+                        if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true && CheckRunInVisualTestingMode(act) && CheckRunInNetworkLog(act))
                         {
                             RunAction(act, false);
                             GiveUserFeedback();
@@ -3367,6 +3405,10 @@ namespace Ginger.Run
                             {
                                 SkipActionAndNotifyEnd(act);
                                 act.ExInfo = "Visual Testing Action Run Mode is Inactive.";
+                            }
+                            if (!CheckRunInNetworkLog(act))
+                            {
+                                SkipActionAndNotifyEnd(act);
                             }
                             if (!activity.Acts.IsLastItem())
                             {
@@ -3479,6 +3521,30 @@ namespace Ginger.Run
                 return false;
             }
             else { return true; }
+        }
+
+        private bool CheckRunInNetworkLog(Act act)
+        {
+            if (act is ActBrowserElement)
+            {
+                ActBrowserElement actBrowserElement = (ActBrowserElement)act;
+                if (actBrowserElement.ControlAction == ActBrowserElement.eControlAction.StartMonitoringNetworkLog || actBrowserElement.ControlAction == ActBrowserElement.eControlAction.GetNetworkLog || actBrowserElement.ControlAction == ActBrowserElement.eControlAction.StopMonitoringNetworkLog)
+                {
+                    GingerCore.Drivers.DriverBase driver = ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Driver;
+
+                    if (driver is GingerCore.Drivers.SeleniumDriver)
+                    {
+                        GingerCore.Drivers.SeleniumDriver.eBrowserType browserType = ((GingerCore.Drivers.SeleniumDriver)driver).GetBrowserType();
+                        if (browserType != GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome)
+                        {
+                            SkipActionAndNotifyEnd(act);
+                            act.ExInfo = "Action is skipped, Selected browser operation:" + actBrowserElement.ControlAction + "  is not supported for browser type:" + browserType;
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
         }
 
         private void ContinueTimerVariables(ObservableList<VariableBase> variableList)
@@ -4069,6 +4135,14 @@ namespace Ginger.Run
                         a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                     }
                 }
+
+                foreach (ActivitiesGroup group in  businessFlow.ActivitiesGroups)
+                {
+                    if (avoidCurrentStatus || group.ActivitiesIdentifiers.Where(x=>x.IdentifiedActivity.Status == eRunStatus.Skipped).ToList().Count == group.ActivitiesIdentifiers.Count)
+                    {
+                        group.RunStatus = eActivitiesGroupRunStatus.Skipped;
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -4143,9 +4217,7 @@ namespace Ginger.Run
                 CurrentBusinessFlow = bf;
                 CurrentBusinessFlow.CurrentActivity = bf.Activities.FirstOrDefault();
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
-
                 SetBusinessFlowActivitiesAndActionsSkipStatus(bf);
-
             }
         }
 
@@ -4272,29 +4344,36 @@ namespace Ginger.Run
 
         public void CloseAgents()
         {
-            foreach (ApplicationAgent p in mGingerRunner.ApplicationAgents)
+            if (mGingerRunner.KeepAgentsOn && !WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunModeParallel)
             {
-                if (p.Agent != null)
-                {
-                    if (p.Agent.AgentOperations == null)
-                    {
-                        p.Agent.AgentOperations = new AgentOperations(p.Agent);
-                    }
-                    try
-                    {
-                        ((Agent)p.Agent).AgentOperations.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        if (p.Agent.Name != null)
-                            Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Close the '{0}' Agent", p.Agent.Name), ex);
-                        else
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to Close the Agent", ex);
-                    }
-                    ((AgentOperations)((Agent)p.Agent).AgentOperations).IsFailedToStart = false;
-                }
+                return;
             }
-            AgentsRunning = false;
+            else 
+            { 
+                foreach (ApplicationAgent p in mGingerRunner.ApplicationAgents)
+                {
+                    if (p.Agent != null)
+                    {
+                        if (p.Agent.AgentOperations == null)
+                        {
+                            p.Agent.AgentOperations = new AgentOperations(p.Agent);
+                        }
+                        try
+                        {
+                            ((Agent)p.Agent).AgentOperations.Close();
+                        }
+                        catch (Exception ex)
+                        {
+                            if (p.Agent.Name != null)
+                                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Close the '{0}' Agent", p.Agent.Name), ex);
+                            else
+                                Reporter.ToLog(eLogLevel.ERROR, "Failed to Close the Agent", ex);
+                        }
+                        ((AgentOperations)((Agent)p.Agent).AgentOperations).IsFailedToStart = false;
+                    }
+                }
+                AgentsRunning = false;
+            }
         }
 
         public void ResetFailedToStartFlagForAgents()
@@ -4909,7 +4988,6 @@ namespace Ginger.Run
                 runnerListener.BusinessFlowSkipped(evetTime, businessFlow, ContinueRun);
             }
         }
-
         private void NotifyBusinessflowWasReset(BusinessFlow businessFlow)
         {
             uint eventTime = RunListenerBase.GetEventTime();

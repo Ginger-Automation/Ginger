@@ -31,6 +31,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using amdocs.ginger.GingerCoreNET;
 using System.Collections.Generic;
+using Amdocs.Ginger.UserControls;
 
 namespace Ginger.SourceControl
 {
@@ -42,6 +43,8 @@ namespace Ginger.SourceControl
         ObservableList<SolutionInfo> SourceControlSolutions = new ObservableList<SolutionInfo>();
 
         SolutionInfo solutionInfo = null;
+
+        ImageMakerControl loaderElement = new ImageMakerControl();
 
         GenericWindow genWin = null;
         Button downloadProjBtn = null;
@@ -171,7 +174,7 @@ namespace Ginger.SourceControl
                 {
                     SolutionsGrid.DataSourceList.Clear();
                 }
-                xProcessingIcon.Visibility = Visibility.Visible;
+                loaderElement.Visibility = Visibility.Visible;
                 if (SourceControlIntegration.BusyInProcessWhileDownloading)
                 {
                     Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
@@ -209,7 +212,7 @@ namespace Ginger.SourceControl
             }
             finally
             {
-                xProcessingIcon.Visibility = Visibility.Collapsed;
+                loaderElement.Visibility = Visibility.Collapsed;
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
 
                 if (SolutionsGrid.DataSourceList != null)
@@ -287,7 +290,13 @@ namespace Ginger.SourceControl
             downloadProjBtn.Content = "Download Selected Solution";
             downloadProjBtn.Click += new RoutedEventHandler(GetProject_Click);
 
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Download Source Control Solution", this, new ObservableList<Button> { downloadProjBtn });
+            loaderElement.Name = "xProcessingImage";
+            loaderElement.Height = 30;
+            loaderElement.Width = 30;
+            loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
+            loaderElement.Visibility = Visibility.Collapsed;
+
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Download Source Control Solution", this, new ObservableList<Button> { downloadProjBtn }, true, "Close", null, false, loaderElement);
 
             if (solutionInfo != null)
             {
@@ -378,13 +387,13 @@ namespace Ginger.SourceControl
         {
             try
             {
-                if (string.IsNullOrEmpty(mSourceControl.SourceControlUser) || string.IsNullOrEmpty(mSourceControl.SourceControlPass) || string.IsNullOrEmpty(mSourceControl.SourceControlURL))
+                if (!mSourceControl.IsPublicRepo && (string.IsNullOrEmpty(mSourceControl.SourceControlUser) || string.IsNullOrEmpty(mSourceControl.SourceControlPass)) || string.IsNullOrEmpty(mSourceControl.SourceControlURL))
                 {
                     Reporter.ToUser(eUserMsgKey.SourceControlConnMissingConnInputs);
                     return;
                 }
                 xConnectButton.Visibility = Visibility.Visible;
-                xProcessingIcon.Visibility = Visibility.Visible;
+                loaderElement.Visibility = Visibility.Visible;
 
                 xConnectButton.IsEnabled = false;
                 SourceControlLocalFolderLable.Visibility = Visibility.Visible;
@@ -444,13 +453,18 @@ namespace Ginger.SourceControl
 
         private void FetchBranches_Click(object sender, RoutedEventArgs e)
         {
-            xProcessingIcon.Visibility = Visibility.Visible;
+            loaderElement.Visibility = Visibility.Visible;
+            mSourceControl.IsPublicRepo = false;
             xBranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
             if (xBranchesCombo.Items.Count > 0)
             {
                 xBranchesCombo.SelectedIndex = 0;
+                if(String.IsNullOrEmpty(mSourceControl.SourceControlUser) || String.IsNullOrEmpty(mSourceControl.SourceControlPass))
+                {
+                    mSourceControl.IsPublicRepo = true;
+                }
             }
-            xProcessingIcon.Visibility = Visibility.Collapsed;
+            loaderElement.Visibility = Visibility.Collapsed;
         }
 
         private async void DownloadButton_Click(object sender, RoutedEventArgs e)
@@ -462,7 +476,7 @@ namespace Ginger.SourceControl
         {
             try
             {
-                xProcessingIcon.Visibility = Visibility.Visible;
+                loaderElement.Visibility = Visibility.Visible;
                 if (SourceControlIntegration.BusyInProcessWhileDownloading)
                 {
                     Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
@@ -521,7 +535,7 @@ namespace Ginger.SourceControl
             finally
             {
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
-                xProcessingIcon.Visibility = Visibility.Collapsed;
+                loaderElement.Visibility = Visibility.Collapsed;
             }
         }
     }

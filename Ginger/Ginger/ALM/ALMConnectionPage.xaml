@@ -6,7 +6,7 @@
       mc:Ignorable="d" 
       xmlns:h="clr-namespace:Ginger.Help"
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls" h:GingerHelpProvider.HelpString="ALM"
-      Height="540" Width="350"
+      Height="640" Width="450"
 	Title="ALM Connection Settings">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">

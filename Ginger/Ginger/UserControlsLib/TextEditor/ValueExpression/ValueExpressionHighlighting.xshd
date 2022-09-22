@@ -22,7 +22,8 @@
       <Word>WROWVAL=</Word>
       <Word>KEY=</Word>
       <Word>COND=</Word>
-    </Keywords>
+
+	</Keywords>
 
     <Keywords fontWeight="bold" fontStyle="italic" foreground="Brown">
       <Word>EnvURL App=</Word>
@@ -74,7 +75,10 @@
 
     <Keywords fontWeight="bold" fontStyle="italic" foreground="Blue">
       <Word>Var Name=</Word>
-    </Keywords>
+	  <Word>Index=</Word>
+	  <Word>GetLength=</Word>
+	  <Word>IsContains=</Word>
+	</Keywords>
 
     <Keywords fontWeight="bold" fontStyle="italic" foreground="#964D91">
       <Word>CS Exp=</Word>
