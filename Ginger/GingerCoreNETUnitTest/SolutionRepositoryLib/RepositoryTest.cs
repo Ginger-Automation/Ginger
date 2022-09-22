@@ -1393,9 +1393,8 @@ namespace UnitTests.NonUITests
         public void ActivityGroupTest()
         {
             //Arrange
-            //Put the BF in Test Resource having class "GingerCore.DataSource.ActDSConditon" serialized in xml
             NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
-            string FileName = TestResources.GetTestResourcesFile(@"Repository" + Path.DirectorySeparatorChar + "Flow 1.Ginger.BusinessFlow.xml");
+            string FileName = TestResources.GetTestResourcesFile(@"Repository" + Path.DirectorySeparatorChar + "ActivityGroupFlow.Ginger.BusinessFlow.xml");
 
             //Load BF
             BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
