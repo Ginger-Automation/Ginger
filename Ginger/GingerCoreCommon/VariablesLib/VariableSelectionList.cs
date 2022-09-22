@@ -185,6 +185,7 @@ namespace GingerCore.Variables
             List<string> extraParamsDescription = new List<string>();
             extraParamsDescription.Add("Index=1");
             extraParamsDescription.Add("GetLength=True");
+            extraParamsDescription.Add("IsContains=");
             return extraParamsDescription;
         }
 
@@ -223,6 +224,17 @@ namespace GingerCore.Variables
                             else
                             {
                                 return Value;
+                            }
+                        }
+                    case "IsContains":
+                        {
+                            if (OptionalValuesList.Where<OptionalValue>(x => x.Value == keyValuePair.Value).FirstOrDefault() != null)
+                            {
+                                return bool.TrueString;
+                            }
+                            else
+                            {
+                                return bool.FalseString;
                             }
                         }
                     default:
