@@ -44,7 +44,7 @@ namespace Ginger.SourceControl
 
         SolutionInfo solutionInfo = null;
 
-        ImageMakerControl loaderElement;
+        ImageMakerControl loaderElement = new ImageMakerControl();;
 
         GenericWindow genWin = null;
         Button downloadProjBtn = null;
@@ -290,7 +290,6 @@ namespace Ginger.SourceControl
             downloadProjBtn.Content = "Download Selected Solution";
             downloadProjBtn.Click += new RoutedEventHandler(GetProject_Click);
 
-            loaderElement = new ImageMakerControl();
             loaderElement.Name = "xProcessingImage";
             loaderElement.Height = 30;
             loaderElement.Width = 30;
