@@ -27,6 +27,7 @@ using LibGit2Sharp.Handlers;
 using System.IO;
 using GingerCoreNET.SourceControl;
 using amdocs.ginger.GingerCoreNET;
+using System.Diagnostics;
 
 namespace GingerCore.SourceControl
 {
@@ -770,6 +771,7 @@ namespace GingerCore.SourceControl
         private MergeResult Pull()
         {
             //Pull = Fetch + Merge
+            UnstageAllUnwantedItems();
             using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
             {
                 PullOptions PullOptions = new PullOptions();
@@ -834,11 +836,44 @@ namespace GingerCore.SourceControl
                         {
                             filePath = filePath.Replace(@"/", @"\");
                         }
-                        ConflictPaths.Add(Path.Combine(RepositoryRootFolder, filePath));
+                        string fullPath = Path.Combine(RepositoryRootFolder, filePath);
+                        if (fullPath.Contains(".db"))
+                        {
+                            Unstage(fullPath);
+                        }
+                        else
+                        {
+                            ConflictPaths.Add(fullPath);
+                        }
                     }
                 }
             }
             return ConflictPaths;
+        }
+
+        private void UnstageAllUnwantedItems()
+        {
+            List<string> lstRelativePaths = new List<string>();
+            lstRelativePaths.Add(@"ExecutionResults\GingerExecutionResults.db");
+            lstRelativePaths.Add(@"DataSources\GingerDataSource.db");
+            foreach(string path in lstRelativePaths)
+            {
+                string fullPath = Path.Combine(RepositoryRootFolder, path);
+                Unstage(fullPath);
+            }
+        }
+
+        private void Unstage(string filePath)
+        {
+            Process gitRemoveCacheProcess = new Process();
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+            startInfo.FileName = "cmd.exe";
+            startInfo.WorkingDirectory = Path.GetDirectoryName(filePath);
+            startInfo.Arguments = "/C git rm --cached " + Path.GetFileName(filePath);
+            gitRemoveCacheProcess.StartInfo = startInfo;
+            gitRemoveCacheProcess.Start();
+            gitRemoveCacheProcess.WaitForExit();
         }
 
         public override bool CreateConfigFile(ref string error)

@@ -192,10 +192,13 @@ namespace Ginger.SourceControl
                     path = path.Replace("@/", "\\");
                 }
                 RepositoryFolderBase repositoryFolderBase = null;
-                if (path != SourceControl.SolutionFolder)
+                if (path.EndsWith("xml"))
                 {
-                    repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
-                    repositoryFolderBase.PauseFileWatcher();
+                    if (path != SourceControl.SolutionFolder)
+                    {
+                        repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
+                        repositoryFolderBase.PauseFileWatcher();
+                    }
                 }
 
                 if (!SourceControl.ResolveConflicts(path, side, ref error))
