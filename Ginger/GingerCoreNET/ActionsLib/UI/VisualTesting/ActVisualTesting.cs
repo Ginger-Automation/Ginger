@@ -23,7 +23,9 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Applitools.Selenium;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -311,9 +313,12 @@ namespace GingerCore.Actions
         {
             mDriver = driver;
             CheckSetVisualAnalyzer();
-            if (mDriver.GetType().Name == "SeleniumDriver")
+            if (mDriver is SeleniumDriver)
             {
-                CheckSetAppWindowSize();
+                if(!CheckSetAppWindowSize())
+                {
+                    return;
+                }
             }
             if (Amdocs.Ginger.Common.Context.GetAsContext(Context).Activity == null)
             {
@@ -338,7 +343,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public void CheckSetAppWindowSize()
+        public bool CheckSetAppWindowSize()
         {
             switch (ChangeAppWindowSize)
             {
@@ -348,7 +353,14 @@ namespace GingerCore.Actions
                     mDriver.ChangeAppWindowSize(0,0);
                     break;
                 case eChangeAppWindowSize.Custom:
-                    mDriver.ChangeAppWindowSize(Convert.ToInt32(GetInputParamCalculatedValue(nameof(SetAppWindowWidth))), Convert.ToInt32(GetInputParamCalculatedValue(nameof(SetAppWindowHeight))));
+                    mDriver.ChangeAppWindowSize(SetAppWindowWidth, SetAppWindowHeight);
+                    Size size = mDriver.GetWebDriver().Manage().Window.Size;
+                    if (SetAppWindowWidth + 5  < size.Width)//+5 added to check with actual viewport/size of the browser which can be different by 2 0r 3 points
+                    {
+                        this.Error = string.Format("Unable to set custom width of web page to {0}, min supported width is {1}.", GetInputParamCalculatedValue(nameof(SetAppWindowWidth)), size.Width.ToString());
+                        mDriver.ChangeAppWindowSize(0, 0);
+                        return false;
+                    }
                     break;
                 case eChangeAppWindowSize.Resolution640x480:
                     mDriver.ChangeAppWindowSize(640, 480);
@@ -370,8 +382,9 @@ namespace GingerCore.Actions
                     break;
                 case eChangeAppWindowSize.Resolution1920x1080:
                     mDriver.ChangeAppWindowSize(1920, 1080);
-                    break;                
+                    break;
             }
+            return true;
         }
 
         public List<int> GetWindowResolution()
