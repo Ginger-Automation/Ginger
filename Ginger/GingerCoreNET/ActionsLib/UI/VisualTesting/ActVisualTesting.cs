@@ -353,9 +353,9 @@ namespace GingerCore.Actions
                     mDriver.ChangeAppWindowSize(0,0);
                     break;
                 case eChangeAppWindowSize.Custom:
-                    mDriver.ChangeAppWindowSize(SetAppWindowWidth, SetAppWindowHeight);
+                    mDriver.ChangeAppWindowSize(Convert.ToInt32(GetInputParamCalculatedValue(nameof(SetAppWindowWidth))), Convert.ToInt32(GetInputParamCalculatedValue(nameof(SetAppWindowHeight))));
                     Size size = mDriver.GetWebDriver().Manage().Window.Size;
-                    if (SetAppWindowWidth + 5  < size.Width)//+5 added to check with actual viewport/size of the browser which can be different by 2 0r 3 points
+                    if (Convert.ToInt32(GetInputParamCalculatedValue(nameof(SetAppWindowWidth))) + 5  < size.Width)//+5 added to check with actual viewport/size of the browser which can be different by 2 0r 3 points
                     {
                         this.Error = string.Format("Unable to set custom width of web page to {0}, min supported width is {1}.", GetInputParamCalculatedValue(nameof(SetAppWindowWidth)), size.Width.ToString());
                         mDriver.ChangeAppWindowSize(0, 0);
