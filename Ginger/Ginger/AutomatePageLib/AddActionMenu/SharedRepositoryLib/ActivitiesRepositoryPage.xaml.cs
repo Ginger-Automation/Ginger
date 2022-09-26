@@ -103,7 +103,7 @@ namespace Ginger.Repository
             ActivitiesListViewHelper mActionsListHelper = null;
             if (mActivities != null)
             {
-                mActionsListHelper = new ActivitiesListViewHelper(mContext, General.eRIPageViewMode.Explorer);
+                mActionsListHelper = new ActivitiesListViewHelper(mContext, General.eRIPageViewMode.AddFromShardRepository);
             }
             else
             {
