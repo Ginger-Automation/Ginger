@@ -193,6 +193,18 @@ namespace Ginger.Actions
             Row.Height = new GridLength(hight);
         }
 
+        public void ShowTextBox(bool showTxtBox = true)
+        {
+            if (showTxtBox)
+            {
+                ValueTextBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ValueTextBox.Visibility = Visibility.Collapsed;
+            }
+        }
+
         public bool IsReadOnly
         {
             get { return ValueTextBox.IsReadOnly; }

@@ -32,10 +32,11 @@ namespace Ginger.Repository.ItemToRepositoryWizard
     {
         public UploadItemToRepositoryWizard UploadItemToRepositoryWizard;
         public UploadItemsValidationPage itemValidate;
-
-        public UploadItemsSelectionPage(ObservableList<UploadItemSelection> items)
+        bool isConvertPage = false;
+        public UploadItemsSelectionPage(ObservableList<UploadItemSelection> items, bool isConvert)
         {
             InitializeComponent();
+            isConvertPage = isConvert;
             SetSelectedItemsGridView();
             itemSelectionGrid.DataSourceList = items;
         }
@@ -54,7 +55,8 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                 Header = "Replace Type",
                 WidthWeight = 20,
                 StyleType = GridColView.eGridColStyleType.Template,
-                CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(UploadItemSelection.eActivityInstanceType)), nameof(UploadItemSelection.ReplaceType), false, false, nameof(UploadItemSelection.IsActivity), true)
+                CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(UploadItemSelection.eActivityInstanceType)), nameof(UploadItemSelection.ReplaceType), false, false, nameof(UploadItemSelection.IsActivity), true),
+                ReadOnly = isConvertPage
             });
 
             GridColView GCWUploadType = new GridColView()

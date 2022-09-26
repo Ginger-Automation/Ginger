@@ -8,7 +8,7 @@
 
     <Grid VerticalAlignment="Top">
         <Grid.RowDefinitions>
-            <RowDefinition MaxHeight="50"/>
+            <RowDefinition MaxHeight="70"/>
             <RowDefinition MaxHeight="60"/>
             <RowDefinition MaxHeight="50"/>
             <RowDefinition MaxHeight="200"/>
@@ -21,6 +21,8 @@
                 <ComboBox x:Name="xActiveProcessesTitlesComboBox" MinWidth="250" MaxWidth="400"
                            Style="{StaticResource $FlatInputComboBoxStyle}" VerticalAlignment="Center" HorizontalAlignment="Left">
                 </ComboBox>
+                <Actions:UCValueExpression x:Name="xProcessValueEditor" ToolTip="Process Name" Width="60"/>
+
                 <usercontrols:ucButton x:Name="xRefreshActiveWindows" ToolTip="Refresh Active Windows List" ButtonImageWidth="15" ButtonImageHeight="15"
                                        Margin="5,0" ButtonImageType="Refresh" Click="xRefreshActiveWindows_Click"/>
                 <CheckBox x:Name="xShowSikuliCheckBox" Content="Show Sikuli Console" Margin="0,20" />
