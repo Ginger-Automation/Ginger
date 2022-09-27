@@ -144,7 +144,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the Action of the Plugin '" + pluginPackage.PluginId + "'", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get the Action of the Plug-in '" + pluginPackage.PluginId + "'", ex);
                 }
             }
 
