@@ -221,11 +221,16 @@ namespace Ginger.SourceControl
                     {
                         if (!IsImportSolution)
                         {
+                            DownloadButtonRow.Height = new GridLength(0);
                             downloadProjBtn.IsEnabled = true;
                         }
                         else
                         {
-                            DownloadButton.Visibility = Visibility.Visible;
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                DownloadButtonRow.Height = new GridLength(40);
+                                DownloadButton.Visibility = Visibility.Visible;
+                            });
                         }
                     }
                 }
