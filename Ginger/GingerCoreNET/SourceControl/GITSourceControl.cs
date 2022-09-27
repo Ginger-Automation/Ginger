@@ -70,46 +70,60 @@ namespace GingerCore.SourceControl
 
         public override bool CommitChanges(ICollection<string> Paths, string Comments, ref string error, ref List<string> conflictsPaths, bool includLockedFiles = false)
         {
-            //Commit Changes
-            bool result = true;
-            try
+            if (TestConnection(ref error))
             {
-                Commit(Comments);
-            }
-            catch (Exception e)
-            {
-                error = e.Message + Environment.NewLine + e.InnerException;
-                Reporter.ToLog(eLogLevel.ERROR, error, e);
-
-            }
-            finally
-            {
+                //Commit Changes
+                bool result = true;
                 try
                 {
-                    Push();
-                    Pull();
-                    using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
-                    {
-                        Reporter.ToUser(eUserMsgKey.CommitedToRevision, repo.Head.Tip.Sha);
-                    }
+                    Commit(Comments);
                 }
                 catch (Exception e)
                 {
-
-                    error = error + Environment.NewLine + e.Message + Environment.NewLine + e.InnerException;
-                    Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, e.Message);
+                    error = e.Message + Environment.NewLine + e.InnerException;
                     Reporter.ToLog(eLogLevel.ERROR, error, e);
+
+                }
+                finally
+                {
                     try
                     {
+                        Push();
                         Pull();
+                        using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                        {
+                            Reporter.ToUser(eUserMsgKey.CommitedToRevision, repo.Head.Tip.Sha);
+                        }
                     }
-                    catch { }
+                    catch (Exception e)
+                    {
 
-                    conflictsPaths = GetConflictsPaths();
-                    result = false;
+                        error = error + Environment.NewLine + e.Message + Environment.NewLine + e.InnerException;
+                        if (e.Message.Contains("403"))
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Check-In Failed, please check if user has Write Permission for this repository");
+                        }
+                        else
+                        {
+                            Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, e.Message);
+                        }
+                        Reporter.ToLog(eLogLevel.ERROR, error, e);
+                        try
+                        {
+                            Pull();
+                        }
+                        catch { }
+
+                        conflictsPaths = GetConflictsPaths();
+                        result = false;
+                    }
                 }
+                return result;
             }
-            return result;
+            else
+            {
+                return false;
+            }
         }
 
         private List<string> GetConflictsPathsforGetLatestConflict(string path)
@@ -245,39 +259,46 @@ namespace GingerCore.SourceControl
         public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths)
         {
             Console.WriteLine("GITHub - GetLatest");
-            try
+            if (TestConnection(ref error))
             {
-                MergeResult result;
-                result = Pull();
-
-                if (result.Status != MergeStatus.Conflicts)
+                try
                 {
-                    using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                    MergeResult result;
+                    result = Pull();
+
+                    if (result.Status != MergeStatus.Conflicts)
+                    {
+                        using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                        {
+                            if (supressMessage == true)
+
+                                Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully, Update status: " + result.Status + ", to Revision :" + repo.Head.Tip.Sha);
+
+                            else
+                                Reporter.ToUser(eUserMsgKey.GitUpdateState, result.Status, repo.Head.Tip.Sha);
+                        }
+                    }
+                    else
                     {
                         if (supressMessage == true)
-
-                            Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully, Update status: " + result.Status + ", to Revision :" + repo.Head.Tip.Sha);
-
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to update the solution from source control. Error Details: 'The files are not connected to source control'");
                         else
-                            Reporter.ToUser(eUserMsgKey.GitUpdateState, result.Status, repo.Head.Tip.Sha);
+                            Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "The files are not connected to source control");
                     }
-                }
-                else
-                {
-                    if (supressMessage == true)
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to update the solution from source control. Error Details: 'The files are not connected to source control'");
-                    else
-                        Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "The files are not connected to source control");
-                }
 
+                }
+                catch (Exception ex)
+                {
+                    conflictsPaths = GetConflictsPathsforGetLatestConflict(path);
+                    error = ex.Message + Environment.NewLine + ex.InnerException;
+                    return false;
+                }
+                return true;
             }
-            catch (Exception ex)
+            else
             {
-                conflictsPaths = GetConflictsPathsforGetLatestConflict(path);
-                error = ex.Message + Environment.NewLine + ex.InnerException;
                 return false;
             }
-            return true;
         }
 
         public override ObservableList<SourceControlFileInfo> GetPathFilesStatus(string Path, ref string error, bool includLockedFiles = false)
