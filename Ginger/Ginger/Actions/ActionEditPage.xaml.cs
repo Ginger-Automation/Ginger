@@ -509,7 +509,7 @@ namespace Ginger.Actions
             int minimumInputValuesToHideGrid = 1;
             if (mAction.ObjectLocatorConfigsNeeded)
             {
-                //For actions with locator config needed, Locate by , locate value is also added to input value                
+                //For actions with locator's config needed, Locate by , locate value is also added to input value                
                 minimumInputValuesToHideGrid = 3;
             }
 
@@ -1272,7 +1272,7 @@ namespace Ginger.Actions
 
                 for (int i = 0; i < mAction.ScreenShots.Count; i++)
                 {
-                    //TODO: clean me when Screenshots changed to class instead of list of strings
+                    //TODO: clean me when Screen-shots changed to class instead of list of strings
                     // just in case we don't have name, TOOD: fix all places where we add screen shots to include name
                     string Name = "";
                     if (mAction.ScreenShotsNames.Count > i)
