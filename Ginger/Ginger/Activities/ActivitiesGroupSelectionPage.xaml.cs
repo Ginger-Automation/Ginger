@@ -34,13 +34,14 @@ namespace Ginger.BusinessFlowPages
         BusinessFlow mBusinessFlow;
         GenericWindow mPageGenericWin = null;
         ActivitiesGroup mSelectedAG = null;
+        bool mAddPOMActivity = false;
 
-        public ActivitiesGroupSelectionPage(BusinessFlow businessFlow, ActivitiesGroup parentGroup =null)
+        public ActivitiesGroupSelectionPage(BusinessFlow businessFlow, ActivitiesGroup parentGroup = null, bool AddPOMActivity = false)
         {
             InitializeComponent();
 
             mBusinessFlow = businessFlow;
-
+            mAddPOMActivity = AddPOMActivity;
             xAddGroupBtn.ButtonText = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "New");
 
             xGroupComboBox.ItemsSource = mBusinessFlow.ActivitiesGroups;
@@ -56,6 +57,17 @@ namespace Ginger.BusinessFlowPages
                     xGroupComboBox.SelectedItem = parentGroup;
                 }
               
+            }
+
+            if (mAddPOMActivity)
+            {
+                xRadioPanel.Visibility = Visibility.Collapsed;
+                xNoteLable.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                xRadioPanel.Visibility = Visibility.Visible;
+                xNoteLable.Visibility = Visibility.Visible;
             }
         }
 

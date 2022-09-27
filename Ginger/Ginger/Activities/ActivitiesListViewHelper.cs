@@ -739,11 +739,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                     return;
                 }
                 List<Activity> list = new List<Activity>();
+                bool isPomActivity = false;
                 foreach (Activity selectedItem in mListView.List.SelectedItems)
                 {
                     list.Add(selectedItem);
+                    isPomActivity = selectedItem.IsAutoLearned;
                 }
-                ActionsFactory.AddActivitiesFromSRHandler(list, mContext.BusinessFlow);
+                ActionsFactory.AddActivitiesFromSRHandler(list, mContext.BusinessFlow, null, -1, isPomActivity);
             }
             else
             {

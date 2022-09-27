@@ -162,7 +162,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
                     //POM Activities to show
                     ObservableList<Activity> pomActivities = AutoGenerateFlows.CreatePOMActivitiesFromMetadata(mPOM);
-                    mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(pomActivities, mContext);
+                    mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(pomActivities, mContext, true);
                     xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
                 }
             }

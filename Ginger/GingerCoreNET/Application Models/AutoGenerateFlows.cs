@@ -24,6 +24,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 Activity activity = new Activity();
                 activity.Active = true;
+                activity.IsAutoLearned = true;
                 activity.ActivityName = metaData.Name;
 
                 //add GoTo url action

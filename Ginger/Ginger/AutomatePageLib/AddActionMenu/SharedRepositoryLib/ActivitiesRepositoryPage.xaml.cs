@@ -49,6 +49,7 @@ namespace Ginger.Repository
         Context mContext;
         GenericWindow _pageGenericWin = null;
         ObservableList<Activity> mActivities;
+        bool mAddPOMActivity = false;
         public enum ePageViewMode { Default, Selection }
 
         public enum eActivityType 
@@ -88,12 +89,13 @@ namespace Ginger.Repository
             SetActivitiesRepositoryListView();            
             SetGridAndTreeData();
         }
-        public ActivitiesRepositoryPage(ObservableList<Activity> activities, Context context)
+        public ActivitiesRepositoryPage(ObservableList<Activity> activities, Context context, bool AddPOMActivity = false)
         {
             InitializeComponent();
 
             mActivities = activities;
             mContext = context;
+            mAddPOMActivity = AddPOMActivity;
             SetActivitiesRepositoryListView();
             SetGridAndTreeData();
         }
@@ -101,9 +103,9 @@ namespace Ginger.Repository
         {
             xActivitiesRepositoryListView.ListTitleVisibility = Visibility.Hidden;
             ActivitiesListViewHelper mActionsListHelper = null;
-            if (mActivities != null)
+            if (!mAddPOMActivity)
             {
-                mActionsListHelper = new ActivitiesListViewHelper(mContext, General.eRIPageViewMode.AddFromShardRepository);
+                mActionsListHelper = new ActivitiesListViewHelper(mContext, General.eRIPageViewMode.Explorer);
             }
             else
             {
