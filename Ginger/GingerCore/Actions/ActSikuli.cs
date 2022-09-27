@@ -281,6 +281,7 @@ namespace GingerCore.Actions
 
         public override void Execute()
         {
+            string veProcessName = ProcessNameForSikuliOperation;
             if (CheckIfImageValidAndIfPercentageValidAndSelectedApplicationValid())
             {
                 string logMessage = string.Empty;
@@ -347,6 +348,7 @@ namespace GingerCore.Actions
                     {
                         sikuliLauncher.Stop();
                     }
+                    ProcessNameForSikuliOperation = veProcessName;
                 }
             }
         }
