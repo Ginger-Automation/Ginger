@@ -147,7 +147,7 @@ namespace GingerCore.Drivers.Common
                     //Need to see if we have similar item with same property under same parent if yes need to add index
                     int? index = GetPropValIndex(EI, prop, val);
                     string SIndex = null;
-                    if (index == null)
+                    if (index == null || index == 0)
                     {
                         SIndex = "";
                     }
