@@ -146,7 +146,7 @@ namespace GingerCore.SourceControl
                 }
                 catch (Exception ex)
                 {
-
+                    Reporter.ToLog(eLogLevel.WARN, ex.Message, ex);
                 }
             }
             finally
