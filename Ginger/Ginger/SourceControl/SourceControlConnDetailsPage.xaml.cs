@@ -127,7 +127,7 @@ namespace Ginger.SourceControl
             {
                 if (SourceControlClassTextBox.Text != SourceControlBase.eSourceControlType.GIT.ToString())
                 {
-                    if (string.IsNullOrEmpty(xTextSourceControlConnectionTimeout.Text) || Int32.TryParse(xTextSourceControlConnectionTimeout.Text, out int _))
+                    if (string.IsNullOrEmpty(xTextSourceControlConnectionTimeout.Text) || !Int32.TryParse(xTextSourceControlConnectionTimeout.Text, out int _))
                     {
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide valid value for connection timeout");
                         return;
