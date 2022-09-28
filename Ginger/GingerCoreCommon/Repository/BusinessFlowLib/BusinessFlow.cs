@@ -915,27 +915,26 @@ namespace GingerCore
             //Attach mapped activities to groups and clear missing Activities
             foreach (ActivitiesGroup group in ActivitiesGroups)
             {
-                for (int indx = 0; indx < group.ActivitiesIdentifiers.Count;)
+                for (int AIindex = 0; AIindex < group.ActivitiesIdentifiers.Count;)
                 {
-                    ActivityIdentifiers actIdentifis = (ActivityIdentifiers)group.ActivitiesIdentifiers[indx];
-                    Activity activ = activitiesList.Where(x => x.ActivityName == actIdentifis.ActivityName && x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
+                    ActivityIdentifiers actIdentifis = (ActivityIdentifiers)group.ActivitiesIdentifiers[AIindex];
+                    Activity activ = activitiesList.Where(x => x.ActivityName == actIdentifis.ActivityName && x.Guid == actIdentifis.ActivityGuid && x.ActivitiesGroupID == group.Name).FirstOrDefault();
                     if (activ == null)
                     {
-                        activ = activitiesList.Where(x => x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
+                        activ = activitiesList.Where(x => x.Guid == actIdentifis.ActivityGuid && x.ActivitiesGroupID == group.Name).FirstOrDefault();
                     }
                     if (activ == null)
                     {
-                        activ = activitiesList.Where(x => x.ParentGuid == actIdentifis.ActivityGuid).FirstOrDefault();
+                        activ = activitiesList.Where(x => x.ParentGuid == actIdentifis.ActivityGuid && x.ActivitiesGroupID == group.Name).FirstOrDefault();
                     }
                     if (activ != null)
                     {
-                        //actIdentifis.IdentifiedActivity = (Activity)activ;
                         activ.ActivitiesGroupID = group.Name;
-                        indx++;
+                        AIindex++;
                     }
                     else
                     {
-                        group.ActivitiesIdentifiers.RemoveAt(indx);//Activity not exist in BF anymore
+                        group.ActivitiesIdentifiers.RemoveAt(AIindex);//Activity not exist in BF anymore
                     }
                 }
 

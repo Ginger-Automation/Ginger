@@ -372,6 +372,24 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
                 }
             }
+            if (act is ActVisualTesting)
+            {
+                ActVisualTesting actVisualTesting = (ActVisualTesting)act;
+                Solution solution = GetSolution();
+
+                if (actVisualTesting.VisualTestingAnalyzer == ActVisualTesting.eVisualTestingAnalyzer.VRT)
+                {
+                    GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.ExtrnalIntegrationConfigurations, solution.FilePath, ConvertToRelativePath(solution.FilePath), true, "", string.IsNullOrEmpty(dependacyFor) ? act.Description : dependacyFor);
+                    newItem.ItemName = ActVisualTesting.eVisualTestingAnalyzer.VRT.ToString();
+                    AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
+                }
+                else if (actVisualTesting.VisualTestingAnalyzer == ActVisualTesting.eVisualTestingAnalyzer.Applitools)
+                {
+                    GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.ExtrnalIntegrationConfigurations, solution.FilePath, ConvertToRelativePath(solution.FilePath), true, "", string.IsNullOrEmpty(dependacyFor) ? act.Description : dependacyFor);
+                    newItem.ItemName = ActVisualTesting.eVisualTestingAnalyzer.Applitools.ToString();
+                    AddItemToSelectedItemsList(newItem, ref SelectedItemsListToImport);
+                }
+            }
             //also find used global variable
             AddGlobalVariablesUsedInAction(ref SelectedItemsListToImport, VariableListToImport, string.IsNullOrEmpty(dependacyFor) ? act.Description : dependacyFor, act);
 
@@ -981,6 +999,10 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             else if (itemToAdd.ItemType == GlobalSolution.eImportItemType.TargetApplication)
             {
                 itemToAdd.Comments = "Target Applications will be added to your solution.";
+            }
+            else if (itemToAdd.ItemType == GlobalSolution.eImportItemType.ExtrnalIntegrationConfigurations)
+            {
+                itemToAdd.Comments = "Extrnal Integration Configurations will be added to your solution.";
             }
             else
             {
