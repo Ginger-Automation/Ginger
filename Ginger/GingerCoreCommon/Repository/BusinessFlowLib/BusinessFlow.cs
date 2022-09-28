@@ -732,7 +732,7 @@ namespace GingerCore
 
         public void AddActivity(Activity activity, ActivitiesGroup activitiesGroup = null, int insertIndex = -1, bool setAsCurrent = true)
         {
-            int groupInsertIndex = -1;
+            int groupIndex = -1;
             if (activity == null)
             {
                 return;
@@ -758,7 +758,6 @@ namespace GingerCore
                     if (string.IsNullOrEmpty(CurrentActivity.ActivitiesGroupID) == false)
                     {
                         activitiesGroup = this.ActivitiesGroups.Where(x => x.Name == CurrentActivity.ActivitiesGroupID).FirstOrDefault();
-                        
                         insertIndex = Activities.IndexOf(CurrentActivity);
                         while (!string.IsNullOrEmpty(Activities[insertIndex].ActivitiesGroupID) && Activities[insertIndex].ActivitiesGroupID.Equals(activitiesGroup?.Name) == true)
                         {
@@ -784,10 +783,10 @@ namespace GingerCore
             if (insertIndex >= 0)
             {
                 Activities.Insert(insertIndex, activity);
-                groupInsertIndex = this.ActivitiesGroups.IndexOf(activitiesGroup);
-                if (groupInsertIndex >= 0)
+                groupIndex = this.ActivitiesGroups.IndexOf(activitiesGroup);
+                if (groupIndex >= 0)
                 {
-                    ActivitiesGroups.Move(groupInsertIndex, insertIndex);
+                    ActivitiesGroups.Move(groupIndex, insertIndex);
                 }
                 
             }
