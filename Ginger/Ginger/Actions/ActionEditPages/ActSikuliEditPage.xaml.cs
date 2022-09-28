@@ -159,15 +159,17 @@ namespace Ginger.Actions
             xPatternImageLocationTextBox.ValueTextBox.Text = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(actSikuli.PatternPath);
 
             App.MainWindow.WindowState = WindowState.Minimized;
-            actSikuli.SetFocusToSelectedApplicationInstance();
-
-            System.Threading.Tasks.Task.Run(() => OpenSnippingTool()).ContinueWith(t =>
+            System.Threading.Tasks.Task.Run(() => actSikuli.SetFocusToSelectedApplicationInstance()).ContinueWith((result) =>
             {
-                if (t.Result)
+
+                System.Threading.Tasks.Task.Run(() => OpenSnippingTool()).ContinueWith(t =>
                 {
-                    ElementImageSourceChanged();
-                }
-            }, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
+                    if (t.Result)
+                    {
+                        xPatternImageLocationTextBox.Dispatcher.Invoke(ElementImageSourceChanged, false);
+                    }
+                });
+            });
         }
 
         private string GetPathToExpectedImage()
