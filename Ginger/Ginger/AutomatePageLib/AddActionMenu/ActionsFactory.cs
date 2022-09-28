@@ -319,7 +319,10 @@ namespace Ginger.BusinessFlowPages
                     //map activities target application to BF if missing in BF
                     userSelection = businessFlow.MapTAToBF(userSelection, activityIns, WorkSpace.Instance.Solution.ApplicationPlatforms);
                     businessFlow.SetActivityTargetApplication(activityIns);
-                    businessFlow.ActivitiesGroups.Move(businessFlow.ActivitiesGroups.IndexOf(parentGroup), insertIndex);
+                    if(insertIndex >= 0)
+                    {
+                        businessFlow.ActivitiesGroups.Move(businessFlow.ActivitiesGroups.IndexOf(parentGroup), insertIndex);
+                    }
                     businessFlow.AddActivity(activityIns, parentGroup, insertIndex);
 
 
