@@ -279,7 +279,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override void Execute()
+        public override async void Execute()
         {
             if (CheckIfImageValidAndIfPercentageValidAndSelectedApplicationValid())
             {
@@ -345,7 +345,7 @@ namespace GingerCore.Actions
                 {
                     if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
                     {
-                        sikuliLauncher.Stop();
+                        await sikuliLauncher.Stop();
                     }
                 }
             }
