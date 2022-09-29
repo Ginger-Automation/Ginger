@@ -563,8 +563,16 @@ namespace Ginger.Actions
             }
             else if (a.GetType() == typeof(ActLaunchJavaWSApplication) || a.GetType() == typeof(ActJavaEXE))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
-                xInputValuesGrid.Visibility = Visibility.Collapsed;
-                xValueBoxPnl.Visibility = Visibility.Collapsed;
+                if (a.InputValues.Count <= 1)
+                {
+                    xInputValuesGrid.Visibility = Visibility.Collapsed;
+                    xValueBoxPnl.Visibility = Visibility.Collapsed;
+                }
+                else if (a.InputValues.Count >= 2)
+                {
+                    xInputValuesGrid.Visibility = Visibility.Visible;
+                    xValueBoxPnl.Visibility = Visibility.Collapsed;
+                }
             }
             else if (a.GetType() == typeof(ActDBValidation))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
