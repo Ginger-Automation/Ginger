@@ -64,7 +64,11 @@ namespace Ginger.BusinessFlowPages
             {
                 mContext.BusinessFlow.CurrentActivity = mContext.Activity;//so new Actions will be added to correct Activity
             }
-
+            if (!mContext.Activity.EnableEdit && mContext.Activity.IsLinkedItem)
+            {
+                Reporter.ToUser(eUserMsgKey.EditLinkSharedActivities);
+                return -1;
+            }
             if (mItem is Act)
             {
                 Act selectedAction = mItem as Act;
