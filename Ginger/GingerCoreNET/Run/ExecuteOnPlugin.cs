@@ -98,12 +98,13 @@ namespace Amdocs.Ginger.CoreNET.Run
             {
                 gingerNodeInfo = GetGingerNode(serviceID);
 
-                if (gingerNodeInfo == null)
+                if (gingerNodeInfo == null || WorkSpace.Instance.PlugInsManager.PluginProcesses.Where(x => x.ServiceId == serviceID).Count() == WorkSpace.Instance.PlugInsManager.PluginProcesses.Where(x => x.ServiceId == serviceID && x.IsProcessExited == true).Count())
                 {
                     // call plugin to start service and wait for ready
                     WorkSpace.Instance.PlugInsManager.StartService(pluginId, serviceID);
 
                     Stopwatch stopwatch = Stopwatch.StartNew();
+                    gingerNodeInfo = null;
                     while (gingerNodeInfo == null && stopwatch.ElapsedMilliseconds < 30000)  // max 30 seconds for service to start
                     {
                         //Todo: remove thread.sleep

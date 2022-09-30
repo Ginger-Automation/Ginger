@@ -69,8 +69,8 @@ namespace Ginger.Actions.VisualTesting
             ShowCompareResult();
             ChangeAppScreenSizeComboBox.Init(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ChangeAppWindowSize, ActVisualTesting.eChangeAppWindowSize.None.ToString()), typeof(ActVisualTesting.eChangeAppWindowSize), false, new SelectionChangedEventHandler(ChangeAppWindowSize_Changed));
 
-            WidthUCVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActVisualTesting.Fields.SetAppWindowWidth);
-            HeightUCVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActVisualTesting.Fields.SetAppWindowHeight);
+            WidthUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.SetAppWindowWidth, "0"), true);
+            HeightUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.SetAppWindowHeight, "0"), true);
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFullPageScreenshotCheckbox, CheckBox.IsCheckedProperty, mAct, nameof(mAct.IsFullPageScreenshot));
             

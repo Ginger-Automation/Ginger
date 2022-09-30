@@ -845,7 +845,7 @@ namespace GingerCore.ALM.QCRestAPI
             {
                 itemWithValues.Fields.Add("parent-id", itemVals.GetType().GetProperty("ParentId").GetValue(itemVals, null));
             }
-            if (itemVals.GetType().GetProperty("Description") != null && itemVals.GetType().GetProperty("Description").GetValue(itemVals, null) != null && !isUpdate)
+            if (itemVals.GetType().GetProperty("Description") != null && itemVals.GetType().GetProperty("Description").GetValue(itemVals, null) != null && (!isUpdate || !string.IsNullOrEmpty(itemVals.Description)))
             {
                 itemWithValues.Fields.Add("description", EscapeChars(itemVals.GetType().GetProperty("Description").GetValue(itemVals, null)));
             }
