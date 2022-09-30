@@ -106,7 +106,7 @@ namespace GingerCore.Variables
                 {
                     return DateTime.Now.AddYears(-1).ToString(mDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
                 }
-                return mMinDateTime;
+                return ConvertMindateTime(mDateTimeFormat);
             }
             set
             {
@@ -126,7 +126,7 @@ namespace GingerCore.Variables
                 {
                     return DateTime.Now.AddYears(1).ToString(mDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
                 }
-                return mMaxDateTime;
+                return ConvertMaxDateTimeToSpecificFormat(mDateTimeFormat);
             }
             set
             {
@@ -168,7 +168,10 @@ namespace GingerCore.Variables
             return "Initial DateTime : " + ConvertDateTimeToSpecificFormat(mDateTimeFormat);
         }
 
-
+        public override string GetValue()
+        {
+            return  ConvertDateTimeToSpecificFormat(mDateTimeFormat);
+        }
 
         public override List<eSetValueOptions> GetSupportedOperations()
         {
@@ -213,6 +216,14 @@ namespace GingerCore.Variables
         {
             return Convert.ToDateTime(this.mInitialDateTime).ToString(format, System.Globalization.CultureInfo.InvariantCulture);
         }
+        public string ConvertMindateTime(string format)
+        {
+            return Convert.ToDateTime(this.mMinDateTime).ToString(format, System.Globalization.CultureInfo.InvariantCulture);
+        }
+        public string ConvertMaxDateTimeToSpecificFormat(string format)
+        {
+            return Convert.ToDateTime(this.mMaxDateTime).ToString(format, System.Globalization.CultureInfo.InvariantCulture);
+        }
 
         public bool CheckDateTimeWithInRange(string dateTimeValue)
         {
@@ -220,6 +231,17 @@ namespace GingerCore.Variables
             {
                 return true;
             }
+            int year = DateTime.Parse(dateTimeValue).Year;
+            int month = DateTime.Parse(dateTimeValue).Month;
+            int maxyear = DateTime.Parse(MaxDateTime).Year;
+            int minmonth = DateTime.Parse(MinDateTime).Month;
+            int maxmonth = DateTime.Parse(MaxDateTime).Month;
+            int minyear = DateTime.Parse(MinDateTime).Year;
+            if (year > minyear && year < maxyear)
+            {
+                return true;
+            }
+            else if (year <= maxyear || year == minyear && minmonth <= month && maxmonth >= month) return true;
             return false;
         }
         public bool IsValidDateTimeFormat(string value)
