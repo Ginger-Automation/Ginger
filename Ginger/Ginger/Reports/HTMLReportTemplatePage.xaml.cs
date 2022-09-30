@@ -895,7 +895,7 @@ namespace Ginger.Reports
         {
             try
             {
-                string dummyReportOriginalZipFilePath = Assembly.GetExecutingAssembly().Location.Replace("Ginger.exe", "") + @"Reports\GingerExecutionReport\PreviewDummyReport\RunSet.zip";
+                string dummyReportOriginalZipFilePath = Assembly.GetExecutingAssembly().Location.Replace("bin\\Debug\\net6.0-windows\\Ginger.dll", "") + @"Reports\GingerExecutionReport\PreviewDummyReport\RunSet.zip";
                 if (File.Exists(dummyReportOriginalZipFilePath))
                 {
                     string tempFolder = System.IO.Path.Combine(System.IO.Path.GetTempPath() + "GingerHtmlPreviewReport");
