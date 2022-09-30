@@ -1418,7 +1418,7 @@ namespace Ginger.Run
         {
             try
             {
-                bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified;
+                bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && mRunSetConfig.ContainingFolderFullPath.Trim().ToLower() == runSetConfig.ContainingFolderFullPath.Trim().ToLower();
                 if (bIsRunsetDirty && !IsCalledFromxUndoBtn)
                 {
                     UserSelectionSaveOrUndoRunsetChanges();
