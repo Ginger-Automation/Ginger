@@ -33,7 +33,7 @@ namespace Ginger.Variables
         {
             variableDateTime = varDateTime;
             InitializeComponent();
-            
+
             BindControlValue();
 
         }
@@ -48,7 +48,7 @@ namespace Ginger.Variables
             dtpInitialDate.CustomFormat = variableDateTime.DateTimeFormat;
             dtpInitialDate.MinDate = Convert.ToDateTime(variableDateTime.MinDateTime);
             dtpInitialDate.MaxDate = Convert.ToDateTime(variableDateTime.MaxDateTime);
-            
+
             dpMinDate.Value = Convert.ToDateTime(variableDateTime.MinDateTime);
             dpMinDate.CustomFormat = variableDateTime.DateTimeFormat;
 
@@ -90,14 +90,14 @@ namespace Ginger.Variables
                 dpMaxDate.Focus();
                 return;
             }
-                
+
         }
 
         private void dtpInitialDate_TextChanged(object sender, EventArgs e)
         {
-            if (dtpInitialDate.Value < Convert.ToDateTime(variableDateTime.MinDateTime) || dtpInitialDate.Value > Convert.ToDateTime(variableDateTime.MaxDateTime))
+            if (!variableDateTime.CheckDateTimeWithInRange(dtpInitialDate.Value.ToString()))
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Input Value is not in range:- Maximum date :[{dpMaxDate.Value}], Minimum Date:[{dtpInitialDate.MinDate}]");
+                Reporter.ToLog(eLogLevel.ERROR, $"Input Value is not in range:- Maximum date :[{variableDateTime.MaxDateTime}], Minimum Date:[{variableDateTime.MinDateTime}]");
                 dtpInitialDate.Focus();
                 return;
             }
@@ -118,7 +118,7 @@ namespace Ginger.Variables
                     dpMaxDate.CustomFormat = ((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedValue).Content.ToString();
                 }
             }
-            
+          
         }
 
         private void txtDateFormat_TextChanged(object sender, SelectionChangedEventArgs e)

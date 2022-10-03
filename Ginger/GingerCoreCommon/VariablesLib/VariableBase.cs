@@ -168,14 +168,7 @@ namespace GingerCore.Variables
         public virtual string Value
         {
             get
-            {
-                string value1 = GetValue();
-                if (value1!= mValue)
-                {
-                    mValue = value1;
-
-                    OnPropertyChanged(value1);
-                }
+            {               
                 return mValue;
             }
             set
@@ -221,7 +214,6 @@ namespace GingerCore.Variables
             }
         }
         public abstract string GetFormula();
-        public virtual string GetValue() { return mValue; }
         public abstract string VariableType { get; }
         public abstract void ResetValue();
         public abstract bool GenerateAutoValue(ref string errorMsg);
