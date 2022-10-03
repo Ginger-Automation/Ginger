@@ -78,31 +78,34 @@ namespace Ginger.Environments
 
         private async void grdMain_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            if (e.Column.Header.ToString() == "User Password")
+            switch(e.Column.DisplayIndex) //we have checked for column index for grid
             {
-                Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
-                String intialValue = selectedEnvDB.Pass;
-                //if Pass is stored in the form of variable, encryption not required at this stage
-                if (!string.IsNullOrEmpty(intialValue) && !intialValue.Contains("{Var Name"))
-                {
-                    if (!EncryptionHandler.IsStringEncrypted(intialValue))
+                case 8:
+                    Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
+                    String intialValue = selectedEnvDB.Pass;
+                    //if Pass is stored in the form of variable, encryption not required at this stage
+                    if (!string.IsNullOrEmpty(intialValue) && !intialValue.Contains("{Var Name"))
                     {
-                        selectedEnvDB.Pass = EncryptionHandler.EncryptwithKey(intialValue);
-                        if (string.IsNullOrEmpty(selectedEnvDB.Pass))
+                        if (!EncryptionHandler.IsStringEncrypted(intialValue))
                         {
-                            selectedEnvDB.Pass = null;
+                            selectedEnvDB.Pass = EncryptionHandler.EncryptwithKey(intialValue);
+                            if (string.IsNullOrEmpty(selectedEnvDB.Pass))
+                            {
+                                selectedEnvDB.Pass = null;
+                            }
                         }
                     }
-                }
-            }
+                    break;
+                case 0:
+                    Database selectedDB = (Database)grdAppDbs.CurrentItem;
+                    if (selectedDB.Name != ((DatabaseOperations)selectedDB.DatabaseOperations).NameBeforeEdit)
+                    {
+                        await UpdateDatabaseNameChange(selectedDB);
+                    }
+                    break;
+                default:
+                    break;
 
-            if (e.Column.Header.ToString() == nameof(Database.Name))
-            {
-                Database selectedDB = (Database)grdAppDbs.CurrentItem;
-                if (selectedDB.Name != ((DatabaseOperations)selectedDB.DatabaseOperations).NameBeforeEdit)
-                {
-                    await UpdateDatabaseNameChange(selectedDB);
-                }
             }
         }
 
