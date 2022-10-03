@@ -361,6 +361,24 @@ namespace GingerCore.Actions
                         mDriver.ChangeAppWindowSize(0, 0);
                         return false;
                     }
+                    else if (Convert.ToInt32(GetInputParamCalculatedValue(nameof(SetAppWindowWidth))) > size.Width)
+                    {
+                        this.Error = string.Format("Unable to set custom width of web page to {0}, max supported width is {1}.", GetInputParamCalculatedValue(nameof(SetAppWindowWidth)), size.Width.ToString());
+                        mDriver.ChangeAppWindowSize(0, 0);
+                        return false;
+                    }
+                    else if (Convert.ToInt32(GetInputParamCalculatedValue(nameof(SetAppWindowHeight))) + 5 < size.Height)//+5 added to check with actual viewport/size of the browser which can be different by 2 0r 3 points
+                    {
+                        this.Error = string.Format("Unable to set custom width of web page to {0}, min supported height is {1}.", GetInputParamCalculatedValue(nameof(SetAppWindowHeight)), size.Height.ToString());
+                        mDriver.ChangeAppWindowSize(0, 0);
+                        return false;
+                    }
+                    else if (Convert.ToInt32(GetInputParamCalculatedValue(nameof(SetAppWindowHeight))) > size.Height)
+                    {
+                        this.Error = string.Format("Unable to set custom width of web page to {0}, max supported height is {1}.", GetInputParamCalculatedValue(nameof(SetAppWindowHeight)), size.Height.ToString());
+                        mDriver.ChangeAppWindowSize(0, 0);
+                        return false;
+                    }
                     break;
                 case eChangeAppWindowSize.Resolution640x480:
                     mDriver.ChangeAppWindowSize(640, 480);
