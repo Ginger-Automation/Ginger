@@ -1143,7 +1143,7 @@ namespace GingerCoreNET.DataSource
                         actDSTable.AddOrUpdateReturnParamActual("Deleted Record", "1");
                     }
                     //By Selected Cell
-                    if (actDSTable.BySelectedCell)
+                    else if (actDSTable.BySelectedCell)
                     {
                         string[] tokens = Query.Split(new[] { "where" }, StringSplitOptions.None);
                         RunQuery("db." + actDSTable.DSTableName + ".delete " + tokens[1]);

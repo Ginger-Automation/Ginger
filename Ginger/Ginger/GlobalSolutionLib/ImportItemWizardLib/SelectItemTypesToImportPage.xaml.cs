@@ -121,7 +121,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             ObservableList<GlobalSolutionItem> ItemTypeListToImport = new ObservableList<GlobalSolutionItem>();
             foreach (GlobalSolution.eImportItemType ItemType in GlobalSolution.GetEnumValues<GlobalSolution.eImportItemType>())
             {
-                if (ItemType == GlobalSolution.eImportItemType.Variables || ItemType == GlobalSolution.eImportItemType.TargetApplication)
+                if (ItemType == GlobalSolution.eImportItemType.Variables || ItemType == GlobalSolution.eImportItemType.TargetApplication || ItemType == GlobalSolution.eImportItemType.ExtrnalIntegrationConfigurations)
                 {
                     continue;
                 }
