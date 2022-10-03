@@ -80,7 +80,7 @@ namespace Ginger.Environments
         {
             switch(e.Column.DisplayIndex) //we have checked for column index for grid
             {
-                case 8:
+                case 8://for Password
                     Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
                     String intialValue = selectedEnvDB.Pass;
                     //if Pass is stored in the form of variable, encryption not required at this stage
@@ -96,7 +96,7 @@ namespace Ginger.Environments
                         }
                     }
                     break;
-                case 0:
+                case 0://for Database name
                     Database selectedDB = (Database)grdAppDbs.CurrentItem;
                     if (selectedDB.Name != ((DatabaseOperations)selectedDB.DatabaseOperations).NameBeforeEdit)
                     {
