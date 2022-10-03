@@ -2456,6 +2456,9 @@
     <None Update="Reports\GingerExecutionReport\GingerRunnerReport.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\GingerExecutionReport\PreviewDummyReport\RunSet.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\GingerExecutionReport\RunSetReport.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
