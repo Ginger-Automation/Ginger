@@ -1418,7 +1418,8 @@ namespace Ginger.Run
         {
             try
             {
-                bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && mRunSetConfig.ContainingFolderFullPath.Trim().ToLower() == runSetConfig.ContainingFolderFullPath.Trim().ToLower();
+                bool isSolutionSame = mRunSetConfig!= null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
+                bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;
                 if (bIsRunsetDirty && !IsCalledFromxUndoBtn)
                 {
                     UserSelectionSaveOrUndoRunsetChanges();
