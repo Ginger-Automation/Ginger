@@ -539,7 +539,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
                 Width = 600,
-                Margin = new Thickness(10, 0, 0, 0),
+                Margin = new Thickness(0, 0, 0, 0),
                 ToolTip = element.ToolTip
             };
         }
@@ -564,7 +564,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 Content = element.Title + ":",
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
-                FontSize = 14
+                MinWidth= 150,
             };
         }
 
