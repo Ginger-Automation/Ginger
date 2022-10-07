@@ -470,124 +470,120 @@ namespace GingerCore.GingerOCR
         private static void GetTableDataFromPageArea(string columnName, bool useRowNumber, int rowNumber, string conditionColumnName, string conditionColumnValue, ref string txtOutput, PageArea page, ActOcr.eTableElementRunColOperator elementLocateBy)
         {
             SpreadsheetDetectionAlgorithm detector = new SpreadsheetDetectionAlgorithm();
-            List<TableRectangle> regions = detector.Detect(page);
 
             IExtractionAlgorithm ea = new SpreadsheetExtractionAlgorithm();
 
-            foreach (TableRectangle region in regions)
+            List<Table> tables = ea.Extract(page);
+            foreach (Table table in tables)
             {
-                List<Table> tables = ea.Extract(page);
-                foreach (Table table in tables)
+                if (useRowNumber)
                 {
-                    if (useRowNumber)
+                    IReadOnlyList<IReadOnlyList<Cell>> rows = table.Rows;
+                    for (int i = 0; i < rows[0].Count; i++)
                     {
-                        IReadOnlyList<IReadOnlyList<Cell>> rows = table.Rows;
-                        for (int i = 0; i < rows[0].Count; i++)
+                        Cell cellObj = rows[0][i];
+                        if (cellObj.GetText(false).Equals(columnName))
                         {
-                            Cell cellObj = rows[0][i];
-                            if (cellObj.GetText(false).Equals(columnName))
-                            {
-                                txtOutput = rows[rowNumber + 1][i].GetText(false);
-                                return;
-                            }
+                            txtOutput = rows[rowNumber + 1][i].GetText(false);
+                            return;
                         }
                     }
-                    else
-                    {
-                        IReadOnlyList<IReadOnlyList<Cell>> rows = table.Rows;
+                }
+                else
+                {
+                    IReadOnlyList<IReadOnlyList<Cell>> rows = table.Rows;
 
-                        int columnNameIndex = -1;
-                        int i, j;
-                        for (i = 0; i < rows[0].Count; i++)
+                    int columnNameIndex = -1;
+                    int i, j;
+                    for (i = 0; i < rows[0].Count; i++)
+                    {
+                        Cell cellObj = rows[0][i];
+                        if (cellObj.GetText(false).Equals(columnName))
                         {
-                            Cell cellObj = rows[0][i];
-                            if (cellObj.GetText(false).Equals(columnName))
-                            {
-                                columnNameIndex = i;
-                                break;
-                            }
+                            columnNameIndex = i;
+                            break;
                         }
-                        for (i = 0; i < rows.Count; i++)
+                    }
+                    for (i = 0; i < rows.Count; i++)
+                    {
+                        bool bIsConditionValFound = false;
+                        for (j = 0; j < rows[i].Count; j++)
                         {
-                            bool bIsConditionValFound = false;
-                            for (j = 0; j < rows[i].Count; j++)
+                            Cell cellObj = rows[i][j];
+                            if (rows[0][j].GetText(false).Equals(conditionColumnName))
                             {
-                                Cell cellObj = rows[i][j];
-                                if (rows[0][j].GetText(false).Equals(conditionColumnName))
+                                switch (elementLocateBy)
                                 {
-                                    switch (elementLocateBy)
-                                    {
-                                        case ActOcr.eTableElementRunColOperator.Equals:
-                                            if (cellObj.GetText(false).Equals(conditionColumnValue))
-                                            {
-                                                bIsConditionValFound = true;
-                                                break;
-                                            }
+                                    case ActOcr.eTableElementRunColOperator.Equals:
+                                        if (cellObj.GetText(false).Equals(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
                                             break;
-                                        case ActOcr.eTableElementRunColOperator.NotEquals:
-                                            if (!cellObj.GetText(false).Equals(conditionColumnValue))
-                                            {
-                                                bIsConditionValFound = true;
-                                                break;
-                                            }
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.NotEquals:
+                                        if (!cellObj.GetText(false).Equals(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
                                             break;
-                                        case ActOcr.eTableElementRunColOperator.Contains:
-                                            if (cellObj.GetText(false).Contains(conditionColumnValue))
-                                            {
-                                                bIsConditionValFound = true;
-                                                break;
-                                            }
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.Contains:
+                                        if (cellObj.GetText(false).Contains(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
                                             break;
-                                        case ActOcr.eTableElementRunColOperator.NotContains:
-                                            if (!cellObj.GetText(false).Contains(conditionColumnValue))
-                                            {
-                                                bIsConditionValFound = true;
-                                                break;
-                                            }
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.NotContains:
+                                        if (!cellObj.GetText(false).Contains(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
                                             break;
-                                        case ActOcr.eTableElementRunColOperator.StartsWith:
-                                            if (cellObj.GetText(false).StartsWith(conditionColumnValue))
-                                            {
-                                                bIsConditionValFound = true;
-                                                break;
-                                            }
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.StartsWith:
+                                        if (cellObj.GetText(false).StartsWith(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
                                             break;
-                                        case ActOcr.eTableElementRunColOperator.NotStartsWith:
-                                            if (!cellObj.GetText(false).StartsWith(conditionColumnValue))
-                                            {
-                                                bIsConditionValFound = true;
-                                                break;
-                                            }
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.NotStartsWith:
+                                        if (!cellObj.GetText(false).StartsWith(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
                                             break;
-                                        case ActOcr.eTableElementRunColOperator.EndsWith:
-                                            if (cellObj.GetText(false).EndsWith(conditionColumnValue))
-                                            {
-                                                bIsConditionValFound = true;
-                                                break;
-                                            }
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.EndsWith:
+                                        if (cellObj.GetText(false).EndsWith(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
                                             break;
-                                        case ActOcr.eTableElementRunColOperator.NotEndsWith:
-                                            if (!cellObj.GetText(false).Equals(conditionColumnValue))
-                                            {
-                                                bIsConditionValFound = true;
-                                                break;
-                                            }
+                                        }
+                                        break;
+                                    case ActOcr.eTableElementRunColOperator.NotEndsWith:
+                                        if (!cellObj.GetText(false).Equals(conditionColumnValue))
+                                        {
+                                            bIsConditionValFound = true;
                                             break;
-                                        default:
-                                            //do nothing
-                                            break;
-                                    }
-                                }
-                                if (bIsConditionValFound)
-                                {
-                                    break;
+                                        }
+                                        break;
+                                    default:
+                                        //do nothing
+                                        break;
                                 }
                             }
                             if (bIsConditionValFound)
                             {
-                                txtOutput = rows[i][columnNameIndex].GetText(false);
-                                return;
+                                break;
                             }
+                        }
+                        if (bIsConditionValFound)
+                        {
+                            txtOutput = rows[i][columnNameIndex].GetText(false);
+                            return;
                         }
                     }
                 }
