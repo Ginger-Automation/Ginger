@@ -18,7 +18,7 @@
 
         <StackPanel Grid.Row="0">
             <StackPanel Orientation="Horizontal">
-                <Label x:Name="xLocateByLbl" Content="Locate By:" Style="{StaticResource $LabelStyle}" MinWidth="130"  VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Label x:Name="xLocateByLbl" Content="Locate By:" Style="{StaticResource $LabelStyle}" MinWidth="150"  VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 <ComboBox  x:Name="ElementLocateByComboBox"  Style="{StaticResource $FlatInputComboBoxStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" ToolTip="How to Locate the Element on the screen"  Margin="0,0,0,0"/>
             </StackPanel>
 
@@ -27,10 +27,10 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="150"/>
                     <ColumnDefinition Width="100*"/>
                 </Grid.ColumnDefinitions>
-                <Label x:Name="LocateValueLable" Content="Locate Value:" Style="{StaticResource $LabelStyle}" MinWidth="130" Grid.Column="0"/>
+                <Label x:Name="LocateValueLable" Content="Locate Value:" Style="{StaticResource $LabelStyle}" MinWidth="150" Grid.Column="0"/>
                 <Frame x:Name="LocateValueEditFrame" NavigationUIVisibility="Hidden" BorderBrush="Transparent" Grid.Column="1" Margin="-2,0,0,0"/>
             </Grid>
 
@@ -40,7 +40,7 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                <Label Content="Element Type:" Style="{StaticResource $LabelStyle}" MinWidth="130" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Label Content="Element Type:" Style="{StaticResource $LabelStyle}" MinWidth="150" VerticalAlignment="Center" HorizontalAlignment="Left"/>
               
                 <ComboBox x:Name="ElementTypeComboBox"  SelectionChanged="ElementTypeComboBox_SelectionChanged"  Style="{StaticResource $FlatInputComboBoxStyle}" VerticalAlignment="Center" HorizontalAlignment="Left"  Margin="0,0,0,0"/>
                 <UserControls:ImageMakerControl x:Name="xElementTypeImage" ImageType="Element" SetAsFontImageWithSize="16"  Width="16" Height="16" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5,0,0,0"/>
@@ -49,7 +49,7 @@
             </StackPanel>
             
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                <Label Content="Element Action:"  Name="ElementActionLabel" MinWidth="130" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $LabelStyle}" />
+                <Label Content="Element Action:"  Name="ElementActionLabel" MinWidth="150" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $LabelStyle}" />
                     <ComboBox x:Name="ElementActionComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="ElementActionComboBox_SelectionChanged" IsSynchronizedWithCurrentItem="True" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,0,0"/>
             </StackPanel>
         </StackPanel>
@@ -59,7 +59,7 @@
             </StackPanel>
 
             <StackPanel Grid.Row="2"  Margin="0,10,0,0">
-            <Frame x:Name="PlatformSpecificFrame" Content="PlatformSpecificFrame" Visibility="Collapsed" Margin="0,0,859,0" NavigationUIVisibility="Hidden"/>
+            <Frame x:Name="PlatformSpecificFrame" Content="PlatformSpecificFrame" Visibility="Collapsed" Margin="0,0,0,0" NavigationUIVisibility="Hidden"/>
         </StackPanel>
 
         <StackPanel Grid.Row="3"  Margin="0,20,0,0">

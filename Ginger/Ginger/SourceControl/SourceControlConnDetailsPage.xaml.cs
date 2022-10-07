@@ -123,19 +123,26 @@ namespace Ginger.SourceControl
 
         private void SaveConfiguration_Click(object sender, RoutedEventArgs e)
         {
-            if (SourceControlClassTextBox.Text != SourceControlBase.eSourceControlType.GIT.ToString())
+            if (TestSourceControlConnection())
             {
-                if (string.IsNullOrEmpty(xTextSourceControlConnectionTimeout.Text) || Int32.TryParse(xTextSourceControlConnectionTimeout.Text, out int _))
+                if (SourceControlClassTextBox.Text != SourceControlBase.eSourceControlType.GIT.ToString())
                 {
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide valid value for connection timeout");
-                    return;
+                    if (string.IsNullOrEmpty(xTextSourceControlConnectionTimeout.Text) || !Int32.TryParse(xTextSourceControlConnectionTimeout.Text, out int _))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please provide valid value for connection timeout");
+                        return;
+                    }
                 }
+                WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
+                Close();
             }
-            WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
-
+        }
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
 
-        private void Close_Click(object sender, RoutedEventArgs e)
+        private void Close()
         {
             if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.SourceControl != null)
             {
@@ -144,7 +151,6 @@ namespace Ginger.SourceControl
                 WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorName = WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorName;
                 WorkSpace.Instance.UserProfile.SolutionSourceControlAuthorEmail = WorkSpace.Instance.Solution.SourceControl.SolutionSourceControlAuthorName;
                 SourceControlIntegration.Disconnect(WorkSpace.Instance.Solution.SourceControl);
-
             }
             genWin.Close();
         }
@@ -159,7 +165,7 @@ namespace Ginger.SourceControl
             SaveBtn.Content = "Save Configuration";
             SaveBtn.Click += new RoutedEventHandler(SaveConfiguration_Click);
 
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { testConnBtn, SaveBtn }, true, "Close", new RoutedEventHandler(Close_Click));
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { testConnBtn, SaveBtn }, true, "Close", Close_Click);
         }
 
         private void SourceControlUserDetails_TextChanged(object sender, TextChangedEventArgs e)

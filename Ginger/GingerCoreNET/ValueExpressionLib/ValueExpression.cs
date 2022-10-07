@@ -214,9 +214,9 @@ namespace GingerCore
 
             //replace environment parameters which embedded into functions like VBS
             ReplaceEnvVars();
-            ReplaceDataSources();
 
             CalculateComplexFormulas();
+            ReplaceDataSources();
             ProcessGeneralFuncations();
             EvaluateFlowDetails();
             EvaluateCSharpFunctions();
