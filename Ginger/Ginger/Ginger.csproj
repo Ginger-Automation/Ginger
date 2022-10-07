@@ -655,10 +655,10 @@
     <PackageReference Include="NSwag.Core.Yaml" Version="12.0.9" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.61" />
     <PackageReference Include="RoyWpf.System.Windows.Interactivity" Version="0.1.2" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="103.0.5060.5300" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="105.0.5195.5200" />
     <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.31.0.1" />
     <PackageReference Include="Selenium.WebDriver.IEDriver" Version="4.2.0" />
-    <PackageReference Include="Selenium.WebDriver.MSEdgeDriver" Version="101.0.1210.47" />
+    <PackageReference Include="Selenium.WebDriver.MSEdgeDriver" Version="105.0.1343.27" />
     <PackageReference Include="sharpadbclient" Version="2.3.23" />
     <PackageReference Include="Syncfusion.Shared.WPF" Version="20.1.0.55" />
     <PackageReference Include="System.Data.OleDb" Version="6.0.0" />
@@ -2456,6 +2456,9 @@
     <None Update="Reports\GingerExecutionReport\GingerRunnerReport.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\GingerExecutionReport\PreviewDummyReport\RunSet.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\GingerExecutionReport\RunSetReport.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -2478,6 +2481,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\VBSTemplate.vbs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="sikulirestapi-1.0.jar">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="StaticDrivers\GingerAgent.jar">

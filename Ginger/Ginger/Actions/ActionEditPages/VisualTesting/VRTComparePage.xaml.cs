@@ -59,9 +59,16 @@ namespace Ginger.Actions.VisualTesting
             xImageNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.ImageName, mAct.Description));
 
             InitLayout();
-
+            
             DiffTollerancePercentUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.VRTParamDiffTollerancePercent, "0.0"), true, false);
-            xTestNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.VRTParamBuildName, (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
+
+            string buildTestName = string.Empty;
+            if (Context.GetAsContext(mAct.Context) != null && (Context.GetAsContext(mAct.Context)).Activity != null)
+            {
+                buildTestName = (Context.GetAsContext(mAct.Context)).Activity.ActivityName;
+            }
+            xTestNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.VRTParamBuildName, buildTestName), true, false);
+
 
             List<eLocateBy> locatorsTypeList = mAct.AvailableLocateBy().Where(e => e != eLocateBy.iOSClassChain && e != eLocateBy.iOSPredicateString).ToList();
             if (mAct.Platform == ePlatformType.NA)
@@ -89,18 +96,32 @@ namespace Ginger.Actions.VisualTesting
             switch (vrtAction)
             {
                 case VRTAnalyzer.eVRTAction.Start:
-                    xVRTDiffTollerancePercent.Visibility = Visibility.Visible;
-                    xVRTBuildName.Visibility = Visibility.Visible;
+                    //diff
+                    xDiffTollerancePercentLabel.Visibility = Visibility.Collapsed;
+                    DiffTollerancePercentUCVE.Visibility = Visibility.Collapsed;
+                    //test/build
+                    xTestNameLabel.Visibility = Visibility.Visible;
+                    xTestNameUCVE.Visibility = Visibility.Visible;
+                    //locateby
                     xLocateByAndValuePanel.Visibility = Visibility.Collapsed;
-                    xActionByPanel.Visibility = Visibility.Collapsed;
-                    xVRTImageNameAction.Visibility = Visibility.Collapsed;
-                    xVRTImageName.Visibility = Visibility.Collapsed;
+                    //actionby
+                    xVRTActionByLabel.Visibility = Visibility.Collapsed;
+                    xActionByComboBox.Visibility = Visibility.Collapsed;
+                    //imagenameby
+                    xVRTImageNameActionLabel.Visibility = Visibility.Collapsed;
+                    xVRTImageNameActionComboBox.Visibility = Visibility.Collapsed;
+                    //image name
+                    xImageNameLabel.Visibility = Visibility.Collapsed;
+                    xImageNameUCVE.Visibility = Visibility.Collapsed;
                     visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility, eVisualTestingVisibility.Visible);
                     break;
                 case VRTAnalyzer.eVRTAction.Track:
-                    xVRTDiffTollerancePercent.Visibility = Visibility.Collapsed;
-                    xVRTBuildName.Visibility = Visibility.Collapsed;
-                    xActionByPanel.Visibility = Visibility.Visible;
+                    xDiffTollerancePercentLabel.Visibility = Visibility.Visible;
+                    DiffTollerancePercentUCVE.Visibility = Visibility.Visible;
+                    xTestNameLabel.Visibility = Visibility.Collapsed;
+                    xTestNameUCVE.Visibility = Visibility.Collapsed;
+                    xVRTActionByLabel.Visibility = Visibility.Visible;
+                    xActionByComboBox.Visibility = Visibility.Visible;
                     if (actionBy == VRTAnalyzer.eActionBy.Region)
                     {
                         xLocateByAndValuePanel.Visibility = Visibility.Visible;
@@ -110,25 +131,38 @@ namespace Ginger.Actions.VisualTesting
                     {
                         xLocateByAndValuePanel.Visibility = Visibility.Collapsed;
                     }
-                    xVRTImageNameAction.Visibility = Visibility.Visible;
+                    xVRTImageNameActionLabel.Visibility = Visibility.Visible;
+                    xVRTImageNameActionComboBox.Visibility = Visibility.Visible;
                     if (imageNameBy == VRTAnalyzer.eImageNameBy.Custom)
                     {
-                        xVRTImageName.Visibility = Visibility.Visible;
+                        xImageNameLabel.Visibility = Visibility.Visible;
+                        xImageNameUCVE.Visibility = Visibility.Visible;
                     }
                     else
                     {
-                        xVRTImageName.Visibility = Visibility.Collapsed;
+                        xImageNameLabel.Visibility = Visibility.Collapsed;
+                        xImageNameUCVE.Visibility = Visibility.Collapsed;
                     }
                     break;
 
                 case VRTAnalyzer.eVRTAction.Stop:
-                    xVRTDiffTollerancePercent.Visibility = Visibility.Collapsed;
-                    xVRTBuildName.Visibility = Visibility.Collapsed;
+                    //diff
+                    xDiffTollerancePercentLabel.Visibility = Visibility.Collapsed;
+                    DiffTollerancePercentUCVE.Visibility = Visibility.Collapsed;
+                    //test/build
+                    xTestNameLabel.Visibility = Visibility.Collapsed;
+                    xTestNameUCVE.Visibility = Visibility.Collapsed;
+                    //locateby
                     xLocateByAndValuePanel.Visibility = Visibility.Collapsed;
-                    xActionByPanel.Visibility = Visibility.Collapsed;
-                    xLocateByAndValuePanel.Visibility = Visibility.Collapsed;
-                    xVRTImageNameAction.Visibility = Visibility.Collapsed;
-                    xVRTImageName.Visibility = Visibility.Collapsed;
+                    //actionby
+                    xVRTActionByLabel.Visibility = Visibility.Collapsed;
+                    xActionByComboBox.Visibility = Visibility.Collapsed;
+                    //imagenameby
+                    xVRTImageNameActionLabel.Visibility = Visibility.Collapsed;
+                    xVRTImageNameActionComboBox.Visibility = Visibility.Collapsed;
+                    //image name
+                    xImageNameLabel.Visibility = Visibility.Collapsed;
+                    xImageNameUCVE.Visibility = Visibility.Collapsed;
                     break;
             }
         }

@@ -64,7 +64,11 @@ namespace Ginger.BusinessFlowPages
             {
                 mContext.BusinessFlow.CurrentActivity = mContext.Activity;//so new Actions will be added to correct Activity
             }
-
+            if (!mContext.Activity.EnableEdit && mContext.Activity.IsLinkedItem)
+            {
+                Reporter.ToUser(eUserMsgKey.EditLinkSharedActivities);
+                return -1;
+            }
             if (mItem is Act)
             {
                 Act selectedAction = mItem as Act;
@@ -299,12 +303,11 @@ namespace Ginger.BusinessFlowPages
             {
                 parentGroup = businessFlow.ActivitiesGroups.Where(g => g.Name == ActivitiesGroupID).FirstOrDefault();
             }
-            else
-            {
-                var activitiesGroupSelectionPage = new ActivitiesGroupSelectionPage(businessFlow);
+          
+                var activitiesGroupSelectionPage = new ActivitiesGroupSelectionPage(businessFlow, parentGroup);
                 parentGroup = activitiesGroupSelectionPage.ShowAsWindow();
                 copyAsLink = activitiesGroupSelectionPage.xLinkedInstance.IsChecked.Value;
-            }
+          
 
             if (parentGroup != null)
             {
@@ -320,6 +323,10 @@ namespace Ginger.BusinessFlowPages
                     //map activities target application to BF if missing in BF
                     userSelection = businessFlow.MapTAToBF(userSelection, activityIns, WorkSpace.Instance.Solution.ApplicationPlatforms);
                     businessFlow.SetActivityTargetApplication(activityIns);
+                    if(insertIndex >= 0)
+                    {
+                        businessFlow.ActivitiesGroups.Move(businessFlow.ActivitiesGroups.IndexOf(parentGroup), insertIndex);
+                    }
                     businessFlow.AddActivity(activityIns, parentGroup, insertIndex);
 
 

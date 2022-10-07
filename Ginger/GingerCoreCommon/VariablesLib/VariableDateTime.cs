@@ -61,9 +61,11 @@ namespace GingerCore.Variables
             get { return GingerDicser.GetTermResValue(eTermResKey.Variable) + " DateTime"; }
         }
 
-        public override void GenerateAutoValue()
+        public override bool GenerateAutoValue(ref string errorMsg)
         {
             //NA
+            errorMsg = "Generate Auto Value is not supported";
+            return false;
         }
 
         [IsSerializedForLocalRepository]
@@ -74,9 +76,9 @@ namespace GingerCore.Variables
                 if (string.IsNullOrEmpty(mInitialDateTime))
                 {
                     var currentDate = DateTime.Today.Date;
-                    return currentDate.ToString("dd-MMM-yyyy hh:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture);
+                    return currentDate.ToString("MM/dd/yyyy hh:mm:ss tt", System.Globalization.CultureInfo.InvariantCulture);
                 }
-                return mInitialDateTime;
+                return ConvertDateTimeToSpecificFormat(mDateTimeFormat, mInitialDateTime);
             }
             set
             {
@@ -87,7 +89,7 @@ namespace GingerCore.Variables
                 else
                 {
                     mInitialDateTime = value;
-                    Value = ConvertDateTimeToSpecificFormat(mDateTimeFormat);
+                    Value = ConvertDateTimeToSpecificFormat(mDateTimeFormat, mInitialDateTime);
                 }
 
                 OnPropertyChanged("InitialDateTime");
@@ -102,9 +104,9 @@ namespace GingerCore.Variables
             {
                 if (string.IsNullOrEmpty(mMinDateTime))
                 {
-                    return DateTime.Now.AddYears(-1).ToString();
+                    return DateTime.Now.AddYears(-1).ToString(mDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
                 }
-                return mMinDateTime;
+                return ConvertDateTimeToSpecificFormat(mDateTimeFormat, mMinDateTime);
             }
             set
             {
@@ -122,9 +124,9 @@ namespace GingerCore.Variables
             {
                 if (string.IsNullOrEmpty(mMaxDateTime))
                 {
-                    return DateTime.Now.AddYears(1).ToString();
+                    return DateTime.Now.AddYears(1).ToString(mDateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
                 }
-                return mMaxDateTime;
+                return ConvertDateTimeToSpecificFormat(mDateTimeFormat, mMaxDateTime);
             }
             set
             {
@@ -143,7 +145,7 @@ namespace GingerCore.Variables
             {
                 if(string.IsNullOrEmpty(mDateTimeFormat))
                 {
-                    return @"dd-MMM-yyyy hh:mm:ss tt";
+                    return @"MM/dd/yyyy hh:mm:ss tt";
                 }
                 return mDateTimeFormat;
             }
@@ -153,7 +155,7 @@ namespace GingerCore.Variables
 
                 if(mInitialDateTime != null)
                 {
-                    InitialDateTime = ConvertDateTimeToSpecificFormat(mDateTimeFormat);
+                    InitialDateTime = ConvertDateTimeToSpecificFormat(mDateTimeFormat, mInitialDateTime);
                 }
                 OnPropertyChanged("DateTimeFormat");
                 OnPropertyChanged("InitialDateTime");
@@ -163,7 +165,7 @@ namespace GingerCore.Variables
 
         public override string GetFormula()
         {
-            return "Initial DateTime : " + ConvertDateTimeToSpecificFormat(mDateTimeFormat);
+            return "Initial DateTime : " + ConvertDateTimeToSpecificFormat(mDateTimeFormat, mInitialDateTime);
         }
 
 
@@ -207,14 +209,19 @@ namespace GingerCore.Variables
             Value = mInitialDateTime;
         }
 
-        public string ConvertDateTimeToSpecificFormat(string format)
+        public string ConvertDateTimeToSpecificFormat(string format, string datetimeToFormat = "")
         {
+            if (!string.IsNullOrEmpty(datetimeToFormat))
+            {
+                return Convert.ToDateTime(datetimeToFormat).ToString(format, System.Globalization.CultureInfo.InvariantCulture);
+            }
             return Convert.ToDateTime(this.mInitialDateTime).ToString(format, System.Globalization.CultureInfo.InvariantCulture);
         }
 
         public bool CheckDateTimeWithInRange(string dateTimeValue)
         {
-            if (DateTime.Parse(dateTimeValue) >= DateTime.Parse(MinDateTime) && DateTime.Parse(dateTimeValue) <= DateTime.Parse(MaxDateTime))
+            if (DateTime.Parse(dateTimeValue) >= DateTime.Parse(ConvertDateTimeToSpecificFormat(DateTimeFormat, MinDateTime)) &&
+                DateTime.Parse(dateTimeValue) <= DateTime.Parse(ConvertDateTimeToSpecificFormat(DateTimeFormat, MaxDateTime)))
             {
                 return true;
             }

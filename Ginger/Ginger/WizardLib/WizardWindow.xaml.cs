@@ -47,8 +47,8 @@ namespace GingerWPF.WizardLib
             WizardWindow wizardWindow = new WizardWindow(wizard);
             wizardWindow.Dispatcher.Invoke(() =>
             {
+                wizardWindow.MaxHeight = height;
                 wizardWindow.Width = width;
-                wizardWindow.Height = height;
                 if (!wizard.IsNavigationListEnabled)
                 {
                     SetterBaseCollection sbc = wizardWindow.NavigationList.ItemContainerStyle.Setters;

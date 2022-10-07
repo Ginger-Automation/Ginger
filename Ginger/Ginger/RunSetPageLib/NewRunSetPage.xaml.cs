@@ -623,21 +623,23 @@ namespace Ginger.Run
 
             // Value expression textboxes
             xSealightsTestStageTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealightsTestStage));
-            xSealighsLabIdTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealighsLabId));
-            xSealighsBuildSessionIDTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID));
-                      
-            // check if fields have been populated (font-end validation)
-            xSealighsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealighsBuildSessionID), "Lab ID or Build Session ID must be provided"));
-            xSealighsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealighsLabId), "Lab ID or Build Session ID must be provided"));
+            xSealightsLabIdTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealightsLabId));
+            xSealightsBuildSessionIDTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealightsBuildSessionID));
+
+            // check if fields have been populated (front-end validation)
+            xSealightsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
+            xSealightsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsLabId), "Lab ID or Build Session ID must be provided"));
             xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
 
             mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsLabId));
             mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsTestStage));
             mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsBuildSessionID));
+            mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsTestRecommendations));
 
             xDefaultTestStageRadioBtn.Checked += XDefaultTestStageRadioBtn_Checked;
             xDefaultLabIdRadioBtn.Checked += XDefaultLabIdRadioBtn_Checked;
             xDefaultSessionIdRadioBtn.Checked += XDefaultSessionIdRadioBtn_Checked;
+            xDefaultTestRecommendationsRadioBtn.Checked += XDefaultTestRecommendationsRadioBtn_Checked;
 
             xCustomTestStageRadioBtn.Checked += XCustomTestStageRadioBtn_Checked;
             xCustomLabIdRadioBtn.Checked += XCustomLabIdRadioBtn_Checked;
@@ -655,10 +657,10 @@ namespace Ginger.Run
             }
 
 
-            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId == null)
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId == null)
             {
                 xDefaultLabIdRadioBtn.IsChecked = true;
-                xSealighsLabIdTextBox.Visibility = Visibility.Collapsed;
+                xSealightsLabIdTextBox.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -666,53 +668,54 @@ namespace Ginger.Run
                 XCustomLabIdRadioBtn_Checked(null, null);
             }
 
-            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null)
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID == null)
             {
                 xDefaultSessionIdRadioBtn.IsChecked = true;
-                xSealighsBuildSessionIDTextBox.Visibility = Visibility.Collapsed;
+                xSealightsBuildSessionIDTextBox.Visibility = Visibility.Collapsed;
             }
             else
             {
                 xCustomSessionIdRadioBtn.IsChecked = true;
                 XCustomSessionIdRadioBtn_Checked(null, null);
             }
-           
 
-            //Sealights Logger configuration settings should be visible only if the Sealight logger is set to yes in Configurations tab
-            if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == SealightsConfiguration.eSealightsLog.No)
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealightsExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
+
+            if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
             {
-                xSealighsExpander.Visibility = Visibility.Collapsed;
-            }
-            else if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null &&
-                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId == null &&
-                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage == null)
-            {
-                xSealighsExpander.IsExpanded = false; //Sealight expand control should collapsed if all 3 Sealights' settings are in ‘Default’ mode.
+                //Sealights Logger configuration settings should be visible only if the Sealight logger is set to yes in Configurations tab
+                if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == SealightsConfiguration.eSealightsLog.No)
+                {
+                    xSealightsExpander.Visibility = Visibility.Collapsed;
+                }
+                else if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID == null &&
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId == null &&
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage == null)
+                {
+                    xSealightsExpander.IsExpanded = false; //Sealight expand control should collapsed if all 3 Sealights' settings are in ‘Default’ mode.
+                }
             }
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSealighsExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xALMDefectsOpening, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
-
-            
         }
 
         private void XCustomSessionIdRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
-            xSealighsBuildSessionIDTextBox.Visibility = Visibility.Visible;
+            xSealightsBuildSessionIDTextBox.Visibility = Visibility.Visible;
 
-            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID.Trim() == "")
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID.Trim() == "")
             {
-                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID;
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID;
             }
         }
 
         private void XCustomLabIdRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
-            xSealighsLabIdTextBox.Visibility = Visibility.Visible;
+            xSealightsLabIdTextBox.Visibility = Visibility.Visible;
 
-            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId.Trim() == "")
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId == null || WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId.Trim() == "")
             {
-                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLabId;
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLabId;
             }
         }
 
@@ -726,24 +729,42 @@ namespace Ginger.Run
             }
         }
 
-
-
         private void XDefaultTestStageRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
             xSealightsTestStageTextBox.Visibility = Visibility.Collapsed;
             WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage = null;
         }
-
         private void XDefaultLabIdRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
-            xSealighsLabIdTextBox.Visibility = Visibility.Collapsed;
-            WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsLabId = null;
+            xSealightsLabIdTextBox.Visibility = Visibility.Collapsed;
+            WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsLabId = null;
         }
-
         private void XDefaultSessionIdRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
-            xSealighsBuildSessionIDTextBox.Visibility = Visibility.Collapsed;
-            WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealighsBuildSessionID = null;
+            xSealightsBuildSessionIDTextBox.Visibility = Visibility.Collapsed;
+            WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsBuildSessionID = null;
+        }
+        private void XDefaultTestRecommendationsRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            mRunSetConfig.SealightsTestRecommendationsRunsetOverrideFlag = false;
+            WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestRecommendations = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsTestRecommendations;
+        }
+        private void SealightsTestRecommendationRadioButtons_CheckedHandler(object sender, RoutedEventArgs e)
+        {
+            string value = ((RadioButton)sender).Tag?.ToString();
+
+            if (Enum.TryParse(value, out SealightsConfiguration.eSealightsTestRecommendations sealightsTestRecommendations))
+            {
+                if (sealightsTestRecommendations == SealightsConfiguration.eSealightsTestRecommendations.Yes)
+                {
+                    mRunSetConfig.SealightsTestRecommendations = SealightsConfiguration.eSealightsTestRecommendations.Yes;
+                }
+                else
+                {
+                    mRunSetConfig.SealightsTestRecommendations = SealightsConfiguration.eSealightsTestRecommendations.No;
+                }
+                mRunSetConfig.SealightsTestRecommendationsRunsetOverrideFlag = true;
+            }
         }
 
         void InitRunSetInfoSection()
@@ -1397,7 +1418,8 @@ namespace Ginger.Run
         {
             try
             {
-                bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified;
+                bool isSolutionSame = mRunSetConfig!= null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
+                bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;
                 if (bIsRunsetDirty && !IsCalledFromxUndoBtn)
                 {
                     UserSelectionSaveOrUndoRunsetChanges();
@@ -1517,7 +1539,7 @@ namespace Ginger.Run
         internal void SaveRunSetConfig()
         {
             try
-            {                
+            {
                 mRunSetConfig.AllowAutoSave = false;
                 Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
@@ -1555,8 +1577,7 @@ namespace Ginger.Run
                     index = mRunSetConfig.GingerRunners.IndexOf(mCurrentSelectedRunner.ExecutorEngine.GingerRunner) + 1;
                 }
                 GingerRunner newRunner = new GingerRunner();
-                GingerExecutionEngine executionEngine = new GingerExecutionEngine(newRunner);
-                //newRunner.Executor = new GingerExecutionEngine(newRunner);
+                newRunner.Executor = new GingerExecutionEngine(newRunner);
                 if (gingerRunner != null)
                 {
                     newRunner = gingerRunner;
@@ -1574,7 +1595,7 @@ namespace Ginger.Run
                 newRunner.PropertyChanged += Runner_PropertyChanged;
                 newRunner.ApplicationAgents.CollectionChanged -= RunnerApplicationAgents_CollectionChanged;
                 newRunner.ApplicationAgents.CollectionChanged += RunnerApplicationAgents_CollectionChanged;
-                WorkSpace.Instance.RunsetExecutor.InitRunner(newRunner, executionEngine);
+                WorkSpace.Instance.RunsetExecutor.InitRunner(newRunner,(GingerExecutionEngine)newRunner.Executor);
                 if (Count != index && index > 0) //TODO : Check if need to add in between runner.
                 {
                     mRunSetConfig.GingerRunners.Insert(index, newRunner);
@@ -1977,7 +1998,7 @@ namespace Ginger.Run
             {
                 string taskCommand = $"{Path.Combine(clientAppFolderPath, "index.html")} --allow-file-access-from-files";
                 System.IO.File.WriteAllText(Path.Combine(clientAppFolderPath, "assets\\Execution_Data\\executiondata.json"), json); //TODO - Replace with the real location under Ginger installation
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "chrome", Arguments= taskCommand, UseShellExecute = true });
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "chrome", Arguments = taskCommand, UseShellExecute = true });
             }
             catch (Exception ex)
             {
@@ -2537,7 +2558,7 @@ namespace Ginger.Run
         private void duplicateRunner(GingerExecutionEngine runner)
         {
             if (CheckIfExecutionIsInProgress()) { return; }
-
+             
             if (runner != null)
             {
                 GingerRunner GR = runner.GingerRunner;

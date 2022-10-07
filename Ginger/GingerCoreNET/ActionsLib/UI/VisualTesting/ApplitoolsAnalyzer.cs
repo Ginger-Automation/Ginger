@@ -66,7 +66,7 @@ namespace GingerCore.Actions.VisualTesting
 
         // We keep one static eyes so we can reuse across action and close when done, to support applitools behaviour
         static Applitools.Images.Eyes mEyes = null;
-        static Eyes newmEyes = null;
+        static Eyes WebEyes = null;
         static ClassicRunner runner = null;
         string mAppName;
         string mTestName;
@@ -133,37 +133,37 @@ namespace GingerCore.Actions.VisualTesting
             switch (matchLevel)
             {
                 case eMatchLevel.Content:
-                    newmEyes.MatchLevel = MatchLevel.Content;
+                    WebEyes.MatchLevel = MatchLevel.Content;
                     break;
                 case eMatchLevel.Exact:
-                    newmEyes.MatchLevel = MatchLevel.Exact;
+                    WebEyes.MatchLevel = MatchLevel.Exact;
                     break;
                 case eMatchLevel.Layout:
-                    newmEyes.MatchLevel = MatchLevel.Layout;
+                    WebEyes.MatchLevel = MatchLevel.Layout;
                     break;
                 case eMatchLevel.Strict:
-                    newmEyes.MatchLevel = MatchLevel.Strict;
+                    WebEyes.MatchLevel = MatchLevel.Strict;
                     break;
             }
         }
 
         void IVisualAnalyzer.Execute()
         {
-            //TODO:Remove hardcoded string and use typeof
+            //TODO: Remove hardcoded string and use typeof
             if (mDriver.GetType().Name == "SeleniumDriver")
             {
                 switch (GetSelectedApplitoolsActionEnum())
                 {
                     case eApplitoolsAction.OpenEyes:
-                        NewEyesOpen();
+                        WebEyesOpen();
                         break;
 
                     case eApplitoolsAction.Checkpoint:
-                        NewCheckpoint();
+                        WebCheckpoint();
                         break;
 
                     case eApplitoolsAction.CloseEyes:
-                        NewCloseEyes();
+                        WebCloseEyes();
                         break;
                 }
             }
@@ -184,7 +184,7 @@ namespace GingerCore.Actions.VisualTesting
                         break;
                 }
             }
-            
+
         }
 
 
@@ -196,8 +196,6 @@ namespace GingerCore.Actions.VisualTesting
                 mEyes = new Applitools.Images.Eyes();
 
                 //TODO: set the proxy
-                // IWebProxy p = WebRequest.DefaultWebProxy; // .GetSystemWebProxy();
-
                 mAppName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
                 mTestName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
                 mAct.CheckSetAppWindowSize();
@@ -221,7 +219,7 @@ namespace GingerCore.Actions.VisualTesting
                     mAct.Error += "Eyes Open Failed, Error: " + ex.Message;
                 }
             }
-            
+
         }
 
         private void Checkpoint()
@@ -234,20 +232,19 @@ namespace GingerCore.Actions.VisualTesting
             }
 
             SetEyesMatchLevel();
-            AppImage response = mEyes.CheckImage(mDriver.GetScreenShot());
+            mEyes.Check(mAct.ItemName, Applitools.Images.Target.Image(mDriver.GetScreenShot()).Fully());
             mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
 
         }
 
         private void CloseEyes()
         {
-            
+
             try
             {
-                TestResults TR = mEyes.Close(false);
-                // Update results info into outputs
-
-                SaveApplitoolsImages(TR);
+                TestResults TR = mEyes.Close();
+                //Update results info into outputs
+                //SaveApplitoolsImages(TR);
                 mAct.ExInfo = "URL to view results: " + TR.Url;
                 mAct.AddOrUpdateReturnParamActual("ResultsURL", TR.Url + "");
                 mAct.AddOrUpdateReturnParamActual("Steps", TR.Steps + "");
@@ -304,30 +301,27 @@ namespace GingerCore.Actions.VisualTesting
             {
                 mAct.Error += "Eyes Close operation failed, Error: " + ex.Message;
             }
-            finally
-            {
-                mEyes.AbortIfNotClosed();
-            }
+            
         }
 
-        void NewEyesOpen()
+        void WebEyesOpen()
         {
             List<int> mResolution = new List<int>();
             try
             {
                 runner = new ClassicRunner();
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any() && ((GingerExecutionEngine)WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners[0].Executor).ExecutedFrom == eExecutedFrom.Run)
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any(x=>x.Executor.IsRunning == true))
                 {
                     runner.DontCloseBatches = true;
                 }
-                newmEyes = new Eyes(runner);
+                WebEyes = new Eyes(runner);
                 mAppName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
                 mTestName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
                 
-                SetUp(newmEyes, mDriver.GetApplitoolServerURL(), mDriver.GetApplitoolKey(), ((SeleniumDriver)mDriver).GetBrowserType(), mDriver.GetEnvironment());
+                SetUp(WebEyes, mDriver.GetApplitoolServerURL(), mDriver.GetApplitoolKey(), ((SeleniumDriver)mDriver).GetBrowserType(), mDriver.GetEnvironment());
                 mAct.CheckSetAppWindowSize();
                 mResolution = mAct.GetWindowResolution();
-                newmEyes.Open(mDriver.GetWebDriver(), mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
+                WebEyes.Open(mDriver.GetWebDriver(), mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
             }
             catch (Exception ex)
             {
@@ -344,9 +338,9 @@ namespace GingerCore.Actions.VisualTesting
             
         }
 
-        private void NewCheckpoint()
+        private void WebCheckpoint()
         {
-            if (!newmEyes.IsOpen)
+            if (!WebEyes.IsOpen)
             {
                 mAct.Error = "Applitools Eyes is not opened";
                 mAct.ExInfo = "You require to add Eyes.Open Action on step before.";
@@ -359,7 +353,7 @@ namespace GingerCore.Actions.VisualTesting
             {
                 if (ActionTakenBy == "Window")
                 {
-                    newmEyes.Check(Target.Window().Fully().WithName(mAct.ItemName));
+                    WebEyes.Check(Target.Window().Fully().WithName(mAct.ItemName));
                 } 
                 else
                 {
@@ -367,8 +361,7 @@ namespace GingerCore.Actions.VisualTesting
                     locator.LocateBy = GetLocateBy();
                     locator.LocateValue = GetLocateValue();
                     IWebElement webElement = ((SeleniumDriver)mDriver).LocateElement(mAct, false,null,null);
-                    //IWebElement webElement = ((SeleniumDriver)mDriver).LocateElementByLocator(locator, true);
-                    newmEyes.Check(Target.Region(webElement).Fully().WithName(mAct.ItemName));
+                    WebEyes.Check(Target.Region(webElement).Fully().WithName(mAct.ItemName));
                 }
                     
                 
@@ -394,14 +387,14 @@ namespace GingerCore.Actions.VisualTesting
             
             
         }
-        private void NewCloseEyes()
+        private void WebCloseEyes()
         {
             try
             {
                 TestResults TR;
-                if (newmEyes.IsOpen)
+                if (WebEyes.IsOpen)
                 {
-                    TR = newmEyes.Close(false);
+                    TR = WebEyes.Close(false);
                 }
                 else
                 {
@@ -469,15 +462,11 @@ namespace GingerCore.Actions.VisualTesting
             {
                 mAct.Error += "Eyes Close operation failed, Error: " + ex.Message;
             }
-            finally
-            {
-                newmEyes.AbortIfNotClosed();
-            }
         }
         private void SetUp(Eyes eyes,string AppilToolServerUrl,string AppilToolsApiKey, eBrowserType BrowserType,string Environment)
         {
             Applitools.Selenium.Configuration config = new Applitools.Selenium.Configuration();
-            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any() && ((GingerExecutionEngine)WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners[0].Executor).ExecutedFrom == eExecutedFrom.Run)
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any(x => x.Executor.IsRunning == true))
             {
                 BatchInfo batchInfo = new BatchInfo(WorkSpace.Instance.RunsetExecutor.RunSetConfig.ItemName);
 
@@ -530,7 +519,6 @@ namespace GingerCore.Actions.VisualTesting
             int numOfSteps = testResult.Steps;
             DownloadImages(numOfSteps, testResult);
         }
-
         private String BakeURL(String sessionURL)
         {
             //Edit URL and prepare it to download images from report
@@ -612,14 +600,13 @@ namespace GingerCore.Actions.VisualTesting
             Match match = Regex.Match(URL, "^" + this.ServerURL + @"/app/batches/(?<batchId>\d+).*$");
             this.batchID = match.Groups[1].Value;
         }
-
+      
         private void setsessionID(TestResults testresult)
         {
             string URL = testresult.Url;
             Match match = Regex.Match(URL, "^" + this.ServerURL + @"/app/batches/\d+/(?<sessionId>\d+).*$");
             this.sessionID = match.Groups[1].Value;
         }
-
 
         private HttpResponseMessage runLongRequest(string URL)
         {

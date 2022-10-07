@@ -80,27 +80,33 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
 
             if (cliHelper.SetSealightsSettings)
-            {               
+            {
                 options.SealightsEnable = solution.SealightsConfiguration.SealightsLog == SealightsConfiguration.eSealightsLog.Yes ? true : false;
+                options.SealightsUrl = solution.SealightsConfiguration.SealightsURL;
                 options.SealightsLabID = solution.SealightsConfiguration.SealightsLabId;
                 options.SealightsSessionID = solution.SealightsConfiguration.SealightsBuildSessionID;
                 options.SealightsTestStage = solution.SealightsConfiguration.SealightsTestStage;
                 options.SealightsSessionTimeOut = solution.SealightsConfiguration.SealightsSessionTimeout;
                 options.SealightsEntityLevel = solution.SealightsConfiguration.SealightsReportedEntityLevel.ToString();
                 options.SealightsAgentToken = solution.SealightsConfiguration.SealightsAgentToken;
+                options.SealightsTestRecommendations = solution.SealightsConfiguration.SealightsTestRecommendations == SealightsConfiguration.eSealightsTestRecommendations.Yes;
 
                 //  Check Sealights's values on run-set levels
-                if (runsetExecutor.RunSetConfig.SealighsLabId != null)
+                if (runsetExecutor.RunSetConfig.SealightsLabId != null)
                 {
-                    options.SealightsLabID = runsetExecutor.RunSetConfig.SealighsLabId;
+                    options.SealightsLabID = runsetExecutor.RunSetConfig.SealightsLabId;
                 }
-                if (runsetExecutor.RunSetConfig.SealighsBuildSessionID != null)
+                if (runsetExecutor.RunSetConfig.SealightsBuildSessionID != null)
                 {
-                    options.SealightsSessionID = runsetExecutor.RunSetConfig.SealighsBuildSessionID;
+                    options.SealightsSessionID = runsetExecutor.RunSetConfig.SealightsBuildSessionID;
                 }
                 if (runsetExecutor.RunSetConfig.SealightsTestStage != null)
                 {
                     options.SealightsTestStage = runsetExecutor.RunSetConfig.SealightsTestStage;
+                }
+                if (runsetExecutor.RunSetConfig.SealightsTestRecommendationsRunsetOverrideFlag)
+                {
+                    options.SealightsTestRecommendations = runsetExecutor.RunSetConfig.SealightsTestRecommendations == SealightsConfiguration.eSealightsTestRecommendations.Yes;
                 }
             }
 

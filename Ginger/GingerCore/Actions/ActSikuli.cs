@@ -42,6 +42,7 @@ using System.Diagnostics;
 using System.Linq;
 using Amdocs.Ginger.Common.UIElement;
 using amdocs.ginger.GingerCoreNET;
+using GingerCore.DataSource;
 
 namespace GingerCore.Actions
 {
@@ -278,8 +279,9 @@ namespace GingerCore.Actions
             }
         }
 
-        public override void Execute()
+        public override async void Execute()
         {
+            string veProcessName = ProcessNameForSikuliOperation;
             if (CheckIfImageValidAndIfPercentageValidAndSelectedApplicationValid())
             {
                 string logMessage = string.Empty;
@@ -344,8 +346,9 @@ namespace GingerCore.Actions
                 {
                     if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
                     {
-                        sikuliLauncher.Stop();
+                        await sikuliLauncher.Stop();
                     }
+                    ProcessNameForSikuliOperation = veProcessName;
                 }
             }
         }
@@ -390,6 +393,11 @@ namespace GingerCore.Actions
                     ActiveProcessWindowsList.Add(process.Current.Name);
                     lstWindows.Add(process);
                 }
+            }
+            if (!string.IsNullOrEmpty(ProcessNameForSikuliOperation) &&
+                !ActiveProcessWindowsList.Contains(ProcessNameForSikuliOperation))
+            {
+                ActiveProcessWindowsList.Add(ProcessNameForSikuliOperation);
             }
         }
 
@@ -482,6 +490,7 @@ namespace GingerCore.Actions
 
         private bool CheckIfImageValidAndIfPercentageValidAndSelectedApplicationValid()
         {
+            SetProcessAsPerVE();
             if (string.IsNullOrEmpty(ValueExpression.Calculate(PatternPath)))
             {
                 Error = "File Path is Empty";
@@ -583,6 +592,22 @@ namespace GingerCore.Actions
             }
 
             return lstVal;
+        }
+
+        private void SetProcessAsPerVE()
+        {
+            ValueExpression mVE = new ValueExpression(Amdocs.Ginger.Common.Context.GetAsContext(Context).Environment, Amdocs.Ginger.Common.Context.GetAsContext(Context), WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
+            mVE.Value = ProcessNameForSikuliOperation;
+            string calculateValue = mVE.ValueCalculated;
+            bool bSimilar = ActiveProcessWindows.Any(p => p.Contains(calculateValue));
+            if (bSimilar)
+            {
+                ProcessNameForSikuliOperation = ActiveProcessWindows.First(p => p.Contains(calculateValue));
+            }
+            else
+            {
+                ProcessNameForSikuliOperation = String.Empty;
+            }
         }
     }
 }

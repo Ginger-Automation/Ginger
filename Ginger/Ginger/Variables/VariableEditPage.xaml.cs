@@ -34,6 +34,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using Ginger.Reports.ValidationRules;
 
 namespace Ginger.Variables
 {
@@ -74,6 +75,8 @@ namespace Ginger.Variables
             mContext = context;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTypeLbl, Label.ContentProperty, mVariable, nameof(VariableBase.VariableType), BindingMode: BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xVarNameTxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Name));
+            xVarNameTxtBox.AddValidationRule(new ValidateNotContainSpecificChar(',', "Variable name can't contain a comma (', ')"));
+            xVarNameTxtBox.AddValidationRule(new ValidateNotContainSpacesBeforeAfter());
             xShowIDUC.Init(mVariable);
             mVariable.NameBeforeEdit = mVariable.Name;            
             xVarNameTxtBox.GotFocus += XVarNameTxtBox_GotFocus;
@@ -336,7 +339,12 @@ namespace Ginger.Variables
 
         private void AutoValueBtn_Click(object sender, RoutedEventArgs e)
         {
-            mVariable.GenerateAutoValue();
+            string errorMsg = string.Empty;
+            mVariable.GenerateAutoValue(ref errorMsg);
+            if (!string.IsNullOrEmpty(errorMsg))
+            {
+                Reporter.ToUser(eUserMsgKey.VariablesAssignError, errorMsg);
+            }
         }
 
         private void SetLinkedVarCombo()

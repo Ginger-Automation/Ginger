@@ -9,8 +9,8 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <AssemblyVersion>4.1.0.0</AssemblyVersion>
-    <FileVersion>4.1.0.0</FileVersion>
+    <AssemblyVersion>4.5.1.1</AssemblyVersion>
+    <FileVersion>4.5.1.1</FileVersion>
     <RootNamespace>Amdocs.Ginger.CoreNET</RootNamespace>
     <GenerateResourceUsePreserializedResources>True</GenerateResourceUsePreserializedResources>
     <Version>4.1.0</Version>
@@ -232,15 +232,13 @@
   
     <PackageReference Include="EPPlus" Version="6.0.4" />
   
-    <PackageReference Include="Eyes.Images" Version="2.32.0" />
+    <PackageReference Include="Eyes.Images" Version="2.33.0" />
   
-    <PackageReference Include="Eyes.Sdk.Core" Version="2.51.0" />
-  
-    <PackageReference Include="Eyes.Selenium" Version="2.57.0" />
+    <PackageReference Include="Eyes.Selenium4" Version="2.59.0" />
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.1" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="4.4.1" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="4.5.3" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.21" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
   
@@ -277,8 +275,8 @@
     <PackageReference Include="NUglify" Version="1.9.7" />
     <PackageReference Include="Protractor" Version="1.0.0" />
     <PackageReference Include="RestSharp" Version="108.0.1" />
-    <PackageReference Include="Selenium.Support" Version="4.1.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.1.0" />
+    <PackageReference Include="Selenium.Support" Version="4.1.1" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.1.1" />
     <PackageReference Include="Selenium.WebDriver.Extensions" Version="3.3.0" />
     <PackageReference Include="SharpAdbClient" Version="2.3.23" />
     <PackageReference Include="SSH.NET" Version="2020.0.1" />

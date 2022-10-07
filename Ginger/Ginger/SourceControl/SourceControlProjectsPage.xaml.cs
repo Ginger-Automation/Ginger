@@ -31,6 +31,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using amdocs.ginger.GingerCoreNET;
 using System.Collections.Generic;
+using Amdocs.Ginger.UserControls;
 
 namespace Ginger.SourceControl
 {
@@ -42,6 +43,8 @@ namespace Ginger.SourceControl
         ObservableList<SolutionInfo> SourceControlSolutions = new ObservableList<SolutionInfo>();
 
         SolutionInfo solutionInfo = null;
+
+        ImageMakerControl loaderElement = new ImageMakerControl();
 
         GenericWindow genWin = null;
         Button downloadProjBtn = null;
@@ -61,7 +64,7 @@ namespace Ginger.SourceControl
             SourceControlLocalFolderTextBox.Visibility = Visibility.Collapsed;
             BrowseButton.Visibility = Visibility.Collapsed;
             SolutionsGrid.Visibility = Visibility.Collapsed;
-            
+
             IsImportSolution = IsCalledFromImportPage;
             Init();
 
@@ -70,13 +73,13 @@ namespace Ginger.SourceControl
         private void Init()
         {
             //ConnecitonDetailsPage Binding
-            if ( WorkSpace.Instance.UserProfile.SourceControlURL == null)
+            if (WorkSpace.Instance.UserProfile.SourceControlURL == null)
             {
 
-                 WorkSpace.Instance.UserProfile.SourceControlURL = "";
+                WorkSpace.Instance.UserProfile.SourceControlURL = "";
             }
 
-            SourceControlClassComboBox.Init( WorkSpace.Instance.UserProfile, nameof(UserProfile.SourceControlType), typeof(SourceControlBase.eSourceControlType), SourceControlClassComboBox_SelectionChanged);
+            SourceControlClassComboBox.Init(WorkSpace.Instance.UserProfile, nameof(UserProfile.SourceControlType), typeof(SourceControlBase.eSourceControlType), SourceControlClassComboBox_SelectionChanged);
             SourceControlClassComboBox.ComboBox.Items.RemoveAt(0);//removing the NONE option from user selection
 
             //ProjectPage Binding.
@@ -85,11 +88,11 @@ namespace Ginger.SourceControl
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlLocalFolderTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlLocalFolderForGlobalSolution));
                 mSourceControl.SourceControlLocalFolderForGlobalSolution = @"C:\GingerSourceControl\GlobalCrossSolutions";
             }
-            else 
+            else
             {
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlLocalFolderTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlLocalFolder));
             }
-            if (String.IsNullOrEmpty( WorkSpace.Instance.UserProfile.SourceControlLocalFolder))
+            if (String.IsNullOrEmpty(WorkSpace.Instance.UserProfile.SourceControlLocalFolder))
             {
                 // Default local solutions folder
                 mSourceControl.SourceControlLocalFolder = @"C:\GingerSourceControl\Solutions\";
@@ -114,14 +117,14 @@ namespace Ginger.SourceControl
         }
         private void SetConfigurationsVisibility()
         {
-            if ( WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
+            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
             {
                 xTimeoutPanel.Visibility = Visibility.Hidden;
                 xFetchBranchesButton.Visibility = Visibility.Visible;
                 xSelectBranchLabel.Visibility = Visibility.Visible;
                 xBranchesCombo.Visibility = Visibility.Visible;
             }
-            if ( WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
             {
                 xTimeoutPanel.Visibility = Visibility.Visible;
                 xFetchBranchesButton.Visibility = Visibility.Hidden;
@@ -129,7 +132,7 @@ namespace Ginger.SourceControl
                 xBranchesCombo.Visibility = Visibility.Hidden;
             }
         }
-        
+
         private void Bind()
         {
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlURLTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlURL));
@@ -171,7 +174,7 @@ namespace Ginger.SourceControl
                 {
                     SolutionsGrid.DataSourceList.Clear();
                 }
-                xProcessingIcon.Visibility = Visibility.Visible;
+                loaderElement.Visibility = Visibility.Visible;
                 if (SourceControlIntegration.BusyInProcessWhileDownloading)
                 {
                     Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
@@ -209,7 +212,7 @@ namespace Ginger.SourceControl
             }
             finally
             {
-                xProcessingIcon.Visibility = Visibility.Collapsed;
+                loaderElement.Visibility = Visibility.Collapsed;
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
 
                 if (SolutionsGrid.DataSourceList != null)
@@ -218,11 +221,16 @@ namespace Ginger.SourceControl
                     {
                         if (!IsImportSolution)
                         {
+                            DownloadButtonRow.Height = new GridLength(0);
                             downloadProjBtn.IsEnabled = true;
                         }
                         else
                         {
-                            DownloadButton.Visibility = Visibility.Visible;
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                DownloadButtonRow.Height = new GridLength(40);
+                                DownloadButton.Visibility = Visibility.Visible;
+                            });
                         }
                     }
                 }
@@ -287,7 +295,13 @@ namespace Ginger.SourceControl
             downloadProjBtn.Content = "Download Selected Solution";
             downloadProjBtn.Click += new RoutedEventHandler(GetProject_Click);
 
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Download Source Control Solution", this, new ObservableList<Button> { downloadProjBtn });
+            loaderElement.Name = "xProcessingImage";
+            loaderElement.Height = 30;
+            loaderElement.Width = 30;
+            loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
+            loaderElement.Visibility = Visibility.Collapsed;
+
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Download Source Control Solution", this, new ObservableList<Button> { downloadProjBtn }, true, "Close", null, false, loaderElement);
 
             if (solutionInfo != null)
             {
@@ -298,7 +312,7 @@ namespace Ginger.SourceControl
             }
             return "";
         }
-       
+
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             var dlg = new System.Windows.Forms.FolderBrowserDialog();
@@ -326,51 +340,52 @@ namespace Ginger.SourceControl
 
         public static void SourceControlInit()
         {
-            if ( WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
+            if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
                 mSourceControl = new GITSourceControl();
-            else if ( WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+            else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                 mSourceControl = new SVNSourceControl();
-            else if ( WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.None)
+            else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.None)
                 mSourceControl = new SVNSourceControl();
 
             if (mSourceControl != null)
             {
-                 WorkSpace.Instance.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
-                mSourceControl.SourceControlURL =  WorkSpace.Instance.UserProfile.SourceControlURL;
-                mSourceControl.SourceControlUser =  WorkSpace.Instance.UserProfile.SourceControlUser;
-                mSourceControl.SourceControlPass =  WorkSpace.Instance.UserProfile.SourceControlPass;
-                mSourceControl.SourceControlLocalFolder =  WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
+                WorkSpace.Instance.UserProfile.UserProfileOperations.RefreshSourceControlCredentials(mSourceControl.GetSourceControlType);
+                mSourceControl.SourceControlURL = WorkSpace.Instance.UserProfile.SourceControlURL;
+                mSourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
+                mSourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
+                mSourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
                 mSourceControl.SourceControlBranch = WorkSpace.Instance.UserProfile.SourceControlBranch;
 
-                mSourceControl.SourceControlConfigureProxy =  WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy;
-                mSourceControl.SourceControlProxyAddress =  WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
-                mSourceControl.SourceControlProxyPort =  WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
+                mSourceControl.SourceControlConfigureProxy = WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy;
+                mSourceControl.SourceControlProxyAddress = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
+                mSourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
 
                 // If the UserProfile has been deleted or been created for the first time
-                if ( WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout == 0)
+                if (WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout == 0)
                 {
-                     WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout = 80;
+                    WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout = 80;
                 }
-                mSourceControl.SourceControlTimeout =  WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
+                mSourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
                 mSourceControl.IsImportSolution = IsImportSolution;
 
+                mSourceControl.PropertyChanged -= SourceControl_PropertyChanged;
                 mSourceControl.PropertyChanged += SourceControl_PropertyChanged;
             }
         }
 
         private static void SourceControl_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-             WorkSpace.Instance.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
-             WorkSpace.Instance.UserProfile.SourceControlURL = mSourceControl.SourceControlURL;
-             WorkSpace.Instance.UserProfile.SourceControlUser = mSourceControl.SourceControlUser;
-             WorkSpace.Instance.UserProfile.SourceControlPass = mSourceControl.SourceControlPass;
-             WorkSpace.Instance.UserProfile.SourceControlLocalFolder = mSourceControl.SourceControlLocalFolder;
-             WorkSpace.Instance.UserProfile.SourceControlBranch = mSourceControl.SourceControlBranch;
+            WorkSpace.Instance.UserProfile.SourceControlType = mSourceControl.GetSourceControlType;
+            WorkSpace.Instance.UserProfile.SourceControlURL = mSourceControl.SourceControlURL;
+            WorkSpace.Instance.UserProfile.SourceControlUser = mSourceControl.SourceControlUser;
+            WorkSpace.Instance.UserProfile.SourceControlPass = mSourceControl.SourceControlPass;
+            WorkSpace.Instance.UserProfile.SourceControlLocalFolder = mSourceControl.SourceControlLocalFolder;
+            WorkSpace.Instance.UserProfile.SourceControlBranch = mSourceControl.SourceControlBranch;
 
-             WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = mSourceControl.SourceControlConfigureProxy;
-             WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress = mSourceControl.SourceControlProxyAddress;
-             WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort = mSourceControl.SourceControlProxyPort;
-             WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout = mSourceControl.SourceControlTimeout;
+            WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = mSourceControl.SourceControlConfigureProxy;
+            WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress = mSourceControl.SourceControlProxyAddress;
+            WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort = mSourceControl.SourceControlProxyPort;
+            WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout = mSourceControl.SourceControlTimeout;
         }
 
 
@@ -378,13 +393,13 @@ namespace Ginger.SourceControl
         {
             try
             {
-                if (string.IsNullOrEmpty(mSourceControl.SourceControlUser) || string.IsNullOrEmpty(mSourceControl.SourceControlPass) || string.IsNullOrEmpty(mSourceControl.SourceControlURL))
+                if (!mSourceControl.IsPublicRepo && (string.IsNullOrEmpty(mSourceControl.SourceControlUser) || string.IsNullOrEmpty(mSourceControl.SourceControlPass)) || string.IsNullOrEmpty(mSourceControl.SourceControlURL))
                 {
                     Reporter.ToUser(eUserMsgKey.SourceControlConnMissingConnInputs);
                     return;
                 }
                 xConnectButton.Visibility = Visibility.Visible;
-                xProcessingIcon.Visibility = Visibility.Visible;
+                loaderElement.Visibility = Visibility.Visible;
 
                 xConnectButton.IsEnabled = false;
                 SourceControlLocalFolderLable.Visibility = Visibility.Visible;
@@ -439,18 +454,23 @@ namespace Ginger.SourceControl
         private void ConfigureProxyCheckBoxUnchecked(object sender, RoutedEventArgs e)
         {
             ProxyAddressTextBox.IsEnabled = false;
-            ProxyPortTextBox.IsEnabled = false;            
+            ProxyPortTextBox.IsEnabled = false;
         }
 
         private void FetchBranches_Click(object sender, RoutedEventArgs e)
         {
-            xProcessingIcon.Visibility = Visibility.Visible;
+            loaderElement.Visibility = Visibility.Visible;
+            mSourceControl.IsPublicRepo = false;
             xBranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
             if (xBranchesCombo.Items.Count > 0)
             {
                 xBranchesCombo.SelectedIndex = 0;
+                if (String.IsNullOrEmpty(mSourceControl.SourceControlUser) || String.IsNullOrEmpty(mSourceControl.SourceControlPass))
+                {
+                    mSourceControl.IsPublicRepo = true;
+                }
             }
-            xProcessingIcon.Visibility = Visibility.Collapsed;
+            loaderElement.Visibility = Visibility.Collapsed;
         }
 
         private async void DownloadButton_Click(object sender, RoutedEventArgs e)
@@ -462,7 +482,7 @@ namespace Ginger.SourceControl
         {
             try
             {
-                xProcessingIcon.Visibility = Visibility.Visible;
+                loaderElement.Visibility = Visibility.Visible;
                 if (SourceControlIntegration.BusyInProcessWhileDownloading)
                 {
                     Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please wait for current process to end.");
@@ -521,7 +541,7 @@ namespace Ginger.SourceControl
             finally
             {
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
-                xProcessingIcon.Visibility = Visibility.Collapsed;
+                loaderElement.Visibility = Visibility.Collapsed;
             }
         }
     }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -22,10 +22,10 @@ using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Variables
 {
-    public class VariablePasswordString : VariableBase 
+    public class VariablePasswordString : VariableBase
     {
         public VariablePasswordString()
-        {            
+        {       
         }
 
         public override string VariableUIType
@@ -39,7 +39,7 @@ namespace GingerCore.Variables
         [IsSerializedForLocalRepository]
         public string Password 
         {
-            set { mPassword = value; Value = value; OnPropertyChanged(nameof(this.Password));  OnPropertyChanged("Formula"); }
+            set { mPassword = value; Value = value; OnPropertyChanged(nameof(this.Password)); OnPropertyChanged("Formula"); }
             get 
             {
                 if (!string.IsNullOrEmpty(mPassword))
@@ -53,7 +53,7 @@ namespace GingerCore.Variables
                 return mPassword;
             } 
         }
-        
+
         public override string GetFormula()
         {
             return Password;
@@ -64,9 +64,11 @@ namespace GingerCore.Variables
             Value = Password; 
         }
 
-        public override void GenerateAutoValue()
-        { 
+        public override bool GenerateAutoValue(ref string errorMsg)
+        {
             //NA
+            errorMsg = "Generate Auto Value is not supported";
+            return false;
         }
 
         public override eImageType Image { get { return eImageType.Password; } }

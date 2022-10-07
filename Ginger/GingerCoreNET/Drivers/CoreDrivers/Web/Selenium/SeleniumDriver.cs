@@ -61,7 +61,9 @@ using System.Text;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.DevTools;
 using Newtonsoft.Json;
-using DevToolsSessionDomains = OpenQA.Selenium.DevTools.V96.DevToolsSessionDomains;
+using DevToolsSessionDomains = OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains;
+using OpenQA.Selenium.DevTools.V101.Network;
 
 namespace GingerCore.Drivers
 {
@@ -69,6 +71,8 @@ namespace GingerCore.Drivers
     {
         protected IDevToolsSession Session;
         DevToolsSession devToolsSession;
+        DevToolsDomains devToolsDomains;
+        IDevTools devTools;
         List<Tuple<string,object>> networkResponseLogList;
         List<Tuple<string, object>> networkRequestLogList;
         INetwork interceptor;
@@ -6671,9 +6675,16 @@ namespace GingerCore.Drivers
                         if (!string.IsNullOrEmpty(POMGuid))
                         {
                             ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(p => p.Guid.ToString() == POMGuid).FirstOrDefault();
-                            POMUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);     // SelectedPOM?.PageURL;
+                            if (SelectedPOM != null)
+                            {
+                                POMUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);
+                                GotoURL(act, POMUrl);
+                            }
+                            else
+                            {
+                                act.Error = "Error: Selected POM was not found.";
+                            }
                         }
-                        GotoURL(act, POMUrl);
                     }
                     else
                     {
@@ -6799,43 +6810,16 @@ namespace GingerCore.Drivers
 
                     break;
                 case ActBrowserElement.eControlAction.StartMonitoringNetworkLog:
-                    
-                    if (AgentType == eBrowserType.Chrome.ToString())
-                    {
                         mAct = act;
                         SetUPDevTools(Driver);
                         StartMonitoringNetworkLog(Driver, act).GetAwaiter().GetResult();
-                    }
-                    else
-                    {
-                        act.ExInfo = "Action is skipped, Selected browser operation:" + act.ControlAction + "  is not supported for browser type:" + AgentType;
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                    }
-
                     break;
                 case ActBrowserElement.eControlAction.GetNetworkLog:
-                    if (AgentType == eBrowserType.Chrome.ToString())
-                    {
                         GetNetworkLogAsync(Driver, act).GetAwaiter().GetResult();
-                    }
-                    else
-                    {
-                        act.ExInfo = "Action is skipped, Selected browser operation:" + act.ControlAction + "  is not supported for browser type:" + AgentType;
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                    }
                     break;
                 case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
-                    if (AgentType == eBrowserType.Chrome.ToString())
-                    {
                         StopMonitoringNetworkLog(Driver, act).GetAwaiter().GetResult();
-                    }
-                    else
-                    {
-                        act.ExInfo = "Action is skipped, Selected browser operation:" + act.ControlAction + "  is not supported for browser type:" + AgentType;
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                    }
                     break;
-
                 case ActBrowserElement.eControlAction.NavigateBack:
                     Driver.Navigate().Back();
                     break;
@@ -7601,39 +7585,10 @@ namespace GingerCore.Drivers
 
         public HtmlDocument SSPageDoc = null;
 
-        public Bitmap GetScreenShot(bool IsFullPageScreenshot = false)
+        private Bitmap CaptureFullPageScreenshot()
         {
-            switch (mBrowserTpe)
-            {
-                case eBrowserType.FireFox:
-                    if (IsFullPageScreenshot)
-                    {
-                        var screenshot = ((FirefoxDriver)Driver).GetFullPageScreenshot();
-                        return ScreenshotToImage(screenshot);
-                    }
-                    break;
-                case eBrowserType.Edge:
-                case eBrowserType.Chrome:
-                    if (IsFullPageScreenshot)
-                    {
-                        var screenshot = ((OpenQA.Selenium.Chromium.ChromiumDriver)Driver).GetFullPageScreenshot();
-                        return ScreenshotToImage(screenshot);
-                    }
-                    break;
-                default:
-                    //
-                    break;
-            }
             try
             {
-                // If set to false only take screenshot of whats in view and not the whole page
-                if (!IsFullPageScreenshot)
-                {
-                    // return screenshot of what's visible currently in the viewport
-                    var screenshot = ((ITakesScreenshot)Driver).GetScreenshot();
-                    return ScreenshotToImage(screenshot);
-                }
-
                 // Scroll to Top
                 ((IJavaScriptExecutor)Driver).ExecuteScript(string.Format("window.scrollTo(0,0)"));
 
@@ -7708,6 +7663,41 @@ namespace GingerCore.Drivers
                 return null;
             }
         }
+
+        public Bitmap GetScreenShot(bool IsFullPageScreenshot = false)
+        {
+            if (!IsFullPageScreenshot)
+            {
+                // return screenshot of what's visible currently in the viewport
+                var screenshot = ((ITakesScreenshot)Driver).GetScreenshot();
+                return ScreenshotToImage(screenshot);
+            }
+            Bitmap bitmapImage = null;
+            switch (mBrowserTpe)
+            {
+                case eBrowserType.FireFox:
+                    var screenShot = ((FirefoxDriver)Driver).GetFullPageScreenshot();
+                    bitmapImage = ScreenshotToImage(screenShot);
+                    break;
+                case eBrowserType.Edge:
+                case eBrowserType.Chrome:
+                    if (Driver is InternetExplorerDriver)
+                    {
+                        bitmapImage = CaptureFullPageScreenshot();
+                    }
+                    else
+                    {
+                        var screenshot = ((OpenQA.Selenium.Chromium.ChromiumDriver)Driver).GetFullPageScreenshot();
+                        bitmapImage = ScreenshotToImage(screenshot);
+                    }
+                    break;
+                default:
+                    bitmapImage = CaptureFullPageScreenshot();
+                    break;
+            }
+            return bitmapImage;
+
+        }
         private Bitmap ScreenshotToImage(Screenshot screenshot)
         {
             TypeConverter tc = TypeDescriptor.GetConverter(typeof(Bitmap));
@@ -7724,7 +7714,7 @@ namespace GingerCore.Drivers
             {
                 string s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
 
-                RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
+                IWebElement ele = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
 
                 if (ele == null)
                 {
@@ -7782,7 +7772,7 @@ namespace GingerCore.Drivers
                 parentElementLocation.X += elemInfo.X;
                 parentElementLocation.Y += elemInfo.Y;
 
-                Point p_Pos = GetElementPosition(ele);
+                Point p_Pos = GetElementPosition((RemoteWebElement)ele);
                 ptX -= p_Pos.X;
                 ptY -= p_Pos.Y;
 
@@ -7833,7 +7823,7 @@ namespace GingerCore.Drivers
                             + "} "
                             + "return new Array(X, Y);";
 
-            RemoteWebDriver i_Driver = (RemoteWebDriver)i_Elem.WrappedDriver;
+            RemoteWebDriver i_Driver = (RemoteWebDriver)((RemoteWebElement)i_Elem).WrappedDriver;
             IList<Object> i_Coord = (IList<Object>)i_Driver.ExecuteScript(s_Script);
 
             int s32_ScrollX = Convert.ToInt32(i_Coord[0]);
@@ -7871,10 +7861,87 @@ namespace GingerCore.Drivers
         public Bitmap GetElementScreenshot(Act act)
         {
             WebElement element = (WebElement)LocateElement(act, false, null, null);
-            var screenshot = ((ITakesScreenshot)element).GetScreenshot();
-            return ScreenshotToImage(screenshot);
+            return CaptureScrollableElementScreenshot(element);
         }
 
+        private Bitmap CaptureScrollableElementScreenshot(WebElement element)
+        {
+            try
+            {
+                // Get the total size of the element
+                var offsetWidth = (int)(long)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].offsetWidth", element);
+                var scrollHeight = (int)(long)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].scrollHeight", element);
+
+                // Get the size of the viewport
+                var clientWidth = (int)(long)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].clientWidth", element);
+                var clientHeihgt = (int)(long)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].clientHeight", element);
+
+                // We only care about taking multiple images together if it doesn't already fit
+                if ((offsetWidth <= clientWidth) && (scrollHeight <= clientHeihgt))
+                {
+                    // return screenshot of what's visible currently in the viewport
+                    var screenshot = ((ITakesScreenshot)element).GetScreenshot();
+                    return ScreenshotToImage(screenshot);
+                }
+                // Split the screen in multiple Rectangles
+                var rectangles = new List<Rectangle>();
+                // Loop until the totalHeight is reached
+                for (var y = 0; y < scrollHeight; y += clientHeihgt)
+                {
+                    var newHeight = clientHeihgt;
+                    // Fix if the height of the element is too big
+                    if (y + clientHeihgt > scrollHeight)
+                        newHeight = scrollHeight - y;
+                    // Loop until the totalWidth is reached
+                    for (var x = 0; x < offsetWidth; x += clientWidth)
+                    {
+                        var newWidth = clientWidth;
+                        // Fix if the Width of the Element is too big
+                        if (x + clientWidth > offsetWidth)
+                            newWidth = offsetWidth - x;
+                        // Create and add the Rectangle
+                        var currRect = new Rectangle(x, y, newWidth, newHeight);
+                        rectangles.Add(currRect);
+                    }
+                }
+                // Build the Image
+                var stitchedImage = new Bitmap(offsetWidth, scrollHeight);
+                // Get all Screenshots and stitch them together
+                var previous = Rectangle.Empty;
+                foreach (var rectangle in rectangles)
+                {
+                    // Calculate the scrolling (if needed)
+                    if (previous != Rectangle.Empty)
+                    {
+                        var xDiff = rectangle.Right - previous.Right;
+                        var yDiff = rectangle.Bottom - previous.Bottom;
+                        // Scroll
+                        ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].scrollTo(arguments[1], arguments[2])", element, xDiff, yDiff);
+                    }
+                    // Take Screenshot
+                    var screenshot = ((ITakesScreenshot)element).GetScreenshot();
+                    // Build an Image out of the Screenshot
+                    var screenshotImage = ScreenshotToImage(screenshot);
+                    // Calculate the source Rectangle
+                    var sourceRectangle = new Rectangle(clientWidth - rectangle.Width, clientHeihgt - rectangle.Height, rectangle.Width, rectangle.Height);
+                    // Copy the Image
+                    using (var graphics = Graphics.FromImage(stitchedImage))
+                    {
+                        graphics.DrawImage(screenshotImage, rectangle, sourceRectangle, GraphicsUnit.Pixel);
+                    }
+                    // Set the Previous Rectangle
+                    previous = rectangle;
+                }
+                return stitchedImage;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to capture scrollable element screenshot", ex);
+                var screenshot = ((ITakesScreenshot)element).GetScreenshot();
+                return ScreenshotToImage(screenshot);
+            }
+
+        }
         VisualElementsInfo IVisualTestingDriver.GetVisualElementsInfo()
         {
             VisualElementsInfo VEI = new VisualElementsInfo();
@@ -8678,12 +8745,14 @@ namespace GingerCore.Drivers
         private void SetUPDevTools(IWebDriver webDriver)
         {
             //Get DevTools
-            var devTool = webDriver as IDevTools;
+            devTools = webDriver as IDevTools;
 
             //DevTool Session 
-            devToolsSession = devTool.GetDevToolsSession(96);
-            var domains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V96.DevToolsSessionDomains>();
-            domains.Network.Enable(new OpenQA.Selenium.DevTools.V96.Network.EnableCommandSettings());
+            devToolsSession = devTools.GetDevToolsSession(101);
+            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains>();
+            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V101.Network.EnableCommandSettings());
+            
+               
         }
         public async Task GetNetworkLogAsync(IWebDriver webDriver, ActBrowserElement act)
         {
@@ -8731,6 +8800,8 @@ namespace GingerCore.Drivers
 
                 interceptor.NetworkRequestSent -= OnNetworkRequestSent;
                 interceptor.NetworkResponseReceived -= OnNetworkResponseReceived;
+                interceptor.ClearRequestHandlers();
+                interceptor.ClearResponseHandlers();
                 act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
                 act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
                 foreach (var val in networkRequestLogList.ToList())
@@ -8741,8 +8812,15 @@ namespace GingerCore.Drivers
                 {
                     act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                 }
-                CreateNetworkLogFile("NetworklogRequest");
-                CreateNetworkLogFile("NetworklogResponse");
+
+                await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V101.Network.DisableCommandSettings());
+                devToolsSession.Dispose();
+                devTools.CloseDevToolsSession();
+
+                string requestPath = CreateNetworkLogFile("NetworklogRequest");
+                act.ExInfo = "RequestFile : " + requestPath + "\n";
+                string responsePath = CreateNetworkLogFile("NetworklogResponse");
+                act.ExInfo = act.ExInfo +  "ResponseFile : " + responsePath + "\n";
 
             }
             else
@@ -8754,25 +8832,28 @@ namespace GingerCore.Drivers
 
         }
 
-        private void CreateNetworkLogFile(string Filename)
+        private string CreateNetworkLogFile(string Filename)
         {
+            string FullFilePath = string.Empty;
             string FullDirectoryPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, "Documents", "NetworkLog");
             if (!System.IO.Directory.Exists(FullDirectoryPath))
             {
                 System.IO.Directory.CreateDirectory(FullDirectoryPath);
             }
 
-            string FullFilePath = FullDirectoryPath + @"\" + Filename + DateTime.Now.Day.ToString() + "_" + DateTime.Now.Month.ToString() + "_" + DateTime.Now.Year.ToString() + "_" + DateTime.Now.Millisecond.ToString() + ".har";
+            FullFilePath = FullDirectoryPath + @"\" + Filename + DateTime.Now.Day.ToString() + "_" + DateTime.Now.Month.ToString() + "_" + DateTime.Now.Year.ToString() + "_" + DateTime.Now.Millisecond.ToString() + ".har";
             if (!System.IO.File.Exists(FullFilePath))
             {
-                string FileContent = Filename.Contains("Request") ? JsonConvert.SerializeObject(networkRequestLogList.ToList()) : JsonConvert.SerializeObject(networkResponseLogList.ToList());
+                string FileContent = Filename.Contains("Request") ? JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()) : JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList());
                 
                 using (Stream fileStream = System.IO.File.Create(FullFilePath))
                 {
                     fileStream.Close();
                 }
                 System.IO.File.WriteAllText(FullFilePath, FileContent);
+                
             }
+            return FullFilePath;
         }
 
         private void OnNetworkRequestSent(object sender, NetworkRequestSentEventArgs e)

@@ -91,6 +91,11 @@ namespace Ginger.Actions
 
             ElementImageSourceChanged(true);
             SetJavaRelatedDetails();
+            xProcessValueEditor.ShowTextBox(false);
+            xProcessValueEditor.Init(Context.GetAsContext(actSikuli.Context), actSikuli.GetOrCreateInputParam(nameof(actSikuli.ProcessNameForSikuliOperation),
+               actSikuli.ProcessNameForSikuliOperation), true, false);
+            xProcessValueEditor.ValueTextBox.TextChanged -= ProcessValueTextBox_TextChanged;
+            xProcessValueEditor.ValueTextBox.TextChanged += ProcessValueTextBox_TextChanged;
         }
 
         private void SetJavaRelatedDetails()
@@ -107,6 +112,29 @@ namespace Ginger.Actions
                 JavaPathHomeRdb.IsChecked = true;
                 JavaPathOtherRdb.IsChecked = false;
                 JavaPathTextBox.ValueTextBox.Text = string.Empty;
+            }
+        }
+
+        private void ProcessValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(xProcessValueEditor.ValueTextBox.Text))
+            {
+                for (int i = 0; i < xActiveProcessesTitlesComboBox.Items.Count; i++)
+                {
+                    ComboEnumItem item = xActiveProcessesTitlesComboBox.Items[i] as ComboEnumItem;
+                    if (item.Value.Equals(actSikuli.ProcessNameForSikuliOperation))
+                    {
+                        xActiveProcessesTitlesComboBox.SelectedIndex = i;
+                        return;
+                    }
+                }
+                ComboEnumItem newItem = new ComboEnumItem()
+                {
+                    text = actSikuli.ProcessNameForSikuliOperation,
+                    Value = actSikuli.ProcessNameForSikuliOperation
+                };
+                int index = xActiveProcessesTitlesComboBox.Items.Add(newItem);
+                xActiveProcessesTitlesComboBox.SelectedIndex = index;
             }
         }
 
@@ -131,15 +159,17 @@ namespace Ginger.Actions
             xPatternImageLocationTextBox.ValueTextBox.Text = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(actSikuli.PatternPath);
 
             App.MainWindow.WindowState = WindowState.Minimized;
-            actSikuli.SetFocusToSelectedApplicationInstance();
-
-            System.Threading.Tasks.Task.Run(() => OpenSnippingTool()).ContinueWith(t =>
+            System.Threading.Tasks.Task.Run(() => actSikuli.SetFocusToSelectedApplicationInstance()).ContinueWith((result) =>
             {
-                if (t.Result)
+
+                System.Threading.Tasks.Task.Run(() => OpenSnippingTool()).ContinueWith(t =>
                 {
-                    ElementImageSourceChanged();
-                }
-            }, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
+                    if (t.Result)
+                    {
+                        xPatternImageLocationTextBox.Dispatcher.Invoke(ElementImageSourceChanged, false);
+                    }
+                });
+            });
         }
 
         private string GetPathToExpectedImage()
@@ -230,13 +260,6 @@ namespace Ginger.Actions
 
         void RefreshProcessesCombo()
         {
-            if (!string.IsNullOrEmpty(actSikuli.ProcessNameForSikuliOperation))
-            {
-                if (!actSikuli.ActiveProcessWindows.Contains(actSikuli.ProcessNameForSikuliOperation))
-                {
-                    actSikuli.ActiveProcessWindows.Add(actSikuli.ProcessNameForSikuliOperation);
-                }
-            }
             GingerCore.General.FillComboFromList(xActiveProcessesTitlesComboBox, actSikuli.ActiveProcessWindows);
         }
 

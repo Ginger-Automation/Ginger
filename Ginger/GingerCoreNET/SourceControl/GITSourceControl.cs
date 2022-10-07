@@ -27,6 +27,7 @@ using LibGit2Sharp.Handlers;
 using System.IO;
 using GingerCoreNET.SourceControl;
 using amdocs.ginger.GingerCoreNET;
+using System.Diagnostics;
 
 namespace GingerCore.SourceControl
 {
@@ -70,43 +71,61 @@ namespace GingerCore.SourceControl
 
         public override bool CommitChanges(ICollection<string> Paths, string Comments, ref string error, ref List<string> conflictsPaths, bool includLockedFiles = false)
         {
-            //Commit Changes
-            bool result = true;
-            try
+            if (TestConnection(ref error))
             {
-                Commit(Comments);
-            }
-            catch (Exception e)
-            {
-                error = e.Message + Environment.NewLine + e.InnerException;
-
-            }
-            finally
-            {
+                //Commit Changes
+                bool result = true;
                 try
                 {
-                    Push();
-                    Pull();
-                    using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
-                    {
-                        Reporter.ToUser(eUserMsgKey.CommitedToRevision, repo.Head.Tip.Sha);
-                    }
+                    Commit(Comments);
                 }
                 catch (Exception e)
                 {
+                    error = e.Message + Environment.NewLine + e.InnerException;
+                    Reporter.ToLog(eLogLevel.ERROR, error, e);
 
-                    error = error + Environment.NewLine + e.Message + Environment.NewLine + e.InnerException;
+                }
+                finally
+                {
                     try
                     {
+                        Push();
                         Pull();
+                        using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                        {
+                            Reporter.ToUser(eUserMsgKey.CommitedToRevision, repo.Head.Tip.Sha);
+                        }
                     }
-                    catch { }
+                    catch (Exception e)
+                    {
 
-                    conflictsPaths = GetConflictsPaths();
-                    result = false;
+                        error = error + Environment.NewLine + e.Message + Environment.NewLine + e.InnerException;
+                        if (e.Message.Contains("403"))
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Check-In Failed, please check if user has Write Permission for this repository");
+                        }
+                        else
+                        {
+                            Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, e.Message);
+                        }
+                        Reporter.ToLog(eLogLevel.ERROR, error, e);
+                        try
+                        {
+                            Pull();
+                        }
+                        catch { }
+
+                        conflictsPaths = GetConflictsPaths();
+                        result = false;
+                    }
                 }
+                return result;
             }
-            return result;
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unable to connect to repository");
+                return false;
+            }
         }
 
         private List<string> GetConflictsPathsforGetLatestConflict(string path)
@@ -120,8 +139,15 @@ namespace GingerCore.SourceControl
             }
             catch (Exception e)
             {
-                Pull();
-                Console.WriteLine(e.StackTrace);
+                try
+                {
+                    Pull();
+                    Console.WriteLine(e.StackTrace);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, ex.Message, ex);
+                }
             }
             finally
             {
@@ -129,8 +155,10 @@ namespace GingerCore.SourceControl
                 {
                     conflictPaths = GetConflictsPaths();
                 }
-                catch
-                { }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, ex.Message, ex);
+                }
             }
             return conflictPaths;
         }
@@ -242,39 +270,47 @@ namespace GingerCore.SourceControl
         public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths)
         {
             Console.WriteLine("GITHub - GetLatest");
-            try
+            if (TestConnection(ref error))
             {
-                MergeResult result;
-                result = Pull();
-
-                if (result.Status != MergeStatus.Conflicts)
+                try
                 {
-                    using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                    MergeResult result;
+                    result = Pull();
+
+                    if (result.Status != MergeStatus.Conflicts)
+                    {
+                        using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                        {
+                            if (supressMessage == true)
+
+                                Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully, Update status: " + result.Status + ", to Revision :" + repo.Head.Tip.Sha);
+
+                            else
+                                Reporter.ToUser(eUserMsgKey.GitUpdateState, result.Status, repo.Head.Tip.Sha);
+                        }
+                    }
+                    else
                     {
                         if (supressMessage == true)
-
-                            Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully, Update status: " + result.Status + ", to Revision :" + repo.Head.Tip.Sha);
-
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to update the solution from source control. Error Details: 'The files are not connected to source control'");
                         else
-                            Reporter.ToUser(eUserMsgKey.GitUpdateState, result.Status, repo.Head.Tip.Sha);
+                            Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "The files are not connected to source control");
                     }
-                }
-                else
-                {
-                    if (supressMessage == true)
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to update the solution from source control. Error Details: 'The files are not connected to source control'");
-                    else
-                        Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "The files are not connected to source control");
-                }
 
+                }
+                catch (Exception ex)
+                {
+                    conflictsPaths = GetConflictsPathsforGetLatestConflict(path);
+                    error = ex.Message + Environment.NewLine + ex.InnerException;
+                    return false;
+                }
+                return true;
             }
-            catch (Exception ex)
+            else
             {
-                conflictsPaths = GetConflictsPathsforGetLatestConflict(path);
-                error = ex.Message + Environment.NewLine + ex.InnerException;
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unable to connect to repository");
                 return false;
             }
-            return true;
         }
 
         public override ObservableList<SourceControlFileInfo> GetPathFilesStatus(string Path, ref string error, bool includLockedFiles = false)
@@ -299,7 +335,7 @@ namespace GingerCore.SourceControl
                             continue;
                         }
 
-                        if (System.IO.Path.GetExtension(item.FilePath) == ".ldb" || System.IO.Path.GetExtension(item.FilePath) == ".ignore")
+                        if (System.IO.Path.GetExtension(item.FilePath) == ".ldb" || System.IO.Path.GetExtension(item.FilePath) == ".ignore" || System.IO.Path.GetExtension(item.FilePath) == ".db")
                             continue;
 
 
@@ -549,14 +585,21 @@ namespace GingerCore.SourceControl
             Console.WriteLine("GITHub - TestConnection");
             try
             {
-                if (SourceControlUser.Length != 0)
+                if (IsPublicRepo)
                 {
-                    IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL, GetSourceCredentialsHandler());
+                    IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL);
                 }
                 else
                 {
-                    error = "Username cannot be empty";
-                    return false;
+                    if (SourceControlUser.Length != 0)
+                    {
+                        IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL, GetSourceCredentialsHandler());
+                    }
+                    else
+                    {
+                        error = "Username cannot be empty";
+                        return false;
+                    }
                 }
             }
             catch (Exception ex)
@@ -824,7 +867,8 @@ namespace GingerCore.SourceControl
                         {
                             filePath = filePath.Replace(@"/", @"\");
                         }
-                        ConflictPaths.Add(Path.Combine(RepositoryRootFolder, filePath));
+                        string fullPath = Path.Combine(RepositoryRootFolder, filePath);
+                            ConflictPaths.Add(fullPath);
                     }
                 }
             }

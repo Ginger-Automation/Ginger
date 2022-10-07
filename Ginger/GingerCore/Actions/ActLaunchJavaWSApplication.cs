@@ -1024,7 +1024,7 @@ namespace GingerCore.Actions
                     return false;
                 }
 
-                var processHandle = Process.Start(new ProcessStartInfo() { FileName = handleExePath, Arguments = String.Format(" -p {0} GingerAgent.jar", id), UseShellExecute = false, RedirectStandardOutput = true });
+                var processHandle = Process.Start(new ProcessStartInfo() { FileName = handleExePath, Arguments = String.Format(" -accepteula -p {0} GingerAgent.jar", id), UseShellExecute = false, RedirectStandardOutput = true });
                 string cliOut = processHandle.StandardOutput.ReadToEnd();
                 processHandle.WaitForExit();
                 processHandle.Close();

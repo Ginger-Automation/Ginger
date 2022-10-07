@@ -446,8 +446,10 @@ namespace Ginger.Repository
             //TODO - find better way to get unique name
         }
 
+
+        //TODO: Not a good solution. Each time we make changes to Linked Activity, we traverse all the flows in the solution
         private static readonly object saveLock = new object();
-        public static async Task UpdateLinkedInstances(Activity mActivity)
+        public static async Task UpdateLinkedInstances(Activity mActivity, string ExcludeBusinessFlowGuid = null)
         {
             try
             {
@@ -455,12 +457,11 @@ namespace Ginger.Repository
                 await Task.Run(() =>
                 {
                     ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-
                     Parallel.ForEach(BizFlows, BF =>
                     {
                         try
                         {
-                            if (BF.Activities.Any(f => f.IsLinkedItem && f.ParentGuid == mActivity.Guid))
+                            if (!BF.ActivitiesLazyLoad && BF.Guid.ToString() != ExcludeBusinessFlowGuid && BF.Activities.Any(f => f.IsLinkedItem && f.ParentGuid == mActivity.Guid))
                             {
                                 for (int i = 0; i < BF.Activities.Count(); i++)
                                 {
@@ -493,5 +494,28 @@ namespace Ginger.Repository
             }
         }
 
+        /// <summary>
+        /// Save a Linked activity
+        /// </summary>
+        /// <param name="LinkedActivity">Linked activity used in the flow to save</param>
+        /// <returns></returns>
+        public static async Task SaveLinkedActivity(Activity LinkedActivity, string ExcludeBusinessFlowGuid)
+        {
+            Activity sharedActivity = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(LinkedActivity.ParentGuid);
+            if (sharedActivity != null)
+            {
+                WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(sharedActivity);
+                sharedActivity = (Activity)LinkedActivity.CreateInstance(true);
+                sharedActivity.Guid = LinkedActivity.ParentGuid;
+                sharedActivity.Type = eSharedItemType.Regular;
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(sharedActivity);
+                LinkedActivity.EnableEdit = false;
+                await UpdateLinkedInstances(sharedActivity, ExcludeBusinessFlowGuid);
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Activity not found in shared repository.");
+            }
+        }
     }
 }

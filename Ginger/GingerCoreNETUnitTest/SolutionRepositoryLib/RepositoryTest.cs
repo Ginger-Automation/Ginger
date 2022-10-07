@@ -1388,5 +1388,23 @@ namespace UnitTests.NonUITests
            Assert.AreNotEqual(sampleFC.Guid, copiedItemNew.ActFlowControls[0].Guid); 
         }
 
+        [TestMethod]
+
+        public void ActivityGroupTest()
+        {
+            //Arrange
+            NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
+            string FileName = TestResources.GetTestResourcesFile(@"Repository" + Path.DirectorySeparatorChar + "ActivityGroupFlow.Ginger.BusinessFlow.xml");
+
+            //Load BF
+            BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
+
+            var bfactivitycount = businessFlow.Activities.Count;
+            //Assert
+            Assert.AreEqual(3, businessFlow.ActivitiesGroups[0].ActivitiesIdentifiers.Count, "BF ActivitiesIdentifiers Count");
+            Assert.AreEqual(1, businessFlow.Activities[0].Acts.Count, "Activity Actions Count");
+
+        }
+
     }
 }
