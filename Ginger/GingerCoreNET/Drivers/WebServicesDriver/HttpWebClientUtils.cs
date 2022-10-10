@@ -244,8 +244,24 @@ namespace GingerCore.Actions.WebAPI
                 Handler.ClientCertificateOptions = ClientCertificateOption.Manual;
                 //string path = (mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath).ToString().Replace(@"~\", mAct.SolutionFolder));
                 string path = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath));
-
-                if (!string.IsNullOrEmpty(path))
+                string keyPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.KeyFilePath));
+                if (!string.IsNullOrEmpty(path) && !string.IsNullOrEmpty(keyPath))
+                {
+                    var certPem = File.ReadAllText(path);
+                    var keyPem = File.ReadAllText(keyPath);
+                    string passwordKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
+                    if (!string.IsNullOrEmpty(passwordKey))
+                    {
+                        X509Certificate2 customCertificate = X509Certificate2.CreateFromEncryptedPemFile(certPem, passwordKey, keyPem);
+                        Handler.ClientCertificates.Add(customCertificate);
+                    }
+                    else
+                    {
+                        X509Certificate2 customCertificate = X509Certificate2.CreateFromPemFile(certPem, keyPem);
+                        Handler.ClientCertificates.Add(customCertificate);
+                    }
+                }
+                else if (!string.IsNullOrEmpty(path))
                 {
                     string CertificateKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
                     if (!string.IsNullOrEmpty(CertificateKey))
@@ -255,7 +271,7 @@ namespace GingerCore.Actions.WebAPI
                         ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
                     }
                     else
-                    { 
+                    {
                         //Case Certifacte key/password is not required
                         X509Certificate2 customCertificate = new X509Certificate2(path);
                         Handler.ClientCertificates.Add(customCertificate);

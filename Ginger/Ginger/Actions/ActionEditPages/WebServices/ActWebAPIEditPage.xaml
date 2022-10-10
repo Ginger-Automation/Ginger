@@ -171,7 +171,7 @@
                         <StackPanel>
                             <Frame x:Name="Certificates"/>
                             <StackPanel Orientation="Horizontal">
-                                <Label Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Left" Margin="0,0,0,0">SSL Certificates:</Label>
+                                <Label Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" HorizontalAlignment="Left" Margin="0,0,0,0">SSL Certificates:</Label>
                                 <StackPanel Orientation="Horizontal" x:Name="CertificateSelection">
                                     <UserControlsLib:UCRadioButtons x:Name="CertificateTypeRadioButton" Margin="0,0,0,0"></UserControlsLib:UCRadioButtons>
                                 </StackPanel>
@@ -179,26 +179,43 @@
                         </StackPanel>
 
                         <StackPanel x:Name="CertificateStackPanel" Visibility="Collapsed" Orientation="Vertical" Margin="20,0,0,0" >
-                            <Label Style="{StaticResource @InputFieldLabelStyle}">Certificate Path:</Label>
-                            <StackPanel Orientation="Vertical">
-                                <Actions:UCValueExpression x:Name="CertificatePath" Margin="0,0,0,0"/>
-                                <CheckBox x:Name="DoNotCertificateImportFile" Content="Import Certificate file to Solution folder" ToolTip="If checked the selected certificate file will be imported to ~Documents\Certificates\" HorizontalAlignment="Left" Margin="0,1,0,0" Style="{StaticResource @InputCheckBoxStyle}"/>
-                            </StackPanel>
-                            <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,5,0,0">Certificate Password:</Label>
-                            <Actions:UCValueExpression x:Name="CertificatePasswordUCValueExpression" Margin="0,0,0,0"/>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="30"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Style="{StaticResource @LabelStyle}" Content="Certificate Path:" Grid.Row="0" Grid.Column="0"/>
+                                <Actions:UCValueExpression x:Name="CertificatePath" Margin="0,0,0,0" Grid.Row="0" Grid.Column="1"/>
+                                <CheckBox x:Name="DoNotCertificateImportFile" Content="Import Certificate file to Solution folder" Grid.Row="1" Grid.Column="1" ToolTip="If checked the selected certificate file will be imported to ~Documents\Certificates\" HorizontalAlignment="Left" Margin="0,1,0,0" Style="{StaticResource @InputCheckBoxStyle}"/>
+
+                                <Label Style="{StaticResource @LabelStyle}" Content="Key File Path:" Grid.Row="2" Grid.Column="0"/>
+                                <Actions:UCValueExpression x:Name="KeyFilePath" Margin="0,0,0,0" Grid.Row="2" Grid.Column="1"/>
+                                <CheckBox x:Name="ImportKeyFile" Content="Import Key file to Solution folder" Grid.Row="3" Grid.Column="1" ToolTip="If checked the selected Key file will be imported to ~Documents\Certificates\" HorizontalAlignment="Left" Margin="0,1,0,0" Style="{StaticResource @InputCheckBoxStyle}"/>
+
+                                <Label Style="{StaticResource @LabelStyle}" Margin="0,5,0,0" Grid.Row="4" Grid.Column="0" Content="Certificate Password:" />
+                                <Actions:UCValueExpression x:Name="CertificatePasswordUCValueExpression" Grid.Row="4" Grid.Column="1" Margin="0,0,0,0"/>
+                            </Grid>
+
                         </StackPanel>
                         <StackPanel Width="175" HorizontalAlignment="Left" Margin="0,5,0,0">
-                            <Label Style="{StaticResource @InputFieldLabelStyle}">Security Type:</Label>
+                            <Label Style="{StaticResource @LabelStyle}" FontWeight="SemiBold">Security Type:</Label>
                             <UserControlsLib:UCComboBox x:Name="SecurityTypeComboBox" ></UserControlsLib:UCComboBox>
                         </StackPanel>
                         <StackPanel Width="175" HorizontalAlignment="Left" Margin="0,5,0,0">
-                            <Label Style="{StaticResource @InputFieldLabelStyle}">Authorization:</Label>
+                            <Label Style="{StaticResource @LabelStyle}" FontWeight="SemiBold">Authorization:</Label>
                             <UserControlsLib:UCComboBox x:Name="AuthTypeComboBox" Grid.Column="0" ></UserControlsLib:UCComboBox>
                         </StackPanel>
                         <StackPanel x:Name="Auth_Creds" Visibility="Collapsed" Margin="20,0,0,0" HorizontalAlignment="Left">
-                            <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">User:</Label>
+                            <Label Style="{StaticResource @LabelStyle}" Margin="0,0,0,0">User:</Label>
                             <Actions:UCValueExpression x:Name="AuthUserUCValueExpression" Width="600" Margin="0,0,0,0"/>
-                            <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">Password:</Label>
+                            <Label Style="{StaticResource @LabelStyle}" Margin="0,0,0,0">Password:</Label>
                             <Actions:UCValueExpression x:Name="AuthPasswordUCValueExpression" Width="600" Margin="0,0,0,0"/>
                         </StackPanel>
                         <StackPanel Margin="0,15,0,0"></StackPanel>

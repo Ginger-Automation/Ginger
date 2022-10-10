@@ -72,6 +72,7 @@ namespace GingerCore.Actions.WebServices
             public static string DoNotFailActionOnBadRespose = "DoNotFailActionOnBadRespose";
             public static string CertificateTypeRadioButton = "CertificateTypeRadioButton";
             public static string CertificatePath = "CertificatePath";
+            public static string KeyFilePath = "KeyFilePath";
             public static string CertificatePassword = "CertificatePassword";
             public static string AuthorizationType = "AuthorizationType";
             public static string AuthUsername = "AuthUsername";
@@ -84,6 +85,7 @@ namespace GingerCore.Actions.WebServices
             public static string NetworkCredentialsRadioButton = "NetworkCredentialsRadioButton";
             public static string ImportRequestFile = "ImportRequestFile";
             public static string ImportCetificateFile = "ImportCetificateFile";
+            public static string ImportKeyFile = "ImportKeyFile";
 
             public static string UseLegacyJSONParsing = "UseLegacyJSONParsing";
 
