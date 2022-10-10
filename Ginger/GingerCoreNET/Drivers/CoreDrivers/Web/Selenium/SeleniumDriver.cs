@@ -4151,6 +4151,8 @@ namespace GingerCore.Drivers
             //AutoGenerateFlows - Activities
             if (AutoGenerateFlows && formElementsList.Count() != 0)
             {
+                Reporter.ToLog(eLogLevel.INFO, "Started generating activities based on input tag.");
+
                 int activityIndex = 1;
                 for (int i=0; i < formElementsList.Count; i++)
                 {
@@ -4188,7 +4190,7 @@ namespace GingerCore.Drivers
 
                     PomActivityList.Add(activity);
                 }
-                //generate activity from found element actions
+                Reporter.ToLog(eLogLevel.INFO, "Finished generating activities based on input tag.");
             }
 
             return foundElementsList;
