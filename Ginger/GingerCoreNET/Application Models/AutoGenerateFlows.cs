@@ -19,6 +19,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
     {
         public static ObservableList<Activity> CreatePOMActivitiesFromMetadata(ApplicationPOMModel POM)
         {
+            Reporter.ToLog(eLogLevel.INFO, "Started generating activities based on pom meta data.");
             ObservableList<Activity> activities = new ObservableList<Activity>();
             foreach (POMMetaData metaData in POM.ApplicationPOMMetaData)
             {
@@ -77,7 +78,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 }
                 activities.Add(activity);//check activity has actions
             }
-
+            Reporter.ToLog(eLogLevel.INFO, "Finished generating activities based on pom meta data.");
             return activities;
         }
     }
