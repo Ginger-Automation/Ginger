@@ -30,6 +30,12 @@ using System.Security.Cryptography.X509Certificates;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using System.IO;
+using Org.BouncyCastle.X509;
+using Ginger.Run;
+using System.Reflection;
+using OpenQA.Selenium.DevTools.V99.DOM;
+using static System.Net.WebRequestMethods;
+using File = System.IO.File;
 
 namespace GingerCore.Actions.Communication
 {
@@ -100,7 +106,7 @@ namespace GingerCore.Actions.Communication
                 }
             }
         }
-
+     
         #region Action Fields 
         //These fields were serialized earlier, do not remove it.
         public override string ActionType
@@ -292,22 +298,30 @@ namespace GingerCore.Actions.Communication
             if( IsValidationRequired==true)
             {
                 Handler.ClientCertificateOptions = ClientCertificateOption.Manual;               
-                string path = CertificatePath;                
+                string path = CertificatePath;
                 if (!string.IsNullOrEmpty(path))
                 {
+                    GingerRunner.eActionExecutorType ActionExecutorType = GingerRunner.eActionExecutorType.RunWithoutDriver;
                     string CertificateKey = CertificatePasswordUCValueExpression;
                     string CertificateName = Path.GetFileName(CertificatePath);
-                    if (!string.IsNullOrEmpty(CertificateName))
+                    if (!string.IsNullOrEmpty(CertificateKey))
                     {
-                        X509Certificate2 customCertificate = new X509Certificate2(path, CertificateKey);
+
+                        //System.Security.Cryptography.X509Certificates.X509Certificate defaultcertificate = new System.Security.Cryptography.X509Certificates.X509Certificate("C:\\TestSolution\\Praneeth\\Documents\\EmailCertificates\\NEW TEXT _Copy25.CRT", CertificateKey, X509KeyStorageFlags.MachineKeySet);
+                        //X509Certificate2 customCertificate = new X509Certificate2(path, CertificateKey, X509KeyStorageFlags.DefaultKeySet);
+                        
+                        X509Certificate2 customCertificate = new X509Certificate2();
                         X509Certificate2Collection collection1 = new X509Certificate2Collection();
                         ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
-                        Handler.ClientCertificates.Add(customCertificate);
-                        ServicePointManager.ServerCertificateValidationCallback = delegate (object s, X509Certificate certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+                        //Handler.ClientCertificates.Add(customCertificate);
+                        ServicePointManager.ServerCertificateValidationCallback = delegate (object s, System.Security.Cryptography.X509Certificates.X509Certificate certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
                         {
                             bool ret = true;
-                            string basepath = Path.Combine(Path.GetDirectoryName(ActWebAPIBase.Fields.CertificatePath), CertificateName);
-                            var actualCertificate = X509Certificate.CreateFromCertFile(basepath);
+                            string basepath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                            X509Certificate2 actualCertificate = new X509Certificate2("C:\\Users\\saiprani@amdocs.com\\OneDrive - AMDOCS\\Backup Folders\\Desktop\\Test\\Documents\\EmailCertificates\\SAMPLECRT_Copy3.CRT", CertificateKey);
+                            //Import(CertificateName);
+
+                            //var actualCertificate = System.Security.Cryptography.X509Certificates.X509Certificate.CreateFromCertFile("C:\\TestSolution\\Praneeth\\Documents\\EmailCertificates\\");
                             Reporter.ToLog(eLogLevel.DEBUG, String.Format(actualCertificate + ": File Certificate Validating: " + certificate, CertificateName));
                             if (!string.IsNullOrEmpty(CertificateName))
                             {
@@ -324,7 +338,7 @@ namespace GingerCore.Actions.Communication
                     }
                     else
                     {                       
-                        X509Certificate2 customCertificate = new X509Certificate2(path);
+                        X509Certificate2 customCertificate = new X509Certificate2("C:\\TestSolution\\Praneeth\\Documents\\EmailCertificates\\SAMPLECRT_Copy2.CRT");//put path
                         Handler.ClientCertificates.Add(customCertificate);
                     }
                 }
