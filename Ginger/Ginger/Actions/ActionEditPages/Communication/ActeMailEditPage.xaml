@@ -74,7 +74,7 @@
                                 <StackPanel Orientation="Horizontal">
                                     <Label Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" Margin="0,5,0,0">Certificate Path:</Label>
                                     <TextBox x:Name="xcbCertificatePathTextBox" TextWrapping="Wrap" Style="{StaticResource @TextBoxStyle}" Margin="32,0,0,0" AcceptsReturn="True" HorizontalAlignment="Left" Height="25" Width="235"/>
-                                    <Button Width="50" Height="25" x:Name="xcBrowseFile" Click="BrowseButton_Certificate" Content="Upload Certificate" Margin="2,0,0,0" Style="{StaticResource  $InputButtonStyle}" HorizontalAlignment="Left" Command="{Binding Path=File}"/>
+                                    <Button Width="50" Height="25" x:Name="xcBrowseFile" Click="BrowseButton_Certificate" Content="Upload" Margin="2,0,0,0" Style="{StaticResource  $InputButtonStyle}" HorizontalAlignment="Left" Command="{Binding Path=File}"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                                     <Label Style="{StaticResource @InputFieldLabelStyle}" FontSize="12" VerticalAlignment="Center">Certificate Password:</Label>
@@ -85,7 +85,7 @@
                                 <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelUser" >SMTP User:</Label>
                                 <Actions:UCValueExpression x:Name="xSMTPUserTextBox"  ToolTip="SMTP User" Width="235" HorizontalAlignment="Left" ScrollViewer.VerticalScrollBarVisibility="Auto" />
                                 <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelPass">SMTP Password:</Label>
-                                <TextBox x:Name="xSMTPPassTextBox" Style="{StaticResource @TextBoxStyle}" Width="235" HorizontalAlignment="Left" LostFocus="xSMTPPassTextBox_LostFocus"/>
+                                <TextBox x:Name="xSMTPPassTextBox" Style="{StaticResource @TextBoxStyle}" Width="205" Height="25" HorizontalAlignment="Left" LostFocus="xSMTPPassTextBox_LostFocus"/>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
