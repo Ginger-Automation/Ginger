@@ -420,8 +420,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.SVN)//added for supporting Jenkins way of config creation- need to improve it
                 {
                     string modifiedURI = solution.SourceControl.SourceControlURL.TrimEnd(new char[] { '/' });
-                    int lastSlash = modifiedURI.LastIndexOf('/');
-                    modifiedURI = (lastSlash > -1) ? modifiedURI.Substring(0, lastSlash) : modifiedURI;
+                    //int lastSlash = modifiedURI.LastIndexOf('/');
+                    //modifiedURI = (lastSlash > -1) ? modifiedURI.Substring(0, lastSlash) : modifiedURI;
                     executionConfig.SolutionScmDetails.SolutionRepositoryUrl = modifiedURI;
                 }
                 else

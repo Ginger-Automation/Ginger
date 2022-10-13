@@ -102,6 +102,7 @@ namespace Ginger.ConflictResolve
             view.GridColsView = viewCols;
             view.GridColsView.Add(new GridColView() { Field = nameof(ConflictResolve.RelativeConflictPath), Header = "Conflicted File", WidthWeight = 150, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             viewCols.Add(new GridColView() { Field = nameof(ConflictResolve.resolveOperations), Header = "Operation", WidthWeight = 90, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(eResolveOperations)), nameof(ConflictResolve.resolveOperations), false, true) }); ;
+            viewCols.Add(new GridColView() { Field = String.Empty, Header = "Compare & Merge", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xConflictingItemsGrid.Resources["xCompareAndMergeTemplate"] });
 
             xConflictingItemsGrid.SetAllColumnsDefaultView(view);
             xConflictingItemsGrid.InitViewItems();
@@ -116,6 +117,11 @@ namespace Ginger.ConflictResolve
         private void CloseWindow()
         {
             genWin.Close();
+        }
+
+        private void xCompareAndMergeButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -868,7 +868,8 @@ namespace GingerCore.SourceControl
                             filePath = filePath.Replace(@"/", @"\");
                         }
                         string fullPath = Path.Combine(RepositoryRootFolder, filePath);
-                            ConflictPaths.Add(fullPath);
+                        ConflictPaths.Add(fullPath);
+                        CreateSeparateLocalAndServerCopies(fullPath, repo.Head.FriendlyName);
                     }
                 }
             }
@@ -988,6 +989,89 @@ namespace GingerCore.SourceControl
             CredentialsHandler credentialHandler = (_url, _user, _cred) => credentials;
 
             return credentialHandler;
+        }
+
+        private void CreateSeparateLocalAndServerCopies(string filePath, string branchName)
+        {
+            try
+            {
+                string headText = "<<<<<<< HEAD";
+                string equalText = "=======";
+                //filePath = Path.Combine(RepositoryRootFolder, filePath);
+                string[] fileOneLines = File.ReadAllLines(filePath);
+                int headIndex = 0, equalIndex = 0, branchIndex = 0;
+                List<string> lstLocalText = new List<string>();
+                List<string> lstServerText = new List<string>();
+                bool headIndexEncountered = false;
+                string directoryName = Path.GetDirectoryName(filePath);
+                string fileName = Path.GetFileNameWithoutExtension(filePath);
+                string extension = Path.GetExtension(filePath);
+                for (int i = 0; i < fileOneLines.Length; i++)
+                {
+                    if (fileOneLines[i].Contains(headText))
+                    {
+                        headIndexEncountered = true;
+                        headIndex = i;
+                        continue;
+                    }
+                    if (fileOneLines[i].Contains(equalText))
+                    {
+                        equalIndex = i;
+                        string localText = string.Empty;
+                        for (int j = headIndex + 1; j < equalIndex; j++)
+                        {
+                            lstLocalText.Add(fileOneLines[j].Trim());
+                        }
+                        //lstLocalText.Add(localText);
+                        //i = equalIndex + equalIndex - headIndex - 1;
+                        continue;
+                    }
+                    if (fileOneLines[i].Contains(branchName))
+                    {
+                        branchIndex = i;
+                        string branchText = string.Empty;
+                        for (int j = equalIndex + 1; j < branchIndex; j++)
+                        {
+                            lstServerText.Add(fileOneLines[j].Trim());
+                        }
+                        i = branchIndex;
+                        //lstServerText.Add(branchText);
+                        headIndexEncountered = false;
+                        continue;
+                    }
+                    if (!headIndexEncountered)
+                    {
+                        lstServerText.Add(fileOneLines[i].Trim());
+                        lstLocalText.Add(fileOneLines[i].Trim());
+                    }
+                }
+                string localXmlName = Path.Combine(directoryName, fileName + "_localChanges" + extension);
+                CreateFile(localXmlName, lstLocalText);
+                string serverXmlName = Path.Combine(directoryName, fileName + "_serverChanges" + extension);
+                CreateFile(serverXmlName, lstServerText);
+                NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
+                BusinessFlow localBusinessFlow = (BusinessFlow)newRepositorySerializer.DeserializeFromFileObj(typeof(BusinessFlow), localXmlName);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Issue in creating local and server files", ex);
+            }
+        }
+
+        private void CreateFile(string fileName, List<string> xmlContent)
+        {
+            if (File.Exists(fileName))
+            {
+                File.Delete(fileName);
+            }
+            using (StreamWriter sw = new StreamWriter(fileName, true))
+            {
+                for (int i = 0; i < xmlContent.Count; i++)
+                {
+                    string line = xmlContent[i];
+                    sw.WriteLine(line);
+                }
+            }
         }
 
     }
