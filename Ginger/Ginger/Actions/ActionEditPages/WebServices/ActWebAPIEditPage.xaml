@@ -93,13 +93,18 @@
                             <StackPanel Orientation="Vertical">
                                 <StackPanel x:Name="ContentTypeParameters" Orientation="Vertical">
                                     <StackPanel x:Name="RequestContent" Margin="0,0,0,0" Orientation="Horizontal" HorizontalAlignment="Left" >
-                                        <Label Style="{StaticResource @InputFieldLabelStyle}">Body Content Type:</Label>
+                                        <Label Style="{StaticResource @InputFieldLabelStyle}" Width="150">Body Content Type:</Label>
                                         <UserControlsLib:UCComboBox x:Name="ContentTypeComboBox" Width="250" Margin="35,0,0,0" ></UserControlsLib:UCComboBox>
                                     </StackPanel>
-                                    <StackPanel x:Name="RequestBodyTypePanel" Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,0">
-                                        <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Row="0">Body Content Source:</Label>
+                                    <StackPanel x:Name="RequestContentEncoding" Margin="0,0,0,0" Orientation="Horizontal" HorizontalAlignment="Left" >
+                                        <Label Style="{StaticResource @InputFieldLabelStyle}" Width="150">Encoding Type:</Label>
+                                        <!--<ComboBox x:Name="ContentEncodingTypeComboBox" Width="250" Margin="35,0,0,0" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>-->
+                                        <UserControlsLib:UCComboBox x:Name="ContentEncodingTypeComboBox" Width="250" Margin="35,0,0,0" ></UserControlsLib:UCComboBox>
+                                    </StackPanel>
+                                    <StackPanel x:Name="RequestBodyTypePanel" Orientation="Horizontal" Margin="0,0,0,0">
+                                        <Label Style="{StaticResource @InputFieldLabelStyle}" Width="150">Body Content Source:</Label>
                                         <StackPanel  Orientation="Horizontal" x:Name="BodySelection">
-                                            <UserControlsLib:UCRadioButtons x:Name="RequestBodyTypeRadioButton" Margin="-5,0,0,0"></UserControlsLib:UCRadioButtons>
+                                            <UserControlsLib:UCRadioButtons x:Name="RequestBodyTypeRadioButton" Margin="10,0,0,0"></UserControlsLib:UCRadioButtons>
                                         </StackPanel>
                                     </StackPanel>
 

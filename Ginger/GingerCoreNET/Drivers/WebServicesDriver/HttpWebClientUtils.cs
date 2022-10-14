@@ -786,13 +786,56 @@ namespace GingerCore.Actions.WebAPI
                             var lastIndexOfUtf8 = _byteOrderMarkUtf8.Length - 1;
                             BodyString = BodyString.Remove(0, lastIndexOfUtf8);
                         }
-                        RequestMessage.Content = new StringContent(BodyString, Encoding.UTF8, ContentType);
+                        CreateRequestContent();
                         break;
                     default:
-                        RequestMessage.Content = new StringContent(BodyString, Encoding.UTF8, ContentType);
+                        CreateRequestContent();
                         break;
                 }
             }
+        }
+
+        private void CreateRequestContent()
+        {
+            ApplicationAPIUtils.eEncodingType eEncodingType = (ApplicationAPIUtils.eEncodingType)mAct.GetInputParamCalculatedValue<ApplicationAPIUtils.eEncodingType>(ActWebAPIRest.Fields.ContentEncodingType);
+            HttpContent httpContent = null;
+
+            switch (eEncodingType)
+            {
+                case ApplicationAPIUtils.eEncodingType.UTF8:
+                    httpContent = new StringContent(BodyString, Encoding.UTF8, ContentType);
+                    break;
+                case ApplicationAPIUtils.eEncodingType.UTF7:
+                    httpContent = new StringContent(BodyString, Encoding.UTF7, ContentType);
+                    break;
+                case ApplicationAPIUtils.eEncodingType.UTF32:
+                    httpContent = new StringContent(BodyString, Encoding.UTF32, ContentType);
+                    break;
+                case ApplicationAPIUtils.eEncodingType.Unicode:
+                    httpContent = new StringContent(BodyString, Encoding.Unicode, ContentType);
+                    break;
+                case ApplicationAPIUtils.eEncodingType.BigEndianUnicode:
+                    httpContent = new StringContent(BodyString, Encoding.BigEndianUnicode, ContentType);
+                    break;
+                case ApplicationAPIUtils.eEncodingType.Latin1:
+                    httpContent = new StringContent(BodyString, Encoding.Latin1, ContentType);
+                    break;
+                case ApplicationAPIUtils.eEncodingType.ASCII:
+                    httpContent = new StringContent(BodyString, Encoding.ASCII, ContentType);
+                    break;
+                case ApplicationAPIUtils.eEncodingType.Default:
+                    httpContent = new StringContent(BodyString, Encoding.Default, ContentType);
+                    break;
+                case ApplicationAPIUtils.eEncodingType.None:
+                    httpContent = new StringContent(BodyString, Encoding.Default, ContentType);
+                    httpContent.Headers.ContentType.CharSet = string.Empty;
+                    break;
+                default:
+                    httpContent = new StringContent(BodyString, Encoding.UTF8, ContentType);
+                    break;
+            }
+
+            RequestMessage.Content = httpContent;
         }
 
         private void SetCookies()

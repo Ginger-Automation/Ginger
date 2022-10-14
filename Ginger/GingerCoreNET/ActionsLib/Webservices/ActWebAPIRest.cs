@@ -52,10 +52,9 @@ namespace GingerCore.Actions.WebServices
             public static string CookieMode = "CookieMode";
             public static string RequestType = "RequestType";
             public static string ContentType = "ContentType";
+            public static string ContentEncodingType = "ContentEncodingType";
             public static string ResponseContentType = "ResponseContentType";
         }
-
-
 
         public PlatformAction GetAsPlatformAction()
         {

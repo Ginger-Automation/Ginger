@@ -26,10 +26,12 @@ using GingerCore.Actions.WebAPI;
 using GingerCore.Actions.WebServices;
 using GingerCore.GeneralLib;
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Amdocs.Ginger.Common.GlobalSolutionLib;
 
 namespace Ginger.Actions.WebServices
 {
@@ -74,7 +76,10 @@ namespace Ginger.Actions.WebServices
 
                     //Request content type
                     ContentTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eContentType.JSon.ToString()), typeof(ApplicationAPIUtils.eContentType), false, ContentTypeChange);
-                    
+
+                    //Encoding Type
+                    ContentEncodingTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ContentEncodingType, ApplicationAPIUtils.eEncodingType.UTF8.ToString()), typeof(ApplicationAPIUtils.eEncodingType));
+
                     //Response Content Type
                     ResponseTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eContentType.JSon.ToString()), typeof(ApplicationAPIUtils.eContentType), false, ResponseTypeComboBox_SelectionChanged);
 
