@@ -64,6 +64,20 @@ namespace GingerCore.GeneralLib
             CredentialManager.DeleteCredential(applicationName: target);
             return true;
         }
+
+        public static UserPass ReadCredential(string target)
+        {
+            try
+            {
+                var cred = CredentialManager.ReadCredential(applicationName: target);
+                return new UserPass(cred?.UserName, cred?.Password);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                return null;
+            }
+        }
     }
 
     public class UserPass

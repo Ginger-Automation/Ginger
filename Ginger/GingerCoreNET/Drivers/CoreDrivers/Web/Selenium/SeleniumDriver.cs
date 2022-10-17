@@ -62,6 +62,8 @@ using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.DevTools;
 using Newtonsoft.Json;
 using DevToolsSessionDomains = OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains;
+using OpenQA.Selenium.DevTools.V101.Network;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 
 namespace GingerCore.Drivers
@@ -70,6 +72,8 @@ namespace GingerCore.Drivers
     {
         protected IDevToolsSession Session;
         DevToolsSession devToolsSession;
+        DevToolsDomains devToolsDomains;
+        IDevTools devTools;
         List<Tuple<string,object>> networkResponseLogList;
         List<Tuple<string, object>> networkRequestLogList;
         INetwork interceptor;
@@ -8824,12 +8828,14 @@ namespace GingerCore.Drivers
         private void SetUPDevTools(IWebDriver webDriver)
         {
             //Get DevTools
-            var devTool = webDriver as IDevTools;
+            devTools = webDriver as IDevTools;
 
             //DevTool Session 
-            devToolsSession = devTool.GetDevToolsSession(101);
-            var domains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains>();
-            domains.Network.Enable(new OpenQA.Selenium.DevTools.V101.Network.EnableCommandSettings());
+            devToolsSession = devTools.GetDevToolsSession(101);
+            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains>();
+            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V101.Network.EnableCommandSettings());
+            
+               
         }
         public async Task GetNetworkLogAsync(IWebDriver webDriver, ActBrowserElement act)
         {
@@ -8877,6 +8883,8 @@ namespace GingerCore.Drivers
 
                 interceptor.NetworkRequestSent -= OnNetworkRequestSent;
                 interceptor.NetworkResponseReceived -= OnNetworkResponseReceived;
+                interceptor.ClearRequestHandlers();
+                interceptor.ClearResponseHandlers();
                 act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
                 act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
                 foreach (var val in networkRequestLogList.ToList())
@@ -8887,6 +8895,11 @@ namespace GingerCore.Drivers
                 {
                     act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                 }
+
+                await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V101.Network.DisableCommandSettings());
+                devToolsSession.Dispose();
+                devTools.CloseDevToolsSession();
+
                 string requestPath = CreateNetworkLogFile("NetworklogRequest");
                 act.ExInfo = "RequestFile : " + requestPath + "\n";
                 string responsePath = CreateNetworkLogFile("NetworklogResponse");
