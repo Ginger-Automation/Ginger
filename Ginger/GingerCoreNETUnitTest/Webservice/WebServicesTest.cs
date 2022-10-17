@@ -340,6 +340,7 @@ namespace UnitTests.NonUITests
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, "{\r\n  \"id\": 55,\r\n  \"category\": {\r\n    \"id\": 0,\r\n    \"name\": \"string\"\r\n  },\r\n  \"name\": \"Rexi\",\r\n  \"photoUrls\": [\r\n    \"string\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"string\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}");
             restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV11.ToString());
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentEncodingType, ApplicationAPIUtils.eEncodingType.UTF8.ToString());
 
 
             context = Context.GetAsContext(restAct.Context);
@@ -436,6 +437,7 @@ namespace UnitTests.NonUITests
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBodyTypeRadioButton, ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, "<Pet>\r\n  <id>111</id>\r\n  <category>\r\n    <id>222</id>\r\n    <name>Dogs</name>\r\n  </category>\r\n  <name>Dogs</name>\r\n  <photoUrls />\r\n  <tags>\r\n    <id>333</id>\r\n    <name>Rexi</name>\r\n  </tags>\r\n  <status>available</status>\r\n</Pet>");
             restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV11.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentEncodingType, ApplicationAPIUtils.eEncodingType.UTF8.ToString());
 
             context = Context.GetAsContext(restAct.Context);
             if (context != null && context.Runner != null)
@@ -652,6 +654,7 @@ namespace UnitTests.NonUITests
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, "{\r\n  \"id\": 55,\r\n  \"category\": {\r\n    \"id\": 0,\r\n    \"name\": \"string\"\r\n  },\r\n  \"name\": \"{CS Exp=System.Environment.UserName}\",\r\n  \"photoUrls\": [\r\n    \"string\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"string\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}");
             restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV10.ToString());
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton,ApplicationAPIUtils.eNetworkCredentials.Default.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ContentEncodingType, ApplicationAPIUtils.eEncodingType.UTF8.ToString());
 
             restAct.Active = true;
             restAct.EnableRetryMechanism = false;
