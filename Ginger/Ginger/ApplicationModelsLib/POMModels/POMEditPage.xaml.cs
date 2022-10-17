@@ -29,12 +29,14 @@ using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers.Common;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using OpenQA.Selenium.DevTools.V100.DOM;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -134,7 +136,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xUIElementsFrame.Content = mPomAllElementsPage;
 
             ObservableList<Activity> pomActivities = AutoGenerateFlows.CreatePOMActivitiesFromMetadata(mPOM);
-             
+            //Shared Activities which uses current POM
+            ObservableList<Activity> sharedActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            IEnumerable<Activity> pomSharedActivities = sharedActivities.Where(x => x.Acts.Any(act => act is ActUIElement && ((ActUIElement)act).ElementLocateValue != null && ((ActUIElement)act).ElementLocateValue.Contains(mPOM.Guid.ToString())));
+            pomSharedActivities.ToList().ForEach(item => pomActivities.Add(item));
+
             mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(pomActivities, new Context());
             xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
 

@@ -151,7 +151,15 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public ListItemUniqueIdentifier GetItemUniqueIdentifier(object item)
         {
             SetItem(item);
-
+            //needed only on pom page
+            //if(mActivity.IsSharedRepositoryInstance)
+            //{
+            //    return new ListItemUniqueIdentifier() { Color = "OrangeRed", Tooltip = "Shared Activity" };
+            //}
+            //if (mActivity.IsAutoLearned)
+            //{
+            //    return new ListItemUniqueIdentifier() { Color = "DarkOrange", Tooltip = "Auto Learned Activity" };
+            //}
             if(mActivity.Type==eSharedItemType.Link)
             {
                 return new ListItemUniqueIdentifier() { Color = "Orange", Tooltip = "Linked Shared Activity" };

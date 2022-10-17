@@ -328,6 +328,7 @@ namespace Ginger.BusinessFlowPages
                     else
                     {
                         activityIns = (Activity)sharedActivity.CreateInstance(false);
+                        activityIns.IsAutoLearned = true;
                     }
                     activityIns.Active = true;
 
