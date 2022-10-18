@@ -2,7 +2,7 @@
 #FROM ghcr.io/ginger-automation/gingerruntime:latest
 #FROM ghcr.io/ginger-automation/gingerruntime:4.2
 
-FROM ghcr.io/ginger-automation/gingerruntime:4.2
+FROM ghcr.io/ginger-automation/gingerruntime:latest
 
 USER root
 
