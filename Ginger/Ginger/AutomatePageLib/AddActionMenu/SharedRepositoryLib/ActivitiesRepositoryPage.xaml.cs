@@ -103,7 +103,11 @@ namespace Ginger.Repository
         {
             xActivitiesRepositoryListView.ListTitleVisibility = Visibility.Hidden;
             ActivitiesListViewHelper mActionsListHelper = null;
-            if (!mAddPOMActivity)
+            if (mAddPOMActivity)
+            {
+                mActionsListHelper = new ActivitiesListViewHelper(mContext, General.eRIPageViewMode.AddFromModel);
+            }
+            else if (mActivities != null)
             {
                 mActionsListHelper = new ActivitiesListViewHelper(mContext, General.eRIPageViewMode.Explorer);
             }
