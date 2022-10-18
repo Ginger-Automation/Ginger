@@ -169,7 +169,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     ObservableList<Activity> pomActivities = AutoGenerateFlows.CreatePOMActivitiesFromMetadata(mPOM);
                     //Shared Activities which uses current POM
                     ObservableList<Activity> sharedActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                    //ObservableList<Activity> pomSharedActivities = GingerCore.General.ConvertListToObservableList(sharedActivities.Where(x => x.Acts.Any(a => a is ActUIElement && ((ActUIElement)a).ElementLocateValue != null && ((ActUIElement)a).ElementLocateValue.Contains(mPOM.Guid.ToString()))).ToList());
                     IEnumerable<Activity> pomSharedActivities = sharedActivities.Where(x => x.Acts.Any(a => a is ActUIElement && ((ActUIElement)a).ElementLocateValue != null && ((ActUIElement)a).ElementLocateValue.Contains(mPOM.Guid.ToString())));
                     pomSharedActivities.ToList().ForEach(item => pomActivities.Add(item));
 
