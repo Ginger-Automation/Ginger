@@ -86,6 +86,8 @@ namespace Ginger.Repository
             mViewMode = viewMode;
             */
 
+            mAddActivityHandler = AddActivityHandler;
+
             SetActivitiesRepositoryListView();            
             SetGridAndTreeData();
         }

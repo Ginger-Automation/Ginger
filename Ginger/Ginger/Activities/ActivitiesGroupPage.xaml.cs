@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
 using Ginger.UserControls;
+using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Activities;
 using System;
@@ -97,19 +98,41 @@ namespace Ginger.Activities
 
         private void GroupActivitiesHandler(object sender, RoutedEventArgs e)
         {
-            ucGrid senderGrid = sender as ucGrid;
-
-            ObservableList<Amdocs.Ginger.Repository.RepositoryItemBase> selectedActivitiesList = null;
-            if (senderGrid != null)
+            if (sender is ucGrid)
             {
-                selectedActivitiesList = senderGrid.GetSelectedItems();
+                ucGrid senderGrid = sender as ucGrid;
 
-                if (selectedActivitiesList != null && selectedActivitiesList.Count > 0)
+                ObservableList<Amdocs.Ginger.Repository.RepositoryItemBase> selectedActivitiesList = null;
+                if (senderGrid != null)
                 {
-                    foreach (Activity sharedActivity in selectedActivitiesList)
+                    selectedActivitiesList = senderGrid.GetSelectedItems();
+
+                    if (selectedActivitiesList != null && selectedActivitiesList.Count > 0)
                     {
-                        Activity newInstance = sharedActivity.CreateInstance(true) as Activity;
-                        mActivitiesGroup.AddActivityToGroup(newInstance);
+                        foreach (Activity sharedActivity in selectedActivitiesList)
+                        {
+                            Activity newInstance = sharedActivity.CreateInstance(true) as Activity;
+                            mActivitiesGroup.AddActivityToGroup(newInstance);
+                        }
+                    }
+                }
+            }
+            else if(sender is UcListView)
+            {
+                UcListView senderUcListView = sender as UcListView;
+
+                ObservableList<Amdocs.Ginger.Repository.RepositoryItemBase> selectedActivitiesList = null;
+                if (senderUcListView != null)
+                {
+                    selectedActivitiesList = senderUcListView.GetSelectedItems();
+
+                    if (selectedActivitiesList != null && selectedActivitiesList.Count > 0)
+                    {
+                        foreach (Activity sharedActivity in selectedActivitiesList)
+                        {
+                            Activity newInstance = sharedActivity.CreateInstance(true) as Activity;
+                            mActivitiesGroup.AddActivityToGroup(newInstance);
+                        }
                     }
                 }
             }
