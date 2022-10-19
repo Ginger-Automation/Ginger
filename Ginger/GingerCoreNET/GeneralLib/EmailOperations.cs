@@ -23,6 +23,7 @@ using Applitools;
 using Ginger.Run.RunSetActions;
 using GingerCore.Actions.WebServices;
 using GingerCore.DataSource;
+using NPOI.HPSF;
 using Renci.SshNet.Messages;
 using System;
 using System.Collections.Generic;
@@ -31,8 +32,10 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Mail;
 using System.Net.Security;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows;
+using Array = System.Array;
 
 namespace GingerCore.GeneralLib
 {
@@ -146,19 +149,25 @@ namespace GingerCore.GeneralLib
                     string path = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(Email.CertificatePath);
                     if (!string.IsNullOrEmpty(path))
                     {
-                        string CertificateName = Email.CertificatePath;
+                        string CertificateName = Path.GetFileName(Email.CertificatePath);
                         string CertificateKey = Email.CertificatePasswordUCValueExpression;
-                        if (!string.IsNullOrEmpty(CertificateName))
+                        if (!string.IsNullOrEmpty(CertificateKey))
                         {
-                            X509Certificate2 customCertificate = new X509Certificate2(path, CertificateKey);
+                            //X509KeyStorageFlags keyStorageFlags;
+                            
                             X509Certificate2Collection collection1 = new X509Certificate2Collection();
                             ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
-                            Handler.ClientCertificates.Add(customCertificate);
+                            X509Certificate customCertificate = new X509Certificate();
+                            System.Net.Http.HttpClientHandler handler = new System.Net.Http.HttpClientHandler();
+                            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+                            handler.ClientCertificates.Add(customCertificate);
                             ServicePointManager.ServerCertificateValidationCallback = delegate (object s, X509Certificate certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
                             {
-                                bool ret = true;
-                                string basepath = Path.Combine(Path.GetDirectoryName(Email.CertificatePath), CertificateName);
-                                var actualCertificate = X509Certificate.CreateFromCertFile(basepath);
+                                bool ret = false;
+                                string basepath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), CertificateName);
+                                X509Certificate actualCertificate = X509Certificate.CreateFromCertFile(basepath);
+                                actualCertificate.Import(CertificateName);
+                                //var actualcert = X509Certificate.CreateFromCertFile(Directory.EnumerateFiles(path));
                                 Reporter.ToLog(eLogLevel.DEBUG, String.Format(actualCertificate+": File Certificate Validating: "+certificate, CertificateName));
                                 if (!string.IsNullOrEmpty(CertificateName))
                                 {
