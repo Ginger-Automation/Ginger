@@ -156,11 +156,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             {
                 if (mActivity.IsSharedRepositoryInstance)
                 {
-                    return new ListItemUniqueIdentifier() { Color = "DarkOrange", Tooltip = "Shared Activity" };
+                    return new ListItemUniqueIdentifier() { Color = "DarkOrange", Tooltip = "This is a Shared Activity" };
                 }
                 if (mActivity.IsAutoLearned)
                 {
-                    return new ListItemUniqueIdentifier() { Color = "OrangeRed", Tooltip = "Auto Learned Activity" };
+                    return new ListItemUniqueIdentifier() { Color = "Purple", Tooltip = "This is a Auto Learned Activity" };
                 }
             }
             if (mActivity.Type==eSharedItemType.Link)
