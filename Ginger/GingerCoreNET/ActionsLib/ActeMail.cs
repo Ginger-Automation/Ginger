@@ -30,16 +30,6 @@ using System.Security.Cryptography.X509Certificates;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using System.IO;
-using Org.BouncyCastle.X509;
-using Ginger.Run;
-using System.Reflection;
-using OpenQA.Selenium.DevTools.V99.DOM;
-using static System.Net.WebRequestMethods;
-using File = System.IO.File;
-using System.Composition;
-using System.Text;
-using X509Certificate = Org.BouncyCastle.X509.X509Certificate;
-using Ginger.Run.RunSetActions;
 
 namespace GingerCore.Actions.Communication
 {
@@ -110,7 +100,7 @@ namespace GingerCore.Actions.Communication
                 }
             }
         }
-     
+
         #region Action Fields 
         //These fields were serialized earlier, do not remove it.
         public override string ActionType
@@ -265,8 +255,8 @@ namespace GingerCore.Actions.Communication
                     return false;
             }
         }
-        #endregion
-        
+        #endregion  
+
         public override void Execute()
         {
             Email email = new Email();
@@ -293,56 +283,56 @@ namespace GingerCore.Actions.Communication
                 {
                     email.Attachments.Add(filePath);
                 }
-            }       
+            }
+
             email.EnableSSL = (bool)this.GetInputParamValue<bool>(Fields.EnableSSL);
             email.ConfigureCredential = (bool)this.GetInputParamValue<bool>(Fields.ConfigureCredential);
             email.SMTPUser = this.GetInputParamCalculatedValue(nameof(User));
             email.SMTPPass = this.GetInputParamCalculatedValue(nameof(Pass));
-            if(IsValidationRequired)
+            if( IsValidationRequired==true)
             {
-                string CertificateName = Path.GetFileName(CertificatePath);
-                string CertificateKey = CertificatePasswordUCValueExpression;
-                string targetPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\EmailCertificates");
-                string Certificatepath = Path.Combine(targetPath, CertificateName);
-                if (!string.IsNullOrEmpty(Certificatepath))
+                Handler.ClientCertificateOptions = ClientCertificateOption.Manual;               
+                string path = CertificatePath;                
+                if (!string.IsNullOrEmpty(path))
                 {
-                    GingerRunner.eActionExecutorType ActionExecutorType = GingerRunner.eActionExecutorType.RunWithoutDriver;
-                    X509Certificate2 customCertificate = new X509Certificate2();
-
-                    ServicePointManager.ServerCertificateValidationCallback = delegate (object s, System.Security.Cryptography.X509Certificates.X509Certificate certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+                    string CertificateKey = CertificatePasswordUCValueExpression;
+                    string CertificateName = Path.GetFileName(CertificatePath);
+                    if (!string.IsNullOrEmpty(CertificateName))
                     {
-                        X509Certificate2 actualCertificate;
-
-                        if (!string.IsNullOrEmpty(CertificateKey))
+                        X509Certificate2 customCertificate = new X509Certificate2(path, CertificateKey);
+                        X509Certificate2Collection collection1 = new X509Certificate2Collection();
+                        ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
+                        Handler.ClientCertificates.Add(customCertificate);
+                        ServicePointManager.ServerCertificateValidationCallback = delegate (object s, X509Certificate certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
                         {
-                            actualCertificate = new X509Certificate2(Certificatepath, CertificateKey);
-                        }
-                        else
-                        {
-                            actualCertificate = new X509Certificate2(Certificatepath);
-                        }                       
-                        if (certificate.Equals(actualCertificate))
-                        {                          
-                            Reporter.ToLog(eLogLevel.INFO, String.Format("Uploaded certificate is vaslidated"));
-                            return true;
-                        }
-                        else
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, String.Format("Uploaded certificate is not validated as it is not matching with (base certificate)"));
-                            return false;
-                        }                                                                             
-                    };
+                            bool ret = true;
+                            string basepath = Path.Combine(Path.GetDirectoryName(ActWebAPIBase.Fields.CertificatePath), CertificateName);
+                            var actualCertificate = X509Certificate.CreateFromCertFile(basepath);
+                            Reporter.ToLog(eLogLevel.DEBUG, String.Format(actualCertificate + ": File Certificate Validating: " + certificate, CertificateName));
+                            if (!string.IsNullOrEmpty(CertificateName))
+                            {
+                                ret = certificate.Equals(actualCertificate);
+                                Reporter.ToLog(eLogLevel.INFO, String.Format(actualCertificate + ": File Certificate Validated:" + certificate, ret));
+                            }
+                            else
+                            {
+                                ret = true;
+                                Reporter.ToLog(eLogLevel.INFO, String.Format(actualCertificate + ": Certificte validation bypassed"));                               
+                            }
+                            return ret;
+                        };                       
+                    }
+                    else
+                    {                       
+                        X509Certificate2 customCertificate = new X509Certificate2(path);
+                        Handler.ClientCertificates.Add(customCertificate);
+                    }
                 }
                 else
                 {
                     Error = "Request setup Failed because of missing/wrong input";
                     ExInfo = "Certificate path is missing";
                 }
-            }
-            if (!IsValidationRequired)
-            {
-                X509Certificate2 Certificate = new X509Certificate2();
-                ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });                
             }
             if (email.EmailMethod == Email.eEmailMethod.SMTP)
             {
