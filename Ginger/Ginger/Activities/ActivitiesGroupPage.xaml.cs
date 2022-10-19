@@ -98,41 +98,26 @@ namespace Ginger.Activities
 
         private void GroupActivitiesHandler(object sender, RoutedEventArgs e)
         {
-            if (sender is ucGrid)
+            if (sender != null)
             {
-                ucGrid senderGrid = sender as ucGrid;
-
                 ObservableList<Amdocs.Ginger.Repository.RepositoryItemBase> selectedActivitiesList = null;
-                if (senderGrid != null)
+                if (sender is ucGrid)
                 {
+                    ucGrid senderGrid = sender as ucGrid;
                     selectedActivitiesList = senderGrid.GetSelectedItems();
-
-                    if (selectedActivitiesList != null && selectedActivitiesList.Count > 0)
-                    {
-                        foreach (Activity sharedActivity in selectedActivitiesList)
-                        {
-                            Activity newInstance = sharedActivity.CreateInstance(true) as Activity;
-                            mActivitiesGroup.AddActivityToGroup(newInstance);
-                        }
-                    }
                 }
-            }
-            else if(sender is UcListView)
-            {
-                UcListView senderUcListView = sender as UcListView;
-
-                ObservableList<Amdocs.Ginger.Repository.RepositoryItemBase> selectedActivitiesList = null;
-                if (senderUcListView != null)
+                else if (sender is UcListView)
                 {
-                    selectedActivitiesList = senderUcListView.GetSelectedItems();
+                    UcListView senderLst = sender as UcListView;
+                    selectedActivitiesList = senderLst.GetSelectedItems();
+                }
 
-                    if (selectedActivitiesList != null && selectedActivitiesList.Count > 0)
+                if (selectedActivitiesList != null && selectedActivitiesList.Count > 0)
+                {
+                    foreach (Activity sharedActivity in selectedActivitiesList)
                     {
-                        foreach (Activity sharedActivity in selectedActivitiesList)
-                        {
-                            Activity newInstance = sharedActivity.CreateInstance(true) as Activity;
-                            mActivitiesGroup.AddActivityToGroup(newInstance);
-                        }
+                        Activity newInstance = sharedActivity.CreateInstance(true) as Activity;
+                        mActivitiesGroup.AddActivityToGroup(newInstance);
                     }
                 }
             }
