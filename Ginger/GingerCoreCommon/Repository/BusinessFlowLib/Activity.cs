@@ -1023,5 +1023,7 @@ namespace GingerCore
         {
             return nameof(Activity);
         }
+
+        public bool IsAutoLearned { get; set; }
     }
 }

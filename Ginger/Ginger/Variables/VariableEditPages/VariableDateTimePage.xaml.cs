@@ -95,9 +95,9 @@ namespace Ginger.Variables
 
         private void dtpInitialDate_TextChanged(object sender, EventArgs e)
         {
-            if (dtpInitialDate.Value < Convert.ToDateTime(variableDateTime.MinDateTime) || dtpInitialDate.Value > Convert.ToDateTime(variableDateTime.MaxDateTime))
+            if (!variableDateTime.CheckDateTimeWithInRange(dtpInitialDate.Value.ToString()))
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Input Value is not in range:- Maximum date :[{dpMaxDate.Value}], Minimum Date:[{dtpInitialDate.MinDate}]");
+                Reporter.ToLog(eLogLevel.ERROR, $"Input Value is not in range:- Maximum date :[{variableDateTime.MaxDateTime}], Minimum Date:[{variableDateTime.MinDateTime}]");
                 dtpInitialDate.Focus();
                 return;
             }
