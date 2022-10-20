@@ -20,15 +20,22 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models;
+using Amdocs.Ginger.Plugin.Core.ActionsLib;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.BusinessFlowPages.AddActionMenu;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.BusinessFlowWindows;
+using Ginger.Repository;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -45,7 +52,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         ITreeViewItem mItemTypeRootNode;
         SingleItemTreeViewSelectionPage mPOMPage;
         ElementInfoListViewHelper mPOMListHelper;
-
+        ActivitiesRepositoryPage mActivitiesRepositoryViewPage;
         private Agent mAgent;
 
         IWindowExplorer mWinExplorer
@@ -157,6 +164,16 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     xPomElementsListView.DataSourceList = mPOM.MappedUIElements;
                     xPomElementsListView.Visibility = Visibility.Visible;
                     xPOMSplitter.IsEnabled = true;
+
+                    //POM Activities to show
+                    ObservableList<Activity> pomActivities = AutoGenerateFlows.CreatePOMActivitiesFromMetadata(mPOM);
+                    //Shared Activities which uses current POM
+                    ObservableList<Activity> sharedActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                    IEnumerable<Activity> pomSharedActivities = sharedActivities.Where(x => x.Acts.Any(a => a is ActUIElement && ((ActUIElement)a).ElementLocateValue != null && ((ActUIElement)a).ElementLocateValue.Contains(mPOM.Guid.ToString())));
+                    pomSharedActivities.ToList().ForEach(item => pomActivities.Add(item));
+
+                    mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(pomActivities, mContext, true);
+                    xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
                 }
             }
             else
