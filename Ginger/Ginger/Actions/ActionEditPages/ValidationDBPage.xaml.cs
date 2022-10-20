@@ -115,9 +115,6 @@ namespace Ginger.Actions
             ComboAutoSelectIfOneItemOnly(ColumnComboBox);
             SetVisibleControlsForAction();
             SetQueryParamsGrid();
-            NewAutomatePage.RaiseEnvComboBoxChanged -= NewAutomatePage_RaiseEnvComboBoxChanged;
-            NewAutomatePage.RaiseEnvComboBoxChanged += NewAutomatePage_RaiseEnvComboBoxChanged;
-
         }
 
         private async void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -527,6 +524,7 @@ namespace Ginger.Actions
                     break;
                 case ActDBValidation.eDBValidationType.SimpleSQLOneValue:
                     checkQueryType();
+                    Keyspace.Visibility = System.Windows.Visibility.Collapsed;
                     try
                     {
                         string DBName = DBNameComboBox.Text;
@@ -534,17 +532,9 @@ namespace Ginger.Actions
                         {
                             db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
                         }
-
-                        if (!(db == null))
+                        if (db != null && db.DBType == Database.eDBTypes.Cassandra)
                         {
-                            if (db.DBType == Database.eDBTypes.Cassandra)
-                            {
-                                Keyspace.Visibility = System.Windows.Visibility.Visible;
-                            }
-                            else
-                            {
-                                Keyspace.Visibility = System.Windows.Visibility.Collapsed;
-                            }
+                            Keyspace.Visibility = System.Windows.Visibility.Visible;
                         }
                     }
                     catch { }

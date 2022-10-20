@@ -64,7 +64,11 @@ namespace Ginger.BusinessFlowPages
             {
                 mContext.BusinessFlow.CurrentActivity = mContext.Activity;//so new Actions will be added to correct Activity
             }
-
+            if (!mContext.Activity.EnableEdit && mContext.Activity.IsLinkedItem)
+            {
+                Reporter.ToUser(eUserMsgKey.EditLinkSharedActivities);
+                return -1;
+            }
             if (mItem is Act)
             {
                 Act selectedAction = mItem as Act;
@@ -291,7 +295,7 @@ namespace Ginger.BusinessFlowPages
         /// </summary>
         /// <param name="sharedActivitiesToAdd">Shared Repository Activities to Add Instances from</param>
         /// <param name="businessFlow">Business Flow to add to</param>
-        public static void AddActivitiesFromSRHandler(List<Activity> sharedActivitiesToAdd, BusinessFlow businessFlow, string ActivitiesGroupID = null, int insertIndex = -1)
+        public static void AddActivitiesFromSRHandler(List<Activity> sharedActivitiesToAdd, BusinessFlow businessFlow, string ActivitiesGroupID = null, int insertIndex = -1, bool IsPomActivity = false)
         {
             ActivitiesGroup parentGroup = null;
             bool copyAsLink = true;
@@ -299,26 +303,42 @@ namespace Ginger.BusinessFlowPages
             {
                 parentGroup = businessFlow.ActivitiesGroups.Where(g => g.Name == ActivitiesGroupID).FirstOrDefault();
             }
-          
-                var activitiesGroupSelectionPage = new ActivitiesGroupSelectionPage(businessFlow, parentGroup);
-                parentGroup = activitiesGroupSelectionPage.ShowAsWindow();
+
+            var activitiesGroupSelectionPage = new ActivitiesGroupSelectionPage(businessFlow, parentGroup, IsPomActivity);
+            parentGroup = activitiesGroupSelectionPage.ShowAsWindow();
+            if (!IsPomActivity)
+            {
                 copyAsLink = activitiesGroupSelectionPage.xLinkedInstance.IsChecked.Value;
-          
+            }
 
             if (parentGroup != null)
             {
                 eUserMsgSelection userSelection = eUserMsgSelection.None;
                 foreach (Activity sharedActivity in sharedActivitiesToAdd)
                 {
-                    Activity activityIns = (Activity)sharedActivity.CreateInstance(true);
-                    activityIns.Active = true;
-                    if (copyAsLink)
+                    Activity activityIns = null;
+                    if (!IsPomActivity)
                     {
-                        activityIns.Type = eSharedItemType.Link;
+                        activityIns = (Activity)sharedActivity.CreateInstance(true);
+                        if (copyAsLink)
+                        {
+                            activityIns.Type = eSharedItemType.Link;
+                        }
                     }
+                    else
+                    {
+                        activityIns = (Activity)sharedActivity.CreateInstance(false);
+                        activityIns.IsAutoLearned = true;
+                    }
+                    activityIns.Active = true;
+
                     //map activities target application to BF if missing in BF
                     userSelection = businessFlow.MapTAToBF(userSelection, activityIns, WorkSpace.Instance.Solution.ApplicationPlatforms);
                     businessFlow.SetActivityTargetApplication(activityIns);
+                    if(insertIndex >= 0)
+                    {
+                        businessFlow.ActivitiesGroups.Move(businessFlow.ActivitiesGroups.IndexOf(parentGroup), insertIndex);
+                    }
                     businessFlow.AddActivity(activityIns, parentGroup, insertIndex);
 
 

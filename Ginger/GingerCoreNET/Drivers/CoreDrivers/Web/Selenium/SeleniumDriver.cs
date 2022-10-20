@@ -62,6 +62,9 @@ using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.DevTools;
 using Newtonsoft.Json;
 using DevToolsSessionDomains = OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains;
+using OpenQA.Selenium.DevTools.V101.Network;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 
 namespace GingerCore.Drivers
 {
@@ -69,6 +72,8 @@ namespace GingerCore.Drivers
     {
         protected IDevToolsSession Session;
         DevToolsSession devToolsSession;
+        DevToolsDomains devToolsDomains;
+        IDevTools devTools;
         List<Tuple<string,object>> networkResponseLogList;
         List<Tuple<string, object>> networkRequestLogList;
         INetwork interceptor;
@@ -3980,7 +3985,7 @@ namespace GingerCore.Drivers
         /// Else, it'll be skipped - Checking the performance
         /// </summary>
         public bool ExtraLocatorsRequired = true;
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMMetaData> PomMetaData = null)
         {
             return await Task.Run(() =>
             {
@@ -3994,7 +3999,7 @@ namespace GingerCore.Drivers
                     List<ElementInfo> list = new List<ElementInfo>();
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
-                    list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, relativeXpathTemplateList, LearnScreenshotsOfElements));
+                    list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, relativeXpathTemplateList, LearnScreenshotsOfElements, PomMetaData));
                     allReadElem.Clear();
                     CurrentFrame = "";
                     Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
@@ -4010,11 +4015,11 @@ namespace GingerCore.Drivers
         }
 
 
-        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
+        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMMetaData> PomMetaDataList = null)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
-
+            List<HtmlNode> formElementsList = new List<HtmlNode>();
             string documentContents = Driver.PageSource;
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(documentContents);
@@ -4130,8 +4135,13 @@ namespace GingerCore.Drivers
                             {
                                 newPath = path + "," + xpath;
                             }
-                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, relativeXpathTemplateList);
+                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, relativeXpathTemplateList, LearnScreenshotsOfElements, PomMetaDataList);
                             Driver.SwitchTo().ParentFrame();
+                        }
+
+                        if (eElementType.Form == elementTypeEnum.Item2)
+                        {
+                            formElementsList.Add(htmlElemNode);
                         }
                     }
                     catch (Exception ex)
@@ -4140,8 +4150,85 @@ namespace GingerCore.Drivers
                     }
                 }
             }
+            if (formElementsList.Count() != 0)
+            {
+                foreach (HtmlNode formElement in formElementsList)
+                {
+                    POMMetaData pomMetaData = new POMMetaData();
+                    pomMetaData.Type = POMMetaData.MetaDataType.Form;
+                    pomMetaData.Name = formElement.GetAttributeValue("name", "") != string.Empty ? formElement.GetAttributeValue("name", "") : formElement.GetAttributeValue("id", "");
 
+                    IEnumerable<HtmlNode> formInputElements = ((HtmlNode)formElement).Descendants().Where(x => x.Name.StartsWith("input"));
+                    CreatePOMMetaData(foundElementsList, formInputElements.ToList(), pomMetaData);
+                    IEnumerable<HtmlNode> formButtonElements = ((HtmlNode)formElement).Descendants().Where(x => x.Name.StartsWith("button"));
+                    CreatePOMMetaData(foundElementsList, formButtonElements.ToList(), pomMetaData);
+
+                    PomMetaDataList.Add(pomMetaData);
+
+                }
+
+            }
             return foundElementsList;
+        }
+
+        private void CreatePOMMetaData(ObservableList<ElementInfo> foundElementsList, List<HtmlNode> formChildElements, POMMetaData pomMetaData)
+        {
+            
+            string radioButtoNameOrID = string.Empty;
+            for (int i = 0; i < formChildElements.Count; i++)
+            {
+                HtmlNode formChildElement = formChildElements[i];
+                IWebElement childElement = null;
+                if (formChildElement.Attributes.Contains("type"))
+                {
+                    if (formChildElement.GetAttributeValue("type", "hidden") == "hidden")
+                    {
+                        continue;
+                    }
+                    // Add only one action for each radio group
+                    if (formChildElement.GetAttributeValue("type", "radio") == "radio")
+                    {
+                        string radioName = formChildElement.GetAttributeValue("name", "") != null ? formChildElement.GetAttributeValue("name", "") : formChildElement.GetAttributeValue("id", "");
+
+                        if (radioButtoNameOrID != radioName)
+                        {
+                            radioButtoNameOrID = radioName;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                }
+                childElement = Driver.FindElement(By.XPath(formChildElement.XPath));
+                if (childElement == null)
+                {
+                    continue;
+                }
+                Tuple<string, eElementType> elementTypeEnum = GetElementTypeEnum(htmlNode: formChildElement);
+                HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
+                foundElemntInfo.ElementType = elementTypeEnum.Item1;
+                foundElemntInfo.ElementTypeEnum = elementTypeEnum.Item2;
+                foundElemntInfo.ElementObject = childElement;
+                foundElemntInfo.Path = String.Empty;
+                foundElemntInfo.XPath = formChildElement.XPath;
+                foundElemntInfo.HTMLElementObject = formChildElement;
+
+                ElementInfo matchingOriginalElement = ((IWindowExplorer)this).GetMatchingElement(foundElemntInfo, foundElementsList);
+                if (matchingOriginalElement == null)
+                {
+                    ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
+                    matchingOriginalElement = ((IWindowExplorer)this).GetMatchingElement(foundElemntInfo, foundElementsList);
+                }
+
+                if (!foundElementsList.Contains(matchingOriginalElement))
+                {
+                    foundElementsList.Add(foundElemntInfo);
+                }
+                ElementMetaData elementData = new ElementMetaData() { ElementGuid = matchingOriginalElement != null ? matchingOriginalElement.Guid : foundElemntInfo.Guid,
+                                                                      OredrId = i+1, ParentGuid = pomMetaData.Guid};
+                pomMetaData.ElementsMetaData.Add(elementData);
+            }
         }
 
         Regex AttRegex = new Regex("@[a-zA-Z]*", RegexOptions.Compiled);
@@ -8741,12 +8828,14 @@ namespace GingerCore.Drivers
         private void SetUPDevTools(IWebDriver webDriver)
         {
             //Get DevTools
-            var devTool = webDriver as IDevTools;
+            devTools = webDriver as IDevTools;
 
             //DevTool Session 
-            devToolsSession = devTool.GetDevToolsSession(101);
-            var domains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains>();
-            domains.Network.Enable(new OpenQA.Selenium.DevTools.V101.Network.EnableCommandSettings());
+            devToolsSession = devTools.GetDevToolsSession(101);
+            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains>();
+            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V101.Network.EnableCommandSettings());
+            
+               
         }
         public async Task GetNetworkLogAsync(IWebDriver webDriver, ActBrowserElement act)
         {
@@ -8794,6 +8883,8 @@ namespace GingerCore.Drivers
 
                 interceptor.NetworkRequestSent -= OnNetworkRequestSent;
                 interceptor.NetworkResponseReceived -= OnNetworkResponseReceived;
+                interceptor.ClearRequestHandlers();
+                interceptor.ClearResponseHandlers();
                 act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
                 act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
                 foreach (var val in networkRequestLogList.ToList())
@@ -8804,6 +8895,11 @@ namespace GingerCore.Drivers
                 {
                     act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                 }
+
+                await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V101.Network.DisableCommandSettings());
+                devToolsSession.Dispose();
+                devTools.CloseDevToolsSession();
+
                 string requestPath = CreateNetworkLogFile("NetworklogRequest");
                 act.ExInfo = "RequestFile : " + requestPath + "\n";
                 string responsePath = CreateNetworkLogFile("NetworklogResponse");

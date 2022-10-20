@@ -140,6 +140,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                             case GlobalSolution.eImportItemType.Agents:
                             case GlobalSolution.eImportItemType.TargetApplication:
                             case GlobalSolution.eImportItemType.Variables:
+                            case GlobalSolution.eImportItemType.ExtrnalIntegrationConfigurations:
                                 AddItemToSolution(sourceFile, targetFile, true, itemToAdd);
                                 break;
 
@@ -192,6 +193,19 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     WorkSpace.Instance.Solution.ApplicationPlatforms.Add(applicationPlatform);
                 }
                 return;
+            }
+            if (itemToImport.ItemType == GlobalSolution.eImportItemType.ExtrnalIntegrationConfigurations)
+            {
+                string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder), "Ginger.Solution.xml", SearchOption.AllDirectories);
+                Solution solution = (Solution)newRepositorySerializer.DeserializeFromFile(filePaths[0]);
+                if (itemToImport.ItemName == ActVisualTesting.eVisualTestingAnalyzer.VRT.ToString())
+                {
+                    WorkSpace.Instance.Solution.VRTConfiguration = solution.VRTConfiguration;
+                }
+                else if (itemToImport.ItemName == ActVisualTesting.eVisualTestingAnalyzer.Applitools.ToString())
+                {
+                    WorkSpace.Instance.Solution.ApplitoolsConfiguration = solution.ApplitoolsConfiguration;
+                }
             }
             RepositoryItemBase repoItemToImport = null;
             if (itemToImport.ItemImportSetting == GlobalSolution.eImportSetting.Replace)

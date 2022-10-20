@@ -207,7 +207,7 @@ namespace GingerCore.Actions.WebAPI
                     //if platform support system defalut don't do anything
                     if (ServicePointManager.SecurityProtocol.ToString() != "SystemDefault")
                     {
-                        ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                        ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
                     }
                     
                     break;
@@ -223,6 +223,9 @@ namespace GingerCore.Actions.WebAPI
                 case ApplicationAPIUtils.eSercurityType.Tls12:
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                     break;
+                case ApplicationAPIUtils.eSercurityType.Tls13:
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13;
+                    break;
             }
         }
 
@@ -233,6 +236,7 @@ namespace GingerCore.Actions.WebAPI
             if (CertificateTypeRadioButton == ApplicationAPIUtils.eCretificateType.AllSSL.ToString())
             {
                 ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+                Handler.ServerCertificateCustomValidationCallback += ( _, certificate, chain, errors) => { return true; };
             }
             else if (CertificateTypeRadioButton == ApplicationAPIUtils.eCretificateType.Custom.ToString())
             {
