@@ -18,11 +18,15 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger;
+using Ginger.Reports;
 using GingerCore.ALM;
 using GingerCore.DataSource;
+using GingerCore.Environments;
 using GingerCore.GeneralFunctions;
 using GingerCore.GeneralLib;
+using MongoDB.Driver;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -333,8 +337,8 @@ namespace GingerCore
             }
             return false;
         }
-
-        public static bool GetInputWithValidation(string header, string label, ref string resultValue, char[] CharsNotAllowed = null, bool isMultiline = false)
+        
+        public static bool GetInputWithValidation(string header, string label, ref string resultValue, char[] CharsNotAllowed = null, bool isMultiline = false, RepositoryItemBase repositoryItem =null)
         {
             bool returnWindow = GingerCore.GeneralLib.InputBoxWindow.OpenDialog(header, label, ref resultValue, isMultiline);
 
@@ -344,7 +348,11 @@ namespace GingerCore
                 if (string.IsNullOrEmpty(resultValue.Trim()))
                 {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot be empty.");
-                    return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
+                    return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline , repositoryItem);
+                }
+                if (IsNameAlreadyexists(repositoryItem, resultValue.Trim()))
+                {                   
+                    return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline, repositoryItem);
                 }
                 if (CharsNotAllowed != null && !(resultValue.IndexOfAny(CharsNotAllowed) < 0))
                 {
@@ -355,10 +363,70 @@ namespace GingerCore
                         builder.Append(" ");
                     }
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot contain characters like:" + "\n" + builder.ToString());
-                    return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
+                    return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline, repositoryItem);
                 }
             }
             return returnWindow;
+        }
+        public static bool IsNameAlreadyexists(RepositoryItemBase repositoryItem ,string resultValue)
+        {                       
+                switch (repositoryItem.GetItemType())
+                {
+                    case "BusinessFlow":
+                        if(!((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where x.Name == resultValue select x).SingleOrDefault() != null))
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Business flow with same name: " + "'" + resultValue + "'" + " already exists.");
+                            return true;
+                        }                            
+                       
+                        break;
+                    case "Agent":
+                        if((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Agent with same name: " + "'" + resultValue + "'" + " already exists.");
+                            return true;
+                        }
+                       
+                        break;
+                    case "ReportTemplate":
+                        if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ReportTemplate>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Template with same name: " + "'" + resultValue + "'" + " already exists.");
+                            return true;
+                        }
+                        
+                        break;
+                    case "ApplicationPOMModel":
+                        if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "POM Model with same name: " + "'" + resultValue + "'" + " already exists.");
+                            return true;
+                        }
+                      
+                        break;
+                    case "EnvApplication":
+                        if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<EnvApplication>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Application with same name: " + "'" + resultValue + "'" + " already exists.");
+                            return true;
+                        }
+                    
+                        break;
+                    case "HTMLReportTemplate":
+                        if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Report Template with same name: " + "'" + resultValue + "'" + " already exists.");
+                            return true;
+                        }
+                       
+                        break;
+                default:
+                    return false;
+                }
+            
+            return false;
+            
+           
         }
 
         public static bool SelectInputWithValidation(string header, string label, ref string resultValue, List<string> mValues)
@@ -372,7 +440,7 @@ namespace GingerCore
                 {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot be empty.");
                     return SelectInputWithValidation(header, label, ref resultValue, mValues);
-                }
+                }              
                 if (!(mValues.Contains(resultValue)))
                 {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value must be form the list");

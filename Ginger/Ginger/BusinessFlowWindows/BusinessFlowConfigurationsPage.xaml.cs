@@ -29,6 +29,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Ginger.Agents;
+using GingerTest.WizardLib;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -137,8 +139,9 @@ namespace GingerWPF.BusinessFlowsLib
                 xPublishcheckbox.IsEnabled = true;
             }
 
-            BindingHandler.ObjFieldBinding(xNameTxtBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
+            BindingHandler.ObjFieldBinding(xNameTxtBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));         
             xNameTxtBox.AddValidationRule(new BusinessFlowNameValidationRule());
+            xNameTxtBox.Focus();
             xShowIDUC.Init(mBusinessFlow);
             BindingHandler.ObjFieldBinding(xDescriptionTxt, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Description));
             xTagsViewer.Init(mBusinessFlow.Tags);

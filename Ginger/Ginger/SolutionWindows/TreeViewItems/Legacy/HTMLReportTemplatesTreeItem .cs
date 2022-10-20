@@ -114,7 +114,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
                 //Make it Generic or Const string for names used for File
                 string NewReportName = string.Empty;
-                if (GingerCore.General.GetInputWithValidation("Add New Report", "Report Name:", ref NewReportName))
+                if (GingerCore.General.GetInputWithValidation("Add New Report", "Report Name:", ref NewReportName, null , false , NewReportTemplate))
                 {
                     NewReportTemplate.Name = NewReportName;
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);                                        

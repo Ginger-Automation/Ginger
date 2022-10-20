@@ -288,9 +288,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             //TODO: change to wizard
             string BizFlowName = string.Empty;
-            if (GingerCore.General.GetInputWithValidation("Add " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name:", ref BizFlowName))
-            {
-                BusinessFlow BizFlow = WorkSpace.Instance.GetNewBusinessFlow(BizFlowName);
+            BusinessFlow BizFlow = WorkSpace.Instance.GetNewBusinessFlow(BizFlowName);
+            if (GingerCore.General.GetInputWithValidation("Add " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name:", ref BizFlowName, null, false, BizFlow) )
+            {               
 
                 if (WorkSpace.Instance.Solution.ApplicationPlatforms.Count != 1)
                 {

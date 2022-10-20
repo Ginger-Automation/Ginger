@@ -19,6 +19,8 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Castle.Components.DictionaryAdapter;
+using DocumentFormat.OpenXml.Office.CustomUI;
 using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using GingerCore;
@@ -28,7 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.SolutionWindows
 {
@@ -71,7 +73,6 @@ namespace Ginger.SolutionWindows
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Description), Header = "Description", WidthWeight = 40 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.CoreVersion), Header = "Version", WidthWeight = 15 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Guid), Header = "ID", WidthWeight = 15, ReadOnly = true });
-
             xTargetApplicationsGrid.SetAllColumnsDefaultView(view);
             xTargetApplicationsGrid.InitViewItems();
             
@@ -84,6 +85,10 @@ namespace Ginger.SolutionWindows
             xTargetApplicationsGrid.SetbtnClearAllHandler(btnClearAll_Click);
         }
 
+        public bool NameAlreadyExists(string value)
+        {
+            return WorkSpace.Instance.Solution.ApplicationPlatforms.Any(x=>x.AppName == value);           
+        }
         private void LoadGridData()
         {
             if (mSolution != null)
@@ -120,34 +125,44 @@ namespace Ginger.SolutionWindows
 
         private void AddApplication(object sender, RoutedEventArgs e)
         {
-            AddApplicationPage AAP = new AddApplicationPage( WorkSpace.Instance.Solution);
+            AddApplicationPage AAP = new AddApplicationPage( WorkSpace.Instance.Solution);            
             AAP.ShowAsWindow();
         }
 
         private void ApplicationGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
-        {
+        {        
             if (e.Column.DisplayIndex == 0)//App Name Column
             {
                 ApplicationPlatform currentApp = (ApplicationPlatform)xTargetApplicationsGrid.CurrentItem;
-                currentApp.NameBeforeEdit = currentApp.AppName;
+                currentApp.NameBeforeEdit = currentApp.AppName;                
             }
         }
-
+        private ObservableList<ApplicationPlatform> Applications;
         private void ApplicationGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
+        {           
             //Validate the name of the App is unique
-            if (e.Column.DisplayIndex == 0)//App Name Column
-            {
-                ApplicationPlatform currentApp = (ApplicationPlatform)xTargetApplicationsGrid.CurrentItem;
+            if (e.Column.DisplayIndex ==1)//App Name Column
+            {                
+                ApplicationPlatform currentApp = (ApplicationPlatform)xTargetApplicationsGrid.CurrentItem;                               
                 mSolution.SetUniqueApplicationName(currentApp);
 
                 if (currentApp.AppName != currentApp.NameBeforeEdit)
                 {
+                    if (currentApp.AppName == null || string.IsNullOrEmpty(currentApp.AppName.ToString()) || string.IsNullOrWhiteSpace(currentApp.AppName.ToString()))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Name Cannot be empty");
+                        return;
+                    }
+                    if (NameAlreadyExists(currentApp.AppName))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Target Application with same name already exists");
+                        return ;
+                    }
                     UpdateApplicationNameChangeInSolution(currentApp);
                 }                    
             }
         }
-
+        
         private void UpdateApplicationNameChangeInSolution(ApplicationPlatform app)
         {
             int numOfAfectedBFs = 0;
