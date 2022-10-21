@@ -50,8 +50,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             if (!string.IsNullOrEmpty(apiUrl))
             {
                 EndPointUrl = apiUrl;
-                restClient = new RestClient(apiUrl);
-                restClient.Options.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+                try
+                {
+                    restClient = new RestClient(apiUrl);
+                    restClient.Options.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Centralized DB endpoint url is Invalid");
+                } 
             }
         }
         public AccountReportApiHandler()
