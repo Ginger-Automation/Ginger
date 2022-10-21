@@ -4150,6 +4150,7 @@ namespace GingerCore.Drivers
                     }
                 }
             }
+            int pomActivityIndex = 1;
             if (formElementsList.Count() != 0)
             {
                 foreach (HtmlNode formElement in formElementsList)
@@ -4157,6 +4158,15 @@ namespace GingerCore.Drivers
                     POMMetaData pomMetaData = new POMMetaData();
                     pomMetaData.Type = POMMetaData.MetaDataType.Form;
                     pomMetaData.Name = formElement.GetAttributeValue("name", "") != string.Empty ? formElement.GetAttributeValue("name", "") : formElement.GetAttributeValue("id", "");
+                    if (string.IsNullOrEmpty(pomMetaData.Name))
+                    {
+                        pomMetaData.Name = "POM Activity - " + Driver.Title + " " + pomActivityIndex;
+                        pomActivityIndex++;
+                    }
+                    else 
+                    {
+                        pomMetaData.Name += " " + Driver.Title;
+                    }
 
                     IEnumerable<HtmlNode> formInputElements = ((HtmlNode)formElement).Descendants().Where(x => x.Name.StartsWith("input"));
                     CreatePOMMetaData(foundElementsList, formInputElements.ToList(), pomMetaData);
