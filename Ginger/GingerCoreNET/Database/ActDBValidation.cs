@@ -381,12 +381,29 @@ namespace GingerCore.Actions
                 Error = "The mapped DB '" + DBNameCalculated + "' was not found in the '" + AppNameCalculated + "' Environment Application.";
                 return false;
             }
+            if(!DB.KeepConnectionOpen)
+            {
+                DB = (Database)DB.CreateCopy(false);
+            }
+            else
+            {
+                Tuple<Guid, Guid> runnerDBTuple = new Tuple<Guid, Guid>(DB.Guid, ((Ginger.Run.GingerExecutionEngine)((Context)Context).Runner).GingerRunner.Guid);
+                if (!App.RunnerDBs.ContainsKey(runnerDBTuple))
+                {
+                    DB = (Database)DB.CreateCopy(false);
+                    App.RunnerDBs.Add(runnerDBTuple, DB);
+                }
+                else
+                {
+                    DB = (Database)App.RunnerDBs.GetValueOrDefault(runnerDBTuple);
+                }
+            }
+
             DB.DSList = DSList;
             DB.ProjEnvironment = RunOnEnvironment;
             DB.BusinessFlow = RunOnBusinessFlow;
 
-            DatabaseOperations databaseOperations = new DatabaseOperations(DB);
-            DB.DatabaseOperations = databaseOperations;
+            DB.DatabaseOperations = new DatabaseOperations(DB);
 
             return true;
         }

@@ -546,7 +546,7 @@ namespace Ginger.Run
                                     }
                                 }
                             }
-                            mGingerRunner.ProjEnvironment.CloseEnvironment();
+                            mGingerRunner.ProjEnvironment.CloseEnvironment(mGingerRunner.Guid);
                         }
                         Status = eRunStatus.Completed;
                         RunsetExecutor.ClearAndResetVirtualAgents(WorkSpace.Instance.RunsetExecutor.RunSetConfig, this);

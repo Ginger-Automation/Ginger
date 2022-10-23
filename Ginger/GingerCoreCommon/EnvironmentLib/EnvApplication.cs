@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -20,6 +20,8 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
 using System.Linq;
 using Amdocs.Ginger.Common.Enums;
+using System.Collections.Generic;
+using System;
 
 namespace GingerCore.Environments
 {
@@ -61,6 +63,8 @@ namespace GingerCore.Environments
 
         [IsSerializedForLocalRepository]
         public ObservableList<IDatabase> Dbs = new ObservableList<IDatabase>();
+
+        public Dictionary<Tuple<Guid, Guid>, IDatabase> RunnerDBs = new Dictionary<Tuple<Guid, Guid>, IDatabase>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<UnixServer> UnixServers = new ObservableList<UnixServer>();

@@ -349,7 +349,7 @@ namespace Ginger.Run
                                 }
                             }
                         }
-                        gr.ProjEnvironment.CloseEnvironment();
+                        gr.ProjEnvironment.CloseEnvironment(gr.Guid);
                     }
                 }
             }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -88,7 +88,7 @@ namespace GingerCore.Environments
             return app;
         }
 
-        public void CloseEnvironment()
+        public void CloseEnvironment(Guid? runnerGuid = null)
         {
             if (Applications != null)
             {
@@ -99,6 +99,12 @@ namespace GingerCore.Environments
                         if (ea.Dbs != null)
                         {
                             db.DatabaseOperations.CloseConnection();
+                        }
+                        if(runnerGuid != null && ea.RunnerDBs.ContainsKey(new Tuple<Guid,Guid> (db.Guid, (Guid)runnerGuid)))
+                        {
+                            Database runnerDBInstance = (Database)ea.RunnerDBs.GetValueOrDefault((new Tuple<Guid, Guid>(db.Guid, (Guid)runnerGuid)));
+                            runnerDBInstance.DatabaseOperations.CloseConnection();
+                            ea.RunnerDBs.Remove((new Tuple<Guid, Guid>(db.Guid, (Guid)runnerGuid)));
                         }
                     }
                 }

@@ -245,7 +245,7 @@ namespace GingerCore.Environments
             }
             try
             {
-
+                Reporter.ToLog(eLogLevel.DEBUG, "Opening DB Connection of type :" + Database.DBType);
                 switch (Database.DBType)
                 {
                     case eDBTypes.MSSQL:
@@ -450,6 +450,7 @@ namespace GingerCore.Environments
             {
                 if (oConn != null)
                 {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Closing DB Connection " + Database.DBType);
                     oConn.Close();
                 }
             }
