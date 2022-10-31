@@ -1435,7 +1435,7 @@ namespace Ginger.WindowExplorer
 
         private void xMainGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (ActualWidth > 700)
+            if (ActualWidth > 1400)
             {
                 xRowSplitter.Visibility = Visibility.Collapsed;
                 xColumnSplitter.Visibility = Visibility.Visible;
