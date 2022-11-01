@@ -13,7 +13,7 @@
     <ScrollViewer>
         <Grid Background="{StaticResource $BackgroundColor_LightGray}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="80"/>
+                <RowDefinition Height="110"/>
                 <RowDefinition Height="320*"/>
             </Grid.RowDefinitions>
 
@@ -30,6 +30,7 @@
                         <RadioButton x:Name="xManualElementConfigurationRadioButton" GroupName="ElementConfigRadioButtonsGroup" Style="{StaticResource $InputRadioButtonStyle}" IsChecked="False" Checked="xAutomaticElementConfigurationRadioButton_Checked" Margin="10,0,0,0"  Content="Manual" FontWeight="Bold"></RadioButton>
                     </StackPanel>
                 </StackPanel>
+                <CheckBox x:Name="xAutoLearnMetadataCheckBox" AutomationProperties.AutomationId="AutoLearnMetadataCheckBox AID" Content="Learn Element Information for Auto flow Generation" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" Style="{StaticResource $CeckBoxStyle}"/>
             </StackPanel>
 
 

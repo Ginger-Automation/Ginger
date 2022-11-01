@@ -71,6 +71,19 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             }
         }
 
+        bool mAutoLearnMetaData = true;
+        public bool AutoLearnMetaData
+        {
+            get
+            {
+                return mAutoLearnMetaData;
+            }
+            set
+            {
+                mAutoLearnMetaData = value;
+            }
+        }
+
         private Agent mAgent = null;
         public Agent Agent
         {
@@ -200,12 +213,12 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 if (SelectedElementTypesList.Count > 0)
                 {
-                    await IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList,true, SpecificFramePath,GetRelativeXpathTemplateList(), LearnScreenshotsOfElements, POM.ApplicationPOMMetaData);
+                    await IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList,true, SpecificFramePath,GetRelativeXpathTemplateList(), LearnScreenshotsOfElements, AutoLearnMetaData, POM.ApplicationPOMMetaData);
                 }
             }
             else
             {
-               await IWindowExplorerDriver.GetVisibleControls(null, mElementsList,true, SpecificFramePath,GetRelativeXpathTemplateList(), LearnScreenshotsOfElements, POM.ApplicationPOMMetaData);
+               await IWindowExplorerDriver.GetVisibleControls(null, mElementsList,true, SpecificFramePath,GetRelativeXpathTemplateList(), LearnScreenshotsOfElements, AutoLearnMetaData, POM.ApplicationPOMMetaData);
             }
 
         }
