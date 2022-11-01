@@ -247,17 +247,19 @@ namespace GingerCore.Actions.WebAPI
                 string keyPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.KeyFilePath));
                 if (!string.IsNullOrEmpty(path) && !string.IsNullOrEmpty(keyPath))
                 {
-                    var certPem = File.ReadAllText(path);
-                    var keyPem = File.ReadAllText(keyPath);
+                    //var certPem = File.ReadAllText(path);
+                    //var keyPem = File.ReadAllText(keyPath);
                     string passwordKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
                     if (!string.IsNullOrEmpty(passwordKey))
                     {
-                        X509Certificate2 customCertificate = X509Certificate2.CreateFromEncryptedPemFile(certPem, passwordKey, keyPem);
+                        //X509Certificate2 customCertificate = X509Certificate2.CreateFromEncryptedPemFile(certPem, passwordKey, keyPem);
+                        X509Certificate2 customCertificate = X509Certificate2.CreateFromEncryptedPemFile(path, passwordKey, keyPath);
                         Handler.ClientCertificates.Add(customCertificate);
                     }
                     else
                     {
-                        X509Certificate2 customCertificate = X509Certificate2.CreateFromPemFile(certPem, keyPem);
+                        //X509Certificate2 customCertificate = X509Certificate2.CreateFromPemFile(certPem, keyPem);
+                        X509Certificate2 customCertificate = X509Certificate2.CreateFromPemFile(path, keyPath);
                         Handler.ClientCertificates.Add(customCertificate);
                     }
                 }
