@@ -372,48 +372,48 @@ namespace GingerCore
         {                       
                 switch (repositoryItem.GetItemType())
                 {
-                    case "BusinessFlow":
-                        if(!((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where x.Name == resultValue select x).SingleOrDefault() != null))
-                        {
+                    case "BusinessFlow":                       
+                        if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Any(x => x.Name == resultValue))
+                        {                        
                             Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Business flow with same name: " + "'" + resultValue + "'" + " already exists.");
                             return true;
                         }                            
                        
                         break;
-                    case "Agent":
-                        if((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                    case "Agent":                        
+                        if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Any(x => x.Name == resultValue))
                         {
                             Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Agent with same name: " + "'" + resultValue + "'" + " already exists.");
                             return true;
                         }
                        
                         break;
-                    case "ReportTemplate":
-                        if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ReportTemplate>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                    case "ReportTemplate":                        
+                        if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ReportTemplate>().Any(x => x.Name == resultValue))
                         {
                             Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Template with same name: " + "'" + resultValue + "'" + " already exists.");
                             return true;
                         }
                         
                         break;
-                    case "ApplicationPOMModel":
-                        if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                    case "ApplicationPOMModel":                        
+                        if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Any(x => x.Name == resultValue))
                         {
                             Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "POM Model with same name: " + "'" + resultValue + "'" + " already exists.");
                             return true;
                         }
                       
                         break;
-                    case "EnvApplication":
-                        if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<EnvApplication>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                    case "EnvApplication":                        
+                        if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<EnvApplication>().Any(x => x.Name == resultValue))
                         {
                             Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Application with same name: " + "'" + resultValue + "'" + " already exists.");
                             return true;
                         }
                     
                         break;
-                    case "HTMLReportTemplate":
-                        if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                    case "HTMLReportTemplate":                        
+                        if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>().Any(x => x.Name == resultValue))
                         {
                             Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Report Template with same name: " + "'" + resultValue + "'" + " already exists.");
                             return true;

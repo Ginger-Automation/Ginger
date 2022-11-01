@@ -148,7 +148,7 @@ namespace Ginger.SolutionWindows
 
                 if (currentApp.AppName != currentApp.NameBeforeEdit)
                 {
-                    if (currentApp.AppName == null || string.IsNullOrEmpty(currentApp.AppName.ToString()) || string.IsNullOrWhiteSpace(currentApp.AppName.ToString()))
+                    if (string.IsNullOrEmpty(currentApp.AppName.ToString()) || string.IsNullOrWhiteSpace(currentApp.AppName.ToString()))
                     {
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Name Cannot be empty");
                         return;
