@@ -93,10 +93,9 @@ namespace Ginger.Actions.Communication
         }
         private void BrowseButton_Certificate(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-
-            dlg.DefaultExt = "*.crt";
-            dlg.Filter = "CRT Files (*.crt)|*.crt";
+            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();           
+            dlg.DefaultExt = "*.cer or .CRT or .crt or .pem or .pfx or .p12";
+            dlg.Filter = "All Certificate Files ((*.crt,*.cer ,*.CRT ,*.CER ,*.pem , *.pfx ,*.p12 )|*.crt;*.cer;*.CER;*.CRT,*.pem;*.pfx;*.p12";
             string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
