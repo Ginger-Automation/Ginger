@@ -547,11 +547,16 @@ namespace GingerCore.Actions.WebAPI
 
         private void AddRawResponseAndRequestToOutputParams()
         {
-            mAct.RawResponseValues = ">>>>>>>>>>>>>>>>>>>>>>>>>>> REQUEST:" + Environment.NewLine + Environment.NewLine + RequestFileContent;
-            mAct.RawResponseValues += Environment.NewLine + Environment.NewLine;
-            mAct.RawResponseValues += ">>>>>>>>>>>>>>>>>>>>>>>>>>> RESPONSE:" + Environment.NewLine + Environment.NewLine + ResponseFileContent;
-            mAct.AddOrUpdateReturnParamActual("Raw Request: ", RequestFileContent);
-            mAct.AddOrUpdateReturnParamActual("Raw Response: ", ResponseFileContent);
+            //If response is broken, do not show the message.
+            if (Response.ReasonPhrase == "OK")
+            {
+                mAct.RawResponseValues = ">>>>>>>>>>>>>>>>>>>>>>>>>>> REQUEST:" + Environment.NewLine + Environment.NewLine + RequestFileContent;
+                mAct.RawResponseValues += Environment.NewLine + Environment.NewLine;
+                mAct.RawResponseValues += ">>>>>>>>>>>>>>>>>>>>>>>>>>> RESPONSE:" + Environment.NewLine + Environment.NewLine + ResponseFileContent;
+                mAct.AddOrUpdateReturnParamActual("Raw Request: ", RequestFileContent);
+                mAct.AddOrUpdateReturnParamActual("Raw Response: ", ResponseFileContent);
+            }
+
         }
 
         public bool ParseRespondToOutputParams()
