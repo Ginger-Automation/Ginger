@@ -1677,6 +1677,8 @@ namespace GingerCore.Actions
                 //}
                 List<ActReturnValue> configuredReturnParamsList = this.ReturnValues.Where(x => String.IsNullOrEmpty(x.Expected) == false || String.IsNullOrEmpty(x.StoreToValue) == false || String.IsNullOrEmpty(x.SimulatedActual) == false).ToList();
                 this.ReturnValues.Clear();
+                //Added in order to remove the "Raw Response Button" when reseting the excution details
+                this.RawResponseValues = String.Empty;
                 foreach (ActReturnValue returnValue in configuredReturnParamsList)
                 {
                     returnValue.Actual = null;
