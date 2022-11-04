@@ -257,20 +257,20 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        private ObservableList<POMMetaData> mApplicationPOMMetaData;
+        private ObservableList<POMPageMetaData> mApplicationPOMMetaData;
         /// <summary>
         /// Been used to identify if POMMetaData were lazy loaded already or not
         /// </summary>
         public bool ApplicationPOMMetaDataLazyLoad { get { return (mApplicationPOMMetaData != null) ? mApplicationPOMMetaData.LazyLoad : false; } }
         [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.NodePath)]
         [IsSerializedForLocalRepository]
-        public ObservableList<POMMetaData> ApplicationPOMMetaData
+        public ObservableList<POMPageMetaData> ApplicationPOMMetaData
         {
             get
             {
                 if (mApplicationPOMMetaData == null)
                 {
-                    mApplicationPOMMetaData = new ObservableList<POMMetaData>();
+                    mApplicationPOMMetaData = new ObservableList<POMPageMetaData>();
                 }
                 if (mApplicationPOMMetaData.LazyLoad)
                 {
