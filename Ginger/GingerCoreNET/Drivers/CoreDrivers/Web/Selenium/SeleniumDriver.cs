@@ -3985,7 +3985,7 @@ namespace GingerCore.Drivers
         /// Else, it'll be skipped - Checking the performance
         /// </summary>
         public bool ExtraLocatorsRequired = true;
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMMetaData> PomMetaData = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             return await Task.Run(() =>
             {
@@ -4015,7 +4015,7 @@ namespace GingerCore.Drivers
         }
 
 
-        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMMetaData> PomMetaDataList = null)
+        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaDataList = null)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
@@ -4093,7 +4093,7 @@ namespace GingerCore.Drivers
                             foundElemntInfo.XPath = xpath;
                             foundElemntInfo.HTMLElementObject = htmlElemNode;
                             ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
-
+                            foundElemntInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.Sequence, Value = foundElementsList.Count.ToString(), ShowOnUI = false });
                             if (ExtraLocatorsRequired)
                             {
                                 GetRelativeXpathElementLocators(foundElemntInfo);
@@ -4155,8 +4155,8 @@ namespace GingerCore.Drivers
             {
                 foreach (HtmlNode formElement in formElementsList)
                 {
-                    POMMetaData pomMetaData = new POMMetaData();
-                    pomMetaData.Type = POMMetaData.MetaDataType.Form;
+                    POMPageMetaData pomMetaData = new POMPageMetaData();
+                    pomMetaData.Type = POMPageMetaData.MetaDataType.Form;
                     pomMetaData.Name = formElement.GetAttributeValue("name", "") != string.Empty ? formElement.GetAttributeValue("name", "") : formElement.GetAttributeValue("id", "");
                     if (string.IsNullOrEmpty(pomMetaData.Name))
                     {
@@ -4181,7 +4181,7 @@ namespace GingerCore.Drivers
             return foundElementsList;
         }
 
-        private void CreatePOMMetaData(ObservableList<ElementInfo> foundElementsList, List<HtmlNode> formChildElements, POMMetaData pomMetaData)
+        private void CreatePOMMetaData(ObservableList<ElementInfo> foundElementsList, List<HtmlNode> formChildElements, POMPageMetaData pomMetaData)
         {
             
             string radioButtoNameOrID = string.Empty;
@@ -4234,10 +4234,11 @@ namespace GingerCore.Drivers
                 if (!foundElementsList.Contains(matchingOriginalElement))
                 {
                     foundElementsList.Add(foundElemntInfo);
+                    foundElemntInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.Sequence, Value = foundElementsList.Count.ToString(), ShowOnUI = false });
+                    matchingOriginalElement = ((IWindowExplorer)this).GetMatchingElement(foundElemntInfo, foundElementsList);
                 }
-                ElementMetaData elementData = new ElementMetaData() { ElementGuid = matchingOriginalElement != null ? matchingOriginalElement.Guid : foundElemntInfo.Guid,
-                                                                      OredrId = i+1, ParentGuid = pomMetaData.Guid};
-                pomMetaData.ElementsMetaData.Add(elementData);
+
+                matchingOriginalElement.Properties.Add(new ControlProperty() { Name = ElementProperty.ParentFormId, Value = pomMetaData.Guid.ToString(), ShowOnUI = false });
             }
         }
 

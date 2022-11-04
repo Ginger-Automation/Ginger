@@ -11,7 +11,7 @@ using static Amdocs.Ginger.Repository.CustomRelativeXpathTemplate;
 
 namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib
 {
-    public class POMMetaData : RepositoryItemBase
+    public class POMPageMetaData : RepositoryItemBase
     {
         public enum MetaDataType
         {
@@ -37,9 +37,6 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib
         public string Name { get; set; }
 
 
-        [IsSerializedForLocalRepository]        
-        public ObservableList<ElementMetaData> ElementsMetaData { get; set; } = new ObservableList<ElementMetaData>();
-
         public override string ItemName
         {
             get { return this.Name; }
@@ -48,16 +45,5 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib
                 //do nothing 
             }
         }
-    }
-
-    public class ElementMetaData : RepositoryItemBase
-    {
-        [IsSerializedForLocalRepository]
-        public Guid ElementGuid { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public int OredrId { get; set; }
-
-        public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }
