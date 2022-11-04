@@ -197,7 +197,10 @@ namespace Ginger.SourceControl
                     if (path != SourceControl.SolutionFolder)
                     {
                         repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
-                        repositoryFolderBase.PauseFileWatcher();
+                        if (repositoryFolderBase != null)
+                        {
+                            repositoryFolderBase.PauseFileWatcher();
+                        }
                     }
                 }
 
