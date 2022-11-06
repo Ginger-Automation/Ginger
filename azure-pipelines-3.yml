@@ -1,3 +1,6 @@
+trigger:
+- main
+pr:  [master, Features/Linux-Migration, Releases/*, Releases/*/* ]
 
 pool:
   vmImage: 'macOS-latest'
