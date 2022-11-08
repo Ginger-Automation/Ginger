@@ -184,9 +184,17 @@ namespace Ginger.Repository
         {
             if (xActivitiesRepositoryListView.CurrentItem != null)
             {
-                Activity a = (Activity)xActivitiesRepositoryListView.CurrentItem;
-                GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(a, new Context() { Activity = a }, General.eRIPageViewMode.SharedReposiotry);
-                w.ShowAsWindow();
+                Activity activity = (Activity)xActivitiesRepositoryListView.CurrentItem;
+                GingerWPF.BusinessFlowsLib.ActivityPage window = null;
+                if (activity.IsAutoLearned)
+                {
+                    window = new GingerWPF.BusinessFlowsLib.ActivityPage(activity, new Context() { Activity = activity }, General.eRIPageViewMode.View);
+                }
+                else
+                {
+                    window = new GingerWPF.BusinessFlowsLib.ActivityPage(activity, new Context() { Activity = activity }, General.eRIPageViewMode.SharedReposiotry);
+                }
+                window.ShowAsWindow();
             }
             else
             {
