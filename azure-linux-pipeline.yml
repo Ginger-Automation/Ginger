@@ -57,14 +57,9 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Publish GingerRuntime
 # ------------------------------------------------------------------------------------------------------
-  - script: ls Ginger/GingerRuntime -alt
-    displayName: 'Print Ginger/GingerRuntime'
-
   - script: dotnet publish  Ginger/GingerRuntime -c Release
     displayName: 'Publish GingerRuntime'
 
-  - script: ls Ginger/GingerRuntime -alt
-    displayName: 'Print Ginger/GingerRuntime'
     
 # ------------------------------------------------------------------------------------------------------
 # Publish Test Results
