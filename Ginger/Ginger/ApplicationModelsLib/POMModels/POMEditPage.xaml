@@ -128,7 +128,7 @@
                 </TabItem.Header>
                 <Frame x:Name="xUIElementsFrame"></Frame>
             </TabItem>
-            <TabItem >
+            <TabItem Name="xPomActivitiesTabItem">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl ImageType="Activity" SetAsFontImageWithSize="18"  Width="18" Height="18" />

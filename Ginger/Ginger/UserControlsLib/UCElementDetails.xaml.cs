@@ -455,7 +455,7 @@ namespace Ginger
                 if (SelectedElement.Locators == null || SelectedElement.Locators.Count == 0)
                     SelectedElement.Locators = SelectedElement.GetElementLocators();
 
-                xPropertiesGrid.DataSourceList = SelectedElement.Properties;
+                xPropertiesGrid.DataSourceList = GingerCore.General.ConvertListToObservableList(SelectedElement.Properties.Where(p => p.ShowOnUI).ToList());
                 xLocatorsGrid.DataSourceList = SelectedElement.Locators;
 
                 Dispatcher.Invoke(() =>

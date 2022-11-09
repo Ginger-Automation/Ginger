@@ -67,7 +67,7 @@ jobs:
       script: |
             Write-Output "Build Reason = $(Build.Reason)"
             $sldomain="amdocs.sealights.co" 
-            $slagenttoken='eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL1BST0QtQ1VTVE9NRVJTMi5hdXRoLnNlYWxpZ2h0cy5pby8iLCJqd3RpZCI6IlBST0QtQ1VTVE9NRVJTMixpLTA0NzIzMTI0MjU2NTg5OTM4LEFQSUdXLTU0ZGRjYjgyLTM4ZDMtNDRkMC04OGI3LTVhMThkZTliZDNhNSwxNjEyNzgwMzY3NjA1Iiwic3ViamVjdCI6ImFtZG9jc0BhZ2VudCIsImF1ZGllbmNlIjpbImFnZW50cyJdLCJ4LXNsLXJvbGUiOiJhZ2VudCIsIngtc2wtc2VydmVyIjoiaHR0cHM6Ly9hbWRvY3Muc2VhbGlnaHRzLmNvL2FwaSIsInNsX2ltcGVyX3N1YmplY3QiOiIiLCJpYXQiOjE2MTI3ODAzNjd9.AISEOpET7FyCSnchXkjMm-aCC3A91bV9myXs7SFu_fMKIJfQzH3maYs9_6rZQTVKoX9SnqMkdUz4lm8RpTx4vOcFutyOyHrFo8hNKFqJEpG87T07y93QTl2coKz2x_4-IOu5i_lxDg_RPpLJkClMD2nyN8DwXYW_0w_3C-JS9asPFDjDAjEEQJDA8oMbstVAm72uaEyS2xVuBYJLuXVP-A47t-nREGuiWKc0Zpq64RMT85Jla7IJdnn6-GFtvGeLQN2INz3RrbjAHS1pWgAm83S--chp8izHQ85BU4reYtyNXa_v8eaidc3x8fjTAwp8_DGbw1hgKETf_znzeWpSeYO5TREHUxLOTY7qtkDBhlspA-ztUI8wewJerykCf_h9Pbdd_olLs0DQgotYgfxYKwDCm2xxpcfOdzxAcPDSA8bE0o_HZJNDfyXdwe9xMco4NGwcfMZUU5mS_cOQ1snBajHPoAxzZbPEb9uN8iAiO1s5jiUuNH4GyLe7hRrC6YAR1zQUhuZ-2iZ7rLJKoOfYOKhTR71wQPOflna-xGnc7hrhTUlA2nAe2Wdzmx-yx-n0lHicywq57m2j2yCLLjdRyfbW-TLqUh7jga34mxMse-zAyIwSfevZ0u8ng8Wm6QsX4A-W26obXHAjdSZcXLoHgzoTN_MVwvA3uUA-QrD_fNg'
+            $slagenttoken= ${env:SLAGENTTOKEN}
             $APP_NAME='Ginger'
             $APP_NAMESPACE='Amdocs.*,ginger.*'
             [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -107,7 +107,7 @@ jobs:
     inputs:
       testStage: 'Unit Tests'
       profilerArchitecture: 'x86'
-      sealightsToken: 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL1BST0QtQ1VTVE9NRVJTMi5hdXRoLnNlYWxpZ2h0cy5pby8iLCJqd3RpZCI6IlBST0QtQ1VTVE9NRVJTMixpLTA0NzIzMTI0MjU2NTg5OTM4LEFQSUdXLTU0ZGRjYjgyLTM4ZDMtNDRkMC04OGI3LTVhMThkZTliZDNhNSwxNjEyNzgwMzY3NjA1Iiwic3ViamVjdCI6ImFtZG9jc0BhZ2VudCIsImF1ZGllbmNlIjpbImFnZW50cyJdLCJ4LXNsLXJvbGUiOiJhZ2VudCIsIngtc2wtc2VydmVyIjoiaHR0cHM6Ly9hbWRvY3Muc2VhbGlnaHRzLmNvL2FwaSIsInNsX2ltcGVyX3N1YmplY3QiOiIiLCJpYXQiOjE2MTI3ODAzNjd9.AISEOpET7FyCSnchXkjMm-aCC3A91bV9myXs7SFu_fMKIJfQzH3maYs9_6rZQTVKoX9SnqMkdUz4lm8RpTx4vOcFutyOyHrFo8hNKFqJEpG87T07y93QTl2coKz2x_4-IOu5i_lxDg_RPpLJkClMD2nyN8DwXYW_0w_3C-JS9asPFDjDAjEEQJDA8oMbstVAm72uaEyS2xVuBYJLuXVP-A47t-nREGuiWKc0Zpq64RMT85Jla7IJdnn6-GFtvGeLQN2INz3RrbjAHS1pWgAm83S--chp8izHQ85BU4reYtyNXa_v8eaidc3x8fjTAwp8_DGbw1hgKETf_znzeWpSeYO5TREHUxLOTY7qtkDBhlspA-ztUI8wewJerykCf_h9Pbdd_olLs0DQgotYgfxYKwDCm2xxpcfOdzxAcPDSA8bE0o_HZJNDfyXdwe9xMco4NGwcfMZUU5mS_cOQ1snBajHPoAxzZbPEb9uN8iAiO1s5jiUuNH4GyLe7hRrC6YAR1zQUhuZ-2iZ7rLJKoOfYOKhTR71wQPOflna-xGnc7hrhTUlA2nAe2Wdzmx-yx-n0lHicywq57m2j2yCLLjdRyfbW-TLqUh7jga34mxMse-zAyIwSfevZ0u8ng8Wm6QsX4A-W26obXHAjdSZcXLoHgzoTN_MVwvA3uUA-QrD_fNg'
+      sealightsToken: ${env:SLAGENTTOKEN}
       SealightsBuildSessionId : $(Build.ArtifactStagingDirectory)\SealightsBuildSessionId.txt 
 # ------------------------------------------------------------------------------------------------------
 # Run Unit Test for .NET Core test DLLs
@@ -142,7 +142,7 @@ jobs:
   
   - task: EndTestExecution@2
     inputs:
-      sealightsToken: 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL1BST0QtQ1VTVE9NRVJTMi5hdXRoLnNlYWxpZ2h0cy5pby8iLCJqd3RpZCI6IlBST0QtQ1VTVE9NRVJTMixpLTA0NzIzMTI0MjU2NTg5OTM4LEFQSUdXLTU0ZGRjYjgyLTM4ZDMtNDRkMC04OGI3LTVhMThkZTliZDNhNSwxNjEyNzgwMzY3NjA1Iiwic3ViamVjdCI6ImFtZG9jc0BhZ2VudCIsImF1ZGllbmNlIjpbImFnZW50cyJdLCJ4LXNsLXJvbGUiOiJhZ2VudCIsIngtc2wtc2VydmVyIjoiaHR0cHM6Ly9hbWRvY3Muc2VhbGlnaHRzLmNvL2FwaSIsInNsX2ltcGVyX3N1YmplY3QiOiIiLCJpYXQiOjE2MTI3ODAzNjd9.AISEOpET7FyCSnchXkjMm-aCC3A91bV9myXs7SFu_fMKIJfQzH3maYs9_6rZQTVKoX9SnqMkdUz4lm8RpTx4vOcFutyOyHrFo8hNKFqJEpG87T07y93QTl2coKz2x_4-IOu5i_lxDg_RPpLJkClMD2nyN8DwXYW_0w_3C-JS9asPFDjDAjEEQJDA8oMbstVAm72uaEyS2xVuBYJLuXVP-A47t-nREGuiWKc0Zpq64RMT85Jla7IJdnn6-GFtvGeLQN2INz3RrbjAHS1pWgAm83S--chp8izHQ85BU4reYtyNXa_v8eaidc3x8fjTAwp8_DGbw1hgKETf_znzeWpSeYO5TREHUxLOTY7qtkDBhlspA-ztUI8wewJerykCf_h9Pbdd_olLs0DQgotYgfxYKwDCm2xxpcfOdzxAcPDSA8bE0o_HZJNDfyXdwe9xMco4NGwcfMZUU5mS_cOQ1snBajHPoAxzZbPEb9uN8iAiO1s5jiUuNH4GyLe7hRrC6YAR1zQUhuZ-2iZ7rLJKoOfYOKhTR71wQPOflna-xGnc7hrhTUlA2nAe2Wdzmx-yx-n0lHicywq57m2j2yCLLjdRyfbW-TLqUh7jga34mxMse-zAyIwSfevZ0u8ng8Wm6QsX4A-W26obXHAjdSZcXLoHgzoTN_MVwvA3uUA-QrD_fNg'
+      sealightsToken: ${env:SLAGENTTOKEN}
       SealightsBuildSessionId : $(Build.ArtifactStagingDirectory)\SealightsBuildSessionId.txt 
 # ------------------------------------------------------------------------------------------------------
 # Package Ginger EXE

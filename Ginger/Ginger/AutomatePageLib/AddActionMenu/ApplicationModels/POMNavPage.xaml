@@ -33,7 +33,7 @@
                 </TabItem.Header>
                 <userControlsLib1:UcListView x:Name="xPomElementsListView" AllowDrop="True"/>
             </TabItem>
-            <TabItem >
+            <TabItem x:Name="xPomActivitiesTabItem">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl ImageType="Activity" SetAsFontImageWithSize="18"  Width="18" Height="18" />
