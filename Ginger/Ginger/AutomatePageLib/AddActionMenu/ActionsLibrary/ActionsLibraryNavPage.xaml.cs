@@ -196,7 +196,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             ucListView.ListSelectionMode = SelectionMode.Extended;
             mActionsListHelper.ListView = ucListView;
 
-            ucListView.MouseDoubleClick += ActionsListView_MouseDoubleClick;
+            ucListView.ItemMouseDoubleClick += ActionsListViewItem_MouseDoubleClick;
         }
 
         private void SetActionsListViewData(UcListView ucListView, ObservableList<Act> dataSource)
@@ -336,7 +336,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
         }
 
-        private void ActionsListView_MouseDoubleClick(object sender, EventArgs e)
+        private void ActionsListViewItem_MouseDoubleClick(object sender, EventArgs e)
         {
             AddActionListView();
         }
