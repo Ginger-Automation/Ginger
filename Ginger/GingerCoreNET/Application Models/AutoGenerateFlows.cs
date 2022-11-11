@@ -21,7 +21,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         {
             Reporter.ToLog(eLogLevel.INFO, "Started generating activities based on pom meta data.");
             ObservableList<Activity> activities = new ObservableList<Activity>();
-            foreach (POMMetaData metaData in POM.ApplicationPOMMetaData)
+            foreach (POMPageMetaData metaData in POM.ApplicationPOMMetaData)
             {
                 Activity activity = new Activity();
                 activity.Active = true;
@@ -46,13 +46,8 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 activity.Acts.Add(gotoAction);
 
                 //generate the action from found element
-                foreach (ElementMetaData elementMetaData in metaData.ElementsMetaData)//we can use orderby if needed
+                foreach (ElementInfo foundElemntInfo in POM.MappedUIElements.Where(ele => ele.Properties.Any(p=>p.Name== ElementProperty.ParentFormId && p.Value == metaData.Guid.ToString())))                
                 {
-                    ElementInfo foundElemntInfo = (ElementInfo)POM.MappedUIElements.Where(z => z.Guid == elementMetaData.ElementGuid).FirstOrDefault();
-                    if (foundElemntInfo == null)
-                    {
-                        foundElemntInfo = (ElementInfo)POM.UnMappedUIElements.Where(z => z.Guid == elementMetaData.ElementGuid).FirstOrDefault();
-                    }
                     if (foundElemntInfo != null)
                     {
                         string elementVal = string.Empty;
