@@ -140,7 +140,7 @@ namespace Ginger.Repository
 
         private void SetActivitiesRepositoryListView()
         {
-            xActivitiesRepositoryListView.MouseDoubleClick += grdActivitiesRepository_grdMain_MouseDoubleClick;
+            xActivitiesRepositoryListView.ItemMouseDoubleClick += grdActivitiesRepository_grdMain_ItemMouseDoubleClick;
             xActivitiesRepositoryListView.ItemDropped += grdActivitiesRepository_ItemDropped;
             xActivitiesRepositoryListView.PreviewDragItem += grdActivitiesRepository_PreviewDragItem;
             xActivitiesRepositoryListView.xTagsFilter.Visibility = Visibility.Visible;
@@ -268,7 +268,7 @@ namespace Ginger.Repository
             }
         }
 
-        private void grdActivitiesRepository_grdMain_MouseDoubleClick(object sender, EventArgs e)
+        private void grdActivitiesRepository_grdMain_ItemMouseDoubleClick(object sender, EventArgs e)
         {
             EditActivity(sender, new RoutedEventArgs());
         }
