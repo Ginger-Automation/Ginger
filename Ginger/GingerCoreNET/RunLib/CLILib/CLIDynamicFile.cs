@@ -320,7 +320,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                             {
                                 //clear previous default
                                 ALMConfig currentDefAlm = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm == true).FirstOrDefault();
-                                currentDefAlm.DefaultAlm = false;
+                                if(currentDefAlm != null)
+                                {
+                                    currentDefAlm.DefaultAlm = false;
+                                }
+                                else
+                                {
+                                    Reporter.ToLog(eLogLevel.WARN, (string.Format("Failed to load the ALM type: '{0}' details", almDetails.ALMType)));
+                                }
+                                
                             }
                             solutionAlmConfig.DefaultAlm = (bool)almDetails.IsDefault;
                         }
