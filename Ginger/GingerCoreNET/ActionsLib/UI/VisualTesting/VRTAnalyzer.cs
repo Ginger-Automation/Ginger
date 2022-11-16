@@ -41,7 +41,7 @@ namespace GingerCore.Actions.VisualTesting
 
         ActVisualTesting mAct;
         IVisualTestingDriver mDriver;
-        static VisualRegressionTracker.VisualRegressionTracker vrt;
+        VisualRegressionTracker.VisualRegressionTracker vrt;
         VisualRegressionTracker.Config config;
 
         public VRTAnalyzer()

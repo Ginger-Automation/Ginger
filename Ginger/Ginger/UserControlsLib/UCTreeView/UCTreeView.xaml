@@ -1,4 +1,4 @@
-    <UserControl x:Class="GingerWPF.UserControlsLib.UCTreeView.UCTreeView"
+<UserControl x:Class="GingerWPF.UserControlsLib.UCTreeView.UCTreeView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,8 +6,13 @@
              xmlns:local="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <Style TargetType="TreeViewItem" x:Key="$UcTreeViewItemStyle">
+            <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
-        <TreeView x:Name="Tree" Background="Transparent">
+        <TreeView x:Name="Tree" Background="Transparent" ItemContainerStyle="{StaticResource $UcTreeViewItemStyle}">
             <TreeView.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                       Color="Transparent" />

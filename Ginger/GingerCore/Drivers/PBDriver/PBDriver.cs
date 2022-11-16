@@ -38,6 +38,7 @@ using Amdocs.Ginger.CoreNET.RunLib;
 using System.Threading.Tasks;
 using GingerCore.Actions.VisualTesting;
 using OpenQA.Selenium;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 
 namespace GingerCore.Drivers.PBDriver
 {
@@ -1010,7 +1011,7 @@ namespace GingerCore.Drivers.PBDriver
             return mUIAutomationHelper.GetListOfDriverAppWindows();
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             return await mUIAutomationHelper.GetVisibleControls();
         }

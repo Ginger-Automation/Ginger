@@ -183,7 +183,8 @@ namespace Ginger.BusinessFlowPages
 
                     List<Activity> list = new List<Activity>();
                     list.Add((Activity)droppedItem);
-                    ActionsFactory.AddActivitiesFromSRHandler(list, mContext.BusinessFlow, activityGroupID, activityIndex);
+                    bool isPomActivity = ((Activity)droppedItem).IsAutoLearned;
+                    ActionsFactory.AddActivitiesFromSRHandler(list, mContext.BusinessFlow, activityGroupID, activityIndex, isPomActivity);
                     if (activityIndex != -1)
                     {
                         ListView.xListView.SelectedIndex = activityIndex;

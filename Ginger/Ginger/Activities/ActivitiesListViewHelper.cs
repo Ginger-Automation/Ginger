@@ -151,8 +151,19 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public ListItemUniqueIdentifier GetItemUniqueIdentifier(object item)
         {
             SetItem(item);
-
-            if(mActivity.Type==eSharedItemType.Link)
+            //needed only on pom page
+            if (PageViewMode == General.eRIPageViewMode.AddFromModel)
+            {
+                if (mActivity.IsSharedRepositoryInstance)
+                {
+                    return new ListItemUniqueIdentifier() { Color = "DarkOrange", Tooltip = "This is a Shared Activity" };
+                }
+                if (mActivity.IsAutoLearned)
+                {
+                    return new ListItemUniqueIdentifier() { Color = "Purple", Tooltip = "This is a Auto Learned Activity" };
+                }
+            }
+            if (mActivity.Type==eSharedItemType.Link)
             {
                 return new ListItemUniqueIdentifier() { Color = "Orange", Tooltip = "Linked Shared Activity" };
             }
@@ -193,14 +204,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             operationsList.Add(addNew);
 
             ListItemOperation addToFlow = new ListItemOperation();
-            addToFlow.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
+            addToFlow.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository, General.eRIPageViewMode.AddFromModel };
             addToFlow.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft;
             addToFlow.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "Add to");
             addToFlow.OperationHandler = AddFromRepository;
             operationsList.Add(addToFlow);
 
             ListItemOperation editItem = new ListItemOperation();
-            editItem.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
+            editItem.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository, General.eRIPageViewMode.AddFromModel };
             editItem.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
             editItem.ToolTip = "Edit Item";
             editItem.OperationHandler = EditActivity;
@@ -327,7 +338,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             publishInd.BindingConverter = new BoolVisibilityConverter();
             notificationsList.Add(publishInd);
 
-            if (PageViewMode != General.eRIPageViewMode.AddFromShardRepository)
+            if (PageViewMode != General.eRIPageViewMode.AddFromShardRepository && PageViewMode != General.eRIPageViewMode.AddFromModel)
             {
                 ListItemNotification sharedRepoInd = new ListItemNotification();
                 sharedRepoInd.AutomationID = "sharedRepoInd";
@@ -742,11 +753,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                     return;
                 }
                 List<Activity> list = new List<Activity>();
+                bool isPomActivity = false;
                 foreach (Activity selectedItem in mListView.List.SelectedItems)
                 {
                     list.Add(selectedItem);
+                    isPomActivity = selectedItem.IsAutoLearned;
                 }
-                ActionsFactory.AddActivitiesFromSRHandler(list, mContext.BusinessFlow);
+                ActionsFactory.AddActivitiesFromSRHandler(list, mContext.BusinessFlow, null, -1, isPomActivity);
             }
             else
             {

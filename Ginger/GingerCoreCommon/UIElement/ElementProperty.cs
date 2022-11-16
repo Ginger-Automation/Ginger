@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -46,5 +46,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public const string IsOffscreen = "Is Offscreen";
         public const string IsSelected = "Is Selected";
         public const string InnerText = "InnerText";
+        public const string ParentFormId = "ParentFormId";
+        public const string Sequence = "Sequence";
     }
 }

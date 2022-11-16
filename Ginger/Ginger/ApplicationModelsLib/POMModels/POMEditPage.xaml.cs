@@ -18,17 +18,25 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models;
+using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.Agents;
 using Ginger.BusinessFlowWindows;
+using Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.Drivers.Common;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using OpenQA.Selenium.DevTools.V100.DOM;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -48,6 +56,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
     {
         ApplicationPOMModel mPOM;
         ScreenShotViewPage mScreenShotViewPage;
+        ActivitiesRepositoryPage mActivitiesRepositoryViewPage;
         GenericWindow mWin;
         public bool IsPageSaved = false;
         public eRIPageViewMode mEditMode { get; set; }
@@ -126,6 +135,23 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
             xUIElementsFrame.Content = mPomAllElementsPage;
 
+            if (WorkSpace.Instance.BetaFeatures.AutoGenerateActivities)
+            {
+                ObservableList<Activity> pomActivities = AutoGenerateFlows.CreatePOMActivitiesFromMetadata(mPOM);
+                //Shared Activities which uses current POM
+                ObservableList<Activity> sharedActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                IEnumerable<Activity> pomSharedActivities = sharedActivities.Where(x => x.Acts.Any(act => act is ActUIElement && ((ActUIElement)act).ElementLocateValue != null && ((ActUIElement)act).ElementLocateValue.Contains(mPOM.Guid.ToString())));
+                pomSharedActivities.ToList().ForEach(item => pomActivities.Add(item));
+
+                mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(pomActivities, new Context());
+                xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
+                xPomActivitiesTabItem.Visibility = Visibility.Visible;
+
+            }
+            else 
+            {
+                xPomActivitiesTabItem.Visibility = Visibility.Collapsed;
+            }
             mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
             UIElementTabTextBlockUpdate();
 
