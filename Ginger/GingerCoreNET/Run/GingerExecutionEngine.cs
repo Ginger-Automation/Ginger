@@ -1118,6 +1118,10 @@ namespace Ginger.Run
             {
                 RunBusinessFlow(CurrentBusinessFlow, doResetErrorHandlerExecutedFlag: false);
             }
+            else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopRun)
+            {
+                //don't do anything
+            }
         }
 
         private void SelfHealingExecuteInSimulationMode(Act act)
@@ -1796,7 +1800,9 @@ namespace Ginger.Run
                     errActivity.Elapsed = stE.ElapsedMilliseconds;
                 }
 
-                if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow || handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginActivity)
+                if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow || 
+                    handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginActivity || 
+                    handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopRun)
                 {
                     mIsErrorHandlerPostActionSet = true;
                 }
