@@ -298,7 +298,7 @@ namespace Ginger.ALM.Repository
             //TODO: retireve test case fields -->DONE
             ObservableList<ExternalItemFieldBase> testCaseFields =  WorkSpace.Instance.Solution.ExternalItemsFields;
             var filterTestCaseFields = testCaseFields.Where(tc => tc.ItemType == eQCItemType.TestCase.ToString()).ToList();
-            for (var i = 0; i < activtiesGroup.ActivitiesIdentifiers.Count; i++)
+            for(var i = 0; i < activtiesGroup.ActivitiesIdentifiers.Where(ai => ai.IdentifiedActivity == null).ToList().Count; i++)
             {
                 if (activtiesGroup.ActivitiesIdentifiers[i].IdentifiedActivity == null)
                 {
