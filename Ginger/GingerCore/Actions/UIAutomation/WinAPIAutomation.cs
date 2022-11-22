@@ -370,8 +370,16 @@ namespace GingerCore.Drivers
             //TODO: FIXME - do not change cursor position or set foreground window, maybe needed only for PB + Calc clickable point and not +3 + send Button Up
             System.Drawing.Point p = System.Windows.Forms.Cursor.Position;
             int x = (int)element.Current.BoundingRectangle.X + ((int)element.Current.BoundingRectangle.Width / 2);
-            int height = element.Current.BoundingRectangle.Height / 3;//calculated height to click in the Element bounding rectangle area
-            int y = (int)element.Current.BoundingRectangle.Y + height * 2;
+            int y = (int)element.Current.BoundingRectangle.Y + ((int)element.Current.BoundingRectangle.Height / 2);
+
+            try
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Menu Item - Bounding Rectamgle x: " + ((int)element.Current.BoundingRectangle.X).ToString() + " y: " + ((int)element.Current.BoundingRectangle.Y).ToString());
+                Reporter.ToLog(eLogLevel.DEBUG, "Calculated value x: " + x.ToString() + " y: " + y.ToString());
+                Reporter.ToLog(eLogLevel.DEBUG, "Bounding Rectangle width: " + ((int)element.Current.BoundingRectangle.Width).ToString() + " height: " + ((int)element.Current.BoundingRectangle.Height).ToString());
+            }
+            catch(Exception ex)
+            {}
 
             ClickLeftMouseButton(x, y);
             System.Threading.Thread.Sleep(500);

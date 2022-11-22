@@ -2847,6 +2847,7 @@ namespace GingerCore.Drivers
         {
             Boolean status;
             UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
+            Reporter.ToLog(eLogLevel.DEBUG, "SelectControlbyIndex, ClassName: " + element.Current.ClassName);
             if (element.Current.ClassName == "PBTabControl32_100")
             {
                 //TOOD: Find a way to handle with UI Automation instead of Win API action
@@ -2891,6 +2892,15 @@ namespace GingerCore.Drivers
             {                
                 winAPI.SendClickOnXYPoint(element,startPoint, y1);
                 UIAuto.AutomationElement currentAE = element.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, tabSelectCondition);
+
+                try
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Current tab: " + currentAE.Current.Name + "   Expected tab: " + value + "   SearchByIndex = " + searchByIndx);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Current tab: " + currentAE.Current.Name);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Child tab: " + ((childAE != null) ? childAE.Current.Name : "child tab is null"));
+                }
+                catch (Exception ex) { }
+
                 if (currentAE != childAE)
                 {
                     childAE = currentAE;
