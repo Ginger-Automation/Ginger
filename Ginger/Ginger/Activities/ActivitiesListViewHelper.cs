@@ -306,15 +306,18 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(item);
             List<ListItemNotification> notificationsList = new List<ListItemNotification>();
 
-            ListItemNotification activitiesVarsDepInd = new ListItemNotification();
-            activitiesVarsDepInd.AutomationID = "activitiesVarsDepInd";
-            activitiesVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
-            activitiesVarsDepInd.ToolTip = string.Format("{0} {1}-{2} dependency is enabled", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
-            activitiesVarsDepInd.ImageSize = 14;
-            activitiesVarsDepInd.BindingObject = mContext.BusinessFlow;
-            activitiesVarsDepInd.BindingFieldName = nameof(BusinessFlow.EnableActivitiesVariablesDependenciesControl);
-            activitiesVarsDepInd.BindingConverter = new BoolVisibilityConverter();
-            notificationsList.Add(activitiesVarsDepInd);
+            if (PageViewMode != General.eRIPageViewMode.AddFromShardRepository)
+            {
+                ListItemNotification activitiesVarsDepInd = new ListItemNotification();
+                activitiesVarsDepInd.AutomationID = "activitiesVarsDepInd";
+                activitiesVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
+                activitiesVarsDepInd.ToolTip = string.Format("{0} {1}-{2} dependency is enabled", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
+                activitiesVarsDepInd.ImageSize = 14;
+                activitiesVarsDepInd.BindingObject = mContext.BusinessFlow;
+                activitiesVarsDepInd.BindingFieldName = nameof(BusinessFlow.EnableActivitiesVariablesDependenciesControl);
+                activitiesVarsDepInd.BindingConverter = new BoolVisibilityConverter();
+                notificationsList.Add(activitiesVarsDepInd);
+            }
 
             ListItemNotification mandatoryInd = new ListItemNotification();
             mandatoryInd.AutomationID = "mandatoryInd";
