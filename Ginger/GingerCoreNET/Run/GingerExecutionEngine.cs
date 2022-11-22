@@ -1118,7 +1118,7 @@ namespace Ginger.Run
             {
                 RunBusinessFlow(CurrentBusinessFlow, doResetErrorHandlerExecutedFlag: false);
             }
-            else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopRun)
+            else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopExecution)
             {
                 //don't do anything
             }
@@ -1802,7 +1802,7 @@ namespace Ginger.Run
 
                 if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow || 
                     handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginActivity || 
-                    handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopRun)
+                    handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopExecution)
                 {
                     mIsErrorHandlerPostActionSet = true;
                 }
@@ -3960,7 +3960,9 @@ namespace Ginger.Run
                     Status = RunsetStatus;
                 }
 
-                if (mIsErrorHandlerPostActionSet && handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow)
+                if (mIsErrorHandlerPostActionSet && (
+                    handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow || 
+                    handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopExecution))
                 {
                     CheckAndExecutePostErrorHandlerAction();
                 }
