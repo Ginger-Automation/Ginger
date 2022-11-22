@@ -24,6 +24,7 @@ using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
+using Ginger.Run;
 using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
@@ -769,7 +770,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (mListView.List.SelectedItems != null && mListView.List.SelectedItems.Count > 0)
             {
                 Activity a = (Activity)mListView.CurrentItem;
-                GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(a, new Context() { Activity = a }, General.eRIPageViewMode.SharedReposiotry);
+                Context context = new Context()
+                {
+                    Activity = a,
+                    Runner = new GingerExecutionEngine(new GingerRunner())
+                };
+                GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(a, context, General.eRIPageViewMode.SharedReposiotry);
                 w.ShowAsWindow();
             }
             else
