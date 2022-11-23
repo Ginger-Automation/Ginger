@@ -455,8 +455,6 @@ namespace Ginger
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65 });
                 defView.GridColsView.Add(new GridColView() { Field = "", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedElementSectionGrid.Resources["xCopyLocatorButtonTemplate"] });
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
-                //defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedElementSectionGrid.Resources["xTestElementButtonTemplate"] });
-                //defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.StatusIcon), Header = "Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedElementSectionGrid.Resources["xTestStatusIconTemplate"] });
                 xFriendlyLocatorsGrid.SetAllColumnsDefaultView(defView);
                 xFriendlyLocatorsGrid.InitViewItems();
 
@@ -627,7 +625,10 @@ namespace Ginger
 
                 xPropertiesGrid.DataSourceList = GingerCore.General.ConvertListToObservableList(SelectedElement.Properties.Where(p => p.ShowOnUI).ToList());
                 if (SelectedElement.FriendlyLocators == null || SelectedElement.FriendlyLocators.Count == 0)
+                {
                     SelectedElement.FriendlyLocators = SelectedElement.GetElementFriendlyLocators();
+                }
+                    
 
                 xPropertiesGrid.DataSourceList = SelectedElement.Properties;
                 xLocatorsGrid.DataSourceList = SelectedElement.Locators;

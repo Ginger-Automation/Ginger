@@ -1206,12 +1206,6 @@ namespace GingerCore.Drivers.WindowsLib
             list.Add(new ControlProperty() { Name = ElementProperty.IsPassword, Value = uIAElement.IsPassword.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.IsOffscreen, Value = uIAElement.IsOffscreen.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.IsSelected, Value = uIAElement.IsSelected.ToString() });
-            
-            //list.Add(new ControlProperty() { Name = ElementProperty.LeftOf, Value = uIAElement.IsSelected.ToString() });
-            //list.Add(new ControlProperty() { Name = ElementProperty.RightOf, Value = uIAElement.IsSelected.ToString() });
-            //list.Add(new ControlProperty() { Name = ElementProperty.Above, Value = uIAElement.IsSelected.ToString() });
-            //list.Add(new ControlProperty() { Name = ElementProperty.Below, Value = uIAElement.IsSelected.ToString() });
-            //list.Add(new ControlProperty() { Name = ElementProperty.Near, Value = uIAElement.IsSelected.ToString() });
 
             return list;       
         }

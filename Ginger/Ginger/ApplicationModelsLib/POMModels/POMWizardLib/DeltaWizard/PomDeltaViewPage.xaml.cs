@@ -338,7 +338,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xFriendlyLocatorsGrid.ShowAdd = Visibility.Collapsed;
             xFriendlyLocatorsGrid.ShowDelete = Visibility.Collapsed;
             xFriendlyLocatorsGrid.ShowUpDown = Visibility.Collapsed;
-            //xFriendlyLocatorsGrid.AddToolbarTool(eImageType.Run, "Test All Elements Friendly Locators", new RoutedEventHandler(TestAllElementsLocators));
         }
 
         private void HandelElementSelectionChange()
