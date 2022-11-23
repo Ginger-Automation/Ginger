@@ -115,6 +115,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             SetDeltaElementsGridView();
             SetDeltaLocatorsGridView();
+            SetDeltaFriendlyLocatorsGridView();
             SetDeltaControlPropertiesGridView();
 
             xMainElementsGrid.DataSourceList = mDeltaElements;
@@ -144,12 +145,26 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void Locators_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             UpdateLocatorsHeader();
+            
+        }
+
+        private void FriendlyLocators_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            UpdateFriendlyLocatorsHeader();
         }
         private void UpdateLocatorsHeader()
         {
             Dispatcher.Invoke(() =>
             {
                 xLocatorsTextBlock.Text = string.Format("Locators ({0})", mSelectedElement.Locators.Count);
+            });
+        }
+
+        private void UpdateFriendlyLocatorsHeader()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xFriendlyLocatorsTextBlock.Text = string.Format("Friendly Locators ({0})", mSelectedElement.FriendlyLocators.Count);
             });
         }
 
@@ -261,7 +276,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 locateByList.Remove(comboItem);
             }
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateBy), Header = "Locate By", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 200, ReadOnly = true, BindingMode = BindingMode.OneWay });            
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 200, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            defView.GridColsView.Add(new GridColView() { Field = "", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xCopyLocatorButtonTemplate"] });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.FriendlyLocator), Header = "Friendly Locator", WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 100, ReadOnly = true, BindingMode = BindingMode.OneWay });           
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.DeltaStatusIcon), Header = "Comparison Status", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xDeltaStatusIconTemplate"] });
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.DeltaExtraDetails), Header = "Comparison Details", WidthWeight = 300, AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
@@ -291,6 +308,37 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xPropertiesGrid.SetAllColumnsDefaultView(view);
             xPropertiesGrid.InitViewItems();
             xPropertiesGrid.SetTitleLightStyle = true;
+        }
+
+        private void SetDeltaFriendlyLocatorsGridView()
+        {
+            GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
+            defView.GridColsView = new ObservableList<GridColView>();
+            List<ComboEnumItem> positionList = GingerCore.General.GetEnumValuesForCombo(typeof(ePosition));
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 50, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            List<ComboEnumItem> locateByList = GingerCore.General.GetEnumValuesForCombo(typeof(eLocateBy));
+            ComboEnumItem comboItem = locateByList.Where(x => ((eLocateBy)x.Value) == eLocateBy.POMElement).FirstOrDefault();
+            if (comboItem != null)
+            {
+                locateByList.Remove(comboItem);
+            }
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.Position), Header = "Position", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = positionList,ReadOnly= true,BindingMode= BindingMode.OneWay });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateBy), Header = "Locate By", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 200, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            defView.GridColsView.Add(new GridColView() { Field = "", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xCopyLocatorButtonTemplate"] });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 100, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.DeltaStatusIcon), Header = "Comparison Status", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xDeltaStatusIconTemplate"] });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.DeltaExtraDetails), Header = "Comparison Details", WidthWeight = 300, AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            xFriendlyLocatorsGrid.SetAllColumnsDefaultView(defView);
+            xFriendlyLocatorsGrid.InitViewItems();
+
+            xFriendlyLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
+            xFriendlyLocatorsGrid.ShowCopy = Visibility.Collapsed;
+            xFriendlyLocatorsGrid.ShowPaste = Visibility.Collapsed;
+            xFriendlyLocatorsGrid.ShowAdd = Visibility.Collapsed;
+            xFriendlyLocatorsGrid.ShowDelete = Visibility.Collapsed;
+            xFriendlyLocatorsGrid.ShowUpDown = Visibility.Collapsed;
+            //xFriendlyLocatorsGrid.AddToolbarTool(eImageType.Run, "Test All Elements Friendly Locators", new RoutedEventHandler(TestAllElementsLocators));
         }
 
         private void HandelElementSelectionChange()
@@ -326,7 +374,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mSelectedElement.Locators.CollectionChanged += Locators_CollectionChanged;
                 xLocatorsGrid.DataSourceList = mSelectedElement.Locators;
                 UpdateLocatorsHeader();
-
+                mSelectedElement.FriendlyLocators.CollectionChanged -= FriendlyLocators_CollectionChanged;
+                mSelectedElement.FriendlyLocators.CollectionChanged += FriendlyLocators_CollectionChanged;
+                xFriendlyLocatorsGrid.DataSourceList = mSelectedElement.FriendlyLocators;
+                UpdateFriendlyLocatorsHeader();
                 mSelectedElement.Properties.CollectionChanged -= Properties_CollectionChanged;
                 mSelectedElement.Properties.CollectionChanged += Properties_CollectionChanged;
                 xPropertiesGrid.DataSourceList = mSelectedElement.Properties;
@@ -405,6 +456,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (mSelectedElement != null)
             {
                 mWinExplorer.TestElementLocators(mSelectedElement.ElementInfo);
+            }
+        }
+
+        private void xCopyLocatorButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ValidateDriverAvalability())
+            {
+                return;
+            }
+
+            if (mSelectedLocator != null)
+            {
+                Clipboard.SetText(mSelectedLocator.LocateValue);
             }
         }
 

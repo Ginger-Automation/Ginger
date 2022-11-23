@@ -64,6 +64,13 @@
                     </DataTrigger>
                 </DataTemplate.Triggers>
             </DataTemplate>
+
+            <DataTemplate x:Key="xCopyLocatorButtonTemplate">
+                <Button x:Name="xCopyLocatorButton" Click="xCopyLocatorButton_Click" ToolTip="Copy Element Locator" Style="{StaticResource @InputImageGridCellButtonStyle}">
+                    <UserControls:ImageMakerControl ImageType="Copy" SetAsFontImageWithSize="16"  Width="16" Height="16" />
+                </Button>
+            </DataTemplate>
+
         </Grid.Resources>
 
         <Grid.RowDefinitions>
@@ -117,6 +124,15 @@
                                 </StackPanel>
                             </TabItem.Header>
                             <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed"/>
+                        </TabItem>
+                        <TabItem>
+                            <TabItem.Header>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
+                                    <UserControls:ImageMakerControl ImageType="LocationPointer"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
+                                    <TextBlock x:Name="xFriendlyLocatorsTextBlock" Text="Friendly Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                                </StackPanel>
+                            </TabItem.Header>
+                            <Ginger:ucGrid x:Name="xFriendlyLocatorsGrid" Title="Friendly Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed"/>
                         </TabItem>
                     </TabControl>
                     <Frame x:Name="xElementScreenShotFrame" Grid.Column="1" Grid.Row="0" Margin="5,25,5,0" Height="200" VerticalAlignment="Top"></Frame>

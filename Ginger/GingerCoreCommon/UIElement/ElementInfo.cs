@@ -42,6 +42,10 @@ namespace Amdocs.Ginger.Common.UIElement
         [IsSerializedForLocalRepository]
         public ObservableList<ControlProperty> Properties = new ObservableList<ControlProperty>();
 
+        [IsSerializedForLocalRepository]
+        public ObservableList<ElementLocator> FriendlyLocators = new ObservableList<ElementLocator>();
+
+
         string mScreenShotImage;
         [IsSerializedForLocalRepository]
         public string ScreenShotImage { get { return mScreenShotImage; } set { if (mScreenShotImage != value) { mScreenShotImage = value; OnPropertyChanged(nameof(ScreenShotImage)); } } }
@@ -465,6 +469,11 @@ namespace Amdocs.Ginger.Common.UIElement
             return this.WindowExplorer.GetElementLocators(this);
         }
 
+        public ObservableList<ElementLocator> GetElementFriendlyLocators()
+        {
+            return this.WindowExplorer.GetElementFriendlyLocators(this);
+        }
+
         public object GetElementData(eLocateBy elementLocateBy = eLocateBy.ByXPath, string elementLocateValue = "")
         {
             //We cache the data, if needed add refresh button
@@ -586,6 +595,8 @@ namespace Amdocs.Ginger.Common.UIElement
         ByContentDescription,
         [EnumValueDescription("By Text")]
         ByText,
+        [EnumValueDescription("By Tag Name")]
+        ByTagName,
         [EnumValueDescription("By Elements Repository")]
         ByElementsRepository,
         [EnumValueDescription("By Model Name")]
@@ -662,4 +673,120 @@ namespace Amdocs.Ginger.Common.UIElement
         [EnumValueDescription("Element updated during self healing operation")]
         ElementModified
     }
+
+    //private string mLeftOfElementXPath;
+    //public string LeftOfElementXPath
+    //{
+    //    get
+    //    {
+    //        if (mLeftOfElementXPath == null)
+    //        {
+    //            mLeftOfElementXPath = GetAbsoluteXpath();
+    //        }
+    //        return mLeftOfElementXPath;
+    //    }
+    //    set
+    //    {
+    //        mLeftOfElementXPath = value;
+    //        OnPropertyChanged(nameof(this.LeftOfElementXPath));  // fix for 6342
+    //    }
+    //}
+
+    //private string mRightOfElementXPath;
+    //public string RightOfElementXPath
+    //{
+    //    get
+    //    {
+    //        if (mRightOfElementXPath == null)
+    //        {
+    //            mRightOfElementXPath = GetAbsoluteXpath();
+    //        }
+    //        return mRightOfElementXPath;
+    //    }
+    //    set
+    //    {
+    //        mRightElementXPath = value;
+    //        OnPropertyChanged(nameof(this.RightElementXPath));  // fix for 6342
+    //    }
+    //}
+
+    //private string mBelowElementXPath;
+    //public string BelowElementXPath
+    //{
+    //    get
+    //    {
+    //        if (mBelowElementXPath == null)
+    //        {
+    //            mBelowElementXPath = GetAbsoluteXpath();
+    //        }
+    //        return mBelowElementXPath;
+    //    }
+    //    set
+    //    {
+    //        mBelowElementXPath = value;
+    //        OnPropertyChanged(nameof(this.BelowElementXPath));  // fix for 6342
+    //    }
+    //}
+
+    //private string mAboveElementXPath;
+    //public string AboveElementXPath
+    //{
+    //    get
+    //    {
+    //        if (mAboveElementXPath == null)
+    //        {
+    //            mAboveElementXPath = GetAbsoluteXpath();
+    //        }
+    //        return mAboveElementXPath;
+    //    }
+    //    set
+    //    {
+    //        mAboveElementXPath = value;
+    //        OnPropertyChanged(nameof(this.AboveElementXPath));  // fix for 6342
+    //    }
+    //}
+
+    //private string mNearElementXPath;
+    //public string NearElementXPath
+    //{
+    //    get
+    //    {
+    //        if (mNearElementXPath == null)
+    //        {
+    //            mNearElementXPath = GetAbsoluteXpath();
+    //        }
+    //        return mNearElementXPath;
+    //    }
+    //    set
+    //    {
+    //        mNearElementXPath = value;
+    //        OnPropertyChanged(nameof(this.NearElementXPath));  // fix for 6342
+    //    }
+    //}
+
+    //[IsSerializedForLocalRepository]
+    //public string LeftOfEle { get; set; }
+    //[IsSerializedForLocalRepository]
+    //public string RightOfEle { get; set; }
+    //[IsSerializedForLocalRepository]
+    //public string AboveEle { get; set; }
+    //[IsSerializedForLocalRepository]
+    //public string BelowEle { get; set; }
+    //[IsSerializedForLocalRepository]
+    //public string NearEle { get; set; }
+
+    public enum ePosition
+    {
+        [EnumValueDescription("Left Of")]
+        LeftOf,
+        [EnumValueDescription("Right Of")]
+        RightOf,
+        [EnumValueDescription("Above")]
+        Above,
+        [EnumValueDescription("Below")]
+        Below,
+        [EnumValueDescription("Near")]
+        Near
+    }
+
 }

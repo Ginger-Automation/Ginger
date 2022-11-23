@@ -1195,6 +1195,7 @@ namespace GingerCore.Drivers.WindowsLib
             {
                 list.Add(new ControlProperty() { Name = ElementProperty.Value, Value = ElementInfo.Value });
             }
+            
             list.Add(new ControlProperty() { Name = ElementProperty.Height, Value = ElementInfo.Height.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.Width, Value = ElementInfo.Width.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.X, Value = ElementInfo.X.ToString() });
@@ -1205,6 +1206,12 @@ namespace GingerCore.Drivers.WindowsLib
             list.Add(new ControlProperty() { Name = ElementProperty.IsPassword, Value = uIAElement.IsPassword.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.IsOffscreen, Value = uIAElement.IsOffscreen.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.IsSelected, Value = uIAElement.IsSelected.ToString() });
+            
+            //list.Add(new ControlProperty() { Name = ElementProperty.LeftOf, Value = uIAElement.IsSelected.ToString() });
+            //list.Add(new ControlProperty() { Name = ElementProperty.RightOf, Value = uIAElement.IsSelected.ToString() });
+            //list.Add(new ControlProperty() { Name = ElementProperty.Above, Value = uIAElement.IsSelected.ToString() });
+            //list.Add(new ControlProperty() { Name = ElementProperty.Below, Value = uIAElement.IsSelected.ToString() });
+            //list.Add(new ControlProperty() { Name = ElementProperty.Near, Value = uIAElement.IsSelected.ToString() });
 
             return list;       
         }
@@ -1835,6 +1842,11 @@ namespace GingerCore.Drivers.WindowsLib
             size.Height = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Height;
             size.Width = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Width;
             return size.ToString();
+        }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
         }
     }
 }
