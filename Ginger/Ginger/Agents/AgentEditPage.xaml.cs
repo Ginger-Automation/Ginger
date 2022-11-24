@@ -173,7 +173,28 @@ namespace Ginger.Agents
                 }                
             }
         }
-                
+
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (mAgent != null)
+            {
+                if ((bool)e.NewValue)
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem != mAgent)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = mAgent;
+                    }
+                }
+                else
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem == mAgent)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = null;
+                    }
+                }
+            }
+        }
+
         private async void xTestBtn_Click(object sender, RoutedEventArgs e)
         {
             xTestBtn.IsEnabled = false;

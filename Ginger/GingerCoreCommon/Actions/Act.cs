@@ -149,7 +149,7 @@ namespace GingerCore.Actions
 
         private bool mEnableActionLogConfig;
         [IsSerializedForLocalRepository]
-        public bool EnableActionLogConfig { get { return mEnableActionLogConfig; } set { mEnableActionLogConfig = value; OnPropertyChanged(nameof(EnableActionLogConfig)); } }
+        public bool EnableActionLogConfig { get { return mEnableActionLogConfig; } set { if (mEnableActionLogConfig != value) { mEnableActionLogConfig = value; OnPropertyChanged(nameof(EnableActionLogConfig)); } } }
 
 
         private bool mActive;
@@ -173,8 +173,11 @@ namespace GingerCore.Actions
             { return mSupportSimulation; }
             set
             {
-                mSupportSimulation = value;
-                OnPropertyChanged(Fields.SupportSimulation);
+                if (mSupportSimulation != value)
+                {
+                    mSupportSimulation = value;
+                    OnPropertyChanged(Fields.SupportSimulation);
+                }
             }
         }
 
@@ -269,20 +272,22 @@ namespace GingerCore.Actions
             }
             set
             {
-                mEnableRetryMechanism = value;
+                if (mEnableRetryMechanism != value)
+                {
+                    mEnableRetryMechanism = value;
+                    OnPropertyChanged(Fields.EnableRetryMechanism);
+                }
 
                 if (value == false)
                 {
                     MaxNumberOfRetries = 0;
                 }
-
-                OnPropertyChanged(Fields.EnableRetryMechanism);
             }
         }
 
         private int mRetryMechanismInterval = 5;
         [IsSerializedForLocalRepository]
-        public int RetryMechanismInterval { get { return mRetryMechanismInterval; } set { mRetryMechanismInterval = value; OnPropertyChanged(Fields.RetryMechanismInterval); } }
+        public int RetryMechanismInterval { get { return mRetryMechanismInterval; } set { if (mRetryMechanismInterval != value) { mRetryMechanismInterval = value; OnPropertyChanged(Fields.RetryMechanismInterval); } } }
 
         private int mMaxNumberOfRetries = 2;
         [IsSerializedForLocalRepository]
@@ -298,8 +303,11 @@ namespace GingerCore.Actions
             }
             set
             {
-                mMaxNumberOfRetries = value;
-                OnPropertyChanged(Fields.MaxNumberOfRetries);
+                if (mMaxNumberOfRetries != value)
+                {
+                    mMaxNumberOfRetries = value;
+                    OnPropertyChanged(Fields.MaxNumberOfRetries);
+                }
             }
         }
 
@@ -313,9 +321,14 @@ namespace GingerCore.Actions
             }
             set
             {
-                mWait = value;
-                if (WaitVE == null)
-                    WaitVE = value.ToString();
+                if (mWait != value)
+                {
+                    mWait = value;
+                    if (WaitVE == null)
+                    {
+                        WaitVE = value.ToString();
+                    }
+                }
             }
         }
 
@@ -329,8 +342,11 @@ namespace GingerCore.Actions
             }
             set
             {
-                mWaitVE = value;
-                OnPropertyChanged(nameof(WaitVE));
+                if (mWaitVE != value)
+                {
+                    mWaitVE = value;
+                    OnPropertyChanged(nameof(WaitVE));
+                }
             }
         }
 
@@ -345,8 +361,11 @@ namespace GingerCore.Actions
             }
             set
             {
-                mTimeout = value;
-                OnPropertyChanged(nameof(Timeout));
+                if (mTimeout != value)
+                {
+                    mTimeout = value;
+                    OnPropertyChanged(nameof(Timeout));
+                }
             }
         } //timeout in secs
 
@@ -360,12 +379,12 @@ namespace GingerCore.Actions
 
         private ePlatformType mPlatform;
         [IsSerializedForLocalRepository]
-        public ePlatformType Platform { get { return mPlatform; } set { mPlatform = value; OnPropertyChanged(Fields.Platform); } }
+        public ePlatformType Platform { get { return mPlatform; } set { if (mPlatform != value) { mPlatform = value; OnPropertyChanged(Fields.Platform); } } }
         // -------------------------------
 
         private bool mTakeScreenShot { get; set; }
         [IsSerializedForLocalRepository]
-        public bool TakeScreenShot { get { return mTakeScreenShot; } set { mTakeScreenShot = value; OnPropertyChanged(Fields.TakeScreenShot); } }
+        public bool TakeScreenShot { get { return mTakeScreenShot; } set { if (mTakeScreenShot != value) { mTakeScreenShot = value; OnPropertyChanged(Fields.TakeScreenShot); } } }
 
 
         private eWindowsToCapture mWindowToCapture;
@@ -374,7 +393,7 @@ namespace GingerCore.Actions
         public eWindowsToCapture WindowsToCapture
         {
             get { return mWindowToCapture; }
-            set { mWindowToCapture = value; OnPropertyChanged(Fields.WindowsToCapture); }
+            set { if (mWindowToCapture != value) { mWindowToCapture = value; OnPropertyChanged(Fields.WindowsToCapture); } }
         }
 
         private eStatusConverterOptions mStatusConverter;
@@ -387,8 +406,11 @@ namespace GingerCore.Actions
             }
             set
             {
-                mStatusConverter = value;
-                OnPropertyChanged(nameof(StatusConverter));
+                if (mStatusConverter != value)
+                {
+                    mStatusConverter = value;
+                    OnPropertyChanged(nameof(StatusConverter));
+                }
             }
         }
 
@@ -1676,7 +1698,10 @@ namespace GingerCore.Actions
                 //    }
                 //}
                 List<ActReturnValue> configuredReturnParamsList = this.ReturnValues.Where(x => String.IsNullOrEmpty(x.Expected) == false || String.IsNullOrEmpty(x.StoreToValue) == false || String.IsNullOrEmpty(x.SimulatedActual) == false).ToList();
-                this.ReturnValues.Clear();
+                if (this.ReturnValues.Count != 0)
+                {
+                    this.ReturnValues.Clear();
+                }
                 //Added in order to remove the "Raw Response Button" when reseting the excution details
                 this.RawResponseValues = String.Empty;
                 foreach (ActReturnValue returnValue in configuredReturnParamsList)

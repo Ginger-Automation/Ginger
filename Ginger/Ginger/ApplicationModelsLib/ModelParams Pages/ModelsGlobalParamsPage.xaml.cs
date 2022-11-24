@@ -96,7 +96,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
             if (!mSelectionModePage)
             {
-                xModelsGlobalParamsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Parameter, "Applications Models Global Parameters", saveAllHandler: SaveAllGlobalParametersChanges, addHandler: AddGlobalParam);
+                xModelsGlobalParamsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Parameter, "Applications Models Global Parameters", saveAllHandler: SaveAllGlobalParametersChanges, addHandler: AddGlobalParam,true);
 
                 view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, MaxWidth=30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["OpenEditPossibleValuesPage"] });
                 view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.CurrentValue), Header = "Current Value", WidthWeight = 20, AllowSorting = true });
@@ -108,7 +108,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 xModelsGlobalParamsGrid.SetbtnPastHandler(BtnPastGlobalParamsClicked);
 
                 xModelsGlobalParamsGrid.ShowSaveAllChanges = Visibility.Collapsed;
-                xModelsGlobalParamsGrid.ShowSaveSelectedChanges = Visibility.Visible;
+                //xModelsGlobalParamsGrid.ShowSaveSelectedChanges = Visibility.Visible;
                 xModelsGlobalParamsGrid.ShowEdit = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.ShowCopy = Visibility.Visible;
                 xModelsGlobalParamsGrid.ShowPaste = Visibility.Visible;
@@ -614,6 +614,35 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         {
             SelectedGlobalParamsFromDialogPage = null;
             mGenericWindow.Close();
+        }
+
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (xModelsGlobalParamsGrid.grdMain.Items.Count != 0 && xModelsGlobalParamsGrid.grdMain.SelectedItems[0] != null)
+            {
+                if ((bool)e.NewValue)
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem != xModelsGlobalParamsGrid.grdMain.SelectedItems[0])
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = (RepositoryItemBase)xModelsGlobalParamsGrid.grdMain.SelectedItems[0];
+                    }
+                }
+                else
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem == xModelsGlobalParamsGrid.grdMain.SelectedItems[0])
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = null;
+                    }
+                }
+            }
+        }
+
+        private void xModelsGlobalParamsGrid_SelectedItemChanged(object selectedItem)
+        {
+            if (selectedItem != null && selectedItem != WorkSpace.Instance.CurrentSelectedItem)
+            {
+                WorkSpace.Instance.CurrentSelectedItem = (Amdocs.Ginger.Repository.RepositoryItemBase)selectedItem;
+            }
         }
     }
 }

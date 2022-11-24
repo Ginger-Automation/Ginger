@@ -160,9 +160,9 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
         }
 
-        public void SetTopToolBarTools(RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, RoutedEventHandler refreshHandler = null, RoutedEventHandler addActionHandler = null)
+        public void SetTopToolBarTools(RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, RoutedEventHandler refreshHandler = null, RoutedEventHandler addActionHandler = null, bool isSaveButtonHidden = false)
         {
-            if (saveAllHandler != null)
+            if (saveAllHandler != null && !isSaveButtonHidden)
             {
                 xSaveAllButton.Visibility = Visibility.Visible;
                 xSaveAllButton.Click += saveAllHandler;

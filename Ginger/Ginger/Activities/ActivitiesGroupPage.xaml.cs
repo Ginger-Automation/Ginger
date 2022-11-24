@@ -256,5 +256,26 @@ namespace Ginger.Activities
                 _pageGenericWin.Close();
             }
         }
+
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (mEditMode == eEditMode.SharedRepository && mActivitiesGroup != null && !String.IsNullOrEmpty(mActivitiesGroup.ContainingFolder))
+            {
+                if ((bool)e.NewValue)
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem != mActivitiesGroup)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = mActivitiesGroup;
+                    }
+                }
+                else
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem == mActivitiesGroup)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = null;
+                    }
+                }
+            }
+        }
     }
 }

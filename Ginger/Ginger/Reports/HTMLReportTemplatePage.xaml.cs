@@ -957,5 +957,26 @@ namespace Ginger.Reports
                 SetIsDefualtImage();
             }
         }
+
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (_HTMLReportConfiguration != null)
+            {
+                if ((bool)e.NewValue)
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem != _HTMLReportConfiguration)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = _HTMLReportConfiguration;
+                    }
+                }
+                else
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem == _HTMLReportConfiguration)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = null;
+                    }
+                }
+            }
+        }
     }
 }

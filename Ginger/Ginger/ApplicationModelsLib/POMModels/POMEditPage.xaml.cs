@@ -485,5 +485,26 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             FirstRow.Height = new GridLength(6, GridUnitType.Star);
         }
+
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (mPOM != null)
+            {
+                if ((bool)e.NewValue)
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem != mPOM)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = mPOM;
+                    }
+                }
+                else
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem == mPOM)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = null;
+                    }
+                }
+            }
+        }
     }
 }

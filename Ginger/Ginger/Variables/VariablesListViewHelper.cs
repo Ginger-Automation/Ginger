@@ -201,7 +201,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             save.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Save;
             save.ToolTip = "Save All Changes";
             save.OperationHandler = SaveAllHandler;
-            operationsList.Add(save);
+            //operationsList.Add(save);
 
             return operationsList;
         }

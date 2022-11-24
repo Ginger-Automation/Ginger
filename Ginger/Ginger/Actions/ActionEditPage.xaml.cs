@@ -1844,5 +1844,26 @@ namespace Ginger.Actions
             }
             Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw response view, see log for details.");
         }
+
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (EditMode == General.eRIPageViewMode.SharedReposiotry && mAction != null && !String.IsNullOrEmpty(mAction.ContainingFolder))
+            {
+                if ((bool)e.NewValue)
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem != mAction)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = mAction;
+                    }
+                }
+                else
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem == mAction)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = null;
+                    }
+                }
+            }
+        }
     }
 }

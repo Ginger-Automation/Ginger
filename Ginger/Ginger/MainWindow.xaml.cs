@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.IO;
+using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.ALM;
 using Ginger.AnalyzerLib;
@@ -38,6 +39,7 @@ using Ginger.SourceControl;
 using Ginger.User;
 using GingerCore;
 using GingerCore.ALM;
+using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
@@ -48,8 +50,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
@@ -226,6 +230,7 @@ namespace Ginger
                     xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
                     xMainWindowFrame.Content = new LoadingPage("Loading Solution...");
                     xMainWindowFrame.Visibility = Visibility.Visible;
+                    xModifiedItemsCounter.Visibility = Visibility.Collapsed;
                     GingerCore.General.DoEvents();
                 }
                 //else if (xMainWindowFrame.Content is LoadingPage && SelectedSolutionTab == eSolutionTabType.None)
@@ -256,6 +261,25 @@ namespace Ginger
                         xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
                     }
                 });
+            }
+            if (e.PropertyName == nameof(WorkSpace.SolutionLoaded))
+            {
+                if (WorkSpace.Instance.SolutionLoaded)
+                {
+                    WorkSpace.Instance.SolutionRepository.ModifiedFiles.CollectionChanged += ModifiedFilesChanged;
+                }
+            }
+
+            if (e.PropertyName == nameof(WorkSpace.CurrentSelectedItem))
+            {
+                if (WorkSpace.Instance.CurrentSelectedItem != null)
+                {
+                    BindingHandler.ObjFieldBinding(xModifiedLabel, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.CurrentSelectedItem, nameof(RepositoryItemBase.DirtyStatusImage), BindingMode.OneWay);
+                }
+                else
+                {
+                    xModifiedLabel.ImageType = eImageType.Empty;
+                }
             }
         }
 
@@ -565,7 +589,7 @@ namespace Ginger
             }
         }
 
-        private void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
+        private async void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             // Alt + CTRL + Shift + G = show beta features
             if (e.Key == Key.G && Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.LeftShift) && Keyboard.IsKeyDown(Key.LeftAlt))
@@ -576,6 +600,19 @@ namespace Ginger
             else if (e.Key == Key.F && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
             {
                 SolutionFindAndReplace();
+            }
+            else if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.S && WorkSpace.Instance.SolutionLoaded)
+            {
+                e.Handled = true;
+                await SaveCurrentItemAsync();
+                return;
+            }
+            else if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.S && WorkSpace.Instance.SolutionLoaded)
+            {
+                e.Handled = true;
+                ModifiedRepositoryFilesPage MRFPage = new ModifiedRepositoryFilesPage();
+                MRFPage.ShowAsWindow();
+                return;
             }
         }
 
@@ -1347,6 +1384,116 @@ namespace Ginger
             SourceControlUploadSolutionPage uploadPage = new SourceControl.SourceControlUploadSolutionPage();
             uploadPage.ShowAsWindow(eWindowShowStyle.Dialog);
             SetSolutionDependedUIElements();
+        }
+        private void ModifiedFilesChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                if (WorkSpace.Instance.SolutionRepository.ModifiedFiles.Count == 0)
+                {
+                    xModifiedItemsCounter.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    xModifiedItemsCounter.Visibility = Visibility.Visible;
+                    xModifiedItemsCounterText.Text = WorkSpace.Instance.SolutionRepository.ModifiedFiles.Count.ToString();
+                }
+            });
+        }
+        private void xSaveCurrentBtn_ToolTipOpening(object sender, ToolTipEventArgs e)
+        {
+            ucButton saveBtn = sender as ucButton;
+            if (WorkSpace.Instance.CurrentSelectedItem != null)
+            {
+                saveBtn.ToolTip = String.Format("Save {0}", WorkSpace.Instance.CurrentSelectedItem.ItemName);
+            }
+            else
+            {
+                saveBtn.ToolTip = "No Item Selected";
+            }
+        }
+
+        private async void xSaveCurrentBtn_Click(object sender, RoutedEventArgs e)
+        {
+            await SaveCurrentItemAsync();
+        }
+        public async Task SaveCurrentItemAsync()
+        {
+            await Task.Run(() => SaveCurrentItem());
+        }
+
+        private void SaveCurrentItem()
+        {
+            if (WorkSpace.Instance.CurrentSelectedItem == null)
+            {
+                Reporter.ToUser(eUserMsgKey.AskToSelectItem); return;
+            }
+            if (Reporter.ToUser(eUserMsgKey.SaveBusinessFlowChanges, WorkSpace.Instance.CurrentSelectedItem.ItemName) == eUserMsgSelection.Yes)
+            {
+                if (WorkSpace.Instance.CurrentSelectedItem is Solution)
+                {
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, WorkSpace.Instance.CurrentSelectedItem.ItemName, "item");
+                    WorkSpace.Instance.Solution.SolutionOperations.SaveSolution();
+                    Reporter.HideStatusMessage();
+                }
+                else
+                {
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, WorkSpace.Instance.CurrentSelectedItem.ItemName, "item");
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(WorkSpace.Instance.CurrentSelectedItem);
+                    Reporter.HideStatusMessage();
+                }
+            }
+        }
+
+        private void xSaveAllBtn_MouseEnter(object sender, MouseEventArgs e)
+        {
+            xSaveAllBtn.ButtonImageType = eImageType.SaveAllGradient;
+        }
+
+        private void xSaveAllBtn_MouseLeave(object sender, MouseEventArgs e)
+        {
+            xSaveAllBtn.ButtonImageType = eImageType.SaveAll;
+        }
+
+        private void xSaveAllBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ModifiedRepositoryFilesPage MRFPage = new ModifiedRepositoryFilesPage();
+            MRFPage.ShowAsWindow();
+        }
+
+        private void xGlobalSolutionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (xGlobalSolutionMenuItem.Tag == null)
+            {
+                xGlobalSolutionMenuItem.Tag = "Expanded";
+            }
+            else
+            {
+                xGlobalSolutionMenuItem.Tag = null;
+            }
+
+            SetGlobalSolutionMenuItems();
+        }
+
+        private void SetGlobalSolutionMenuItems()
+        {
+            //delete all Global Solution Sub menu items
+            for (int i = 0; i < xExtraSolutionOperationsMainMenuItem.Items.Count; i++)
+            {
+                if ((string)((MenuItem)xExtraSolutionOperationsMainMenuItem.Items[i]).Tag == "Global Solution")
+                {
+                    xExtraSolutionOperationsMainMenuItem.Items.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            if (xGlobalSolutionMenuItem.Tag != null)
+            {
+                //Insert
+                int insertIndex = xExtraSolutionOperationsMainMenuItem.Items.IndexOf(xGlobalSolutionMenuItem) + 1;
+
+                AddSubMenuItem(xExtraSolutionOperationsMainMenuItem, "Import Global Cross Solution Items", "Global Solution", btnGlobalSolutionImport_Click, insertIndex++, iconType: eImageType.GetLatest);
+            }
         }
     }
 }

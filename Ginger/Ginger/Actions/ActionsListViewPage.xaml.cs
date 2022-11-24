@@ -218,11 +218,19 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         if (act is ActWithoutDriver)
                         {
-                            act.Platform = ePlatformType.NA;
+                            // set only if the value is different so dirty status won't be changed to modified when unnecessary
+                            if (act.Platform != ePlatformType.NA)
+                            {
+                                act.Platform = ePlatformType.NA;
+                            }
                         }
                         else
                         {
-                           act.Platform = platform;
+                            // set only if the value is different so dirty status won't be changed to modified when unnecessary
+                            if (act.Platform != platform)
+                            {
+                                act.Platform = platform;
+                            }
                         }
                     }
                 });

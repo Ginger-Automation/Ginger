@@ -61,7 +61,7 @@ namespace Ginger.SolutionWindows
 
         private void SetAppsGrid()
         {
-            xTargetApplicationsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Application, "Target Applications", saveAllHandler: SaveHandler, addHandler: AddApplication);
+            xTargetApplicationsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Application, "Target Applications", saveAllHandler: SaveHandler, addHandler: AddApplication, true);
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             //List<string> platformesTypesList = GingerCore.General.GetEnumValues(typeof(ePlatformType));
@@ -215,5 +215,25 @@ namespace Ginger.SolutionWindows
             
         }
 
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (WorkSpace.Instance.Solution != null)
+            {
+                if ((bool)e.NewValue)
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem != WorkSpace.Instance.Solution)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = WorkSpace.Instance.Solution;
+                    }
+                }
+                else
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem == WorkSpace.Instance.Solution)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = null;
+                    }
+                }
+            }
+        }
     }
 }

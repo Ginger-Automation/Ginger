@@ -6,7 +6,7 @@
       xmlns:Ginger="clr-namespace:Ginger"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="600"
-      Title="GingerGridPage">
+      Title="GingerGridPage" IsVisibleChanged="Page_IsVisibleChanged">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
@@ -37,7 +37,7 @@
                 <ColumnDefinition Width="50*"/>
             </Grid.ColumnDefinitions>
             <DataGrid x:Name="xProcessesDataGrid" IsReadOnly="True"/>
-            <Ginger:ucGrid x:Name="xRemoteServiceGrid" Grid.Column="1" Title="Remote Service Grid" ShowRefresh="Visible" ShowUndo="Visible" />
+            <Ginger:ucGrid x:Name="xRemoteServiceGrid" SelectedItemChanged="xRemoteServiceGrid_SelectedItemChanged" SelectionMode="Single" Grid.Column="1" Title="Remote Service Grid" ShowRefresh="Visible" ShowSaveAllChanges="Collapsed" ShowUndo="Visible" />
         </Grid>
     </Grid>
 </Page>

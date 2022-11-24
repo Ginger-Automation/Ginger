@@ -501,5 +501,26 @@ namespace Ginger.Variables
                 xMandatoryInputCheckBox.Visibility = Visibility.Collapsed;
             }
         }
+
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (editMode == eEditMode.SharedRepository && mVariable != null)
+            {
+                if ((bool)e.NewValue)
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem != mVariable)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = mVariable;
+                    }
+                }
+                else
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem == mVariable)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = null;
+                    }
+                }
+            }
+        }
     }
 }

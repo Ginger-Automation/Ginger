@@ -94,7 +94,7 @@ namespace Ginger.TagsLib
         {
             if (mViewMode == eViewMode.Solution)
             {
-                xTagsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Tag, "Tags", saveAllHandler: saveBtn_Click, addHandler: AddButton);
+                xTagsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Tag, "Tags", saveAllHandler: saveBtn_Click, addHandler: AddButton, true);
                 xTagsGrid.ShowUpDown = Visibility.Visible;
                 xTagsGrid.ShowAdd = Visibility.Collapsed;
             }
@@ -166,6 +166,27 @@ namespace Ginger.TagsLib
                         mTags.RemoveAt(j);
                         j--;
                     }
+        }
+
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (WorkSpace.Instance.Solution != null)
+            {
+                if ((bool)e.NewValue)
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem != WorkSpace.Instance.Solution)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = WorkSpace.Instance.Solution;
+                    }
+                }
+                else
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem == WorkSpace.Instance.Solution)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = null;
+                    }
+                }
+            }
         }
     }
 }

@@ -9,7 +9,8 @@
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       xmlns:usercontrols1="clr-namespace:Ginger.UserControlsLib" h:GingerHelpProvider.HelpString="Variable"
       mc:Ignorable="d" 
-      d:DesignHeight="1000" d:DesignWidth="800">
+      d:DesignHeight="1000" d:DesignWidth="800" 
+      IsVisibleChanged="Page_IsVisibleChanged">
 
     <ScrollViewer Background="{StaticResource $BackgroundColor_LightGray}">
         <DockPanel >

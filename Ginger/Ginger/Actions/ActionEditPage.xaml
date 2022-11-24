@@ -10,7 +10,8 @@
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       xmlns:uclistview="clr-namespace:Ginger.UserControlsLib.UCListView"
       mc:Ignorable="d" 
-      Title="Edit Action" 
+      Title="Edit Action"
+      IsVisibleChanged="Page_IsVisibleChanged"
       d:DesignWidth="1000"
       d:DesignHeight="800">
 

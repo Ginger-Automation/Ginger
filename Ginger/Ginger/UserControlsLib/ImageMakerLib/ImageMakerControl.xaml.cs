@@ -191,6 +191,12 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Sealights:
                     SetAsStaticImage("SealightsLogo.png");
                     break;
+                case eImageType.SaveAll:
+                    SetAsStaticImage("save-all-regular-light-grey.png");
+                    break;
+                case eImageType.SaveAllGradient:
+                    SetAsStaticImage("save-all-regular-gradient-amdocs.png");
+                    break;
                 #endregion
 
 

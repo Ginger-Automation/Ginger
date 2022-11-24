@@ -596,5 +596,26 @@ namespace GingerWPF.BusinessFlowsLib
 
             UpdateActivityViewMode(Ginger.General.eRIPageViewMode.ViewAndExecute);
         }
+
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.SharedReposiotry && mActivity != null && !String.IsNullOrEmpty(mActivity.ContainingFolder))
+            {
+                if ((bool)e.NewValue)
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem != mActivity)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = mActivity;
+                    }
+                }
+                else
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem == mActivity)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = null;
+                    }
+                }
+            }
+        }
     }
 }

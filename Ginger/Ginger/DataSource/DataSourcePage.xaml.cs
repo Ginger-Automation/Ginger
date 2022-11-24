@@ -39,6 +39,7 @@ using GingerCore.Drivers.JavaDriverLib;
 using Ginger.Drivers;
 using GingerCore.Drivers.MainFrame;
 using GingerCore.Drivers.AndroidADB;
+using amdocs.ginger.GingerCoreNET;
 using GingerCore.GeneralLib;
 
 namespace Ginger.DataSource
@@ -190,7 +191,28 @@ namespace Ginger.DataSource
                 mDSTableList.Add(dsTableDetails);
             }           
         }
-        
+
         #endregion Functions
+
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (mDSDetails != null)
+            {
+                if ((bool)e.NewValue)
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem != mDSDetails)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = mDSDetails;
+                    }
+                }
+                else
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem == mDSDetails)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = null;
+                    }
+                }
+            }
+        }
     }
 }

@@ -8,12 +8,12 @@
       mc:Ignorable="d"
       h:GingerHelpProvider.HelpString="Report"
       MinHeight="300" MinWidth="785"
-	Title="General HTML Reports Configurations">
+	Title="General HTML Reports Configurations" IsVisibleChanged="Page_IsVisibleChanged">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <StackPanel>
             <StackPanel x:Name="htmlReportFolderPnl" Margin="10,0,0,0" HorizontalAlignment="Left">
-                <usercontrols:ucButton x:Name="xSaveButton"  ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" HorizontalAlignment="Left" Margin="-3,0,0,10"/>
+                <usercontrols:ucButton x:Name="xSaveButton"  ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" Visibility="Collapsed" HorizontalAlignment="Left" Margin="-3,0,0,10"/>
                 <Label Content="HTML Report Folder" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
                 <Label  Style="{StaticResource @LabelStyle}" Content="Folder Path:"/>
                 <StackPanel Margin="5,0,0,0" Orientation="Horizontal" >

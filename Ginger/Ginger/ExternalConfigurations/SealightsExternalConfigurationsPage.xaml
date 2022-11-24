@@ -8,7 +8,7 @@
       xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
       mc:Ignorable="d" 
       MinHeight="500" MinWidth="585"
-	Title="Execution Logger Configuration">
+	Title="Execution Logger Configuration" IsVisibleChanged="Page_IsVisibleChanged">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
         <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
@@ -19,7 +19,7 @@
                     <RowDefinition  Height="1*"/>
                     <RowDefinition  Height="1*"/>
                 </Grid.RowDefinitions>
-                <usercontrols:ucButton x:Name="xSaveButton" DockPanel.Dock="Top" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+                <usercontrols:ucButton x:Name="xSaveButton" DockPanel.Dock="Top" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" Visibility="Collapsed" HorizontalAlignment="Left" Margin="0,0,0,0"/>
                 <StackPanel Orientation="Horizontal" Grid.Row="1">
                     <Label Content="Sealights Execution Logger Settings" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                     <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />

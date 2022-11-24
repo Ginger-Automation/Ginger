@@ -1715,6 +1715,27 @@ namespace GingerWPF.BusinessFlowsLib
                 }
             }
         }
+
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (mBusinessFlow != null)
+            {
+                if ((bool)e.NewValue)
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem != mBusinessFlow)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = mBusinessFlow;
+                    }
+                }
+                else
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem == mBusinessFlow)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = null;
+                    }
+                }
+            }
+        }
     }
 
     public class ActiveImageTypeConverter : IValueConverter

@@ -420,5 +420,26 @@ namespace Ginger.BusinessFlowPages
                 Reporter.ToUser(eUserMsgKey.VariablesAssignError, errorMsg);
             }
         }
+
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (WorkSpace.Instance.Solution != null)
+            {
+                if ((bool)e.NewValue)
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem != WorkSpace.Instance.Solution)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = WorkSpace.Instance.Solution;
+                    }
+                }
+                else
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem == WorkSpace.Instance.Solution)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = null;
+                    }
+                }
+            }
+        }
     }
 }

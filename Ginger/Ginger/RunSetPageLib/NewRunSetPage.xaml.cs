@@ -631,11 +631,6 @@ namespace Ginger.Run
             xSealightsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsLabId), "Lab ID or Build Session ID must be provided"));
             xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
 
-            mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsLabId));
-            mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsTestStage));
-            mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsBuildSessionID));
-            mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsTestRecommendations));
-
             xDefaultTestStageRadioBtn.Checked += XDefaultTestStageRadioBtn_Checked;
             xDefaultLabIdRadioBtn.Checked += XDefaultLabIdRadioBtn_Checked;
             xDefaultSessionIdRadioBtn.Checked += XDefaultSessionIdRadioBtn_Checked;
@@ -2876,6 +2871,24 @@ namespace Ginger.Run
 
             GingerSelfHealingConfiguration selfHealingConfiguration = new GingerSelfHealingConfiguration(mRunSetConfig);
             selfHealingConfiguration.ShowAsWindow();
+        }
+
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (mRunSetConfig != null)
+            {
+                if ((bool)e.NewValue)
+                {
+                    WorkSpace.Instance.CurrentSelectedItem = mRunSetConfig;
+                }
+                else
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem == mRunSetConfig)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = null;
+                    }
+                }
+            }
         }
     }
 }

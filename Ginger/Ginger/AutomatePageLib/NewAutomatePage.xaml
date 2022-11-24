@@ -10,7 +10,7 @@
         xmlns:h="clr-namespace:Ginger.Help"
         h:GingerHelpProvider.HelpString="Automate"
         d:DesignHeight="800" d:DesignWidth="1500"
-        Title="AutomatePage" Loaded="Page_Loaded">
+        Title="AutomatePage" Loaded="Page_Loaded" IsVisibleChanged="Page_IsVisibleChanged">
 
     <Page.Resources>
         <local1:ListItemIndexConverter x:Key="RowNumberConverter" />

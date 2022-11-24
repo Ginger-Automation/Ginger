@@ -10,7 +10,7 @@
       xmlns:h="clr-namespace:Ginger.Help"
       h:GingerHelpProvider.HelpString="Activity"
       d:DesignHeight="1000" d:DesignWidth="1000"
-      Title="ActivityPage">
+      Title="ActivityPage" IsVisibleChanged="Page_IsVisibleChanged">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>

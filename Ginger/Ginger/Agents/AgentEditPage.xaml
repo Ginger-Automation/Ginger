@@ -9,7 +9,7 @@
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
     xmlns:usercontrols1="clr-namespace:Ginger.UserControlsLib" h:GingerHelpProvider.HelpString="Agent"
       d:DesignHeight="600" d:DesignWidth="800"
-	Title="AgentEditPage">
+	Title="AgentEditPage" IsVisibleChanged="Page_IsVisibleChanged">
 
     <ScrollViewer>
         <Grid Background="{StaticResource $BackgroundColor_LightGray}">

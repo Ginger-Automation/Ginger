@@ -891,5 +891,25 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             _pageGenericWin.Close();
         }
 
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (mApplicationAPIModel != null)
+            {
+                if ((bool)e.NewValue)
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem != mApplicationAPIModel)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = mApplicationAPIModel;
+                    }
+                }
+                else
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem == mApplicationAPIModel)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = null;
+                    }
+                }
+            }
+        }
     }
 }

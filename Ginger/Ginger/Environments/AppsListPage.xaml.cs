@@ -128,5 +128,26 @@ namespace Ginger.Environments
         }
 
         #endregion Functions
+
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (AppEnvironmnet != null)
+            {
+                if ((bool)e.NewValue)
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem != AppEnvironmnet)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = AppEnvironmnet;
+                    }
+                }
+                else
+                {
+                    if (WorkSpace.Instance.CurrentSelectedItem == AppEnvironmnet)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = null;
+                    }
+                }
+            }
+        }
     }
 }

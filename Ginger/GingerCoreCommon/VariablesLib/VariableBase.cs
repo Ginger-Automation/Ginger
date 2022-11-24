@@ -127,15 +127,7 @@ namespace GingerCore.Variables
 
         private string mName;
         [IsSerializedForLocalRepository]
-        public string Name
-        {
-            get { return mName; }
-            set
-            {
-                mName = value;
-                OnPropertyChanged("Name");
-            }
-        }
+        public string Name { get { return mName; } set { if (mName != value) { mName = value; OnPropertyChanged(nameof(Name)); } } }
 
         public string MandatoryIndication
         {
@@ -154,29 +146,10 @@ namespace GingerCore.Variables
 
         private string mDescription;
         [IsSerializedForLocalRepository]
-        public string Description
-        {
-            get { return mDescription; }
-            set
-            {
-                mDescription = value;
-                OnPropertyChanged("Description");
-            }
-        }
+        public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(nameof(Description)); } } }
 
         private string mValue;
-        public virtual string Value
-        {
-            get
-            {
-                return mValue;
-            }
-            set
-            {
-                mValue = value;
-                OnPropertyChanged("Value");
-            }
-        }
+        public virtual string Value { get { return mValue; } set { if (mValue != value) { mValue = value; OnPropertyChanged(nameof(Value)); } } }
 
 
         public override void PostDeserialization()
@@ -267,7 +240,7 @@ namespace GingerCore.Variables
                 }
                 return mDiffrentFromOrigin;
             }
-            set { mDiffrentFromOrigin = value; OnPropertyChanged(nameof(DiffrentFromOrigin)); }
+            set { if (mDiffrentFromOrigin != value) { mDiffrentFromOrigin = value; OnPropertyChanged(nameof(DiffrentFromOrigin)); } }
         }
 
         public string NameBeforeEdit;
@@ -466,18 +439,7 @@ namespace GingerCore.Variables
 
         string mLinkedVariableName;
         [IsSerializedForLocalRepository]
-        public string LinkedVariableName
-        {
-            get
-            {
-                return mLinkedVariableName;
-            }
-            set
-            {
-                mLinkedVariableName = value;
-                OnPropertyChanged(nameof(this.LinkedVariableName));
-            }
-        }
+        public string LinkedVariableName { get { return mLinkedVariableName; } set { if (mLinkedVariableName != value) { mLinkedVariableName = value; OnPropertyChanged(nameof(this.LinkedVariableName)); } } }
 
         public override string ItemName
         {
@@ -638,16 +600,7 @@ namespace GingerCore.Variables
 
         private eOutputType mMappedOutputType;
         [IsSerializedForLocalRepository]
-        public eOutputType MappedOutputType
-        {
-            get { return mMappedOutputType; }
-
-            set
-            {
-                mMappedOutputType = value;
-                OnPropertyChanged(nameof(MappedOutputType));
-            }
-        }
+        public eOutputType MappedOutputType { get { return mMappedOutputType; }  set { if (mMappedOutputType != value) { mMappedOutputType = value; OnPropertyChanged(nameof(MappedOutputType)); } } }
 
         private string mMappedOutputValue;
         [IsSerializedForLocalRepository]
@@ -659,12 +612,15 @@ namespace GingerCore.Variables
             }
             set
             {
-                mMappedOutputValue = value;
+                if (mMappedOutputValue != value)
+                {
+                    mMappedOutputValue = value;
+                    OnPropertyChanged(nameof(MappedOutputValue));
+                }
                 if (String.IsNullOrEmpty(value) == false || VarValChanged == true)
                     DiffrentFromOrigin = true;
                 else
                     DiffrentFromOrigin = false;
-                OnPropertyChanged(nameof(MappedOutputValue));
             }
         }
         public abstract bool SupportSetValue { get; }

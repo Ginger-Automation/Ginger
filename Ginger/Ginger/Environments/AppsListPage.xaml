@@ -8,7 +8,7 @@
      xmlns:h="clr-namespace:Ginger.Help"
     xmlns:usercontrols="clr-namespace:Ginger.UserControlsLib" h:GingerHelpProvider.HelpString="Environment"
       d:DesignHeight="300" d:DesignWidth="300"
-	Title="AppsListPage">
+	Title="AppsListPage" IsVisibleChanged="Page_IsVisibleChanged">
 
     <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>

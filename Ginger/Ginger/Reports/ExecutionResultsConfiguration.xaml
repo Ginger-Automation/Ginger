@@ -8,12 +8,12 @@
       xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
       mc:Ignorable="d" 
       MinHeight="500" MinWidth="585"
-	Title="Execution Logger Configuration">
+	Title="Execution Logger Configuration" IsVisibleChanged="Page_IsVisibleChanged">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
         <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
 
-            <usercontrols:ucButton x:Name="xSaveButton" DockPanel.Dock="Top" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+            <usercontrols:ucButton x:Name="xSaveButton" DockPanel.Dock="Top" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" Visibility="Collapsed" HorizontalAlignment="Left" Margin="0,0,0,0"/>
             
             <Label Margin="0,5,0,0" Content="Local Execution Logger Settings" DockPanel.Dock="Top" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="16"></Label>
 

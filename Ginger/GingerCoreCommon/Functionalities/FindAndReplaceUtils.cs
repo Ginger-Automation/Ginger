@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -283,6 +283,11 @@ namespace Amdocs.Ginger.Common.Functionalities
                 {
                     PI.SetValue(FI.ItemObject, ValueToReplace);
                     FI.FieldValue = ValueToReplace.ToString();
+                    // change the dirty status of the the modified object to populate the object into the modified solution files.
+                    if (FI.ItemObject is RepositoryItemBase)
+                    {
+                        FI.ItemObject.DirtyStatus = Enums.eDirtyStatus.Modified;
+                    }
                     return true;
                 }
                 else

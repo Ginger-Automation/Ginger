@@ -9,7 +9,7 @@
        xmlns:h="clr-namespace:Ginger.Help"
       xmlns:usercontrols1="clr-namespace:Ginger.UserControlsLib" h:GingerHelpProvider.HelpString="Report"
       
-	Title="New HTML Report Template">
+	Title="New HTML Report Template" IsVisibleChanged="Page_IsVisibleChanged">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.Resources>

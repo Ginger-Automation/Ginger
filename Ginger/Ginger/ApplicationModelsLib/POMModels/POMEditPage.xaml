@@ -12,7 +12,7 @@
       xmlns:local="clr-namespace:Ginger.Actions.ActionConversion"
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1000"
-      Title="POMEditPage">
+      Title="POMEditPage" IsVisibleChanged="Page_IsVisibleChanged">
 
     <Grid Background="{DynamicResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>

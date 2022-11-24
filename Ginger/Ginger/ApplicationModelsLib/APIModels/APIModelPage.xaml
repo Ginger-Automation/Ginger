@@ -7,7 +7,7 @@
       xmlns:UserControlsLib1="clr-namespace:Ginger.UserControlsLib"
       mc:Ignorable="d" 
        d:DesignWidth="750"
-      Title="APIModelPage">
+      Title="APIModelPage" IsVisibleChanged="Page_IsVisibleChanged">
 
     <ScrollViewer>
         <Grid Background="{DynamicResource $BackgroundColor_LightGray}">
