@@ -324,10 +324,10 @@ namespace GingerCoreNET.Application_Models
                     if (matchingExistingFLocator.LocateBy == eLocateBy.ByXPath)
                     {
                         //fiting previous learned Xpath to latest structure to avoid false change indication
-                        if (matchingExistingFLocator.LocateValue.StartsWith("/") == false)
+                        if (!matchingExistingFLocator.LocateValue.StartsWith("/"))
                         {
                             string updatedXpath = string.Empty;
-                            string[] xpathVals = matchingExistingFLocator.LocateValue.Split(new char[] { '/' });
+                            string[] xpathVals = matchingExistingFLocator.LocateValue.Split('/');
                             for (int indx = 0; indx < xpathVals.Count(); indx++)
                             {
                                 if (indx == 0)
@@ -341,7 +341,7 @@ namespace GingerCoreNET.Application_Models
                         }
                     }
                     //compare value
-                    if ((string.IsNullOrWhiteSpace(matchingExistingFLocator.LocateValue) == true && string.IsNullOrWhiteSpace(latestFLocator.LocateValue) == true)
+                    if ((string.IsNullOrWhiteSpace(matchingExistingFLocator.LocateValue) && string.IsNullOrWhiteSpace(latestFLocator.LocateValue))
                         || matchingExistingFLocator.LocateValue.Equals(latestFLocator.LocateValue, StringComparison.OrdinalIgnoreCase))//Unchanged
                     {
                         deltaFLocator.DeltaStatus = eDeltaStatus.Unchanged;
@@ -501,7 +501,7 @@ namespace GingerCoreNET.Application_Models
                 }
                 else if(modifiedFriendlyLocatorsList.Count > 0)
                 {
-                    matchedDeltaElement.DeltaExtraDetails = "Friednly Locators changed";
+                    matchedDeltaElement.DeltaExtraDetails = "Friendly Locators changed";
                 }
                 else if (modifiedPropertiesList.Count > 0)
                 {
