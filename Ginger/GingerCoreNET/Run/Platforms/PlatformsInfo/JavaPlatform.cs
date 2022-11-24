@@ -1077,5 +1077,10 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             return true;
         }
+
+        public override List<ePosition> GetElementPositionList()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
