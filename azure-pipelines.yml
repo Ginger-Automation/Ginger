@@ -67,9 +67,10 @@ jobs:
       script: |
             Write-Output "Build Reason = $(Build.Reason)"
             $sldomain="amdocs.sealights.co" 
-            $slagenttoken= ${env:SLAGENTTOKEN}
+            $slagenttoken= "$(SLAGENTTOKEN)"
             $APP_NAME='Ginger'
             $APP_NAMESPACE='Amdocs.*,ginger.*'
+            Write-Output "Token $($SLAGENTTOKEN.SubString($SLAGENTTOKEN.Length-5))"
             [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
             Write-Output "Download the Sealights DotNet agent version set in settings..." 
             $agentversion = ((iwr -Uri https://$($sldomain)/api/v2/agents/dotnet/recommended -Headers @{'Accept' = 'application/json'; 'Authorization' = "Bearer $($slagenttoken)"}).Content | ConvertFrom-Json | Select-Object agent).agent.version
@@ -107,7 +108,7 @@ jobs:
     inputs:
       testStage: 'Unit Tests'
       profilerArchitecture: 'x86'
-      sealightsToken: ${env:SLAGENTTOKEN}
+      sealightsToken: "$(SLAGENTTOKEN)"
       SealightsBuildSessionId : $(Build.ArtifactStagingDirectory)\SealightsBuildSessionId.txt 
 # ------------------------------------------------------------------------------------------------------
 # Run Unit Test for .NET Core test DLLs
@@ -142,7 +143,7 @@ jobs:
   
   - task: EndTestExecution@2
     inputs:
-      sealightsToken: ${env:SLAGENTTOKEN}
+      sealightsToken: "$(SLAGENTTOKEN)"
       SealightsBuildSessionId : $(Build.ArtifactStagingDirectory)\SealightsBuildSessionId.txt 
 # ------------------------------------------------------------------------------------------------------
 # Package Ginger EXE
