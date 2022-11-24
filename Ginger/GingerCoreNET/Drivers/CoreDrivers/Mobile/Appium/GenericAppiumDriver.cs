@@ -1871,7 +1871,6 @@ namespace Amdocs.Ginger.CoreNET
             return xmlNode.Attributes[attr].Value;
         }
 
-
         ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
         {
             if (AppType == eAppType.Web)
@@ -3124,6 +3123,11 @@ namespace Amdocs.Ginger.CoreNET
         public string GetViewport()
         {
             return Driver.Manage().Window.Size.ToString();
+        }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
         }
     }
 

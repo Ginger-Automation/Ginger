@@ -42,6 +42,10 @@ namespace Amdocs.Ginger.Common.UIElement
         [IsSerializedForLocalRepository]
         public ObservableList<ControlProperty> Properties = new ObservableList<ControlProperty>();
 
+        [IsSerializedForLocalRepository]
+        public ObservableList<ElementLocator> FriendlyLocators = new ObservableList<ElementLocator>();
+
+
         string mScreenShotImage;
         [IsSerializedForLocalRepository]
         public string ScreenShotImage { get { return mScreenShotImage; } set { if (mScreenShotImage != value) { mScreenShotImage = value; OnPropertyChanged(nameof(ScreenShotImage)); } } }
@@ -465,6 +469,11 @@ namespace Amdocs.Ginger.Common.UIElement
             return this.WindowExplorer.GetElementLocators(this);
         }
 
+        public ObservableList<ElementLocator> GetElementFriendlyLocators()
+        {
+            return this.WindowExplorer.GetElementFriendlyLocators(this);
+        }
+
         public object GetElementData(eLocateBy elementLocateBy = eLocateBy.ByXPath, string elementLocateValue = "")
         {
             //We cache the data, if needed add refresh button
@@ -586,6 +595,8 @@ namespace Amdocs.Ginger.Common.UIElement
         ByContentDescription,
         [EnumValueDescription("By Text")]
         ByText,
+        [EnumValueDescription("By Tag Name")]
+        ByTagName,
         [EnumValueDescription("By Elements Repository")]
         ByElementsRepository,
         [EnumValueDescription("By Model Name")]
@@ -662,4 +673,18 @@ namespace Amdocs.Ginger.Common.UIElement
         [EnumValueDescription("Element updated during self healing operation")]
         ElementModified
     }
+    public enum ePosition
+    {
+        [EnumValueDescription("Left Of")]
+        LeftOf,
+        [EnumValueDescription("Right Of")]
+        RightOf,
+        [EnumValueDescription("Above")]
+        Above,
+        [EnumValueDescription("Below")]
+        Below,
+        [EnumValueDescription("Near")]
+        Near
+    }
+
 }

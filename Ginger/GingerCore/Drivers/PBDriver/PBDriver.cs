@@ -1307,5 +1307,10 @@ namespace GingerCore.Drivers.PBDriver
             size.Width = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Width;
             return size.ToString();
         }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
