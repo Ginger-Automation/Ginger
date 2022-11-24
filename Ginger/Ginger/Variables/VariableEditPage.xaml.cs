@@ -509,10 +509,7 @@ namespace Ginger.Variables
             {
                 if ((bool)e.NewValue)
                 {
-                    if (WorkSpace.Instance.CurrentSelectedItem != mVariable)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = mVariable;
-                    }
+                    WorkSpace.Instance.CurrentSelectedItem = mVariable;
                 }
                 else
                 {

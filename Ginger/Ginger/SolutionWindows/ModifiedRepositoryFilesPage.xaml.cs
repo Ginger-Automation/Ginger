@@ -233,7 +233,7 @@ namespace Ginger.SolutionWindows
             try
             {
                 loaderElement.Visibility = Visibility.Visible;
-                List<ModifiedRepositoryFileInfo> selectedFiles = mModifiedFilesInfo.Where(x => x.Selected == true).ToList();
+                List<ModifiedRepositoryFileInfo> selectedFiles = mModifiedFilesInfo.Where(x => x.Selected).ToList();
                 if (selectedFiles == null || selectedFiles.Count == 0)
                 {
                     Reporter.ToUser(eUserMsgKey.AskToSelectItem);

@@ -23,7 +23,7 @@ namespace Ginger.UserControlsLib
     public abstract class GingerEntitiesUIPage : Page
     {
         protected RepositoryItemBase currentItem { get; set; }
-        public GingerEntitiesUIPage()
+        protected GingerEntitiesUIPage()
         {
             IsVisibleChanged += IsVisibleChangedHandler;
         }

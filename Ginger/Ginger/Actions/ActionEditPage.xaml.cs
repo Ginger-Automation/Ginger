@@ -1851,10 +1851,7 @@ namespace Ginger.Actions
             {
                 if ((bool)e.NewValue)
                 {
-                    if (WorkSpace.Instance.CurrentSelectedItem != mAction)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = mAction;
-                    }
+                    WorkSpace.Instance.CurrentSelectedItem = mAction;
                 }
                 else
                 {
