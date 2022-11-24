@@ -44,10 +44,11 @@ using System.Windows.Data;
 using System.Windows.Media;
 using Ginger.SolutionWindows.TreeViewItems;
 using Amdocs.Ginger.Common.Repository;
+using Ginger.UserControlsLib;
 
 namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 {
-    public partial class ModelsGlobalParamsPage : Page
+    public partial class ModelsGlobalParamsPage : GingerEntitiesUIPage
     {
         public ObservableList<GlobalAppModelParameter> mModelsGlobalParamsList;
         GenericWindow mGenericWindow = null;
@@ -108,7 +109,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 xModelsGlobalParamsGrid.SetbtnPastHandler(BtnPastGlobalParamsClicked);
 
                 xModelsGlobalParamsGrid.ShowSaveAllChanges = Visibility.Collapsed;
-                //xModelsGlobalParamsGrid.ShowSaveSelectedChanges = Visibility.Visible;
+                xModelsGlobalParamsGrid.ShowSaveSelectedChanges = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.ShowEdit = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.ShowCopy = Visibility.Visible;
                 xModelsGlobalParamsGrid.ShowPaste = Visibility.Visible;
@@ -616,7 +617,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             mGenericWindow.Close();
         }
 
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (xModelsGlobalParamsGrid.grdMain.Items.Count != 0 && xModelsGlobalParamsGrid.grdMain.SelectedItems[0] != null)
             {

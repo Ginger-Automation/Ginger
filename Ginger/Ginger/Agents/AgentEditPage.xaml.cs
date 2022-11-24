@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -34,7 +35,7 @@ namespace Ginger.Agents
     /// <summary>
     /// Interaction logic for AgentEditPage.xaml
     /// </summary>
-    public partial class AgentEditPage : Page
+    public partial class AgentEditPage : GingerEntitiesUIPage
     {        
         Agent mAgent;
         ePlatformType mOriginalPlatformType;
@@ -52,7 +53,8 @@ namespace Ginger.Agents
             if (agent != null)
             {               
                 mAgent = agent;
-
+                currentItem = mAgent;
+                //currentWorkingItem = mAgent;
                 xShowIDUC.Init(mAgent);
                 BindingHandler.ObjFieldBinding(xAgentNameTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Name));
                 xAgentNameTextBox.AddValidationRule(new AgentNameValidationRule());
@@ -171,27 +173,6 @@ namespace Ginger.Agents
                     mOriginalDriverType = xDriverTypeComboBox.SelectedItem.ToString();                    
                     mAgent.AgentOperations.InitDriverConfigs(); 
                 }                
-            }
-        }
-
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (mAgent != null)
-            {
-                if ((bool)e.NewValue)
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem != mAgent)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = mAgent;
-                    }
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == mAgent)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
             }
         }
 

@@ -23,6 +23,7 @@ using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.Repository;
 using Ginger.Drivers.CommunicationProtocol;
 using Ginger.UserControls;
+using Ginger.UserControlsLib;
 using GingerCoreNET.RunLib;
 using System;
 using System.Collections.Generic;
@@ -35,7 +36,7 @@ namespace Ginger.GingerGridLib
     /// <summary>
     /// Interaction logic for GingerGridPage.xaml
     /// </summary>
-    public partial class GingerGridPage : Page
+    public partial class GingerGridPage : GingerEntitiesUIPage
     {
         GingerGrid mGingerGrid;
 
@@ -239,14 +240,14 @@ namespace Ginger.GingerGridLib
         private void InitRemoteServiceGrid()
         {
             mRemoteServiceGrids = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
-            foreach(RemoteServiceGrid remoteServiceGrid in mRemoteServiceGrids)
+            foreach (RemoteServiceGrid remoteServiceGrid in mRemoteServiceGrids)
             {
                 StartTrackingRemoteServiceGrid(remoteServiceGrid);
             }
             xRemoteServiceGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
             xRemoteServiceGrid.ShowRefresh = Visibility.Collapsed;
             xRemoteServiceGrid.btnSaveAllChanges.Click += BtnSaveAllChanges_Click;
-            //xRemoteServiceGrid.ShowSaveAllChanges = Visibility.Visible;
+            xRemoteServiceGrid.ShowSaveAllChanges = Visibility.Collapsed;
             xRemoteServiceGrid.btnAdd.Click += BtnAdd_Click;
             xRemoteServiceGrid.SetbtnClearAllHandler(BtnClearAll_Click);
             xRemoteServiceGrid.SetbtnDeleteHandler(btnDeleteSelected_Click);
@@ -328,16 +329,13 @@ namespace Ginger.GingerGridLib
             xRemoteServiceGrid.InitViewItems();
         }
 
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (xRemoteServiceGrid.grdMain.Items.Count != 0 && xRemoteServiceGrid.grdMain.SelectedItems[0] != null)
             {
                 if ((bool)e.NewValue)
                 {
-                    if (WorkSpace.Instance.CurrentSelectedItem != xRemoteServiceGrid.grdMain.SelectedItems[0])
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = (RepositoryItemBase)xRemoteServiceGrid.grdMain.SelectedItems[0];
-                    }
+                    WorkSpace.Instance.CurrentSelectedItem = (RepositoryItemBase)xRemoteServiceGrid.grdMain.SelectedItems[0];
                 }
                 else
                 {

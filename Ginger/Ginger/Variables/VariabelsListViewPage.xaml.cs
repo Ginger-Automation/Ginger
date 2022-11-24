@@ -23,6 +23,7 @@ using Amdocs.Ginger.UserControls;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository;
 using Ginger.SolutionGeneral;
+using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
 using GingerCore;
@@ -40,7 +41,7 @@ namespace Ginger.BusinessFlowPages
     /// <summary>
     /// Interaction logic for VariabelsListViewPage.xaml
     /// </summary>
-    public partial class VariabelsListViewPage : Page
+    public partial class VariabelsListViewPage : GingerEntitiesUIPage
     {
         RepositoryItemBase mVariabelsParent;
         eVariablesLevel mVariablesLevel;
@@ -65,6 +66,7 @@ namespace Ginger.BusinessFlowPages
             mVariablesLevel = GetVariablesLevel();
             mContext = context;
             mPageViewMode = pageViewMode;
+            currentItem = WorkSpace.Instance.Solution;
 
             SetListView();
             ShowHideEditPage(null);
@@ -418,27 +420,6 @@ namespace Ginger.BusinessFlowPages
             if (!string.IsNullOrEmpty(errorMsg))
             {
                 Reporter.ToUser(eUserMsgKey.VariablesAssignError, errorMsg);
-            }
-        }
-
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (WorkSpace.Instance.Solution != null)
-            {
-                if ((bool)e.NewValue)
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem != WorkSpace.Instance.Solution)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = WorkSpace.Instance.Solution;
-                    }
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == WorkSpace.Instance.Solution)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
             }
         }
     }

@@ -35,13 +35,14 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Ginger.Reports.ValidationRules;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Variables
 {
     /// <summary>
     /// Interaction logic for VariableEditPage.xaml
     /// </summary>
-    public partial class VariableEditPage : Page
+    public partial class VariableEditPage : GingerEntitiesUIPage
     {
         private VariableBase mVariable;
         private RepositoryItemBase mParent;
@@ -502,7 +503,7 @@ namespace Ginger.Variables
             }
         }
 
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (editMode == eEditMode.SharedRepository && mVariable != null)
             {

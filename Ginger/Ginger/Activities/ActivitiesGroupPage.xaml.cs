@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
 using Ginger.UserControls;
+using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Activities;
@@ -36,7 +37,7 @@ namespace Ginger.Activities
     /// <summary>
     /// Interaction logic for ActivitiesGroupPage.xaml
     /// </summary>
-    public partial class ActivitiesGroupPage : Page
+    public partial class ActivitiesGroupPage : GingerEntitiesUIPage
     {
         ActivitiesGroup mActivitiesGroup;
         BusinessFlow mBusinessFlow = null;
@@ -257,16 +258,13 @@ namespace Ginger.Activities
             }
         }
 
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (mEditMode == eEditMode.SharedRepository && mActivitiesGroup != null && !String.IsNullOrEmpty(mActivitiesGroup.ContainingFolder))
             {
                 if ((bool)e.NewValue)
                 {
-                    if (WorkSpace.Instance.CurrentSelectedItem != mActivitiesGroup)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = mActivitiesGroup;
-                    }
+                    WorkSpace.Instance.CurrentSelectedItem = mActivitiesGroup;
                 }
                 else
                 {

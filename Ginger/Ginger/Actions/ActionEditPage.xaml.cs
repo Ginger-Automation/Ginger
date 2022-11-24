@@ -57,7 +57,7 @@ namespace Ginger.Actions
         RegularView
     }
 
-    public partial class ActionEditPage : Page
+    public partial class ActionEditPage : GingerEntitiesUIPage
     {
         //static int ActionEditNum = 0;
         //static int LiveActionEditCounter = 0;
@@ -1845,7 +1845,7 @@ namespace Ginger.Actions
             Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw response view, see log for details.");
         }
 
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (EditMode == General.eRIPageViewMode.SharedReposiotry && mAction != null && !String.IsNullOrEmpty(mAction.ContainingFolder))
             {

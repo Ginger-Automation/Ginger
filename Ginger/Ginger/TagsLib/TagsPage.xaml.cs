@@ -24,13 +24,14 @@ using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using System;
+using Ginger.UserControlsLib;
 
 namespace Ginger.TagsLib
 {
     /// <summary>
     /// Interaction logic for TagsEditorPage.xaml
     /// </summary>
-    public partial class TagsPage : Page
+    public partial class TagsPage : GingerEntitiesUIPage
     {
         public enum eViewMode { Solution, SpecificList }
 
@@ -44,7 +45,7 @@ namespace Ginger.TagsLib
 
             mViewMode = viewMode;
             mTags = tags;
-
+            currentItem = WorkSpace.Instance.Solution;
             if (mViewMode == eViewMode.Solution)
             {
                  WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
@@ -166,27 +167,6 @@ namespace Ginger.TagsLib
                         mTags.RemoveAt(j);
                         j--;
                     }
-        }
-
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (WorkSpace.Instance.Solution != null)
-            {
-                if ((bool)e.NewValue)
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem != WorkSpace.Instance.Solution)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = WorkSpace.Instance.Solution;
-                    }
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == WorkSpace.Instance.Solution)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
-            }
         }
     }
 }

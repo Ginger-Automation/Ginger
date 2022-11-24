@@ -57,13 +57,14 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Run
 {
     /// <summary>
     /// Interaction logic for RunPage.xaml
     /// </summary>
-    public partial class NewRunSetPage : Page
+    public partial class NewRunSetPage : GingerEntitiesUIPage
     {
         public RunnerPage mCurrentSelectedRunner;
 
@@ -1424,6 +1425,7 @@ namespace Ginger.Run
                     xRunSetLoadingPnl.Visibility = Visibility.Visible;
                     xRunsetPageGrid.Visibility = Visibility.Collapsed;
                     mRunSetConfig = runSetConfig;
+                    currentItem = mRunSetConfig;
                     mRunSetConfig.SaveBackup();
 
                     mRunSetConfig.StartDirtyTracking();
@@ -2871,24 +2873,6 @@ namespace Ginger.Run
 
             GingerSelfHealingConfiguration selfHealingConfiguration = new GingerSelfHealingConfiguration(mRunSetConfig);
             selfHealingConfiguration.ShowAsWindow();
-        }
-
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (mRunSetConfig != null)
-            {
-                if ((bool)e.NewValue)
-                {
-                    WorkSpace.Instance.CurrentSelectedItem = mRunSetConfig;
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == mRunSetConfig)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
-            }
         }
     }
 }

@@ -32,8 +32,7 @@ namespace Ginger.SolutionWindows
             UnsavedItemsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
             UnsavedItemsGrid.AddToolbarTool("@CheckAllColumn_16x16.png", "Select All", new RoutedEventHandler(SelectAll));
             UnsavedItemsGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Unselect All", new RoutedEventHandler(UnselectAll));
-            //UnsavedItemsGrid.AddToolbarTool("@Filter16x16.png", "Filter Items By Item Type", new RoutedEventHandler(FilterItemsByType));
-
+            UnsavedItemsGrid.AddToolbarTool("@Filter16x16.png", "Filter Items By Item Type", new RoutedEventHandler(FilterItemsByType));
         }
 
         private void SetGridView()
@@ -142,7 +141,7 @@ namespace Ginger.SolutionWindows
             try
             {
                 loaderElement.Visibility = Visibility.Visible;
-                List<ModifiedRepositoryFileInfo> selectedFiles = mModifiedFilesInfo.Where(x => x.Selected == true).ToList();
+                List<ModifiedRepositoryFileInfo> selectedFiles = mModifiedFilesInfo.Where(x => x.Selected).ToList();
                 if (selectedFiles == null || selectedFiles.Count == 0)
                 {
                     Reporter.ToUser(eUserMsgKey.AskToSelectItem);
@@ -212,6 +211,7 @@ namespace Ginger.SolutionWindows
         }
         private void FilterItemsByType(object sender, RoutedEventArgs e)
         {
+            // TODO
         }
         private void RefreshGrid(object sender, RoutedEventArgs e)
         {

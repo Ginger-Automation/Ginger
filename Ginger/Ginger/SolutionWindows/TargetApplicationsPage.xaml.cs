@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using Ginger.UserControls;
+using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -35,7 +36,7 @@ namespace Ginger.SolutionWindows
     /// <summary>
     /// Interaction logic for TargetApplicationsPage.xaml
     /// </summary>
-    public partial class TargetApplicationsPage : Page
+    public partial class TargetApplicationsPage : GingerEntitiesUIPage
     {
         Solution mSolution;
 
@@ -45,6 +46,7 @@ namespace Ginger.SolutionWindows
 
             mSolution =  WorkSpace.Instance.Solution;
              WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+            currentItem= mSolution;
 
             LoadGridData();
             SetAppsGrid();
@@ -213,27 +215,6 @@ namespace Ginger.SolutionWindows
                 }
             }
             
-        }
-
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (WorkSpace.Instance.Solution != null)
-            {
-                if ((bool)e.NewValue)
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem != WorkSpace.Instance.Solution)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = WorkSpace.Instance.Solution;
-                    }
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == WorkSpace.Instance.Solution)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
-            }
         }
     }
 }

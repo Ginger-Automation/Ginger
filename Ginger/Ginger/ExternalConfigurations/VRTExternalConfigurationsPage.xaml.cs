@@ -27,13 +27,14 @@ using amdocs.ginger.GingerCoreNET;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
 using Ginger.ValidationRules;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Configurations
 {
     /// <summary>
     /// Interaction logic for VRTExternalConfigurationsPage.xaml
     /// </summary>
-    public partial class VRTExternalConfigurationsPage : Page
+    public partial class VRTExternalConfigurationsPage : GingerEntitiesUIPage
     {
         VRTConfiguration _VRTConfiguration = null;
 
@@ -47,6 +48,7 @@ namespace Ginger.Configurations
         {
             _VRTConfiguration = WorkSpace.Instance.Solution.VRTConfiguration;
             _VRTConfiguration.StartDirtyTracking();
+            currentItem = WorkSpace.Instance.Solution;
             SetControls();
         }
 
@@ -100,10 +102,7 @@ namespace Ginger.Configurations
             {
                 if ((bool)e.NewValue)
                 {
-                    if (WorkSpace.Instance.CurrentSelectedItem != WorkSpace.Instance.Solution)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = WorkSpace.Instance.Solution;
-                    }
+                    WorkSpace.Instance.CurrentSelectedItem = WorkSpace.Instance.Solution;
                 }
                 else
                 {

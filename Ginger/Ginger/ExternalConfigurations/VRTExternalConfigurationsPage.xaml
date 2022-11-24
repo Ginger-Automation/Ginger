@@ -1,4 +1,4 @@
-<Page x:Class="Ginger.Configurations.VRTExternalConfigurationsPage"
+<UserControlsLib:GingerEntitiesUIPage x:Class="Ginger.Configurations.VRTExternalConfigurationsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -8,7 +8,7 @@
       xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
       mc:Ignorable="d" 
       MinHeight="500" MinWidth="585"
-	Title="Execution Logger Configuration" IsVisibleChanged="Page_IsVisibleChanged">
+	Title="Execution Logger Configuration">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
         <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
@@ -101,4 +101,4 @@
             </Grid>
         </DockPanel>
     </ScrollViewer>
-</Page>
+</UserControlsLib:GingerEntitiesUIPage>

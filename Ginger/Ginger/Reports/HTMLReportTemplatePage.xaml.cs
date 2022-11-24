@@ -30,13 +30,14 @@ using System.IO;
 using System.IO.Compression;
 using GingerCore.Drivers;
 using amdocs.ginger.GingerCoreNET;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Reports
 {
     /// <summary>
     /// Interaction logic for ExecutionResultsConfiguration.xaml
     /// </summary>
-    public partial class HTMLReportTemplatePage : Page
+    public partial class HTMLReportTemplatePage : GingerEntitiesUIPage
     {
         GenericWindow _pageGenericWin = null;
         private bool _existingTemplatePage = false;
@@ -77,6 +78,7 @@ namespace Ginger.Reports
             _HTMLReportConfiguration.HTMLReportConfigurationOperations = reportConfigurationOperations;
 
             _HTMLReportConfiguration = new HTMLReportConfiguration("", false, reportConfigurationOperations);
+            currentItem = _HTMLReportConfiguration;
             
 
             InitializeComponent();
@@ -93,6 +95,7 @@ namespace Ginger.Reports
             _existingTemplatePage = true;
             _HTMLReportConfiguration = EnchancingLoadedFieldsWithDataAndValidating(HTMLReportConfiguration);
             _HTMLReportConfiguration.PropertyChanged += _HTMLReportConfiguration_PropertyChanged;
+            currentItem= _HTMLReportConfiguration;
             SetControls();
             SetLoadedLogoImage();
             SetHTMLReportsConfigFieldsGridsView();
@@ -955,27 +958,6 @@ namespace Ginger.Reports
             if (e.PropertyName == nameof(HTMLReportConfiguration.IsDefault))
             {
                 SetIsDefualtImage();
-            }
-        }
-
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (_HTMLReportConfiguration != null)
-            {
-                if ((bool)e.NewValue)
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem != _HTMLReportConfiguration)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = _HTMLReportConfiguration;
-                    }
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == _HTMLReportConfiguration)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
             }
         }
     }

@@ -26,13 +26,14 @@ using GingerCore;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using GingerCore.GeneralLib;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Environments
 {
     /// <summary>
     /// Interaction logic for AppsListPage.xaml
     /// </summary>
-    public partial class AppsListPage : Page
+    public partial class AppsListPage : GingerEntitiesUIPage
     {
         public ProjEnvironment AppEnvironmnet { get; set; }
         public AppsListPage(ProjEnvironment env)
@@ -40,6 +41,7 @@ namespace Ginger.Environments
             InitializeComponent();
 
             AppEnvironmnet = env;
+            currentItem = AppEnvironmnet;
             //Set grid look and data
             SetGridView();
             SetGridData();
@@ -128,26 +130,5 @@ namespace Ginger.Environments
         }
 
         #endregion Functions
-
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (AppEnvironmnet != null)
-            {
-                if ((bool)e.NewValue)
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem != AppEnvironmnet)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = AppEnvironmnet;
-                    }
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == AppEnvironmnet)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
-            }
-        }
     }
 }

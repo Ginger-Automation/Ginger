@@ -27,13 +27,14 @@ using amdocs.ginger.GingerCoreNET;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
 using Ginger.ValidationRules;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Reports
 {
     /// <summary>
     /// Interaction logic for ExecutionResultsConfiguration.xaml
     /// </summary>
-    public partial class ExecutionResultsConfiguration : Page
+    public partial class ExecutionResultsConfiguration : GingerEntitiesUIPage
     {
         GenericWindow _pageGenericWin = null;
         ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
@@ -66,6 +67,7 @@ namespace Ginger.Reports
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Sealights Configurations section moved to Configurations -> External Integrations -> Sealights Configurations. \n Please save the configuration details.");
             }
+            currentItem = WorkSpace.Instance.Solution;
             SetControls();
             isControlsSet = true;
         }
@@ -280,27 +282,6 @@ namespace Ginger.Reports
                         {
                             continue;
                         }
-                    }
-                }
-            }
-        }
-
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (WorkSpace.Instance.Solution != null)
-            {
-                if ((bool)e.NewValue)
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem != WorkSpace.Instance.Solution)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = WorkSpace.Instance.Solution;
-                    }
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == WorkSpace.Instance.Solution)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
                     }
                 }
             }

@@ -25,6 +25,7 @@ using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
+using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
@@ -37,7 +38,7 @@ namespace GingerWPF.BusinessFlowsLib
     /// <summary>
     /// Interaction logic for BusinessFlowViewPage.xaml
     /// </summary>
-    public partial class BusinessFlowViewPage : Page
+    public partial class BusinessFlowViewPage : GingerEntitiesUIPage
     {
         BusinessFlow mBusinessFlow;
         Context mContext;
@@ -54,6 +55,7 @@ namespace GingerWPF.BusinessFlowsLib
             InitializeComponent();
 
             mBusinessFlow = businessFlow;
+            currentItem = mBusinessFlow;
             mContext = context;
             if (mContext == null)
             {
@@ -412,24 +414,6 @@ namespace GingerWPF.BusinessFlowsLib
         private void xAutomateBtn_Loaded(object sender, RoutedEventArgs e)
         {
             App.MainWindow.AddHelpLayoutToShow("BusinessFlowPage_AutomateBtnHelp", xAutomateBtn, "Click here to design your automation flow");
-        }
-
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (mBusinessFlow != null)
-            {
-                if ((bool)e.NewValue)
-                {
-                    WorkSpace.Instance.CurrentSelectedItem = mBusinessFlow;
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == mBusinessFlow)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
-            }
         }
     }
 }

@@ -1492,7 +1492,7 @@ namespace Ginger
                 //Insert
                 int insertIndex = xExtraSolutionOperationsMainMenuItem.Items.IndexOf(xGlobalSolutionMenuItem) + 1;
 
-                AddSubMenuItem(xExtraSolutionOperationsMainMenuItem, "Import Global Cross Solution Items", "Global Solution", btnGlobalSolutionImport_Click, insertIndex++, iconType: eImageType.GetLatest);
+                AddSubMenuItem(xExtraSolutionOperationsMainMenuItem, "Import Global Cross Solution Items", "Global Solution", btnGlobalSolutionImport_Click, insertIndex, iconType: eImageType.GetLatest);
             }
         }
     }

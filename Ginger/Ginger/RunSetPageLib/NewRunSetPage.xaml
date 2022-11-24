@@ -1,4 +1,4 @@
-﻿<Page x:Class="Ginger.Run.NewRunSetPage"
+﻿<UserControlsLib:GingerEntitiesUIPage x:Class="Ginger.Run.NewRunSetPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,13 +6,14 @@
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls" 
       xmlns:z="clr-namespace:Ginger.UserControlsLib.VisualFlow"      
       xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
       xmlns:state="clr-namespace:Ginger.MoveToGingerWPF.Run_Set_Pages"
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
       xmlns:h="clr-namespace:Ginger.Help"
       xmlns:usercontrols1="clr-namespace:Ginger.UserControlsLib" xmlns:Activities="clr-namespace:Ginger.BusinessFlowWindows" h:GingerHelpProvider.HelpString="Run Set"
       d:DesignHeight="1000" d:DesignWidth="2000"
-      Title="Runset"  Loaded="Page_loaded" IsVisibleChanged="Page_IsVisibleChanged">
+      Title="Runset"  Loaded="Page_loaded">
 
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
@@ -505,4 +506,4 @@
         </Grid>
     </Grid>
 
-</Page>
+</UserControlsLib:GingerEntitiesUIPage>

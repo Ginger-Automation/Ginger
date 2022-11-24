@@ -41,6 +41,7 @@ using Ginger.Reports;
 using Ginger.Repository;
 using Ginger.Run;
 using Ginger.TimeLineLib;
+using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.TextEditor;
 using GingerCore;
 using GingerCore.Actions;
@@ -72,7 +73,7 @@ namespace GingerWPF.BusinessFlowsLib
     /// <summary>
     /// Page used to design the Business Flow automation flow
     /// </summary>
-    public partial class NewAutomatePage : Page, INotifyPropertyChanged
+    public partial class NewAutomatePage : GingerEntitiesUIPage, INotifyPropertyChanged
     {
         GingerExecutionEngine mExecutionEngine;
         ProjEnvironment mEnvironment = null;
@@ -406,6 +407,7 @@ namespace GingerWPF.BusinessFlowsLib
                 ResetPageUI();
 
                 mBusinessFlow = businessFlowToLoad;
+                currentItem = mBusinessFlow;
                 if (mBusinessFlow != null)
                 {
                     try
@@ -1712,27 +1714,6 @@ namespace GingerWPF.BusinessFlowsLib
                     Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);
                     Reporter.HideStatusMessage();
-                }
-            }
-        }
-
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (mBusinessFlow != null)
-            {
-                if ((bool)e.NewValue)
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem != mBusinessFlow)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = mBusinessFlow;
-                    }
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == mBusinessFlow)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
                 }
             }
         }

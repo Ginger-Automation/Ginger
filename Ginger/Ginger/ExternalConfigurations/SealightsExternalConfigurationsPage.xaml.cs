@@ -27,13 +27,14 @@ using amdocs.ginger.GingerCoreNET;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
 using Ginger.ValidationRules;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Configurations
 {
     /// <summary>
     /// Interaction logic for SealightsConfiguration.xaml
     /// </summary>
-    public partial class SealightsExternalConfigurationsPage : Page
+    public partial class SealightsExternalConfigurationsPage : GingerEntitiesUIPage
     {
         SealightsConfiguration _SealightsConfiguration = new SealightsConfiguration();
 
@@ -47,6 +48,7 @@ namespace Ginger.Configurations
         {
             _SealightsConfiguration = WorkSpace.Instance.Solution.SealightsConfiguration;
             _SealightsConfiguration.StartDirtyTracking();
+            currentItem = WorkSpace.Instance.Solution;
             SetControls();
         }
 
@@ -146,27 +148,6 @@ namespace Ginger.Configurations
             else
             {
                 _SealightsConfiguration.SealightsTestRecommendations = SealightsConfiguration.eSealightsTestRecommendations.No;
-            }
-        }
-
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (WorkSpace.Instance.Solution != null)
-            {
-                if ((bool)e.NewValue)
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem != WorkSpace.Instance.Solution)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = WorkSpace.Instance.Solution;
-                    }
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == WorkSpace.Instance.Solution)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
             }
         }
     }

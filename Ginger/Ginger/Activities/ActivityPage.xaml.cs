@@ -26,6 +26,7 @@ using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
 using Ginger.Repository.AddItemToRepositoryWizard;
+using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
@@ -46,7 +47,7 @@ namespace GingerWPF.BusinessFlowsLib
     /// <summary>
     /// Interaction logic for ActivityPage.xaml
     /// </summary>
-    public partial class ActivityPage : Page
+    public partial class ActivityPage : GingerEntitiesUIPage
     {
         Activity mActivity;
         public Activity Activity { get { return mActivity; } }
@@ -597,16 +598,13 @@ namespace GingerWPF.BusinessFlowsLib
             UpdateActivityViewMode(Ginger.General.eRIPageViewMode.ViewAndExecute);
         }
 
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (mPageViewMode == Ginger.General.eRIPageViewMode.SharedReposiotry && mActivity != null && !String.IsNullOrEmpty(mActivity.ContainingFolder))
             {
                 if ((bool)e.NewValue)
                 {
-                    if (WorkSpace.Instance.CurrentSelectedItem != mActivity)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = mActivity;
-                    }
+                    WorkSpace.Instance.CurrentSelectedItem = mActivity;
                 }
                 else
                 {

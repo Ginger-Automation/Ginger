@@ -1,4 +1,4 @@
-<Page x:Class="Ginger.ApplicationModelsLib.POMModels.POMEditPage"
+<UserControlsLib1:GingerEntitiesUIPage x:Class="Ginger.ApplicationModelsLib.POMModels.POMEditPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -12,7 +12,7 @@
       xmlns:local="clr-namespace:Ginger.Actions.ActionConversion"
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1000"
-      Title="POMEditPage" IsVisibleChanged="Page_IsVisibleChanged">
+      Title="POMEditPage">
 
     <Grid Background="{DynamicResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
@@ -139,4 +139,4 @@
             </TabItem>
         </TabControl>
     </Grid>
-</Page>
+</UserControlsLib1:GingerEntitiesUIPage>

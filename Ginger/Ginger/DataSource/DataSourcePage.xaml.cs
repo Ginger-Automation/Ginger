@@ -41,13 +41,14 @@ using GingerCore.Drivers.MainFrame;
 using GingerCore.Drivers.AndroidADB;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore.GeneralLib;
+using Ginger.UserControlsLib;
 
 namespace Ginger.DataSource
 {
     /// <summary>
     /// Interaction logic for AgentEditPage.xaml
     /// </summary>
-    public partial class DataSourcePage : Page
+    public partial class DataSourcePage : GingerEntitiesUIPage
     {
         DataSourceBase mDSDetails;
         ObservableList<DataSourceTable> mDSTableList;
@@ -193,26 +194,5 @@ namespace Ginger.DataSource
         }
 
         #endregion Functions
-
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (mDSDetails != null)
-            {
-                if ((bool)e.NewValue)
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem != mDSDetails)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = mDSDetails;
-                    }
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == mDSDetails)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
-            }
-        }
     }
 }

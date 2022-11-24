@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.UserControls;
+using Ginger.UserControlsLib;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
@@ -35,7 +36,7 @@ using System.Windows.Media;
 
 namespace GingerWPF.ApplicationModelsLib.APIModels
 {
-    public partial class APIModelPage : Page
+    public partial class APIModelPage : GingerEntitiesUIPage
     {
         ApplicationAPIModel mApplicationAPIModel;
         ModelParamsPage page;
@@ -44,6 +45,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         public APIModelPage(ApplicationAPIModel applicationAPIModelBase, General.eRIPageViewMode viewMode = General.eRIPageViewMode.Standalone)
         {
             mApplicationAPIModel = applicationAPIModelBase;
+            currentItem = mApplicationAPIModel;
 
             InitializeComponent();
             BindUiControls();
@@ -889,27 +891,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             Mouse.OverrideCursor = null;
 
             _pageGenericWin.Close();
-        }
-
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (mApplicationAPIModel != null)
-            {
-                if ((bool)e.NewValue)
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem != mApplicationAPIModel)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = mApplicationAPIModel;
-                    }
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == mApplicationAPIModel)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
-            }
         }
     }
 }
