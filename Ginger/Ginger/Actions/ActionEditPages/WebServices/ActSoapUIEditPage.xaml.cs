@@ -158,6 +158,8 @@ namespace Ginger.Actions.WebServices
         }
         public void InitPropertiesGrid(Amdocs.Ginger.Common.ObservableList<ActSoapUiInputValue> datasource, string gridTitle = "Input Values", string type = "Parameter Type", string paramTitle = "Parameter Name", string valueTitle = "Parameter Value", string valueForDriverTitle = "Calculated Parameter Value")
         {
+            ProjectPropertiesGrid.Init(mContext, mAct.SystemProperties, "Project Properties", "Property Name", "Property Value", "Property Calculated Value");
+
             ProjectPropertiesGrid.VEGrid.Title = gridTitle;
             ProjectPropertiesGrid.VEGrid.SetTitleStyle((Style)TryFindResource("@ucGridTitleLightStyle"));
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);

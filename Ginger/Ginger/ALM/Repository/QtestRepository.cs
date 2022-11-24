@@ -298,6 +298,13 @@ namespace Ginger.ALM.Repository
             //TODO: retireve test case fields -->DONE
             ObservableList<ExternalItemFieldBase> testCaseFields =  WorkSpace.Instance.Solution.ExternalItemsFields;
             var filterTestCaseFields = testCaseFields.Where(tc => tc.ItemType == eQCItemType.TestCase.ToString()).ToList();
+            for(var i = 0; i < activtiesGroup.ActivitiesIdentifiers.Where(ai => ai.IdentifiedActivity == null).ToList().Count; i++)
+            {
+                if (activtiesGroup.ActivitiesIdentifiers[i].IdentifiedActivity == null)
+                {
+                    activtiesGroup.ActivitiesIdentifiers[i].IdentifiedActivity = businessFlow.Activities.FirstOrDefault(x => x.Guid == activtiesGroup.ActivitiesIdentifiers[i].ActivityGuid);
+                }
+            }
             bool exportRes = ((QtestCore)ALMIntegration.Instance.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, matchingTC, parentObjectId, new ObservableList<ExternalItemFieldBase>(filterTestCaseFields), ref res);
             Reporter.HideStatusMessage();
             if (exportRes)
@@ -390,11 +397,11 @@ namespace Ginger.ALM.Repository
                         //no path to upload to
                         return false;
                     }
-                    ExportActivitiesGroupToALM(ag, testCaseParentObjectId);
+                    ExportActivitiesGroupToALM(ag, testCaseParentObjectId, false, businessFlow);
                 }
                 else
                 {
-                    ExportActivitiesGroupToALM(ag, parentObjectId);
+                    ExportActivitiesGroupToALM(ag, parentObjectId, false, businessFlow);
                 }
 
             }
