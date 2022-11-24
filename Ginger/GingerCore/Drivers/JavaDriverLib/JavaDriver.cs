@@ -4118,5 +4118,10 @@ namespace GingerCore.Drivers.JavaDriverLib
             size.Width = Width;
             return size.ToString();
         }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

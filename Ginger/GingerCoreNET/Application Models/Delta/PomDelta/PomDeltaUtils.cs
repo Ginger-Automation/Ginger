@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
@@ -80,11 +81,12 @@ namespace GingerCoreNET.Application_Models
                 PomLearnUtils.PrepareLearningConfigurations();
                 PomLearnUtils.LearnScreenShot();//this will set screen size to be same as in learning time
                 PrepareCurrentPOMElementsData();
+                ObservableList<POMPageMetaData> PomMetaData = new ObservableList<POMPageMetaData>();
                 if (PomLearnUtils.LearnOnlyMappedElements)
                 {
                     List<eElementType> selectedElementList = GetSelectedElementList();
 
-                    await mIWindowExplorerDriver.GetVisibleControls(selectedElementList, POMLatestElements, true, SpecificFramePath, GetRelativeXpathTemplateList(), PomLearnUtils.LearnScreenshotsOfElements);
+                    await mIWindowExplorerDriver.GetVisibleControls(selectedElementList, POMLatestElements, true, SpecificFramePath, GetRelativeXpathTemplateList(), PomLearnUtils.LearnScreenshotsOfElements, PomMetaData);
                 }
                 else
                 {
@@ -205,6 +207,14 @@ namespace GingerCoreNET.Application_Models
                 deltaLocator.ElementLocator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
                 deltaLocator.DeltaStatus = deltaStatus;
                 newDeltaElement.Locators.Add(deltaLocator);
+            }
+            foreach (ElementLocator Flocator in elementInfo.FriendlyLocators)
+            {
+                DeltaElementLocator deltaFLocator = new DeltaElementLocator();
+                deltaFLocator.ElementLocator = Flocator;
+                deltaFLocator.ElementLocator.LocateStatus = ElementLocator.eLocateStatus.Unknown;
+                deltaFLocator.DeltaStatus = deltaStatus;
+                newDeltaElement.FriendlyLocators.Add(deltaFLocator);
             }
             foreach (ControlProperty propery in elementInfo.Properties)
             {
