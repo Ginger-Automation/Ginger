@@ -1047,14 +1047,18 @@ namespace GingerCore.Actions
             //TODO: replace name with a unique ID?
             //TODO: To add Action.Name to the file name
             string fn = Description;// + ActionName + ": " + mLocateBy + "=" + LocateValue + " value=" + InputValues.FirstOrDefault(); ; 
-            if (fn.Length > 100)
+            if (fn != null)
             {
-                return fn.Substring(0, 99);
+                if (fn.Length > 100)
+                {
+                    return fn.Substring(0, 99);
+                }
+                else
+                {
+                    return fn;
+                }
             }
-            else
-            {
-                return fn;
-            }
+            return ItemName;
         }
 
         #endregion ActInputValues
