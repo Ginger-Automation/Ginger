@@ -3503,7 +3503,7 @@ namespace GingerCore.Drivers
             catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception occured when LocateElementByLocator", ex);
-                if (AlwaysReturn)
+                if (true)
                 {
                     friendlyEle = null;
                     locator.StatusError = ex.Message;
