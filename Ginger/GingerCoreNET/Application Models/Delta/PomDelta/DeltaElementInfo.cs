@@ -48,6 +48,8 @@ namespace GingerCoreNET.Application_Models
 
         public ObservableList<DeltaElementLocator> Locators = new ObservableList<DeltaElementLocator>();
 
+        public ObservableList<DeltaElementLocator> FriendlyLocators = new ObservableList<DeltaElementLocator>();
+
         public ObservableList<DeltaControlProperty> Properties = new ObservableList<DeltaControlProperty>();
 
         public object OriginalElementGroup { get { return ElementInfo.ElementGroup; } }
