@@ -41,8 +41,17 @@ namespace GingerCore
         [EnumValueDescription("Rerun Business Flow")]
         ReRunBusinessFlow,
 
-        [EnumValueDescription("Stop Execution")]
-        StopExecution
+        [EnumValueDescription("Stop BusinessFlow")]
+        StopBusinessFlow,
+
+        [EnumValueDescription("ContinueFromNextAction")]
+        ContinueFromNextAction,
+
+        [EnumValueDescription("ContinueFromNextActivity")]
+        ContinueFromNextActivity,
+
+        [EnumValueDescription("Stop Run")]
+        StopRun
     }
 
     public enum eTriggerType

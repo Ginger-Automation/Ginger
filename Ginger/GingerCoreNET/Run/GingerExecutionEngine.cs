@@ -104,7 +104,7 @@ namespace Ginger.Run
 
         Activity mLastExecutedActivity;
 
-        private bool mIsErrorHandlerPostActionSet;
+        private bool mErrorPostExecutionActionFlowBreaker;
         eErrorHandlerPostExecutionAction handlerPostExecutionAction;
 
 
@@ -509,8 +509,12 @@ namespace Ginger.Run
                     if (flowControlIndx == null && executedBusFlow.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) //stop if needed based on current BF failure
                     {
                         LastFailedBusinessFlow = executedBusFlow;
-                        if ((executedBusFlow.Mandatory == true) || (executedBusFlow.Mandatory == false & mGingerRunner.RunOption == GingerRunner.eRunOptions.StopAllBusinessFlows))
+                        if ((executedBusFlow.Mandatory == true) || 
+                            (executedBusFlow.Mandatory == false & mGingerRunner.RunOption == GingerRunner.eRunOptions.StopAllBusinessFlows) ||
+                            (mErrorPostExecutionActionFlowBreaker && handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopRun))
                         {
+                            if (mErrorPostExecutionActionFlowBreaker)
+                                mErrorPostExecutionActionFlowBreaker = false;
                             SetNextBusinessFlowsBlockedStatus();
                             break;
                         }
@@ -1063,7 +1067,7 @@ namespace Ginger.Run
                 act.RetryMechanismCount = 0;
                 RunActionWithRetryMechanism(act, checkIfActionAllowedToRun, moveToNextAction);
 
-                if ((act.EnableRetryMechanism & mStopRun == false) && !mIsErrorHandlerPostActionSet)
+                if ((act.EnableRetryMechanism & mStopRun == false) && !mErrorPostExecutionActionFlowBreaker)
                 {
                     while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && act.RetryMechanismCount < act.MaxNumberOfRetries & mStopRun == false)
                     {
@@ -1104,11 +1108,11 @@ namespace Ginger.Run
 
         public void CheckAndExecutePostErrorHandlerAction()
         {
-            if (!mIsErrorHandlerPostActionSet)
+            if (!mErrorPostExecutionActionFlowBreaker)
             {
                 return;
             }
-            mIsErrorHandlerPostActionSet = false;
+            mErrorPostExecutionActionFlowBreaker = false;
             if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginActivity)
             {
                 CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts.FirstOrDefault();
@@ -1117,10 +1121,6 @@ namespace Ginger.Run
             else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow)
             {
                 RunBusinessFlow(CurrentBusinessFlow, doResetErrorHandlerExecutedFlag: false);
-            }
-            else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopExecution)
-            {
-                //don't do anything
             }
         }
 
@@ -1265,7 +1265,7 @@ namespace Ginger.Run
                         ExecuteErrorHandlerActivities(lstMappedErrorHandlers);
                         // mErrorHandlerExecuted = true;
 
-                        if (mIsErrorHandlerPostActionSet)
+                        if (mErrorPostExecutionActionFlowBreaker || handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ContinueFromNextAction)
                         {
                             break;
                         }
@@ -1312,7 +1312,7 @@ namespace Ginger.Run
                 Activity activity = (Activity)CurrentBusinessFlow.CurrentActivity;
                 Act action = act;
 
-                if (!mIsErrorHandlerPostActionSet)
+                if (!mErrorPostExecutionActionFlowBreaker)
                 {
                     DoFlowControl(act, moveToNextAction);
                 }
@@ -1802,9 +1802,11 @@ namespace Ginger.Run
 
                 if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow || 
                     handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginActivity || 
-                    handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopExecution)
+                    handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ContinueFromNextActivity ||
+                    handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopBusinessFlow ||
+                    handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopRun)
                 {
-                    mIsErrorHandlerPostActionSet = true;
+                    mErrorPostExecutionActionFlowBreaker = true;
                 }
                 else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginAction)
                 {
@@ -3356,7 +3358,9 @@ namespace Ginger.Run
                                 {
                                     activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
 
-                                    if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
+                                    if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && 
+                                        act.FlowControls.Count == 0 && 
+                                        handlerPostExecutionAction != eErrorHandlerPostExecutionAction.ContinueFromNextAction)
                                     {
                                         SetNextActionsBlockedStatus();
                                         statusCalculationIsDone = true;
@@ -3372,7 +3376,9 @@ namespace Ginger.Run
                             {
                                 activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                                 CurrentBusinessFlow.LastFailedAction = act;
-                                if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
+                                if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && 
+                                    act.FlowControls.Count == 0 && 
+                                    handlerPostExecutionAction != eErrorHandlerPostExecutionAction.ContinueFromNextAction)
                                 {
                                     SetNextActionsBlockedStatus();
                                     statusCalculationIsDone = true;
@@ -3395,7 +3401,7 @@ namespace Ginger.Run
                                 return;
                             }
 
-                            if (mIsErrorHandlerPostActionSet)
+                            if (mErrorPostExecutionActionFlowBreaker)
                             {
                                 break;
                             }
@@ -3503,10 +3509,8 @@ namespace Ginger.Run
                     IsRunning = false;
                 }
 
-                if (mIsErrorHandlerPostActionSet && handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginActivity)
-                {
+                if (mErrorPostExecutionActionFlowBreaker && handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginActivity)
                     CheckAndExecutePostErrorHandlerAction();
-                }
             }
         }
 
@@ -3765,8 +3769,8 @@ namespace Ginger.Run
                     IsRunning = true;
                     mStopRun = false;
                 }
-                
- 
+
+
 
                 //set the BF to execute
                 if (businessFlow != null)
@@ -3809,7 +3813,7 @@ namespace Ginger.Run
                 if (PrepareVariables() == false)
                 {
                     if (CurrentBusinessFlow.Activities.Count > 0)
-                    {                        
+                    {
                         NotifyActivityGroupStart(CurrentBusinessFlow.ActivitiesGroups[0]);
                         NotifyActivityStart(CurrentBusinessFlow.Activities[0]);
                         CurrentBusinessFlow.Activities[0].Status = eRunStatus.Failed;
@@ -3900,9 +3904,12 @@ namespace Ginger.Run
                             return;
                         }
 
-                        if (mIsErrorHandlerPostActionSet)
+                        if (mErrorPostExecutionActionFlowBreaker)
                         {
-                            break;
+                            if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ContinueFromNextActivity)
+                                mErrorPostExecutionActionFlowBreaker = false;
+                            else
+                                break;
                         }
 
                         if ((Activity)CurrentBusinessFlow.Activities.CurrentItem != ExecutingActivity)
@@ -3960,11 +3967,12 @@ namespace Ginger.Run
                     Status = RunsetStatus;
                 }
 
-                if (mIsErrorHandlerPostActionSet && (
-                    handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow || 
-                    handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopExecution))
+                if (mErrorPostExecutionActionFlowBreaker)
                 {
-                    CheckAndExecutePostErrorHandlerAction();
+                    if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow)
+                        CheckAndExecutePostErrorHandlerAction();
+                    else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopBusinessFlow)
+                        mErrorPostExecutionActionFlowBreaker = false;
                 }
             }
 
