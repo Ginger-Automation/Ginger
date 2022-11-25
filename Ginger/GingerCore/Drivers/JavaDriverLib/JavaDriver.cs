@@ -4119,6 +4119,12 @@ namespace GingerCore.Drivers.JavaDriverLib
             return size.ToString();
         }
 
+        public ObservableList<ElementLocator> GetElement
+            (ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
+        }
+
         public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
         {
             throw new NotImplementedException();
