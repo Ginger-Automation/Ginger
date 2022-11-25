@@ -44,6 +44,8 @@ namespace Amdocs.Ginger.Common.UIElement
 
         ObservableList<ElementLocator> GetElementLocators(ElementInfo ElementInfo);
 
+        ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo);
+
         ObservableList<OptionalValue> GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue);
 
         // Get the data of the element
