@@ -1838,6 +1838,12 @@ namespace GingerCore.Drivers.WindowsLib
             return size.ToString();
         }
 
+        public ObservableList<ElementLocator> GetElement
+            (ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
+        }
+
         public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
         {
             throw new NotImplementedException();
