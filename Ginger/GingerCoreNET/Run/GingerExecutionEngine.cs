@@ -63,7 +63,13 @@ using Activity = GingerCore.Activity;
 
 namespace Ginger.Run
 {
-
+    public enum eRunSource
+    {
+        Runner,
+        BusinessFlow,
+        Activity,
+        Action
+    }
 
     public class GingerExecutionEngine : IGingerExecutionEngine
     {
@@ -104,6 +110,7 @@ namespace Ginger.Run
 
         Activity mLastExecutedActivity;
 
+        private eRunSource? mRunSource = null;
         private bool mErrorPostExecutionActionFlowBreaker;
         eErrorHandlerPostExecutionAction handlerPostExecutionAction;
 
@@ -466,6 +473,9 @@ namespace Ginger.Run
                     startingBfIndx = BusinessFlows.IndexOf(CurrentBusinessFlow);//skip BFs which already executed
                 }
 
+                if (mRunSource == null)
+                    mRunSource = eRunSource.Runner;
+
                 int? flowControlIndx = null;
                 for (int bfIndx = startingBfIndx; bfIndx < BusinessFlows.Count; CalculateNextBFIndx(ref flowControlIndx, ref bfIndx))
                 {
@@ -486,7 +496,7 @@ namespace Ginger.Run
                         continue;
                     }
 
-                    //Run Bf                   
+                    //Run Bf
                     if (doContinueRun && bfIndx == startingBfIndx)//this is the BF to continue from
                     {
                         RunBusinessFlow(null, false, true);//Continue BF run
@@ -576,6 +586,14 @@ namespace Ginger.Run
                     NotifySkippedEntitiesWhenRunnerExecutionSkipped();
                     Status = RunsetStatus;
                 }
+
+                if (mRunSource == eRunSource.Runner)
+                {
+                    mRunSource = null;
+                    mErrorPostExecutionActionFlowBreaker = false;
+                }
+
+
             }
         }
 
@@ -1063,6 +1081,9 @@ namespace Ginger.Run
                 act.SolutionFolder = SolutionFolder;
                 act.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
 
+                if (mRunSource == null)
+                    mRunSource = eRunSource.Action;
+
                 //resetting the retry mechanism count before calling the function.
                 act.RetryMechanismCount = 0;
                 RunActionWithRetryMechanism(act, checkIfActionAllowedToRun, moveToNextAction);
@@ -1103,7 +1124,14 @@ namespace Ginger.Run
                 act.Error = act.Error + "\nException in Run Action " + ex.Message;
                 act.Status = eRunStatus.Failed;
             }
-
+            finally
+            {
+                if (mRunSource == eRunSource.Action)
+                {
+                    mRunSource = null;
+                    mErrorPostExecutionActionFlowBreaker = false;
+                }
+            }
         }
 
         public void CheckAndExecutePostErrorHandlerAction()
@@ -3342,6 +3370,10 @@ namespace Ginger.Run
                     }
 
                     bool bHasMoreActions = true;
+
+                    if (mRunSource == null)
+                        mRunSource = eRunSource.Activity;
+
                     while (bHasMoreActions)
                     {
                         CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
@@ -3511,6 +3543,12 @@ namespace Ginger.Run
 
                 if (mErrorPostExecutionActionFlowBreaker && handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginActivity)
                     CheckAndExecutePostErrorHandlerAction();
+
+                if (mRunSource == eRunSource.Activity)
+                {
+                    mRunSource = null;
+                    mErrorPostExecutionActionFlowBreaker = false;
+                }
             }
         }
 
@@ -3849,6 +3887,9 @@ namespace Ginger.Run
                 Activity ExecutingActivity = (Activity)CurrentBusinessFlow.CurrentActivity;
                 Activity FirstExecutedActivity = ExecutingActivity;
 
+                if (mRunSource == null)
+                    mRunSource = eRunSource.BusinessFlow;
+
                 while (ExecutingActivity != null)
                 {
                     if (ExecutingActivity.GetType() == typeof(ErrorHandler) || ExecutingActivity.GetType() == typeof(CleanUpActivity))
@@ -3973,6 +4014,12 @@ namespace Ginger.Run
                         CheckAndExecutePostErrorHandlerAction();
                     else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopBusinessFlow)
                         mErrorPostExecutionActionFlowBreaker = false;
+                }
+
+                if (mRunSource == eRunSource.BusinessFlow)
+                {
+                    mRunSource = null;
+                    mErrorPostExecutionActionFlowBreaker = false;
                 }
             }
 
