@@ -16,7 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using System.Text;
+using System;
 using Amdocs.Ginger.Common;
+using Microsoft.CodeAnalysis;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -123,6 +126,19 @@ namespace Amdocs.Ginger.Repository
             New,
             [EnumValueDescription("Use cookies from request header")]
             HeaderCookie
+        }
+
+        public enum eEncodingType
+        {
+            UTF8,
+            UTF7,
+            UTF32,
+            Unicode,
+            BigEndianUnicode,
+            Latin1,
+            ASCII,
+            Default,
+            None
         }
     }
 }

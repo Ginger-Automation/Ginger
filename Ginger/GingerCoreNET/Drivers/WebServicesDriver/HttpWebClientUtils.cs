@@ -244,8 +244,26 @@ namespace GingerCore.Actions.WebAPI
                 Handler.ClientCertificateOptions = ClientCertificateOption.Manual;
                 //string path = (mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath).ToString().Replace(@"~\", mAct.SolutionFolder));
                 string path = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath));
-
-                if (!string.IsNullOrEmpty(path))
+                string keyPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.KeyFilePath));
+                if (!string.IsNullOrEmpty(path) && !string.IsNullOrEmpty(keyPath))
+                {
+                    //var certPem = File.ReadAllText(path);
+                    //var keyPem = File.ReadAllText(keyPath);
+                    string passwordKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
+                    if (!string.IsNullOrEmpty(passwordKey))
+                    {
+                        //X509Certificate2 customCertificate = X509Certificate2.CreateFromEncryptedPemFile(certPem, passwordKey, keyPem);
+                        X509Certificate2 customCertificate = X509Certificate2.CreateFromEncryptedPemFile(path, passwordKey, keyPath);
+                        Handler.ClientCertificates.Add(customCertificate);
+                    }
+                    else
+                    {
+                        //X509Certificate2 customCertificate = X509Certificate2.CreateFromPemFile(certPem, keyPem);
+                        X509Certificate2 customCertificate = X509Certificate2.CreateFromPemFile(path, keyPath);
+                        Handler.ClientCertificates.Add(customCertificate);
+                    }
+                }
+                else if (!string.IsNullOrEmpty(path))
                 {
                     string CertificateKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
                     if (!string.IsNullOrEmpty(CertificateKey))
@@ -255,7 +273,7 @@ namespace GingerCore.Actions.WebAPI
                         ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
                     }
                     else
-                    { 
+                    {
                         //Case Certifacte key/password is not required
                         X509Certificate2 customCertificate = new X509Certificate2(path);
                         Handler.ClientCertificates.Add(customCertificate);
@@ -775,13 +793,56 @@ namespace GingerCore.Actions.WebAPI
                             var lastIndexOfUtf8 = _byteOrderMarkUtf8.Length - 1;
                             BodyString = BodyString.Remove(0, lastIndexOfUtf8);
                         }
-                        RequestMessage.Content = new StringContent(BodyString, Encoding.UTF8, ContentType);
+                        CreateRequestContent();
                         break;
                     default:
-                        RequestMessage.Content = new StringContent(BodyString, Encoding.UTF8, ContentType);
+                        CreateRequestContent();
                         break;
                 }
             }
+        }
+
+        private void CreateRequestContent()
+        {
+            ApplicationAPIUtils.eEncodingType eEncodingType = (ApplicationAPIUtils.eEncodingType)mAct.GetInputParamCalculatedValue<ApplicationAPIUtils.eEncodingType>(ActWebAPIRest.Fields.ContentEncodingType);
+            HttpContent httpContent = null;
+
+            switch (eEncodingType)
+            {
+                case ApplicationAPIUtils.eEncodingType.UTF8:
+                    httpContent = new StringContent(BodyString, Encoding.UTF8, ContentType);
+                    break;
+                case ApplicationAPIUtils.eEncodingType.UTF7:
+                    httpContent = new StringContent(BodyString, Encoding.UTF7, ContentType);
+                    break;
+                case ApplicationAPIUtils.eEncodingType.UTF32:
+                    httpContent = new StringContent(BodyString, Encoding.UTF32, ContentType);
+                    break;
+                case ApplicationAPIUtils.eEncodingType.Unicode:
+                    httpContent = new StringContent(BodyString, Encoding.Unicode, ContentType);
+                    break;
+                case ApplicationAPIUtils.eEncodingType.BigEndianUnicode:
+                    httpContent = new StringContent(BodyString, Encoding.BigEndianUnicode, ContentType);
+                    break;
+                case ApplicationAPIUtils.eEncodingType.Latin1:
+                    httpContent = new StringContent(BodyString, Encoding.Latin1, ContentType);
+                    break;
+                case ApplicationAPIUtils.eEncodingType.ASCII:
+                    httpContent = new StringContent(BodyString, Encoding.ASCII, ContentType);
+                    break;
+                case ApplicationAPIUtils.eEncodingType.Default:
+                    httpContent = new StringContent(BodyString, Encoding.Default, ContentType);
+                    break;
+                case ApplicationAPIUtils.eEncodingType.None:
+                    httpContent = new StringContent(BodyString, Encoding.Default, ContentType);
+                    httpContent.Headers.ContentType.CharSet = string.Empty;
+                    break;
+                default:
+                    httpContent = new StringContent(BodyString, Encoding.UTF8, ContentType);
+                    break;
+            }
+
+            RequestMessage.Content = httpContent;
         }
 
         private void SetCookies()
