@@ -60,7 +60,6 @@ namespace Ginger.SolutionGeneral
             {
                 solution.StartDirtyTracking();
             }
-            //solution.SolutionOperations = this;
             return solution;
         }
 

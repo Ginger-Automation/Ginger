@@ -158,8 +158,7 @@ namespace Amdocs.Ginger.UserControls
                 #region General Images
                 //############################## General Images:
                 case eImageType.Empty:
-                    // Do nothing and leave it empty
-                    // SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Ban);                    
+                    // Do nothing and leave it empty             
                     break;
                 case eImageType.Ginger:
                     SetAsStaticImage("Ginger.png");
@@ -1031,13 +1030,9 @@ namespace Amdocs.Ginger.UserControls
             // Reset All do defaults
             xFAImage.Visibility = Visibility.Collapsed;
             xFAImage.Spin = false;
-            //xFAImage.StopSpin();
             xFAImage.Rotation = 0;
-            //xFAImage.SpinDuration = 0;
             xFAFont.Visibility = Visibility.Collapsed;
             xFAFont.Spin = false;
-            //xFAFont.StopSpin();
-           // xFAFont.SpinDuration = 0;
             xFAFont.Rotation = 0;
             xStaticImage.Visibility = Visibility.Collapsed;
             xViewBox.Visibility = Visibility.Collapsed;
@@ -1065,10 +1060,14 @@ namespace Amdocs.Ginger.UserControls
                 foreground = (SolidColorBrush)this.ImageForeground;
             }
             else if (foreground == null)
+            {
                 foreground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
+            }
             xFAImage.Foreground = foreground;
             if (this.ImageForeground != null)
+            {
                 xFAFont.Foreground = foreground;
+            }
 
             if (spinDuration != 0)
             {
@@ -1111,7 +1110,6 @@ namespace Amdocs.Ginger.UserControls
 
         private BitmapImage GetImageBitMap(string imageName)
         {
-            //return new BitmapImage(new Uri(@"/UserControlsLib/ImageMakerLib/Images/" + imageName, UriKind.RelativeOrAbsolute));
             return new BitmapImage(new Uri("pack://application:,,,/Ginger;component/UserControlsLib/ImageMakerLib/Images/" + imageName, UriKind.RelativeOrAbsolute));
         }
 
@@ -1141,9 +1139,13 @@ namespace Amdocs.Ginger.UserControls
         {
             xStaticImage.Visibility = Visibility.Visible;
             if (imageBitMap != null)
+            {
                 xStaticImage.Source = imageBitMap;
+            }
             else
+            {
                 xStaticImage.Source = GetImageBitMap(imageName);
+            }
         }
 
         Shape GetKidsDrawingShape()

@@ -77,8 +77,6 @@ namespace Ginger
 
             mHelpLayoutList.CollectionChanged += MHelpLayoutList_CollectionChanged;
 
-            //Telemetry.eventHandler += TelemetryEventHandler;
-
             DriverWindowHandler.Init();
 
             GingerCore.General.DoEvents();
@@ -143,14 +141,14 @@ namespace Ginger
                 lblVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
 
                 //Solution                  
-                if (WorkSpace.Instance.UserProfile.AutoLoadLastSolution && WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
+                if (WorkSpace.Instance.UserProfile.AutoLoadLastSolution && !WorkSpace.Instance.RunningInExecutionMode && !WorkSpace.Instance.RunningFromUnitTest)
                 {
                     AutoLoadLastSolution();
                     autoLoadSolDone = true;
                 }
 
                 //Messages
-                if (WorkSpace.Instance.UserProfile.NewHelpLibraryMessgeShown == false)
+                if (!WorkSpace.Instance.UserProfile.NewHelpLibraryMessgeShown)
                 {
                     Reporter.ToStatus(eStatusMsgKey.GingerHelpLibrary);
                     WorkSpace.Instance.UserProfile.NewHelpLibraryMessgeShown = true;
@@ -168,7 +166,7 @@ namespace Ginger
             finally
             {
                 HideSplash();
-                if (autoLoadSolDone == false && WorkSpace.Instance.Solution == null)
+                if (!autoLoadSolDone && WorkSpace.Instance.Solution == null)
                 {
                     AddHelpLayoutToShow("MainWindow_AddSolutionHelp", xSolutionSelectionMainMenuItem, "Click here to create new Solution or to open / download an existing one");
                 }
@@ -233,7 +231,6 @@ namespace Ginger
                     xModifiedItemsCounter.Visibility = Visibility.Collapsed;
                     GingerCore.General.DoEvents();
                 }
-                //else if (xMainWindowFrame.Content is LoadingPage && SelectedSolutionTab == eSolutionTabType.None)
                 else if (WorkSpace.Instance.Solution == null)
                 {
                     xMainWindowFrame.Visibility = Visibility.Collapsed;
@@ -425,7 +422,7 @@ namespace Ginger
             {
                 userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestart);
             }
-            else if (mAskUserIfToClose == false)
+            else if (!mAskUserIfToClose)
             {
                 userSelection = eUserMsgSelection.Yes;
             }
@@ -448,15 +445,13 @@ namespace Ginger
 
         private void AppCleanUp()
         {
-            //Telemetry.eventHandler -= TelemetryEventHandler;
-
             ClosingWindow CW = new ClosingWindow();
             CW.Show();
             GingerCore.General.DoEvents();
 
             if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
             {
-                while (WorkSpace.Instance.Solution.LoggerConfigurations.IsPublishToCentralDBRunning == true)
+                while (WorkSpace.Instance.Solution.LoggerConfigurations.IsPublishToCentralDBRunning)
                 {
                     Thread.Sleep(500);
                     GingerCore.General.DoEvents();
@@ -686,14 +681,17 @@ namespace Ginger
 
         private void btnSourceControlGetLatest_Click(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) return;
+            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) { return; }
 
             Reporter.ToStatus(eStatusMsgKey.GetLatestFromSourceControl);
             if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.Folder))
+            {
                 Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
+            }
             else
+            {
                 SourceControlUI.GetLatest(WorkSpace.Instance.Solution.Folder, WorkSpace.Instance.Solution.SourceControl);
-
+            }
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
             Reporter.HideStatusMessage();
 
@@ -730,7 +728,6 @@ namespace Ginger
 
         private void xHelpOptionsMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            //General.ShowGingerHelpWindow();
             if (xHelpOptionsMenuItem.Tag == null)
             {
                 xHelpOptionsMenuItem.Tag = "Expanded";//expanded
@@ -879,8 +876,6 @@ namespace Ginger
             {
                 //TODO: load Business Flows tab
                 xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
-                //App.BusinessFlow = (BusinessFlow)args.Object;
-                //App.BusinessFlow.SaveBackup();
             }
         }
 
@@ -1036,9 +1031,9 @@ namespace Ginger
                 int insertIndex = xUserOperationsMainMenuItem.Items.IndexOf(xLogOptionsMenuItem) + 1;
 
                 AddSubMenuItem(xUserOperationsMainMenuItem, "View Current Log Details", "Log", btnViewLogDetails_Click, insertIndex++, iconType: eImageType.View);
-                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Ginger Console Window", "Log", btnLaunchConsole_Click, insertIndex, iconType: eImageType.Window);
                 AddSubMenuItem(xUserOperationsMainMenuItem, "Open Full Log File", "Log", btnViewLog_Click, insertIndex++, iconType: eImageType.File);
                 AddSubMenuItem(xUserOperationsMainMenuItem, "Open Log File Folder", "Log", btnViewLogLocation_Click, insertIndex++, iconType: eImageType.OpenFolder);
+                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Ginger Console Window", "Log", btnLaunchConsole_Click, insertIndex, iconType: eImageType.Window);
             }
         }
 
@@ -1096,7 +1091,7 @@ namespace Ginger
                 int insertIndex = xExtraOperationsMainMenuItem.Items.IndexOf(xHelpOptionsMenuItem) + 1;
 
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Offline Help Library", "Help", xLoadOfflineHelpMenuItem_Click, insertIndex++, iconType: eImageType.File);
-                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Online Help Library", "Help", xLoadOnlineHelpMenuItem_Click, insertIndex++, iconType: eImageType.Globe);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Online Help Library", "Help", xLoadOnlineHelpMenuItem_Click, insertIndex, iconType: eImageType.Globe);
             }
         }
 
@@ -1121,7 +1116,7 @@ namespace Ginger
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Public Support", "Support", xLoadPublicSupportSiteMenuItem_Click, insertIndex++, iconType: eImageType.Support);
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Internal Support Site", "Support", xLoadSupportSiteMenuItem_Click, insertIndex++, iconType: eImageType.Website);
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Internal Q&A Fourm Site", "Support", xLoadForumSiteMenuItem_Click, insertIndex++, iconType: eImageType.Forum);
-                AddSubMenuItem(xExtraOperationsMainMenuItem, "Raise Internal Ticket", "Support", xOpenTicketMenuItem_Click, insertIndex++, iconType: eImageType.Ticket);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Raise Internal Ticket", "Support", xOpenTicketMenuItem_Click, insertIndex, iconType: eImageType.Ticket);
             }
         }
 
@@ -1156,7 +1151,6 @@ namespace Ginger
                 //Insert
                 int insertIndex = xExtraOperationsMainMenuItem.Items.IndexOf(xContactOptionsMenuItem) + 1;
 
-                //AddSubMenuItem(xExtraOperationsMainMenuItem, "Contact Support Team", "Contact", xSupportTeamMenuItem_Click, insertIndex++, "AmdocsTestingGingerDVCISupport@int.amdocs.com", iconType: eImageType.Email);
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Contact Ginger Core Team", "Contact", xCoreTeamMenuItem_Click, insertIndex, "GingerCoreTeam@int.amdocs.com", iconType: eImageType.Email);
             }
         }
@@ -1224,7 +1218,7 @@ namespace Ginger
                 return;//not showing help in automatic run mode
             }
             HelpLayoutArgs helpLayoutArgs = new HelpLayoutArgs(helpLayoutKey, focusedControl, helpText);
-            if (WorkSpace.Instance.UserProfile.ShownHelpLayoutsKeys.Contains(helpLayoutArgs.HelpLayoutKey) == false)
+            if (!WorkSpace.Instance.UserProfile.ShownHelpLayoutsKeys.Contains(helpLayoutArgs.HelpLayoutKey))
             {
                 mHelpLayoutList.Add(helpLayoutArgs);
             }
@@ -1280,11 +1274,6 @@ namespace Ginger
                     xHelpLayoutRectangleBottom.Width = controlToFocusWidth;
                     xHelpLayoutRectangleBottom.Height = xMainWindowPnl.ActualHeight - (controlToFocusLocation.Y + controlToFocusHeight);
 
-                    //xHelpLayoutRectangleFocusedItem.SetValue(Canvas.LeftProperty, controlToFocusLocation.X);
-                    //xHelpLayoutRectangleFocusedItem.SetValue(Canvas.TopProperty, controlToFocusLocation.Y);
-                    //xHelpLayoutRectangleFocusedItem.Width = controlToFocusWidth;
-                    //xHelpLayoutRectangleFocusedItem.Height = controlToFocusHeight;
-
                     //-- set text and it location 
                     xHelpLayoutTextBlock.Text = helpArgs.HelpText;
                     double textNeededWidth = 450;
@@ -1297,7 +1286,7 @@ namespace Ginger
                     //focused item top left corner
                     if (controlToFocusLocation.X >= textNeededWidth && controlToFocusLocation.Y >= textNeededHeight)
                     {
-                        helpTextLocation.X = controlToFocusLocation.X - textNeededWidth - arrowNeededLength; ;
+                        helpTextLocation.X = controlToFocusLocation.X - textNeededWidth - arrowNeededLength;
                         helpTextLocation.Y = controlToFocusLocation.Y - arrowNeededLength;
                         arrowSourceLocation = new Point(helpTextLocation.X + textNeededWidth, helpTextLocation.Y + 50);
                         arrowTargetLocation = new Point(controlToFocusLocation.X, controlToFocusLocation.Y - arrowDistanceFromTarget);
