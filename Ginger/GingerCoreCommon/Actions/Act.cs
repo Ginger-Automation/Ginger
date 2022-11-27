@@ -531,7 +531,6 @@ namespace GingerCore.Actions
         public abstract List<ePlatformType> Platforms { get; }
 
         // return all supported LocateBy of this action, so in edit action page we show only the relevant
-        // protected List<Act.eLocatorType> mPlatforms = new List<Platforms.Platform.eType>();
         // by default we return all, each action can override
         // TODO: use abstract to force all actions to impl
         public virtual List<eLocateBy> AvailableLocateBy()
@@ -610,7 +609,7 @@ namespace GingerCore.Actions
             }
             set
             {
-                if (string.IsNullOrEmpty(mExInfo) == false && value.Contains(mExInfo) && value.IndexOf(mExInfo) == 0)//meaning act.ExInfo += was used
+                if (!string.IsNullOrEmpty(mExInfo) && value.Contains(mExInfo) && value.IndexOf(mExInfo) == 0)//meaning act.ExInfo += was used
                 {
                     //add line break
                     mExInfo = string.Format("{0}{1}{2}", value.Substring(0, mExInfo.Length), Environment.NewLine, value.Substring(mExInfo.Length));
@@ -718,8 +717,7 @@ namespace GingerCore.Actions
             bool isActive = true;
             // check if param already exist then update as it can be saved and loaded + keep other values
             ActOutDataSourceConfig ADCS = (from arc in DSOutputConfigParams where arc.DSName == DSName && arc.DSTable == DSTable && arc.OutputType == OutputType select arc).FirstOrDefault();
-            //if (Active != "")
-            //    isActive = bool.Parse(Active);
+
             if (ADCS == null)
             {
                 if (OutputType == "Parameter_Path" || OutDSParamType != "ParamToRow")
@@ -764,7 +762,9 @@ namespace GingerCore.Actions
             ADCS.Active = isActive;
 
             if (ColName != "")
+            {
                 ADCS.TableColumn = ColName;
+            }
         }
 
         public void RemoveAllButOneInputParam(string Param)
@@ -1108,7 +1108,7 @@ namespace GingerCore.Actions
                     if (Value is ArrayList)
                     {
                         int k = ((System.Collections.ArrayList)Value).Count;
-                        AddOrUpdateReturnParamActualWithPath(Key.ToString(), k.ToString(), Path.ToString());
+                        AddOrUpdateReturnParamActualWithPath(Key, k.ToString(), Path.ToString());
                         int j = 1;
                         // If the table base value is a collection of items then loop through them
                         foreach (var item in (ICollection)Value)
@@ -1116,7 +1116,6 @@ namespace GingerCore.Actions
                             AddJsonKeyValueToOutputValue(item, Key + "[" + j + "]", Path);
                             j++;
                         }
-                        k++;
                     }
                     else
                     {
@@ -1158,6 +1157,7 @@ namespace GingerCore.Actions
                     }
                 }
                 else
+                {
                     try
                     {
                         if (Value != null)
@@ -1173,6 +1173,7 @@ namespace GingerCore.Actions
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
                     }
+                }
             }
             catch (Exception ex)
             {
@@ -1473,9 +1474,13 @@ namespace GingerCore.Actions
                             {
                                 VariableDependency varDep = null;
                                 if (this.VariablesDependencies != null)
+                                {
                                     varDep = this.VariablesDependencies.Where(avd => avd.VariableName == listVar.Name && avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                }
                                 if (varDep == null)
+                                {
                                     varDep = this.VariablesDependencies.Where(avd => avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                }
                                 if (varDep != null)
                                 {
                                     if (!varDep.VariableValues.Contains(listVar.Value))
@@ -1491,19 +1496,27 @@ namespace GingerCore.Actions
                                 }
                             }
                             if (checkStatus == null)
+                            {
                                 checkStatus = true;//All Selection List variable selected values were configured on the action
+                            }
                         }
                         else
+                        {
                             checkStatus = true;//the Activity don't has Selection List variables
+                        }
                     }
                     else
-                        checkStatus = true;//the mechanism is disabled                    
+                    {
+                        checkStatus = true;//the mechanism is disabled
+                    }
                 }
                 else
+                {
                     checkStatus = false; //Activity object is null
+                }
 
                 //Check failed
-                if (checkStatus == false && setActStatus == true)
+                if (!checkStatus == false && setActStatus)
                 {
                     this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                     this.ExInfo = "Action was not configured to run with current " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " values.";
@@ -1528,7 +1541,9 @@ namespace GingerCore.Actions
         public void InvokPropertyChanngedForAllFields()
         {
             foreach (var field in typeof(Fields).GetFields())
+            {
                 OnPropertyChanged(field.Name);
+            }
         }
 
         public virtual List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
@@ -1712,7 +1727,7 @@ namespace GingerCore.Actions
                 //        indx--;
                 //    }
                 //}
-                List<ActReturnValue> configuredReturnParamsList = this.ReturnValues.Where(x => String.IsNullOrEmpty(x.Expected) == false || String.IsNullOrEmpty(x.StoreToValue) == false || String.IsNullOrEmpty(x.SimulatedActual) == false).ToList();
+                List<ActReturnValue> configuredReturnParamsList = this.ReturnValues.Where(x => !String.IsNullOrEmpty(x.Expected) || !String.IsNullOrEmpty(x.StoreToValue) || !String.IsNullOrEmpty(x.SimulatedActual)).ToList();
                 if (this.ReturnValues.Count != 0)
                 {
                     this.ReturnValues.Clear();
@@ -1839,22 +1854,22 @@ namespace GingerCore.Actions
                 {
                     if (RCValue.Length > 0) // Ignore empty lines
                     {
-                        string Param;
-                        string Value;
+                        string param;
+                        string value;
                         i = RCValue.IndexOf('=');
                         if (i > 0)
                         {
-                            Param = RCValue.Substring(0, i);
+                            param = RCValue.Substring(0, i);
                             //the rest is the value
-                            Value = RCValue.Substring(Param.Length + 1);
+                            value = RCValue.Substring(param.Length + 1);
                         }
                         else
                         {
                             // in case of bad RC not per Ginger style we show it as "?" with value
-                            Param = "???";
-                            Value = RCValue;
+                            param = "???";
+                            value = RCValue;
                         }
-                        AddOrUpdateReturnParamActual(Param, Value);
+                        AddOrUpdateReturnParamActual(param, value);
                     }
                 }
             }

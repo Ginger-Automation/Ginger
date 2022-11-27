@@ -115,10 +115,7 @@ namespace GingerCore.Platforms
             {
                 if (Agent != null)
                 {
-                    if (mAgentName != Agent.Name)
-                    {
-                        mAgentName = Agent.Name;
-                    }
+                    mAgentName = Agent.Name;
                 }
                 else if (string.IsNullOrEmpty(mAgentName))
                 {
@@ -144,10 +141,7 @@ namespace GingerCore.Platforms
             {
                 if (Agent != null)
                 {
-                    if (mAgentID != Agent.Guid)
-                    {
-                        mAgentID = Agent.Guid;
-                    }
+                    mAgentID = Agent.Guid;
                 }
                 return mAgentID;
             }
