@@ -1484,5 +1484,40 @@ namespace Ginger
                 AddSubMenuItem(xExtraSolutionOperationsMainMenuItem, "Import Global Cross Solution Items", "Global Solution", btnGlobalSolutionImport_Click, insertIndex, iconType: eImageType.GetLatest);
             }
         }
+        private void xSolutionALMMenu_Click(object sender, RoutedEventArgs e)
+        {
+            if (xSolutionALMMenu.Tag == null)
+            {
+                xSolutionALMMenu.Tag = "Expanded";
+            }
+            else
+            {
+                xSolutionALMMenu.Tag = null;
+            }
+
+            SetALMMenuItems();
+        }
+        private void SetALMMenuItems()
+        {
+            //delete all Global Solution Sub menu items
+            for (int i = 0; i < xExtraSolutionOperationsMainMenuItem.Items.Count; i++)
+            {
+                if ((string)((MenuItem)xExtraSolutionOperationsMainMenuItem.Items[i]).Tag == "ALM")
+                {
+                    xExtraSolutionOperationsMainMenuItem.Items.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            if (xSolutionALMMenu.Tag != null)
+            {
+                //Insert
+                int insertIndex = xExtraSolutionOperationsMainMenuItem.Items.IndexOf(xSolutionALMMenu) + 1;
+
+                AddSubMenuItem(xExtraSolutionOperationsMainMenuItem, "ALM Connection Settings", "ALM", ALMConfigButton_Click, insertIndex++, iconType: eImageType.Parameter);
+                AddSubMenuItem(xExtraSolutionOperationsMainMenuItem, "ALM Items Fields Configuration", "ALM", ALMFieldsConfiguration_Click, insertIndex++, iconType: eImageType.ListGroup);
+                AddSubMenuItem(xExtraSolutionOperationsMainMenuItem, "ALM Defect's Profiles", "ALM", ALMDefectsProfiles_Click, insertIndex, iconType: eImageType.Bug);
+            }
+        }
     }
 }

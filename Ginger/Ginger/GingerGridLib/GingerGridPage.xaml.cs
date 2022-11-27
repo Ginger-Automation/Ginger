@@ -333,17 +333,8 @@ namespace Ginger.GingerGridLib
         {
             if (xRemoteServiceGrid.grdMain.Items.Count != 0 && xRemoteServiceGrid.grdMain.SelectedItems[0] != null)
             {
-                if ((bool)e.NewValue)
-                {
-                    WorkSpace.Instance.CurrentSelectedItem = (RepositoryItemBase)xRemoteServiceGrid.grdMain.SelectedItems[0];
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == xRemoteServiceGrid.grdMain.SelectedItems[0])
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
+                CurrentItem = (RepositoryItemBase)xRemoteServiceGrid.grdMain.SelectedItems[0];
+                base.IsVisibleChangedHandler(sender, e);
             }
         }
 

@@ -602,17 +602,8 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mPageViewMode == Ginger.General.eRIPageViewMode.SharedReposiotry && mActivity != null && !String.IsNullOrEmpty(mActivity.ContainingFolder))
             {
-                if ((bool)e.NewValue)
-                {
-                    WorkSpace.Instance.CurrentSelectedItem = mActivity;
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == mActivity)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
+                CurrentItem = mActivity;
+                base.IsVisibleChangedHandler(sender, e);
             }
         }
     }

@@ -1849,17 +1849,8 @@ namespace Ginger.Actions
         {
             if (EditMode == General.eRIPageViewMode.SharedReposiotry && mAction != null && !String.IsNullOrEmpty(mAction.ContainingFolder))
             {
-                if ((bool)e.NewValue)
-                {
-                    WorkSpace.Instance.CurrentSelectedItem = mAction;
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == mAction)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
+                CurrentItem = mAction;
+                base.IsVisibleChangedHandler(sender, e);
             }
         }
     }

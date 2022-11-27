@@ -262,17 +262,8 @@ namespace Ginger.Activities
         {
             if (mEditMode == eEditMode.SharedRepository && mActivitiesGroup != null && !String.IsNullOrEmpty(mActivitiesGroup.ContainingFolder))
             {
-                if ((bool)e.NewValue)
-                {
-                    WorkSpace.Instance.CurrentSelectedItem = mActivitiesGroup;
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == mActivitiesGroup)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
+                CurrentItem = mActivitiesGroup;
+                base.IsVisibleChangedHandler(sender, e);
             }
         }
     }

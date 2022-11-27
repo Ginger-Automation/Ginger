@@ -85,7 +85,7 @@ namespace GingerWPFUnitTest
             string tabs = string.Join(",", visibileTabs);
 
             //Assert
-            Assert.AreEqual("xSolutionSelectionMenu,xExtraSolutionOperationsMenu,xSolutionALMMenu,xSolutionSourceControlMenu,xUserOperationsMenu,xExtraOperationsMenu", tabs);
+            Assert.AreEqual("xSolutionSelectionMenu,xExtraSolutionOperationsMenu,xSolutionSourceControlMenu,xUserOperationsMenu,xExtraOperationsMenu", tabs);
         }
 
         

@@ -621,20 +621,8 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         {
             if (xModelsGlobalParamsGrid.grdMain.Items.Count != 0 && xModelsGlobalParamsGrid.grdMain.SelectedItems[0] != null)
             {
-                if ((bool)e.NewValue)
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem != xModelsGlobalParamsGrid.grdMain.SelectedItems[0])
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = (RepositoryItemBase)xModelsGlobalParamsGrid.grdMain.SelectedItems[0];
-                    }
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == xModelsGlobalParamsGrid.grdMain.SelectedItems[0])
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
+                CurrentItem = (RepositoryItemBase)xModelsGlobalParamsGrid.grdMain.SelectedItems[0];
+                base.IsVisibleChangedHandler(sender, e);
             }
         }
 
