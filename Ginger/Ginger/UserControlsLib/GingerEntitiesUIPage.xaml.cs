@@ -2,6 +2,7 @@
 using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,7 +23,8 @@ namespace Ginger.UserControlsLib
     /// </summary>
     public abstract class GingerEntitiesUIPage : Page
     {
-        protected RepositoryItemBase currentItem { get; set; }
+        private RepositoryItemBase mCurrentItem;
+        protected RepositoryItemBase CurrentItem { get { return mCurrentItem; } set{ if (mCurrentItem != value) { mCurrentItem = value; WorkSpace.Instance.CurrentSelectedItem = mCurrentItem; } } } 
         protected GingerEntitiesUIPage()
         {
             IsVisibleChanged += IsVisibleChangedHandler;
@@ -30,15 +32,15 @@ namespace Ginger.UserControlsLib
 
         protected virtual void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (currentItem != null)
+            if (mCurrentItem != null)
             {
                 if((bool)e.NewValue)
                 {
-                    WorkSpace.Instance.CurrentSelectedItem = currentItem;
+                    WorkSpace.Instance.CurrentSelectedItem = mCurrentItem;
                 }
                 else
                 {
-                    if(WorkSpace.Instance.CurrentSelectedItem == currentItem) 
+                    if(WorkSpace.Instance.CurrentSelectedItem == mCurrentItem) 
                     {
                         WorkSpace.Instance.CurrentSelectedItem = null;
                     }

@@ -48,7 +48,7 @@ namespace Ginger.Configurations
         {
             _VRTConfiguration = WorkSpace.Instance.Solution.VRTConfiguration;
             _VRTConfiguration.StartDirtyTracking();
-            currentItem = WorkSpace.Instance.Solution;
+            CurrentItem = WorkSpace.Instance.Solution;
             SetControls();
         }
 

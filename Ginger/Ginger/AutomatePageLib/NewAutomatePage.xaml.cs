@@ -407,7 +407,7 @@ namespace GingerWPF.BusinessFlowsLib
                 ResetPageUI();
 
                 mBusinessFlow = businessFlowToLoad;
-                currentItem = mBusinessFlow;
+                CurrentItem = mBusinessFlow;
                 if (mBusinessFlow != null)
                 {
                     try

@@ -55,7 +55,7 @@ namespace GingerWPF.BusinessFlowsLib
             InitializeComponent();
 
             mBusinessFlow = businessFlow;
-            currentItem = mBusinessFlow;
+            CurrentItem = mBusinessFlow;
             mContext = context;
             if (mContext == null)
             {

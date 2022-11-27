@@ -48,7 +48,7 @@ namespace Ginger.Configurations
         {
             _ApplitoolsConfiguration = WorkSpace.Instance.Solution.ApplitoolsConfiguration;
             _ApplitoolsConfiguration.StartDirtyTracking();
-            currentItem = WorkSpace.Instance.Solution;
+            CurrentItem = WorkSpace.Instance.Solution;
             SetControls();
         }
 

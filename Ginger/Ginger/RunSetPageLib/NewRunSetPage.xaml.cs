@@ -1425,7 +1425,7 @@ namespace Ginger.Run
                     xRunSetLoadingPnl.Visibility = Visibility.Visible;
                     xRunsetPageGrid.Visibility = Visibility.Collapsed;
                     mRunSetConfig = runSetConfig;
-                    currentItem = mRunSetConfig;
+                    CurrentItem = mRunSetConfig;
                     mRunSetConfig.SaveBackup();
 
                     mRunSetConfig.StartDirtyTracking();

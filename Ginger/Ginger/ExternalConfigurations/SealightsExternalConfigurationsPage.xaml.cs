@@ -48,7 +48,7 @@ namespace Ginger.Configurations
         {
             _SealightsConfiguration = WorkSpace.Instance.Solution.SealightsConfiguration;
             _SealightsConfiguration.StartDirtyTracking();
-            currentItem = WorkSpace.Instance.Solution;
+            CurrentItem = WorkSpace.Instance.Solution;
             SetControls();
         }
 

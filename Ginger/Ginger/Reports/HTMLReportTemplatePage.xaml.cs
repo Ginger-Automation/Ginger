@@ -78,7 +78,7 @@ namespace Ginger.Reports
             _HTMLReportConfiguration.HTMLReportConfigurationOperations = reportConfigurationOperations;
 
             _HTMLReportConfiguration = new HTMLReportConfiguration("", false, reportConfigurationOperations);
-            currentItem = _HTMLReportConfiguration;
+            CurrentItem = _HTMLReportConfiguration;
             
 
             InitializeComponent();
@@ -95,7 +95,7 @@ namespace Ginger.Reports
             _existingTemplatePage = true;
             _HTMLReportConfiguration = EnchancingLoadedFieldsWithDataAndValidating(HTMLReportConfiguration);
             _HTMLReportConfiguration.PropertyChanged += _HTMLReportConfiguration_PropertyChanged;
-            currentItem= _HTMLReportConfiguration;
+            CurrentItem = _HTMLReportConfiguration;
             SetControls();
             SetLoadedLogoImage();
             SetHTMLReportsConfigFieldsGridsView();

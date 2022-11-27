@@ -60,6 +60,7 @@ namespace Ginger.DataSource
             if (dsDetails != null)    
             {
                 mDSDetails = dsDetails;
+                CurrentItem= mDSDetails;
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DataSourceNameTextBox, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.Name);
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDataSourcePath, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.FilePath, BindingMode.OneWay);
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DataSourceTypeTextBox, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.DSType, BindingMode.OneWay);

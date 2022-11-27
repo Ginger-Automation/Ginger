@@ -67,7 +67,7 @@ namespace Ginger.Reports
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Sealights Configurations section moved to Configurations -> External Integrations -> Sealights Configurations. \n Please save the configuration details.");
             }
-            currentItem = WorkSpace.Instance.Solution;
+            CurrentItem = WorkSpace.Instance.Solution;
             SetControls();
             isControlsSet = true;
         }
