@@ -938,7 +938,14 @@ namespace GingerCore.Actions
             if (typeof(T) == typeof(bool))
             {
                 bool value = false;
-                return Boolean.TryParse(paramValue, out value) ? value : false;
+                if (Boolean.TryParse(paramValue, out value))
+                {
+                    return value;
+                }
+                else
+                {
+                    return false; // default value
+                }
             }
             if (typeof(T) == typeof(string))
             {

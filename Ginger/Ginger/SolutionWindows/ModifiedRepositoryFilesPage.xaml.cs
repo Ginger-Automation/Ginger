@@ -50,16 +50,13 @@ namespace Ginger.SolutionWindows
             UnsavedItemsGrid.InitViewItems();
         }
 
-        private async void Init()
+        private void Init()
         {
             try
             {
                 loaderElement.Visibility = Visibility.Visible;
-                await Task.Run(() =>
-                {
-                    mModifiedFilesInfo = GetModifiedFilesInfo();
-                    UnsavedItemsGrid.DataSourceList = mModifiedFilesInfo;
-                });
+                mModifiedFilesInfo = GetModifiedFilesInfo();
+                UnsavedItemsGrid.DataSourceList = mModifiedFilesInfo;
             }
             catch (Exception e)
             {
