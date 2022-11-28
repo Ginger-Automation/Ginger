@@ -24,6 +24,18 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
+using Ginger.Run;
+using NPOI.HPSF;
+using Org.BouncyCastle.Asn1.X509;
+using Array = System.Array;
+using System.Security.Cryptography.X509Certificates;
+using System.IO;
+using Applitools;
+using Ginger.Run.RunSetActions;
+using GingerCore.Actions.WebServices;
+using System.Net.Security;
+using System.Reflection;
+using System.Windows;
 
 namespace GingerCore.GeneralLib
 {
@@ -140,7 +152,46 @@ namespace GingerCore.GeneralLib
                 {
                     myMail.To.Add(email);
                 }
-
+                if (Email.IsValidationRequired)
+                {
+                    string CertificateName = Path.GetFileName(Email.CertificatePath);
+                    string CertificateKey = Email.CertificatePasswordUCValueExpression;
+                    string targetPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\EmailCertificates");//certificate is present in this folder //used this since relative path cannot be used during execution
+                    string Certificatepath = Path.Combine(targetPath, CertificateName);
+                    if (!string.IsNullOrEmpty(Certificatepath))
+                    {
+                        GingerRunner.eActionExecutorType ActionExecutorType = GingerRunner.eActionExecutorType.RunWithoutDriver;
+                        X509Certificate2 customCertificate = new X509Certificate2();
+                        ServicePointManager.ServerCertificateValidationCallback = delegate (object s, System.Security.Cryptography.X509Certificates.X509Certificate certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+                        {
+                            X509Certificate2 actualCertificate;
+                            if (!string.IsNullOrEmpty(CertificateKey))
+                            {
+                                actualCertificate = new X509Certificate2(Certificatepath, CertificateKey);
+                            }
+                            else
+                            {
+                                actualCertificate = new X509Certificate2(Certificatepath);
+                            }
+                            if (certificate.Equals(actualCertificate))
+                            {
+                                Email.Attachments.Add(Certificatepath);
+                                Email.Event = "Uploaded certificate is vaslidated";
+                                return true;
+                            }
+                            else
+                            {
+                                Email.Event = "Uploaded certificate is not validated as it is not matching with base certificate";
+                                return false;
+                            }
+                        };
+                    }
+                    else
+                    {
+                        Email.Event = "Request setup Failed because of missing/wrong input";
+                        return false;
+                    }
+                }
                 //Add CC
                 if (!String.IsNullOrEmpty(Email.MailCC))
                 {

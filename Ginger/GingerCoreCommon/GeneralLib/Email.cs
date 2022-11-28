@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -24,6 +24,8 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
+using Microsoft.CodeAnalysis.Text;
+using System.IO;
 
 namespace GingerCore.GeneralLib
 {    
@@ -207,7 +209,33 @@ namespace GingerCore.GeneralLib
                 }
             }
         }
-
+        private string mCertificatePath;
+        [IsSerializedForLocalRepository]
+        public string CertificatePath
+        {
+            get { return mCertificatePath; }
+            set
+            {
+                if (mCertificatePath != value)
+                {
+                    mCertificatePath = value;
+                }
+            }
+        }
+        private bool mIsValidationRequired = false;
+        [IsSerializedForLocalRepository]
+        public bool IsValidationRequired
+        {
+            get { return mIsValidationRequired; }
+            set
+            {
+                if (mIsValidationRequired != value)
+                {
+                    mIsValidationRequired = value;
+                }
+            }
+        }
+        public static string CertificatePasswordUCValueExpression { get; set; }
         private bool mConfigureCredential = false;
         [IsSerializedForLocalRepository(false)]
         public bool ConfigureCredential
