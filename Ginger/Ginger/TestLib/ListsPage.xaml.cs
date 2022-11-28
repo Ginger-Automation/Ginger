@@ -97,6 +97,7 @@ namespace GingerWPF.TestLib
             BusinessFlow BF3 = new BusinessFlow("BF3");
             mSolutionRepository.AddRepositoryItem(BF3);
 
+
             RepositoryFolder<BusinessFlow> BFRF = mSolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>();
             RepositoryFolder<BusinessFlow> SubFolder1 = (RepositoryFolder < BusinessFlow > )BFRF.AddSubFolder("SubFolder1");
 

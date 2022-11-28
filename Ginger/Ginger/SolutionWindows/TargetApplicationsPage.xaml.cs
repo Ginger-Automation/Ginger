@@ -29,7 +29,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-
+using Castle.Components.DictionaryAdapter;
+using DocumentFormat.OpenXml.Office.CustomUI;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.SolutionWindows
 {
@@ -85,7 +87,10 @@ namespace Ginger.SolutionWindows
             xTargetApplicationsGrid.SetbtnDeleteHandler(btnDelete_Click);
             xTargetApplicationsGrid.SetbtnClearAllHandler(btnClearAll_Click);
         }
-
+        public bool NameAlreadyExists(string value)
+        {
+            return WorkSpace.Instance.Solution.ApplicationPlatforms.Any(x => x.AppName == value);
+        }
         private void LoadGridData()
         {
             if (mSolution != null)
@@ -134,17 +139,27 @@ namespace Ginger.SolutionWindows
                 currentApp.NameBeforeEdit = currentApp.AppName;
             }
         }
-
+        private ObservableList<ApplicationPlatform> Applications;
         private void ApplicationGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             //Validate the name of the App is unique
-            if (e.Column.DisplayIndex == 0)//App Name Column
+            if (e.Column.DisplayIndex == 1)//App Name Column
             {
                 ApplicationPlatform currentApp = (ApplicationPlatform)xTargetApplicationsGrid.CurrentItem;
                 mSolution.SetUniqueApplicationName(currentApp);
 
                 if (currentApp.AppName != currentApp.NameBeforeEdit)
                 {
+                    if (string.IsNullOrEmpty(currentApp.AppName.ToString()) || string.IsNullOrWhiteSpace(currentApp.AppName.ToString()))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Name Cannot be empty");
+                        return;
+                    }
+                    if (NameAlreadyExists(currentApp.AppName))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Target Application with same name already exists");
+                        return ;
+                    }
                     UpdateApplicationNameChangeInSolution(currentApp);
                 }                    
             }

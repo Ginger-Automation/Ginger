@@ -32,7 +32,7 @@ namespace Ginger.BDD
         public void CreateFeatureFile()
         {
             string FileName = string.Empty;
-            if (GingerCore.General.GetInputWithValidation("New Feature File", "File Name:", ref FileName, System.IO.Path.GetInvalidFileNameChars()))
+            if (GingerCore.General.GetInputWithValidation("New Feature File", "File Name:", ref FileName, System.IO.Path.GetInvalidFileNameChars(), false, null))
             {
                 string FullDirectoryPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, "Documents", "Features");
                 if (!System.IO.Directory.Exists(FullDirectoryPath))
