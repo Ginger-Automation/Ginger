@@ -19,36 +19,149 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.GeneralLib;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection;
+using Newtonsoft.Json;
+using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.CoreNET.TelemetryLib
 {
-    class TelemetrySession
+    public class TelemetrySession
     {
         public Guid Guid { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
-        public string Elapsed { get; set; }
-        public int BusinessFlowsCounter { get; set; }
-        public int ActivitiesCounter { get; set; }
-        public int ActionsCounter { get; set; }
         public string TimeZone { get; set; }
-        public string version { get; set; }
+        public string GingerVersion { get; set; }
         public string Runtime { get; set; }
 
         public bool Debugger { get; set; }
         public bool Is64BitProcess { get; set; }
         public string OSVersion { get; set; }
-        public bool dox { get; set; }
+        public bool IsAmdocs { get; set; }
         public string Terminology { get; set; }
-        public string exe { get; set; }
+        public string UserType { get; set; }
+        public string UserRole { get; set; }
+        public string ExecutionContext { get; set; }
+        public string CliType { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public string OverallSessionTime { get; set; }
+        [JsonIgnore]
+        public double? OverallExecutionTimeNumber { get; set; } = 0;
+        public string OverallExecutionTime { get; set; }
+        public int OverallExecutedRunsets { get; set; } = 0;
+        public int OVerallExecutedBuisnessFlows { get; set; } = 0;
+        public int OverallExecutedActivityGroups { get; set; } = 0;
+        public int OVerallExecutedActivities { get; set; } = 0;
+        public int OVerallExecutedActions { get; set; } = 0;
+        public int PassedActionsCount { get; set; } = 0;
+        public int FailedActionsCount { get; set; } = 0;
+        public int PassedBuisnessFlowsCount { get; set; } = 0;
+        public int FailedBuisnessFlowsCount { get; set; } = 0;
+        public Dictionary<string, int> UsedActionTypes { get; set; } = new Dictionary<string, int>();
+        public HashSet<string> AutomatedPlatforms { get; set; } = new HashSet<string>();
+        public HashSet<string> UsedFeatures { get; set; } = new HashSet<string>();
+        public List<string> LoggedErrors { get; set; } = new List<string>();
+
+
+        public enum GingerExecutionContext
+        {
+            UI,
+            CLI,
+            UnitTest
+        }
+
+        public enum GingerUsedFeatures
+        {
+            [Description("POM")]
+            POM, //Done
+            [Description("ApiModel")]
+            ApiModel, //Done
+            [Description("DataSource")]
+            DataSource,
+            [Description("SharedRepository")]
+            SharedRepository,
+            [Description("ALM")]
+            ALM, //Done
+            [Description("SourceControl")]
+            SourceControl,
+            [Description("AlmImport")]
+            AlmImport,
+            [Description("AlmExport")]
+            AlmExport,
+            [Description("SourceControlDownload")]
+            SourceControlDownload,
+            [Description("SourceControlUpload")]
+            SourceControlUpload,
+            [Description("Analyzer")]
+            Analyzer,
+            [Description("SelfHealing")]
+            SelfHealing,
+            [Description("Search")]
+            Search,
+            [Description("ParallelExecution")]
+            ParallelExecution, //Done
+            [Description("RunsetOperationsMailReport")]
+            RunsetOperationsMailReport,
+            [Description("RunsetOperationsExportToAlm")]
+            RunsetOperationsExportToAlm,
+            [Description("RunSetActionHTMLReport")]
+            RunSetActionHTMLReport,
+            [Description("RunSetActionHTMLReportSendEmail")]
+            RunSetActionHTMLReportSendEmail,
+            [Description("RunSetActionJSONSummaryOperations")]
+            RunSetActionJSONSummary,
+            [Description("RunSetActionGenerateTestNGReportOperations")]
+            RunSetActionGenerateTestNGReport,
+            [Description("RunSetActionSendFreeEmailOperations")]
+            RunSetActionSendFreeEmail,
+            [Description("RunSetActionSendSMSOperations")]
+            RunSetActionSendSMS,
+            [Description("RunSetActionPublishToQCOperations")]
+            RunSetActionPublishToQC,
+            [Description("RunSetActionAutomatedALMDefects")]
+            RunSetActionAutomatedALMDefects,
+            [Description("RunSetActionScriptOperations")]
+            RunSetActionScript,
+            [Description("RunSetActionSendDataToExternalSourceOperations")]
+            RunSetActionSendDataToExternalSource,
+            CustomizedReportTemplates,
+            [Description("LiteDBLogger")]
+            LiteDB,
+            [Description("TextFile")]
+            TextfileLogger,
+            [Description("CentralizedReportLoggerPost")]
+            PostExecution,
+            [Description("CentralizedReportLoggerDuring")]
+            DuringExecution,
+            [Description("Tags")]
+            Tags,
+            [Description("VRT")]
+            VRT,
+            [Description("Applitools")]
+            Applitools, //Done but need to check
+            [Description("Sealights")]
+            Sealights,
+            [Description("ModelParameters")]
+            ModelParameters,
+            [Description("Environments")]
+            Environments, //Done
+            [Description("GlovalVaraibles")]
+            GlovalVaraibles,
+            [Description("Documents")]
+            Documents,
+            [Description("Plugins")]
+            Plugins, //Done
+            [Description("ActionResultSimulation")]
+            ActionResultSimulation
+        }
 
         public TelemetrySession(Guid guid)
         {
             Guid = guid;
             StartTime = Telemetry.Time;
             TimeZone = TimeZoneInfo.Local.DisplayName;
-            version = ApplicationInfo.ApplicationVersion;
+            GingerVersion = ApplicationInfo.ApplicationVersion;
 
 #if DEBUG
             Runtime = "Debug";
@@ -62,11 +175,11 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
             if (System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName == "corp.amdocs.com")
             {
-                dox = true;
+                IsAmdocs = true;
             }
             else
             {
-                dox = false;
+                IsAmdocs = false;
             }
 
             if (WorkSpace.Instance.UserProfile != null)
@@ -75,16 +188,21 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             }
 
             Assembly assembly = Assembly.GetEntryAssembly();
-            if (assembly ==null)
+            if (assembly != null)
             {
-                //running from unit tests
-                exe = "Unit Test";
+                if (assembly.GetName().Name == "testhost")
+                {
+                    ExecutionContext = GingerExecutionContext.UnitTest.ToString();
+                }
+                else if (assembly.GetName().Name == "Ginger")
+                {
+                    ExecutionContext = GingerExecutionContext.UI.ToString();
+                }
+                else
+                {
+                    ExecutionContext = GingerExecutionContext.CLI.ToString();
+                }
             }
-            else
-            {
-                exe = assembly.GetName().Name;
-            }
-            
         }
 
     }

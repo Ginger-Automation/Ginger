@@ -419,6 +419,7 @@ namespace Ginger.Run
                 await RunRunset(doContinueRun);
                 return 1;
             });
+            WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.ParallelExecution.ToString());
             return result;
         }
 

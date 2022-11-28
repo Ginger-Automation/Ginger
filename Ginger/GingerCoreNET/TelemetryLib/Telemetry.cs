@@ -17,25 +17,39 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Repository;
+using DocumentFormat.OpenXml.Wordprocessing;
+using Ginger.Reports;
+using Ginger.SolutionGeneral;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Activities;
+using GingerCore.DataSource;
+using GingerCore.Environments;
+using GingerCore.Variables;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
+using static GingerCoreNET.SourceControl.SourceControlBase;
 
 namespace Amdocs.Ginger.CoreNET.TelemetryLib
 {
     public class Telemetry 
     {
         public Guid Guid { get; set; } // keep public
-        public bool DoNotCollect { get; set; } = true; // keep public, default is do not collect
+        public bool DoNotCollect { get; set; } = false; // keep public, default is do not collect
 
-        TelemetrySession mTelemetrySession;
+        public TelemetrySession TelemetrySession { get; set; }
 
         static HttpClient mClient;
 
@@ -187,12 +201,10 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
         public void SessionStarted()
         {
-            mTelemetrySession = new TelemetrySession(Guid);
+            TelemetrySession = new TelemetrySession(Guid);
             if (WorkSpace.Instance.Telemetry.DoNotCollect)  return;
 
-            
-
-            Add("sessionstart", mTelemetrySession);
+            //Add("sessionstart", TelemetrySession);
 
             // TODO: add selective collection per user permission
             //Add("sessionstart", new
@@ -201,17 +213,119 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             //    zz = mTelemetrySession.Debugger
             //});
         }
-        
+
+        private void CheckSolutionInstanceForUserData()
+        {
+            bool isLogger = Enum.TryParse(WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod.ToString(), out TelemetrySession.GingerUsedFeatures selectedLogger);
+            if (isLogger)
+            {
+                TelemetrySession.UsedFeatures.Add(selectedLogger.ToString());
+            }
+
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ePublishToCentralDB.Yes)
+            {
+                bool isCentralizedDB = Enum.TryParse(WorkSpace.Instance.Solution.LoggerConfigurations.DataPublishingPhase.ToString(), out TelemetrySession.GingerUsedFeatures publishPhase);
+                if (isCentralizedDB)
+                {
+                    TelemetrySession.UsedFeatures.Add(publishPhase.ToString());
+                }
+            }
+
+            if (WorkSpace.Instance.Solution.SourceControl != null && WorkSpace.Instance.Solution.SourceControl.GetSourceControlType != eSourceControlType.None)
+            {
+                TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.SourceControl.ToString());
+            }
+
+            if (WorkSpace.Instance.Solution.Tags.Count > 0)
+            {
+                WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.Tags.ToString());
+            }
+
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().Count > 1)
+            {
+                TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.DataSource.ToString());
+            }
+
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Count > 1)
+            {
+                TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.Environments.ToString());
+            }
+
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>().Count > 0)
+            {
+                TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.Plugins.ToString());
+            }
+
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Count > 0)
+            {
+                TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.ModelParameters.ToString());
+            }
+
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Count > 0)
+            {
+                TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.POM.ToString());
+            }
+
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Count > 0)
+            {
+                TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.ApiModel.ToString());
+            }
+
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Count > 1)
+            {
+                TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.CustomizedReportTemplates.ToString());
+            }
+
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>().Where(x => x.MappedOutputType == VariableBase.eOutputType.GlobalVariable).ToList().Count > 1)
+            {
+                TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.CustomizedReportTemplates.ToString());
+            }
+
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>().Count > 0)
+            {
+                TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString());
+            }
+            else if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().Count > 0)
+            {
+                TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString());
+            }
+            else if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>().Count > 0)
+            {
+                TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString());
+            }
+            else if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>().Count > 0)
+            {
+                TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString());
+            }
+
+            if (WorkSpace.Instance.UserProfile != null)
+            {
+                if (!string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.UserType.ToString()))
+                {
+                    TelemetrySession.UserType = WorkSpace.Instance.UserProfile.UserType.ToString();
+                }
+                if (!string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.UserRole.ToString()))
+                {
+                    TelemetrySession.UserRole = WorkSpace.Instance.UserProfile.UserRole.ToString();
+                }
+            }
+        }
+
         public void SessionEnd()
         {
             if (WorkSpace.Instance.Telemetry.DoNotCollect) return;
+            TelemetrySession.EndTime = Time;
+            TimeSpan ts = TelemetrySession.EndTime - TelemetrySession.StartTime;
+            TelemetrySession.OverallSessionTime = ts.ToString(@"hh\:mm\:ss");
 
-            mTelemetrySession.EndTime = Time;
-            TimeSpan ts = mTelemetrySession.EndTime - mTelemetrySession.StartTime;
-            mTelemetrySession.Elapsed = ts.ToString(@"hh\:mm\:ss");
-            Add("sessionend", mTelemetrySession);
+            TimeSpan sp = TimeSpan.FromMilliseconds((double)TelemetrySession.OverallExecutionTimeNumber);
+            TelemetrySession.OverallExecutionTime = sp.ToString(@"hh\:mm\:ss");
 
-            Add("dummy", new { a = 1}); // add another dummy to make sure session is written
+            CheckSolutionInstanceForUserData();
+
+            Add("sessionend", TelemetrySession);
+
+            //Add("dummy", new { a = 1}); // add another dummy to make sure session is written
 
             TelemetryRecords.CompleteAdding();
             
@@ -223,7 +337,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                     Thread.Sleep(100);
                 }
 
-                Compress();
+                //Compress();
                 while (!done)  
                 {
                     Thread.Sleep(100);
@@ -267,9 +381,10 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 string objJSON = JsonConvert.SerializeObject(telemetryRecord.getTelemetry());
                 
                 // Adding timestamp, uid and sid
-                string controlfields = "\"timestamp\":\"" + Time + "\",\"sid\":\"" + mTelemetrySession.Guid.ToString() + "\",\"uid\":\"" + Guid.ToString() + "\",";
-                string fullobj = indexHeader + Environment.NewLine + "{" + controlfields + objJSON.Substring(1) + Environment.NewLine;
-                             
+                string controlfields = "\"timestamp\":\"" + Time + "\",\"sid\":\"" + TelemetrySession.Guid.ToString() + "\",\"uid\":\"" + Guid.ToString() + "\",";
+                //string fullobj = indexHeader + Environment.NewLine + "{" + controlfields + objJSON.Substring(1) + Environment.NewLine;
+                string fullobj = "{" + controlfields + objJSON.Substring(1) + Environment.NewLine;
+
                 //TODO: add try catch
 
                 File.AppendAllText(sessionFileName, fullobj);                             

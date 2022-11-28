@@ -92,6 +92,7 @@ namespace Ginger.Configurations
         private void xSaveButton_Click(object sender, RoutedEventArgs e)
         {
             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
+            WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.VRT.ToString());
         }
 
     }

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Repository;
@@ -115,6 +116,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             }
 
             ImportAPIModels(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected == true).ToList()));
+
+            //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.ApiModel);
         }
 
         private void ImportAPIModels(ObservableList<ApplicationAPIModel> SelectedAAMList)

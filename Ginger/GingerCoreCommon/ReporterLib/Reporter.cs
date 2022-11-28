@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Timers;
+using Amdocs.Ginger.CoreNET;
 
 namespace Amdocs.Ginger.Common
 {
@@ -44,6 +45,7 @@ namespace Amdocs.Ginger.Common
 
             if (logLevel == eLogLevel.ERROR || logLevel == eLogLevel.FATAL)
             {
+                ReporterData.LastLoggedError = messageToLog;
                 ReporterData.ErrorCounter++;
             }
 
@@ -51,8 +53,8 @@ namespace Amdocs.Ginger.Common
             {
                 ToConsole(logLevel, messageToLog, exceptionToLog);
             }
-
-            WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog);            
+            
+            WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog);       
         }
         #endregion ToLog
 
@@ -267,6 +269,11 @@ namespace Amdocs.Ginger.Common
 
                 // if we have log to console event listener send the message 
                 logToConsoleEvent?.Invoke(logLevel, msg);
+                if (logLevel == eLogLevel.ERROR || logLevel == eLogLevel.FATAL)
+                {
+                    ReporterData.LastLoggedError = "Error:" + exceptionToConsole.Message;
+                }
+                
             }
             catch (Exception ex)
             {

@@ -30,6 +30,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using static QTestAPIStdModel.ParameterModel;
 
 namespace Ginger.Run
 {
@@ -175,7 +176,13 @@ namespace Ginger.Run
                 Reporter.ToUser(eUserMsgKey.RunSetNotExecuted);
                 return;
             }
-                ((RunSetActionBase)RunSetActionsGrid.CurrentItem).runSetActionBaseOperations.ExecuteWithRunPageBFES();
+            ((RunSetActionBase)RunSetActionsGrid.CurrentItem).runSetActionBaseOperations.ExecuteWithRunPageBFES();
+            bool isEnum = Enum.TryParse(RunSetActionsGrid.CurrentItem.GetType().Name.ToString(),
+                    out Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures usedRunsetOperation);
+            if (isEnum)
+            {
+                WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(usedRunsetOperation.ToString());
+            }
         }
         private void RunAll(object sender, RoutedEventArgs e)
         {
@@ -183,6 +190,13 @@ namespace Ginger.Run
             {
                 mRunSetConfig.RunSetActions.CurrentItem = a;
                 a.runSetActionBaseOperations.ExecuteWithRunPageBFES();
+                bool isEnum = Enum.TryParse(a.GetType().Name.ToString(),
+                    out Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures usedRunsetOperation);
+                if (isEnum)
+                {
+                    WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(usedRunsetOperation.ToString());
+                }
+
             }
         }
 

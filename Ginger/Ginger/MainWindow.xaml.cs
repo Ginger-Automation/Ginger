@@ -175,6 +175,10 @@ namespace Ginger
         {
             if (e.PropertyName == nameof(ReporterData.ErrorCounter))
             {
+                if (!string.IsNullOrEmpty(Reporter.ReporterData.LastLoggedError))
+                {
+                    WorkSpace.Instance.Telemetry.TelemetrySession.LoggedErrors.Add(Reporter.ReporterData.LastLoggedError);
+                }
                 this.Dispatcher.BeginInvoke(
                 System.Windows.Threading.DispatcherPriority.Normal,
                 new Action(
@@ -193,6 +197,13 @@ namespace Ginger
                      }
                  }
               ));
+            }
+            if (e.PropertyName == nameof(ReporterData.LastLoggedError))
+            {
+                if (!string.IsNullOrEmpty(Reporter.ReporterData.LastLoggedError))
+                {
+                    WorkSpace.Instance.Telemetry.TelemetrySession.LoggedErrors.Add(Reporter.ReporterData.LastLoggedError);
+                }
             }
         }
 
@@ -631,6 +642,7 @@ namespace Ginger
 
         private void btnSourceControlConnectionDetails_Click(object sender, RoutedEventArgs e)
         {
+            WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.SourceControlDownload.ToString());
             SourceControlConnDetailsPage p = new SourceControlConnDetailsPage();
             p.ShowAsWindow(eWindowShowStyle.Dialog);
         }
@@ -824,6 +836,7 @@ namespace Ginger
         private void xFindAndReplaceSolutionButton_Click(object sender, RoutedEventArgs e)
         {
             SolutionFindAndReplace();
+            WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.Search.ToString());
         }
 
         FindAndReplacePage mfindAndReplacePageSolution = null;

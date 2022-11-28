@@ -273,11 +273,11 @@ namespace Ginger.Run
             {
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
-            
-            //if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
-            //{
-            //    RunListeners.Add(new TelemetryRunListener());
-            //}
+
+            if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
+            {
+                RunListeners.Add(new TelemetryRunListener());
+            }
 
         }
 
@@ -301,11 +301,11 @@ namespace Ginger.Run
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
 
-          
-            //if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
-            //{
-            //    RunListeners.Add(new TelemetryRunListener());
-            //}
+
+            if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
+            {
+                RunListeners.Add(new TelemetryRunListener());
+            }
 
         }
 
@@ -3945,6 +3945,7 @@ namespace Ginger.Run
                 }
                 st.Stop();
                 CurrentBusinessFlow.Elapsed = st.ElapsedMilliseconds;
+
                 PreviousBusinessFlow = CurrentBusinessFlow;
                 NotifyBusinessFlowEnd(CurrentBusinessFlow);
 

@@ -1699,6 +1699,8 @@ namespace GingerWPF.BusinessFlowsLib
 
             GingerSelfHealingConfiguration selfHealingConfiguration = new GingerSelfHealingConfiguration();
             selfHealingConfiguration.ShowAsWindow();
+            WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.SelfHealing.ToString());
+
         }
 
         private void xMapToAlmMenuItem_Click(object sender, RoutedEventArgs e)

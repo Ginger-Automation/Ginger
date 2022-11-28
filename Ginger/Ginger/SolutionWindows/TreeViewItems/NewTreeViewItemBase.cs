@@ -245,11 +245,26 @@ namespace GingerWPF.TreeViewItemsLib
                                     {
                                         ((SharedActivityTreeItem)node).PostSaveTreeItemHandler();
                                     }
+
+                                    //switch (node.GetType().Name)
+                                    //{
+                                    //    case "ApplicationPOMTreeItem":
+                                    //        {
+                                    //            WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.POM);
+                                    //            break;
+                                    //        }
+                                    //    case "AppApiModelTreeItem":
+                                    //        {
+                                    //            WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.ApiModel);
+                                    //            break;
+                                    //        }
+                                    //}
                                 }
                             }
                         }
                     }
                 }
+
             }
             if (itemsSavedCount == 0)
             {

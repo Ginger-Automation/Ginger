@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCoreNET.RosLynLib;
@@ -70,6 +71,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public async Task Execute(RunsetExecutor runsetExecutor)
         {
+            WorkSpace.Instance.Telemetry.TelemetrySession.CliType = "Script File";
             await Task.Run(() =>
             {
                 var rc = CodeProcessor.ExecuteNew(mScriptFile);

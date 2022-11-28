@@ -1702,6 +1702,7 @@ namespace Ginger.Run
                 {
                     int analyzeRes = await AnalyzeRunsetWithUI().ConfigureAwait(false);
                     if (analyzeRes == 1) return;//cancel run because issues found
+
                 }
 
                 ResetRunners();
@@ -1719,6 +1720,8 @@ namespace Ginger.Run
                         InitALMDefectsOpeningSection();
                     });
                 }
+                //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.RunsetOperations);
+
             }
             catch (Exception ex)
             {
@@ -2095,6 +2098,7 @@ namespace Ginger.Run
                 SaveRunSetConfig();
             }
 
+            //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.RunsetOperations);
         }
 
 

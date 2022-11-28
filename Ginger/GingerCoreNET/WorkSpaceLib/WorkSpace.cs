@@ -115,8 +115,8 @@ namespace amdocs.ginger.GingerCoreNET
             {
                 mWorkSpace.InitLocalGrid();
             }
-            //Telemetry.Init();
-            //mWorkSpace.Telemetry.SessionStarted();
+            Telemetry.Init();
+            mWorkSpace.Telemetry.SessionStarted();
         }
 
         public void StartLocalGrid()
@@ -175,7 +175,7 @@ namespace amdocs.ginger.GingerCoreNET
                 {
                     WorkSpace.Instance.LocalGingerGrid.Stop();
                 }
-                //WorkSpace.Instance.Telemetry.SessionEnd();
+                WorkSpace.Instance.Telemetry.SessionEnd();
                 mWorkSpace = null;
             }
             catch (Exception ex)
@@ -519,7 +519,9 @@ namespace amdocs.ginger.GingerCoreNET
                 //Change sealights configurations object
                 Solution.SetSealightsOldConifurationsToNewObject();
 
+
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
+
                 return true;
             }
             catch (Exception ex)

@@ -25,6 +25,8 @@ using System;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 using Ginger.Configurations;
+using amdocs.ginger.GingerCoreNET;
+
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public class CLIArgs : ICLI
@@ -162,6 +164,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public async Task Execute(RunsetExecutor runsetExecutor)
         {
+            WorkSpace.Instance.Telemetry.TelemetrySession.CliType = "Arguments";
             await runsetExecutor.RunRunset();
         }
 

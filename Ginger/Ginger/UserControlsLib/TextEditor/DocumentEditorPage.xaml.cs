@@ -88,6 +88,8 @@ namespace Ginger.UserControlsLib.TextEditor
                     EditorFrame.Content = p;
                 }
             }
+
+            WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures. Documents.ToString());
         }
 
 

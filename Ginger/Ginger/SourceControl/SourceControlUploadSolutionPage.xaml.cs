@@ -204,6 +204,7 @@ namespace Ginger.SourceControl
             }
             finally
             {
+                WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.SourceControlUpload.ToString());
                 loaderElement.Visibility = Visibility.Collapsed;
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
             }

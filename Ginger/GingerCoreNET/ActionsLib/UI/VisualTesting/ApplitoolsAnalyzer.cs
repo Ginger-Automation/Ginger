@@ -207,6 +207,8 @@ namespace GingerCore.Actions.VisualTesting
                 mEyes.AddProperty("Environment ID", mDriver.GetEnvironment());
                 mResolution = mAct.GetWindowResolution();
                 mEyes.Open(mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
+
+                WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.Applitools.ToString());
             }
             catch (Exception ex)
             {

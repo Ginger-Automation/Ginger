@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run;
@@ -49,7 +50,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         }
 
         public async Task Execute(RunsetExecutor runsetExecutor)
-        {            
+        {
+            WorkSpace.Instance.Telemetry.TelemetrySession.CliType = "Config File";
             await runsetExecutor.RunRunset();            
         }
 

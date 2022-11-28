@@ -259,6 +259,7 @@ namespace Ginger.SourceControl
 
         private async void GetProject_Click(object sender, RoutedEventArgs e)
         {
+            WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.SourceControlDownload.ToString());
             await DownloadSolution().ConfigureAwait(false);
         }
 

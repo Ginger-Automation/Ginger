@@ -59,7 +59,8 @@ namespace Ginger.TagsLib
             if (e.PropertyName == nameof(WorkSpace.Solution))
             {
                 SetGridData();
-            }                
+            }
+
         }
 
         private void SetGridData()

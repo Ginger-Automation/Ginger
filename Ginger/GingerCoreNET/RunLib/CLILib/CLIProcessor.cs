@@ -19,12 +19,14 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using CommandLine;
 using Ginger;
 using GingerCore;
 using GingerCoreNET.RunLib;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -33,6 +35,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using static Amdocs.Ginger.CoreNET.RunLib.CLILib.OptionsBase;
+using static Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
@@ -41,7 +44,23 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         ICLI mCLIHandler;
         CLIHelper mCLIHelper = new CLIHelper();
 
-        public async Task ExecuteArgs(string[] args)
+        public CLIProcessor()
+        {
+            Reporter.ReporterData.PropertyChanged += ReporterDataChanged;
+        }
+
+        private void ReporterDataChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ReporterData.LastLoggedError))
+            {
+                if (!string.IsNullOrEmpty(Reporter.ReporterData.LastLoggedError))
+                {
+                    WorkSpace.Instance.Telemetry.TelemetrySession.LoggedErrors.Add(Reporter.ReporterData.LastLoggedError);
+                }
+            }
+        }
+
+            public async Task ExecuteArgs(string[] args)
         {
             WorkSpace.Instance.RunningInExecutionMode = true;
             Reporter.ReportAllAlsoToConsole = true;
@@ -544,7 +563,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 mCLIHelper.SaveAndCommitSelfHealingChanges();
             }
 
+
             Reporter.ToLog(eLogLevel.INFO, "Closing Solution and doing Cleanup...");
+            WorkSpace.Instance.Telemetry.TelemetrySession.ExecutionContext = GingerExecutionContext.CLI.ToString();
+            WorkSpace.Instance.Telemetry.SessionEnd();
             mCLIHelper.CloseSolution();
         }
 

@@ -646,6 +646,7 @@ namespace Ginger.AnalyzerLib
                 finally
                 {
                     BusyInProcess = false;
+                    WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.Analyzer.ToString());
                 }
                 SetStatus("Finished to Fix Selected Items.");
                 StatusLabel.Visibility = Visibility.Collapsed;               

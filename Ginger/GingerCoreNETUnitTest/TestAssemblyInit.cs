@@ -2,6 +2,7 @@
 using Amdocs.Ginger.Common;
 using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
+using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Reflection;
 
@@ -26,6 +27,7 @@ namespace GingerCoreNETUnitTest
         {
             // Called once when the test assembly is done
             // WorkSpace.Instance.Close();
+            WorkSpace.Instance.Telemetry.SessionEnd();
         }
 
 

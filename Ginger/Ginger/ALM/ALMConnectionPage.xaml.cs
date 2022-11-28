@@ -395,9 +395,12 @@ namespace Ginger.ALM
             if(ConnectProjectButton.Content.ToString() == "Save Project Mapping")
             {
                 SaveConnectionDetails();
+                WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.AlmExport.ToString());
                 return;
             }
             ConnectProject();
+            WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.AlmImport.ToString());
+
         }
 
         private void SaveConnectionDetails()

@@ -22,6 +22,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.WizardLib;
 using GingerCore;
 using GingerWPF.WizardLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
@@ -56,6 +57,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             //close all Agents raised in Wizard
             CloseStartedAgents();
+
+            //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.POM);
         }
 
         public override void Cancel()

@@ -86,7 +86,7 @@ namespace Ginger.SolutionGeneral
         public string EncryptionKey { get; set; }
 
         [IsSerializedForLocalRepository]
-        public string EncryptedValidationString { get; set; }
+        public string EncryptedValidationString { get;  set; }
 
         public bool NeedVariablesReEncryption { get; set; } = false;
 

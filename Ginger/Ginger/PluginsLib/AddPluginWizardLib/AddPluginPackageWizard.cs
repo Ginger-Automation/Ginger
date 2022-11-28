@@ -53,6 +53,8 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
                     PluginPackage.LocalFolder = Folder;
                 }
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(PluginPackage);
+
+                WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.Plugins.ToString());
             }
             else
             {
