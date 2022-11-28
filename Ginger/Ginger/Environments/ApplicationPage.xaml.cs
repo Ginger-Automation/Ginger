@@ -32,7 +32,7 @@ namespace Ginger.Environments
     /// <summary>
     /// Interaction logic for ApplicationPage.xaml
     /// </summary>
-    public partial class ApplicationPage : GingerEntitiesUIPage
+    public partial class ApplicationPage : GingerUIPage
     {
         EnvApplication mEnvApplication;
 

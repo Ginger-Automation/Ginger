@@ -1,4 +1,4 @@
-<GingerUserControlsLib:GingerEntitiesUIPage xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"  x:Class="Ginger.GingerGridLib.GingerGridPage"
+<GingerUserControlsLib:GingerUIPage xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"  x:Class="Ginger.GingerGridLib.GingerGridPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -41,4 +41,4 @@
             <Ginger:ucGrid x:Name="xRemoteServiceGrid" SelectedItemChanged="xRemoteServiceGrid_SelectedItemChanged" SelectionMode="Single" Grid.Column="1" Title="Remote Service Grid" ShowRefresh="Visible" ShowSaveAllChanges="Collapsed" ShowUndo="Visible" />
         </Grid>
     </Grid>
-</GingerUserControlsLib:GingerEntitiesUIPage>
+</GingerUserControlsLib:GingerUIPage>

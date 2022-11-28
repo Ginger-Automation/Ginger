@@ -30,7 +30,7 @@ namespace Ginger.Reports
     /// <summary>
     /// Interaction logic for ExecutionResultsConfiguration.xaml
     /// </summary>
-    public partial class HTMLReportsConfigurationPage : GingerEntitiesUIPage
+    public partial class HTMLReportsConfigurationPage : GingerUIPage
     {        
         HTMLReportsConfiguration mHTMLReportConfiguration = new HTMLReportsConfiguration();
 

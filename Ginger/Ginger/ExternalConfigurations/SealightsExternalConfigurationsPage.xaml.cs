@@ -34,7 +34,7 @@ namespace Ginger.Configurations
     /// <summary>
     /// Interaction logic for SealightsConfiguration.xaml
     /// </summary>
-    public partial class SealightsExternalConfigurationsPage : GingerEntitiesUIPage
+    public partial class SealightsExternalConfigurationsPage : GingerUIPage
     {
         SealightsConfiguration _SealightsConfiguration = new SealightsConfiguration();
 

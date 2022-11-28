@@ -41,7 +41,7 @@ namespace Ginger.BusinessFlowPages
     /// <summary>
     /// Interaction logic for VariabelsListViewPage.xaml
     /// </summary>
-    public partial class VariabelsListViewPage : GingerEntitiesUIPage
+    public partial class VariabelsListViewPage : GingerUIPage
     {
         RepositoryItemBase mVariabelsParent;
         eVariablesLevel mVariablesLevel;

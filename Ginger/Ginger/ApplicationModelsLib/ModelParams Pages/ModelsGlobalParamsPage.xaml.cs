@@ -48,7 +48,7 @@ using Ginger.UserControlsLib;
 
 namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 {
-    public partial class ModelsGlobalParamsPage : GingerEntitiesUIPage
+    public partial class ModelsGlobalParamsPage : GingerUIPage
     {
         public ObservableList<GlobalAppModelParameter> mModelsGlobalParamsList;
         GenericWindow mGenericWindow = null;

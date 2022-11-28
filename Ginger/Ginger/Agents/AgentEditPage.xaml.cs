@@ -35,7 +35,7 @@ namespace Ginger.Agents
     /// <summary>
     /// Interaction logic for AgentEditPage.xaml
     /// </summary>
-    public partial class AgentEditPage : GingerEntitiesUIPage
+    public partial class AgentEditPage : GingerUIPage
     {        
         Agent mAgent;
         ePlatformType mOriginalPlatformType;

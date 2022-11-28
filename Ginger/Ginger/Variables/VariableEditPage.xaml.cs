@@ -42,7 +42,7 @@ namespace Ginger.Variables
     /// <summary>
     /// Interaction logic for VariableEditPage.xaml
     /// </summary>
-    public partial class VariableEditPage : GingerEntitiesUIPage
+    public partial class VariableEditPage : GingerUIPage
     {
         private VariableBase mVariable;
         private RepositoryItemBase mParent;

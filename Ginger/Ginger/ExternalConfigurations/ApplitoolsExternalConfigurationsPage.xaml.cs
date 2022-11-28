@@ -34,7 +34,7 @@ namespace Ginger.Configurations
     /// <summary>
     /// Interaction logic for ApplitoolsExternalConfigurationsPage.xaml
     /// </summary>
-    public partial class ApplitoolsExternalConfigurationsPage : GingerEntitiesUIPage
+    public partial class ApplitoolsExternalConfigurationsPage : GingerUIPage
     {
         ApplitoolsConfiguration _ApplitoolsConfiguration = new ApplitoolsConfiguration();
 

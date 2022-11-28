@@ -36,7 +36,7 @@ namespace Ginger.SolutionWindows
     /// <summary>
     /// Interaction logic for TargetApplicationsPage.xaml
     /// </summary>
-    public partial class TargetApplicationsPage : GingerEntitiesUIPage
+    public partial class TargetApplicationsPage : GingerUIPage
     {
         Solution mSolution;
 

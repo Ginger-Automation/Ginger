@@ -38,7 +38,7 @@ namespace GingerWPF.BusinessFlowsLib
     /// <summary>
     /// Interaction logic for BusinessFlowViewPage.xaml
     /// </summary>
-    public partial class BusinessFlowViewPage : GingerEntitiesUIPage
+    public partial class BusinessFlowViewPage : GingerUIPage
     {
         BusinessFlow mBusinessFlow;
         Context mContext;

@@ -1,4 +1,4 @@
-<UserControlsLib1:GingerEntitiesUIPage x:Class="Ginger.ApplicationModelsLib.POMModels.POMEditPage"
+<UserControlsLib1:GingerUIPage x:Class="Ginger.ApplicationModelsLib.POMModels.POMEditPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -139,4 +139,4 @@
             </TabItem>
         </TabControl>
     </Grid>
-</UserControlsLib1:GingerEntitiesUIPage>
+</UserControlsLib1:GingerUIPage>

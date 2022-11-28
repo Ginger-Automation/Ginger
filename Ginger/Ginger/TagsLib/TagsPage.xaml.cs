@@ -31,7 +31,7 @@ namespace Ginger.TagsLib
     /// <summary>
     /// Interaction logic for TagsEditorPage.xaml
     /// </summary>
-    public partial class TagsPage : GingerEntitiesUIPage
+    public partial class TagsPage : GingerUIPage
     {
         public enum eViewMode { Solution, SpecificList }
 

@@ -1,4 +1,4 @@
-<UserControlsLib:GingerEntitiesUIPage x:Class="Ginger.Reports.HTMLReportTemplatePage"
+<UserControlsLib:GingerUIPage x:Class="Ginger.Reports.HTMLReportTemplatePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -559,4 +559,4 @@
         </TabControl>
         </ScrollViewer>
     </Grid>
-</UserControlsLib:GingerEntitiesUIPage>
+</UserControlsLib:GingerUIPage>

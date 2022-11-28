@@ -57,7 +57,7 @@ namespace Ginger.Actions
         RegularView
     }
 
-    public partial class ActionEditPage : GingerEntitiesUIPage
+    public partial class ActionEditPage : GingerUIPage
     {
         //static int ActionEditNum = 0;
         //static int LiveActionEditCounter = 0;

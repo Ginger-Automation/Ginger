@@ -36,7 +36,7 @@ namespace Ginger.GingerGridLib
     /// <summary>
     /// Interaction logic for GingerGridPage.xaml
     /// </summary>
-    public partial class GingerGridPage : GingerEntitiesUIPage
+    public partial class GingerGridPage : GingerUIPage
     {
         GingerGrid mGingerGrid;
 

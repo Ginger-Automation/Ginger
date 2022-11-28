@@ -1,4 +1,4 @@
-<UCControl:GingerEntitiesUIPage x:Class="Ginger.Actions.ActionEditPage"
+<UCControl:GingerUIPage x:Class="Ginger.Actions.ActionEditPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -365,4 +365,4 @@
             <usercontrols:ucButton x:Name="xHelpButton" VerticalAlignment="Top" HorizontalAlignment="Right" ButtonFontImageSize="16" ButtonType="ImageButton" ButtonImageType="Help" Click="XHelpButton_Click" ToolTip="View Action help info" Margin="0,0,5,0" />
         </Grid>
     </Grid>
-</UCControl:GingerEntitiesUIPage>
+</UCControl:GingerUIPage>

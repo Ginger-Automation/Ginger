@@ -33,7 +33,7 @@ namespace Ginger.Environments
     /// <summary>
     /// Interaction logic for AppsListPage.xaml
     /// </summary>
-    public partial class AppsListPage : GingerEntitiesUIPage
+    public partial class AppsListPage : GingerUIPage
     {
         public ProjEnvironment AppEnvironmnet { get; set; }
         public AppsListPage(ProjEnvironment env)

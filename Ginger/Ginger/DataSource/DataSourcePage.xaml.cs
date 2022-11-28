@@ -48,7 +48,7 @@ namespace Ginger.DataSource
     /// <summary>
     /// Interaction logic for AgentEditPage.xaml
     /// </summary>
-    public partial class DataSourcePage : GingerEntitiesUIPage
+    public partial class DataSourcePage : GingerUIPage
     {
         DataSourceBase mDSDetails;
         ObservableList<DataSourceTable> mDSTableList;

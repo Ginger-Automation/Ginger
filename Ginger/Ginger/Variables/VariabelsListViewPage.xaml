@@ -1,4 +1,4 @@
-﻿<UserControlsLib:GingerEntitiesUIPage x:Class="Ginger.BusinessFlowPages.VariabelsListViewPage"
+﻿<UserControlsLib:GingerUIPage x:Class="Ginger.BusinessFlowPages.VariabelsListViewPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -81,4 +81,4 @@
 
         <Frame x:Name="xMainFrame" DockPanel.Dock="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden"/>
     </DockPanel>
-</UserControlsLib:GingerEntitiesUIPage>
+</UserControlsLib:GingerUIPage>

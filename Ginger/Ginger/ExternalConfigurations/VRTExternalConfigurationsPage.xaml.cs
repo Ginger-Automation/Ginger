@@ -34,7 +34,7 @@ namespace Ginger.Configurations
     /// <summary>
     /// Interaction logic for VRTExternalConfigurationsPage.xaml
     /// </summary>
-    public partial class VRTExternalConfigurationsPage : GingerEntitiesUIPage
+    public partial class VRTExternalConfigurationsPage : GingerUIPage
     {
         VRTConfiguration _VRTConfiguration = null;
 

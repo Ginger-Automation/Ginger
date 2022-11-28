@@ -73,7 +73,7 @@ namespace GingerWPF.BusinessFlowsLib
     /// <summary>
     /// Page used to design the Business Flow automation flow
     /// </summary>
-    public partial class NewAutomatePage : GingerEntitiesUIPage, INotifyPropertyChanged
+    public partial class NewAutomatePage : GingerUIPage, INotifyPropertyChanged
     {
         GingerExecutionEngine mExecutionEngine;
         ProjEnvironment mEnvironment = null;

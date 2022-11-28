@@ -36,7 +36,7 @@ using System.Windows.Media;
 
 namespace GingerWPF.ApplicationModelsLib.APIModels
 {
-    public partial class APIModelPage : GingerEntitiesUIPage
+    public partial class APIModelPage : GingerUIPage
     {
         ApplicationAPIModel mApplicationAPIModel;
         ModelParamsPage page;

@@ -37,7 +37,7 @@ namespace Ginger.Activities
     /// <summary>
     /// Interaction logic for ActivitiesGroupPage.xaml
     /// </summary>
-    public partial class ActivitiesGroupPage : GingerEntitiesUIPage
+    public partial class ActivitiesGroupPage : GingerUIPage
     {
         ActivitiesGroup mActivitiesGroup;
         BusinessFlow mBusinessFlow = null;

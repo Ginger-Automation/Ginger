@@ -1193,7 +1193,11 @@ namespace GingerCore.Actions
         public bool IsInputParamExist(string Param)
         {
             ActInputValue AIV = (from aiv in InputValues where aiv.Param == Param select aiv).FirstOrDefault();
-            return AIV != null;
+            if (AIV != null)
+            {
+                return true;
+            }
+            return false;
         }
 
         [IsSerializedForLocalRepository]
@@ -1523,7 +1527,7 @@ namespace GingerCore.Actions
                 }
 
                 //Check failed
-                if (!checkStatus == false && setActStatus)
+                if (checkStatus == false && setActStatus)
                 {
                     this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                     this.ExInfo = "Action was not configured to run with current " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " values.";

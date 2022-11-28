@@ -34,7 +34,7 @@ namespace Ginger.Reports
     /// <summary>
     /// Interaction logic for ExecutionResultsConfiguration.xaml
     /// </summary>
-    public partial class ExecutionResultsConfiguration : GingerEntitiesUIPage
+    public partial class ExecutionResultsConfiguration : GingerUIPage
     {
         GenericWindow _pageGenericWin = null;
         ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();

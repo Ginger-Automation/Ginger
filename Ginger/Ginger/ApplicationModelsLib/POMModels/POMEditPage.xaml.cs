@@ -53,7 +53,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
     /// <summary>
     /// Interaction logic for POMEditPage.xaml
     /// </summary>
-    public partial class POMEditPage : GingerEntitiesUIPage
+    public partial class POMEditPage : GingerUIPage
     {
         ApplicationPOMModel mPOM;
         ScreenShotViewPage mScreenShotViewPage;

@@ -47,7 +47,7 @@ namespace GingerWPF.BusinessFlowsLib
     /// <summary>
     /// Interaction logic for ActivityPage.xaml
     /// </summary>
-    public partial class ActivityPage : GingerEntitiesUIPage
+    public partial class ActivityPage : GingerUIPage
     {
         Activity mActivity;
         public Activity Activity { get { return mActivity; } }

@@ -37,7 +37,7 @@ namespace Ginger.Reports
     /// <summary>
     /// Interaction logic for ExecutionResultsConfiguration.xaml
     /// </summary>
-    public partial class HTMLReportTemplatePage : GingerEntitiesUIPage
+    public partial class HTMLReportTemplatePage : GingerUIPage
     {
         GenericWindow _pageGenericWin = null;
         private bool _existingTemplatePage = false;

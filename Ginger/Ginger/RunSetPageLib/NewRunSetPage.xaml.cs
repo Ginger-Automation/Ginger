@@ -64,7 +64,7 @@ namespace Ginger.Run
     /// <summary>
     /// Interaction logic for RunPage.xaml
     /// </summary>
-    public partial class NewRunSetPage : GingerEntitiesUIPage
+    public partial class NewRunSetPage : GingerUIPage
     {
         public RunnerPage mCurrentSelectedRunner;
 

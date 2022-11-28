@@ -1,4 +1,4 @@
-<GingerUserControlLib:GingerEntitiesUIPage x:Class="GingerWPF.ApplicationModelsLib.ModelParams_Pages.ModelsGlobalParamsPage"
+<GingerUserControlLib:GingerUIPage x:Class="GingerWPF.ApplicationModelsLib.ModelParams_Pages.ModelsGlobalParamsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -31,4 +31,4 @@
             </Label>
         </StackPanel>
     </Grid>
-</GingerUserControlLib:GingerEntitiesUIPage>
+</GingerUserControlLib:GingerUIPage>
