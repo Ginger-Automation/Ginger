@@ -176,12 +176,12 @@ namespace GingerCore.GeneralLib
                             if (certificate.Equals(actualCertificate))
                             {
                                 Email.Attachments.Add(Certificatepath);
-                                Reporter.ToLog(eLogLevel.INFO, String.Format("Uploaded certificate is vaslidated"));
+                                Email.Event = "Uploaded certificate is vaslidated";
                                 return true;
                             }
                             else
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, String.Format("Uploaded certificate is not validated as it is not matching with (base certificate)"));
+                                Email.Event = "Uploaded certificate is not validated as it is not matching with base certificate";
                                 return false;
                             }
                         };

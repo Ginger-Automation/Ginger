@@ -273,12 +273,12 @@ namespace GingerCore.Actions.WebAPI
                                 if (certificate.Equals(actualCertificate))
                                 {
                                     Handler.ClientCertificates.Add(actualCertificate);
-                                    Reporter.ToLog(eLogLevel.INFO, String.Format("Uploaded certificate is vaslidated"));
+                                    mAct.ExInfo = "Uploaded certificate is vaslidated";
                                     return true;
                                 }
                                 else
                                 {
-                                    Reporter.ToLog(eLogLevel.ERROR, String.Format("Uploaded certificate is not validated as it is not matching with (base certificate)"));
+                                    mAct.Error = "Uploaded certificate is not validated as it is not matching with (base certificate)";
                                     return false;
                                 }
                             };

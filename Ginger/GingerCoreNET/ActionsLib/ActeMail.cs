@@ -36,6 +36,8 @@ using System.Reflection;
 using OpenQA.Selenium.DevTools.V99.DOM;
 using static System.Net.WebRequestMethods;
 using File = System.IO.File;
+using DocumentFormat.OpenXml.EMMA;
+
 namespace GingerCore.Actions.Communication
 {
     public class ActeMail : ActWithoutDriver
@@ -316,12 +318,12 @@ namespace GingerCore.Actions.Communication
                         }
                         if (certificate.Equals(actualCertificate))
                         {
-                            Reporter.ToLog(eLogLevel.INFO, String.Format("Uploaded certificate is vaslidated"));
+                            ExInfo = "Uploaded certificate is vaslidated";
                             return true;
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, String.Format("Uploaded certificate is not validated as it is not matching with (base certificate)"));
+                            Error = "Uploaded certificate is not validated as it is not matching with base certificate";
                             return false;
                         }
                     };
