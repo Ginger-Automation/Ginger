@@ -1008,9 +1008,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xElementDetails.xFriendlyLocatorsGrid.InitViewItems();
 
             xElementDetails.xFriendlyLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
-            //xElementDetails.xFriendlyLocatorsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddFriendlyLocatorButtonClicked));
-            //xElementDetails.xFriendlyLocatorsGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteFriendlyLocatorClicked));
-
+            
             xElementDetails.xFriendlyLocatorsGrid.grdMain.PreparingCellForEdit += FriendlyLocatorsGrid_PreparingCellForEdit;
             xElementDetails.xFriendlyLocatorsGrid.PasteItemEvent += PasteLocatorEvent;
         }
