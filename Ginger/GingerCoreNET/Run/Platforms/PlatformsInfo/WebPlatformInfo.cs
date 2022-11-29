@@ -659,11 +659,11 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override ObservableList<ElementLocator> GetLearningLocators()
         {
             ObservableList<ElementLocator> learningLocatorsList = new ObservableList<ElementLocator>();
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Highly Recommended (usually unique)", FriendlyLocator = false });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Highly Recommended (usually unique)", FriendlyLocator = false });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Highly Recommended (usually unique)", FriendlyLocator = false });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Less Recommended (sensitive to page design changes)", FriendlyLocator = false });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByTagName, Help = "Less Recommended", FriendlyLocator=true });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Less Recommended (sensitive to page design changes)", EnableFriendlyLocator = false });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByTagName, Help = "Less Recommended", EnableFriendlyLocator = true });
             return learningLocatorsList;
         }
 

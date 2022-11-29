@@ -315,8 +315,9 @@ namespace Ginger
 
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, });
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65 });
+                defView.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedElementSectionGrid.Resources["xLocateValueVETemplate"] });
                 defView.GridColsView.Add(new GridColView() { Field = "", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedElementSectionGrid.Resources["xCopyLocatorButtonTemplate"] });
-                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.FriendlyLocator), Header = "Friendly Locator", WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.EnableFriendlyLocator), Header = "Friendly Locator", WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
                 defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedElementSectionGrid.Resources["xTestElementButtonTemplate"] });
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.StatusIcon), Header = "Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedElementSectionGrid.Resources["xTestStatusIconTemplate"] });
@@ -450,21 +451,20 @@ namespace Ginger
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Position), Header = "Position" , WidthWeight = 25, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = positionList });
 
                 List<ComboEnumItem> locateByList = GetPlatformLocatByList();
+                List<ComboEnumItem> locateValueList = GetAllElementlist();
 
-                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, });
-                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65 });
-                defView.GridColsView.Add(new GridColView() { Field = "", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedElementSectionGrid.Resources["xCopyLocatorButtonTemplate"] });
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList });
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateValueList });
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
                 xFriendlyLocatorsGrid.SetAllColumnsDefaultView(defView);
                 xFriendlyLocatorsGrid.InitViewItems();
 
                 xFriendlyLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
-                xFriendlyLocatorsGrid.AddToolbarTool(eImageType.Run, "Test All Elements Locators", new RoutedEventHandler(TestAllElementsFriendlyLocators));
                 xFriendlyLocatorsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddFriendlyLocatorButtonClicked));
                 xFriendlyLocatorsGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteFriendlyLocatorClicked));
 
                 xFriendlyLocatorsGrid.RowDoubleClick += XFriendlyLocatorsGrid_RowDoubleClick;
-                xFriendlyLocatorsGrid.ToolTip = "Double click on a row to copy the selected Locator's Locate by value";
+                xFriendlyLocatorsGrid.ToolTip = "Double click on a row to copy the selected Friendly Locator's Locate by value";
 
                 xFriendlyLocatorsGrid.grdMain.PreparingCellForEdit += FriendlyLocatorsGrid_PreparingCellForEdit;
                 xFriendlyLocatorsGrid.PasteItemEvent += PasteFriendlyLocatorEvent;
@@ -592,6 +592,19 @@ namespace Ginger
             return locateByComboItemList;
         }
 
+        private List<ComboEnumItem> GetAllElementlist()
+        {
+            List<ComboEnumItem> Allelementlist = new List<ComboEnumItem>();
+            List<ElementInfo> MappedElementlist = mSelectedPOM != null ? mSelectedPOM.MappedUIElements.ToList() : new List<ElementInfo>();
+            foreach(var Elem in MappedElementlist)
+            {
+                ComboEnumItem comboEnumItem = new ComboEnumItem();
+                comboEnumItem.text = Elem.ElementName + " [" + Elem.ElementType + "]";
+                comboEnumItem.Value = Elem.Guid;
+                Allelementlist.Add(comboEnumItem);
+            }
+            return Allelementlist;
+        }
         private List<ComboEnumItem> GetPositionList()
         {
             List<ComboEnumItem> PositionComboItemList = new List<ComboEnumItem>();

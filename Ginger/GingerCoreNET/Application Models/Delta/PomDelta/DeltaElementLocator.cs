@@ -49,7 +49,7 @@ namespace GingerCoreNET.Application_Models
 
         public ePosition Position { get { return ElementLocator.Position; } }
 
-        public bool FriendlyLocator { get { return ElementLocator.FriendlyLocator; } }
+        public bool EnableFriendlyLocator { get { return ElementLocator.EnableFriendlyLocator; } }
 
         private void MOriginalElementLocator_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
