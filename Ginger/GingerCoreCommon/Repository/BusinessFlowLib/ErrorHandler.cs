@@ -41,14 +41,14 @@ namespace GingerCore
         [EnumValueDescription("Rerun Business Flow")]
         ReRunBusinessFlow,
 
-        [EnumValueDescription("Stop Business Flow")]
-        StopBusinessFlow,
-
         [EnumValueDescription("Continue From Next Action")]
         ContinueFromNextAction,
 
         [EnumValueDescription("Continue From Next Activity")]
         ContinueFromNextActivity,
+
+        [EnumValueDescription("Continue From Next Business Flow")]
+        ContinueFromNextBusinessFlow,
 
         [EnumValueDescription("Stop Run")]
         StopRun

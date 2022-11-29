@@ -519,17 +519,24 @@ namespace Ginger.Run
                     if (flowControlIndx == null && executedBusFlow.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) //stop if needed based on current BF failure
                     {
                         LastFailedBusinessFlow = executedBusFlow;
-                        if ((executedBusFlow.Mandatory == true) || 
-                            (executedBusFlow.Mandatory == false & mGingerRunner.RunOption == GingerRunner.eRunOptions.StopAllBusinessFlows) ||
-                            (mErrorPostExecutionActionFlowBreaker && handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopRun))
+                        if ((executedBusFlow.Mandatory == true) || (executedBusFlow.Mandatory == false & mGingerRunner.RunOption == GingerRunner.eRunOptions.StopAllBusinessFlows))
                         {
-                            if (mErrorPostExecutionActionFlowBreaker)
-                                mErrorPostExecutionActionFlowBreaker = false;
                             SetNextBusinessFlowsBlockedStatus();
                             break;
                         }
                     }
 
+                    if (executedBusFlow.RunStatus == eRunStatus.Failed && mErrorPostExecutionActionFlowBreaker)
+                    {
+                        mErrorPostExecutionActionFlowBreaker = false;
+                        if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ContinueFromNextBusinessFlow)
+                            flowControlIndx = null;
+                        else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopRun)
+                        {
+                            SetPendingBusinessFlowsSkippedStatus();
+                            break;
+                        }
+                    }
                 }
             }
             catch (Exception ec)
@@ -1342,8 +1349,12 @@ namespace Ginger.Run
 
                 if (!mErrorPostExecutionActionFlowBreaker)
                 {
-                    DoFlowControl(act, moveToNextAction);
+                    if (handlerPostExecutionAction != eErrorHandlerPostExecutionAction.ContinueFromNextAction)
+                        DoFlowControl(act, moveToNextAction);
+                    else
+                        MoveToNextAction(act);
                 }
+                
                 DoStatusConversion(act);   //does it need to be here or earlier?
             }
             finally
@@ -1831,7 +1842,7 @@ namespace Ginger.Run
                 if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow || 
                     handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginActivity || 
                     handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ContinueFromNextActivity ||
-                    handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopBusinessFlow ||
+                    handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ContinueFromNextBusinessFlow ||
                     handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopRun)
                 {
                     mErrorPostExecutionActionFlowBreaker = true;
@@ -2619,26 +2630,26 @@ namespace Ginger.Run
 
 
                 // If all above completed and no change on flow then move to next in the activity unless it is the last one
-                if (!isFlowChange)
-                {
-                    if (moveToNextAction)
-                    {
-                        if (!IsLastActionOfActivity())// if running single action we don't want to move to next action
-                        {
-                            // if execution has been stopped externally, stop at current action
-                            if (!mStopRun)
-                            {
-                                CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
-                                GotoNextAction();
-                                ((Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem).Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
-                            }
-                        }
-                    }
-                }
+                if (!isFlowChange && moveToNextAction)
+                    MoveToNextAction(act);
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception occurred in DoFlowControl", ex);
+            }
+        }
+
+        private void MoveToNextAction(Act act)
+        {
+            if (!IsLastActionOfActivity())// if running single action we don't want to move to next action
+            {
+                // if execution has been stopped externally, stop at current action
+                if (!mStopRun)
+                {
+                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
+                    GotoNextAction();
+                    ((Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem).Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+                }
             }
         }
 
@@ -3390,9 +3401,7 @@ namespace Ginger.Run
                                 {
                                     activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
 
-                                    if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && 
-                                        act.FlowControls.Count == 0 && 
-                                        handlerPostExecutionAction != eErrorHandlerPostExecutionAction.ContinueFromNextAction)
+                                    if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
                                     {
                                         SetNextActionsBlockedStatus();
                                         statusCalculationIsDone = true;
@@ -3408,9 +3417,7 @@ namespace Ginger.Run
                             {
                                 activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                                 CurrentBusinessFlow.LastFailedAction = act;
-                                if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && 
-                                    act.FlowControls.Count == 0 && 
-                                    handlerPostExecutionAction != eErrorHandlerPostExecutionAction.ContinueFromNextAction)
+                                if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
                                 {
                                     SetNextActionsBlockedStatus();
                                     statusCalculationIsDone = true;
@@ -4008,13 +4015,8 @@ namespace Ginger.Run
                     Status = RunsetStatus;
                 }
 
-                if (mErrorPostExecutionActionFlowBreaker)
-                {
-                    if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow)
-                        CheckAndExecutePostErrorHandlerAction();
-                    else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopBusinessFlow)
-                        mErrorPostExecutionActionFlowBreaker = false;
-                }
+                if (mErrorPostExecutionActionFlowBreaker && handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow)
+                    CheckAndExecutePostErrorHandlerAction();
 
                 if (mRunSource == eRunSource.BusinessFlow)
                 {
