@@ -2876,7 +2876,7 @@ namespace GingerCore.Drivers
             UIAuto.AutomationElement childAE = null, initialTab = null;
             int id = element.Current.ProcessId;
             //int y1 = (int)(element.Current.BoundingRectangle.BottomLeft.Y - 10);
-            int y1 = (int)(element.Current.BoundingRectangle.Left - 10);
+            int y1 = (int)(element.Current.BoundingRectangle.Bottom - 10);
             int startPoint = (int)element.Current.BoundingRectangle.X + 5;
             int endPoint = (int)(element.Current.BoundingRectangle.X + element.Current.BoundingRectangle.Width);
             UIAuto.PropertyCondition tabSelectCondition = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.LocalizedControlTypeProperty, "pane");
@@ -2886,8 +2886,9 @@ namespace GingerCore.Drivers
             {
                 startPoint = (int)element.Current.BoundingRectangle.X + 5;
                 y1 = (int)((element.Current.BoundingRectangle.Y + initialTab.Current.BoundingRectangle.Y) / 2);
+                Reporter.ToLog(eLogLevel.DEBUG, "Inside if loop. y1: " + y1);
             }
-
+    
             while (startPoint < endPoint && !taskFinished)
             {                
                 winAPI.SendClickOnXYPoint(element,startPoint, y1);
@@ -6487,7 +6488,7 @@ namespace GingerCore.Drivers
             {
                 ControlProperty CP = new ControlProperty();
                 CP.Name = AP.ProgrammaticName;
-                CP.Name = CP.Name.Replace("UIAuto.AutomationElementIdentifiers.", "");
+                CP.Name = CP.Name.Replace("AutomationElementIdentifiers.", "");
                 CP.Name = CP.Name.Replace("Property", "");
                 object propValue;
                 try
