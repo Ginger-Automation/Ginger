@@ -509,17 +509,6 @@ namespace Ginger.Variables
             {
                 CurrentItem = mVariable;
                 base.IsVisibleChangedHandler(sender, e);
-                if ((bool)e.NewValue)
-                {
-                    WorkSpace.Instance.CurrentSelectedItem = mVariable;
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == mVariable)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
             }
         }
     }

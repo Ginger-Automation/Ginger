@@ -1,5 +1,6 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.UserControls;
@@ -147,23 +148,12 @@ namespace Ginger.SolutionWindows
                 if (Reporter.ToUser(eUserMsgKey.SaveAllModifiedItems, $"Are you sure you want to save {selectedFiles.Count} Item(s)") == eUserMsgSelection.Yes)
                 {
                     await Task.Run(() =>
-                    {
-                        Parallel.ForEach(selectedFiles, fileToSave =>
-                        {
-                            if (fileToSave.FileType.Equals(nameof(Ginger.SolutionGeneral.Solution)))
-                            {
-                                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, fileToSave.Name, fileToSave.FileType);
-                                WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(false);
-                                Reporter.HideStatusMessage();
-                            }
-                            else
-                            {
-                                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, fileToSave.Name, fileToSave.FileType);
-                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(fileToSave.item);
-                                Reporter.HideStatusMessage();
-                            }
-                        });
-                    });
+                   {
+                       Parallel.ForEach(selectedFiles, fileToSave =>
+                       {
+                           SaveHandler.Save(fileToSave.item);
+                       });
+                   });
                     Init();
                 }
             }

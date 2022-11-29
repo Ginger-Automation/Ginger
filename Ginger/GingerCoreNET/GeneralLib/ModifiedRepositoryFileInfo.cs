@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Amdocs.Ginger.Repository;
+using System;
 
-namespace Amdocs.Ginger.Repository
+namespace Amdocs.Ginger.CoreNET.GeneralLib
 {
     public class ModifiedRepositoryFileInfo
     {

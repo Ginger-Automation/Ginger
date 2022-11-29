@@ -1032,10 +1032,7 @@ namespace GingerCore.Actions
             using (screenshot)
             {
                 string filePath = GetScreenShotRandomFileName();
-                if (OperatingSystem.IsWindows())
-                {
-                    screenshot.Save(filePath);
-                }
+                screenshot.Save(filePath);
                 return filePath;
             }
         }

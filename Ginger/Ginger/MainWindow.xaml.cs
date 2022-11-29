@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
@@ -1408,29 +1409,19 @@ namespace Ginger
         }
         public async Task SaveCurrentItemAsync()
         {
+            if(WorkSpace.Instance.CurrentSelectedItem == null || WorkSpace.Instance.CurrentSelectedItem.DirtyStatus != eDirtyStatus.Modified)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Nothing found to Save.");
+                return;
+            }
             await Task.Run(() => SaveCurrentItem());
         }
 
         private void SaveCurrentItem()
         {
-            if (WorkSpace.Instance.CurrentSelectedItem == null)
-            {
-                Reporter.ToUser(eUserMsgKey.AskToSelectItem); return;
-            }
             if (Reporter.ToUser(eUserMsgKey.SaveBusinessFlowChanges, WorkSpace.Instance.CurrentSelectedItem.ItemName) == eUserMsgSelection.Yes)
             {
-                if (WorkSpace.Instance.CurrentSelectedItem is Solution)
-                {
-                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, WorkSpace.Instance.CurrentSelectedItem.ItemName, "item");
-                    WorkSpace.Instance.Solution.SolutionOperations.SaveSolution();
-                    Reporter.HideStatusMessage();
-                }
-                else
-                {
-                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, WorkSpace.Instance.CurrentSelectedItem.ItemName, "item");
-                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(WorkSpace.Instance.CurrentSelectedItem);
-                    Reporter.HideStatusMessage();
-                }
+                SaveHandler.Save(WorkSpace.Instance.CurrentSelectedItem);
             }
         }
 
@@ -1446,6 +1437,11 @@ namespace Ginger
 
         private void xSaveAllBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (WorkSpace.Instance.SolutionRepository.ModifiedFiles.Count == 0)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Nothing found to Save.");
+                return;
+            }
             ModifiedRepositoryFilesPage MRFPage = new ModifiedRepositoryFilesPage();
             MRFPage.ShowAsWindow();
         }

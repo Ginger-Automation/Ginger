@@ -220,7 +220,9 @@ namespace Amdocs.Ginger.Repository
             get
             {
                 if (mGuid == Guid.Empty)
+                {
                     mGuid = Guid.NewGuid();
+                }
                 return mGuid;
             }
             set
