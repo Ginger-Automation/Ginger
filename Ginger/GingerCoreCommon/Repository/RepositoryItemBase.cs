@@ -22,6 +22,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -29,6 +30,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using GingerCore.GeneralLib;
 
 namespace Amdocs.Ginger.Repository
@@ -218,13 +220,18 @@ namespace Amdocs.Ginger.Repository
             get
             {
                 if (mGuid == Guid.Empty)
+                {
                     mGuid = Guid.NewGuid();
+                }
                 return mGuid;
             }
             set
             {
-                mGuid = value;
-                OnPropertyChanged(nameof(Guid));
+                if (mGuid != value)
+                {
+                    mGuid = value;
+                    OnPropertyChanged(nameof(Guid));
+                }
             }
         }
 
@@ -1011,6 +1018,11 @@ namespace Amdocs.Ginger.Repository
                     if (value == eDirtyStatus.Modified)
                     {
                         RaiseDirtyChangedEvent();
+                        // check that path is really valid path to a file contaning both drive at the start & a target with extension, also in order to keep the list unique, check if the value has already been added to the list.
+                        if (!String.IsNullOrEmpty(FilePath) && Path.IsPathFullyQualified(FilePath) && !GingerCoreCommonWorkSpace.Instance.SolutionRepository.ModifiedFiles.Contains(this))
+                        {
+                            GingerCoreCommonWorkSpace.Instance.SolutionRepository.ModifiedFiles.Add(this);
+                        }
                     }
                     OnPropertyChanged(nameof(DirtyStatus));
                     OnPropertyChanged(nameof(DirtyStatusImage));

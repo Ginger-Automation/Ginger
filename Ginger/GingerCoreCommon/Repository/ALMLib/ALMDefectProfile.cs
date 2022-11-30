@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -24,8 +24,9 @@ namespace Amdocs.Ginger.Repository
 {
     public class ALMDefectProfile : RepositoryItemBase
     {
+        private bool mIsDefault;
         [IsSerializedForLocalRepository]
-        public bool IsDefault { get; set; }
+        public bool IsDefault { get { return mIsDefault; } set { if (mIsDefault != value) { mIsDefault = value; OnPropertyChanged(nameof(IsDefault)); } } }
 
         [IsSerializedForLocalRepository]
         public bool ShowAllIterationsElements { get; set; }
@@ -39,17 +40,21 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public int ID { get; set; }
 
+        private bool mToUpdate;
         [IsSerializedForLocalRepository]
-        public bool ToUpdate { get; set; }
+        public bool ToUpdate { get { return mToUpdate; } set { if (mToUpdate != value) { mToUpdate = value; OnPropertyChanged(nameof(ToUpdate)); } } }
 
+        private string mName;
         [IsSerializedForLocalRepository]
-        public string Name { get; set; }
+        public string Name { get { return mName; } set { if (mName != value) { mName = value; OnPropertyChanged(nameof(Name)); } } }
 
+        private string mDescription;
         [IsSerializedForLocalRepository]
-        public string Description { get; set; }
+        public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(nameof(Description)); } } }
 
+        private ALMIntegrationEnums.eALMType mAlmType;
         [IsSerializedForLocalRepository]
-        public ALMIntegrationEnums.eALMType AlmType { get; set; }
+        public ALMIntegrationEnums.eALMType AlmType { get { return mAlmType; } set { if (mAlmType != value) { mAlmType = value; OnPropertyChanged(nameof(AlmType)); } } }
 
 
         [IsSerializedForLocalRepository]

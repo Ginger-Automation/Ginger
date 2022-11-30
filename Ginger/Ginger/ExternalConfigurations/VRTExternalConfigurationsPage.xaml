@@ -1,4 +1,4 @@
-<Page x:Class="Ginger.Configurations.VRTExternalConfigurationsPage"
+<UserControlsLib:GingerUIPage x:Class="Ginger.Configurations.VRTExternalConfigurationsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -18,7 +18,7 @@
                     <RowDefinition  Height="30"/>
                     <RowDefinition  Height="1*"/>
                 </Grid.RowDefinitions>
-                <usercontrols:ucButton x:Name="xSaveButton" DockPanel.Dock="Top" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+                <usercontrols:ucButton x:Name="xSaveButton" DockPanel.Dock="Top" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" Visibility="Collapsed" HorizontalAlignment="Left" Margin="0,0,0,0"/>
                 <StackPanel Orientation="Horizontal" Grid.Row="1">
                     <Label Content="Visual Regression Testing(VRT) Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                     <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
@@ -101,4 +101,4 @@
             </Grid>
         </DockPanel>
     </ScrollViewer>
-</Page>
+</UserControlsLib:GingerUIPage>

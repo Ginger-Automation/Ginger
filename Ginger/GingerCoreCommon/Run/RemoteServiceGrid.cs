@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -25,17 +25,21 @@ namespace Amdocs.Ginger.Common.Run
 {
     public class RemoteServiceGrid : RepositoryItemBase
     {
+        private string mName;
         [IsSerializedForLocalRepository]
-        public string Name { get; set; }
+        public string Name { get { return mName; } set { if (mName != value) { mName = value; OnPropertyChanged(nameof(Name)); } } }
 
+        private string mHost;
         [IsSerializedForLocalRepository]
-        public string Host { get; set; }
+        public string Host { get { return mHost; } set { if (mHost != value) { mHost = value; OnPropertyChanged(nameof(Host)); } } }
 
+        private int mHostPort;
         [IsSerializedForLocalRepository]
-        public int HostPort { get; set; }
+        public int HostPort { get { return mHostPort; } set { if (mHostPort != value) { mHostPort = value; OnPropertyChanged(nameof(HostPort)); } } }
 
+        private bool mActive;
         [IsSerializedForLocalRepository]
-        public bool Active { get; set; }
+        public bool Active { get { return mActive; }  set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
 
         public override string ItemName
@@ -49,6 +53,9 @@ namespace Amdocs.Ginger.Common.Run
                 Name = value;
             }
         }
-
+        public override string GetItemType()
+        {
+            return nameof(RemoteServiceGrid);
+        }
     }
 }

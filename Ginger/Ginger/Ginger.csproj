@@ -586,6 +586,8 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\ios.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\iosOutline.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\iosWhite.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-light-grey.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\VRTLogo.png" />
   </ItemGroup>
@@ -2411,6 +2413,8 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\iosWhite.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\save-all-regular-light-grey.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

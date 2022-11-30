@@ -35,13 +35,14 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Ginger.Reports.ValidationRules;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Variables
 {
     /// <summary>
     /// Interaction logic for VariableEditPage.xaml
     /// </summary>
-    public partial class VariableEditPage : Page
+    public partial class VariableEditPage : GingerUIPage
     {
         private VariableBase mVariable;
         private RepositoryItemBase mParent;
@@ -499,6 +500,15 @@ namespace Ginger.Variables
             {
                 xMandatoryInputCheckBox.IsChecked = false;
                 xMandatoryInputCheckBox.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (editMode == eEditMode.SharedRepository && mVariable != null)
+            {
+                CurrentItem = mVariable;
+                base.IsVisibleChangedHandler(sender, e);
             }
         }
     }

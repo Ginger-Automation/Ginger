@@ -27,13 +27,14 @@ using amdocs.ginger.GingerCoreNET;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
 using Ginger.ValidationRules;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Reports
 {
     /// <summary>
     /// Interaction logic for ExecutionResultsConfiguration.xaml
     /// </summary>
-    public partial class ExecutionResultsConfiguration : Page
+    public partial class ExecutionResultsConfiguration : GingerUIPage
     {
         GenericWindow _pageGenericWin = null;
         ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
@@ -66,6 +67,7 @@ namespace Ginger.Reports
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Sealights Configurations section moved to Configurations -> External Integrations -> Sealights Configurations. \n Please save the configuration details.");
             }
+            CurrentItem = WorkSpace.Instance.Solution;
             SetControls();
             isControlsSet = true;
         }
