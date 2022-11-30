@@ -1081,8 +1081,8 @@ namespace Amdocs.Ginger.Repository
         internal void ChildCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             // each change in Observavle will mark the item modified - all NotifyCollectionChangedAction.*
-            DirtyStatus = eDirtyStatus.Modified;
 
+            #region Collection Action - Add
             // if item added set tracking too
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
@@ -1093,6 +1093,7 @@ namespace Amdocs.Ginger.Repository
                         RepositoryItemBase repositoryItemBase = (RepositoryItemBase)obj;
                         repositoryItemBase.StartDirtyTracking();
                         repositoryItemBase.OnDirtyStatusChanged += this.RaiseDirtyChanged;
+                        repositoryItemBase.DirtyStatus = eDirtyStatus.Modified;
                     }
                     else
                     {
@@ -1100,6 +1101,45 @@ namespace Amdocs.Ginger.Repository
                     }
                 }
             }
+            #endregion
+            #region Collection Action - Remove Or Move
+            else if (e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Move)
+            {
+                foreach (object obj in e.OldItems)
+                {
+                    if (obj is RepositoryItemBase)
+                    {
+                        ((RepositoryItemBase)obj).DirtyStatus = eDirtyStatus.Modified;
+                    }
+                }
+            }
+            #endregion
+            #region Collection Action - Replace
+            else if (e.Action == NotifyCollectionChangedAction.Replace)
+            {
+                foreach (object obj in e.NewItems)
+                {
+                    if (obj is RepositoryItemBase)
+                    {
+                        ((RepositoryItemBase)obj).DirtyStatus = eDirtyStatus.Modified;
+                    }
+                }
+                foreach (object obj in e.OldItems)
+                {
+                    if (obj is RepositoryItemBase)
+                    {
+                        ((RepositoryItemBase)obj).DirtyStatus = eDirtyStatus.Modified;
+                    }
+                }
+
+            }
+            #endregion
+            #region Collection Action - Reset
+            else
+            {
+                DirtyStatus = eDirtyStatus.Modified;
+            }
+            #endregion
         }
 
         public void PauseDirtyTracking()

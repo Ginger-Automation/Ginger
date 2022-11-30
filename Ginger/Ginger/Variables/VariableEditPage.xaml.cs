@@ -507,7 +507,7 @@ namespace Ginger.Variables
         {
             if (editMode == eEditMode.SharedRepository && mVariable != null)
             {
-                CurrentItem = mVariable;
+                CurrentItemToSave = mVariable;
                 base.IsVisibleChangedHandler(sender, e);
             }
         }

@@ -602,7 +602,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mPageViewMode == Ginger.General.eRIPageViewMode.SharedReposiotry && mActivity != null && !String.IsNullOrEmpty(mActivity.ContainingFolder))
             {
-                CurrentItem = mActivity;
+                CurrentItemToSave = mActivity;
                 base.IsVisibleChangedHandler(sender, e);
             }
         }

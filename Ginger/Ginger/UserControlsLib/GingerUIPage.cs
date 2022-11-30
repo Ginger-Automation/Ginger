@@ -8,7 +8,7 @@ namespace Ginger.UserControlsLib
     public abstract class GingerUIPage : Page
     {
         private RepositoryItemBase mCurrentItem;
-        protected RepositoryItemBase CurrentItem { get { return mCurrentItem; } set { if (mCurrentItem != value) { mCurrentItem = value; WorkSpace.Instance.CurrentSelectedItem = mCurrentItem; } } }
+        protected RepositoryItemBase CurrentItemToSave { get { return mCurrentItem; } set { if (mCurrentItem != value) { mCurrentItem = value; WorkSpace.Instance.CurrentSelectedItem = mCurrentItem; } } }
         protected GingerUIPage()
         {
             IsVisibleChanged += IsVisibleChangedHandler;

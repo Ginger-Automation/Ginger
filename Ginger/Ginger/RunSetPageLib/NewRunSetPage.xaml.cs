@@ -556,6 +556,7 @@ namespace Ginger.Run
             else if (e.Action == NotifyCollectionChangedAction.Move)
             {
                 mCurrentSelectedRunner.BusinessflowRunnerItems.Move(e.OldStartingIndex, e.NewStartingIndex);
+                mCurrentSelectedRunner.ExecutorEngine.GingerRunner.DirtyStatus = eDirtyStatus.Modified;
             }
             this.Dispatcher.Invoke(() =>
             {
@@ -1425,7 +1426,7 @@ namespace Ginger.Run
                     xRunSetLoadingPnl.Visibility = Visibility.Visible;
                     xRunsetPageGrid.Visibility = Visibility.Collapsed;
                     mRunSetConfig = runSetConfig;
-                    CurrentItem = mRunSetConfig;
+                    CurrentItemToSave = mRunSetConfig;
                     mRunSetConfig.SaveBackup();
 
                     mRunSetConfig.StartDirtyTracking();

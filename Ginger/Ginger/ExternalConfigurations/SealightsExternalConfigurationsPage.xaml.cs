@@ -36,7 +36,7 @@ namespace Ginger.Configurations
     /// </summary>
     public partial class SealightsExternalConfigurationsPage : GingerUIPage
     {
-        SealightsConfiguration _SealightsConfiguration = new SealightsConfiguration();
+        SealightsConfiguration _SealightsConfiguration;
 
         public SealightsExternalConfigurationsPage()
         {
@@ -47,9 +47,9 @@ namespace Ginger.Configurations
         private void Init()
         {
             _SealightsConfiguration = WorkSpace.Instance.Solution.SealightsConfiguration;
-            _SealightsConfiguration.StartDirtyTracking();
-            CurrentItem = WorkSpace.Instance.Solution;
+            CurrentItemToSave = WorkSpace.Instance.Solution;
             SetControls();
+            _SealightsConfiguration.StartDirtyTracking();
         }
 
         private void SetControls()
