@@ -357,8 +357,11 @@ namespace GingerCore
             get { return mType; }
             set
             {
-                mType = value;
-                OnPropertyChanged(nameof(Type));
+                if (mType != value)
+                {
+                    mType = value;
+                    OnPropertyChanged(nameof(Type));
+                }
             }
         }
 
@@ -455,8 +458,11 @@ namespace GingerCore
             }
             set
             {
-                mEnableActionsVariablesDependenciesControl = value;
-                OnPropertyChanged(nameof(EnableActionsVariablesDependenciesControl));
+                if (mEnableActionsVariablesDependenciesControl != value)
+                {
+                    mEnableActionsVariablesDependenciesControl = value;
+                    OnPropertyChanged(nameof(EnableActionsVariablesDependenciesControl));
+                }
             }
         }
 

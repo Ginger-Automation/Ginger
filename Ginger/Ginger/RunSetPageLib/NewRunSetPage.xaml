@@ -1,4 +1,4 @@
-﻿<Page x:Class="Ginger.Run.NewRunSetPage"
+﻿<UserControlsLib:GingerUIPage x:Class="Ginger.Run.NewRunSetPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,6 +6,7 @@
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls" 
       xmlns:z="clr-namespace:Ginger.UserControlsLib.VisualFlow"      
       xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
       xmlns:state="clr-namespace:Ginger.MoveToGingerWPF.Run_Set_Pages"
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
@@ -53,7 +54,7 @@
 
                             <GridSplitter Width="1" Height="25" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="10 0 10 0"/>
 
-                            <usercontrols:ucButton x:Name="xRunsetSaveBtn"  ButtonType="ImageButton"  ButtonFontImageSize="21" ButtonImageWidth="22" ButtonImageHeight="22" ButtonImageType="Save" Click="xRunsetSaveBtn_Click">
+                            <usercontrols:ucButton x:Name="xRunsetSaveBtn"  ButtonType="ImageButton" Visibility="Collapsed"  ButtonFontImageSize="21" ButtonImageWidth="22" ButtonImageHeight="22" ButtonImageType="Save" Click="xRunsetSaveBtn_Click">
                                 <usercontrols:ucButton.ToolTip>
                                     <GingerCore:ucTextDicResource Text="Save [RunSet] Changes"/>
                                 </usercontrols:ucButton.ToolTip>
@@ -505,4 +506,4 @@
         </Grid>
     </Grid>
 
-</Page>
+</UserControlsLib:GingerUIPage>

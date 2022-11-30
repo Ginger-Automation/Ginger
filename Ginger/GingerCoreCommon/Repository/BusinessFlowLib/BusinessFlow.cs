@@ -151,7 +151,6 @@ namespace GingerCore
         }
 
         double? mElapsed;
-        [IsSerializedForLocalRepository]     // TODO: Needed?
         public double? Elapsed
         {
             get { return mElapsed; }

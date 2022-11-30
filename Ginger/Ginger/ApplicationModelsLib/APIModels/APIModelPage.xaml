@@ -1,10 +1,10 @@
-﻿<Page x:Class="GingerWPF.ApplicationModelsLib.APIModels.APIModelPage"
+﻿<UserControlsLib:GingerUIPage x:Class="GingerWPF.ApplicationModelsLib.APIModels.APIModelPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:ginger="clr-namespace:Ginger"
-      xmlns:UserControlsLib1="clr-namespace:Ginger.UserControlsLib"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
       mc:Ignorable="d" 
        d:DesignWidth="750"
       Title="APIModelPage">
@@ -21,7 +21,7 @@
                 <StackPanel  Margin="5,0,10,0">
                     <StackPanel Orientation="Horizontal">
                         <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
-                        <UserControlsLib1:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
+                        <UserControlsLib:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
                     </StackPanel>
                     <TextBox x:Name="txtName" Style="{StaticResource $TextBoxStyle}" FontSize="14" FontWeight="Bold" />
                 </StackPanel>
@@ -34,7 +34,7 @@
 
                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="0,5,0,0" >
                     <Label Style="{StaticResource @LabelStyle}" Content="Target Application:" VerticalAlignment="Center"/>
-                    <UserControlsLib1:UCComboBox x:Name="xTargetApplicationComboBox" Width="250" VerticalAlignment="Center"></UserControlsLib1:UCComboBox>
+                    <UserControlsLib:UCComboBox x:Name="xTargetApplicationComboBox" Width="250" VerticalAlignment="Center"></UserControlsLib:UCComboBox>
                 </StackPanel>
             </StackPanel>
 
@@ -73,7 +73,7 @@
                             <StackPanel Grid.Row="0" VerticalAlignment="Top">
                                 <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
                                     <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,10,0">API Type:</Label>
-                                    <UserControlsLib1:UCComboBox x:Name="xAPITypeComboBox" Width="120"></UserControlsLib1:UCComboBox>
+                                    <UserControlsLib:UCComboBox x:Name="xAPITypeComboBox" Width="120"></UserControlsLib:UCComboBox>
                                 </StackPanel>
                                 <StackPanel  VerticalAlignment="Top" Margin="0,0,0,0">
                                     <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,10,0">End Point URL:</Label>
@@ -83,19 +83,19 @@
                                 <StackPanel x:Name="RestHeader"  Orientation="Horizontal" Visibility="Visible" Margin="0,10,0,0">
                                     <StackPanel Width="160" Margin="0,0,0,0">
                                         <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">Request Type:</Label>
-                                        <UserControlsLib1:UCComboBox x:Name="RequestTypeComboBox"></UserControlsLib1:UCComboBox>
+                                        <UserControlsLib:UCComboBox x:Name="RequestTypeComboBox"></UserControlsLib:UCComboBox>
                                     </StackPanel>
                                     <StackPanel Width="160" Margin="10,0,10,0">
                                         <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">HTTP Version:</Label>
-                                        <UserControlsLib1:UCComboBox x:Name="HttpVersioncombobox"></UserControlsLib1:UCComboBox>
+                                        <UserControlsLib:UCComboBox x:Name="HttpVersioncombobox"></UserControlsLib:UCComboBox>
                                     </StackPanel>
                                     <StackPanel Width="160" Margin="10,0,10,0">
                                         <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">Response Content Type:</Label>
-                                        <UserControlsLib1:UCComboBox x:Name="ResponseTypeComboBox"></UserControlsLib1:UCComboBox>
+                                        <UserControlsLib:UCComboBox x:Name="ResponseTypeComboBox"></UserControlsLib:UCComboBox>
                                     </StackPanel>
                                     <StackPanel Width="195" Margin="10,0,10,0">
                                         <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">Cookies:</Label>
-                                        <UserControlsLib1:UCComboBox x:Name="CookieMode"></UserControlsLib1:UCComboBox>
+                                        <UserControlsLib:UCComboBox x:Name="CookieMode"></UserControlsLib:UCComboBox>
                                     </StackPanel>
                                 </StackPanel>
 
@@ -147,7 +147,7 @@
                                                 <StackPanel Orientation="Vertical">
                                                     <StackPanel x:Name="RequestContent" Margin="0,0,0,0" Orientation="Horizontal" HorizontalAlignment="Left" >
                                                         <Label Style="{StaticResource @InputFieldLabelStyle}">Body Content Type:</Label>
-                                                        <UserControlsLib1:UCComboBox x:Name="ContentTypeComboBox" Width="250" Margin="35,0,0,0"></UserControlsLib1:UCComboBox>
+                                                        <UserControlsLib:UCComboBox x:Name="ContentTypeComboBox" Width="250" Margin="35,0,0,0"></UserControlsLib:UCComboBox>
                                                     </StackPanel>
                                                     <StackPanel x:Name="ContentTypeParameters" Orientation="Vertical">
                                                         <StackPanel x:Name="RequestBodyTypePanel" Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,0">
@@ -241,11 +241,11 @@
                                             </StackPanel>
                                             <StackPanel Width="175" HorizontalAlignment="Left" Margin="0,5,0,0">
                                                 <Label Style="{StaticResource @InputFieldLabelStyle}">Security Type:</Label>
-                                                <UserControlsLib1:UCComboBox x:Name="SecurityTypeComboBox" ></UserControlsLib1:UCComboBox>
+                                                <UserControlsLib:UCComboBox x:Name="SecurityTypeComboBox" ></UserControlsLib:UCComboBox>
                                             </StackPanel>
                                             <StackPanel Width="175" HorizontalAlignment="Left" Margin="0,5,0,0">
                                                 <Label Style="{StaticResource @InputFieldLabelStyle}">Authorization:</Label>
-                                                <UserControlsLib1:UCComboBox x:Name="AuthTypeComboBox" Grid.Column="0" ></UserControlsLib1:UCComboBox>
+                                                <UserControlsLib:UCComboBox x:Name="AuthTypeComboBox" Grid.Column="0" ></UserControlsLib:UCComboBox>
                                             </StackPanel>
                                             <StackPanel x:Name="Auth_Creds" Visibility="Collapsed" Margin="20,0,0,0" HorizontalAlignment="Left">
                                                 <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0">User:</Label>
@@ -285,4 +285,4 @@
 
         </Grid>
     </ScrollViewer>
-</Page>
+</UserControlsLib:GingerUIPage>
