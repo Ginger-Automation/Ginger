@@ -214,6 +214,180 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
 
         }
 
+        [TestMethod]
+        [Timeout(60000)]
+        public void ErrorHandlerActivityWithContinueFromNextActionPostAction()
+        {
+            //Arrange
+            CreateActivityListForBusinessFlow();
+            var failingActivity = GetActivityWithFailedActionScenario();
+            ErrorHandler errorHandlerActivity = GetErrorHandlerActivity();
+            errorHandlerActivity.ErrorHandlerPostExecutionAction = eErrorHandlerPostExecutionAction.ContinueFromNextAction;
+            errorHandlerActivity.ActivityName = "Error Handler Activity With ContinueFromNextAction PostAction";
+
+            mBF.AddActivity(failingActivity, null, 3);
+            mBF.AddActivity(errorHandlerActivity, null, 5);
+
+            Context context = new Context();
+            context.BusinessFlow = mBF;
+            context.Activity = mBF.Activities[0];
+
+            mGR.Executor.CurrentBusinessFlow = mBF;
+            mGR.Executor.CurrentBusinessFlow.CurrentActivity = mBF.Activities[0];
+            mGR.Executor.Context = context;
+
+            //Act
+            mGR.Executor.RunBusinessFlow(mBF);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Failed, mBF.RunStatus, "Business Flow Status");
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[0].Status, "Activity 1 Status");
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[1].Status, "Activity 2 Status");
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[2].Status, "Activity 3 Status");
+            Assert.AreEqual(eRunStatus.Failed, mBF.Activities[3].Status, "Activity 5 Status");
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[4].Status);
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[5].Status);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ErrorHandlerActivityWithContinueFromNextActivityPostAction()
+        {
+            //Arrange
+            CreateActivityListForBusinessFlow();
+            var failingActivity = GetActivityWithFailedActionScenario();
+            ErrorHandler errorHandlerActivity = GetErrorHandlerActivity();
+            errorHandlerActivity.ErrorHandlerPostExecutionAction = eErrorHandlerPostExecutionAction.ContinueFromNextActivity;
+            errorHandlerActivity.ActivityName = "Error Handler Activity With ContinueFromNextActivity PostAction";
+
+            mBF.AddActivity(failingActivity, null, 3);
+            mBF.AddActivity(errorHandlerActivity, null, 5);
+
+            Context context = new Context();
+            context.BusinessFlow = mBF;
+            context.Activity = mBF.Activities[0];
+
+            mGR.Executor.CurrentBusinessFlow = mBF;
+            mGR.Executor.CurrentBusinessFlow.CurrentActivity = mBF.Activities[0];
+            mGR.Executor.Context = context;
+
+            //Act
+            mGR.Executor.RunBusinessFlow(mBF);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Failed, mBF.RunStatus, "Business Flow Status");
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[0].Status, "Activity 1 Status");
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[1].Status, "Activity 2 Status");
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[2].Status, "Activity 3 Status");
+            Assert.AreEqual(eRunStatus.Failed, mBF.Activities[3].Status, "Activity 5 Status");
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[4].Status);
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[5].Status);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ErrorHandlerActivityWithContinueFromNextBusinessFlowPostAction()
+        {
+            //Arrange
+            CreateActivityListForBusinessFlow();
+            var failingActivity = GetActivityWithFailedActionScenario();
+            ErrorHandler errorHandlerActivity = GetErrorHandlerActivity();
+            errorHandlerActivity.ErrorHandlerPostExecutionAction = eErrorHandlerPostExecutionAction.ContinueFromNextBusinessFlow;
+            errorHandlerActivity.ActivityName = "Error Handler Activity With ContinueFromNextBusinessFlow PostAction";
+            Activity activity6 = CreateDummyActivities(1, 2)[0];
+            mBF.ActivitiesGroups[0].AddActivityToGroup(activity6);
+
+            mBF.AddActivity(failingActivity, null, 3);
+            mBF.AddActivity(activity6, null, 4);
+            mBF.AddActivity(errorHandlerActivity, null, mBF.Activities.Count);
+
+            BusinessFlow dummyBF = CreateDummyBusinessFlow(1, 1);
+
+            Context context = new Context();
+            context.BusinessFlow = mBF;
+            context.Activity = mBF.Activities[0];
+
+            GingerRunner runner = new GingerRunner();
+            runner.Executor = new GingerExecutionEngine(runner);
+
+            ((GingerExecutionEngine)runner.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)runner.Executor).SolutionAgents.Add(wsAgent);
+
+            runner.Executor.BusinessFlows.Add(mBF);
+            runner.Executor.BusinessFlows.Add(dummyBF);
+
+            runner.Executor.CurrentBusinessFlow = mBF;
+            runner.Executor.CurrentBusinessFlow.CurrentActivity = mBF.Activities[0];
+            runner.Executor.Context = context;
+
+            //Act
+            runner.Executor.RunRunner();
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Failed, mBF.RunStatus, "Business Flow Status");
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[0].Status, "Activity 1 Status");
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[1].Status, "Activity 2 Status");
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[2].Status, "Activity 3 Status");
+            Assert.AreEqual(eRunStatus.Failed, mBF.Activities[3].Status, "Activity 5 Status");
+            Assert.AreEqual(eRunStatus.Skipped, mBF.Activities[4].Status, "Activity 6 Status");
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[5].Status);
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[6].Status);
+            Assert.AreEqual(eRunStatus.Passed, dummyBF.RunStatus, "Dummy Business Flow Status");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ErrorHandlerActivityWithStopRunPostAction()
+        {
+            //Arrange
+            CreateActivityListForBusinessFlow();
+            var failingActivity = GetActivityWithFailedActionScenario();
+            ErrorHandler errorHandlerActivity = GetErrorHandlerActivity();
+            errorHandlerActivity.ErrorHandlerPostExecutionAction = eErrorHandlerPostExecutionAction.StopRun;
+            errorHandlerActivity.ActivityName = "Error Handler Activity With StopRun PostAction";
+            Activity activity6 = CreateDummyActivities(1, 2)[0];
+            mBF.ActivitiesGroups[0].AddActivityToGroup(activity6);
+
+            mBF.AddActivity(failingActivity, null, 3);
+            mBF.AddActivity(activity6, null, 4);
+            mBF.AddActivity(errorHandlerActivity, null, mBF.Activities.Count);
+
+            BusinessFlow dummyBF = CreateDummyBusinessFlow(1, 1);
+
+            Context context = new Context();
+            context.BusinessFlow = mBF;
+            context.Activity = mBF.Activities[0];
+
+            GingerRunner runner = new GingerRunner();
+            runner.Executor = new GingerExecutionEngine(runner);
+
+            ((GingerExecutionEngine)runner.Executor).SolutionAgents = new ObservableList<Agent>();
+            ((GingerExecutionEngine)runner.Executor).SolutionAgents.Add(wsAgent);
+
+            runner.Executor.BusinessFlows.Add(mBF);
+            runner.Executor.BusinessFlows.Add(dummyBF);
+            foreach (BusinessFlow bf in runner.Executor.BusinessFlows)
+                bf.Reset(true);
+
+            runner.Executor.CurrentBusinessFlow = mBF;
+            runner.Executor.CurrentBusinessFlow.CurrentActivity = mBF.Activities[0];
+            runner.Executor.Context = context;
+
+            //Act
+            runner.Executor.RunRunner();
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Failed, mBF.RunStatus, "Business Flow Status");
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[0].Status, "Activity 1 Status");
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[1].Status, "Activity 2 Status");
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[2].Status, "Activity 3 Status");
+            Assert.AreEqual(eRunStatus.Failed, mBF.Activities[3].Status, "Activity 5 Status");
+            Assert.AreEqual(eRunStatus.Skipped, mBF.Activities[4].Status, "Activity 6 Status");
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[5].Status);
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[6].Status);
+            Assert.AreEqual(eRunStatus.Skipped, dummyBF.RunStatus, "Dummy Business Flow Status");
+        }
+
         private static ErrorHandler GetErrorHandlerActivity()
         {
             ErrorHandler errorHandlerActivity1 = new ErrorHandler();
@@ -319,6 +493,56 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
 
             mBF.ActivitiesGroups.Add(activityGroup);
 
+        }
+
+        private BusinessFlow CreateDummyBusinessFlow(int activityCount, int actionCount)
+        {
+            BusinessFlow dummyBusinessFlow = new BusinessFlow();
+
+            ActivitiesGroup activityGroup = new ActivitiesGroup();
+            Activity[] activities = CreateDummyActivities(activityCount, actionCount);
+
+            foreach (Activity activity in activities)
+                activityGroup.AddActivityToGroup(activity);
+
+            foreach (Activity activity in activities)
+                dummyBusinessFlow.Activities.Add(activity);
+
+            dummyBusinessFlow.ActivitiesGroups.Add(activityGroup);
+
+            return dummyBusinessFlow;
+        }
+
+        private Activity[] CreateDummyActivities(int activityCount, int actionCount)
+        {
+            Activity[] activities = new Activity[activityCount];
+            for(int count = 0; count < activityCount; count++)
+            {
+                Activity activity = new Activity();
+                activity.Active = true;
+
+                Act[] actions = CreateDummyActions(actionCount);
+                foreach (Act action in actions)
+                    activity.Acts.Add(action);
+
+                activities[count] = activity;
+            }
+
+            return activities;
+        }
+
+        private Act[] CreateDummyActions(int actionCount)
+        {
+            Act[] actions = new Act[actionCount];
+            for(int count = 0; count < actionCount; count++)
+            {
+                ActDummy act = new ActDummy();
+                act.Active = true;
+
+                actions[count] = act;
+            }
+
+            return actions;
         }
     }
 }
