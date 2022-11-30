@@ -42,6 +42,7 @@ using System.Reflection;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using OpenQA.Selenium;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 
 namespace GingerCore.Drivers.WindowsLib
 {
@@ -1101,7 +1102,7 @@ namespace GingerCore.Drivers.WindowsLib
             return EI;
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             return await Task.Run(async () =>
             {
@@ -1194,6 +1195,7 @@ namespace GingerCore.Drivers.WindowsLib
             {
                 list.Add(new ControlProperty() { Name = ElementProperty.Value, Value = ElementInfo.Value });
             }
+            
             list.Add(new ControlProperty() { Name = ElementProperty.Height, Value = ElementInfo.Height.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.Width, Value = ElementInfo.Width.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.X, Value = ElementInfo.X.ToString() });
@@ -1834,6 +1836,17 @@ namespace GingerCore.Drivers.WindowsLib
             size.Height = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Height;
             size.Width = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Width;
             return size.ToString();
+        }
+
+        public ObservableList<ElementLocator> GetElement
+            (ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
         }
     }
 }

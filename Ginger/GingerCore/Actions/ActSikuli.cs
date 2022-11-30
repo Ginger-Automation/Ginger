@@ -258,7 +258,8 @@ namespace GingerCore.Actions
 
         public void SetFocusToSelectedApplicationInstance()
         {
-            if (!string.IsNullOrEmpty(ProcessNameForSikuliOperation))
+            string processNameForSikuli = ValueExpression.Calculate(ProcessNameForSikuliOperation);
+            if (!string.IsNullOrEmpty(processNameForSikuli))
             {
                 if (lstWindows.Count == 0)
                 {
@@ -266,13 +267,13 @@ namespace GingerCore.Actions
                 }
                 if (lstWindows.Count != 0)
                 {
-                    WinAPIAutomation.ShowWindow(lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).First());
+                    WinAPIAutomation.ShowWindow(lstWindows.Where(m => m.Current.Name.Equals(processNameForSikuli)).First());
                     if (SetCustomResolution)
                     {
                         List<int> lstVal = GetCustomResolutionValues();
                         if (lstVal.Count == 2)
                         {
-                            WinAPIAutomation.ResizeExternalWindow(lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).First(), lstVal[0], lstVal[1]);
+                            WinAPIAutomation.ResizeExternalWindow(lstWindows.Where(m => m.Current.Name.Equals(processNameForSikuli)).First(), lstVal[0], lstVal[1]);
                         }
                     }
                 }
@@ -348,9 +349,9 @@ namespace GingerCore.Actions
                     {
                         await sikuliLauncher.Stop();
                     }
-                    ProcessNameForSikuliOperation = veProcessName;
                 }
             }
+            ProcessNameForSikuliOperation = veProcessName;
         }
 
         private void sikuliLauncher_EvtLogMessage(object sender, EventArgs e)
@@ -596,9 +597,7 @@ namespace GingerCore.Actions
 
         private void SetProcessAsPerVE()
         {
-            ValueExpression mVE = new ValueExpression(Amdocs.Ginger.Common.Context.GetAsContext(Context).Environment, Amdocs.Ginger.Common.Context.GetAsContext(Context), WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
-            mVE.Value = ProcessNameForSikuliOperation;
-            string calculateValue = mVE.ValueCalculated;
+            string calculateValue = GetInputParamCalculatedValue(nameof(ProcessNameForSikuliOperation));
             bool bSimilar = ActiveProcessWindows.Any(p => p.Contains(calculateValue));
             if (bSimilar)
             {

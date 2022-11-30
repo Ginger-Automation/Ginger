@@ -7,6 +7,12 @@
              xmlns:Ginger="clr-namespace:Ginger"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="500" KeyDown="UserControl_KeyDown">
+    <UserControl.Resources>
+        <Style TargetType="ListViewItem" x:Key="$UcListViewItemStyle" BasedOn="{StaticResource $ListViewItemStyle}">
+            <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick"/>
+        </Style>
+    </UserControl.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition x:Name="xListTitleRow" Height="40" />
@@ -49,7 +55,7 @@
         <ListView x:Name="xListView" Grid.Row="3" 
                   Margin="0 0 0 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible" 
                   VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" 
-                  VerticalContentAlignment="Top"  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionMode="Single" IsSynchronizedWithCurrentItem="True" ItemContainerStyle="{StaticResource $ListViewItemStyle}" 
+                  VerticalContentAlignment="Top"  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionMode="Single" IsSynchronizedWithCurrentItem="True" ItemContainerStyle="{StaticResource $UcListViewItemStyle}" 
                   SelectionChanged="xListView_SelectionChanged" AllowDrop="True" >
 
             <ListView.GroupStyle>

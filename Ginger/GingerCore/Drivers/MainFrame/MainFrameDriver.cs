@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -707,7 +708,7 @@ namespace GingerCore.Drivers.MainFrame
             throw new System.NotImplementedException();
         }
 
-        public async Task<System.Collections.Generic.List<ElementInfo>> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
+        public async Task<System.Collections.Generic.List<ElementInfo>> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             return await Task.Run(() =>
             {
@@ -851,6 +852,11 @@ namespace GingerCore.Drivers.MainFrame
         public string GetCurrentPageSourceString()
         {
             return null;
+        }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -21,6 +21,8 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
 using Ginger.UserControls;
+using Ginger.UserControlsLib;
+using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Activities;
 using System;
@@ -35,7 +37,7 @@ namespace Ginger.Activities
     /// <summary>
     /// Interaction logic for ActivitiesGroupPage.xaml
     /// </summary>
-    public partial class ActivitiesGroupPage : Page
+    public partial class ActivitiesGroupPage : GingerUIPage
     {
         ActivitiesGroup mActivitiesGroup;
         BusinessFlow mBusinessFlow = null;
@@ -97,12 +99,19 @@ namespace Ginger.Activities
 
         private void GroupActivitiesHandler(object sender, RoutedEventArgs e)
         {
-            ucGrid senderGrid = sender as ucGrid;
-
-            ObservableList<Amdocs.Ginger.Repository.RepositoryItemBase> selectedActivitiesList = null;
-            if (senderGrid != null)
+            if (sender != null)
             {
-                selectedActivitiesList = senderGrid.GetSelectedItems();
+                ObservableList<Amdocs.Ginger.Repository.RepositoryItemBase> selectedActivitiesList = null;
+                if (sender is ucGrid)
+                {
+                    ucGrid senderGrid = sender as ucGrid;
+                    selectedActivitiesList = senderGrid.GetSelectedItems();
+                }
+                else if (sender is UcListView)
+                {
+                    UcListView senderLst = sender as UcListView;
+                    selectedActivitiesList = senderLst.GetSelectedItems();
+                }
 
                 if (selectedActivitiesList != null && selectedActivitiesList.Count > 0)
                 {
@@ -246,6 +255,15 @@ namespace Ginger.Activities
             {
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivitiesGroup);
                 _pageGenericWin.Close();
+            }
+        }
+
+        protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (mEditMode == eEditMode.SharedRepository && mActivitiesGroup != null && !String.IsNullOrEmpty(mActivitiesGroup.ContainingFolder))
+            {
+                CurrentItem = mActivitiesGroup;
+                base.IsVisibleChangedHandler(sender, e);
             }
         }
     }

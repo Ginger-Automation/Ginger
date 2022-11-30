@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -253,6 +254,37 @@ namespace Amdocs.Ginger.Repository
             {
                 mIsCollapseDetailsExapander = value;
                 OnPropertyChanged(nameof(this.IsCollapseDetailsExapander));
+            }
+        }
+
+        private ObservableList<POMPageMetaData> mApplicationPOMMetaData;
+        /// <summary>
+        /// Been used to identify if POMMetaData were lazy loaded already or not
+        /// </summary>
+        public bool ApplicationPOMMetaDataLazyLoad { get { return (mApplicationPOMMetaData != null) ? mApplicationPOMMetaData.LazyLoad : false; } }
+        [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.NodePath)]
+        [IsSerializedForLocalRepository]
+        public ObservableList<POMPageMetaData> ApplicationPOMMetaData
+        {
+            get
+            {
+                if (mApplicationPOMMetaData == null)
+                {
+                    mApplicationPOMMetaData = new ObservableList<POMPageMetaData>();
+                }
+                if (mApplicationPOMMetaData.LazyLoad)
+                {
+                    mApplicationPOMMetaData.LoadLazyInfo();
+                    if (this.DirtyStatus != eDirtyStatus.NoTracked)
+                    {
+                        this.TrackObservableList(mApplicationPOMMetaData);
+                    }
+                }
+                return mApplicationPOMMetaData;
+            }
+            set
+            {
+                mApplicationPOMMetaData = value;
             }
         }
     }

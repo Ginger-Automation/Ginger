@@ -441,7 +441,7 @@ namespace Ginger
             xSimpleHeaderTitle.Style = (Style)TryFindResource("$ucGridTitleLightStyle");
         }
 
-        public void SetGridEnhancedHeader(eImageType itemTypeIcon, string itemTypeName = "", RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null)
+        public void SetGridEnhancedHeader(eImageType itemTypeIcon, string itemTypeName = "", RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, bool isSaveButtonHidden = false)
         {
             GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
 
@@ -459,7 +459,7 @@ namespace Ginger
                 xEnhancedHeaderTitle.Content = itemTypeName;
             }
 
-            if (saveAllHandler != null)
+            if (saveAllHandler != null && !isSaveButtonHidden)
             {
                 xEnhancedHeaderSaveAllButton.Click += saveAllHandler;
                 xEnhancedHeaderSaveAllButton.Visibility = Visibility.Visible;

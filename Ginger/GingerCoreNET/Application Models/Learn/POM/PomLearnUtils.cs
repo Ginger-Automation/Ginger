@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore;
@@ -199,13 +200,14 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 if (SelectedElementTypesList.Count > 0)
                 {
-                    await IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList,true, SpecificFramePath,GetRelativeXpathTemplateList(), LearnScreenshotsOfElements);
+                    await IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList,true, SpecificFramePath,GetRelativeXpathTemplateList(), LearnScreenshotsOfElements, POM.ApplicationPOMMetaData);
                 }
             }
             else
             {
-               await IWindowExplorerDriver.GetVisibleControls(null, mElementsList,true, SpecificFramePath,GetRelativeXpathTemplateList(), LearnScreenshotsOfElements);
+               await IWindowExplorerDriver.GetVisibleControls(null, mElementsList,true, SpecificFramePath,GetRelativeXpathTemplateList(), LearnScreenshotsOfElements, POM.ApplicationPOMMetaData);
             }
+
         }
 
         private List<string> GetRelativeXpathTemplateList()

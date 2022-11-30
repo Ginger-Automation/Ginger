@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -29,14 +29,14 @@ namespace Amdocs.Ginger.Repository
 
         string mName = string.Empty;
         [IsSerializedForLocalRepository]
-        public string Name { get { return mName; } set { mName = value; OnPropertyChanged(Fields.Name); } }
+        public string Name { get { return mName; } set { if (mName != value) { mName = value; OnPropertyChanged(Fields.Name); } } }
 
         string mDescription = string.Empty;
         [IsSerializedForLocalRepository]
         public string Description
         {
             get { return mDescription; }
-            set { mDescription = value; OnPropertyChanged(Fields.Description); }
+            set { if (mDescription != value) { mDescription = value; OnPropertyChanged(Fields.Description); } }
         }
 
 

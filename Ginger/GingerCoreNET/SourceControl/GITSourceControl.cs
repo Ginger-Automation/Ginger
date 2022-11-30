@@ -28,6 +28,7 @@ using System.IO;
 using GingerCoreNET.SourceControl;
 using amdocs.ginger.GingerCoreNET;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace GingerCore.SourceControl
 {
@@ -802,15 +803,21 @@ namespace GingerCore.SourceControl
 
         private MergeResult Pull()
         {
+            MergeResult mergeResult = null;
             //Pull = Fetch + Merge
-            using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
-            {
-                PullOptions PullOptions = new PullOptions();
-                PullOptions.FetchOptions = new FetchOptions();
-                PullOptions.FetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
-                MergeResult mergeResult = Commands.Pull(repo, new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), PullOptions);
-                return mergeResult;
-            }
+            Task.Run(() =>
+             {
+                 using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                 {
+
+                     PullOptions PullOptions = new PullOptions();
+                     PullOptions.FetchOptions = new FetchOptions();
+                     PullOptions.FetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
+                     mergeResult = Commands.Pull(repo, new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), PullOptions);
+                     
+                 }
+             }).Wait();
+            return mergeResult;
         }
 
         private Commit Commit(string Comments)

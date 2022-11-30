@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -1219,7 +1220,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             return list;
         }
         
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null,bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null,bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             //TODO: impl
             return null;
@@ -1404,6 +1405,11 @@ namespace GingerCore.Drivers.InternalBrowserLib
         public string GetCurrentPageSourceString()
         {
             return null;
+        }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
         }
     }
 }

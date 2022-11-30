@@ -39,14 +39,16 @@ using GingerCore.Drivers.JavaDriverLib;
 using Ginger.Drivers;
 using GingerCore.Drivers.MainFrame;
 using GingerCore.Drivers.AndroidADB;
+using amdocs.ginger.GingerCoreNET;
 using GingerCore.GeneralLib;
+using Ginger.UserControlsLib;
 
 namespace Ginger.DataSource
 {
     /// <summary>
     /// Interaction logic for AgentEditPage.xaml
     /// </summary>
-    public partial class DataSourcePage : Page
+    public partial class DataSourcePage : GingerUIPage
     {
         DataSourceBase mDSDetails;
         ObservableList<DataSourceTable> mDSTableList;
@@ -58,6 +60,7 @@ namespace Ginger.DataSource
             if (dsDetails != null)    
             {
                 mDSDetails = dsDetails;
+                CurrentItem= mDSDetails;
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DataSourceNameTextBox, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.Name);
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDataSourcePath, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.FilePath, BindingMode.OneWay);
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DataSourceTypeTextBox, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.DSType, BindingMode.OneWay);
@@ -190,7 +193,7 @@ namespace Ginger.DataSource
                 mDSTableList.Add(dsTableDetails);
             }           
         }
-        
+
         #endregion Functions
     }
 }

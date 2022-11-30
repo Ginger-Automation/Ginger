@@ -78,7 +78,9 @@ namespace GingerCore.Actions
             get
             {
                 if (string.IsNullOrEmpty(mScreenshotTempFolder))
+                { 
                     mScreenshotTempFolder = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "Ginger_Screenshots");
+                }
                 return mScreenshotTempFolder;
             }
         }
@@ -149,7 +151,7 @@ namespace GingerCore.Actions
 
         private bool mEnableActionLogConfig;
         [IsSerializedForLocalRepository]
-        public bool EnableActionLogConfig { get { return mEnableActionLogConfig; } set { mEnableActionLogConfig = value; OnPropertyChanged(nameof(EnableActionLogConfig)); } }
+        public bool EnableActionLogConfig { get { return mEnableActionLogConfig; } set { if (mEnableActionLogConfig != value) { mEnableActionLogConfig = value; OnPropertyChanged(nameof(EnableActionLogConfig)); } } }
 
 
         private bool mActive;
@@ -173,8 +175,11 @@ namespace GingerCore.Actions
             { return mSupportSimulation; }
             set
             {
-                mSupportSimulation = value;
-                OnPropertyChanged(Fields.SupportSimulation);
+                if (mSupportSimulation != value)
+                {
+                    mSupportSimulation = value;
+                    OnPropertyChanged(Fields.SupportSimulation);
+                }
             }
         }
 
@@ -269,20 +274,22 @@ namespace GingerCore.Actions
             }
             set
             {
-                mEnableRetryMechanism = value;
+                if (mEnableRetryMechanism != value)
+                {
+                    mEnableRetryMechanism = value;
+                    OnPropertyChanged(Fields.EnableRetryMechanism);
+                }
 
-                if (value == false)
+                if (!value)
                 {
                     MaxNumberOfRetries = 0;
                 }
-
-                OnPropertyChanged(Fields.EnableRetryMechanism);
             }
         }
 
         private int mRetryMechanismInterval = 5;
         [IsSerializedForLocalRepository]
-        public int RetryMechanismInterval { get { return mRetryMechanismInterval; } set { mRetryMechanismInterval = value; OnPropertyChanged(Fields.RetryMechanismInterval); } }
+        public int RetryMechanismInterval { get { return mRetryMechanismInterval; } set { if (mRetryMechanismInterval != value) { mRetryMechanismInterval = value; OnPropertyChanged(Fields.RetryMechanismInterval); } } }
 
         private int mMaxNumberOfRetries = 2;
         [IsSerializedForLocalRepository]
@@ -298,8 +305,11 @@ namespace GingerCore.Actions
             }
             set
             {
-                mMaxNumberOfRetries = value;
-                OnPropertyChanged(Fields.MaxNumberOfRetries);
+                if (mMaxNumberOfRetries != value)
+                {
+                    mMaxNumberOfRetries = value;
+                    OnPropertyChanged(Fields.MaxNumberOfRetries);
+                }
             }
         }
 
@@ -313,9 +323,14 @@ namespace GingerCore.Actions
             }
             set
             {
-                mWait = value;
-                if (WaitVE == null)
-                    WaitVE = value.ToString();
+                if (mWait != value)
+                {
+                    mWait = value;
+                    if (WaitVE == null)
+                    {
+                        WaitVE = value.ToString();
+                    }
+                }
             }
         }
 
@@ -329,8 +344,11 @@ namespace GingerCore.Actions
             }
             set
             {
-                mWaitVE = value;
-                OnPropertyChanged(nameof(WaitVE));
+                if (mWaitVE != value)
+                {
+                    mWaitVE = value;
+                    OnPropertyChanged(nameof(WaitVE));
+                }
             }
         }
 
@@ -345,8 +363,11 @@ namespace GingerCore.Actions
             }
             set
             {
-                mTimeout = value;
-                OnPropertyChanged(nameof(Timeout));
+                if (mTimeout != value)
+                {
+                    mTimeout = value;
+                    OnPropertyChanged(nameof(Timeout));
+                }
             }
         } //timeout in secs
 
@@ -360,12 +381,12 @@ namespace GingerCore.Actions
 
         private ePlatformType mPlatform;
         [IsSerializedForLocalRepository]
-        public ePlatformType Platform { get { return mPlatform; } set { mPlatform = value; OnPropertyChanged(Fields.Platform); } }
+        public ePlatformType Platform { get { return mPlatform; } set { if (mPlatform != value) { mPlatform = value; OnPropertyChanged(Fields.Platform); } } }
         // -------------------------------
 
         private bool mTakeScreenShot { get; set; }
         [IsSerializedForLocalRepository]
-        public bool TakeScreenShot { get { return mTakeScreenShot; } set { mTakeScreenShot = value; OnPropertyChanged(Fields.TakeScreenShot); } }
+        public bool TakeScreenShot { get { return mTakeScreenShot; } set { if (mTakeScreenShot != value) { mTakeScreenShot = value; OnPropertyChanged(Fields.TakeScreenShot); } } }
 
 
         private eWindowsToCapture mWindowToCapture;
@@ -374,7 +395,7 @@ namespace GingerCore.Actions
         public eWindowsToCapture WindowsToCapture
         {
             get { return mWindowToCapture; }
-            set { mWindowToCapture = value; OnPropertyChanged(Fields.WindowsToCapture); }
+            set { if (mWindowToCapture != value) { mWindowToCapture = value; OnPropertyChanged(Fields.WindowsToCapture); } }
         }
 
         private eStatusConverterOptions mStatusConverter;
@@ -387,8 +408,11 @@ namespace GingerCore.Actions
             }
             set
             {
-                mStatusConverter = value;
-                OnPropertyChanged(nameof(StatusConverter));
+                if (mStatusConverter != value)
+                {
+                    mStatusConverter = value;
+                    OnPropertyChanged(nameof(StatusConverter));
+                }
             }
         }
 
@@ -437,15 +461,14 @@ namespace GingerCore.Actions
         {
             get
             {
-                if (StatusConverter == eStatusConverterOptions.IgnoreFail)
-                    return true;
-                else
-                    return false;
+                return StatusConverter == eStatusConverterOptions.IgnoreFail;
             }
             set
             {
                 if (value)
+                {
                     StatusConverter = eStatusConverterOptions.IgnoreFail;
+                }
             }
         }
 
@@ -508,7 +531,6 @@ namespace GingerCore.Actions
         public abstract List<ePlatformType> Platforms { get; }
 
         // return all supported LocateBy of this action, so in edit action page we show only the relevant
-        // protected List<Act.eLocatorType> mPlatforms = new List<Platforms.Platform.eType>();
         // by default we return all, each action can override
         // TODO: use abstract to force all actions to impl
         public virtual List<eLocateBy> AvailableLocateBy()
@@ -587,7 +609,7 @@ namespace GingerCore.Actions
             }
             set
             {
-                if (string.IsNullOrEmpty(mExInfo) == false && value.Contains(mExInfo) && value.IndexOf(mExInfo) == 0)//meaning act.ExInfo += was used
+                if (!string.IsNullOrEmpty(mExInfo) && value.Contains(mExInfo) && value.IndexOf(mExInfo) == 0)//meaning act.ExInfo += was used
                 {
                     //add line break
                     mExInfo = string.Format("{0}{1}{2}", value.Substring(0, mExInfo.Length), Environment.NewLine, value.Substring(mExInfo.Length));
@@ -695,12 +717,13 @@ namespace GingerCore.Actions
             bool isActive = true;
             // check if param already exist then update as it can be saved and loaded + keep other values
             ActOutDataSourceConfig ADCS = (from arc in DSOutputConfigParams where arc.DSName == DSName && arc.DSTable == DSTable && arc.OutputType == OutputType select arc).FirstOrDefault();
-            //if (Active != "")
-            //    isActive = bool.Parse(Active);
+
             if (ADCS == null)
             {
                 if (OutputType == "Parameter_Path" || OutDSParamType != "ParamToRow")
+                {
                     isActive = false;
+                }
             }
             else
             {
@@ -712,9 +735,10 @@ namespace GingerCore.Actions
                 isActive = ADCS.Active;
                 ColName = ADCS.TableColumn;
                 if (mColNames != null && !mColNames.Contains(ColName))
+                {
                     ColName = OutputType;
+                }
                 DSOutputConfigParams.Remove(ADCS);
-                ADCS = null;
             }
 
             ADCS = new ActOutDataSourceConfig();
@@ -727,24 +751,34 @@ namespace GingerCore.Actions
             if (mColNames != null)
             {
                 foreach (string sCol in mColNames)
+                {
                     if (sCol != ColName)
+                    {
                         ADCS.PossibleValues.Add(sCol);
+                    }
+                }
             }
 
             ADCS.Active = isActive;
 
             if (ColName != "")
+            {
                 ADCS.TableColumn = ColName;
+            }
         }
 
         public void RemoveAllButOneInputParam(string Param)
         {
-            if ((from aiv in InputValues where aiv.Param == Param select aiv).Count() == 0)
+            if (!(from aiv in InputValues where aiv.Param == Param select aiv).Any())
+            {
                 InputValues.Clear();
+            }
             else
             {
-                while (InputValues.Count() > 1)
+                while (InputValues.Count > 1)
+                {
                     InputValues.Remove((from aiv in InputValues where aiv.Param != Param select aiv).FirstOrDefault());
+                }
             }
         }
 
@@ -755,7 +789,6 @@ namespace GingerCore.Actions
             if (AIV == null)
             {
                 AIV = new ActInputValue();
-                // AIV.Active = true;
                 AIV.Param = Param;
                 InputValues.Add(AIV);
             }
@@ -900,25 +933,23 @@ namespace GingerCore.Actions
             if (typeof(T) == typeof(int))
             {
                 int value = 0;
-                if (int.TryParse(paramValue, out value))
-                    return value;
-                else
-                    return 0; // default value
+                return int.TryParse(paramValue, out value) ? value : 0;
             }
             if (typeof(T) == typeof(bool))
             {
                 bool value = false;
                 if (Boolean.TryParse(paramValue, out value))
+                {
                     return value;
+                }
                 else
+                {
                     return false; // default value
+                }
             }
             if (typeof(T) == typeof(string))
             {
-                if (string.IsNullOrEmpty(paramValue))
-                    return string.Empty;
-                else
-                    return paramValue;
+                return string.IsNullOrEmpty(paramValue) ? string.Empty : paramValue;
             }
             if (typeof(T).BaseType == typeof(Enum))
             {
@@ -1017,22 +1048,23 @@ namespace GingerCore.Actions
             return filePath;
         }
 
-
-
-        //public override string GetNameForFileName() { return Description; }
         public override string GetNameForFileName()
         {
             //TODO: replace name with a unique ID?
             //TODO: To add Action.Name to the file name
             string fn = Description;// + ActionName + ": " + mLocateBy + "=" + LocateValue + " value=" + InputValues.FirstOrDefault(); ; 
-            if (fn.Length > 100)
+            if (fn != null)
             {
-                return fn.Substring(0, 99);
+                if (fn.Length > 100)
+                {
+                    return fn.Substring(0, 99);
+                }
+                else
+                {
+                    return fn;
+                }
             }
-            else
-            {
-                return fn;
-            }
+            return ItemName;
         }
 
         #endregion ActInputValues
@@ -1080,7 +1112,7 @@ namespace GingerCore.Actions
                     if (Value is ArrayList)
                     {
                         int k = ((System.Collections.ArrayList)Value).Count;
-                        AddOrUpdateReturnParamActualWithPath(Key.ToString(), k.ToString(), Path.ToString());
+                        AddOrUpdateReturnParamActualWithPath(Key, k.ToString(), Path.ToString());
                         int j = 1;
                         // If the table base value is a collection of items then loop through them
                         foreach (var item in (ICollection)Value)
@@ -1088,7 +1120,6 @@ namespace GingerCore.Actions
                             AddJsonKeyValueToOutputValue(item, Key + "[" + j + "]", Path);
                             j++;
                         }
-                        k++;
                     }
                     else
                     {
@@ -1104,7 +1135,6 @@ namespace GingerCore.Actions
 
                                     foreach (IList item in (IList)Value)
                                     {
-                                        //string a= (Newtonsoft.Json.Linq.JProperty)item).Name;
                                         AddJsonKeyValueToOutputValue(((Newtonsoft.Json.Linq.JProperty)item).Value, Key + "." + ((Newtonsoft.Json.Linq.JProperty)item).Name, Path);
                                         j++;
                                     }
@@ -1131,10 +1161,13 @@ namespace GingerCore.Actions
                     }
                 }
                 else
+                {
                     try
                     {
                         if (Value != null)
+                        {
                             AddOrUpdateReturnParamActualWithPath(Key, Value.ToString(), Path.ToString());
+                        }
                         else
                         {
                             AddOrUpdateReturnParamActualWithPath(Key, null, Path.ToString());
@@ -1144,6 +1177,7 @@ namespace GingerCore.Actions
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
                     }
+                }
             }
             catch (Exception ex)
             {
@@ -1157,8 +1191,9 @@ namespace GingerCore.Actions
         {
             ActInputValue AIV = (from aiv in InputValues where aiv.Param == Param select aiv).FirstOrDefault();
             if (AIV != null)
+            {
                 return true;
-
+            }
             return false;
         }
 
@@ -1172,9 +1207,11 @@ namespace GingerCore.Actions
                 case eFilterBy.Tags:
                     foreach (Guid tagGuid in Tags)
                     {
-                        Guid guid = ((List<Guid>)obj).Where(x => tagGuid.Equals(x) == true).FirstOrDefault();
+                        Guid guid = ((List<Guid>)obj).Where(x => tagGuid.Equals(x)).FirstOrDefault();
                         if (!guid.Equals(Guid.Empty))
+                        {
                             return true;
+                        }
                     }
                     break;
             }
@@ -1222,7 +1259,9 @@ namespace GingerCore.Actions
             }
 
             if (ARC != null)
+            {
                 ARC.Expected = ExpectedValue;
+            }
         } // end of AddOrUpdateReturnParamExpected
 
 
@@ -1376,12 +1415,18 @@ namespace GingerCore.Actions
         {
             string supportedPlatforms = string.Empty;
             foreach (ePlatformType actPlatform in act.Platforms)
+            {
                 supportedPlatforms += actPlatform.ToString() + ",";
+            }
 
             if (supportedPlatforms.Contains("NA"))
+            {
                 supportedPlatforms = "All";//assumption is that if 'NA' is in the platforms list then all platforms are supported
+            }
             else
+            {
                 supportedPlatforms = supportedPlatforms.TrimEnd(',');
+            }
             return supportedPlatforms;
         }
 
@@ -1437,9 +1482,13 @@ namespace GingerCore.Actions
                             {
                                 VariableDependency varDep = null;
                                 if (this.VariablesDependencies != null)
+                                {
                                     varDep = this.VariablesDependencies.Where(avd => avd.VariableName == listVar.Name && avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                }
                                 if (varDep == null)
+                                {
                                     varDep = this.VariablesDependencies.Where(avd => avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                }
                                 if (varDep != null)
                                 {
                                     if (!varDep.VariableValues.Contains(listVar.Value))
@@ -1455,19 +1504,27 @@ namespace GingerCore.Actions
                                 }
                             }
                             if (checkStatus == null)
+                            {
                                 checkStatus = true;//All Selection List variable selected values were configured on the action
+                            }
                         }
                         else
+                        {
                             checkStatus = true;//the Activity don't has Selection List variables
+                        }
                     }
                     else
-                        checkStatus = true;//the mechanism is disabled                    
+                    {
+                        checkStatus = true;//the mechanism is disabled
+                    }
                 }
                 else
+                {
                     checkStatus = false; //Activity object is null
+                }
 
                 //Check failed
-                if (checkStatus == false && setActStatus == true)
+                if (checkStatus == false && setActStatus)
                 {
                     this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                     this.ExInfo = "Action was not configured to run with current " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " values.";
@@ -1492,7 +1549,9 @@ namespace GingerCore.Actions
         public void InvokPropertyChanngedForAllFields()
         {
             foreach (var field in typeof(Fields).GetFields())
+            {
                 OnPropertyChanged(field.Name);
+            }
         }
 
         public virtual List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
@@ -1512,10 +1571,11 @@ namespace GingerCore.Actions
 
         public void ClearUnUsedReturnParams()
         {
-            //List<ActReturnValue> arvsToRemove = ReturnValues.Where(x => string.IsNullOrEmpty(x.Expected) && string.IsNullOrEmpty(x.StoreToVariable) && string.IsNullOrEmpty(x.StoreToDataSource) && string.IsNullOrEmpty(x.StoreToValue)).ToList();
             List<ActReturnValue> arvsToRemove = ReturnValues.Where(x => string.IsNullOrEmpty(x.Expected) && string.IsNullOrEmpty(x.SimulatedActual) && string.IsNullOrEmpty(x.StoreToValue)).ToList();
             foreach (ActReturnValue arv in arvsToRemove)
+            {
                 ReturnValues.Remove(arv);
+            }
         }
 
 
@@ -1675,8 +1735,13 @@ namespace GingerCore.Actions
                 //        indx--;
                 //    }
                 //}
-                List<ActReturnValue> configuredReturnParamsList = this.ReturnValues.Where(x => String.IsNullOrEmpty(x.Expected) == false || String.IsNullOrEmpty(x.StoreToValue) == false || String.IsNullOrEmpty(x.SimulatedActual) == false).ToList();
-                this.ReturnValues.Clear();
+                List<ActReturnValue> configuredReturnParamsList = this.ReturnValues.Where(x => !String.IsNullOrEmpty(x.Expected) || !String.IsNullOrEmpty(x.StoreToValue) || !String.IsNullOrEmpty(x.SimulatedActual)).ToList();
+                if (this.ReturnValues.Count != 0)
+                {
+                    this.ReturnValues.Clear();
+                }
+                //Added in order to remove the "Raw Response Button" when reseting the excution details
+                this.RawResponseValues = String.Empty;
                 foreach (ActReturnValue returnValue in configuredReturnParamsList)
                 {
                     returnValue.Actual = null;
@@ -1797,22 +1862,22 @@ namespace GingerCore.Actions
                 {
                     if (RCValue.Length > 0) // Ignore empty lines
                     {
-                        string Param;
-                        string Value;
+                        string param;
+                        string value;
                         i = RCValue.IndexOf('=');
                         if (i > 0)
                         {
-                            Param = RCValue.Substring(0, i);
+                            param = RCValue.Substring(0, i);
                             //the rest is the value
-                            Value = RCValue.Substring(Param.Length + 1);
+                            value = RCValue.Substring(param.Length + 1);
                         }
                         else
                         {
                             // in case of bad RC not per Ginger style we show it as "?" with value
-                            Param = "???";
-                            Value = RCValue;
+                            param = "???";
+                            value = RCValue;
                         }
-                        AddOrUpdateReturnParamActual(Param, Value);
+                        AddOrUpdateReturnParamActual(param, value);
                     }
                 }
             }

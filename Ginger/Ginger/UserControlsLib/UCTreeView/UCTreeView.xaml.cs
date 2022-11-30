@@ -94,7 +94,6 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             Tree.SelectedItemChanged += Tree_SelectedItemChanged;
           
-            Tree.MouseDoubleClick += Tree_MouseDoubleClick;
 
             //Hook Drag Drop handler
             //TODO: add flag to decide if Drag and drop is needed          
@@ -142,8 +141,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 mEnableDragDrop = value;
             }
         }
-       
-        private void Tree_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+
+        private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             TreeItemDoubleClicked = true;
             if (ItemDoubleClick != null)

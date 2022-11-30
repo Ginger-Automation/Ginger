@@ -121,32 +121,32 @@ namespace Ginger.MenusLib
         private static Page SharedActivitiesGroups()
         {
             SharedActivitiesGroupsFolderTreeItem activitiesGroupsRoot = new SharedActivitiesGroupsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>());
-            SingleItemTreeViewExplorerPage activitiesGroupsPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.ActivitiesGroups), eImageType.ActivitiesGroup, activitiesGroupsRoot, saveAllHandler: activitiesGroupsRoot.SaveAllTreeFolderItemsHandler);
+            SingleItemTreeViewExplorerPage activitiesGroupsPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.ActivitiesGroups), eImageType.ActivitiesGroup, activitiesGroupsRoot, saveAllHandler: activitiesGroupsRoot.SaveAllTreeFolderItemsHandler, isSaveButtonHidden: true);
             return activitiesGroupsPage;
         }
         private static Page SharedActivities()
         {
             SharedActivitiesFolderTreeItem activitiesRoot = new SharedActivitiesFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>());
-            SingleItemTreeViewExplorerPage activitiesPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.Activities), eImageType.Activity, activitiesRoot, saveAllHandler: activitiesRoot.SaveAllTreeFolderItemsHandler);
+            SingleItemTreeViewExplorerPage activitiesPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.Activities), eImageType.Activity, activitiesRoot, saveAllHandler: activitiesRoot.SaveAllTreeFolderItemsHandler, isSaveButtonHidden: true);
             return activitiesPage;
         }
         private static Page SharedActions()
         {
             SharedActionsFolderTreeItem actionsRoot = new SharedActionsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>());
-            SingleItemTreeViewExplorerPage actionsPage = new SingleItemTreeViewExplorerPage("Actions", eImageType.Action, actionsRoot, actionsRoot.SaveAllTreeFolderItemsHandler);
+            SingleItemTreeViewExplorerPage actionsPage = new SingleItemTreeViewExplorerPage("Actions", eImageType.Action, actionsRoot, actionsRoot.SaveAllTreeFolderItemsHandler, isSaveButtonHidden: true);
             return actionsPage;
         }
         private static Page SharedVariables()
         {
             SharedVariablesFolderTreeItem variablesRoot = new SharedVariablesFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>());
-            SingleItemTreeViewExplorerPage variablesPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.Variables), eImageType.Variable, variablesRoot, variablesRoot.SaveAllTreeFolderItemsHandler);
+            SingleItemTreeViewExplorerPage variablesPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.Variables), eImageType.Variable, variablesRoot, variablesRoot.SaveAllTreeFolderItemsHandler, isSaveButtonHidden: true);
             return variablesPage;
         }
 
         private static Page GetEnvsPage()
         {
             EnvironmentsFolderTreeItem EnvsRoot = new EnvironmentsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ProjEnvironment>());
-            SingleItemTreeViewExplorerPage p = new SingleItemTreeViewExplorerPage("Environments", eImageType.Environment, EnvsRoot, EnvsRoot.SaveAllTreeFolderItemsHandler, EnvsRoot.AddItemHandler);
+            SingleItemTreeViewExplorerPage p = new SingleItemTreeViewExplorerPage("Environments", eImageType.Environment, EnvsRoot, EnvsRoot.SaveAllTreeFolderItemsHandler, EnvsRoot.AddItemHandler, isSaveButtonHidden: true);
             EnvsRoot.IsGingerDefualtFolder = true;
             return p;
         }
@@ -181,14 +181,14 @@ namespace Ginger.MenusLib
         private static Page POMModels()
         {
             ApplicationPOMsTreeItem POMsRoot = new ApplicationPOMsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>());
-            SingleItemTreeViewExplorerPage pomModelPage = new SingleItemTreeViewExplorerPage("Page Objects Models", eImageType.Application, POMsRoot, POMsRoot.SaveAllTreeFolderItemsHandler, POMsRoot.AddPOM);
+            SingleItemTreeViewExplorerPage pomModelPage = new SingleItemTreeViewExplorerPage("Page Objects Models", eImageType.Application, POMsRoot, POMsRoot.SaveAllTreeFolderItemsHandler, POMsRoot.AddPOM, isSaveButtonHidden: true);
             return pomModelPage;
         }
 
         private static Page APIModels()
         {
             AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>());
-            SingleItemTreeViewExplorerPage apiModelPage = new SingleItemTreeViewExplorerPage("API Models", eImageType.APIModel, apiRoot, apiRoot.SaveAllTreeFolderItemsHandler, apiRoot.AddAPIModelFromDocument);
+            SingleItemTreeViewExplorerPage apiModelPage = new SingleItemTreeViewExplorerPage("API Models", eImageType.APIModel, apiRoot, apiRoot.SaveAllTreeFolderItemsHandler, apiRoot.AddAPIModelFromDocument, isSaveButtonHidden: true);
             return apiModelPage;
         }
 
