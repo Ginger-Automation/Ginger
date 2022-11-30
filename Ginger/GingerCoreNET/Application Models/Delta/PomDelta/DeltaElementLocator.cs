@@ -43,13 +43,15 @@ namespace GingerCoreNET.Application_Models
         public bool Active { get { return ElementLocator.Active; } }
         public eLocateBy LocateBy { get { return ElementLocator.LocateBy; } }
         public string LocateValue { get { return ElementLocator.LocateValue; } }
+        
+        public string ReferanceElement { get { return ElementLocator.ReferanceElement; } }
         public bool IsAutoLearned { get { return ElementLocator.IsAutoLearned; } }
         public ElementLocator.eLocateStatus LocateStatus { get { return ElementLocator.LocateStatus; } }
         public eImageType StatusIcon { get { return ElementLocator.StatusIcon; } } 
 
         public ePosition Position { get { return ElementLocator.Position; } }
 
-        public bool FriendlyLocator { get { return ElementLocator.FriendlyLocator; } }
+        public bool EnableFriendlyLocator { get { return ElementLocator.EnableFriendlyLocator; } }
 
         private void MOriginalElementLocator_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {

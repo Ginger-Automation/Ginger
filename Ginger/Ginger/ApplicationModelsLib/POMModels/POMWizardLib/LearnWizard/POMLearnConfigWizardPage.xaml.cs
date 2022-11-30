@@ -41,7 +41,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     {
         private AddPOMWizard mWizard;
         private ePlatformType mAppPlatform;
-
+        public bool isEnableFriendlyLocator = false;
         public POMLearnConfigWizardPage()
         {
             InitializeComponent();
@@ -69,6 +69,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     SetAutoMapElementTypesGridView();
                     xLearnOnlyMappedElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
                     xLearnScreenshotsOfElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnScreenshotsOfElements));
+                    if(mAppPlatform == ePlatformType.Web)
+                    {
+                        isEnableFriendlyLocator = true;
+                    }
                     SetElementLocatorsSettingsGridView();
                     UpdateConfigsBasedOnAgentStatus();
                     PlatformSpecificUIManipulations();
@@ -134,10 +138,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (mAppPlatform == ePlatformType.Web)
             {
                 xLearnScreenshotsOfElements.Visibility = Visibility.Visible;
+                isEnableFriendlyLocator = true;
             }
             else
             {
                 xLearnScreenshotsOfElements.Visibility = Visibility.Collapsed;
+                isEnableFriendlyLocator = false;
             }
             mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
             foreach (Agent agent in mWizard.OptionalAgentsList)
@@ -231,7 +237,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.FriendlyLocator), Header = "Friendly Locator", WidthWeight = 25, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.EnableFriendlyLocator),Visible = isEnableFriendlyLocator , Header = "Friendly Locator", WidthWeight = 25, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 25, ReadOnly = true });
 
             xElementLocatorsSettingsGrid.SetAllColumnsDefaultView(defView);
