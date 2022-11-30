@@ -115,8 +115,6 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        private ConcurrentQueue<RepositoryItemBase> mSourceDirtyQueue = new ConcurrentQueue<RepositoryItemBase>();
-        public ConcurrentQueue<RepositoryItemBase> SourceDirtyQueue { get { return mSourceDirtyQueue; } }
         public virtual string ObjFileExt
         {
             get
@@ -1074,10 +1072,6 @@ namespace Amdocs.Ginger.Repository
 
         internal void RaiseDirtyChanged(object sender, EventArgs e)
         {
-            if (!SourceDirtyQueue.Contains(sender as RepositoryItemBase))
-            {
-                SourceDirtyQueue.Enqueue(sender as RepositoryItemBase);
-            }
             DirtyStatus = eDirtyStatus.Modified;
             // RaiseDirtyChangedEvent();
         }
@@ -1311,10 +1305,6 @@ namespace Amdocs.Ginger.Repository
         public void SetDirtyStatusToNoChange()
         {
             DirtyStatus = eDirtyStatus.NoChange;
-            if(SourceDirtyQueue.Count > 0)
-            {
-                SourceDirtyQueue.Clear();
-            }
 
             // Properties
             foreach (PropertyInfo PI in this.GetType().GetProperties())
