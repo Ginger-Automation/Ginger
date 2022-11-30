@@ -132,7 +132,7 @@ namespace Ginger.Run.RunSetActions
             string reportName = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
             if (RunSetActionHTMLReport.isHTMLReportFolderNameUsed && !String.IsNullOrEmpty(RunSetActionHTMLReport.HTMLReportFolderName))
             {
-                reportsResultFolder = Path.Combine(RunSetActionHTMLReport.HTMLReportFolderName, "Reports");
+                reportsResultFolder = Path.Combine(HTMLReportFolderNameCalculated, "Reports");
             }
             else
             {
