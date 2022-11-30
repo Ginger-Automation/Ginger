@@ -591,19 +591,7 @@ namespace Ginger
             return locateByComboItemList;
         }
 
-        private List<ComboEnumItem> GetAllElementlist()
-        {
-            List<ComboEnumItem> Allelementlist = new List<ComboEnumItem>();
-            List<ElementInfo> MappedElementlist = mSelectedPOM != null ? mSelectedPOM.MappedUIElements.ToList() : new List<ElementInfo>();
-            foreach(var Elem in MappedElementlist)
-            {
-                ComboEnumItem comboEnumItem = new ComboEnumItem();
-                comboEnumItem.text = Elem.ElementName + " [" + Elem.ElementType + "]";
-                comboEnumItem.Value = Elem.Guid;
-                Allelementlist.Add(comboEnumItem);
-            }
-            return Allelementlist;
-        }
+        
         private List<ComboEnumItem> GetPositionList()
         {
             List<ComboEnumItem> PositionComboItemList = new List<ComboEnumItem>();

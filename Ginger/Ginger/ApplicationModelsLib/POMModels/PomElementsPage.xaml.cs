@@ -582,19 +582,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             return locateByComboItemList;
         }
 
-        private List<ComboEnumItem> GetAllElementlist()
-        {
-            List<ComboEnumItem> Allelementlist = new List<ComboEnumItem>();
-            List<ElementInfo> MappedElementlist = mElements.ToList();
-            foreach (var Elem in MappedElementlist)
-            {
-                ComboEnumItem comboEnumItem = new ComboEnumItem();
-                comboEnumItem.text = Elem.ElementName + " [" + Elem.ElementType + "]";
-                comboEnumItem.Value = Elem.Guid;
-                Allelementlist.Add(comboEnumItem);
-            }
-            return Allelementlist;
-        }
         private void DeleteLocatorClicked(object sender, RoutedEventArgs e)
         {
             bool msgShowen = false;
