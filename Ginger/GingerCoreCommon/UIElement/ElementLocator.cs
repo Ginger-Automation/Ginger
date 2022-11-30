@@ -32,7 +32,9 @@ namespace Amdocs.Ginger.Common.UIElement
         public bool Active { get { return mActive; } set { mActive = value; OnPropertyChanged(nameof(Active)); } }
 
         private ePosition mPosition { get; set; }
-
+        /// <summary>
+        /// It is used of Friendly Locator Position e.g. Left, Right, Above etc.
+        /// </summary>
         [IsSerializedForLocalRepository]
         public ePosition Position { get { return mPosition; } set { mPosition = value; OnPropertyChanged(nameof(Position)); } }
 
@@ -59,9 +61,15 @@ namespace Amdocs.Ginger.Common.UIElement
             get { return mLocateValue; }
             set { mLocateValue = value; OnPropertyChanged(nameof(LocateValue)); } }
 
+        private string mReferanceElement { get; set; }
+        public string ReferanceElement
+        {
+            get { return mReferanceElement; }
+            set { mReferanceElement = value; OnPropertyChanged(nameof(ReferanceElement)); }
+        }
+
         private string mHelp { get; set; }
 
-        [IsSerializedForLocalRepository]
         public string Help { get { return mHelp; } set { mHelp = value; OnPropertyChanged(nameof(Help)); } }
 
         private int? mCount { get; set; }
@@ -143,11 +151,9 @@ namespace Amdocs.Ginger.Common.UIElement
             }
         }
 
-        private bool mFriendlyLocator { get; set; }
+        private bool mEnableFriendlyLocator { get; set; }
 
         [IsSerializedForLocalRepository]
-        public bool FriendlyLocator { get { return mFriendlyLocator; } set { mFriendlyLocator = value; OnPropertyChanged(nameof(FriendlyLocator)); } }
-
-        public object FriendlyObject { get; set; }
+        public bool EnableFriendlyLocator { get { return mEnableFriendlyLocator; } set { mEnableFriendlyLocator = value; OnPropertyChanged(nameof(EnableFriendlyLocator)); } }
     }
 }

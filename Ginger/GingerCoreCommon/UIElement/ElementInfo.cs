@@ -675,16 +675,16 @@ namespace Amdocs.Ginger.Common.UIElement
     }
     public enum ePosition
     {
-        [EnumValueDescription("Left Of")]
-        LeftOf,
-        [EnumValueDescription("Right Of")]
-        RightOf,
+        [EnumValueDescription("LeftOf")]
+        left,
+        [EnumValueDescription("RightOf")]
+        right,
         [EnumValueDescription("Above")]
-        Above,
+        above,
         [EnumValueDescription("Below")]
-        Below,
+        below,
         [EnumValueDescription("Near")]
-        Near
+        near
     }
 
 }
