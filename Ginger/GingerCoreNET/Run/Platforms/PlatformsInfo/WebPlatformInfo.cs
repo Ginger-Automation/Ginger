@@ -673,11 +673,11 @@ namespace GingerCore.Platforms.PlatformsInfo
             {
                 //Arrange Position on priority basis
                 mElementPositionList = new List<ePosition>();
-                mElementPositionList.Add(ePosition.LeftOf);
-                mElementPositionList.Add(ePosition.RightOf);
-                mElementPositionList.Add(ePosition.Above);
-                mElementPositionList.Add(ePosition.Below);
-                mElementPositionList.Add(ePosition.Near);
+                mElementPositionList.Add(ePosition.left);
+                mElementPositionList.Add(ePosition.right);
+                mElementPositionList.Add(ePosition.above);
+                mElementPositionList.Add(ePosition.below);
+                mElementPositionList.Add(ePosition.near);
             }
             return mElementPositionList;
         }

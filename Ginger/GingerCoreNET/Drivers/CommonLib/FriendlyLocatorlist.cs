@@ -9,7 +9,7 @@ namespace GingerCoreNET.Drivers.CommonLib
 {
     public class FriendlyLocatorElement
     {
-        public string position { get; set; }
+        public ePosition position { get; set; }
 
         public IWebElement FriendlyElement { get; set; }
     }

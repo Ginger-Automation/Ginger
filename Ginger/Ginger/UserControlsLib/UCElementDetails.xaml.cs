@@ -451,10 +451,9 @@ namespace Ginger
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Position), Header = "Position" , WidthWeight = 25, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = positionList });
 
                 List<ComboEnumItem> locateByList = GetPlatformLocatByList();
-                List<ComboEnumItem> locateValueList = GetAllElementlist();
 
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList });
-                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateValueList });
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.ReferanceElement), Header = "Locate Value", WidthWeight = 65 });
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
                 xFriendlyLocatorsGrid.SetAllColumnsDefaultView(defView);
                 xFriendlyLocatorsGrid.InitViewItems();
@@ -646,6 +645,8 @@ namespace Ginger
                 xPropertiesGrid.DataSourceList = SelectedElement.Properties;
                 xLocatorsGrid.DataSourceList = SelectedElement.Locators;
                 xFriendlyLocatorsGrid.DataSourceList = SelectedElement.FriendlyLocators;
+                xFriendlyLocatorsGrid.ShowAdd = Visibility.Collapsed;
+                xFriendlyLocatorsGrid.ShowDelete = Visibility.Collapsed;
 
                 Dispatcher.Invoke(() =>
                 {
@@ -919,7 +920,6 @@ namespace Ginger
                     LearnedElementInfo = SelectedElement
                 };
             }
-
             CAP = new ControlActionsPage_New(WindowExplorerDriver, SelectedElement, Context, actConfigurations, mCurrentControlTreeViewItem);
             //}
 

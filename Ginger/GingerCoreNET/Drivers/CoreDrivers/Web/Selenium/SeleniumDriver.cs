@@ -3471,7 +3471,7 @@ namespace GingerCore.Drivers
                         if(targetElement!=null)
                         {
                             FriendlyLocatorElement friendlyLocatorElement = new FriendlyLocatorElement();
-                            friendlyLocatorElement.position = (FLocator.Position == ePosition.LeftOf ? "left" : (FLocator.Position == ePosition.RightOf ? "right" : ( FLocator.Position == ePosition.Below ? "below" : ( FLocator.Position == ePosition.Above ? "above" : (FLocator.Position == ePosition.Near ? "near": "")))));
+                            friendlyLocatorElement.position = FLocator.Position;
                             friendlyLocatorElement.FriendlyElement = targetElement;
                             friendlyLocatorElementlist.Add(friendlyLocatorElement);
                         }
@@ -3818,7 +3818,7 @@ namespace GingerCore.Drivers
             List<object> Args = new List<object>();
             foreach (FriendlyLocatorElement friendlyLocatorElement in friendlyLocatorElements)
             {
-                dictionary["kind"] = friendlyLocatorElement.position;
+                dictionary["kind"] = friendlyLocatorElement.position.ToString();
                 dictionary["args"] = new List<object>
                             {
                                 friendlyLocatorElement.FriendlyElement
@@ -4207,7 +4207,7 @@ namespace GingerCore.Drivers
                                 if(newelementinfo != null)
                                 {
                                     felementLocator.LocateValue = newelementinfo.Guid.ToString();
-                                    
+                                    felementLocator.ReferanceElement = newelementinfo.ElementName + "[" + newelementinfo.ElementType + "]";
                                 }
                                 else
                                 {
@@ -5690,13 +5690,7 @@ namespace GingerCore.Drivers
         ObservableList<ElementLocator> IWindowExplorer.GetElementFriendlyLocators(ElementInfo ElementInfo)
         {
 
-            ObservableList<ElementLocator> locatorsList = new ObservableList<ElementLocator>(); //new Platforms.PlatformsInfo.WebPlatform().GetLearningLocators();
-            IWebElement e = null;
-            IWebElement LeftofwebElement = null;
-            IWebElement RightofwebElement = null;
-            IWebElement AbovewebElement = null;
-            IWebElement BelowwebElement = null;
-            IWebElement NearwebElement = null;
+            ObservableList<ElementLocator> locatorsList = new ObservableList<ElementLocator>();
             try
             {
                 if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
@@ -5704,129 +5698,78 @@ namespace GingerCore.Drivers
                     if (((HTMLElementInfo)ElementInfo).HTMLElementObject.NextSibling != null && ((HTMLElementInfo)ElementInfo).HTMLElementObject.NextSibling.Name.StartsWith("#"))
                     {
                         ((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject.NextSibling.NextSibling;
-                        RightofwebElement = ((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject != null ? Driver.FindElement(By.XPath(((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject.XPath)) : null;
-                        ElementLocator elemLocator = new ElementLocator();
-                        elemLocator.Active = true;
-                        elemLocator.Position = ePosition.LeftOf;
-                        elemLocator.LocateBy = eLocateBy.POMElement;
-                        elemLocator.LocateValue = ((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject != null ? (((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject.Name == "div" ? String.Empty : ((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject.XPath) : String.Empty;
-                        elemLocator.IsAutoLearned = true;
-                        if (!string.IsNullOrEmpty(elemLocator.LocateValue))
+                        if (((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject != null)
                         {
-                            locatorsList.Add(elemLocator);
+                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject, ref locatorsList, ePosition.left);
                         }
+                        
                     }
                     else
                     {
                         ((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject.NextSibling;
-                        RightofwebElement = ((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject != null ? Driver.FindElement(By.XPath(((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject.XPath)) : null;
-                        ElementLocator elemLocator = new ElementLocator();
-                        elemLocator.Active = true;
-                        elemLocator.Position = ePosition.LeftOf;
-                        elemLocator.LocateBy = eLocateBy.POMElement;
-                        elemLocator.LocateValue = ((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject != null ? (((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject.Name == "div" ? String.Empty : ((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject.XPath) : String.Empty;
-                        elemLocator.IsAutoLearned = true;
-                        if (!string.IsNullOrEmpty(elemLocator.LocateValue))
+                        if (((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject != null)
                         {
-                            locatorsList.Add(elemLocator);
+                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject, ref locatorsList, ePosition.left);
                         }
+                        
                     }
 
                     if (((HTMLElementInfo)ElementInfo).HTMLElementObject.PreviousSibling != null && ((HTMLElementInfo)ElementInfo).HTMLElementObject.PreviousSibling.Name.StartsWith("#"))
                     {
                         ((HTMLElementInfo)ElementInfo).RightofHTMLElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject.PreviousSibling.PreviousSibling;
-                        LeftofwebElement = ((HTMLElementInfo)ElementInfo).RightofHTMLElementObject != null ? Driver.FindElement(By.XPath(((HTMLElementInfo)ElementInfo).RightofHTMLElementObject.XPath)) : null;
-                        ElementLocator elemLocator = new ElementLocator();
-                        elemLocator.Active = true;
-                        elemLocator.Position = ePosition.RightOf;
-                        elemLocator.LocateBy = eLocateBy.POMElement;
-                        elemLocator.LocateValue = ((HTMLElementInfo)ElementInfo).RightofHTMLElementObject != null ? (((HTMLElementInfo)ElementInfo).RightofHTMLElementObject.Name == "div" ? String.Empty : ((HTMLElementInfo)ElementInfo).RightofHTMLElementObject.XPath) : String.Empty;
-                        elemLocator.IsAutoLearned = true;
-                        if (!string.IsNullOrEmpty(elemLocator.LocateValue))
+                        if (((HTMLElementInfo)ElementInfo).RightofHTMLElementObject != null)
                         {
-                            locatorsList.Add(elemLocator);
+                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).RightofHTMLElementObject, ref locatorsList, ePosition.right);
                         }
+                        
                     }
                     else
                     {
                         ((HTMLElementInfo)ElementInfo).RightofHTMLElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject.PreviousSibling;
-                        LeftofwebElement = ((HTMLElementInfo)ElementInfo).RightofHTMLElementObject != null ? Driver.FindElement(By.XPath(((HTMLElementInfo)ElementInfo).RightofHTMLElementObject.XPath)) : null;
-                        ElementLocator elemLocator = new ElementLocator();
-                        elemLocator.Active = true;
-                        elemLocator.Position = ePosition.RightOf;
-                        elemLocator.LocateBy = eLocateBy.POMElement;
-                        elemLocator.LocateValue = ((HTMLElementInfo)ElementInfo).RightofHTMLElementObject != null ? (((HTMLElementInfo)ElementInfo).RightofHTMLElementObject.Name == "div" ? String.Empty : ((HTMLElementInfo)ElementInfo).RightofHTMLElementObject.XPath) : String.Empty;
-                        elemLocator.IsAutoLearned = true;
-                        if (!string.IsNullOrEmpty(elemLocator.LocateValue))
+                        if (((HTMLElementInfo)ElementInfo).RightofHTMLElementObject != null)
                         {
-                            locatorsList.Add(elemLocator);
+                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).RightofHTMLElementObject, ref locatorsList, ePosition.right);
                         }
-
+                        
                     }
 
                     if (((HTMLElementInfo)ElementInfo).HTMLElementObject.ParentNode != null && ((HTMLElementInfo)ElementInfo).HTMLElementObject.ParentNode.Name.StartsWith("#"))
                     {
                         ((HTMLElementInfo)ElementInfo).BelowHTMLElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject.ParentNode.ParentNode;
-                        BelowwebElement = ((HTMLElementInfo)ElementInfo).BelowHTMLElementObject != null ? Driver.FindElement(By.XPath(((HTMLElementInfo)ElementInfo).BelowHTMLElementObject.XPath)) : null;
-
-                        ElementLocator elemLocator = new ElementLocator();
-                        elemLocator.Active = true;
-                        elemLocator.Position = ePosition.Below;
-                        elemLocator.LocateBy = eLocateBy.POMElement;
-                        elemLocator.LocateValue = ((HTMLElementInfo)ElementInfo).BelowHTMLElementObject != null ? (((HTMLElementInfo)ElementInfo).BelowHTMLElementObject.Name == "div" ? String.Empty : ((HTMLElementInfo)ElementInfo).BelowHTMLElementObject.XPath) : String.Empty;
-                        elemLocator.IsAutoLearned = true;
-                        if (!string.IsNullOrEmpty(elemLocator.LocateValue))
+                        if (((HTMLElementInfo)ElementInfo).BelowHTMLElementObject != null)
                         {
-                            locatorsList.Add(elemLocator);
+                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).BelowHTMLElementObject, ref locatorsList, ePosition.below);
                         }
+                        
                     }
 
                     else
                     {
                         ((HTMLElementInfo)ElementInfo).BelowHTMLElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject.ParentNode;
-                        BelowwebElement = ((HTMLElementInfo)ElementInfo).BelowHTMLElementObject != null ? Driver.FindElement(By.XPath(((HTMLElementInfo)ElementInfo).BelowHTMLElementObject.XPath)) : null;
-                        ElementLocator elemLocator = new ElementLocator();
-                        elemLocator.Active = true;
-                        elemLocator.Position = ePosition.Below;
-                        elemLocator.LocateBy = eLocateBy.POMElement;
-                        elemLocator.LocateValue = ((HTMLElementInfo)ElementInfo).BelowHTMLElementObject != null ? (((HTMLElementInfo)ElementInfo).BelowHTMLElementObject.Name == "div" ? String.Empty : ((HTMLElementInfo)ElementInfo).BelowHTMLElementObject.XPath) : String.Empty;
-                        elemLocator.IsAutoLearned = true;
-                        if (!string.IsNullOrEmpty(elemLocator.LocateValue))
+                        if (((HTMLElementInfo)ElementInfo).BelowHTMLElementObject != null)
                         {
-                            locatorsList.Add(elemLocator);
+                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).BelowHTMLElementObject, ref locatorsList, ePosition.below);
                         }
+                        
                     }
 
                     if (((HTMLElementInfo)ElementInfo).HTMLElementObject.FirstChild != null && ((HTMLElementInfo)ElementInfo).HTMLElementObject.FirstChild.Name.StartsWith("#"))
                     {
                         ((HTMLElementInfo)ElementInfo).AboveHTMLElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject.FirstChild.FirstChild;
-                        AbovewebElement = ((HTMLElementInfo)ElementInfo).AboveHTMLElementObject != null ? Driver.FindElement(By.XPath(((HTMLElementInfo)ElementInfo).AboveHTMLElementObject.XPath)) : null;
-
-                        ElementLocator elemLocator = new ElementLocator();
-                        elemLocator.Active = true;
-                        elemLocator.Position = ePosition.Above;
-                        elemLocator.LocateBy = eLocateBy.POMElement;
-                        elemLocator.LocateValue = ((HTMLElementInfo)ElementInfo).AboveHTMLElementObject != null ? (((HTMLElementInfo)ElementInfo).AboveHTMLElementObject.Name == "div" ? String.Empty : ((HTMLElementInfo)ElementInfo).AboveHTMLElementObject.XPath) : String.Empty;
-                        elemLocator.IsAutoLearned = true;
-                        if (!string.IsNullOrEmpty(elemLocator.LocateValue))
+                        if (((HTMLElementInfo)ElementInfo).AboveHTMLElementObject != null)
                         {
-                            locatorsList.Add(elemLocator);
+                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).AboveHTMLElementObject, ref locatorsList,ePosition.above);
                         }
+                        
                     }
                     else
                     {
                         ((HTMLElementInfo)ElementInfo).AboveHTMLElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject.FirstChild;
-                        AbovewebElement = ((HTMLElementInfo)ElementInfo).AboveHTMLElementObject != null ? Driver.FindElement(By.XPath(((HTMLElementInfo)ElementInfo).AboveHTMLElementObject.XPath)) : null;
-                        ElementLocator elemLocator = new ElementLocator();
-                        elemLocator.Active = true;
-                        elemLocator.Position = ePosition.Above;
-                        elemLocator.LocateBy = eLocateBy.POMElement;
-                        elemLocator.LocateValue = ((HTMLElementInfo)ElementInfo).AboveHTMLElementObject != null ? (((HTMLElementInfo)ElementInfo).AboveHTMLElementObject.Name == "div" ? String.Empty : ((HTMLElementInfo)ElementInfo).AboveHTMLElementObject.XPath) : String.Empty;
-                        elemLocator.IsAutoLearned = true;
-                        if (!string.IsNullOrEmpty(elemLocator.LocateValue))
+                        if(((HTMLElementInfo)ElementInfo).AboveHTMLElementObject != null)
                         {
-                            locatorsList.Add(elemLocator);
+                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).AboveHTMLElementObject, ref locatorsList,ePosition.above);
                         }
+                        
                     }
                 }
             }
@@ -5836,6 +5779,20 @@ namespace GingerCore.Drivers
             }
             
             return locatorsList;
+        }
+
+        public void GetLocatorlistforFriendlyLocator(HtmlNode currentHtmlNode,ref ObservableList<ElementLocator> locatorsList,ePosition position)
+        {
+            ElementLocator elemLocator = new ElementLocator();
+            elemLocator.Active = true;
+            elemLocator.Position = position;
+            elemLocator.LocateBy = eLocateBy.POMElement;
+            elemLocator.LocateValue = currentHtmlNode.Name == "div" ? String.Empty : currentHtmlNode.XPath;
+            elemLocator.IsAutoLearned = true;
+            if (!string.IsNullOrEmpty(elemLocator.LocateValue))
+            {
+                locatorsList.Add(elemLocator);
+            }
         }
 
         string IWindowExplorer.GetFocusedControl()

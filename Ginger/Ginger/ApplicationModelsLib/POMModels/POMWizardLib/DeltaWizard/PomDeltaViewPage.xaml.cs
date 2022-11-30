@@ -26,6 +26,8 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCoreNET.Application_Models;
+using GingerCoreNET;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -36,6 +38,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static GingerCore.General;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ApplicationModelsLib.POMModels
 {
@@ -49,7 +52,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         ComboEnumItem mCurrentDeltaStatusFilter;
 
         bool IsFirstSelection = true;
-
+        bool isEnableFriendlyLocator = false;
         GridColView mGridCompareColumn;
 
         private Agent mAgent;
@@ -102,7 +105,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        public PomDeltaViewPage(ObservableList<DeltaElementInfo> deltaElements = null, GridColView gridCompareColumn = null)
+        public PomDeltaViewPage(ObservableList<DeltaElementInfo> deltaElements = null, GridColView gridCompareColumn = null,Agent mAgent=null)
         {
             InitializeComponent();
 
@@ -112,10 +115,18 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 mGridCompareColumn = gridCompareColumn;
             }
+            if (mAgent.Platform == ePlatformType.Web)
+            {
+                isEnableFriendlyLocator = true;
+            }
 
             SetDeltaElementsGridView();
             SetDeltaLocatorsGridView();
-            SetDeltaFriendlyLocatorsGridView();
+            
+            if (isEnableFriendlyLocator)
+            {
+                SetDeltaFriendlyLocatorsGridView();
+            }
             SetDeltaControlPropertiesGridView();
 
             xMainElementsGrid.DataSourceList = mDeltaElements;
@@ -278,7 +289,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateBy), Header = "Locate By", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, ReadOnly = true, BindingMode = BindingMode.OneWay });
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 200, ReadOnly = true, BindingMode = BindingMode.OneWay });
             defView.GridColsView.Add(new GridColView() { Field = "", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xCopyLocatorButtonTemplate"] });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.EnableFriendlyLocator), Header = "Friendly Locator", WidthWeight = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox,BindingMode=BindingMode.OneWay });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.EnableFriendlyLocator),Visible = isEnableFriendlyLocator, Header = "Friendly Locator", WidthWeight = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox, BindingMode = BindingMode.OneWay });
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 100, ReadOnly = true, BindingMode = BindingMode.OneWay });           
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.DeltaStatusIcon), Header = "Comparison Status", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xDeltaStatusIconTemplate"] });
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.DeltaExtraDetails), Header = "Comparison Details", WidthWeight = 300, AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
@@ -317,10 +328,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
             List<ComboEnumItem> positionList = GingerCore.General.GetEnumValuesForCombo(typeof(ePosition));
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.Active), WidthWeight = 50, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox, ReadOnly = true, BindingMode = BindingMode.OneWay });
             List<ComboEnumItem> locateByList = GingerCore.General.GetEnumValuesForCombo(typeof(eLocateBy));
-            List<ComboEnumItem> locateValueList = GetAllElementlist();
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.Position), Header = "Position", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = positionList,ReadOnly= true,BindingMode= BindingMode.OneWay });
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateBy), Header = "Locate By", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateValueList, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.ReferanceElement), Header = "Locate Value", WidthWeight = 65 });
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 100, ReadOnly = true, BindingMode = BindingMode.OneWay });
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.DeltaStatusIcon), Header = "Comparison Status", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xDeltaStatusIconTemplate"] });
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.DeltaExtraDetails), Header = "Comparison Details", WidthWeight = 300, AllowSorting = true, ReadOnly = true, BindingMode = BindingMode.OneWay });
@@ -371,6 +381,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mSelectedElement.FriendlyLocators.CollectionChanged -= FriendlyLocators_CollectionChanged;
                 mSelectedElement.FriendlyLocators.CollectionChanged += FriendlyLocators_CollectionChanged;
                 xFriendlyLocatorsGrid.DataSourceList = mSelectedElement.FriendlyLocators;
+                xFriendlyLocatorsGrid.ShowAdd = Visibility.Collapsed;
+                xFriendlyLocatorsGrid.ShowDelete = Visibility.Collapsed;
                 UpdateFriendlyLocatorsHeader();
                 mSelectedElement.Properties.CollectionChanged -= Properties_CollectionChanged;
                 mSelectedElement.Properties.CollectionChanged += Properties_CollectionChanged;
@@ -530,21 +542,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 Reporter.ToLog(eLogLevel.ERROR, "Error in POM Delta View Page tabs style", ex);
             }
         }
-
-        private List<ComboEnumItem> GetAllElementlist()
-        {
-            List<ComboEnumItem> Allelementlist = new List<ComboEnumItem>();
-            List<DeltaElementInfo> MappedElementlist = mDeltaElements.ToList();
-            foreach (var Elem in MappedElementlist)
-            {
-                ComboEnumItem comboEnumItem = new ComboEnumItem();
-                comboEnumItem.text = Elem.ElementName + " [" + Elem.ElementTypeEnum + "]";
-                comboEnumItem.Value = Elem.ElementInfo.Guid;
-                Allelementlist.Add(comboEnumItem);
-            }
-            return Allelementlist;
-        }
-
 
     }
 }
