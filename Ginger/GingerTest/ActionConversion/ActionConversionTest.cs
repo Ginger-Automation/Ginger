@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
+using Ginger;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
@@ -57,6 +58,7 @@ namespace GingerTest
 
             // Creating workspace
             WorkSpace.Init(new WorkSpaceEventHandler());
+            TargetFrameworkHelper.Helper = new DotNetFrameworkHelper();
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
 
             // Init SR

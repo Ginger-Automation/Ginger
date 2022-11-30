@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -41,6 +41,17 @@ namespace GingerCore
         [EnumValueDescription("Rerun Business Flow")]
         ReRunBusinessFlow,
 
+        [EnumValueDescription("Continue From Next Action")]
+        ContinueFromNextAction,
+
+        [EnumValueDescription("Continue From Next Activity")]
+        ContinueFromNextActivity,
+
+        [EnumValueDescription("Continue From Next Business Flow")]
+        ContinueFromNextBusinessFlow,
+
+        [EnumValueDescription("Stop Run")]
+        StopRun
     }
 
     public enum eTriggerType
