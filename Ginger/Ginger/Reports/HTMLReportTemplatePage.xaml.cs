@@ -30,6 +30,7 @@ using System.IO;
 using System.IO.Compression;
 using GingerCore.Drivers;
 using amdocs.ginger.GingerCoreNET;
+using GingerCore.GeneralLib;
 
 namespace Ginger.Reports
 {
@@ -243,16 +244,16 @@ namespace Ginger.Reports
 
         private void SetControls()
         {
-            SetIsDefualtImage();
-            NewTemplateNameTextBox.Text = _HTMLReportConfiguration.Name.ToString();
+            SetIsDefualtImage();            
             xShowIDUC.Init(_HTMLReportConfiguration);
+            NewTemplateNameTextBox.Text = _HTMLReportConfiguration.Name;
             TemplateDescriptionTextBox.BindControl(_HTMLReportConfiguration, nameof(HTMLReportConfiguration.Description));
             htmlShowFirstIterationOnRadioBtn.IsChecked = _HTMLReportConfiguration.ShowAllIterationsElements;
             htmlShowFirstIterationOffRadioBtn.IsChecked = !_HTMLReportConfiguration.ShowAllIterationsElements;
             htmlUseLocalStoredStylingOnRadioBtn.IsChecked = _HTMLReportConfiguration.UseLocalStoredStyling;
             htmlUseLocalStoredStylingOffRadioBtn.IsChecked = !_HTMLReportConfiguration.UseLocalStoredStyling;
             SetControlsEvents();
-
+            
             switch ((HTMLReportConfiguration.ReportsLevel)Enum.Parse(typeof(HTMLReportConfiguration.ReportsLevel), _HTMLReportConfiguration.ReportLowerLevelToShow))
             {
                 case HTMLReportConfiguration.ReportsLevel.SummaryViewLevel:
@@ -521,12 +522,19 @@ namespace Ginger.Reports
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            _HTMLReportConfiguration.Name = NewTemplateNameTextBox.Text.ToString();
-            _HTMLReportConfiguration.Description = TemplateDescriptionTextBox.Text.ToString();
-            _newHTMLReportConfiguration = _HTMLReportConfiguration;
-            _pageGenericWin.Hide();
-            WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
-
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Any(x => x.Name == _HTMLReportConfiguration.Name.ToString()))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "HTML Report with same name: " + "'" + _HTMLReportConfiguration.Name.ToString() + "'" + " already exists.");// it won't get save
+            }
+            else
+            {
+                NewTemplateNameTextBox.Text = _HTMLReportConfiguration.Name.ToString();
+                _HTMLReportConfiguration.Name = NewTemplateNameTextBox.Text.ToString();
+                _HTMLReportConfiguration.Description = TemplateDescriptionTextBox.Text.ToString();
+                _newHTMLReportConfiguration = _HTMLReportConfiguration;
+                _pageGenericWin.Hide();
+                WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
+            }
             if (_existingTemplatePage)
             {
                 Reporter.ToStatus(eStatusMsgKey.SaveItem, null, _HTMLReportConfiguration.GetNameForFileName(), "item");
