@@ -1511,5 +1511,10 @@ namespace GingerCore.Drivers.ASCF
         {
             return null;
         }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -163,9 +163,9 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         internal void AddEmptyPOM(object sender, RoutedEventArgs e)
         {
             string NewPOMName = string.Empty;
-            if (GingerCore.General.GetInputWithValidation("Add Page Object Model", "Page Object Model Name:", ref NewPOMName))
+            ApplicationPOMModel emptyPOM = new ApplicationPOMModel() { Name = NewPOMName };
+            if (GingerCore.General.GetInputWithValidation("Add Page Object Model", "Page Object Model Name:", ref NewPOMName, null, false, emptyPOM))
             {
-                ApplicationPOMModel emptyPOM = new ApplicationPOMModel() { Name = NewPOMName };
                 ObservableList<ApplicationPlatform> TargetApplications = GingerCore.General.ConvertListToObservableList(WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList());
                 if (TargetApplications != null && TargetApplications.Count > 0)
                 {

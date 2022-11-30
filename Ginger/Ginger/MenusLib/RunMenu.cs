@@ -74,10 +74,10 @@ namespace Ginger.MenusLib
 
         static NewRunSetPage runSetPage;
         private static Page GetRunSetPage()
-        {            
+        {
             if (runSetPage == null)
             {
-                runSetPage= new NewRunSetPage();
+                runSetPage = new NewRunSetPage();
             }
             return runSetPage;
         }

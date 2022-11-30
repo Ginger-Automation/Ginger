@@ -23,13 +23,14 @@ using System.Windows;
 using System.Windows.Controls;
 using GingerCore;
 using amdocs.ginger.GingerCoreNET;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Reports
 {
     /// <summary>
     /// Interaction logic for ExecutionResultsConfiguration.xaml
     /// </summary>
-    public partial class HTMLReportsConfigurationPage : Page
+    public partial class HTMLReportsConfigurationPage : GingerUIPage
     {        
         HTMLReportsConfiguration mHTMLReportConfiguration = new HTMLReportsConfiguration();
 
@@ -44,6 +45,7 @@ namespace Ginger.Reports
         {
             mHTMLReportConfiguration =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
             mHTMLReportConfiguration.StartDirtyTracking();
+            CurrentItem = WorkSpace.Instance.Solution;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(LimitReportFolder, CheckBox.IsCheckedProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.LimitReportFolderSize));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralizedReportDataServiceURLTextBox, TextBox.TextProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.CentralizedReportDataServiceURL));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralizedHtmlReportServiceURLTextBox, TextBox.TextProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.CentralizedHtmlReportServiceURL));

@@ -36,7 +36,11 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using Ginger.Run.RunSetActions;
+using GingerCore.GeneralLib;
+using Org.BouncyCastle.Asn1.X509;
 using System.Xml;
+using Ginger.Run;
 
 namespace GingerCore.Actions.WebAPI
 {
@@ -250,18 +254,42 @@ namespace GingerCore.Actions.WebAPI
                 if (!string.IsNullOrEmpty(path))
                 {
                     string CertificateKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
-                    if (!string.IsNullOrEmpty(CertificateKey))
-                    {
-                        X509Certificate2 customCertificate = new X509Certificate2(path, CertificateKey);
-                        Handler.ClientCertificates.Add(customCertificate);
-                        ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
-                    }
-                    else
-                    { 
-                        //Case Certifacte key/password is not required
-                        X509Certificate2 customCertificate = new X509Certificate2(path);
-                        Handler.ClientCertificates.Add(customCertificate);
-                    }
+                    string CertificateName = Path.GetFileName(ActWebAPIBase.Fields.CertificatePath);                                                                                      
+                        string targetPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\EmailCertificates");
+                        string Certificatepath = Path.Combine(targetPath, CertificateName);
+                        if (!string.IsNullOrEmpty(Certificatepath))
+                        {
+                            GingerRunner.eActionExecutorType ActionExecutorType = GingerRunner.eActionExecutorType.RunWithoutDriver;
+                            
+                            ServicePointManager.ServerCertificateValidationCallback = delegate (object s, System.Security.Cryptography.X509Certificates.X509Certificate certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+                            {
+                                X509Certificate2 actualCertificate;
+                                if (!string.IsNullOrEmpty(CertificateKey))
+                                {
+                                    actualCertificate = new X509Certificate2(Certificatepath, CertificateKey);
+                                }
+                                else
+                                {
+                                    actualCertificate = new X509Certificate2(Certificatepath);
+                                }
+                                if (certificate.Equals(actualCertificate))
+                                {
+                                    Handler.ClientCertificates.Add(actualCertificate);
+                                    mAct.ExInfo = "Uploaded certificate is vaslidated";
+                                    return true;
+                                }
+                                else
+                                {
+                                    mAct.Error = "Uploaded certificate is not validated as it is not matching with (base certificate)";
+                                    return false;
+                                }
+                            };
+                        }
+                        else
+                        {
+                        mAct.Error = "Request setup Failed because of missing/wrong input";
+                        return false;
+                        }                                      
                 }
                 else
                 {

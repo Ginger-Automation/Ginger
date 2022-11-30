@@ -142,7 +142,7 @@ namespace Amdocs.Ginger.Common
         POMSearchByGUIDFailed, POMElementSearchByGUIDFailed, NoRelevantAgentInRunningStatus, SolutionSaveWarning,
         InvalidIndexValue, FileOperationError, FolderOperationError, ObjectUnavailable, PatternNotHandled, LostConnection, AskToSelectBusinessflow,
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, RunSetNotExecuted, OperationNotSupported, ValueIssue, MissingTargetApplication,
-        ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, CopiedErrorInfo, RepositoryNameCantEmpty,
+        ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, SaveAllModifiedItems, CopiedErrorInfo, RepositoryNameCantEmpty,
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
         POMElementNotExist, UpdateExistingPOMElement, POMMoveElementFromUnmappedToMapped, SavePOMChanges,
         AskIfToUndoChanges, AskIfToUndoItemChanges, FileAlreadyExistWarn,
@@ -645,6 +645,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.ParameterDelete, new UserMsg(eUserMsgType.WARN, "Delete Parameter", "{0}", eUserMsgOption.YesNo, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SaveAll, new UserMsg(eUserMsgType.WARN, "Save All", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SaveSelected, new UserMsg(eUserMsgType.WARN, "Save Selected", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SaveAllModifiedItems, new UserMsg(eUserMsgType.WARN, "Save All", "{0}", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.CopiedErrorInfo, new UserMsg(eUserMsgType.INFO, "Copied Error information", "Error Information copied to Clipboard", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.RepositoryNameCantEmpty, new UserMsg(eUserMsgType.WARN, "QTP to Ginger Converter", "Object Repository name cannot be empty", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExcelProcessingError, new UserMsg(eUserMsgType.ERROR, "Excel processing error", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));

@@ -320,7 +320,7 @@ namespace Ginger.Reports
                 if (mDataRepositoryMethod != value)
                 {
                     mDataRepositoryMethod = value;                    
-                    OnPropertyChanged(nameof(mDataRepositoryMethod));
+                    OnPropertyChanged(nameof(SelectedDataRepositoryMethod));
                 }
             }
         }
