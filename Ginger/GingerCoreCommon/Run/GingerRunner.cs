@@ -93,9 +93,9 @@ namespace Ginger.Run
 
 
 
-
+        private int mAutoWait;
         [IsSerializedForLocalRepository]
-        public int AutoWait { get; set; } = 0;
+        public int AutoWait { get { return mAutoWait; } set { if (mAutoWait != value) { mAutoWait = value; OnPropertyChanged(nameof(AutoWait)); } } }
 
         private string mName;
         [IsSerializedForLocalRepository]
@@ -167,8 +167,11 @@ namespace Ginger.Run
             }
             set
             {
-                mSpecificEnvironmentName = value;
-                OnPropertyChanged(nameof(SpecificEnvironmentName));
+                if (mSpecificEnvironmentName != value)
+                {
+                    mSpecificEnvironmentName = value;
+                    OnPropertyChanged(nameof(SpecificEnvironmentName));
+                }
             }
         }
 

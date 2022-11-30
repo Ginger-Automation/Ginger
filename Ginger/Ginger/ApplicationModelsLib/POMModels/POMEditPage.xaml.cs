@@ -27,6 +27,7 @@ using Ginger.Actions.UserControls;
 using Ginger.Agents;
 using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
+using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
@@ -52,7 +53,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
     /// <summary>
     /// Interaction logic for POMEditPage.xaml
     /// </summary>
-    public partial class POMEditPage : Page
+    public partial class POMEditPage : GingerUIPage
     {
         ApplicationPOMModel mPOM;
         ScreenShotViewPage mScreenShotViewPage;
@@ -107,6 +108,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             InitializeComponent();
             mPOM = POM;
+            CurrentItem = mPOM;
             mEditMode = editMode;
 
             mBusinessFlowControl = new ucBusinessFlowMap(mPOM, nameof(mPOM.MappedBusinessFlow));

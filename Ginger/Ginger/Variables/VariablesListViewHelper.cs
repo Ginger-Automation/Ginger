@@ -195,14 +195,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             deleteSelected.OperationHandler = DeleteSelectedHandler;
             operationsList.Add(deleteSelected);
 
-            ListItemOperation save = new ListItemOperation();
-            save.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Standalone };
-            save.AutomationID = "save";
-            save.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Save;
-            save.ToolTip = "Save All Changes";
-            save.OperationHandler = SaveAllHandler;
-            operationsList.Add(save);
-
             return operationsList;
         }
 

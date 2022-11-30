@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using Ginger.UserControls;
+using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -37,7 +38,7 @@ namespace Ginger.SolutionWindows
     /// <summary>
     /// Interaction logic for TargetApplicationsPage.xaml
     /// </summary>
-    public partial class TargetApplicationsPage : Page
+    public partial class TargetApplicationsPage : GingerUIPage
     {
         Solution mSolution;
 
@@ -47,6 +48,7 @@ namespace Ginger.SolutionWindows
 
             mSolution =  WorkSpace.Instance.Solution;
              WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+            CurrentItem = mSolution;
 
             LoadGridData();
             SetAppsGrid();
@@ -63,7 +65,7 @@ namespace Ginger.SolutionWindows
 
         private void SetAppsGrid()
         {
-            xTargetApplicationsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Application, "Target Applications", saveAllHandler: SaveHandler, addHandler: AddApplication);
+            xTargetApplicationsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Application, "Target Applications", saveAllHandler: SaveHandler, addHandler: AddApplication, true);
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             //List<string> platformesTypesList = GingerCore.General.GetEnumValues(typeof(ePlatformType));
@@ -229,6 +231,5 @@ namespace Ginger.SolutionWindows
             }
             
         }
-
     }
 }
