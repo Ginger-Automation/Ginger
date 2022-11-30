@@ -474,7 +474,9 @@ namespace Ginger.Run
                 }
 
                 if (mRunSource == null)
+                {
                     mRunSource = eRunSource.Runner;
+                }
 
                 int? flowControlIndx = null;
                 for (int bfIndx = startingBfIndx; bfIndx < BusinessFlows.Count; CalculateNextBFIndx(ref flowControlIndx, ref bfIndx))
@@ -1089,7 +1091,9 @@ namespace Ginger.Run
                 act.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
 
                 if (mRunSource == null)
+                {
                     mRunSource = eRunSource.Action;
+                }
 
                 //resetting the retry mechanism count before calling the function.
                 act.RetryMechanismCount = 0;
@@ -3384,7 +3388,9 @@ namespace Ginger.Run
                     bool bHasMoreActions = true;
 
                     if (mRunSource == null)
+                    {
                         mRunSource = eRunSource.Activity;
+                    }
 
                     while (bHasMoreActions)
                     {
@@ -3896,7 +3902,9 @@ namespace Ginger.Run
                 Activity FirstExecutedActivity = ExecutingActivity;
 
                 if (mRunSource == null)
+                {
                     mRunSource = eRunSource.BusinessFlow;
+                }
 
                 while (ExecutingActivity != null)
                 {

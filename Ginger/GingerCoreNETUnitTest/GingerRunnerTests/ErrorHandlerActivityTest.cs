@@ -4,6 +4,7 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.WebServices;
@@ -42,6 +43,7 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
             sol.ContainingFolderFullPath = TempRepositoryFolder;
             WorkSpace.Instance.Solution = sol;
+            WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
 
             WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = Path.Combine(TempRepositoryFolder, "ExecutionResults");
 
@@ -125,7 +127,7 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
 
             Activity5.ErrorHandlerMappingType = eHandlerMappingType.AllAvailableHandlers;
             mBF.AddActivity(Activity5, null, 3);
-            
+
             Context context1 = new Context();
             context1.BusinessFlow = mBF;
             context1.Activity = mBF.Activities[0];
@@ -179,7 +181,7 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             Assert.AreEqual(eRunStatus.Passed, mBF.Activities[5].Status);
 
         }
-        
+
         [TestMethod]
         [Timeout(60000)]
         public void ErrorHandlerActivityWithReRunBusinesFlowPostAction()
@@ -297,8 +299,8 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             Activity activity6 = CreateDummyActivities(1, 2)[0];
             mBF.ActivitiesGroups[0].AddActivityToGroup(activity6);
 
-            mBF.AddActivity(failingActivity, null, 3);
-            mBF.AddActivity(activity6, null, 4);
+            mBF.AddActivity(failingActivity, null, 4);
+            mBF.AddActivity(activity6, null, 5);
             mBF.AddActivity(errorHandlerActivity, null, mBF.Activities.Count);
 
             BusinessFlow dummyBF = CreateDummyBusinessFlow(1, 1);
@@ -328,9 +330,9 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             Assert.AreEqual(eRunStatus.Passed, mBF.Activities[0].Status, "Activity 1 Status");
             Assert.AreEqual(eRunStatus.Passed, mBF.Activities[1].Status, "Activity 2 Status");
             Assert.AreEqual(eRunStatus.Passed, mBF.Activities[2].Status, "Activity 3 Status");
-            Assert.AreEqual(eRunStatus.Failed, mBF.Activities[3].Status, "Activity 5 Status");
-            Assert.AreEqual(eRunStatus.Skipped, mBF.Activities[4].Status, "Activity 6 Status");
-            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[5].Status);
+            Assert.AreEqual(eRunStatus.Passed, mBF.Activities[3].Status, "Activity 5 Status");
+            Assert.AreEqual(eRunStatus.Failed, mBF.Activities[4].Status, "Activity 6 Status");
+            Assert.AreEqual(eRunStatus.Skipped, mBF.Activities[5].Status);
             Assert.AreEqual(eRunStatus.Passed, mBF.Activities[6].Status);
             Assert.AreEqual(eRunStatus.Passed, dummyBF.RunStatus, "Dummy Business Flow Status");
         }
@@ -367,7 +369,9 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             runner.Executor.BusinessFlows.Add(mBF);
             runner.Executor.BusinessFlows.Add(dummyBF);
             foreach (BusinessFlow bf in runner.Executor.BusinessFlows)
+            {
                 bf.Reset(true);
+            }
 
             runner.Executor.CurrentBusinessFlow = mBF;
             runner.Executor.CurrentBusinessFlow.CurrentActivity = mBF.Activities[0];
@@ -503,10 +507,14 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             Activity[] activities = CreateDummyActivities(activityCount, actionCount);
 
             foreach (Activity activity in activities)
+            {
                 activityGroup.AddActivityToGroup(activity);
+            }
 
             foreach (Activity activity in activities)
+            {
                 dummyBusinessFlow.Activities.Add(activity);
+            }
 
             dummyBusinessFlow.ActivitiesGroups.Add(activityGroup);
 
