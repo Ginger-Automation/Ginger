@@ -41,7 +41,7 @@ namespace Ginger.Environments
             InitializeComponent();
 
             AppEnvironmnet = env;
-            CurrentItem = AppEnvironmnet;
+            CurrentItemToSave = AppEnvironmnet;
             //Set grid look and data
             SetGridView();
             SetGridData();

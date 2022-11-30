@@ -586,8 +586,14 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\ios.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\iosOutline.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\iosWhite.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs-n.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs-new.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-light-grey-n.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-light-grey-new.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-light-grey.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\save-regular-amdocs-gradient.svg" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\save-regular-light-grey.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\VRTLogo.png" />
   </ItemGroup>
@@ -2415,6 +2421,8 @@
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\save-all-regular-light-grey.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\save-regular-amdocs-gradient.svg" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\save-regular-light-grey.svg" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

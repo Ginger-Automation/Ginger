@@ -66,7 +66,10 @@ namespace Ginger.BusinessFlowPages
             mVariablesLevel = GetVariablesLevel();
             mContext = context;
             mPageViewMode = pageViewMode;
-            CurrentItem = WorkSpace.Instance.Solution;
+            if (pageViewMode == General.eRIPageViewMode.Standalone)
+            {
+                CurrentItemToSave = WorkSpace.Instance.Solution;
+            }
 
             SetListView();
             ShowHideEditPage(null);

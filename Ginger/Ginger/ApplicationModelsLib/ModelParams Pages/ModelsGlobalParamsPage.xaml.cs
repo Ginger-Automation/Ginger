@@ -621,7 +621,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         {
             if (xModelsGlobalParamsGrid.grdMain.Items.Count != 0 && xModelsGlobalParamsGrid.grdMain.SelectedItems[0] != null)
             {
-                CurrentItem = (RepositoryItemBase)xModelsGlobalParamsGrid.grdMain.SelectedItems[0];
+                CurrentItemToSave = (RepositoryItemBase)xModelsGlobalParamsGrid.grdMain.SelectedItems[0];
                 base.IsVisibleChangedHandler(sender, e);
             }
         }

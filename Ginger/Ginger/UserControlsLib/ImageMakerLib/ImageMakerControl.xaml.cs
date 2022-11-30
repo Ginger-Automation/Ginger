@@ -196,6 +196,12 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.SaveAllGradient:
                     SetAsStaticImage("save-all-regular-gradient-amdocs.png");
                     break;
+                case eImageType.SaveLightGrey:
+                    SetAsStaticImage("save-regular-light-grey.svg");
+                    break;
+                case eImageType.SaveGradient:
+                    SetAsStaticImage("save-regular-amdocs-gradient.svg");
+                    break;
                 #endregion
 
 

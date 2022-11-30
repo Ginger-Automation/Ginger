@@ -208,7 +208,7 @@
                         </Grid>
 
                         <Grid DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
-                            <usercontrols:ucButton x:Name="xSaveCurrentBtn" ButtonType="ImageButton" ToolTip="No Item Selected" ToolTipOpening="xSaveCurrentBtn_ToolTipOpening" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Save" Click="xSaveCurrentBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Menu}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,0"/>
+                            <usercontrols:ucButton x:Name="xSaveCurrentBtn" ButtonType="ImageButton" ToolTip="No Item Selected" ToolTipOpening="xSaveCurrentBtn_ToolTipOpening" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="SaveLightGrey" MouseEnter="xSaveCurrentBtn_MouseEnter" MouseLeave="xSaveCurrentBtn_MouseLeave" Click="xSaveCurrentBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Menu}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,0"/>
                             <usercontrols:ImageMakerControl x:Name="xModifiedLabel" SetAsFontImageWithSize="8" Margin="5" Foreground="{DynamicResource $HighlightColor_Orange}" ImageType="Empty" HorizontalAlignment="Right" VerticalAlignment="Top"/>
                         </Grid>
                     </DockPanel>

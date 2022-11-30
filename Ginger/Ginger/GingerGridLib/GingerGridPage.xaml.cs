@@ -333,7 +333,7 @@ namespace Ginger.GingerGridLib
         {
             if (xRemoteServiceGrid.grdMain.Items.Count != 0 && xRemoteServiceGrid.grdMain.SelectedItems[0] != null)
             {
-                CurrentItem = (RepositoryItemBase)xRemoteServiceGrid.grdMain.SelectedItems[0];
+                CurrentItemToSave = (RepositoryItemBase)xRemoteServiceGrid.grdMain.SelectedItems[0];
                 base.IsVisibleChangedHandler(sender, e);
             }
         }

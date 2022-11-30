@@ -200,9 +200,12 @@ namespace Ginger.SolutionGeneral
                 Solution.RepositorySerializer.SaveToFile(Solution, Solution.FilePath);
                 Solution.SetDirtyStatusToNoChange();
                 Reporter.HideStatusMessage();
-                if (WorkSpace.Instance.SolutionRepository.ModifiedFiles.Contains(Solution))
+                if (WorkSpace.Instance.SolutionRepository != null)
                 {
-                    WorkSpace.Instance.SolutionRepository.ModifiedFiles.Remove(Solution);
+                    if (WorkSpace.Instance.SolutionRepository.ModifiedFiles.Contains(Solution))
+                    {
+                        WorkSpace.Instance.SolutionRepository.ModifiedFiles.Remove(Solution);
+                    }
                 }
             }
         }

@@ -1849,7 +1849,7 @@ namespace Ginger.Actions
         {
             if (EditMode == General.eRIPageViewMode.SharedReposiotry && mAction != null && !String.IsNullOrEmpty(mAction.ContainingFolder))
             {
-                CurrentItem = mAction;
+                CurrentItemToSave = mAction;
                 base.IsVisibleChangedHandler(sender, e);
             }
         }

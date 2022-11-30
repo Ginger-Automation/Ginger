@@ -45,7 +45,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         public APIModelPage(ApplicationAPIModel applicationAPIModelBase, General.eRIPageViewMode viewMode = General.eRIPageViewMode.Standalone)
         {
             mApplicationAPIModel = applicationAPIModelBase;
-            CurrentItem = mApplicationAPIModel;
+            CurrentItemToSave = mApplicationAPIModel;
 
             InitializeComponent();
             BindUiControls();
