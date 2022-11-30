@@ -659,11 +659,11 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override ObservableList<ElementLocator> GetLearningLocators()
         {
             ObservableList<ElementLocator> learningLocatorsList = new ObservableList<ElementLocator>();
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Highly Recommended (usually unique)", FriendlyLocator = false });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Highly Recommended (usually unique)", FriendlyLocator = false });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Highly Recommended (usually unique)", FriendlyLocator = false });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Less Recommended (sensitive to page design changes)", FriendlyLocator = false });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByTagName, Help = "Less Recommended", FriendlyLocator=true });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Less Recommended (sensitive to page design changes)", EnableFriendlyLocator = false });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByTagName, Help = "Less Recommended", EnableFriendlyLocator = true });
             return learningLocatorsList;
         }
 
@@ -673,11 +673,11 @@ namespace GingerCore.Platforms.PlatformsInfo
             {
                 //Arrange Position on priority basis
                 mElementPositionList = new List<ePosition>();
-                mElementPositionList.Add(ePosition.LeftOf);
-                mElementPositionList.Add(ePosition.RightOf);
-                mElementPositionList.Add(ePosition.Above);
-                mElementPositionList.Add(ePosition.Below);
-                mElementPositionList.Add(ePosition.Near);
+                mElementPositionList.Add(ePosition.left);
+                mElementPositionList.Add(ePosition.right);
+                mElementPositionList.Add(ePosition.above);
+                mElementPositionList.Add(ePosition.below);
+                mElementPositionList.Add(ePosition.near);
             }
             return mElementPositionList;
         }
