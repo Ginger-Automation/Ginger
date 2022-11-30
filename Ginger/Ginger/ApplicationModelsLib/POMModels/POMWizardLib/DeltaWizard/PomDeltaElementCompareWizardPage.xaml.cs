@@ -112,7 +112,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         private void InitilizePomElementsMappingPage()
         {
-            mPomDeltaViewPage = new PomDeltaViewPage(mWizard.mPomDeltaUtils.DeltaViewElements);
+            mPomDeltaViewPage = new PomDeltaViewPage(mWizard.mPomDeltaUtils.DeltaViewElements,null, mWizard.mPomDeltaUtils.Agent);
             mPomDeltaViewPage.SetAgent(mWizard.mPomDeltaUtils.Agent);
             xPomElementsMappingPageFrame.Content = mPomDeltaViewPage;
         }

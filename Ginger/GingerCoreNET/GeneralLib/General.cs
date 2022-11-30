@@ -37,6 +37,7 @@ using System.Xml;
 using System.Net.Http;
 using System.Net;
 using GingerCore.Actions;
+using System.Reflection;
 
 namespace GingerCoreNET.GeneralLib
 {
@@ -520,6 +521,18 @@ namespace GingerCoreNET.GeneralLib
             HttpClient client = new HttpClient();
             HttpResponseMessage response = client.SendAsync(request).Result;
             return response;
+        }
+
+        public static string GetDataByassemblyNameandResource(string AssemblyName, string ResourceId)
+        {
+            string arg = string.Empty;
+            Assembly asm = Assembly.Load(AssemblyName);
+            Stream stream = asm.GetManifestResourceStream(ResourceId);
+            using (StreamReader streamReader = new StreamReader(stream))
+            {
+                arg = streamReader.ReadToEnd();
+            }
+            return arg;
         }
     }
 
