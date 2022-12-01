@@ -36,7 +36,7 @@ namespace Ginger.Configurations
     /// </summary>
     public partial class SealightsExternalConfigurationsPage : GingerUIPage
     {
-        SealightsConfiguration _SealightsConfiguration;
+        SealightsConfiguration _SealightsConfiguration = null;
 
         public SealightsExternalConfigurationsPage()
         {
