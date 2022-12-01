@@ -47,9 +47,9 @@ namespace Ginger.Configurations
         private void Init()
         {
             _ApplitoolsConfiguration = WorkSpace.Instance.Solution.ApplitoolsConfiguration;
-            _ApplitoolsConfiguration.StartDirtyTracking();
             CurrentItemToSave = WorkSpace.Instance.Solution;
             SetControls();
+            _ApplitoolsConfiguration.StartDirtyTracking();
         }
 
         private void SetControls()
@@ -66,10 +66,10 @@ namespace Ginger.Configurations
             xAPIURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("URL cannot be empty"));
             xAPIKeyTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Key cannot be empty"));
 
-            CallSealightsConfigPropertyChange();
+            CallApplitoolsConfigPropertyChange();
         }
 
-        private void CallSealightsConfigPropertyChange()
+        private void CallApplitoolsConfigPropertyChange()
         {
             // need in order to trigger the validation's rules on init binding (load/init form)
             _ApplitoolsConfiguration.OnPropertyChanged(nameof(ApplitoolsConfiguration.ApiUrl));
