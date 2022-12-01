@@ -139,11 +139,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             {
                 xLearnScreenshotsOfElements.Visibility = Visibility.Visible;
                 isEnableFriendlyLocator = true;
+                SetElementLocatorsSettingsGridView();
             }
             else
             {
                 xLearnScreenshotsOfElements.Visibility = Visibility.Collapsed;
                 isEnableFriendlyLocator = false;
+                SetElementLocatorsSettingsGridView();
             }
             mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
             foreach (Agent agent in mWizard.OptionalAgentsList)
