@@ -24,7 +24,7 @@ namespace Ginger.UserControlsLib
                 }
                 else
                 {
-                    if (WorkSpace.Instance.CurrentSelectedItem == mCurrentItem)
+                    if (WorkSpace.Instance!= null && WorkSpace.Instance.CurrentSelectedItem == mCurrentItem)
                     {
                         WorkSpace.Instance.CurrentSelectedItem = null;
                     }
