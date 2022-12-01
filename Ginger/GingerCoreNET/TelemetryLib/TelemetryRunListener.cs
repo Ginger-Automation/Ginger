@@ -29,6 +29,8 @@ using System.Linq;
 using GingerCore.Actions.PlugIns;
 using static GingerCore.BusinessFlow;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.CoreNET.TelemetryLib
 {
@@ -67,27 +69,87 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             //    });
             //}
 
+            if (action is ActPlugIn)
+            {
+                ActPlugIn actPlugIn = ((ActPlugIn)action);
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Plugins.ToString(), true, true, actPlugIn.ItemName);
+            }
+
             WorkSpace.Instance.Telemetry.TelemetrySession.OVerallExecutedActions += 1;
 
-            if (WorkSpace.Instance.Telemetry.TelemetrySession.UsedActionTypes.ContainsKey(action.ActionType))
+            UsedActionDetail usedActionDetail = WorkSpace.Instance.Telemetry.TelemetrySession.UsedActionTypes.Where(x => x.Name == action.ActionType).FirstOrDefault();
+            if (usedActionDetail != null)
             {
-                WorkSpace.Instance.Telemetry.TelemetrySession.UsedActionTypes[action.ActionType.ToString()] += 1;
+                int index = WorkSpace.Instance.Telemetry.TelemetrySession.UsedActionTypes.IndexOf(usedActionDetail);
+                usedActionDetail.CountTotal += 1;
+                if (action.Status == eRunStatus.Passed)
+                {
+                    WorkSpace.Instance.Telemetry.TelemetrySession.PassedActionsCount += 1;
+                    usedActionDetail.CountPassed += 1;
+                }
+                if (action.Status == eRunStatus.Failed)
+                {
+                    WorkSpace.Instance.Telemetry.TelemetrySession.FailedActionsCount += 1;
+                    usedActionDetail.CountFailed += 1;
+                }
+                WorkSpace.Instance.Telemetry.TelemetrySession.UsedActionTypes[index] = usedActionDetail;
+
             }
             else
             {
-                WorkSpace.Instance.Telemetry.TelemetrySession.UsedActionTypes[action.ActionType] = 1;
+                usedActionDetail = new UsedActionDetail(action.ActionType, 1, 0, 0);
+
+
+
+                if (action.Status == eRunStatus.Passed)
+                {
+                    WorkSpace.Instance.Telemetry.TelemetrySession.PassedActionsCount += 1;
+                    usedActionDetail.CountPassed += 1;
+                }
+                if (action.Status == eRunStatus.Failed)
+                {
+                    WorkSpace.Instance.Telemetry.TelemetrySession.FailedActionsCount += 1;
+                    usedActionDetail.CountFailed += 1;
+                }
+                WorkSpace.Instance.Telemetry.TelemetrySession.UsedActionTypes.Add(usedActionDetail);
+            }
+            if (action.ActionType.Contains("API"))
+            {
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ApiModel.ToString(), true, true);
+            }
+            try
+            {
+                if (((GingerCore.Actions.Common.ActUIElement)action).ElementLocateBy.ToString() == "POMElement")
+                {
+                    ObservableList<ApplicationPOMModel> pomModels = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
+                    foreach (ApplicationPOMModel pomModel in pomModels)
+                    {
+                        //var appPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(pomModel.TargetApplicationKey);
+                        if (pomModel.MappedUIElements.Where(x => ((GingerCore.Actions.Common.ActUIElement)action).ElementLocateValue.Contains(x.Guid.ToString())).FirstOrDefault() != null)
+                        {
+                            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.POM.ToString(), true, true, pomModel.ItemImageType.ToString());
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+
             }
 
-            if (action.Status == eRunStatus.Passed)
-            {
-                WorkSpace.Instance.Telemetry.TelemetrySession.PassedActionsCount += 1;
-            }
-            if (action.Status == eRunStatus.Failed)
-            {
-                WorkSpace.Instance.Telemetry.TelemetrySession.FailedActionsCount += 1;
-            }
+
+
+            //if (WorkSpace.Instance.Telemetry.TelemetrySession.UsedActionTypes.ContainsKey(action.ActionType))
+            //{
+            //    WorkSpace.Instance.Telemetry.TelemetrySession.UsedActionTypes[action.ActionType.ToString()] += 1;
+            //}
+            //else
+            //{
+            //    WorkSpace.Instance.Telemetry.TelemetrySession.UsedActionTypes[action.ActionType] = 1;
+            //}
         }
-        
+
 
         public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
         {
@@ -117,7 +179,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             {
                 return null;
             }
-                
+
         }
 
         public override void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)

@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Ginger.WizardLib;
 using GingerWPF.WizardLib;
@@ -54,7 +55,8 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
                 }
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(PluginPackage);
 
-                WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.Plugins.ToString());
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Plugins.ToString(), true, false, PluginPackage.ItemName);
+                //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.Plugins.ToString());
             }
             else
             {

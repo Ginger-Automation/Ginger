@@ -43,6 +43,7 @@ using static Ginger.Reports.ExecutionLoggerConfiguration;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Ginger.Configurations;
 using DocumentFormat.OpenXml.Wordprocessing;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace Ginger.Run
 {
@@ -419,7 +420,8 @@ namespace Ginger.Run
                 await RunRunset(doContinueRun);
                 return 1;
             });
-            WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.ParallelExecution.ToString());
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ParallelExecution.ToString(), true, true);
+            //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.ParallelExecution.ToString());
             return result;
         }
 

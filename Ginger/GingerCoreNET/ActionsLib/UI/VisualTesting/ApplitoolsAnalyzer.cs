@@ -38,6 +38,7 @@ using System.IO;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Run;
 using OpenQA.Selenium.Appium.Windows;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace GingerCore.Actions.VisualTesting
 {
@@ -184,7 +185,7 @@ namespace GingerCore.Actions.VisualTesting
                         break;
                 }
             }
-
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Applitools.ToString(), true, true);
         }
 
 
@@ -208,7 +209,8 @@ namespace GingerCore.Actions.VisualTesting
                 mResolution = mAct.GetWindowResolution();
                 mEyes.Open(mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
 
-                WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.Applitools.ToString());
+
+                //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.Applitools.ToString());
             }
             catch (Exception ex)
             {
@@ -324,6 +326,7 @@ namespace GingerCore.Actions.VisualTesting
                 mAct.CheckSetAppWindowSize();
                 mResolution = mAct.GetWindowResolution();
                 WebEyes.Open(mDriver.GetWebDriver(), mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
+
             }
             catch (Exception ex)
             {

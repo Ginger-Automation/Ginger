@@ -642,7 +642,8 @@ namespace Ginger
 
         private void btnSourceControlConnectionDetails_Click(object sender, RoutedEventArgs e)
         {
-            WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.SourceControlDownload.ToString());
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SourceControlDownload.ToString(), true, true);
+            //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.SourceControlDownload.ToString());
             SourceControlConnDetailsPage p = new SourceControlConnDetailsPage();
             p.ShowAsWindow(eWindowShowStyle.Dialog);
         }
@@ -836,7 +837,8 @@ namespace Ginger
         private void xFindAndReplaceSolutionButton_Click(object sender, RoutedEventArgs e)
         {
             SolutionFindAndReplace();
-            WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.Search.ToString());
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Search.ToString(), null, true);
+            //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.Search.ToString());
         }
 
         FindAndReplacePage mfindAndReplacePageSolution = null;

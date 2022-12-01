@@ -27,6 +27,7 @@ using amdocs.ginger.GingerCoreNET;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
 using Ginger.ValidationRules;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace Ginger.Configurations
 {
@@ -105,7 +106,8 @@ namespace Ginger.Configurations
 
             if (sealightsLog == SealightsConfiguration.eSealightsLog.Yes)
             {
-                WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.Sealights.ToString());
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Sealights.ToString(), true, true);
+                //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.Sealights.ToString());
             }
         }
 

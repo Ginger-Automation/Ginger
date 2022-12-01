@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Ginger.WizardLib;
 using GingerCore;
 using GingerCore.Activities;
@@ -135,7 +136,8 @@ namespace Ginger.ALM.MapToALMWizard
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mapBusinessFlow);
                 Reporter.HideStatusMessage();
 
-                WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.ALM.ToString());
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ALM.ToString(), true, false);
+                //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.ALM.ToString());
             }
             catch (Exception ex)
             {

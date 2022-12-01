@@ -58,9 +58,9 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         public int FailedActionsCount { get; set; } = 0;
         public int PassedBuisnessFlowsCount { get; set; } = 0;
         public int FailedBuisnessFlowsCount { get; set; } = 0;
-        public Dictionary<string, int> UsedActionTypes { get; set; } = new Dictionary<string, int>();
+        public List<UsedActionDetail> UsedActionTypes { get; set; } = new List<UsedActionDetail>();
         public HashSet<string> AutomatedPlatforms { get; set; } = new HashSet<string>();
-        public HashSet<string> UsedFeatures { get; set; } = new HashSet<string>();
+        public List<UsedFeatureDetail> UsedFeatures { get; set; } = new List<UsedFeatureDetail>();
         public List<string> LoggedErrors { get; set; } = new List<string>();
 
 
@@ -74,86 +74,86 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         public enum GingerUsedFeatures
         {
             [Description("POM")]
-            POM, //Done
+            POM, //Need to specify when action of POM is running
             [Description("ApiModel")]
             ApiModel, //Done
             [Description("DataSource")]
-            DataSource,
+            DataSource,//Done
             [Description("SharedRepository")]
-            SharedRepository,
+            SharedRepository,//Done
             [Description("ALM")]
             ALM, //Done
             [Description("SourceControl")]
-            SourceControl,
+            SourceControl,//Done
             [Description("AlmImport")]
-            AlmImport,
+            AlmImport,//Done
             [Description("AlmExport")]
-            AlmExport,
+            AlmExport,//Done
             [Description("SourceControlDownload")]
-            SourceControlDownload,
+            SourceControlDownload,//Done
             [Description("SourceControlUpload")]
-            SourceControlUpload,
+            SourceControlUpload,//Done
             [Description("Analyzer")]
-            Analyzer,
+            Analyzer,//Done
             [Description("SelfHealing")]
-            SelfHealing,
+            SelfHealing,//Done
             [Description("Search")]
-            Search,
+            Search,//Done
             [Description("ParallelExecution")]
-            ParallelExecution, //Done
+            ParallelExecution, //Need to check if it's working correctly
             [Description("RunsetOperationsMailReport")]
-            RunsetOperationsMailReport,
+            RunsetOperationsMailReport,//Done
             [Description("RunsetOperationsExportToAlm")]
-            RunsetOperationsExportToAlm,
+            RunsetOperationsExportToAlm,//Done
             [Description("RunSetActionHTMLReport")]
-            RunSetActionHTMLReport,
+            RunSetActionHTMLReport,//Done
             [Description("RunSetActionHTMLReportSendEmail")]
-            RunSetActionHTMLReportSendEmail,
+            RunSetActionHTMLReportSendEmail,//Done
             [Description("RunSetActionJSONSummaryOperations")]
-            RunSetActionJSONSummary,
+            RunSetActionJSONSummary,//Done
             [Description("RunSetActionGenerateTestNGReportOperations")]
-            RunSetActionGenerateTestNGReport,
+            RunSetActionGenerateTestNGReport,//Done
             [Description("RunSetActionSendFreeEmailOperations")]
-            RunSetActionSendFreeEmail,
+            RunSetActionSendFreeEmail,//Done
             [Description("RunSetActionSendSMSOperations")]
-            RunSetActionSendSMS,
+            RunSetActionSendSMS,//Done
             [Description("RunSetActionPublishToQCOperations")]
-            RunSetActionPublishToQC,
+            RunSetActionPublishToQC,//Done
             [Description("RunSetActionAutomatedALMDefects")]
-            RunSetActionAutomatedALMDefects,
+            RunSetActionAutomatedALMDefects,//Done
             [Description("RunSetActionScriptOperations")]
-            RunSetActionScript,
+            RunSetActionScript,//Done
             [Description("RunSetActionSendDataToExternalSourceOperations")]
-            RunSetActionSendDataToExternalSource,
-            CustomizedReportTemplates,
+            RunSetActionSendDataToExternalSource,//Done
+            CustomizedReportTemplates,//Done
             [Description("LiteDBLogger")]
-            LiteDB,
+            LiteDB,//Done
             [Description("TextFile")]
-            TextfileLogger,
+            TextfileLogger,//Done
             [Description("CentralizedReportLoggerPost")]
-            PostExecution,
+            PostExecution,//Done
             [Description("CentralizedReportLoggerDuring")]
-            DuringExecution,
+            DuringExecution,//Done
             [Description("Tags")]
-            Tags,
+            Tags,//Done
             [Description("VRT")]
-            VRT,
+            VRT,//Done
             [Description("Applitools")]
-            Applitools, //Done but need to check
+            Applitools, //Done
             [Description("Sealights")]
-            Sealights,
+            Sealights,//Done
             [Description("ModelParameters")]
-            ModelParameters,
+            ModelParameters,//Done
             [Description("Environments")]
             Environments, //Done
-            [Description("GlovalVaraibles")]
-            GlovalVaraibles,
+            [Description("GlobalVaraibles")]
+            GlobalVaraibles,//Done
             [Description("Documents")]
-            Documents,
+            Documents,//Done
             [Description("Plugins")]
             Plugins, //Done
             [Description("ActionResultSimulation")]
-            ActionResultSimulation
+            ActionResultSimulation //Not Done! need to add this
         }
 
         public TelemetrySession(Guid guid)
@@ -180,11 +180,6 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             else
             {
                 IsAmdocs = false;
-            }
-
-            if (WorkSpace.Instance.UserProfile != null)
-            {
-                Terminology = WorkSpace.Instance.UserProfile.TerminologyDictionaryType.ToString();
             }
 
             Assembly assembly = Assembly.GetEntryAssembly();

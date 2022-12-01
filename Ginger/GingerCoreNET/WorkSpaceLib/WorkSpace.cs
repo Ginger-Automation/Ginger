@@ -522,6 +522,8 @@ namespace amdocs.ginger.GingerCoreNET
 
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
 
+                mWorkSpace.Telemetry.CheckSolutionInstanceForUserData();
+
                 return true;
             }
             catch (Exception ex)

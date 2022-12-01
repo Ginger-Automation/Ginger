@@ -24,6 +24,7 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Run;
 using Amdocs.Ginger.UserControls;
 using Ginger;
@@ -1699,7 +1700,8 @@ namespace GingerWPF.BusinessFlowsLib
 
             GingerSelfHealingConfiguration selfHealingConfiguration = new GingerSelfHealingConfiguration();
             selfHealingConfiguration.ShowAsWindow();
-            WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.SelfHealing.ToString());
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SelfHealing.ToString(), null, true);
+            //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.SelfHealing.ToString());
 
         }
 

@@ -32,6 +32,7 @@ using System.Windows.Threading;
 using amdocs.ginger.GingerCoreNET;
 using System.Collections.Generic;
 using Amdocs.Ginger.UserControls;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace Ginger.SourceControl
 {
@@ -259,7 +260,8 @@ namespace Ginger.SourceControl
 
         private async void GetProject_Click(object sender, RoutedEventArgs e)
         {
-            WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.SourceControlDownload.ToString());
+            UsedFeatureDetail.AddOrModifyFeatureDetail(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.SourceControlDownload.ToString(), null, true);
+            //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.SourceControlDownload.ToString());
             await DownloadSolution().ConfigureAwait(false);
         }
 

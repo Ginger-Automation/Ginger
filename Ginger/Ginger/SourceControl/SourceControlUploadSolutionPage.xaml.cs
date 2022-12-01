@@ -33,6 +33,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.UserControls;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
@@ -204,7 +205,8 @@ namespace Ginger.SourceControl
             }
             finally
             {
-                WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.SourceControlUpload.ToString());
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SourceControlUpload.ToString(), true, true);
+                //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.SourceControlUpload.ToString());
                 loaderElement.Visibility = Visibility.Collapsed;
                 SourceControlIntegration.BusyInProcessWhileDownloading = false;
             }

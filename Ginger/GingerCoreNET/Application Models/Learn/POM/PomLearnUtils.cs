@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions.VisualTesting;
@@ -130,6 +131,8 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(POM);
             }
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.POM.ToString(), true, false, POM.ItemImageType.ToString());
+
         }
 
         private string BitmapToBase64(Bitmap bImage)

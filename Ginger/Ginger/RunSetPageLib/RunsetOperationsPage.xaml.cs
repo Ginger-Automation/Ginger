@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
 using Ginger.UserControls;
@@ -181,7 +182,8 @@ namespace Ginger.Run
                     out Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures usedRunsetOperation);
             if (isEnum)
             {
-                WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(usedRunsetOperation.ToString());
+                UsedFeatureDetail.AddOrModifyFeatureDetail(usedRunsetOperation.ToString(), null, true);
+                //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(usedRunsetOperation.ToString());
             }
         }
         private void RunAll(object sender, RoutedEventArgs e)
@@ -194,7 +196,8 @@ namespace Ginger.Run
                     out Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures usedRunsetOperation);
                 if (isEnum)
                 {
-                    WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(usedRunsetOperation.ToString());
+                    UsedFeatureDetail.AddOrModifyFeatureDetail(usedRunsetOperation.ToString(), null, true);
+                    //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(usedRunsetOperation.ToString());
                 }
 
             }
