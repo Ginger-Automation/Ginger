@@ -252,15 +252,18 @@ namespace Ginger.Run
                     LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "GingerExecutionResults.db"));
                     dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0]);
                 }
-                else if (remoteDeletionFlag == false)
+                else if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                {
+                    string runSetFolder = executionLoggerHelper.GetLoggerDirectory(runSetReport.LogFolder);
+
+                    var fi = new DirectoryInfo(runSetFolder);
+                    CleanDirectory(fi.FullName);
+                    fi.Delete();
+                }
+                else if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.Remote && remoteDeletionFlag == false)
                 {
                     Reporter.ToUser(eUserMsgKey.RemoteExecutionResultsCannotBeAccessed);
                     remoteDeletionFlag = true;
-                    //string runSetFolder = executionLoggerHelper.GetLoggerDirectory(runSetReport.LogFolder);
-
-                    //var fi = new DirectoryInfo(runSetFolder);
-                    //CleanDirectory(fi.FullName);
-                    //fi.Delete();
                 }
             }
 
