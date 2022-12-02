@@ -260,7 +260,7 @@ namespace Ginger.Run
                     CleanDirectory(fi.FullName);
                     fi.Delete();
                 }
-                else if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.Remote && remoteDeletionFlag == false)
+                else if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.Remote && !remoteDeletionFlag)
                 {
                     Reporter.ToUser(eUserMsgKey.RemoteExecutionResultsCannotBeAccessed);
                     remoteDeletionFlag = true;
