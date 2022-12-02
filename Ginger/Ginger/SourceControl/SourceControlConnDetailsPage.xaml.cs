@@ -133,7 +133,9 @@ namespace Ginger.SourceControl
                         return;
                     }
                 }
+                WorkSpace.Instance.UserProfile.SourceControlPass = WorkSpace.Instance.Solution.SourceControl.SourceControlPass;
                 WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
+                WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
                 Close();
             }
         }
