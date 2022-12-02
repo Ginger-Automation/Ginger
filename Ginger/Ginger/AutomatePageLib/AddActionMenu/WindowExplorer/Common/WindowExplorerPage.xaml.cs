@@ -375,7 +375,10 @@ namespace Ginger.WindowExplorer
                 if (mWindowExplorerDriver.IsPOMSupported())
                 {
                     xUCElementDetails.InitLocatorsGridView();
-                    xUCElementDetails.InitFriendlyLocatorsGridView();
+                    if (mContext.Platform == ePlatformType.Web)
+                    {
+                        xUCElementDetails.InitFriendlyLocatorsGridView();
+                    }
                 }
                 else
                 {

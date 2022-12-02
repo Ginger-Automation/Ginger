@@ -83,7 +83,7 @@ namespace Amdocs.Ginger.Repository
         protected ConcurrentDictionary<string, object> mBackupDic;
         protected bool mBackupInProgress = false;
 
-        public bool IsBackupExist
+        public bool IsBackupExist 
         {
             get
             {
@@ -1196,7 +1196,6 @@ namespace Amdocs.Ginger.Repository
                 {
                     return;
                 }
-
                 DirtyTrackingFields.Add(PI.Name);
 
                 // We track observable list which are seriazlized - drill down recursivley in obj tree
@@ -1226,6 +1225,17 @@ namespace Amdocs.Ginger.Repository
                         return;
                     }
                     TrackObservableList((IObservableList)obj);
+                }
+                // track changes in childern which are RepositoryItemBase
+                if (typeof(RepositoryItemBase).IsAssignableFrom(PI.PropertyType))
+                {
+                    RepositoryItemBase obj = (RepositoryItemBase)PI.GetValue(this);
+
+                    if (obj == null)
+                    {
+                        return;
+                    }
+                    obj.OnDirtyStatusChanged += this.RaiseDirtyChanged;
                 }
             });
 
