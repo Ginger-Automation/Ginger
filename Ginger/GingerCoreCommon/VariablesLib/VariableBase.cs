@@ -354,7 +354,7 @@ namespace GingerCore.Variables
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Exception occured during Action Analyze of Used Variabels, object='{0}', field='{1}'", item, mi.Name), ex);
+                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Exception occurred during Action Analyze of Used Variables, object='{0}', field='{1}'", item, mi.Name), ex);
                         value = null;
                     }
 
@@ -429,7 +429,7 @@ namespace GingerCore.Variables
                             }
                             catch (Exception ex)
                             {
-                                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Exception occured during Action Analyze of Used Variabels, object='{0}', field='{1}'", item, mi.Name), ex);
+                                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Exception occurred during Action Analyze of Used Variables, object='{0}', field='{1}'", item, mi.Name), ex);
                             }
                         }
                     }
