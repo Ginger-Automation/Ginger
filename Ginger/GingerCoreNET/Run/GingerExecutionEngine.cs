@@ -3925,15 +3925,15 @@ namespace Ginger.Run
                     {
                         ExecutingActivity.Status = eRunStatus.Running;
                         GiveUserFeedback();
-                        // We run the first Activity in Continue mode, if it came from RunFlow, then it is set to first action
-                        //if (FirstExecutedActivity.Equals(ExecutingActivity))
-                        //{
-                        //    RunActivity(ExecutingActivity, true, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
-                        //}
-                        //else
-                        //{
-                        RunActivity(ExecutingActivity, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
-                        //}
+                        if (doContinueRun && FirstExecutedActivity.Equals(ExecutingActivity))
+                        {
+                            // We run the first Activity in Continue mode, if it came from RunFlow, then it is set to first action
+                            RunActivity(ExecutingActivity, true, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
+                        }
+                        else
+                        {
+                            RunActivity(ExecutingActivity, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
+                        }
                         //TODO: Why this is here? do we need to rehook
                         CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
                         if (ExecutingActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)

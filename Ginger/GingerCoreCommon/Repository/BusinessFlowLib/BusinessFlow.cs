@@ -1271,7 +1271,7 @@ namespace GingerCore
             {
                 if (userSelection == eUserMsgSelection.None)
                 {
-                    userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Target Application is not mapped to selected BF. Ginger will map the Activies Target application to BF.");
+                    userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Target Application is not mapped to selected BF. Ginger will map the Activity's Target application to BF.");
                 }
 
                 if (userSelection == eUserMsgSelection.OK)
