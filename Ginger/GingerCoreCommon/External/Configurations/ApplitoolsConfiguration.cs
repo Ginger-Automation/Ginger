@@ -35,8 +35,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mApiUrl = value;
-                OnPropertyChanged(nameof(ApiUrl));
+                if (mApiUrl != value)
+                {
+                    mApiUrl = value;
+                    OnPropertyChanged(nameof(ApiUrl));
+                }
             }
         }
 
@@ -51,8 +54,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mApiKey = value;
-                OnPropertyChanged(nameof(ApiKey));
+                if (mApiKey != value)
+                {
+                    mApiKey = value;
+                    OnPropertyChanged(nameof(ApiKey));
+                }
             }
         }
 
