@@ -112,6 +112,7 @@ namespace Amdocs.Ginger.Common
         CurrentActionNotSaved,
         LoseChangesWarn,
         BFNotExistInDB,
+        RemoteExecutionResultsCannotBeAccessed,
         // Merged from GingerCore        
         CopiedVariableSuccessfully, AskIfShareVaribalesInRunner, ShareVariableNotSelected,
         WarnOnDynamicActivities,
@@ -553,6 +554,9 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.BFNotExistInDB, new UserMsg(eUserMsgType.INFO, "Run " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), "Business Flow data don't exist in LiteDB, Please run to generate report", eUserMsgOption.OK, eUserMsgSelection.None));
 
             #endregion Reports
+
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RemoteExecutionResultsCannotBeAccessed, new UserMsg(eUserMsgType.INFO, "Remote Data deletion", "Remote Execution Results will not be deleted.", eUserMsgOption.OK, eUserMsgSelection.OK));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.ApplicationNotFoundInEnvConfig, new UserMsg(eUserMsgType.ERROR, "Application Not Found In EnvConfig", "Application = {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
