@@ -2,9 +2,9 @@ Write-Host "-------------------------------------------------------------"
 Write-Host "-          Starting test for .Net Framework DLLs            -"
 Write-Host "-------------------------------------------------------------"
 
-cd "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\" 
+# cd "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensions\TestPlatform\" 
 
-$exitcode=0
+# $exitcode=0
 
 # mkdir D:\a\gingertest\gingertest\TestResults\DotNetFramework
 
@@ -51,4 +51,4 @@ $exitcode=0
 # dir
 
 
-exit $exitcode
+# exit $exitcode
