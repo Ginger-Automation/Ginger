@@ -441,7 +441,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 {
                     if(IsStart)
                     {
-                        ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.Acts.Count;
+                        ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.Acts.Count(x => x.Active);
                     }
                     else
                     {
@@ -506,7 +506,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     {
                         if (IsStart)
                         {
-                            ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.Acts.Count;
+                            ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.Acts.Count(x => x.Active);
                         }
                         else
                         {
