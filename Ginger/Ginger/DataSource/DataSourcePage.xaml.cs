@@ -186,9 +186,9 @@ namespace Ginger.DataSource
                 dsTableDetails.DSC = mDSDetails;
                                 
                 if (dsTableDetails.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue)
-                    dsTableDetails.DSC.AddTable(dsTableDetails.Name, "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text");
+                    dsTableDetails.DSC.AddTable(dsTableDetails.Name, "GINGER_ID AUTOINCREMENT,GINGER_KEY_NAME Text,GINGER_KEY_VALUE Text,GINGER_LAST_UPDATED_BY Text,GINGER_LAST_UPDATE_DATETIME Text");
                 else if (dsTableDetails.DSTableType == DataSourceTable.eDSTableType.Customized)
-                    dsTableDetails.DSC.AddTable(dsTableDetails.Name, "[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text");
+                    dsTableDetails.DSC.AddTable(dsTableDetails.Name, "GINGER_ID AUTOINCREMENT,GINGER_USED Text,GINGER_LAST_UPDATED_BY Text,GINGER_LAST_UPDATE_DATETIME Text");
                 
                 mDSTableList.Add(dsTableDetails);
             }           
