@@ -1072,7 +1072,10 @@ namespace Amdocs.Ginger.Repository
 
         internal void RaiseDirtyChanged(object sender, EventArgs e)
         {
-            DirtyStatus = eDirtyStatus.Modified;
+            if (this.DirtyTracking != eDirtyTracking.Paused)
+            {
+                DirtyStatus = eDirtyStatus.Modified;
+            }
             // RaiseDirtyChangedEvent();
         }
 
@@ -1081,63 +1084,65 @@ namespace Amdocs.Ginger.Repository
         internal void ChildCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             // each change in Observavle will mark the item modified - all NotifyCollectionChangedAction.*
+            if (this.DirtyTracking != eDirtyTracking.Paused)
+            {
+                #region Collection Action - Add
+                // if item added set tracking too
+                if (e.Action == NotifyCollectionChangedAction.Add)
+                {
+                    foreach (object obj in e.NewItems)
+                    {
+                        if (obj is RepositoryItemBase)
+                        {
+                            RepositoryItemBase repositoryItemBase = (RepositoryItemBase)obj;
+                            repositoryItemBase.StartDirtyTracking();
+                            repositoryItemBase.OnDirtyStatusChanged += this.RaiseDirtyChanged;
+                            repositoryItemBase.DirtyStatus = eDirtyStatus.Modified;
+                        }
+                        else
+                        {
+                            // not RI no tracking...
+                        }
+                    }
+                }
+                #endregion
+                #region Collection Action - Remove Or Move
+                else if (e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Move)
+                {
+                    foreach (object obj in e.OldItems)
+                    {
+                        if (obj is RepositoryItemBase)
+                        {
+                            ((RepositoryItemBase)obj).DirtyStatus = eDirtyStatus.Modified;
+                        }
+                    }
+                }
+                #endregion
+                #region Collection Action - Replace
+                else if (e.Action == NotifyCollectionChangedAction.Replace)
+                {
+                    foreach (object obj in e.NewItems)
+                    {
+                        if (obj is RepositoryItemBase)
+                        {
+                            ((RepositoryItemBase)obj).DirtyStatus = eDirtyStatus.Modified;
+                        }
+                    }
+                    foreach (object obj in e.OldItems)
+                    {
+                        if (obj is RepositoryItemBase)
+                        {
+                            ((RepositoryItemBase)obj).DirtyStatus = eDirtyStatus.Modified;
+                        }
+                    }
 
-            #region Collection Action - Add
-            // if item added set tracking too
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (object obj in e.NewItems)
-                {
-                    if (obj is RepositoryItemBase)
-                    {
-                        RepositoryItemBase repositoryItemBase = (RepositoryItemBase)obj;
-                        repositoryItemBase.StartDirtyTracking();
-                        repositoryItemBase.OnDirtyStatusChanged += this.RaiseDirtyChanged;
-                        repositoryItemBase.DirtyStatus = eDirtyStatus.Modified;
-                    }
-                    else
-                    {
-                        // not RI no tracking...
-                    }
                 }
-            }
-            #endregion
-            #region Collection Action - Remove Or Move
-            else if (e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Move)
-            {
-                foreach (object obj in e.OldItems)
+                #endregion
+                #region Collection Action - Reset
+                else
                 {
-                    if (obj is RepositoryItemBase)
-                    {
-                        ((RepositoryItemBase)obj).DirtyStatus = eDirtyStatus.Modified;
-                    }
+                    DirtyStatus = eDirtyStatus.Modified;
                 }
-            }
-            #endregion
-            #region Collection Action - Replace
-            else if (e.Action == NotifyCollectionChangedAction.Replace)
-            {
-                foreach (object obj in e.NewItems)
-                {
-                    if (obj is RepositoryItemBase)
-                    {
-                        ((RepositoryItemBase)obj).DirtyStatus = eDirtyStatus.Modified;
-                    }
-                }
-                foreach (object obj in e.OldItems)
-                {
-                    if (obj is RepositoryItemBase)
-                    {
-                        ((RepositoryItemBase)obj).DirtyStatus = eDirtyStatus.Modified;
-                    }
-                }
-
-            }
-            #endregion
-            #region Collection Action - Reset
-            else
-            {
-                DirtyStatus = eDirtyStatus.Modified;
             }
             #endregion
         }
@@ -1329,6 +1334,16 @@ namespace Amdocs.Ginger.Repository
                     foreach (object o in obj)
                         if (o is RepositoryItemBase)
                             ((RepositoryItemBase)o).SetDirtyStatusToNoChange();
+                }
+                if (typeof(RepositoryItemBase).IsAssignableFrom(PI.PropertyType))
+                {
+                    RepositoryItemBase obj = (RepositoryItemBase)PI.GetValue(this);
+
+                    if (obj == null)
+                    {
+                        continue;
+                    }
+                    obj.SetDirtyStatusToNoChange();
                 }
             }
 
