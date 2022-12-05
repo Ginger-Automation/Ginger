@@ -39,6 +39,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         internal List<eElementType> mElementsTypeList = null;
         internal List<ElementTypeData> mPlatformElementTypeOperations = null;
         internal List<eLocateBy> mElementLocatorsTypeList = null;
+        internal List<ePosition> mElementPositionList = null;
 
         public abstract ePlatformType PlatformType();
         public abstract List<eLocateBy> GetPlatformUIElementLocatorsList();
@@ -279,5 +280,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             return null;
         }
+
+        public abstract List<ePosition> GetElementPositionList();
     }
 }

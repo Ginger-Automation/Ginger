@@ -44,10 +44,11 @@ using System.Windows.Data;
 using System.Windows.Media;
 using Ginger.SolutionWindows.TreeViewItems;
 using Amdocs.Ginger.Common.Repository;
+using Ginger.UserControlsLib;
 
 namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 {
-    public partial class ModelsGlobalParamsPage : Page
+    public partial class ModelsGlobalParamsPage : GingerUIPage
     {
         public ObservableList<GlobalAppModelParameter> mModelsGlobalParamsList;
         GenericWindow mGenericWindow = null;
@@ -96,7 +97,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
             if (!mSelectionModePage)
             {
-                xModelsGlobalParamsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Parameter, "Applications Models Global Parameters", saveAllHandler: SaveAllGlobalParametersChanges, addHandler: AddGlobalParam);
+                xModelsGlobalParamsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Parameter, "Applications Models Global Parameters", saveAllHandler: SaveAllGlobalParametersChanges, addHandler: AddGlobalParam,true);
 
                 view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, MaxWidth=30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["OpenEditPossibleValuesPage"] });
                 view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.CurrentValue), Header = "Current Value", WidthWeight = 20, AllowSorting = true });
@@ -108,7 +109,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 xModelsGlobalParamsGrid.SetbtnPastHandler(BtnPastGlobalParamsClicked);
 
                 xModelsGlobalParamsGrid.ShowSaveAllChanges = Visibility.Collapsed;
-                xModelsGlobalParamsGrid.ShowSaveSelectedChanges = Visibility.Visible;
+                xModelsGlobalParamsGrid.ShowSaveSelectedChanges = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.ShowEdit = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.ShowCopy = Visibility.Visible;
                 xModelsGlobalParamsGrid.ShowPaste = Visibility.Visible;
@@ -614,6 +615,23 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         {
             SelectedGlobalParamsFromDialogPage = null;
             mGenericWindow.Close();
+        }
+
+        protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (xModelsGlobalParamsGrid.grdMain.Items.Count != 0 && xModelsGlobalParamsGrid.grdMain.SelectedItems[0] != null)
+            {
+                CurrentItemToSave = (RepositoryItemBase)xModelsGlobalParamsGrid.grdMain.SelectedItems[0];
+                base.IsVisibleChangedHandler(sender, e);
+            }
+        }
+
+        private void xModelsGlobalParamsGrid_SelectedItemChanged(object selectedItem)
+        {
+            if (selectedItem != null && selectedItem != WorkSpace.Instance.CurrentSelectedItem)
+            {
+                WorkSpace.Instance.CurrentSelectedItem = (Amdocs.Ginger.Repository.RepositoryItemBase)selectedItem;
+            }
         }
     }
 }

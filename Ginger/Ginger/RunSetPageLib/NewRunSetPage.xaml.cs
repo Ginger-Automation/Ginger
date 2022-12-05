@@ -57,13 +57,14 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Run
 {
     /// <summary>
     /// Interaction logic for RunPage.xaml
     /// </summary>
-    public partial class NewRunSetPage : Page
+    public partial class NewRunSetPage : GingerUIPage
     {
         public RunnerPage mCurrentSelectedRunner;
 
@@ -555,6 +556,7 @@ namespace Ginger.Run
             else if (e.Action == NotifyCollectionChangedAction.Move)
             {
                 mCurrentSelectedRunner.BusinessflowRunnerItems.Move(e.OldStartingIndex, e.NewStartingIndex);
+                mCurrentSelectedRunner.ExecutorEngine.GingerRunner.DirtyStatus = eDirtyStatus.Modified;
             }
             this.Dispatcher.Invoke(() =>
             {
@@ -630,11 +632,6 @@ namespace Ginger.Run
             xSealightsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
             xSealightsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsLabId), "Lab ID or Build Session ID must be provided"));
             xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
-
-            mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsLabId));
-            mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsTestStage));
-            mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsBuildSessionID));
-            mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsTestRecommendations));
 
             xDefaultTestStageRadioBtn.Checked += XDefaultTestStageRadioBtn_Checked;
             xDefaultLabIdRadioBtn.Checked += XDefaultLabIdRadioBtn_Checked;
@@ -1429,6 +1426,7 @@ namespace Ginger.Run
                     xRunSetLoadingPnl.Visibility = Visibility.Visible;
                     xRunsetPageGrid.Visibility = Visibility.Collapsed;
                     mRunSetConfig = runSetConfig;
+                    CurrentItemToSave = mRunSetConfig;
                     mRunSetConfig.SaveBackup();
 
                     mRunSetConfig.StartDirtyTracking();

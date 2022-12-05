@@ -82,8 +82,21 @@ namespace Ginger.Reports
         [IsSerializedForLocalRepository]
         public bool IsSelected { get; set; }
 
+        private bool mExecutionLoggerConfigurationIsEnabled;
         [IsSerializedForLocalRepository]
-        public bool ExecutionLoggerConfigurationIsEnabled { get; set; }
+        public bool ExecutionLoggerConfigurationIsEnabled 
+        { 
+            get { return mExecutionLoggerConfigurationIsEnabled; } 
+            set 
+            {
+                if (mExecutionLoggerConfigurationIsEnabled != value)
+                {
+                    mExecutionLoggerConfigurationIsEnabled = value;
+                    OnPropertyChanged(nameof(ExecutionLoggerConfigurationIsEnabled));
+                }
+            }
+        }
+
 
         string mExecutionLoggerConfigurationExecResultsFolder;
         [IsSerializedForLocalRepository]
@@ -95,8 +108,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mExecutionLoggerConfigurationExecResultsFolder = value;
-                OnPropertyChanged(nameof(ExecutionLoggerConfigurationExecResultsFolder));
+                if (mExecutionLoggerConfigurationExecResultsFolder != value)
+                {
+                    mExecutionLoggerConfigurationExecResultsFolder = value;
+                    OnPropertyChanged(nameof(ExecutionLoggerConfigurationExecResultsFolder));
+                }
             }
         }
 
@@ -111,9 +127,12 @@ namespace Ginger.Reports
                 return mExecutionLoggerConfigurationMaximalFolderSize;
             }
             set
-            {                
-                mExecutionLoggerConfigurationMaximalFolderSize = value;
-                OnPropertyChanged(nameof(ExecutionLoggerConfigurationMaximalFolderSize));
+            {
+                if (mExecutionLoggerConfigurationMaximalFolderSize != value)
+                {
+                    mExecutionLoggerConfigurationMaximalFolderSize = value;
+                    OnPropertyChanged(nameof(ExecutionLoggerConfigurationMaximalFolderSize));
+                }
             }
         }
 
@@ -128,7 +147,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mPublishLogToCentralDB = value;               
+                if (mPublishLogToCentralDB != value)
+                { 
+                    mPublishLogToCentralDB = value;
+                    OnPropertyChanged(nameof(PublishLogToCentralDB));
+                }       
             }
         }
 
@@ -144,7 +167,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mDataPublishingPhase = value;
+                if (mDataPublishingPhase != value)
+                {
+                    mDataPublishingPhase = value;
+                    OnPropertyChanged(nameof(DataPublishingPhase));
+                }
             }
         }
 
@@ -159,7 +186,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mDeleteLocalDataOnPublish = value;
+                if (mDeleteLocalDataOnPublish != value)
+                {
+                    mDeleteLocalDataOnPublish = value;
+                    OnPropertyChanged(nameof(DeleteLocalDataOnPublish));
+                }
             }
         }
 
@@ -174,8 +205,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mCentralLoggerEndPointUrl = value;
-                OnPropertyChanged(nameof(CentralLoggerEndPointUrl));
+                if (mCentralLoggerEndPointUrl != value)
+                {
+                    mCentralLoggerEndPointUrl = value;
+                    OnPropertyChanged(nameof(CentralLoggerEndPointUrl));
+                }
             }
         }
 
@@ -320,7 +354,7 @@ namespace Ginger.Reports
                 if (mDataRepositoryMethod != value)
                 {
                     mDataRepositoryMethod = value;                    
-                    OnPropertyChanged(nameof(mDataRepositoryMethod));
+                    OnPropertyChanged(nameof(SelectedDataRepositoryMethod));
                 }
             }
         }

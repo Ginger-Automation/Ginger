@@ -77,6 +77,13 @@ namespace Ginger.ALM
 
         private void SetFieldsGrid()
         {
+            if (mALMDefectProfiles != null)
+            {
+                foreach (ALMDefectProfile defectProfile in mALMDefectProfiles)
+                {
+                    StartTrackingDefectProfile(defectProfile);
+                }
+            }
             //Remove Rally
             var comboEnumItem = ALMTypes.Cast<GingerCore.GeneralLib.ComboEnumItem>().Where(x => x.text == ALMIntegrationEnums.eALMType.RALLY.ToString()).FirstOrDefault();
             ALMTypes.Remove(comboEnumItem);
@@ -195,6 +202,7 @@ namespace Ginger.ALM
             grdDefectsProfiles.DataSourceList = mALMDefectProfiles;
             grdDefectsFields.DataSourceList = newALMDefectProfile.ALMDefectProfileFields;
             grdDefectsProfiles.Grid.SelectedItem = newALMDefectProfile;
+            StartTrackingDefectProfile(newALMDefectProfile);
         }
 
         private void EditDefectsProfile(object sender, RoutedEventArgs e)
@@ -367,6 +375,10 @@ namespace Ginger.ALM
                 Mouse.OverrideCursor = null;
             }
             return mALMDefectProfileFields;
+        }
+        private void StartTrackingDefectProfile(ALMDefectProfile profile)
+        {
+            profile.StartDirtyTracking();
         }
     }
 }

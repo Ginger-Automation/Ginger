@@ -124,6 +124,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 if (mWindowExplorerDriver.IsPOMSupported())
                 {
                     xUCElementDetails.InitLocatorsGridView();
+                    if (mContext.Platform == ePlatformType.Web)
+                    {
+                        xUCElementDetails.InitFriendlyLocatorsGridView();
+                    }
                 }
                 else
                 {

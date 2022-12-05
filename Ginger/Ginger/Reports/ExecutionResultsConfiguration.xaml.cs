@@ -27,13 +27,14 @@ using amdocs.ginger.GingerCoreNET;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
 using Ginger.ValidationRules;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Reports
 {
     /// <summary>
     /// Interaction logic for ExecutionResultsConfiguration.xaml
     /// </summary>
-    public partial class ExecutionResultsConfiguration : Page
+    public partial class ExecutionResultsConfiguration : GingerUIPage
     {
         GenericWindow _pageGenericWin = null;
         ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = new ExecutionLoggerConfiguration();
@@ -60,13 +61,14 @@ namespace Ginger.Reports
         private void Init()
         {
             _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
-            _selectedExecutionLoggerConfiguration.StartDirtyTracking();
             //Notify User about Change in sealights configurations settings
             if (!string.IsNullOrEmpty(WorkSpace.Instance.Solution.LoggerConfigurations.SealightsURL))
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Sealights Configurations section moved to Configurations -> External Integrations -> Sealights Configurations. \n Please save the configuration details.");
             }
+            CurrentItemToSave = WorkSpace.Instance.Solution;
             SetControls();
+            _selectedExecutionLoggerConfiguration.StartDirtyTracking();
             isControlsSet = true;
         }
 
@@ -150,9 +152,7 @@ namespace Ginger.Reports
         private void executionResultOffRadioBtnsPnl_Checked(object sender, RoutedEventArgs e)
         {
             _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled = false;
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled));
             _selectedExecutionLoggerConfiguration.PublishLogToCentralDB = ExecutionLoggerConfiguration.ePublishToCentralDB.No;
-            _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.PublishLogToCentralDB));
             SetExecutionLoggerRadioButtonToOff();
             if (xLoggerSettingsGrid != null)
             {
@@ -224,7 +224,6 @@ namespace Ginger.Reports
                 }
                 xFolderMaximumSizeRow.Height = new GridLength(0);
                 _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
-                _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
                 if (isControlsSet)
                 {
                     Reporter.ToUser(eUserMsgKey.ChangesRequireRestart);

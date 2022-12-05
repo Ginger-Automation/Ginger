@@ -27,15 +27,16 @@ using amdocs.ginger.GingerCoreNET;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
 using Ginger.ValidationRules;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Configurations
 {
     /// <summary>
     /// Interaction logic for SealightsConfiguration.xaml
     /// </summary>
-    public partial class SealightsExternalConfigurationsPage : Page
+    public partial class SealightsExternalConfigurationsPage : GingerUIPage
     {
-        SealightsConfiguration _SealightsConfiguration = new SealightsConfiguration();
+        SealightsConfiguration _SealightsConfiguration = null;
 
         public SealightsExternalConfigurationsPage()
         {
@@ -46,8 +47,9 @@ namespace Ginger.Configurations
         private void Init()
         {
             _SealightsConfiguration = WorkSpace.Instance.Solution.SealightsConfiguration;
-            _SealightsConfiguration.StartDirtyTracking();
+            CurrentItemToSave = WorkSpace.Instance.Solution;
             SetControls();
+            _SealightsConfiguration.StartDirtyTracking();
         }
 
         private void SetControls()

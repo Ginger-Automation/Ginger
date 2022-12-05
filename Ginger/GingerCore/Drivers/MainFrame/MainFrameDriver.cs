@@ -853,5 +853,10 @@ namespace GingerCore.Drivers.MainFrame
         {
             return null;
         }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

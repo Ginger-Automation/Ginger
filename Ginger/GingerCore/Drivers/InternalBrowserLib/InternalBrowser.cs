@@ -1406,5 +1406,10 @@ namespace GingerCore.Drivers.InternalBrowserLib
         {
             return null;
         }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

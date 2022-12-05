@@ -30,13 +30,14 @@ using System.IO;
 using System.IO.Compression;
 using GingerCore.Drivers;
 using amdocs.ginger.GingerCoreNET;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Reports
 {
     /// <summary>
     /// Interaction logic for ExecutionResultsConfiguration.xaml
     /// </summary>
-    public partial class HTMLReportTemplatePage : Page
+    public partial class HTMLReportTemplatePage : GingerUIPage
     {
         GenericWindow _pageGenericWin = null;
         private bool _existingTemplatePage = false;
@@ -77,6 +78,7 @@ namespace Ginger.Reports
             _HTMLReportConfiguration.HTMLReportConfigurationOperations = reportConfigurationOperations;
 
             _HTMLReportConfiguration = new HTMLReportConfiguration("", false, reportConfigurationOperations);
+            CurrentItemToSave = _HTMLReportConfiguration;
             
 
             InitializeComponent();
@@ -93,6 +95,7 @@ namespace Ginger.Reports
             _existingTemplatePage = true;
             _HTMLReportConfiguration = EnchancingLoadedFieldsWithDataAndValidating(HTMLReportConfiguration);
             _HTMLReportConfiguration.PropertyChanged += _HTMLReportConfiguration_PropertyChanged;
+            CurrentItemToSave = _HTMLReportConfiguration;
             SetControls();
             SetLoadedLogoImage();
             SetHTMLReportsConfigFieldsGridsView();

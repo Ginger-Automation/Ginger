@@ -25,6 +25,7 @@ using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
+using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
@@ -37,7 +38,7 @@ namespace GingerWPF.BusinessFlowsLib
     /// <summary>
     /// Interaction logic for BusinessFlowViewPage.xaml
     /// </summary>
-    public partial class BusinessFlowViewPage : Page
+    public partial class BusinessFlowViewPage : GingerUIPage
     {
         BusinessFlow mBusinessFlow;
         Context mContext;
@@ -54,6 +55,7 @@ namespace GingerWPF.BusinessFlowsLib
             InitializeComponent();
 
             mBusinessFlow = businessFlow;
+            CurrentItemToSave = mBusinessFlow;
             mContext = context;
             if (mContext == null)
             {

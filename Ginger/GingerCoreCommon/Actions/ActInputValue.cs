@@ -82,8 +82,11 @@ namespace Amdocs.Ginger.Repository
 
             set
             {
-                mValue = value.ToString();
-                OnPropertyChanged(nameof(Value));
+                if (mValue != value.ToString())
+                {
+                    mValue = value.ToString();
+                    OnPropertyChanged(nameof(Value));
+                }
             }
         }
 

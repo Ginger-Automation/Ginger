@@ -69,11 +69,11 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
         private void xAddAppBtn_Click(object sender, RoutedEventArgs e)
         {
             string newAppName = "NewApp";
-            if (GingerCore.General.GetInputWithValidation("Add Environment Application", "Application Name:", ref newAppName))
+            EnvApplication envApp = new EnvApplication() { Name = newAppName };
+            if (GingerCore.General.GetInputWithValidation("Add Environment Application", "Application Name:", ref newAppName, null, false, envApp))
             {
                 if (mWizard.apps.Where(x => x.Name == newAppName).FirstOrDefault() == null)
-                {
-                    EnvApplication envApp = new EnvApplication() { Name = newAppName };
+                {                    
                     envApp.Active = true;
                     mWizard.apps.Add(envApp);
                 }

@@ -239,6 +239,7 @@ namespace Ginger.Run
 
         private void DeleteExecutionReports(System.Collections.IList runSetReports)
         {
+            bool remoteDeletionFlag = false;
             foreach (RunSetReport runSetReport in runSetReports)
             {
                 if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
@@ -251,13 +252,18 @@ namespace Ginger.Run
                     LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "GingerExecutionResults.db"));
                     dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0]);
                 }
-                else
+                else if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                 {
                     string runSetFolder = executionLoggerHelper.GetLoggerDirectory(runSetReport.LogFolder);
 
                     var fi = new DirectoryInfo(runSetFolder);
                     CleanDirectory(fi.FullName);
                     fi.Delete();
+                }
+                else if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.Remote && !remoteDeletionFlag)
+                {
+                    Reporter.ToUser(eUserMsgKey.RemoteExecutionResultsCannotBeAccessed);
+                    remoteDeletionFlag = true;
                 }
             }
 

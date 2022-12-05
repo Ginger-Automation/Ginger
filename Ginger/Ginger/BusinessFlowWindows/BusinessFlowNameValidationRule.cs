@@ -27,14 +27,20 @@ namespace Ginger.BusinessFlowWindows
     {
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
-            return IsBusinessFlowNameValid(value) ?
-                new ValidationResult(false, "Business Flow Name cannot be empty")
+            return IsBusinessFlowNameValid(value.ToString()) ?
+                new ValidationResult(false, "Business Flow Name cannot be empty"):
+                IsBusinessFlowNameExists(value.ToString()) ?
+                new ValidationResult(false, "Business Flow Name already exists")
                 : new ValidationResult(true, null);
         }
 
         private bool IsBusinessFlowNameValid(object value)
         {
             return value == null || string.IsNullOrEmpty(value.ToString()) || string.IsNullOrWhiteSpace(value.ToString());
+        }
+        private bool IsBusinessFlowNameExists(string value)
+        {
+            return (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where x.Name == value select x).SingleOrDefault() != null;
         }
     }
 }

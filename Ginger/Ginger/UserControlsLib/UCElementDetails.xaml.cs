@@ -173,6 +173,21 @@ namespace Ginger
             }
         }
 
+        ElementLocator mSelectedFriendlyLocator
+        {
+            get
+            {
+                if (xFriendlyLocatorsGrid.Grid.SelectedItem != null)
+                {
+                    return (ElementLocator)xFriendlyLocatorsGrid.Grid.SelectedItem;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
         bool POMBasedAction = false;
         bool POMElementsUpdated = false;
         ElementInfo POMElement = null;
@@ -211,7 +226,7 @@ namespace Ginger
                             }
                     }
 
-                    if(xElementDetailsTabs.SelectedItem == xAddActionTab)
+                    if (xElementDetailsTabs.SelectedItem == xAddActionTab)
                     {
                         AddActionTab_Selected(sender, e);
                     }
@@ -300,8 +315,9 @@ namespace Ginger
 
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, });
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65 });
+                defView.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedElementSectionGrid.Resources["xLocateValueVETemplate"] });
                 defView.GridColsView.Add(new GridColView() { Field = "", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedElementSectionGrid.Resources["xCopyLocatorButtonTemplate"] });
-                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 25 });
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.EnableFriendlyLocator), Header = "Friendly Locator", WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
                 defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedElementSectionGrid.Resources["xTestElementButtonTemplate"] });
                 defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.StatusIcon), Header = "Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)xSelectedElementSectionGrid.Resources["xTestStatusIconTemplate"] });
@@ -388,6 +404,139 @@ namespace Ginger
             }
         }
 
+        private void XFriendlyLocatorsGrid_RowDoubleClick(object sender, EventArgs e)
+        {
+            Clipboard.SetText((sender as ElementLocator).LocateValue);
+        }
+
+        bool FriendlyLocatorsGridInitialized = false;
+
+        public void InitLegacyFriendlyLocatorsGridView()
+        {
+            if (!FriendlyLocatorsGridInitialized)
+            {
+                // Grid View
+                GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+                view.GridColsView = new ObservableList<GridColView>();
+
+                view.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), WidthWeight = 8, ReadOnly = true });
+                view.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), WidthWeight = 20, ReadOnly = true });
+
+                //if (mPlatform.PlatformType() != ePlatformType.Web && mPlatform.PlatformType() != ePlatformType.Java)
+                //{
+                xFriendlyLocatorsGrid.ShowAdd = Visibility.Collapsed;
+                xFriendlyLocatorsGrid.ShowDelete = Visibility.Collapsed;
+                xFriendlyLocatorsGrid.ShowUpDown = Visibility.Collapsed;
+                xFriendlyLocatorsGrid.ShowCopyCutPast = Visibility.Collapsed;
+                xFriendlyLocatorsGrid.ShowClearAll = Visibility.Collapsed;
+                //}
+                xFriendlyLocatorsGrid.RowDoubleClick += XFriendlyLocatorsGrid_RowDoubleClick;
+                xFriendlyLocatorsGrid.ToolTip = "Double click on a row to copy the selected Locator's Locate by value";
+
+                xFriendlyLocatorsGrid.SetAllColumnsDefaultView(view);
+                xFriendlyLocatorsGrid.InitViewItems();
+
+                FriendlyLocatorsGridInitialized = true;
+            }
+        }
+
+        internal void InitFriendlyLocatorsGridView()
+        {
+            if (!FriendlyLocatorsGridInitialized)
+            {
+                GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
+                defView.GridColsView = new ObservableList<GridColView>();
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
+                List<ComboEnumItem> positionList = GetPositionList();
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Position), Header = "Position", WidthWeight = 25, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = positionList });
+
+                List<ComboEnumItem> locateByList = GetPlatformLocatByList();
+
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList });
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.ReferanceElement), Header = "Locate Value", WidthWeight = 65 });
+                defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", StyleType = GridColView.eGridColStyleType.Image, WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
+                xFriendlyLocatorsGrid.SetAllColumnsDefaultView(defView);
+                xFriendlyLocatorsGrid.InitViewItems();
+
+                xFriendlyLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
+                xFriendlyLocatorsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddFriendlyLocatorButtonClicked));
+                xFriendlyLocatorsGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteFriendlyLocatorClicked));
+
+                xFriendlyLocatorsGrid.RowDoubleClick += XFriendlyLocatorsGrid_RowDoubleClick;
+                xFriendlyLocatorsGrid.ToolTip = "Double click on a row to copy the selected Friendly Locator's Locate by value";
+
+                xFriendlyLocatorsGrid.grdMain.PreparingCellForEdit += FriendlyLocatorsGrid_PreparingCellForEdit;
+                xFriendlyLocatorsGrid.PasteItemEvent += PasteFriendlyLocatorEvent;
+
+                FriendlyLocatorsGridInitialized = true;
+            }
+        }
+
+        private void TestAllElementsFriendlyLocators(object sender, RoutedEventArgs e)
+        {
+            if (!ValidateDriverAvalability())
+            {
+                return;
+            }
+
+            if (SelectedElement != null)
+            {
+                WindowExplorerDriver.TestElementLocators(SelectedElement);
+            }
+        }
+
+        private void AddFriendlyLocatorButtonClicked(object sender, RoutedEventArgs e)
+        {
+            xFriendlyLocatorsGrid.Grid.CommitEdit();
+
+            ElementLocator locator = new ElementLocator() { Active = true };
+            SelectedElement.Locators.Add(locator);
+
+            xFriendlyLocatorsGrid.Grid.SelectedItem = locator;
+            xFriendlyLocatorsGrid.ScrollToViewCurrentItem();
+        }
+
+        private void DeleteFriendlyLocatorClicked(object sender, RoutedEventArgs e)
+        {
+            bool msgShowen = false;
+            List<ElementLocator> locatorsToDelete = xFriendlyLocatorsGrid.Grid.SelectedItems.Cast<ElementLocator>().ToList();
+            foreach (ElementLocator locator in locatorsToDelete)
+            {
+                if (locator.IsAutoLearned)
+                {
+                    if (!msgShowen)
+                    {
+                        Reporter.ToUser(eUserMsgKey.POMCannotDeleteAutoLearnedElement);
+                        msgShowen = true;
+                    }
+                }
+                else
+                {
+                    SelectedElement.Locators.Remove(locator);
+                }
+            }
+        }
+
+        private void PasteFriendlyLocatorEvent(PasteItemEventArgs EventArgs)
+        {
+            ElementLocator copiedLocator = (ElementLocator)EventArgs.Item;
+            copiedLocator.IsAutoLearned = false;
+        }
+
+        bool disabeledFriendlyLocatorsMsgShown;
+        private void FriendlyLocatorsGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
+        {
+            if (e.Column.Header.ToString() != nameof(ElementLocator.Active) && e.Column.Header.ToString() != nameof(ElementLocator.Help) && mSelectedLocator.IsAutoLearned)
+            {
+                if (!disabeledFriendlyLocatorsMsgShown)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You can not edit Locator which was auto learned, please duplicate it and create customized Locator.");
+                    disabeledFriendlyLocatorsMsgShown = true;
+                }
+                e.EditingElement.IsEnabled = false;
+            }
+        }
+
         private bool ValidateDriverAvalability()
         {
             if (WindowExplorerDriver == null)
@@ -442,6 +591,25 @@ namespace Ginger
             return locateByComboItemList;
         }
 
+
+        private List<ComboEnumItem> GetPositionList()
+        {
+            List<ComboEnumItem> PositionComboItemList = new List<ComboEnumItem>();
+            if (Platform == null)
+            {
+                Platform = PlatformInfoBase.GetPlatformImpl(Context.Platform);  // ((Agent)ApplicationAgent.Agent).Platform);
+            }
+            List<ePosition> positionList = Platform.GetElementPositionList();
+            foreach (var positionBy in positionList)
+            {
+                ComboEnumItem comboEnumItem = new ComboEnumItem();
+                comboEnumItem.text = GingerCore.General.GetEnumValueDescription(typeof(ePosition), positionBy);
+                comboEnumItem.Value = positionBy;
+                PositionComboItemList.Add(comboEnumItem);
+            }
+            return PositionComboItemList;
+        }
+
         public void RefreshPropertiesAndLocators()
         {
             if (SelectedElement != null)
@@ -456,24 +624,38 @@ namespace Ginger
                     SelectedElement.Locators = SelectedElement.GetElementLocators();
 
                 xPropertiesGrid.DataSourceList = GingerCore.General.ConvertListToObservableList(SelectedElement.Properties.Where(p => p.ShowOnUI).ToList());
+                xPropertiesGrid.DataSourceList = SelectedElement.Properties;
                 xLocatorsGrid.DataSourceList = SelectedElement.Locators;
+                if (Context.Platform == ePlatformType.Web && (SelectedElement.FriendlyLocators == null || SelectedElement.FriendlyLocators.Count == 0))
+                {
+                    SelectedElement.FriendlyLocators = SelectedElement.GetElementFriendlyLocators();
+                    xFriendlyLocatorsGrid.DataSourceList = SelectedElement.FriendlyLocators;
+                    xFriendlyLocatorsGrid.ShowAdd = Visibility.Collapsed;
+                    xFriendlyLocatorsGrid.ShowDelete = Visibility.Collapsed;
+                    xFriendlyLocatorTab.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    xFriendlyLocatorTab.Visibility = Visibility.Collapsed;
+                }
 
                 Dispatcher.Invoke(() =>
                 {
                     xPropertiesTextBlock.Text = SelectedElement.Properties == null ? "Properties" : string.Format("Properties ({0})", SelectedElement.Properties.Count);
                     xLocatorsTextBlock.Text = SelectedElement.Locators == null ? "Locators" : string.Format("Locators ({0})", SelectedElement.Locators.Count);
+                    xFriendlyLocatorsTextBlock.Text = SelectedElement.FriendlyLocators == null ? "Friendly Locators" : String.Format("Friendly Locators({0})", SelectedElement.FriendlyLocators.Count);
                 });
             }
         }
 
         private void AddActionTab_Selected(object sender, RoutedEventArgs e)
         {
-            if(SelectedElement == null)
+            if (SelectedElement == null)
             {
                 return;
             }
 
-            if(WindowExplorerDriver == null)
+            if (WindowExplorerDriver == null)
             {
                 WindowExplorerDriver = (IWindowExplorer)((AgentOperations)Context.Agent.AgentOperations).Driver;
             }
@@ -645,9 +827,9 @@ namespace Ginger
 
         public void CustomElementLocatorsCheck(ElementInfo matchingOriginalElement, ElementInfo selectedElement)
         {
-            if(matchingOriginalElement.Locators.Count != selectedElement.Locators.Count && matchingOriginalElement.Locators.Where(l => l.Help.Contains("Custom Locator")).Count() > 0)
+            if (matchingOriginalElement.Locators.Count != selectedElement.Locators.Count && matchingOriginalElement.Locators.Where(l => l.Help.Contains("Custom Locator")).Count() > 0)
             {
-                foreach(ElementLocator customLocator in matchingOriginalElement.Locators.Where(l => l.Help.Contains("Custom Locator")))
+                foreach (ElementLocator customLocator in matchingOriginalElement.Locators.Where(l => l.Help.Contains("Custom Locator")))
                 {
                     selectedElement.Locators.Add(customLocator);
                 }
@@ -682,7 +864,7 @@ namespace Ginger
             SetPOMBasedChecks();
 
             ControlActionsPage_New CAP = null;
-            if(xActUIPageFrame.HasContent)
+            if (xActUIPageFrame.HasContent)
             {
                 xActUIPageFrame.Content = null;
             }
@@ -729,7 +911,6 @@ namespace Ginger
                     LearnedElementInfo = SelectedElement
                 };
             }
-
             CAP = new ControlActionsPage_New(WindowExplorerDriver, SelectedElement, Context, actConfigurations, mCurrentControlTreeViewItem);
             //}
 
@@ -741,7 +922,7 @@ namespace Ginger
             }
             else
             {
-                if(CAP.IsLegacyPlatform)
+                if (CAP.IsLegacyPlatform)
                 {
                     xExecutionStatusIcon.Visibility = Visibility.Visible;
                     BindingHandler.ObjFieldBinding(xExecutionStatusIcon, UcItemExecutionStatus.StatusProperty, CAP.DefaultAction, nameof(Act.Status));
@@ -912,7 +1093,7 @@ namespace Ginger
 
         private void xRunActBtn_Click(object sender, RoutedEventArgs e)
         {
-            if(xActUIPageFrame.Content != null && xActUIPageFrame.Content is ControlActionsPage_New)
+            if (xActUIPageFrame.Content != null && xActUIPageFrame.Content is ControlActionsPage_New)
             {
                 (xActUIPageFrame.Content as ControlActionsPage_New).RunActionClicked(sender, e);
             }
@@ -949,6 +1130,12 @@ namespace Ginger
             {
                 Clipboard.SetText(mSelectedLocator.LocateValue);
             }
+        }
+
+        bool FriendlyLocatorChanged = false;
+        private void xFriendlyLocatorsGrid_RowChangedEvent(object sender, EventArgs e)
+        {
+            FriendlyLocatorChanged = true;
         }
     }
 }

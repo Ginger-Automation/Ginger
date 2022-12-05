@@ -52,7 +52,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         public bool ShowMessage { get; set; }//For Non UI Unit Test
         public eParameterType ParameterType { get; set; }
         public ImportOptionalValuesForParameters() { ShowMessage = true; }
-  
+
         #region XML&JSON
         private APIConfigurationsDocumentParserBase currentParser;
         public void CreateParser(string FilePath)
@@ -150,7 +150,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
         }
         #endregion
-               
+
         #region DB&Excel
         /// <summary>
         /// Update optional values only for selected Local parameters according to DB\Excel file
@@ -162,7 +162,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             int UpdatedParameters = 0;
             bool IsUpdate;
             List<AppModelParameter> RelevantParameterList = new List<AppModelParameter>();
-            foreach(AppModelParameter prm in SelectedParametersGridList)
+            foreach (AppModelParameter prm in SelectedParametersGridList)
             {
                 AppModelParameter pOriginal = AAM.AppModelParameters.FirstOrDefault(p => p.ItemName == prm.ItemName);
                 if (pOriginal != null)
@@ -174,10 +174,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     RelevantParameterList.Add(prm);
                 }
             }
-            
+
             foreach (var tuple in SelectedParametersGridList.Zip(RelevantParameterList, (x, y) => (x, y)))
             {
-                
+
                 IsUpdate = false;
                 if (tuple.x.RequiredAsInput) //selected
                 {
@@ -193,7 +193,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 OptionalValue.IsDefault = val.Contains("*") ? true : false;
                                 OptionalValue.Value = val.Replace("*", "");
                                 tuple.y.OptionalValuesList.Add(OptionalValue);
-                                IsUpdate = true; 
+                                IsUpdate = true;
                             }
                         }
                     }
@@ -212,7 +212,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     int indx = 1;
                     foreach (var opVal in tuple.y.OptionalValuesList.Where(t => t.IsDefault == true))
                     {
-                        if(indx < countDefault)
+                        if (indx < countDefault)
                         {
                             opVal.IsDefault = false;
                         }
@@ -223,11 +223,11 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 if (IsUpdate)
                 { UpdatedParameters++; }
             }
-            
+
             if (ShowMessage)
                 Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParameters);
         }
- 
+
         public void PopulateExcelDBOptionalValuesForAPIParametersExcelDB(ObservableList<GlobalAppModelParameter> mGlobalParamterList, List<GlobalAppModelParameter> SelectedParametersGridList, List<ParameterValues> ParameterValuesByNameDic)
         {
             int UpdatedParameters = 0;
@@ -259,7 +259,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         {
                             tuple.y.OptionalValuesList.Add(new OptionalValue { Value = CURRENT_VAL_PARAMETER, IsDefault = true });
                         }
-                        
+
                         foreach (string val in item.ParameterValuesByNameDic)
                         {
                             if (!string.IsNullOrEmpty(val))
@@ -271,7 +271,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 OptionalValue.IsDefault = val.Contains("*") ? true : false;
 
                                 tuple.y.OptionalValuesList.Add(OptionalValue);
-                                IsUpdate = true; 
+                                IsUpdate = true;
                             }
                         }
                     }
@@ -301,8 +301,8 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 if (IsUpdate)
                 {
                     tuple.y.SaveBackup();
-                    UpdatedParameters++;                    
-                }                    
+                    UpdatedParameters++;
+                }
             }
 
 
@@ -399,7 +399,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 break;
                             default:
                                 if (ShowMessage)
-                                   Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
+                                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
                                 break;
                         }
                         return null;
@@ -421,6 +421,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             try
             {
                 SharedStringTablePart stringTablePart = document.WorkbookPart.SharedStringTablePart;
+                if (cell.CellValue == null || cell.CellValue.InnerText == null)
+                {
+                    return String.Empty;
+                }
                 value = cell.CellValue.InnerText;
 
                 if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
@@ -524,14 +528,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                             if (isValid)
                             {
                                 lst.Add(sheetName);
-                            } 
+                            }
                         }
                         else
                         {
                             lst.Add(sheetName);
                         }
                     }
-                } 
+                }
             }
             return lst;
         }
@@ -636,7 +640,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 
         private string GetConnectionString()
         {
-            string connString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=\"Excel 12.0 Xml;HDR=YES;\"",ExcelFileName);
+            string connString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=\"Excel 12.0 Xml;HDR=YES;\"", ExcelFileName);
             return connString;
         }
         public List<ParameterValues> UpdateParametersOptionalValuesFromCurrentExcelTable()
@@ -669,7 +673,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         {
                             parmVal.ParamName = Convert.ToString(row[col]);
                         }
-                        else if(col.ColumnName.StartsWith("Desc"))
+                        else if (col.ColumnName.StartsWith("Desc"))
                         {
                             parmVal.Description = Convert.ToString(row[col]);
                         }
@@ -742,14 +746,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Error while exporting Parameters to File", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error while exporting Parameters to File", ex);
             }
 
             return filePath;
         }
 
-        private DataTable ExportParametertoDataTable(List<AppParameters> parameters,string tableName, bool isExcelExport)
-        {            
+        private DataTable ExportParametertoDataTable(List<AppParameters> parameters, string tableName, bool isExcelExport)
+        {
             int colCount = isExcelExport ? 100 : 0;
             foreach (var paramVal in parameters)
             {
@@ -766,7 +770,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             DataTable dtTemplate = new DataTable(tableName);
             dtTemplate.Columns.Add(PARAMETER_NAME, typeof(string));
             dtTemplate.Columns.Add(DESCRIPTION, typeof(string));
-                        
+
             for (int index = 1; index <= colCount; index++)
             {
                 dtTemplate.Columns.Add(string.Format("Value_{0}", index), typeof(string));
@@ -791,14 +795,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         {
                             if (isExcelExport)
                             {
-                                dr[index] = Convert.ToString(item.Value) + (item.IsDefault ? "*" : ""); 
+                                dr[index] = Convert.ToString(item.Value) + (item.IsDefault ? "*" : "");
                             }
                             else
                             {
                                 dr[index] = Convert.ToString(item.Value);
                             }
                             index++;
-                        }                        
+                        }
                     }
                     if (!isExcelExport)
                     {
@@ -806,16 +810,16 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         {
                             dr[index] = Convert.ToString(prm.OptionalValuesList.Where(x => x.IsDefault == true && x.Value != CURRENT_VAL_PARAMETER).Select(x => x.Value).FirstOrDefault());
                             index++;
-                        } 
+                        }
                     }
                 }
 
                 dtTemplate.Rows.Add(dr);
             }
-            return dtTemplate;            
+            return dtTemplate;
         }
 
-        public bool ExportTemplateExcelFileForImportOptionalValues(List<AppModelParameter> Parameters,string PathToExport)
+        public bool ExportTemplateExcelFileForImportOptionalValues(List<AppModelParameter> Parameters, string PathToExport)
         {
             DataTable dtTemplate = new DataTable(ParameterType.ToString());
             dtTemplate.Columns.Add(PARAMETER_NAME, typeof(string));
@@ -827,7 +831,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             bool IsExportSuccess = ExportToExcel(dtTemplate, PathToExport, dtTemplate.TableName);
             if (IsExportSuccess && ShowMessage)
-                Reporter.ToUser(eUserMsgKey.ExportDetails , "Excel File");
+                Reporter.ToUser(eUserMsgKey.ExportDetails, "Excel File");
             return IsExportSuccess;
         }
 
@@ -918,9 +922,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     DataTable dtNew = PivotTable(dt, isFirstRowHeader);
                     //Removing Paramter Name Column
                     if (dtNew.Columns.Contains(PARAMETER_NAME))
-                    {                                             
+                    {
                         dtNew.Columns.Remove(PARAMETER_NAME);
-                    }                        
+                    }
                     dsPivote.Tables.Add(dtNew);
                 }
                 dsExact = dsPivote;
@@ -942,7 +946,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             int cols = 0;
             for (; cols < dt.Rows.Count; cols++)
             {
-                string colName = Convert.ToString(dt.Rows[cols].ItemArray[0]).Replace("[", "_").Replace("]", "").Replace("{","").Replace("}","");
+                string colName = Convert.ToString(dt.Rows[cols].ItemArray[0]).Replace("[", "_").Replace("]", "").Replace("{", "").Replace("}", "");
                 dtNew.Columns.Add(colName);
             }
 
@@ -958,14 +962,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     if (Convert.ToString(dt.Rows[indx][cols]) != "")
                     {
                         emptyRow = false;
-                    }                        
+                    }
                     row[indx] = Convert.ToString(dt.Rows[indx][cols]).Replace("*", "");
                 }
 
                 if (emptyRow == false)
                 {
                     dtNew.Rows.Add(row);
-                }                    
+                }
             }
 
             UpdateDefauktValuesInBlankCell(dtNew, dt);
@@ -986,14 +990,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     string defaultValue = string.Empty;
                     for (int olCols = 1; olCols < dt.Columns.Count; olCols++)
                     {
-                        if(Convert.ToString(dt.Rows[newCols][olCols]).EndsWith("*"))
+                        if (Convert.ToString(dt.Rows[newCols][olCols]).EndsWith("*"))
                         {
                             defaultValue = Convert.ToString(dt.Rows[newCols][olCols]).Replace("*", "");
                             break;
                         }
                     }
 
-                    if(string.IsNullOrEmpty(defaultValue))
+                    if (string.IsNullOrEmpty(defaultValue))
                     {
                         defaultValue = Convert.ToString(dt.Rows[newCols][2]);
                     }
@@ -1129,48 +1133,48 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             try
             {
                 if (mDSDetails != null)
-                {                    
+                {
                     List<string> colList = mDSDetails.GetColumnList(tableName);
-                    List<string> defColList = GetDefaultColumnNameListForTableCreation();                    
+                    List<string> defColList = GetDefaultColumnNameListForTableCreation();
                     foreach (AppParameters appParam in parameters)
                     {
                         string sColName = appParam.ItemName.Replace("[", "_").Replace("]", "").Replace("{", "").Replace("}", "");
                         if (!colList.Contains(sColName))
-                        {                            
+                        {
                             mDSDetails.AddColumn(tableName, sColName, "Text");
                         }
                     }
                     if (!colList.Contains("GINGER_USED"))
-                    { 
+                    {
                         mDSDetails.AddColumn(tableName, "GINGER_USED", "Text");
                     }
 
-                    DataTable dtTemplate = ExportParametertoDataTable(parameters, tableName, false);                    
+                    DataTable dtTemplate = ExportParametertoDataTable(parameters, tableName, false);
                     dtTemplate = PivotTable(dtTemplate, true);
                     //Removing Paramter Name Column                    
                     if (dtTemplate.Columns.Contains(PARAMETER_NAME))
-                    {                                                
+                    {
                         dtTemplate.Columns.Remove(PARAMETER_NAME);
-                    }                        
+                    }
 
                     foreach (string colName in defColList)
                     {
                         if (!dtTemplate.Columns.Contains(colName))
-                        { 
+                        {
                             dtTemplate.Columns.Add(colName);
                         }
-                    }                    
+                    }
                     foreach (DataRow dr in dtTemplate.Rows)
                     {
                         dr["GINGER_USED"] = "False";
-                    }                    
-                    mDSDetails.SaveTable(dtTemplate);                    
-                    Reporter.ToUser(eUserMsgKey.ExportDetails,"Data Source");
-                }                
+                    }
+                    mDSDetails.SaveTable(dtTemplate);
+                    Reporter.ToUser(eUserMsgKey.ExportDetails, "Data Source");
+                }
             }
             catch (System.Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR,"Failed to Export to Data Source",ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Export to Data Source", ex);
                 Reporter.ToUser(eUserMsgKey.ExportFailed, "Data Source");
             }
         }
@@ -1239,7 +1243,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             db.TNS = host;
             db.User = user;
             db.Pass = password;
-            if(!string.IsNullOrEmpty(connectionString))
+            if (!string.IsNullOrEmpty(connectionString))
                 db.ConnectionString = connectionString;
             db.DBType = (Database.eDBTypes)Enum.Parse(typeof(Database.eDBTypes), dbType);
 
@@ -1260,18 +1264,18 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         public void ExecuteFreeSQL(string command)
         {
-             SQLResult = db.DatabaseOperations.FreeSQL(command);
+            SQLResult = db.DatabaseOperations.FreeSQL(command);
         }
         public List<ParameterValues> UpdateParametersOptionalValuesFromDB()
         {
-            Dictionary<string,List<string>> ParamAndValues = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> ParamAndValues = new Dictionary<string, List<string>>();
             List<string> ParamNameList = (List<string>)SQLResult.ElementAt(0);
             List<List<string>> Record = (List<List<string>>)SQLResult.ElementAt(1);
             string[][] ParamValues = new string[ParamNameList.Count][];//create matrix ParamName -> ParamValues(List)
             for (int i = 0; i < ParamNameList.Count; i++)
                 ParamValues[i] = new string[Record.Count];
             int rowValue = 0;
-            for(int i = 0; i < Record.Count; i++)
+            for (int i = 0; i < Record.Count; i++)
             {
                 string[] current = (Record.ElementAt<List<string>>(i)).ToArray<string>();
                 for (int j = 0; j < current.Length; j++)
@@ -1281,13 +1285,13 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     else
                         ParamValues[rowValue++][i] = string.Empty;
                 }
-                rowValue=0;
+                rowValue = 0;
             }
 
-            List<ParameterValues>  ParameterValuesByNameDic = new List<ParameterValues>();
+            List<ParameterValues> ParameterValuesByNameDic = new List<ParameterValues>();
             dtDB = new DataTable();
             dtDB.Columns.Add(PARAMETER_NAME, typeof(string));
-            for (int i =0; i < ParamNameList.Count; i++)
+            for (int i = 0; i < ParamNameList.Count; i++)
             {
                 List<string> values = ParamValues[i].OfType<string>().ToList<string>();
                 values = values.Where(s => !string.IsNullOrEmpty(s)).Distinct().ToList();
@@ -1299,7 +1303,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     DataRow row = dtDB.NewRow();
                     row[PARAMETER_NAME] = ParamNameList[i].ToString();
                     dtDB.Rows.Add(row);
-                }      
+                }
                 else//different columns with the same alias name
                 {
                     List<string> extraValues = ParameterValuesByNameDic.Select(p => p.ParamName).ToList();
@@ -1310,7 +1314,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         ParameterValuesByNameDic.RemoveAt(i);
                         ParameterValuesByNameDic.Add(new ParameterValues() { ParamName = ParamNameList.ElementAt(i), ParameterValuesByNameDic = values });
                     }
-                }  
+                }
             }
             return ParameterValuesByNameDic;
         }

@@ -22,6 +22,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -29,6 +30,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using GingerCore.GeneralLib;
 
 namespace Amdocs.Ginger.Repository
@@ -81,7 +83,7 @@ namespace Amdocs.Ginger.Repository
         protected ConcurrentDictionary<string, object> mBackupDic;
         protected bool mBackupInProgress = false;
 
-        public bool IsBackupExist
+        public bool IsBackupExist 
         {
             get
             {
@@ -218,13 +220,18 @@ namespace Amdocs.Ginger.Repository
             get
             {
                 if (mGuid == Guid.Empty)
+                {
                     mGuid = Guid.NewGuid();
+                }
                 return mGuid;
             }
             set
             {
-                mGuid = value;
-                OnPropertyChanged(nameof(Guid));
+                if (mGuid != value)
+                {
+                    mGuid = value;
+                    OnPropertyChanged(nameof(Guid));
+                }
             }
         }
 
@@ -610,7 +617,7 @@ namespace Amdocs.Ginger.Repository
             }
             catch (Exception exc)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured in the Undo Process", exc);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred in the Undo Process", exc);
             }
             finally
             {
@@ -750,7 +757,7 @@ namespace Amdocs.Ginger.Repository
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Error occured during object copy of the item: '{0}', type: '{1}', property/field: '{2}'", this.ItemName, this.GetType(), mi.Name), ex);
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Error occurred during object copy of the item: '{0}', type: '{1}', property/field: '{2}'", this.ItemName, this.GetType(), mi.Name), ex);
                 }
             });
             //targetObj.PostDeserialization();
@@ -1011,6 +1018,11 @@ namespace Amdocs.Ginger.Repository
                     if (value == eDirtyStatus.Modified)
                     {
                         RaiseDirtyChangedEvent();
+                        // check that path is really valid path to a file contaning both drive at the start & a target with extension, also in order to keep the list unique, check if the value has already been added to the list.
+                        if (!String.IsNullOrEmpty(FilePath) && Path.IsPathFullyQualified(FilePath) && !GingerCoreCommonWorkSpace.Instance.SolutionRepository.ModifiedFiles.Contains(this))
+                        {
+                            GingerCoreCommonWorkSpace.Instance.SolutionRepository.ModifiedFiles.Add(this);
+                        }
                     }
                     OnPropertyChanged(nameof(DirtyStatus));
                     OnPropertyChanged(nameof(DirtyStatusImage));
@@ -1069,8 +1081,8 @@ namespace Amdocs.Ginger.Repository
         internal void ChildCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             // each change in Observavle will mark the item modified - all NotifyCollectionChangedAction.*
-            DirtyStatus = eDirtyStatus.Modified;
 
+            #region Collection Action - Add
             // if item added set tracking too
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
@@ -1081,6 +1093,7 @@ namespace Amdocs.Ginger.Repository
                         RepositoryItemBase repositoryItemBase = (RepositoryItemBase)obj;
                         repositoryItemBase.StartDirtyTracking();
                         repositoryItemBase.OnDirtyStatusChanged += this.RaiseDirtyChanged;
+                        repositoryItemBase.DirtyStatus = eDirtyStatus.Modified;
                     }
                     else
                     {
@@ -1088,6 +1101,45 @@ namespace Amdocs.Ginger.Repository
                     }
                 }
             }
+            #endregion
+            #region Collection Action - Remove Or Move
+            else if (e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Move)
+            {
+                foreach (object obj in e.OldItems)
+                {
+                    if (obj is RepositoryItemBase)
+                    {
+                        ((RepositoryItemBase)obj).DirtyStatus = eDirtyStatus.Modified;
+                    }
+                }
+            }
+            #endregion
+            #region Collection Action - Replace
+            else if (e.Action == NotifyCollectionChangedAction.Replace)
+            {
+                foreach (object obj in e.NewItems)
+                {
+                    if (obj is RepositoryItemBase)
+                    {
+                        ((RepositoryItemBase)obj).DirtyStatus = eDirtyStatus.Modified;
+                    }
+                }
+                foreach (object obj in e.OldItems)
+                {
+                    if (obj is RepositoryItemBase)
+                    {
+                        ((RepositoryItemBase)obj).DirtyStatus = eDirtyStatus.Modified;
+                    }
+                }
+
+            }
+            #endregion
+            #region Collection Action - Reset
+            else
+            {
+                DirtyStatus = eDirtyStatus.Modified;
+            }
+            #endregion
         }
 
         public void PauseDirtyTracking()
@@ -1144,7 +1196,6 @@ namespace Amdocs.Ginger.Repository
                 {
                     return;
                 }
-
                 DirtyTrackingFields.Add(PI.Name);
 
                 // We track observable list which are seriazlized - drill down recursivley in obj tree
@@ -1174,6 +1225,17 @@ namespace Amdocs.Ginger.Repository
                         return;
                     }
                     TrackObservableList((IObservableList)obj);
+                }
+                // track changes in childern which are RepositoryItemBase
+                if (typeof(RepositoryItemBase).IsAssignableFrom(PI.PropertyType))
+                {
+                    RepositoryItemBase obj = (RepositoryItemBase)PI.GetValue(this);
+
+                    if (obj == null)
+                    {
+                        return;
+                    }
+                    obj.OnDirtyStatusChanged += this.RaiseDirtyChanged;
                 }
             });
 

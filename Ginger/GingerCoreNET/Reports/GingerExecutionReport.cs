@@ -2965,6 +2965,10 @@ namespace Ginger.Reports.GingerExecutionReport
         {
             try
             {
+                if (logsFolder == null)
+                {
+                    return logsFolder;
+                }
                 if (logsFolder != null && logsFolder.StartsWith(@"~\"))
                 {
                     logsFolder = Path.Combine(WorkSpace.Instance.Solution.Folder, logsFolder.Substring(2));
@@ -2974,7 +2978,7 @@ namespace Ginger.Reports.GingerExecutionReport
                     logsFolder = logsFolder.Replace(@"~", WorkSpace.Instance.Solution.Folder);
                 }
 
-                
+
 
                 if (Directory.Exists(logsFolder))
                 {
