@@ -112,6 +112,7 @@ namespace Amdocs.Ginger.Common
         CurrentActionNotSaved,
         LoseChangesWarn,
         BFNotExistInDB,
+        RemoteExecutionResultsCannotBeAccessed,
         // Merged from GingerCore        
         CopiedVariableSuccessfully, AskIfShareVaribalesInRunner, ShareVariableNotSelected,
         WarnOnDynamicActivities,
@@ -239,7 +240,7 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.OfferToUploadAlsoTheActivityGroupToRepository, new UserMsg(eUserMsgType.QUESTION, "Add the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " to Repository", "The " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '{0}' is part of the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " '{1}', do you want to add the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " to the shared repository as well?" + System.Environment.NewLine + System.Environment.NewLine + "Note: If you select Yes, only the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " will be added to the repository and not all of it " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ".", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.PublishRepositoryInfo, new UserMsg(eUserMsgType.INFO, "Item Repository Publish Info", "Repository item is published to selected BusinessFlow.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToPublishRepositoryInfo, new UserMsg(eUserMsgType.ERROR, "Failed to pulblish Repository Item", "Failed to publish in one or more Business flows.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToPublishRepositoryInfo, new UserMsg(eUserMsgType.ERROR, "Failed to publish Repository Item", "Failed to publish in one or more Business flows.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.MissingErrorString, new UserMsg(eUserMsgType.ERROR, "Missing Error String details", "Error String is missing for one or more row."+ Environment.NewLine +"Please add error string for missing rows", eUserMsgOption.OK,eUserMsgSelection.None));
 
@@ -553,6 +554,9 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.BFNotExistInDB, new UserMsg(eUserMsgType.INFO, "Run " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), "Business Flow data don't exist in LiteDB, Please run to generate report", eUserMsgOption.OK, eUserMsgSelection.None));
 
             #endregion Reports
+
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RemoteExecutionResultsCannotBeAccessed, new UserMsg(eUserMsgType.INFO, "Remote Data deletion", "Remote Execution Results will not be deleted.", eUserMsgOption.OK, eUserMsgSelection.OK));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.ApplicationNotFoundInEnvConfig, new UserMsg(eUserMsgType.ERROR, "Application Not Found In EnvConfig", "Application = {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
