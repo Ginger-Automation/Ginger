@@ -617,7 +617,7 @@ namespace Amdocs.Ginger.Repository
             }
             catch (Exception exc)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured in the Undo Process", exc);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred in the Undo Process", exc);
             }
             finally
             {
@@ -757,7 +757,7 @@ namespace Amdocs.Ginger.Repository
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Error occured during object copy of the item: '{0}', type: '{1}', property/field: '{2}'", this.ItemName, this.GetType(), mi.Name), ex);
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Error occurred during object copy of the item: '{0}', type: '{1}', property/field: '{2}'", this.ItemName, this.GetType(), mi.Name), ex);
                 }
             });
             //targetObj.PostDeserialization();
