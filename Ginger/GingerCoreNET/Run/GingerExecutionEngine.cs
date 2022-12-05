@@ -3408,7 +3408,8 @@ namespace Ginger.Run
                                 {
                                     activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
 
-                                    if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
+                                    if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0 &&
+                                        !mErrorPostExecutionActionFlowBreaker)
                                     {
                                         SetNextActionsBlockedStatus();
                                         statusCalculationIsDone = true;
@@ -3424,7 +3425,8 @@ namespace Ginger.Run
                             {
                                 activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                                 CurrentBusinessFlow.LastFailedAction = act;
-                                if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
+                                if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0 && 
+                                    !mErrorPostExecutionActionFlowBreaker)
                                 {
                                     SetNextActionsBlockedStatus();
                                     statusCalculationIsDone = true;
