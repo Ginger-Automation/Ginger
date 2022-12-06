@@ -388,8 +388,6 @@ namespace Ginger.Run.RunSetActions
                 RunSetActionHTMLReportSendEmail.Email.MailCC = mValueExpression.ValueCalculated;
                 mValueExpression.Value = RunSetActionHTMLReportSendEmail.Subject;
                 RunSetActionHTMLReportSendEmail.Email.Subject = mValueExpression.ValueCalculated;
-                mValueExpression.Value = RunSetActionHTMLReportSendEmail.MailHost;
-                RunSetActionHTMLReportSendEmail.Email.SMTPMailHost = mValueExpression.ValueCalculated;
                 mValueExpression.Value = RunSetActionHTMLReportSendEmail.MailUser;
                 RunSetActionHTMLReportSendEmail.Email.SMTPUser = mValueExpression.ValueCalculated;
                 RunSetActionHTMLReportSendEmail.Email.Body = emailReadyHtml;
