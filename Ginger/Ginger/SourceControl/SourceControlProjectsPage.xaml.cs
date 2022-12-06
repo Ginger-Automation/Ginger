@@ -393,7 +393,7 @@ namespace Ginger.SourceControl
         {
             try
             {
-                if (!mSourceControl.IsPublicRepo && (string.IsNullOrEmpty(mSourceControl.SourceControlUser) || string.IsNullOrEmpty(mSourceControl.SourceControlPass)) || string.IsNullOrEmpty(mSourceControl.SourceControlURL))
+                if (!mSourceControl.IsRepositoryPublic() && (string.IsNullOrEmpty(mSourceControl.SourceControlUser) || string.IsNullOrEmpty(mSourceControl.SourceControlPass)) || string.IsNullOrEmpty(mSourceControl.SourceControlURL))
                 {
                     Reporter.ToUser(eUserMsgKey.SourceControlConnMissingConnInputs);
                     return;

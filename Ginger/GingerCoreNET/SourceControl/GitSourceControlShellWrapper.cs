@@ -230,5 +230,10 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
         {
             throw new NotImplementedException();
         }
+
+        public override bool IsRepositoryPublic()
+        {
+            return false;
+        }
     }
 }
