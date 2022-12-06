@@ -397,12 +397,10 @@ namespace Ginger.ALM
             {
                 SaveConnectionDetails();
                 UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.AlmExport.ToString(), true, true);
-                //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.AlmExport.ToString());
                 return;
             }
             ConnectProject();
             UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.AlmImport.ToString(), true, true);
-            //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.AlmImport.ToString());
 
         }
 

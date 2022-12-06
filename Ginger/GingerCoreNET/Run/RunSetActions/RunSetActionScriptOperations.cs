@@ -26,6 +26,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using System.Runtime.InteropServices;
 using static Ginger.Run.RunSetActions.RunSetActionBase;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -48,6 +49,8 @@ namespace Ginger.Run.RunSetActions
                 act.ScriptInterpreterType = (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     ? ActScript.eScriptInterpreterType.VBS : ActScript.eScriptInterpreterType.SH;
                 act.Execute();
+
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.RunSetActionScript.ToString(), true, true);
             }
             catch (Exception ex)
             {

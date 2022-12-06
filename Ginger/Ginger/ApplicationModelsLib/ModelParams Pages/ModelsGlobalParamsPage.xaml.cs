@@ -44,6 +44,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using Ginger.SolutionWindows.TreeViewItems;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 {
@@ -441,6 +442,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                     break;
                 }
             }
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ModelParameters.ToString(), true, false);
         }
 
         private void BtnCopyGlobalParamsClicked(object sender, RoutedEventArgs e)
@@ -528,11 +530,13 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         private void SaveAllGlobalParametersChanges(object sender, RoutedEventArgs e)
         {
             Save(true);
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ModelParameters.ToString(), true, false);
         }
 
         private void SaveSelectedGlobalParametersChanges(object sender, RoutedEventArgs e)
         {
             Save(false);
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ModelParameters.ToString(), true, false);
         }
 
         private void Save(bool saveAll)

@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Ginger.TagsLib;
 using System;
@@ -256,6 +257,8 @@ namespace Ginger
             xAddTagBtn.Visibility = Visibility.Collapsed;
 
             xTagsComboBox.IsDropDownOpen = true;
+
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Tags.ToString(), true, true);
         }
 
         // Add tags to stackpanal

@@ -29,11 +29,29 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 {
     public class TelemetrySession
     {
-        public Guid Guid { get; set; }
+        public Guid Id { get; set; }
+        public string WorkStationId { get; set; }
         public string TimeZone { get; set; }
         public string GingerVersion { get; set; }
+        [JsonIgnore]
+        public bool IsUserSession
+        {
+            get
+            {
+                if (Debugger == true || Runtime == "Debug")
+                {
+                    return true;
+                    //return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+        [JsonIgnore]
         public string Runtime { get; set; }
-
+        [JsonIgnore]
         public bool Debugger { get; set; }
         public bool Is64BitProcess { get; set; }
         public string OSVersion { get; set; }
@@ -50,18 +68,18 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         public double? OverallExecutionTimeNumber { get; set; } = 0;
         public string OverallExecutionTime { get; set; }
         public int OverallExecutedRunsets { get; set; } = 0;
-        public int OVerallExecutedBuisnessFlows { get; set; } = 0;
+        public int OverallExecutedBusinessFlows { get; set; } = 0;
         public int OverallExecutedActivityGroups { get; set; } = 0;
-        public int OVerallExecutedActivities { get; set; } = 0;
-        public int OVerallExecutedActions { get; set; } = 0;
+        public int OverallExecutedActivities { get; set; } = 0;
+        public int OverallExecutedActions { get; set; } = 0;
         public int PassedActionsCount { get; set; } = 0;
         public int FailedActionsCount { get; set; } = 0;
-        public int PassedBuisnessFlowsCount { get; set; } = 0;
-        public int FailedBuisnessFlowsCount { get; set; } = 0;
-        public List<UsedActionDetail> UsedActionTypes { get; set; } = new List<UsedActionDetail>();
-        public HashSet<string> AutomatedPlatforms { get; set; } = new HashSet<string>();
+        public int PassedBusinessFlowsCount { get; set; } = 0;
+        public int FailedBusinessFlowsCount { get; set; } = 0;
+        public List<UsedActionDetail> ExecutedActionTypes { get; set; } = new List<UsedActionDetail>();
+        public HashSet<string> ExecutedAutomatedPlatforms { get; set; } = new HashSet<string>();
         public List<UsedFeatureDetail> UsedFeatures { get; set; } = new List<UsedFeatureDetail>();
-        public List<string> LoggedErrors { get; set; } = new List<string>();
+        public List<string> ExceptionErrors { get; set; } = new List<string>();
 
 
         public enum GingerExecutionContext
@@ -153,12 +171,13 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             [Description("Plugins")]
             Plugins, //Done
             [Description("ActionResultSimulation")]
-            ActionResultSimulation //Not Done! need to add this
+            ActionResultSimulation 
         }
 
         public TelemetrySession(Guid guid)
         {
-            Guid = guid;
+            Id = guid;
+            WorkStationId = guid.ToString();
             StartTime = Telemetry.Time;
             TimeZone = TimeZoneInfo.Local.DisplayName;
             GingerVersion = ApplicationInfo.ApplicationVersion;
@@ -173,7 +192,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             Is64BitProcess = Environment.Is64BitProcess;
             OSVersion = Environment.OSVersion.ToString();
 
-            if (System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName == "corp.amdocs.com")
+            if (System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName.Contains("amdocs"))
             {
                 IsAmdocs = true;
             }

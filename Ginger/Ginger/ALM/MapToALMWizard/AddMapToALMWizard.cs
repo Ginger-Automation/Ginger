@@ -136,8 +136,7 @@ namespace Ginger.ALM.MapToALMWizard
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mapBusinessFlow);
                 Reporter.HideStatusMessage();
 
-                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ALM.ToString(), true, false);
-                //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.ALM.ToString());
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ALM.ToString(), true, true);
             }
             catch (Exception ex)
             {

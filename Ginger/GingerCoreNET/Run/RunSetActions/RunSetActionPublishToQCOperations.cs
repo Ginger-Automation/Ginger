@@ -31,6 +31,7 @@ using static Ginger.Run.RunSetActions.RunSetActionBase;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 using static GingerCore.ALM.PublishToALMConfig;
 using GingerCore.Activities;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -119,6 +120,7 @@ namespace Ginger.Run.RunSetActions
             {
                 RunSetActionPublishToQC.Status = eRunSetActionStatus.Completed;
             }
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.RunsetOperationsExportToAlm.ToString(), true, true);
         }
 
         private BusinessFlow ConvertRunSetToBF(IReportInfo reportInfo)

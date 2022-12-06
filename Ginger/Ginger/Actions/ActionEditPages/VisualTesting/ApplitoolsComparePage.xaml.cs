@@ -184,7 +184,6 @@ namespace Ginger.Actions.VisualTesting
                     //First try open with Chrome
                     System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "chrome.exe", Arguments = url , UseShellExecute = true });
                     UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Applitools.ToString(), true, true);
-                    //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.Applitools.ToString());
 
                 }
                 catch (Exception ex)
@@ -195,7 +194,6 @@ namespace Ginger.Actions.VisualTesting
                         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "firefox.exe", Arguments = url, UseShellExecute = true });
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Applitools.ToString(), true, true);
-                        //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.Applitools.ToString());
                     }
                     catch (Exception ee)
                     {

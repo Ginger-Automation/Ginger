@@ -29,6 +29,7 @@ using Ginger.Reports;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
 using GingerCore;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -89,6 +90,8 @@ namespace Ginger.Run.RunSetActions
                 Reporter.HideStatusMessage();
                 RunSetActionSendFreeEmail.Status = RunSetActionBase.eRunSetActionStatus.Failed;
             }
+
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.RunSetActionSendFreeEmail.ToString(), true, true);
         }
 
         public static string OverrideHTMLRelatedCharacters(string text)

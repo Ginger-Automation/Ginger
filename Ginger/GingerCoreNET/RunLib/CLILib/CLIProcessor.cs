@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             {
                 if (!string.IsNullOrEmpty(Reporter.ReporterData.LastLoggedError))
                 {
-                    WorkSpace.Instance.Telemetry.TelemetrySession.LoggedErrors.Add(Reporter.ReporterData.LastLoggedError);
+                    WorkSpace.Instance.Telemetry.TelemetrySession.ExceptionErrors.Add(Reporter.ReporterData.LastLoggedError);
                 }
             }
         }

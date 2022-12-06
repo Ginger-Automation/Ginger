@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.SelfHealingLib;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,6 +81,7 @@ namespace Ginger.Run
         private void xEnableSelfHealingChkBox_Click(object sender, RoutedEventArgs e)
         {
             ShowHideConfigPanel();
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SelfHealing.ToString(), true, true);
         }
 
         private void ShowHideConfigPanel()

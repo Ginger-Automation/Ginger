@@ -203,128 +203,106 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         {
             TelemetrySession = new TelemetrySession(Guid);
             if (WorkSpace.Instance.Telemetry.DoNotCollect)  return;
-
-            //Add("sessionstart", TelemetrySession);
-
-            // TODO: add selective collection per user permission
-            //Add("sessionstart", new
-            //{
-            //    id = mTelemetrySession.Guid,
-            //    zz = mTelemetrySession.Debugger
-            //});
         }
 
         public void CheckSolutionInstanceForUserData()
         {
-            bool isLogger = Enum.TryParse(WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod.ToString(), out TelemetrySession.GingerUsedFeatures selectedLogger);
-            if (isLogger)
-            {
-                //TelemetrySession.UsedFeatures.Add(selectedLogger.ToString());
-                UsedFeatureDetail.AddOrModifyFeatureDetail(selectedLogger.ToString(), true, true);
-            }
+            //bool isLogger = Enum.TryParse(WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod.ToString(), out TelemetrySession.GingerUsedFeatures selectedLogger);
+            //if (isLogger)
+            //{
+            //    UsedFeatureDetail.AddOrModifyFeatureDetail(selectedLogger.ToString(), true, true);
+            //}
 
-            if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ePublishToCentralDB.Yes)
-            {
-                bool isCentralizedDB = Enum.TryParse(WorkSpace.Instance.Solution.LoggerConfigurations.DataPublishingPhase.ToString(), out TelemetrySession.GingerUsedFeatures publishPhase);
-                if (isCentralizedDB)
-                {
-                    //TelemetrySession.UsedFeatures.Add(publishPhase.ToString());
-                    UsedFeatureDetail.AddOrModifyFeatureDetail(publishPhase.ToString(), true, true);
-                }
-            }
+            //if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ePublishToCentralDB.Yes)
+            //{
+            //    bool isCentralizedDB = Enum.TryParse(WorkSpace.Instance.Solution.LoggerConfigurations.DataPublishingPhase.ToString(), out TelemetrySession.GingerUsedFeatures publishPhase);
+            //    if (isCentralizedDB)
+            //    {
+            //        UsedFeatureDetail.AddOrModifyFeatureDetail(publishPhase.ToString(), true, true);
+            //    }
+            //}
 
             if (WorkSpace.Instance.Solution.SourceControl != null && WorkSpace.Instance.Solution.SourceControl.GetSourceControlType != eSourceControlType.None)
             {
-                //TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.SourceControl.ToString());
                 UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SourceControl.ToString(), true, true);
             }
 
-            if (WorkSpace.Instance.Solution.Tags.Count > 0)
-            {
-                //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.Tags.ToString());
-                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Tags.ToString(), true, false);
-            }
+            #region Remove Code
 
-            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().Count > 1)
-            {
-                //TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.DataSource.ToString());
-                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.DataSource.ToString(), true, false);
+            //if (WorkSpace.Instance.Solution.Tags.Count > 0)
+            //{
+            //    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Tags.ToString(), true, false);
+            //}
 
-            }
+            //if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().Count > 1)
+            //{
+            //    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.DataSource.ToString(), true, false);
+            //}
 
-            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Count > 1)
-            {
-                //TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.Environments.ToString());
-                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Environments.ToString(), true, false);
-            }
+            //if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Count > 1)
+            //{
+            //    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Environments.ToString(), true, false);
+            //}
 
-            ObservableList<PluginPackage> pluginPackages = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
-            if (pluginPackages.Count > 0)
-            {
-                //TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.Plugins.ToString());
-                foreach(PluginPackage plugin in pluginPackages)
-                {
-                    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Plugins.ToString(), true, false, plugin.ItemName);
-                }
-            }
+            //ObservableList<PluginPackage> pluginPackages = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+            //if (pluginPackages.Count > 0)
+            //{
+            //    foreach(PluginPackage plugin in pluginPackages)
+            //    {
+            //        UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Plugins.ToString(), true, false, plugin.ItemName);
+            //    }
+            //}
 
-            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Count > 0)
-            {
-                //TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.ModelParameters.ToString());
-                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ModelParameters.ToString(), true, false);
-            }
+            //if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Count > 0)
+            //{
+            //    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ModelParameters.ToString(), true, false);
+            //}
 
-            ObservableList<ApplicationPOMModel> pomModels = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
-            if (pomModels.Count > 0)
-            {
-                //TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.POM.ToString());
-                foreach (ApplicationPOMModel pomModel in pomModels)
-                {
-                    var appPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(pomModel.TargetApplicationKey);
-                    pomModel.SetItemImageType(appPlatform);
-                    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.POM.ToString(), true, false, pomModel.ItemImageType.ToString());
-                }
-            }
+            //ObservableList<ApplicationPOMModel> pomModels = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
+            //if (pomModels.Count > 0)
+            //{
+            //    foreach (ApplicationPOMModel pomModel in pomModels)
+            //    {
+            //        var appPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(pomModel.TargetApplicationKey);
+            //        pomModel.SetItemImageType(appPlatform);
+            //        UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.POM.ToString(), true, false, pomModel.ItemImageType.ToString());
+            //    }
+            //}
 
-            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Count > 0)
-            {
-                //TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.ApiModel.ToString());
-                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ApiModel.ToString(), true, false);
-            }
+            //if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Count > 0)
+            //{
+            //    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ApiModel.ToString(), true, false);
+            //}
 
-            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Count > 1)
-            {
-                //TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.CustomizedReportTemplates.ToString());
-                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.CustomizedReportTemplates.ToString(), true, false);
-            }
+            //if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Count > 1)
+            //{
+            //    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.CustomizedReportTemplates.ToString(), true, false);
+            //}
 
-            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>().Where(x => x.MappedOutputType == VariableBase.eOutputType.GlobalVariable).ToList().Count > 1)
-            {
-                //TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.CustomizedReportTemplates.ToString());
-                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.GlobalVaraibles.ToString(), true, false);
-            }
+            //if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>().Where(x => x.MappedOutputType == VariableBase.eOutputType.GlobalVariable).ToList().Count > 1)
+            //{
+            //    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.GlobalVaraibles.ToString(), true, false);
+            //}
 
-            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>().Count > 0)
-            {
-                //TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString());
-                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString(), true, false);
+            //if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>().Count > 0)
+            //{
+            //    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString(), true, false);
 
-            }
-            else if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().Count > 0)
-            {
-                //TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString());
-                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString(), true, false);
-            }
-            else if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>().Count > 0)
-            {
-                //TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString());
-                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString(), true, false);
-            }
-            else if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>().Count > 0)
-            {
-                //TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString());
-                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString(), true, false);
-            }
+            //}
+            //else if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().Count > 0)
+            //{
+            //    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString(), true, false);
+            //}
+            //else if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>().Count > 0)
+            //{
+            //    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString(), true, false);
+            //}
+            //else if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>().Count > 0)
+            //{
+            //    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString(), true, false);
+            //}
+
+            #endregion
 
             if (WorkSpace.Instance.UserProfile != null)
             {
@@ -354,11 +332,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             TimeSpan sp = TimeSpan.FromMilliseconds((double)TelemetrySession.OverallExecutionTimeNumber);
             TelemetrySession.OverallExecutionTime = sp.ToString(@"hh\:mm\:ss");
 
-            //CheckSolutionInstanceForUserData();
-
             Add("sessionend", TelemetrySession);
-
-            //Add("dummy", new { a = 1}); // add another dummy to make sure session is written
 
             TelemetryRecords.CompleteAdding();
             
@@ -410,22 +384,12 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         {
             foreach (TelemetryRecord telemetryRecord in TelemetryRecords.GetConsumingEnumerable())
             {                                
-                //string indexHeader = JsonConvert.SerializeObject(telemetryRecord);
-                //string objJSON = JsonConvert.SerializeObject(telemetryRecord.getTelemetry());
-
                 string objJSON = JsonConvert.SerializeObject(telemetryRecord.getTelemetry(), Formatting.Indented, new JsonSerializerSettings
                 {
                     DefaultValueHandling = DefaultValueHandling.Ignore
                 });
 
-                // Adding timestamp, uid and sid
-                string controlfields = "\"timestamp\":\"" + Time + "\",\"workstationID\":\"" + TelemetrySession.Guid.ToString() + "\",";// + \"uid\":\"" + Guid.ToString() + "\",";
-                //string fullobj = indexHeader + Environment.NewLine + "{" + controlfields + objJSON.Substring(1) + Environment.NewLine;
-                string fullobj = "{" + controlfields + objJSON.Substring(1) + Environment.NewLine;
-
-                //TODO: add try catch
-
-                File.AppendAllText(sessionFileName, fullobj);                             
+                File.AppendAllText(sessionFileName, objJSON);                             
             }
         }
 

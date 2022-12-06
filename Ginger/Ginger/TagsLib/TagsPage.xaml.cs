@@ -24,6 +24,7 @@ using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using System;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace Ginger.TagsLib
 {
@@ -119,6 +120,8 @@ namespace Ginger.TagsLib
         {
             xTagsGrid.Grid.CommitEdit(DataGridEditingUnit.Row, true);
             mTags.Add(new RepositoryItemTag());
+
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Tags.ToString(), true, false);
         }
 
         public void ShowAsWindow()
@@ -139,7 +142,9 @@ namespace Ginger.TagsLib
         {
             xTagsGrid.Grid.CommitEdit(DataGridEditingUnit.Row, true);
             CleanUnValidTags();
-             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.Tags);
+            WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.Tags);
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Tags.ToString(), true, false);
+
         }
 
         private void closeBtn_Click(object sender, EventArgs e)

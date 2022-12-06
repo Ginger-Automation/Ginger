@@ -27,6 +27,8 @@ using amdocs.ginger.GingerCoreNET;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
 using Ginger.ValidationRules;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Ginger.Reports
 {
@@ -194,6 +196,20 @@ namespace Ginger.Reports
             }
 
             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
+
+            bool isLogger = Enum.TryParse(WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod.ToString(), out TelemetrySession.GingerUsedFeatures selectedLogger);
+            if (isLogger)
+            {
+                UsedFeatureDetail.AddOrModifyFeatureDetail(selectedLogger.ToString(), true, true);
+            }
+            if (WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ePublishToCentralDB.Yes)
+            {
+                bool isCentralizedDB = Enum.TryParse(WorkSpace.Instance.Solution.LoggerConfigurations.DataPublishingPhase.ToString(), out TelemetrySession.GingerUsedFeatures publishPhase);
+                if (isCentralizedDB)
+                {
+                    UsedFeatureDetail.AddOrModifyFeatureDetail(publishPhase.ToString(), true, true);
+                }
+            }
 
             // validate the paths of inserted folders
             Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationHTMLReportsFolder);

@@ -91,7 +91,6 @@ namespace Ginger.UserControlsLib.TextEditor
             }
 
             UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Documents.ToString(), null, true);
-            //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures. Documents.ToString());
         }
 
 

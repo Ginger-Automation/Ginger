@@ -43,10 +43,5 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(usedFeatureDetail);
             }
         }
-
-        public override string ToString()
-        {
-            return "Feature Name: " + Name + ", Is Configured: " + IsConfigured.ToString() + ", Is Used: " + IsUsed + ". ";
-        }
     }
 }

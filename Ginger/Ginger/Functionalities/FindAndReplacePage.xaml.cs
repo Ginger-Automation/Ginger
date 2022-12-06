@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Functionalities;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.Run;
@@ -351,6 +352,8 @@ namespace Ginger.Functionalities
             }
 
             ReplaceItemsAsync();
+
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Search.ToString(), null, true);
         }
 
         private async void ReplaceItemsAsync()
@@ -399,6 +402,8 @@ namespace Ginger.Functionalities
         private void FindButtonClicked(object sender, RoutedEventArgs e)
         {
             Find();
+
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Search.ToString(), null, true);
         }
 
         private void Find()

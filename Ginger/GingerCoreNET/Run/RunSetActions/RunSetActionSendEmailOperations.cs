@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Reports.HTMLReports;
@@ -89,6 +90,7 @@ namespace Ginger.Run.RunSetActions
                 }
             }
             RunSetActionSendEmail.Email.EmailOperations.Send();
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.RunsetOperationsMailReport.ToString(), true, true);
         }
 
         public void SetBodyFromHTMLReport(ReportInfo RI)

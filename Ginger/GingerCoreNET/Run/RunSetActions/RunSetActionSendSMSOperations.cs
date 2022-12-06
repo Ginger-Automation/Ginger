@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore.GeneralLib;
@@ -50,6 +51,8 @@ namespace Ginger.Run.RunSetActions
                 Reporter.HideStatusMessage();
                 RunSetActionSendSMS.Status = RunSetActionBase.eRunSetActionStatus.Failed;
             }
+
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.RunSetActionSendSMS.ToString(), true, true);
         }
 
     }

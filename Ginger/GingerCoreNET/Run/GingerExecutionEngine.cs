@@ -274,7 +274,7 @@ namespace Ginger.Run
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
 
-            if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
+            if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect && WorkSpace.Instance.Telemetry.TelemetrySession.IsUserSession)
             {
                 RunListeners.Add(new TelemetryRunListener());
             }

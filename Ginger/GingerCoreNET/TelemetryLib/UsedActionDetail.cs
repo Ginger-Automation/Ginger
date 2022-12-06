@@ -1,33 +1,79 @@
-﻿using DocumentFormat.OpenXml.Bibliography;
-using System;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.CoreNET.Execution;
+using GingerCore.Actions;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.TelemetryLib
 {
     public class UsedActionDetail
     {
         public string Name { get; set; }
-        [DefaultValueAttribute(0)]
-        public int CountTotal { get; set; } = 0;
-        [DefaultValueAttribute(0)]
-        public int CountPassed { get; set; } = 0;
-        [DefaultValueAttribute(0)]
-        public int CountFailed { get; set; } = 0;
+        [DefaultValue(0)]
+        public int Total { get; set; } = 0;
+        [DefaultValue(0)]
+        public int Passed { get; set; } = 0;
+        [DefaultValue(0)]
+        public int Failed { get; set; } = 0;
+        [Setting, DefaultValue(default(HashSet<string>))]
+        public HashSet<string> Errors { get; set; }
 
-        public UsedActionDetail(string name, int countTotal, int countPassed, int countFailed)
+        public UsedActionDetail(string name, int countTotal, string error=null)
         {
             Name = name;
-            CountTotal = countTotal;
-            CountPassed = countPassed;
+            Total = countTotal;
+            if (!string.IsNullOrEmpty(error))
+            {
+                if (Errors == null)
+                {
+                    Errors = new HashSet<string>();
+                }
+                Errors.Add(error);
+            }     
         }
 
-        public override string ToString()
+        public static void AddOrModifyActionDetail(Act action)
         {
-            return "Action Name: " + Name + ", Total Usage: " + CountTotal.ToString() + ", Passed: " + CountPassed.ToString() + ", Failed: " + CountFailed.ToString();
+            UsedActionDetail usedActionDetail = WorkSpace.Instance.Telemetry.TelemetrySession.ExecutedActionTypes.Where(x => x.Name == action.ActionType).FirstOrDefault();
+            if (usedActionDetail != null)
+            {
+                int index = WorkSpace.Instance.Telemetry.TelemetrySession.ExecutedActionTypes.IndexOf(usedActionDetail);
+                usedActionDetail.Total += 1;
+                if (action.Status == eRunStatus.Passed)
+                {
+                    WorkSpace.Instance.Telemetry.TelemetrySession.PassedActionsCount += 1;
+                    usedActionDetail.Passed += 1;
+                }
+                if (action.Status == eRunStatus.Failed)
+                {
+                    WorkSpace.Instance.Telemetry.TelemetrySession.FailedActionsCount += 1;
+                    usedActionDetail.Failed += 1;
+                }
+                if (!string.IsNullOrEmpty(action.Error))
+                {
+                    usedActionDetail.Errors.Add(action.Error);
+                }
+                WorkSpace.Instance.Telemetry.TelemetrySession.ExecutedActionTypes[index] = usedActionDetail;
+
+            }
+            else
+            {
+                usedActionDetail = new UsedActionDetail(action.ActionType, 1, action.Error);
+
+                if (action.Status == eRunStatus.Passed)
+                {
+                    WorkSpace.Instance.Telemetry.TelemetrySession.PassedActionsCount += 1;
+                    usedActionDetail.Passed += 1;
+                }
+                if (action.Status == eRunStatus.Failed)
+                {
+                    WorkSpace.Instance.Telemetry.TelemetrySession.FailedActionsCount += 1;
+                    usedActionDetail.Failed += 1;
+                }
+                WorkSpace.Instance.Telemetry.TelemetrySession.ExecutedActionTypes.Add(usedActionDetail);
+            }
         }
     }
 }

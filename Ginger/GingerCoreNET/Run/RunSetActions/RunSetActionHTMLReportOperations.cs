@@ -31,6 +31,7 @@ using Ginger.Reports.GingerExecutionReport;
 using Amdocs.Ginger.CoreNET.Logger;
 using System.IO;
 using Amdocs.Ginger.CoreNET.Utility;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -115,6 +116,7 @@ namespace Ginger.Run.RunSetActions
                                                                                                                                 currentHTMLFolderName,
                                                                                                                                 RunSetActionHTMLReport.isHTMLReportPermanentFolderNameUsed);
                 }
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.RunSetActionHTMLReport.ToString(), true, true);
             }
             else
             {

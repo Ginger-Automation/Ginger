@@ -421,7 +421,6 @@ namespace Ginger.Run
                 return 1;
             });
             UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ParallelExecution.ToString(), true, true);
-            //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.ParallelExecution.ToString());
             return result;
         }
 

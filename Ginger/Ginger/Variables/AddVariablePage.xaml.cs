@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.SolutionGeneral;
@@ -155,6 +156,7 @@ namespace Ginger.Variables
             foreach (VariableBase varToAdd in xSharedRepoTabListView.List.SelectedItems)
             {
                 AddVarToParent((VariableBase)varToAdd.CreateInstance(true));
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString(), true, false);
             }
         }
 
@@ -172,6 +174,7 @@ namespace Ginger.Variables
                         ((Solution)mVariablesParentObj).AddVariable(newVar);
                     }
                     ((Solution)mVariablesParentObj).Variables.CurrentItem = newVar;
+                    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.GlobalVaraibles.ToString(), true, false);
                     break;
                 case eVariablesLevel.BusinessFlow:
                     if (((BusinessFlow)mVariablesParentObj).Variables.CurrentItem != null)

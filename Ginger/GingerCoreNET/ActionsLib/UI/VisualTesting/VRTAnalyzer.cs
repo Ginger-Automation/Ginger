@@ -135,7 +135,6 @@ namespace GingerCore.Actions.VisualTesting
                     break;
             }
             UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.VRT.ToString(), true, true);
-            //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.VRT.ToString());
         }
 
         private void StartVRT()

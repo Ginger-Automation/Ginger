@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Environments;
 using GingerWPF.WizardLib;
@@ -59,7 +60,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
             //Save the Environment 
             EnvsFolder.AddRepositoryItem(NewEnvironment);
 
-            //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.Environments.ToString());
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Environments.ToString(), true, false);
         }
     }
 }
