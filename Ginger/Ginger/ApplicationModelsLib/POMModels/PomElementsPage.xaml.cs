@@ -145,6 +145,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey) == ePlatformType.Web)
             {
                 isEnableFriendlyLocator = true;
+                xElementDetails.xFriendlyLocatorTab.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xElementDetails.xFriendlyLocatorTab.Visibility = Visibility.Collapsed;
             }
 
             SetElementsGridView();
@@ -759,12 +764,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mSelectedElement.Locators.CollectionChanged += Locators_CollectionChanged;
                 xElementDetails.xLocatorsGrid.DataSourceList = mSelectedElement.Locators;
                 UpdateLocatorsHeader();
-                mSelectedElement.FriendlyLocators.CollectionChanged -= FriendlyLocators_CollectionChanged;
-                mSelectedElement.FriendlyLocators.CollectionChanged += FriendlyLocators_CollectionChanged;
-                xElementDetails.xFriendlyLocatorsGrid.DataSourceList = mSelectedElement.FriendlyLocators;
-                xElementDetails.xFriendlyLocatorsGrid.ShowAdd = Visibility.Collapsed;
-                xElementDetails.xFriendlyLocatorsGrid.ShowDelete = Visibility.Collapsed;
-                UpdateFriendlyLocatorsHeader();
+                if (isEnableFriendlyLocator)
+                {
+                    mSelectedElement.FriendlyLocators.CollectionChanged -= FriendlyLocators_CollectionChanged;
+                    mSelectedElement.FriendlyLocators.CollectionChanged += FriendlyLocators_CollectionChanged;
+                    xElementDetails.xFriendlyLocatorsGrid.DataSourceList = mSelectedElement.FriendlyLocators;
+                    xElementDetails.xFriendlyLocatorsGrid.ShowAdd = Visibility.Collapsed;
+                    xElementDetails.xFriendlyLocatorsGrid.ShowDelete = Visibility.Collapsed;
+                    UpdateFriendlyLocatorsHeader();
+                }
+                else
+                {
+                    xElementDetails.xFriendlyLocatorTab.Visibility = Visibility.Collapsed;
+                }
 
                 mSelectedElement.Properties.CollectionChanged -= Properties_CollectionChanged;
                 mSelectedElement.Properties.CollectionChanged += Properties_CollectionChanged;
