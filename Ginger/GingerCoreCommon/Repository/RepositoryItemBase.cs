@@ -1062,7 +1062,7 @@ namespace Amdocs.Ginger.Repository
 
         private void DirtyCheck(string name)
         {
-            if (DirtyStatus != eDirtyStatus.NoTracked && DirtyTrackingFields != null && DirtyTrackingFields.Contains(name))
+            if (DirtyStatus != eDirtyStatus.NoTracked && DirtyTrackingFields != null && DirtyTrackingFields.Contains(name) && DirtyTracking != eDirtyTracking.Paused)
             {
                 DirtyStatus = eDirtyStatus.Modified;
                 // RaiseDirtyChangedEvent();
@@ -1072,7 +1072,7 @@ namespace Amdocs.Ginger.Repository
 
         internal void RaiseDirtyChanged(object sender, EventArgs e)
         {
-            if (this.DirtyTracking != eDirtyTracking.Paused)
+            if (DirtyTracking != eDirtyTracking.Paused)
             {
                 DirtyStatus = eDirtyStatus.Modified;
             }
@@ -1084,8 +1084,9 @@ namespace Amdocs.Ginger.Repository
         internal void ChildCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             // each change in Observavle will mark the item modified - all NotifyCollectionChangedAction.*
-            if (this.DirtyTracking != eDirtyTracking.Paused)
+            if (DirtyTracking != eDirtyTracking.Paused)
             {
+                DirtyStatus = eDirtyStatus.Modified;
                 #region Collection Action - Add
                 // if item added set tracking too
                 if (e.Action == NotifyCollectionChangedAction.Add)
@@ -1135,16 +1136,9 @@ namespace Amdocs.Ginger.Repository
                             ((RepositoryItemBase)obj).DirtyStatus = eDirtyStatus.Modified;
                         }
                     }
-
                 }
                 #endregion
-                #region Collection Action - Reset
-                else
-                {
-                    DirtyStatus = eDirtyStatus.Modified;
-                }
             }
-            #endregion
         }
 
         public void PauseDirtyTracking()

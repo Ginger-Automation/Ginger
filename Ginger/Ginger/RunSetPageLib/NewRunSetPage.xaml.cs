@@ -1213,7 +1213,9 @@ namespace Ginger.Run
             RunnerPage rp = (RunnerPage)((FlowElement)sender).GetCustomeShape().Content;
             GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(rp.ExecutorEngine, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext);
             PACW.ShowAsWindow();
+            rp.ExecutorEngine.GingerRunner.PauseDirtyTracking();
             rp.UpdateRunnerInfo();
+            rp.ExecutorEngine.GingerRunner.ResumeDirtyTracking();
         }
 
         private void GRP_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
