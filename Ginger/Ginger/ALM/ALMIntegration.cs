@@ -278,10 +278,9 @@ namespace Ginger.ALM
             {
                 Reporter.ToStatus(eStatusMsgKey.ALMTestSetMap);
                 bool isConnected = false;
-                await Task.Run(() =>
-                {
-                    isConnected = AutoALMProjectConnect(eALMConnectType.Auto);
-                });
+                
+                isConnected = AutoALMProjectConnect(eALMConnectType.Auto);
+                
                 if (isConnected)
                     {
                         if (GetALMType().Equals(eALMType.ZephyrEnterprise))
