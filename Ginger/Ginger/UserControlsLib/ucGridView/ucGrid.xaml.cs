@@ -111,7 +111,7 @@ namespace Ginger
                         BindingOperations.EnableCollectionSynchronization(mObjList, mObjList);//added to allow collection changes from other threads
                     }
 
-                    mCollectionView = CollectionViewSource.GetDefaultView(mObjList);
+                    mCollectionView = new CollectionViewSource() { Source = mObjList }.View;
 
                     if (mCollectionView != null)
                     {
@@ -130,7 +130,7 @@ namespace Ginger
                     }
                     this.Dispatcher.Invoke(() =>
                     {
-                        grdMain.ItemsSource = mObjList;
+                        grdMain.ItemsSource = mCollectionView;
 
                         // Make the first row selected
                         if (value != null && value.Count > 0)

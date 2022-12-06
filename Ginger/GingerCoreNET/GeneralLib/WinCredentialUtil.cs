@@ -44,6 +44,10 @@ namespace GingerCore.GeneralLib
         {
             try
             {
+                if (string.IsNullOrEmpty(target) || string.IsNullOrEmpty(password))
+                {
+                    return true;
+                }
                 // Save the credential to the credential manager
                 CredentialManager.WriteCredential(
                     applicationName: target,
