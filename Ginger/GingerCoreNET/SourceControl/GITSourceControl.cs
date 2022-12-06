@@ -586,7 +586,7 @@ namespace GingerCore.SourceControl
             Console.WriteLine("GITHub - TestConnection");
             try
             {
-                if (IsPublicRepo)
+                if (IsRepositoryPublic())
                 {
                     IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL);
                 }
@@ -813,8 +813,14 @@ namespace GingerCore.SourceControl
                      PullOptions PullOptions = new PullOptions();
                      PullOptions.FetchOptions = new FetchOptions();
                      PullOptions.FetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
-                     mergeResult = Commands.Pull(repo, new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), PullOptions);
-                     
+                     if (!IsRepositoryPublic())
+                     {
+                         mergeResult = Commands.Pull(repo, new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), PullOptions);
+                     }
+                     else
+                     {
+                         mergeResult = Commands.Pull(repo, new Signature("dummy", "dummy", new DateTimeOffset(DateTime.Now)), PullOptions);
+                     }
                  }
              }).Wait();
             return mergeResult;
@@ -875,7 +881,7 @@ namespace GingerCore.SourceControl
                             filePath = filePath.Replace(@"/", @"\");
                         }
                         string fullPath = Path.Combine(RepositoryRootFolder, filePath);
-                            ConflictPaths.Add(fullPath);
+                        ConflictPaths.Add(fullPath);
                     }
                 }
             }
@@ -976,12 +982,45 @@ namespace GingerCore.SourceControl
             }
         }
 
+        public override bool IsRepositoryPublic()
+        {
+            try
+            {
+                var branchesList = Repository.ListRemoteReferences(SourceControlURL, GetEmptySourceCredentialsHandler())
+                    .Where(elem => elem.CanonicalName.Contains("refs/heads/"))
+                    .Select(elem => elem.CanonicalName.Replace("refs/heads/", ""))
+                    .ToList();
+                if (branchesList == null || branchesList.Count == 0)
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public override string GetCurrentBranchForSolution()
         {
             using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
             {
                 return repo.Head.FriendlyName;
             }
+        }
+
+        private CredentialsHandler GetEmptySourceCredentialsHandler()
+        {
+            var credentials = new UsernamePasswordCredentials()
+            {
+                Username = String.Empty,
+                Password = String.Empty,
+
+            };
+            CredentialsHandler credentialHandler = (_url, _user, _cred) => credentials;
+
+            return credentialHandler;
         }
 
         private CredentialsHandler GetSourceCredentialsHandler()

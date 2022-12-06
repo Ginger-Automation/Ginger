@@ -14,16 +14,15 @@
         <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition  Height="50"/>
                     <RowDefinition  Height="30"/>
                     <RowDefinition  Height="1*"/>
                 </Grid.RowDefinitions>
                 <usercontrols:ucButton x:Name="xSaveButton" DockPanel.Dock="Top" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" Visibility="Collapsed" HorizontalAlignment="Left" Margin="0,0,0,0"/>
-                <StackPanel Orientation="Horizontal" Grid.Row="1">
+                <StackPanel Orientation="Horizontal" Grid.Row="0">
                     <Label Content="Visual Regression Testing(VRT) Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                     <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
                 </StackPanel>
-                <StackPanel Orientation="Vertical" Grid.Row="2">
+                <StackPanel Orientation="Vertical" Grid.Row="1">
                     <Grid Margin="10,10,0,0" x:Name="xVRTGrid" >
                         <Grid.RowDefinitions>
                             <RowDefinition  Height="50"/>

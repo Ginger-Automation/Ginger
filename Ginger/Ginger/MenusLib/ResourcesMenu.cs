@@ -200,7 +200,7 @@ namespace Ginger.MenusLib
             }
 
             PlugInsFolderTreeItem pluginsRoot = new PlugInsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<PluginPackage>());          
-            SingleItemTreeViewExplorerPage PluginsRootPage = new SingleItemTreeViewExplorerPage("Plugins", eImageType.PluginPackage, pluginsRoot, saveAllHandler: pluginsRoot.SaveAllTreeFolderItemsHandler, addHandler: pluginsRoot.AddPlugIn);
+            SingleItemTreeViewExplorerPage PluginsRootPage = new SingleItemTreeViewExplorerPage("Plugins", eImageType.PluginPackage, pluginsRoot, saveAllHandler: pluginsRoot.SaveAllTreeFolderItemsHandler, addHandler: pluginsRoot.AddPlugIn, isSaveButtonHidden: true);
             return PluginsRootPage;
         }
 
