@@ -119,6 +119,7 @@ namespace Ginger.Actions
             EditMode = editMode;
 
             mAction = act;
+            mAction.PauseDirtyTracking();
             if (editMode != General.eRIPageViewMode.View && editMode != General.eRIPageViewMode.ViewAndExecute && editMode != General.eRIPageViewMode.Explorer)
             {
                 mAction.SaveBackup();
@@ -162,6 +163,7 @@ namespace Ginger.Actions
             GingerHelpProvider.SetHelpString(this, act.ActionDescription);
 
             InitView();
+            mAction.ResumeDirtyTracking();
         }
 
         private void InitView()
