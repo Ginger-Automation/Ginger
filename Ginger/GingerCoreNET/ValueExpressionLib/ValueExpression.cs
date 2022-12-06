@@ -757,8 +757,14 @@ namespace GingerCore
                             iColVal = p.Substring(p.IndexOf("ICOLVAL=") + 8, p.IndexOf("IROW=") - 9);
                             iColVal = "[" + iColVal + "]";
                             p = p.Substring(p.TrimStart().IndexOf("IROW="));
-                            Query = Query + iColVal + ",[GINGER_ID] from " + DSTable;
-
+                            if (iColVal != "[]")
+                            {
+                                Query = Query + iColVal + ",[GINGER_ID] from " + DSTable;
+                            }
+                            else
+                            {
+                                Query = "Select [GINGER_ID] from " + DSTable;
+                            }
                             if (p.IndexOf(" ") > 0)
                                 IRow = p.Substring(p.IndexOf("IROW=") + 5, p.IndexOf(" ") - 5);
                             else
@@ -1122,7 +1128,7 @@ namespace GingerCore
             for (int i = 0; i < matches.Count; i++)
             {
                 Match match = matches[i];
-                
+
                 if (!string.IsNullOrEmpty(match.Value) && match.Value.Contains('='))
                 {
                     string[] keyValue = match.Value.Split('=');
@@ -1491,7 +1497,7 @@ namespace GingerCore
                         VarValue = vb.Value;
                     }
                 }
-                
+
                 mValueCalculated = mValueCalculated.Replace(p, VarValue);
             }
 
