@@ -4055,7 +4055,7 @@ namespace GingerCore.Drivers
                     });
 
                     //result = action.BeginInvoke(null, null);
-                    //if (result.AsyncWaitHandle.WaitOne(10000, true))
+                    //if (result.AsyncWaitHandle.WaitOne(10000, true))  
 
                     if (action.Wait(10000))
                     {
@@ -4180,7 +4180,8 @@ namespace GingerCore.Drivers
         /// Else, it'll be skipped - Checking the performance
         /// </summary>
         public bool ExtraLocatorsRequired = true;
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null
+            ,ObservableList<ElementLocator> ElementLocatorsSettingsList=null)
         {
             return await Task.Run(() =>
             {
@@ -4194,28 +4195,28 @@ namespace GingerCore.Drivers
                     List<ElementInfo> list = new List<ElementInfo>();
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
-                    list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, relativeXpathTemplateList, LearnScreenshotsOfElements, PomMetaData));
-                    for(int i=0;i<list.Count;i++)
-                    {
-                        ElementInfo elementInfo = list[i];
-                        if(elementInfo.FriendlyLocators.Count > 0)
-                        {
-                            for(int j=0;j<elementInfo.FriendlyLocators.Count;j++)
-                            {
-                                ElementLocator felementLocator = elementInfo.FriendlyLocators[j];
-                                ElementInfo newelementinfo = list.FirstOrDefault(x => x.XPath == felementLocator.LocateValue);
-                                if(newelementinfo != null)
-                                {
-                                    felementLocator.LocateValue = newelementinfo.Guid.ToString();
-                                    felementLocator.ReferanceElement = newelementinfo.ElementName + "[" + newelementinfo.ElementType + "]";
-                                }
-                                else
-                                {
-                                    elementInfo.FriendlyLocators.Remove(felementLocator);
-                                }
-                            }
-                        }
-                    }
+                    list = General.ConvertObservableListToList<ElementInfo>(GetAllElementsFromPage("", filteredElementType, foundElementsList, relativeXpathTemplateList, LearnScreenshotsOfElements, PomMetaData,ElementLocatorsSettingsList));
+                    //for(int i=0;i<list.Count;i++)
+                    //{
+                    //    ElementInfo elementInfo = list[i];
+                    //    if(elementInfo.FriendlyLocators.Count > 0)
+                    //    {
+                    //        for(int j=0;j<elementInfo.FriendlyLocators.Count;j++)
+                    //        {
+                    //            ElementLocator felementLocator = elementInfo.FriendlyLocators[j];
+                    //            ElementInfo newelementinfo = list.FirstOrDefault(x => x.XPath == felementLocator.LocateValue);
+                    //            if(newelementinfo != null)
+                    //            {
+                    //                felementLocator.LocateValue = newelementinfo.Guid.ToString();
+                    //                felementLocator.ReferanceElement = newelementinfo.ElementName + "[" + newelementinfo.ElementType + "]";
+                    //            }
+                    //            else
+                    //            {
+                    //                elementInfo.FriendlyLocators.Remove(felementLocator);
+                    //            }
+                    //        }
+                    //    }
+                    //}
                     allReadElem.Clear();
                     CurrentFrame = "";
                     Driver.Manage().Timeouts().ImplicitWait = new TimeSpan();
@@ -4231,7 +4232,7 @@ namespace GingerCore.Drivers
         }
 
 
-        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaDataList = null)
+        private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaDataList = null,ObservableList<ElementLocator> ElementLocatorsSettingsList=null)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
@@ -4307,7 +4308,7 @@ namespace GingerCore.Drivers
                             foundElemntInfo.Path = path;
                             foundElemntInfo.XPath = xpath;
                             foundElemntInfo.HTMLElementObject = htmlElemNode;                            
-                            ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
+                            ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo,filteredElementType, ElementLocatorsSettingsList);
                             foundElemntInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.Sequence, Value = foundElementsList.Count.ToString(), ShowOnUI = false });
                             if (ExtraLocatorsRequired)
                             {
@@ -4350,7 +4351,7 @@ namespace GingerCore.Drivers
                             {
                                 newPath = path + "," + xpath;
                             }
-                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, relativeXpathTemplateList, LearnScreenshotsOfElements, PomMetaDataList);
+                            GetAllElementsFromPage(newPath, filteredElementType, foundElementsList, relativeXpathTemplateList, LearnScreenshotsOfElements, PomMetaDataList,ElementLocatorsSettingsList);
                             Driver.SwitchTo().ParentFrame();
                         }
 
@@ -4365,6 +4366,29 @@ namespace GingerCore.Drivers
                     }
                 }
             }
+
+            for (int i = 0; i < foundElementsList.Count; i++)
+            {
+                ElementInfo elementInfo = foundElementsList[i];
+                if (elementInfo.FriendlyLocators.Count > 0)
+                {
+                    for (int j = 0; j < elementInfo.FriendlyLocators.Count; j++)
+                    {
+                        ElementLocator felementLocator = elementInfo.FriendlyLocators[j];
+                        ElementInfo newelementinfo = foundElementsList.FirstOrDefault(x => x.XPath == felementLocator.LocateValue);
+                        if (newelementinfo != null)
+                        {
+                            felementLocator.LocateValue = newelementinfo.Guid.ToString();
+                            felementLocator.ReferanceElement = newelementinfo.ElementName + "[" + newelementinfo.ElementType + "]";
+                        }
+                        else
+                        {
+                            elementInfo.FriendlyLocators.Remove(felementLocator);
+                        }
+                    }
+                }
+            }
+
             int pomActivityIndex = 1;
             if (formElementsList.Count() != 0)
             {
@@ -4696,7 +4720,7 @@ namespace GingerCore.Drivers
             return returnTuple;
         }
 
-        ElementInfo IWindowExplorer.LearnElementInfoDetails(ElementInfo EI)
+        ElementInfo IWindowExplorer.LearnElementInfoDetails(ElementInfo EI, List<eElementType> filteredElementType=null, ObservableList<ElementLocator> ElementLocatorsSettingsList = null)
         {
             if (string.IsNullOrEmpty(EI.ElementType) || EI.ElementTypeEnum == eElementType.Unknown)
             {
@@ -4724,10 +4748,10 @@ namespace GingerCore.Drivers
             }
 
             ((HTMLElementInfo)EI).RelXpath = mXPathHelper.GetElementRelXPath(EI);
-            EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
+            EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI, ElementLocatorsSettingsList);
             if (EI.Locators.Any(x => x.EnableFriendlyLocator))
             {
-                EI.FriendlyLocators = ((IWindowExplorer)this).GetElementFriendlyLocators(EI);
+                EI.FriendlyLocators = ((IWindowExplorer)this).GetElementFriendlyLocators(EI,filteredElementType);
             }
             EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);// improve code inside
 
@@ -5580,7 +5604,7 @@ namespace GingerCore.Drivers
             return ComboValues;
         }
 
-        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
+        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo, ObservableList<ElementLocator> ElementLocatorsSettingsList=null)
         {
             ObservableList<ElementLocator> locatorsList = new Platforms.PlatformsInfo.WebPlatform().GetLearningLocators();
             IWebElement e = null;
@@ -5623,6 +5647,7 @@ namespace GingerCore.Drivers
                         {
                             elemLocator.LocateValue = id;
                             elemLocator.IsAutoLearned = true;
+                            elemLocator.EnableFriendlyLocator = ElementLocatorsSettingsList!=null ? ElementLocatorsSettingsList.FirstOrDefault(x => x.LocateBy == eLocateBy.ByID).EnableFriendlyLocator : elemLocator.EnableFriendlyLocator;
                         }
                         break;
 
@@ -5650,6 +5675,7 @@ namespace GingerCore.Drivers
                         {
                             elemLocator.LocateValue = name;
                             elemLocator.IsAutoLearned = true;
+                            elemLocator.EnableFriendlyLocator = ElementLocatorsSettingsList != null ? ElementLocatorsSettingsList.FirstOrDefault(x => x.LocateBy == eLocateBy.ByName).EnableFriendlyLocator : elemLocator.EnableFriendlyLocator; 
                         }
                         break;
 
@@ -5660,6 +5686,7 @@ namespace GingerCore.Drivers
                         {
                             elemLocator.LocateValue = relXPath;
                             elemLocator.IsAutoLearned = true;
+                            elemLocator.EnableFriendlyLocator = ElementLocatorsSettingsList != null ? ElementLocatorsSettingsList.FirstOrDefault(x => x.LocateBy == eLocateBy.ByRelXPath).EnableFriendlyLocator : elemLocator.EnableFriendlyLocator; 
                         }
 
                         break;
@@ -5669,6 +5696,7 @@ namespace GingerCore.Drivers
                         {
                             elemLocator.LocateValue = ElementInfo.XPath;
                             elemLocator.IsAutoLearned = true;
+                            elemLocator.EnableFriendlyLocator = ElementLocatorsSettingsList != null ? ElementLocatorsSettingsList.FirstOrDefault(x => x.LocateBy == eLocateBy.ByXPath).EnableFriendlyLocator : elemLocator.EnableFriendlyLocator; 
                         }
 
                         break;
@@ -5678,6 +5706,7 @@ namespace GingerCore.Drivers
                         {
                             elemLocator.LocateValue = ElementInfo.ElementType;
                             elemLocator.IsAutoLearned = true;
+                            elemLocator.EnableFriendlyLocator = ElementLocatorsSettingsList != null ? ElementLocatorsSettingsList.FirstOrDefault(x => x.LocateBy == eLocateBy.ByTagName).EnableFriendlyLocator : elemLocator.EnableFriendlyLocator; 
                         }
 
                         break;
@@ -5687,7 +5716,7 @@ namespace GingerCore.Drivers
             return locatorsList;
         }
 
-        ObservableList<ElementLocator> IWindowExplorer.GetElementFriendlyLocators(ElementInfo ElementInfo)
+        ObservableList<ElementLocator> IWindowExplorer.GetElementFriendlyLocators(ElementInfo ElementInfo, List<eElementType> filteredElementType=null)
         {
 
             ObservableList<ElementLocator> locatorsList = new ObservableList<ElementLocator>();
@@ -5700,7 +5729,7 @@ namespace GingerCore.Drivers
                         ((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject.NextSibling.NextSibling;
                         if (((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject != null)
                         {
-                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject, ref locatorsList, ePosition.left);
+                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject, ref locatorsList, ePosition.left, filteredElementType);
                         }
                         
                     }
@@ -5709,7 +5738,7 @@ namespace GingerCore.Drivers
                         ((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject.NextSibling;
                         if (((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject != null)
                         {
-                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject, ref locatorsList, ePosition.left);
+                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).LeftofHTMLElementObject, ref locatorsList, ePosition.left, filteredElementType);
                         }
                         
                     }
@@ -5719,7 +5748,7 @@ namespace GingerCore.Drivers
                         ((HTMLElementInfo)ElementInfo).RightofHTMLElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject.PreviousSibling.PreviousSibling;
                         if (((HTMLElementInfo)ElementInfo).RightofHTMLElementObject != null)
                         {
-                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).RightofHTMLElementObject, ref locatorsList, ePosition.right);
+                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).RightofHTMLElementObject, ref locatorsList, ePosition.right, filteredElementType);
                         }
                         
                     }
@@ -5728,7 +5757,7 @@ namespace GingerCore.Drivers
                         ((HTMLElementInfo)ElementInfo).RightofHTMLElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject.PreviousSibling;
                         if (((HTMLElementInfo)ElementInfo).RightofHTMLElementObject != null)
                         {
-                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).RightofHTMLElementObject, ref locatorsList, ePosition.right);
+                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).RightofHTMLElementObject, ref locatorsList, ePosition.right, filteredElementType);
                         }
                         
                     }
@@ -5738,7 +5767,7 @@ namespace GingerCore.Drivers
                         ((HTMLElementInfo)ElementInfo).BelowHTMLElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject.ParentNode.ParentNode;
                         if (((HTMLElementInfo)ElementInfo).BelowHTMLElementObject != null)
                         {
-                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).BelowHTMLElementObject, ref locatorsList, ePosition.below);
+                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).BelowHTMLElementObject, ref locatorsList, ePosition.below, filteredElementType);
                         }
                         
                     }
@@ -5748,7 +5777,7 @@ namespace GingerCore.Drivers
                         ((HTMLElementInfo)ElementInfo).BelowHTMLElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject.ParentNode;
                         if (((HTMLElementInfo)ElementInfo).BelowHTMLElementObject != null)
                         {
-                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).BelowHTMLElementObject, ref locatorsList, ePosition.below);
+                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).BelowHTMLElementObject, ref locatorsList, ePosition.below, filteredElementType);
                         }
                         
                     }
@@ -5758,7 +5787,7 @@ namespace GingerCore.Drivers
                         ((HTMLElementInfo)ElementInfo).AboveHTMLElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject.FirstChild.FirstChild;
                         if (((HTMLElementInfo)ElementInfo).AboveHTMLElementObject != null)
                         {
-                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).AboveHTMLElementObject, ref locatorsList,ePosition.above);
+                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).AboveHTMLElementObject, ref locatorsList,ePosition.above, filteredElementType);
                         }
                         
                     }
@@ -5767,7 +5796,7 @@ namespace GingerCore.Drivers
                         ((HTMLElementInfo)ElementInfo).AboveHTMLElementObject = ((HTMLElementInfo)ElementInfo).HTMLElementObject.FirstChild;
                         if(((HTMLElementInfo)ElementInfo).AboveHTMLElementObject != null)
                         {
-                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).AboveHTMLElementObject, ref locatorsList,ePosition.above);
+                            GetLocatorlistforFriendlyLocator(((HTMLElementInfo)ElementInfo).AboveHTMLElementObject, ref locatorsList,ePosition.above, filteredElementType);
                         }
                         
                     }
@@ -5781,13 +5810,13 @@ namespace GingerCore.Drivers
             return locatorsList;
         }
 
-        public void GetLocatorlistforFriendlyLocator(HtmlNode currentHtmlNode,ref ObservableList<ElementLocator> locatorsList,ePosition position)
+        public void GetLocatorlistforFriendlyLocator(HtmlNode currentHtmlNode,ref ObservableList<ElementLocator> locatorsList,ePosition position,List<eElementType> filteredElementType=null)
         {
             ElementLocator elemLocator = new ElementLocator();
             elemLocator.Active = true;
             elemLocator.Position = position;
             elemLocator.LocateBy = eLocateBy.POMElement;
-            elemLocator.LocateValue = currentHtmlNode.Name == "div" ? String.Empty : currentHtmlNode.XPath;
+            elemLocator.LocateValue = filteredElementType != null ? (filteredElementType.Any(x => x.ToString() == currentHtmlNode.Name) ? currentHtmlNode.XPath : String.Empty) : String.Empty;
             elemLocator.IsAutoLearned = true;
             if (!string.IsNullOrEmpty(elemLocator.LocateValue))
             {

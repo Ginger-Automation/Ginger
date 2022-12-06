@@ -1080,7 +1080,7 @@ namespace GingerCore.Drivers.WindowsLib
             return GetControlFromMousePosition();
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI, List<eElementType> filteredElementType, ObservableList<ElementLocator> ElementLocatorsSettingsList = null)
         {
             if (ElementInfo.IsElementTypeSupportingOptionalValues(EI.ElementTypeEnum))
             {
@@ -1102,7 +1102,7 @@ namespace GingerCore.Drivers.WindowsLib
             return EI;
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null, ObservableList<ElementLocator> ElementLocatorsSettingsList = null)
         {
             return await Task.Run(async () =>
             {
@@ -1210,7 +1210,7 @@ namespace GingerCore.Drivers.WindowsLib
             return list;       
         }
 
-        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
+        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo, ObservableList<ElementLocator> ElementLocatorsSettingsList = null)
         {
             ObservableList<ElementLocator> Locators = GetElementLocators(ElementInfo);
             foreach (var elementLocator in Locators)
@@ -1844,7 +1844,7 @@ namespace GingerCore.Drivers.WindowsLib
             throw new NotImplementedException();
         }
 
-        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, List<eElementType> filteredElementType=null)
         {
             throw new NotImplementedException();
         }

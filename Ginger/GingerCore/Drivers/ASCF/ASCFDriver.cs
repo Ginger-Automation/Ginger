@@ -987,7 +987,7 @@ namespace GingerCore.Drivers.ASCF
             return null;
         }
 
-        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
+        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo,ObservableList<ElementLocator> ElementLocatorsSettingsList=null)
         {
             return null;
         }
@@ -1415,7 +1415,7 @@ namespace GingerCore.Drivers.ASCF
 
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null,ObservableList<ElementLocator> ElementLocatorsSettingsList = null)
         {
             //DOTO add grid view contol lists
             return new List<ElementInfo>();
@@ -1452,7 +1452,7 @@ namespace GingerCore.Drivers.ASCF
             throw new NotImplementedException();
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI, List<eElementType> filteredElementType, ObservableList<ElementLocator> ElementLocatorsSettingsList =null)
         {
             return EI;
         }
@@ -1512,7 +1512,7 @@ namespace GingerCore.Drivers.ASCF
             return null;
         }
 
-        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, List<eElementType> filteredElementType)
         {
             throw new NotImplementedException();
         }
