@@ -134,6 +134,7 @@ namespace GingerCoreNET.SourceControl
         public abstract bool TestConnection(ref string error);
 
         public abstract List<string> GetBranches();
+        public abstract bool IsRepositoryPublic();
 
         public abstract string GetCurrentBranchForSolution();
 
