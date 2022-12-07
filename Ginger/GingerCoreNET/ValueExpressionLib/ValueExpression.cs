@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.CoreNET.ValueExpression;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
@@ -562,10 +563,41 @@ namespace GingerCore
                 //}
                 //else
                 mValueCalculated = mValueCalculated.Replace(p, Param.CurrentValue);
+
+                AddToTelemetry(TelemetrySession.GingerUsedFeatures.ModelParameters);
+                AddToTelemetry(TelemetrySession.GingerUsedFeatures.GlobalVaraibles);
             }
             else
             {
                 mValueCalculated = mValueCalculated.Replace(p, string.Format("ERROR: The Global Model Parameter '{0}' was not found", VarName));
+            }
+
+        }
+
+        private void AddToTelemetry(TelemetrySession.GingerUsedFeatures usedFeature)
+        {
+            switch (usedFeature)
+            {
+                case TelemetrySession.GingerUsedFeatures.GlobalVaraibles:
+                    {
+                        UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.GlobalVaraibles.ToString(), true, false);
+                        break;
+                    }
+                case TelemetrySession.GingerUsedFeatures.Environments:
+                    {
+                        UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Environments.ToString(), true, false);
+                        break;
+                    }
+                case TelemetrySession.GingerUsedFeatures.DataSource:
+                    {
+                        UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.DataSource.ToString(), true, false);
+                        break;
+                    }
+                case TelemetrySession.GingerUsedFeatures.ModelParameters:
+                    {
+                        UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ModelParameters.ToString(), true, false);
+                        break;
+                    }
             }
         }
 
@@ -1045,6 +1077,8 @@ namespace GingerCore
                     Console.WriteLine(e.StackTrace);
                 }
             }
+
+            AddToTelemetry(TelemetrySession.GingerUsedFeatures.DataSource);
         }
 
 
@@ -1255,6 +1289,8 @@ namespace GingerCore
                 // TODO: err                
                 mValueCalculated = mValueCalculated.Replace(p, "");
             }
+
+            AddToTelemetry(TelemetrySession.GingerUsedFeatures.Environments);
         }
 
         private void ReplaceEnvParamWithValue(string p, string[] a)
@@ -1310,8 +1346,12 @@ namespace GingerCore
                 mValueCalculated = mValueCalculated.Replace(p, "");
             }
 
+            AddToTelemetry(TelemetrySession.GingerUsedFeatures.Environments);
 
         }
+
+
+
         private void ReplaceGeneralFunctionsWithValue(string p, string[] a)
         {
             string pc = string.Join(" ", a);

@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository.ItemToRepositoryWizard;
 using GingerCore;
@@ -206,6 +207,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
         public override void Finish()
         {
             mWizardWindow.Close();
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString(), true, true);
         }
     }
 }

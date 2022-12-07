@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.BusinessFlowPages.ListHelpers;
@@ -68,6 +69,9 @@ namespace Ginger.BusinessFlowPages
 
             SetListView();
             ShowHideEditPage(null);
+
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Environments.ToString(), true, false);
+
         }
 
         public void UpdatePageViewMode(Ginger.General.eRIPageViewMode pageViewMode)

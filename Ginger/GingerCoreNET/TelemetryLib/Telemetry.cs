@@ -41,15 +41,32 @@ using System.Threading;
 using System.Threading.Tasks;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 using static GingerCoreNET.SourceControl.SourceControlBase;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Amdocs.Ginger.CoreNET.TelemetryLib
 {
-    public class Telemetry 
+    public class Telemetry : ITelemetry
     {
         public Guid Guid { get; set; } // keep public
         public bool DoNotCollect { get; set; } = false; // keep public, default is do not collect
 
         public TelemetrySession TelemetrySession { get; set; }
+
+        public ITelemetry GetTelemetry
+        {
+            get
+            {
+                return this;
+            }
+        }
+
+        public ITelemetry SetTelemetry
+        {
+            set
+            {
+                this = value;
+            }
+        }
 
         static HttpClient mClient;
 

@@ -24,6 +24,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.IO;
 
 namespace Amdocs.Ginger.Repository
@@ -170,7 +171,38 @@ namespace Amdocs.Ginger.Repository
                 repositoryItem.SetDirtyStatusToNoChange();
             }
 
+            AddToTelemetry(repositoryItem);
+
             repositoryItem.CreateBackup();
+        }
+
+        private void AddToTelemetry(RepositoryItemBase repositoryItem)
+        {
+            var repoType = repositoryItem.GetType();
+            switch (repoType.Name)
+            {
+                case "ProjEnvironment":
+                    {
+                        GingerCoreCommonWorkSpace.Instance.Telemetry.GetTelemetry.
+                        //UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Environments.ToString(), true, false);
+                        break;
+                    }
+                case "ApplicationAPIModel":
+                    {
+                        //UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ApiModel.ToString(), true, false);
+                        break;
+                    }
+                case "ApplicationPOMModel":
+                    {
+                        //UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.POM.ToString(), true, false);
+                        break;
+                    }
+                case "GlobalAppModelParameter":
+                    {
+                        //UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ModelParameters.ToString(), true, false);
+                        break;
+                    }
+            }
         }
 
         public void Close()

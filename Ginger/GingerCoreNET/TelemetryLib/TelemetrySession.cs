@@ -217,6 +217,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                     ExecutionContext = GingerExecutionContext.CLI.ToString();
                 }
             }
+            WorkSpace.Instance.Telemetry
         }
 
     }
