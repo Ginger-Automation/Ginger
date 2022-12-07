@@ -3894,7 +3894,7 @@ namespace Ginger.Run
                 //Start execution
                 if (doContinueRun == false)
                 {
-                    CurrentBusinessFlow.ExecutionLogActivityCounter = 1;
+                    CurrentBusinessFlow.ExecutionLogActivityCounter = 0;
                 }
 
                 //Executing the Activities
@@ -5134,7 +5134,7 @@ namespace Ginger.Run
                 Context.BusinessFlow = BF;
             }
 
-            Context.BusinessFlow.ExecutionLogActivityCounter = 1;
+            Context.BusinessFlow.ExecutionLogActivityCounter = 0;
             try
             {
                 if (System.IO.Directory.Exists(logFolderPath))
