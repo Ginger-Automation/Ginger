@@ -1687,6 +1687,7 @@ namespace GingerCore.Actions
         {
             if (this != null)
             {
+                PauseDirtyTracking();
                 if (reSetActionErrorHandlerExecutionStatus)
                 {
                     this.ErrorHandlerExecuted = false;
@@ -1761,8 +1762,8 @@ namespace GingerCore.Actions
                 {
                     FC.Status = eStatus.Pending;
                 }
-
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+                ResumeDirtyTracking();
             }
         }    // end of Reset
 
