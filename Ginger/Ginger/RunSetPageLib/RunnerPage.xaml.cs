@@ -731,7 +731,9 @@ namespace Ginger.Run
             GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(mExecutorEngine, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext);
             PACW.ShowAsWindow();
 
+            mExecutorEngine.GingerRunner.PauseDirtyTracking();
             UpdateRunnerInfo();
+            mExecutorEngine.GingerRunner.ResumeDirtyTracking();
         }
 
         private void xContinueRunnerBtn_Click(object sender, RoutedEventArgs e)

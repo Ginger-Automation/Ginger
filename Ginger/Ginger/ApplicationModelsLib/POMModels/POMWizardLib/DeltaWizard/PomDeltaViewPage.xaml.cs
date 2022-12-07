@@ -118,6 +118,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (mAgent.Platform == ePlatformType.Web)
             {
                 isEnableFriendlyLocator = true;
+                xFriendlyLocatorTab.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xFriendlyLocatorTab.Visibility = Visibility.Collapsed;
             }
 
             SetDeltaElementsGridView();
@@ -378,12 +383,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mSelectedElement.Locators.CollectionChanged += Locators_CollectionChanged;
                 xLocatorsGrid.DataSourceList = mSelectedElement.Locators;
                 UpdateLocatorsHeader();
-                mSelectedElement.FriendlyLocators.CollectionChanged -= FriendlyLocators_CollectionChanged;
-                mSelectedElement.FriendlyLocators.CollectionChanged += FriendlyLocators_CollectionChanged;
-                xFriendlyLocatorsGrid.DataSourceList = mSelectedElement.FriendlyLocators;
-                xFriendlyLocatorsGrid.ShowAdd = Visibility.Collapsed;
-                xFriendlyLocatorsGrid.ShowDelete = Visibility.Collapsed;
-                UpdateFriendlyLocatorsHeader();
+                if (isEnableFriendlyLocator)
+                {
+                    mSelectedElement.FriendlyLocators.CollectionChanged -= FriendlyLocators_CollectionChanged;
+                    mSelectedElement.FriendlyLocators.CollectionChanged += FriendlyLocators_CollectionChanged;
+                    xFriendlyLocatorsGrid.DataSourceList = mSelectedElement.FriendlyLocators;
+                    xFriendlyLocatorsGrid.ShowAdd = Visibility.Collapsed;
+                    xFriendlyLocatorsGrid.ShowDelete = Visibility.Collapsed;
+                    UpdateFriendlyLocatorsHeader();
+                }
+                else
+                {
+                    xFriendlyLocatorTab.Visibility = Visibility.Collapsed;
+                }
                 mSelectedElement.Properties.CollectionChanged -= Properties_CollectionChanged;
                 mSelectedElement.Properties.CollectionChanged += Properties_CollectionChanged;
                 xPropertiesGrid.DataSourceList = mSelectedElement.Properties;
