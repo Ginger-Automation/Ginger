@@ -1152,11 +1152,6 @@ namespace Amdocs.Ginger.Repository
 
         public void ResumeDirtyTracking()
         {
-            if (DirtyTracking == eDirtyTracking.NotStarted)
-            {
-                StartDirtyTracking();
-                return;
-            }
 
             if (DirtyTracking == eDirtyTracking.Paused)
             {
