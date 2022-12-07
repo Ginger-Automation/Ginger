@@ -179,11 +179,12 @@ namespace Amdocs.Ginger.Repository
         private void AddToTelemetry(RepositoryItemBase repositoryItem)
         {
             var repoType = repositoryItem.GetType();
+
             switch (repoType.Name)
             {
                 case "ProjEnvironment":
                     {
-                        GingerCoreCommonWorkSpace.Instance.Telemetry.GetTelemetry.
+                        GingerCoreCommonWorkSpace.Instance.Telemetry.UpdateTelemetrySessionUsedFeatures("Environments");
                         //UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Environments.ToString(), true, false);
                         break;
                     }

@@ -8,8 +8,6 @@ namespace Amdocs.Ginger.Common.InterfacesLib
 {
     public interface ITelemetry
     {
-        ITelemetry GetTelemetry { get; }
-
-        ITelemetry SetTelemetry { set; }
+        void UpdateTelemetrySessionUsedFeatures(string usedFeature);
     }
 }
