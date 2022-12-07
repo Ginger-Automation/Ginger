@@ -266,6 +266,10 @@ namespace Ginger.GingerGridLib
             {
                 WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(selectedItem);
             }
+            if (xRemoteServiceGrid.Grid.SelectedItems.Count == 0)
+            {
+                WorkSpace.Instance.CurrentSelectedItem = null;
+            }
         }
 
         private void BtnClearAll_Click(object sender, RoutedEventArgs e)
@@ -284,6 +288,7 @@ namespace Ginger.GingerGridLib
                     //because list changes every time delete is called
                     WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>()[0]);
                 } while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>().Count != 0);
+                WorkSpace.Instance.CurrentSelectedItem = null;
             }
         }
 
@@ -312,6 +317,7 @@ namespace Ginger.GingerGridLib
             RemoteServiceGrid remoteServiceGrid = new RemoteServiceGrid() { Name = "Remote Grid " + remoteGridCount, Host = SocketHelper.GetLocalHostIP(), HostPort = 15555, Active = true };
             StartTrackingRemoteServiceGrid(remoteServiceGrid);
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(remoteServiceGrid);
+            xRemoteServiceGrid.Grid.SelectedIndex = xRemoteServiceGrid.Grid.Items.Count-1;
         }
 
         private void SetRemoteGridView()
@@ -331,10 +337,14 @@ namespace Ginger.GingerGridLib
 
         protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (xRemoteServiceGrid.grdMain.Items.Count != 0 && xRemoteServiceGrid.grdMain.SelectedItems[0] != null)
+            if (xRemoteServiceGrid.Grid.Items.Count != 0 && xRemoteServiceGrid.Grid.SelectedItems.Count != 0 && xRemoteServiceGrid.Grid.SelectedItems[0] != null)
             {
-                CurrentItemToSave = (RepositoryItemBase)xRemoteServiceGrid.grdMain.SelectedItems[0];
+                CurrentItemToSave = (RepositoryItemBase)xRemoteServiceGrid.Grid.SelectedItems[0];
                 base.IsVisibleChangedHandler(sender, e);
+            }
+            else
+            {
+                WorkSpace.Instance.CurrentSelectedItem = null;
             }
         }
 

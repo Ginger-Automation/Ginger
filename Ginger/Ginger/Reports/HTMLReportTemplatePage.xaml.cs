@@ -524,11 +524,18 @@ namespace Ginger.Reports
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            _HTMLReportConfiguration.Name = NewTemplateNameTextBox.Text.ToString();
-            _HTMLReportConfiguration.Description = TemplateDescriptionTextBox.Text.ToString();
-            _newHTMLReportConfiguration = _HTMLReportConfiguration;
-            _pageGenericWin.Hide();
-            WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Any(x => x.Name == _HTMLReportConfiguration.Name.ToString()))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "HTML Report with same name: " + "'" + _HTMLReportConfiguration.Name.ToString() + "'" + " already exists.");// it won't get save
+            }
+            else
+            {
+                _HTMLReportConfiguration.Name = NewTemplateNameTextBox.Text.ToString();
+                _HTMLReportConfiguration.Description = TemplateDescriptionTextBox.Text.ToString();
+                _newHTMLReportConfiguration = _HTMLReportConfiguration;
+                _pageGenericWin.Hide();
+                WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
+            }
 
             if (_existingTemplatePage)
             {
