@@ -37,6 +37,7 @@ namespace GingerCoreNET.Application_Models
         public ObservableList<ElementInfo> POMElementsCopy = new ObservableList<ElementInfo>();
         public ObservableList<DeltaElementInfo> DeltaViewElements = new ObservableList<DeltaElementInfo>();
         public ObservableList<ElementInfo> POMLatestElements = new ObservableList<ElementInfo>();
+        public PomSetting pomSetting = null;
         public bool IsLearning { get; set; }
         List<string> mVisualPropertiesList = new List<string> { "X", "Y", "Height", "Width"};        
         public DeltaControlProperty.ePropertiesChangesToAvoid PropertiesChangesToAvoid;
@@ -86,11 +87,11 @@ namespace GingerCoreNET.Application_Models
                 {
                     List<eElementType> selectedElementList = GetSelectedElementList();
 
-                    await mIWindowExplorerDriver.GetVisibleControls(selectedElementList, POMLatestElements, true, SpecificFramePath, GetRelativeXpathTemplateList(), PomLearnUtils.LearnScreenshotsOfElements, PomMetaData, PomLearnUtils.ElementLocatorsSettingsList);
+                    await mIWindowExplorerDriver.GetVisibleControls(pomSetting);
                 }
                 else
                 {
-                   await mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements,true,SpecificFramePath, GetRelativeXpathTemplateList(), PomLearnUtils.LearnScreenshotsOfElements,null,PomLearnUtils.ElementLocatorsSettingsList);
+                   await mIWindowExplorerDriver.GetVisibleControls(pomSetting);
                 }
                 SetUnidentifiedElementsDeltaDetails();
                 DoEndOfRelearnElementsSorting();
