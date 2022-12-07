@@ -566,7 +566,7 @@ namespace GingerCore.Drivers.MainFrame
             throw new NotImplementedException();
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting=null)
         {
             return EI;
         }
@@ -708,7 +708,7 @@ namespace GingerCore.Drivers.MainFrame
             throw new System.NotImplementedException();
         }
 
-        public async Task<System.Collections.Generic.List<ElementInfo>> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null)
+        public async Task<System.Collections.Generic.List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             return await Task.Run(() =>
             {
@@ -748,7 +748,7 @@ namespace GingerCore.Drivers.MainFrame
             throw new System.NotImplementedException();
         }
 
-        public ObservableList<ElementLocator> GetElementLocators(ElementInfo ElementInfo)
+        public ObservableList<ElementLocator> GetElementLocators(ElementInfo ElementInfo,PomSetting pomSetting = null)
         {
             throw new System.NotImplementedException();
         }
@@ -854,7 +854,7 @@ namespace GingerCore.Drivers.MainFrame
             return null;
         }
 
-        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
             throw new NotImplementedException();
         }

@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 
 namespace GingerCore.Drivers.Common
 {
@@ -412,7 +413,7 @@ namespace GingerCore.Drivers.Common
             return list;
         }
 
-        public string GetElementRelXPath(ElementInfo elemInfo)
+        public string GetElementRelXPath(ElementInfo elemInfo, PomSetting pomSetting=null)
         {
             var relxpath = "";
             string xpath = elemInfo.XPath;
@@ -463,7 +464,7 @@ namespace GingerCore.Drivers.Common
                     }
                     if(relxpath== "")
                     {
-                        elemInfo = mDriver.GetElementParent(elemInfo);
+                        elemInfo = mDriver.GetElementParent(elemInfo,pomSetting);
                         if (elemInfo is HTMLElementInfo && !string.IsNullOrEmpty(((HTMLElementInfo)elemInfo).RelXpath))
                         {
                             relxpath = xpath.Replace(elemInfo.XPath, ((HTMLElementInfo)elemInfo).RelXpath);
