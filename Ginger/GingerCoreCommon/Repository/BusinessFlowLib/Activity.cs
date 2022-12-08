@@ -25,6 +25,7 @@ using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Variables;
+using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -1028,6 +1029,16 @@ namespace GingerCore
         public override string GetItemType()
         {
             return nameof(Activity);
+        }
+
+        public override void PostSaveHandler()
+        {
+            // saving from Shared repository tab
+            GingerCoreCommonWorkSpace.Instance.SharedRepositoryOperations.UpdateSharedRepositoryLinkedInstances(this);
+        }
+        public override bool PreSaveHandler()
+        {
+            return Reporter.ToUser(eUserMsgKey.WarnOnEditLinkSharedActivities) == Amdocs.Ginger.Common.eUserMsgSelection.No;
         }
 
         public bool IsAutoLearned { get; set; }

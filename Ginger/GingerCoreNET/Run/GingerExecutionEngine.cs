@@ -1086,7 +1086,7 @@ namespace Ginger.Run
         {
             try
             {
-                act.PauseDirtyTracking();
+                //act.PauseDirtyTracking();
                 //init
                 act.SolutionFolder = SolutionFolder;
                 act.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
@@ -1143,7 +1143,7 @@ namespace Ginger.Run
                     mRunSource = null;
                     mErrorPostExecutionActionFlowBreaker = false;
                 }
-                act.ResumeDirtyTracking();
+                //act.ResumeDirtyTracking();
             }
         }
 
@@ -2488,6 +2488,7 @@ namespace Ginger.Run
 
         private void ResetAction(Act act)
         {
+            /*
             if (act.DirtyTracking == Amdocs.Ginger.Common.Enums.eDirtyTracking.Paused)
             {
                 act.Reset(isActionDirtyTrackingPaused: true);
@@ -2495,7 +2496,8 @@ namespace Ginger.Run
             else
             {
                 act.Reset();
-            }
+            }*/
+            act.Reset();
         }
 
         private void DoFlowControl(Act act, bool moveToNextAction = true)

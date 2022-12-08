@@ -1687,10 +1687,11 @@ namespace GingerCore.Actions
         {
             if (this != null)
             {
+                /* added the flag in order to avoid resuming the dirty tracking when this method is being called after RunAction method from GingerExecutionEngine. commented this as it need further testing
                 if (!isActionDirtyTrackingPaused)
                 {
                     PauseDirtyTracking();
-                }
+                }*/
                 if (reSetActionErrorHandlerExecutionStatus)
                 {
                     this.ErrorHandlerExecuted = false;
@@ -1766,10 +1767,11 @@ namespace GingerCore.Actions
                     FC.Status = eStatus.Pending;
                 }
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
-                if (!isActionDirtyTrackingPaused)
+                /*  commented this as it need further testing
+                 * if (!isActionDirtyTrackingPaused)
                 {
                     ResumeDirtyTracking();
-                }
+                }*/
             }
         }    // end of Reset
 

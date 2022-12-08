@@ -1480,6 +1480,14 @@ namespace Amdocs.Ginger.Repository
         {
         }
 
+        public virtual void PostSaveHandler()
+        {
+        }
+        public virtual bool PreSaveHandler()
+        {
+            return false;
+        }
+
         bool mPublish = false;
         /// <summary>
         /// Flag used to mark if item is ready to be published on third party applications which enhancing Ginger framework
