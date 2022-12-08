@@ -1,0 +1,117 @@
+name: Ginger Windows Build
+
+on:
+  pull_request:
+    branches: 
+      - master
+      - Features/Linux-Migration
+      - Releases/*
+      - Releases/*/*
+      
+  workflow_dispatch: 
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    
+    env:
+      BUILD_CONFIGURATION: Release
+      
+    steps:
+      - uses: actions/checkout@v3
+
+# ------------------------------------------------------------------------------------------------------
+# Install .Net core SDK 6.0.301
+# ------------------------------------------------------------------------------------------------------
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.301
+          
+# ------------------------------------------------------------------------------------------------------
+# Install Nuget tool v1.0.5
+# ------------------------------------------------------------------------------------------------------
+      - name: Setup Nuget
+        uses: Nuget/setup-nuget@v1.0.5
+
+# ------------------------------------------------------------------------------------------------------
+# Restore Ginger solution NuGet packages
+# ------------------------------------------------------------------------------------------------------
+      - name: Restore nuget packages
+        run: nuget restore ./Ginger/Ginger.sln
+
+
+
+# ------------------------------------------------------------------------------------------------------
+# SeaLight
+# ---------------------------------------------------------------------------------------------------
+
+
+
+
+# ------------------------------------------------------------------------------------------------------
+# Install msbuild && Build Ginger Solution
+# ------------------------------------------------------------------------------------------------------
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+
+
+      - name: Build
+        run: msbuild ./Ginger/Ginger.sln /p:DebugSymbols=true /p:DebugType=full /p:Configuration=Release
+        
+# ------------------------------------------------------------------------------------------------------
+# Start Testing 
+# ------------------------------------------------------------------------------------------------------
+      - name: Testing GingerUtilsTest
+        run: dotnet test  Ginger/GingerUtilsTest --configuration Release --logger trx --verbosity=normal
+
+      - name: 'Testing GingerCoreCommonTest'
+        if: success() || failure()  
+        run: dotnet test  Ginger/GingerCoreCommonTest --configuration Release --logger trx --verbosity=normal
+
+      - name: 'Testing GingerCoreNETUnitTest'
+        if: success() || failure()  
+        run: dotnet test  Ginger/GingerCoreNETUnitTest --configuration Release --logger trx --verbosity=normal
+
+      - name: 'Testing GingerPluginCoreTest'
+        if: success() || failure()  
+        run: dotnet test  Ginger/GingerPluginCoreTest --configuration Release --logger trx --verbosity=normal
+
+      - name: 'Testing GingerConsoleTest'
+        if: success() || failure()  
+        run: dotnet test  Ginger/GingerConsoleTest --configuration Release --logger trx --verbosity=normal
+
+      - name: 'Testing GingerAutoPilotTest'
+        if: success() || failure()  
+        run: dotnet test  Ginger/GingerAutoPilotTest --configuration Release --logger trx --verbosity=normal     
+        
+# ------------------------------------------------------------------------------------------------------
+# Run .Net Framework tests using powershell and publish the results
+# ------------------------------------------------------------------------------------------------------
+
+      - name: Run tests for Ginger .NetFramework *Test Dlls
+        if: success() || failure()        # run this step even if previous step failed
+        run: powershell -file "TestDotNetFrameworkGithub.ps1"
+      
+# ------------------------------------------------------------------------------------------------------
+# Publish Test Results
+# ------------------------------------------------------------------------------------------------------
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()        # run this step even if previous step failed
+        with:
+          name: Ginger Windows UnitTests    # Name of the check run which will be created
+          path: "**/*.trx"                # Path to test results
+          reporter: dotnet-trx            # Format of test results
+          
+          
+# ------------------------------------------------------------------------------------------------------
+# Stop Sealight
+# ------------------------------------------------------------------------------------------------------        
+#       - task: EndTestExecution@2
+#         inputs:
+#           sealightsToken: "$(SLAGENTTOKEN)"
+#           SealightsBuildSessionId : $(Build.ArtifactStagingDirectory)\SealightsBuildSessionId.txt 
+          
+          
