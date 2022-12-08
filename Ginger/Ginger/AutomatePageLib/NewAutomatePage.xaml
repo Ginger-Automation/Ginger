@@ -252,7 +252,7 @@
                                         <UserControls:ImageMakerControl ImageType="MapALM" SetAsFontImageWithSize="18" />
                                     </MenuItem.Icon>
                                     <MenuItem.Header>
-                                        <GingerCore:ucTextDicResource Text="Export [BusinessFlow] to ALM" />
+                                        <GingerCore:ucTextDicResource Text="Map [BusinessFlow] to ALM" />
                                     </MenuItem.Header>
                                 </MenuItem>
                                 <MenuItem x:Name="xRefreshFromAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xRefreshFromAlmMenuItem_Click">
