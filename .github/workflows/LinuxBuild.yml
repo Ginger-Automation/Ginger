@@ -89,4 +89,4 @@ jobs:
         if: success() || failure()        # run this step even if previous step failed
         run: |
           chmod +x CLITestsGithub.ps1
-          ./CLITests.ps1
+          ./CLITestsGithub.ps1
