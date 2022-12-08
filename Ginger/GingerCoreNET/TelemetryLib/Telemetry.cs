@@ -341,7 +341,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
             Add("sessionend", TelemetrySession);
 
-            TelemetryRecords.CompleteAdding();
+            TelemetryRecords.CompleteAdding(); 
 
 
             //Task.Factory.StartNew(() =>
