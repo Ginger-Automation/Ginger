@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -29,6 +29,8 @@ namespace Amdocs.Ginger.Common.UIElement
         public string Name { get; set; }
         [IsSerializedForLocalRepository]
         public string Value { get; set; }
+        [IsSerializedForLocalRepository(true)]
+        public bool ShowOnUI { get; set; } = true;
         public override string ItemName { get { return Name; } set { Name = value;  } }
 
     }

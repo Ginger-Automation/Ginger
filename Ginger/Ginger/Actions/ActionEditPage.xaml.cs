@@ -58,7 +58,7 @@ namespace Ginger.Actions
         RegularView
     }
 
-    public partial class ActionEditPage : Page
+    public partial class ActionEditPage : GingerUIPage
     {
         //static int ActionEditNum = 0;
         //static int LiveActionEditCounter = 0;
@@ -1847,6 +1847,15 @@ namespace Ginger.Actions
                 }
             }
             Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw response view, see log for details.");
+        }
+
+        protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (EditMode == General.eRIPageViewMode.SharedReposiotry && mAction != null && !String.IsNullOrEmpty(mAction.ContainingFolder))
+            {
+                CurrentItem = mAction;
+                base.IsVisibleChangedHandler(sender, e);
+            }
         }
     }
 }

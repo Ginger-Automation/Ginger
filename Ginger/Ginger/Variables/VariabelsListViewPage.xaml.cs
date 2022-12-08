@@ -24,6 +24,7 @@ using Amdocs.Ginger.UserControls;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository;
 using Ginger.SolutionGeneral;
+using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
 using GingerCore;
@@ -41,7 +42,7 @@ namespace Ginger.BusinessFlowPages
     /// <summary>
     /// Interaction logic for VariabelsListViewPage.xaml
     /// </summary>
-    public partial class VariabelsListViewPage : Page
+    public partial class VariabelsListViewPage : GingerUIPage
     {
         RepositoryItemBase mVariabelsParent;
         eVariablesLevel mVariablesLevel;
@@ -66,6 +67,7 @@ namespace Ginger.BusinessFlowPages
             mVariablesLevel = GetVariablesLevel();
             mContext = context;
             mPageViewMode = pageViewMode;
+            CurrentItem = WorkSpace.Instance.Solution;
 
             SetListView();
             ShowHideEditPage(null);

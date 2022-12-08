@@ -56,5 +56,11 @@ namespace Amdocs.Ginger.Common.WorkSpaceLib
         }
 
         public ITelemetry Telemetry { get; set; }
+        
+        public ISharedRepositoryOperations SharedRepositoryOperations
+        {
+            get;
+            set;
+        }
     }
 }

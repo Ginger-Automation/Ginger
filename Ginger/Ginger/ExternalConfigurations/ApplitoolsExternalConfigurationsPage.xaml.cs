@@ -28,13 +28,14 @@ using System.Windows.Input;
 using System.Text.RegularExpressions;
 using Ginger.ValidationRules;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Configurations
 {
     /// <summary>
     /// Interaction logic for ApplitoolsExternalConfigurationsPage.xaml
     /// </summary>
-    public partial class ApplitoolsExternalConfigurationsPage : Page
+    public partial class ApplitoolsExternalConfigurationsPage : GingerUIPage
     {
         ApplitoolsConfiguration _ApplitoolsConfiguration = new ApplitoolsConfiguration();
 
@@ -48,6 +49,7 @@ namespace Ginger.Configurations
         {
             _ApplitoolsConfiguration = WorkSpace.Instance.Solution.ApplitoolsConfiguration;
             _ApplitoolsConfiguration.StartDirtyTracking();
+            CurrentItem = WorkSpace.Instance.Solution;
             SetControls();
         }
 
@@ -80,6 +82,5 @@ namespace Ginger.Configurations
             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
             UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Applitools.ToString(), true, false);
         }
-
     }
 }

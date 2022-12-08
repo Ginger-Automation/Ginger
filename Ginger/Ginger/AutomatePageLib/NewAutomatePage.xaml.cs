@@ -42,6 +42,7 @@ using Ginger.Reports;
 using Ginger.Repository;
 using Ginger.Run;
 using Ginger.TimeLineLib;
+using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.TextEditor;
 using GingerCore;
 using GingerCore.Actions;
@@ -73,7 +74,7 @@ namespace GingerWPF.BusinessFlowsLib
     /// <summary>
     /// Page used to design the Business Flow automation flow
     /// </summary>
-    public partial class NewAutomatePage : Page, INotifyPropertyChanged
+    public partial class NewAutomatePage : GingerUIPage, INotifyPropertyChanged
     {
         GingerExecutionEngine mExecutionEngine;
         ProjEnvironment mEnvironment = null;
@@ -407,6 +408,7 @@ namespace GingerWPF.BusinessFlowsLib
                 ResetPageUI();
 
                 mBusinessFlow = businessFlowToLoad;
+                CurrentItem = mBusinessFlow;
                 if (mBusinessFlow != null)
                 {
                     try

@@ -148,6 +148,11 @@ namespace GingerCore.Platforms.PlatformsInfo
             throw new NotImplementedException();
         }
 
+        public override List<ePosition> GetElementPositionList()
+        {
+            throw new NotImplementedException();
+        }
+
         // TODO: provide type of values per property - true/false, string, number bounds etc...       
     }
 }

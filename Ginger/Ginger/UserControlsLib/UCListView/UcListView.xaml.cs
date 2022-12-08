@@ -66,6 +66,9 @@ namespace Ginger.UserControlsLib.UCListView
 
         NotifyCollectionChangedEventHandler CollectionChangedHandler;
 
+        public delegate void ItemMouseDoubleClickEventHandler(object? sender, MouseButtonEventArgs e);
+        public event ItemMouseDoubleClickEventHandler ItemMouseDoubleClick;
+
         // DragDrop event handler
         public event EventHandler ItemDropped;
         public delegate void ItemDroppedEventHandler(DragInfo DragInfo);
@@ -119,6 +122,11 @@ namespace Ginger.UserControlsLib.UCListView
 
             xTagsFilter.Init(Tags);
             xTagsFilter.TagsStackPanlChanged += TagsFilter_TagsStackPanlChanged;
+        }
+
+        private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            ItemMouseDoubleClick?.Invoke(sender, e);
         }
 
         private void TagsFilter_TagsStackPanlChanged(object sender, EventArgs e)

@@ -1011,7 +1011,7 @@ namespace GingerCore.Drivers.PBDriver
             return mUIAutomationHelper.GetListOfDriverAppWindows();
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMMetaData> PomMetaData = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             return await mUIAutomationHelper.GetVisibleControls();
         }
@@ -1306,6 +1306,11 @@ namespace GingerCore.Drivers.PBDriver
             size.Height = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Height;
             size.Width = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Width;
             return size.ToString();
+        }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
         }
     }
 }

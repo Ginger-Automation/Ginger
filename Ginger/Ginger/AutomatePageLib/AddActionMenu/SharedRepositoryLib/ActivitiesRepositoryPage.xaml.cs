@@ -23,6 +23,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository.AddItemToRepositoryWizard;
+using Ginger.Run;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Activities;
@@ -86,6 +87,8 @@ namespace Ginger.Repository
             mViewMode = viewMode;
             */
 
+            mAddActivityHandler = AddActivityHandler;
+
             SetActivitiesRepositoryListView();            
             SetGridAndTreeData();
         }
@@ -140,7 +143,7 @@ namespace Ginger.Repository
 
         private void SetActivitiesRepositoryListView()
         {
-            xActivitiesRepositoryListView.MouseDoubleClick += grdActivitiesRepository_grdMain_MouseDoubleClick;
+            xActivitiesRepositoryListView.ItemMouseDoubleClick += grdActivitiesRepository_grdMain_ItemMouseDoubleClick;
             xActivitiesRepositoryListView.ItemDropped += grdActivitiesRepository_ItemDropped;
             xActivitiesRepositoryListView.PreviewDragItem += grdActivitiesRepository_PreviewDragItem;
             xActivitiesRepositoryListView.xTagsFilter.Visibility = Visibility.Visible;
@@ -184,9 +187,22 @@ namespace Ginger.Repository
         {
             if (xActivitiesRepositoryListView.CurrentItem != null)
             {
-                Activity a = (Activity)xActivitiesRepositoryListView.CurrentItem;
-                GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(a, new Context() { Activity = a }, General.eRIPageViewMode.SharedReposiotry);
-                w.ShowAsWindow();
+                Activity activity = (Activity)xActivitiesRepositoryListView.CurrentItem;
+                GingerWPF.BusinessFlowsLib.ActivityPage window = null;
+                Context context = new Context()
+                {
+                    Activity = activity,
+                    Runner = new GingerExecutionEngine(new GingerRunner())
+                };
+                if (activity.IsAutoLearned)
+                {
+                    window = new GingerWPF.BusinessFlowsLib.ActivityPage(activity, context, General.eRIPageViewMode.View);
+                }
+                else
+                {
+                    window = new GingerWPF.BusinessFlowsLib.ActivityPage(activity, context, General.eRIPageViewMode.SharedReposiotry);
+                }
+                window.ShowAsWindow();
             }
             else
             {
@@ -260,7 +276,7 @@ namespace Ginger.Repository
             }
         }
 
-        private void grdActivitiesRepository_grdMain_MouseDoubleClick(object sender, EventArgs e)
+        private void grdActivitiesRepository_grdMain_ItemMouseDoubleClick(object sender, EventArgs e)
         {
             EditActivity(sender, new RoutedEventArgs());
         }

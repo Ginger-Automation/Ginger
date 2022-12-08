@@ -19,8 +19,10 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.IO;
+using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.ALM;
 using Ginger.AnalyzerLib;
@@ -38,6 +40,7 @@ using Ginger.SourceControl;
 using Ginger.User;
 using GingerCore;
 using GingerCore.ALM;
+using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
@@ -48,8 +51,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
@@ -72,8 +77,6 @@ namespace Ginger
             xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
 
             mHelpLayoutList.CollectionChanged += MHelpLayoutList_CollectionChanged;
-
-            //Telemetry.eventHandler += TelemetryEventHandler;
 
             DriverWindowHandler.Init();
 
@@ -139,14 +142,14 @@ namespace Ginger
                 lblVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
 
                 //Solution                  
-                if (WorkSpace.Instance.UserProfile.AutoLoadLastSolution && WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
+                if (WorkSpace.Instance.UserProfile.AutoLoadLastSolution && !WorkSpace.Instance.RunningInExecutionMode && !WorkSpace.Instance.RunningFromUnitTest)
                 {
                     AutoLoadLastSolution();
                     autoLoadSolDone = true;
                 }
 
                 //Messages
-                if (WorkSpace.Instance.UserProfile.NewHelpLibraryMessgeShown == false)
+                if (!WorkSpace.Instance.UserProfile.NewHelpLibraryMessgeShown)
                 {
                     Reporter.ToStatus(eStatusMsgKey.GingerHelpLibrary);
                     WorkSpace.Instance.UserProfile.NewHelpLibraryMessgeShown = true;
@@ -164,7 +167,7 @@ namespace Ginger
             finally
             {
                 HideSplash();
-                if (autoLoadSolDone == false && WorkSpace.Instance.Solution == null)
+                if (!autoLoadSolDone && WorkSpace.Instance.Solution == null)
                 {
                     AddHelpLayoutToShow("MainWindow_AddSolutionHelp", xSolutionSelectionMainMenuItem, "Click here to create new Solution or to open / download an existing one");
                 }
@@ -237,9 +240,9 @@ namespace Ginger
                     xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
                     xMainWindowFrame.Content = new LoadingPage("Loading Solution...");
                     xMainWindowFrame.Visibility = Visibility.Visible;
+                    xModifiedItemsCounter.Visibility = Visibility.Collapsed;
                     GingerCore.General.DoEvents();
                 }
-                //else if (xMainWindowFrame.Content is LoadingPage && SelectedSolutionTab == eSolutionTabType.None)
                 else if (WorkSpace.Instance.Solution == null)
                 {
                     xMainWindowFrame.Visibility = Visibility.Collapsed;
@@ -267,6 +270,25 @@ namespace Ginger
                         xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
                     }
                 });
+            }
+            if (e.PropertyName == nameof(WorkSpace.SolutionLoaded))
+            {
+                if (WorkSpace.Instance.SolutionLoaded)
+                {
+                    WorkSpace.Instance.SolutionRepository.ModifiedFiles.CollectionChanged += ModifiedFilesChanged;
+                }
+            }
+
+            if (e.PropertyName == nameof(WorkSpace.CurrentSelectedItem))
+            {
+                if (WorkSpace.Instance.CurrentSelectedItem != null)
+                {
+                    BindingHandler.ObjFieldBinding(xModifiedLabel, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.CurrentSelectedItem, nameof(RepositoryItemBase.DirtyStatusImage), BindingMode.OneWay);
+                }
+                else
+                {
+                    xModifiedLabel.ImageType = eImageType.Empty;
+                }
             }
         }
 
@@ -412,7 +434,7 @@ namespace Ginger
             {
                 userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestart);
             }
-            else if (mAskUserIfToClose == false)
+            else if (!mAskUserIfToClose)
             {
                 userSelection = eUserMsgSelection.Yes;
             }
@@ -435,15 +457,13 @@ namespace Ginger
 
         private void AppCleanUp()
         {
-            //Telemetry.eventHandler -= TelemetryEventHandler;
-
             ClosingWindow CW = new ClosingWindow();
             CW.Show();
             GingerCore.General.DoEvents();
 
             if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
             {
-                while (WorkSpace.Instance.Solution.LoggerConfigurations.IsPublishToCentralDBRunning == true)
+                while (WorkSpace.Instance.Solution.LoggerConfigurations.IsPublishToCentralDBRunning)
                 {
                     Thread.Sleep(500);
                     GingerCore.General.DoEvents();
@@ -576,7 +596,7 @@ namespace Ginger
             }
         }
 
-        private void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
+        private async void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             // Alt + CTRL + Shift + G = show beta features
             if (e.Key == Key.G && Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.LeftShift) && Keyboard.IsKeyDown(Key.LeftAlt))
@@ -587,6 +607,19 @@ namespace Ginger
             else if (e.Key == Key.F && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
             {
                 SolutionFindAndReplace();
+            }
+            else if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.S && WorkSpace.Instance.SolutionLoaded)
+            {
+                e.Handled = true;
+                await SaveCurrentItemAsync();
+                return;
+            }
+            else if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.S && WorkSpace.Instance.SolutionLoaded)
+            {
+                e.Handled = true;
+                ModifiedRepositoryFilesPage MRFPage = new ModifiedRepositoryFilesPage();
+                MRFPage.ShowAsWindow();
+                return;
             }
         }
 
@@ -661,14 +694,17 @@ namespace Ginger
 
         private void btnSourceControlGetLatest_Click(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) return;
+            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) { return; }
 
             Reporter.ToStatus(eStatusMsgKey.GetLatestFromSourceControl);
             if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.Folder))
+            {
                 Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
+            }
             else
+            {
                 SourceControlUI.GetLatest(WorkSpace.Instance.Solution.Folder, WorkSpace.Instance.Solution.SourceControl);
-
+            }
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
             Reporter.HideStatusMessage();
 
@@ -705,7 +741,6 @@ namespace Ginger
 
         private void xHelpOptionsMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            //General.ShowGingerHelpWindow();
             if (xHelpOptionsMenuItem.Tag == null)
             {
                 xHelpOptionsMenuItem.Tag = "Expanded";//expanded
@@ -854,8 +889,6 @@ namespace Ginger
             {
                 //TODO: load Business Flows tab
                 xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
-                //App.BusinessFlow = (BusinessFlow)args.Object;
-                //App.BusinessFlow.SaveBackup();
             }
         }
 
@@ -1011,9 +1044,9 @@ namespace Ginger
                 int insertIndex = xUserOperationsMainMenuItem.Items.IndexOf(xLogOptionsMenuItem) + 1;
 
                 AddSubMenuItem(xUserOperationsMainMenuItem, "View Current Log Details", "Log", btnViewLogDetails_Click, insertIndex++, iconType: eImageType.View);
-                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Ginger Console Window", "Log", btnLaunchConsole_Click, insertIndex, iconType: eImageType.Window);
                 AddSubMenuItem(xUserOperationsMainMenuItem, "Open Full Log File", "Log", btnViewLog_Click, insertIndex++, iconType: eImageType.File);
                 AddSubMenuItem(xUserOperationsMainMenuItem, "Open Log File Folder", "Log", btnViewLogLocation_Click, insertIndex++, iconType: eImageType.OpenFolder);
+                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Ginger Console Window", "Log", btnLaunchConsole_Click, insertIndex, iconType: eImageType.Window);
             }
         }
 
@@ -1071,7 +1104,7 @@ namespace Ginger
                 int insertIndex = xExtraOperationsMainMenuItem.Items.IndexOf(xHelpOptionsMenuItem) + 1;
 
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Offline Help Library", "Help", xLoadOfflineHelpMenuItem_Click, insertIndex++, iconType: eImageType.File);
-                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Online Help Library", "Help", xLoadOnlineHelpMenuItem_Click, insertIndex++, iconType: eImageType.Globe);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Online Help Library", "Help", xLoadOnlineHelpMenuItem_Click, insertIndex, iconType: eImageType.Globe);
             }
         }
 
@@ -1096,7 +1129,7 @@ namespace Ginger
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Public Support", "Support", xLoadPublicSupportSiteMenuItem_Click, insertIndex++, iconType: eImageType.Support);
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Internal Support Site", "Support", xLoadSupportSiteMenuItem_Click, insertIndex++, iconType: eImageType.Website);
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Ginger Internal Q&A Fourm Site", "Support", xLoadForumSiteMenuItem_Click, insertIndex++, iconType: eImageType.Forum);
-                AddSubMenuItem(xExtraOperationsMainMenuItem, "Raise Internal Ticket", "Support", xOpenTicketMenuItem_Click, insertIndex++, iconType: eImageType.Ticket);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Raise Internal Ticket", "Support", xOpenTicketMenuItem_Click, insertIndex, iconType: eImageType.Ticket);
             }
         }
 
@@ -1131,7 +1164,6 @@ namespace Ginger
                 //Insert
                 int insertIndex = xExtraOperationsMainMenuItem.Items.IndexOf(xContactOptionsMenuItem) + 1;
 
-                //AddSubMenuItem(xExtraOperationsMainMenuItem, "Contact Support Team", "Contact", xSupportTeamMenuItem_Click, insertIndex++, "AmdocsTestingGingerDVCISupport@int.amdocs.com", iconType: eImageType.Email);
                 AddSubMenuItem(xExtraOperationsMainMenuItem, "Contact Ginger Core Team", "Contact", xCoreTeamMenuItem_Click, insertIndex, "GingerCoreTeam@int.amdocs.com", iconType: eImageType.Email);
             }
         }
@@ -1199,7 +1231,7 @@ namespace Ginger
                 return;//not showing help in automatic run mode
             }
             HelpLayoutArgs helpLayoutArgs = new HelpLayoutArgs(helpLayoutKey, focusedControl, helpText);
-            if (WorkSpace.Instance.UserProfile.ShownHelpLayoutsKeys.Contains(helpLayoutArgs.HelpLayoutKey) == false)
+            if (!WorkSpace.Instance.UserProfile.ShownHelpLayoutsKeys.Contains(helpLayoutArgs.HelpLayoutKey))
             {
                 mHelpLayoutList.Add(helpLayoutArgs);
             }
@@ -1255,11 +1287,6 @@ namespace Ginger
                     xHelpLayoutRectangleBottom.Width = controlToFocusWidth;
                     xHelpLayoutRectangleBottom.Height = xMainWindowPnl.ActualHeight - (controlToFocusLocation.Y + controlToFocusHeight);
 
-                    //xHelpLayoutRectangleFocusedItem.SetValue(Canvas.LeftProperty, controlToFocusLocation.X);
-                    //xHelpLayoutRectangleFocusedItem.SetValue(Canvas.TopProperty, controlToFocusLocation.Y);
-                    //xHelpLayoutRectangleFocusedItem.Width = controlToFocusWidth;
-                    //xHelpLayoutRectangleFocusedItem.Height = controlToFocusHeight;
-
                     //-- set text and it location 
                     xHelpLayoutTextBlock.Text = helpArgs.HelpText;
                     double textNeededWidth = 450;
@@ -1272,7 +1299,7 @@ namespace Ginger
                     //focused item top left corner
                     if (controlToFocusLocation.X >= textNeededWidth && controlToFocusLocation.Y >= textNeededHeight)
                     {
-                        helpTextLocation.X = controlToFocusLocation.X - textNeededWidth - arrowNeededLength; ;
+                        helpTextLocation.X = controlToFocusLocation.X - textNeededWidth - arrowNeededLength;
                         helpTextLocation.Y = controlToFocusLocation.Y - arrowNeededLength;
                         arrowSourceLocation = new Point(helpTextLocation.X + textNeededWidth, helpTextLocation.Y + 50);
                         arrowTargetLocation = new Point(controlToFocusLocation.X, controlToFocusLocation.Y - arrowDistanceFromTarget);
@@ -1359,6 +1386,146 @@ namespace Ginger
             SourceControlUploadSolutionPage uploadPage = new SourceControl.SourceControlUploadSolutionPage();
             uploadPage.ShowAsWindow(eWindowShowStyle.Dialog);
             SetSolutionDependedUIElements();
+        }
+        private void ModifiedFilesChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                if (WorkSpace.Instance.SolutionRepository.ModifiedFiles.Count == 0)
+                {
+                    xModifiedItemsCounter.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    xModifiedItemsCounter.Visibility = Visibility.Visible;
+                    xModifiedItemsCounterText.Text = WorkSpace.Instance.SolutionRepository.ModifiedFiles.Count.ToString();
+                }
+            });
+        }
+        private void xSaveCurrentBtn_ToolTipOpening(object sender, ToolTipEventArgs e)
+        {
+            ucButton saveBtn = sender as ucButton;
+            if (WorkSpace.Instance.CurrentSelectedItem != null)
+            {
+                saveBtn.ToolTip = String.Format("Save {0}", WorkSpace.Instance.CurrentSelectedItem.ItemName);
+            }
+            else
+            {
+                saveBtn.ToolTip = "No Item Selected";
+            }
+        }
+
+        private async void xSaveCurrentBtn_Click(object sender, RoutedEventArgs e)
+        {
+            await SaveCurrentItemAsync();
+        }
+        public async Task SaveCurrentItemAsync()
+        {
+            if(WorkSpace.Instance.CurrentSelectedItem == null || WorkSpace.Instance.CurrentSelectedItem.DirtyStatus != eDirtyStatus.Modified)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Nothing found to Save.");
+                return;
+            }
+            await Task.Run(() => SaveCurrentItem());
+        }
+
+        private void SaveCurrentItem()
+        {
+            if (Reporter.ToUser(eUserMsgKey.SaveBusinessFlowChanges, WorkSpace.Instance.CurrentSelectedItem.ItemName) == eUserMsgSelection.Yes)
+            {
+                SaveHandler.Save(WorkSpace.Instance.CurrentSelectedItem);
+            }
+        }
+
+        private void xSaveAllBtn_MouseEnter(object sender, MouseEventArgs e)
+        {
+            xSaveAllBtn.ButtonImageType = eImageType.SaveAllGradient;
+        }
+
+        private void xSaveAllBtn_MouseLeave(object sender, MouseEventArgs e)
+        {
+            xSaveAllBtn.ButtonImageType = eImageType.SaveAll;
+        }
+
+        private void xSaveAllBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (WorkSpace.Instance.SolutionRepository.ModifiedFiles.Count == 0)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Nothing found to Save.");
+                return;
+            }
+            ModifiedRepositoryFilesPage MRFPage = new ModifiedRepositoryFilesPage();
+            MRFPage.ShowAsWindow();
+        }
+
+        private void xGlobalSolutionMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (xGlobalSolutionMenuItem.Tag == null)
+            {
+                xGlobalSolutionMenuItem.Tag = "Expanded";
+            }
+            else
+            {
+                xGlobalSolutionMenuItem.Tag = null;
+            }
+
+            SetGlobalSolutionMenuItems();
+        }
+
+        private void SetGlobalSolutionMenuItems()
+        {
+            //delete all Global Solution Sub menu items
+            for (int i = 0; i < xExtraSolutionOperationsMainMenuItem.Items.Count; i++)
+            {
+                if ((string)((MenuItem)xExtraSolutionOperationsMainMenuItem.Items[i]).Tag == "Global Solution")
+                {
+                    xExtraSolutionOperationsMainMenuItem.Items.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            if (xGlobalSolutionMenuItem.Tag != null)
+            {
+                //Insert
+                int insertIndex = xExtraSolutionOperationsMainMenuItem.Items.IndexOf(xGlobalSolutionMenuItem) + 1;
+
+                AddSubMenuItem(xExtraSolutionOperationsMainMenuItem, "Import Global Cross Solution Items", "Global Solution", btnGlobalSolutionImport_Click, insertIndex, iconType: eImageType.GetLatest);
+            }
+        }
+        private void xSolutionALMMenu_Click(object sender, RoutedEventArgs e)
+        {
+            if (xSolutionALMMenu.Tag == null)
+            {
+                xSolutionALMMenu.Tag = "Expanded";
+            }
+            else
+            {
+                xSolutionALMMenu.Tag = null;
+            }
+
+            SetALMMenuItems();
+        }
+        private void SetALMMenuItems()
+        {
+            //delete all Global Solution Sub menu items
+            for (int i = 0; i < xExtraSolutionOperationsMainMenuItem.Items.Count; i++)
+            {
+                if ((string)((MenuItem)xExtraSolutionOperationsMainMenuItem.Items[i]).Tag == "ALM")
+                {
+                    xExtraSolutionOperationsMainMenuItem.Items.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            if (xSolutionALMMenu.Tag != null)
+            {
+                //Insert
+                int insertIndex = xExtraSolutionOperationsMainMenuItem.Items.IndexOf(xSolutionALMMenu) + 1;
+
+                AddSubMenuItem(xExtraSolutionOperationsMainMenuItem, "ALM Connection Settings", "ALM", ALMConfigButton_Click, insertIndex++, iconType: eImageType.Parameter);
+                AddSubMenuItem(xExtraSolutionOperationsMainMenuItem, "ALM Items Fields Configuration", "ALM", ALMFieldsConfiguration_Click, insertIndex++, iconType: eImageType.ListGroup);
+                AddSubMenuItem(xExtraSolutionOperationsMainMenuItem, "ALM Defect's Profiles", "ALM", ALMDefectsProfiles_Click, insertIndex, iconType: eImageType.Bug);
+            }
         }
     }
 }

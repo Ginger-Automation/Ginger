@@ -117,7 +117,7 @@ namespace Ginger.Repository
 
         private void SetActionsGridView()
         {
-            xActionListView.MouseDoubleClick += grdActions_grdMain_MouseDoubleClick;
+            xActionListView.ItemMouseDoubleClick += grdActions_grdMain_ItemMouseDoubleClick;
             xActionListView.ItemDropped += grdActions_ItemDropped;
             xActionListView.PreviewDragItem += grdActions_PreviewDragItem;
             xActionListView.xTagsFilter.Visibility = Visibility.Visible;
@@ -137,7 +137,7 @@ namespace Ginger.Repository
             }
         }
         
-        private void grdActions_grdMain_MouseDoubleClick(object sender, EventArgs e)
+        private void grdActions_grdMain_ItemMouseDoubleClick(object sender, EventArgs e)
         {
             EditAction(sender, new RoutedEventArgs());
         }

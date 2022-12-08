@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -51,5 +51,7 @@ namespace Amdocs.Ginger.Repository
         public string PropertyForFileName { get; set; }
 
         public string Pattern { get; set; }
+        public string DisplayName { get; set; }
+
     }
 }

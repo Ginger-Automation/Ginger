@@ -448,7 +448,7 @@ namespace GingerWPF.TreeViewItemsLib
                 return;
             }
             string lockComment = string.Empty;
-            if (GingerCore.General.GetInputWithValidation("Lock", "Lock Comment:", ref lockComment))
+            if (GingerCore.General.GetInputWithValidation("Lock", "Lock Comment:", ref lockComment, null, false, RI))
             {
                 SourceControlIntegration.Lock(WorkSpace.Instance.Solution.SourceControl, this.NodePath(), lockComment);
                 mTreeView.Tree.RefreshHeader((ITreeViewItem)this);

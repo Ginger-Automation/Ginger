@@ -27,6 +27,7 @@ using Ginger.Actions.UserControls;
 using Ginger.Agents;
 using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
+using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
@@ -52,7 +53,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
     /// <summary>
     /// Interaction logic for POMEditPage.xaml
     /// </summary>
-    public partial class POMEditPage : Page
+    public partial class POMEditPage : GingerUIPage
     {
         ApplicationPOMModel mPOM;
         ScreenShotViewPage mScreenShotViewPage;
@@ -107,6 +108,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             InitializeComponent();
             mPOM = POM;
+            CurrentItem = mPOM;
             mEditMode = editMode;
 
             mBusinessFlowControl = new ucBusinessFlowMap(mPOM, nameof(mPOM.MappedBusinessFlow));
@@ -135,15 +137,23 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
             xUIElementsFrame.Content = mPomAllElementsPage;
 
-            ObservableList<Activity> pomActivities = AutoGenerateFlows.CreatePOMActivitiesFromMetadata(mPOM);
-            //Shared Activities which uses current POM
-            ObservableList<Activity> sharedActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-            IEnumerable<Activity> pomSharedActivities = sharedActivities.Where(x => x.Acts.Any(act => act is ActUIElement && ((ActUIElement)act).ElementLocateValue != null && ((ActUIElement)act).ElementLocateValue.Contains(mPOM.Guid.ToString())));
-            pomSharedActivities.ToList().ForEach(item => pomActivities.Add(item));
+            if (WorkSpace.Instance.BetaFeatures.AutoGenerateActivities)
+            {
+                ObservableList<Activity> pomActivities = AutoGenerateFlows.CreatePOMActivitiesFromMetadata(mPOM);
+                //Shared Activities which uses current POM
+                ObservableList<Activity> sharedActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                IEnumerable<Activity> pomSharedActivities = sharedActivities.Where(x => x.Acts.Any(act => act is ActUIElement && ((ActUIElement)act).ElementLocateValue != null && ((ActUIElement)act).ElementLocateValue.Contains(mPOM.Guid.ToString())));
+                pomSharedActivities.ToList().ForEach(item => pomActivities.Add(item));
 
-            mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(pomActivities, new Context());
-            xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
+                mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(pomActivities, new Context());
+                xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
+                xPomActivitiesTabItem.Visibility = Visibility.Visible;
 
+            }
+            else 
+            {
+                xPomActivitiesTabItem.Visibility = Visibility.Collapsed;
+            }
             mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
             UIElementTabTextBlockUpdate();
 

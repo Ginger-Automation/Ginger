@@ -1521,7 +1521,7 @@ namespace Amdocs.Ginger.CoreNET
                 return null;
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMMetaData> PomMetaData = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             if (AppType == eAppType.Web)
             {
@@ -1870,7 +1870,6 @@ namespace Amdocs.Ginger.CoreNET
             if (string.IsNullOrEmpty(xmlNode.Attributes[attr].Value)) return null;
             return xmlNode.Attributes[attr].Value;
         }
-
 
         ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
         {
@@ -3124,6 +3123,11 @@ namespace Amdocs.Ginger.CoreNET
         public string GetViewport()
         {
             return Driver.Manage().Window.Size.ToString();
+        }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
         }
     }
 

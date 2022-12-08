@@ -2103,7 +2103,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return true;
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null,List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMMetaData> PomMetaData = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null,List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             return await Task.Run(() =>
             {
@@ -4117,6 +4117,17 @@ namespace GingerCore.Drivers.JavaDriverLib
             size.Height = Height;
             size.Width = Width;
             return size.ToString();
+        }
+
+        public ObservableList<ElementLocator> GetElement
+            (ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
         }
     }
 }

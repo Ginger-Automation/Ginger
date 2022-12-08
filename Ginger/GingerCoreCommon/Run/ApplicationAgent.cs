@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -84,17 +84,25 @@ namespace GingerCore.Platforms
             set
             {
                 if (mAgent != null)
+                {
                     mAgent.PropertyChanged -= Agent_OnPropertyChange;
+                }
 
                 mAgent = value;
                 if (mAgent != null)
                 {
-                    AgentName = mAgent.Name;
+                    // check if the AgentName & Id is diff before setting the value to avoid dirty status to become modified when unnecessary
+                    if (AgentName != mAgent.Name)
+                    {
+                        AgentName = mAgent.Name;
+                    }
+                    if (AgentID != mAgent.Guid)
+                    {
+                        AgentID = mAgent.Guid;
+                    }
                     mAgent.PropertyChanged += Agent_OnPropertyChange;
                 }
                 OnPropertyChanged(nameof(Agent));
-                OnPropertyChanged(nameof(AgentName));
-                OnPropertyChanged(nameof(AgentID));
                 OnPropertyChanged(nameof(AppAndAgent));
             }
         }
@@ -107,8 +115,7 @@ namespace GingerCore.Platforms
             {
                 if (Agent != null)
                 {
-                    if (mAgentName != Agent.Name)
-                        mAgentName = Agent.Name;
+                    mAgentName = Agent.Name;
                 }
                 else if (string.IsNullOrEmpty(mAgentName))
                 {
@@ -134,15 +141,17 @@ namespace GingerCore.Platforms
             {
                 if (Agent != null)
                 {
-                    if (mAgentID != Agent.Guid)
-                        mAgentID = Agent.Guid;
+                    mAgentID = Agent.Guid;
                 }
                 return mAgentID;
             }
             set
             {
-                mAgentID = value;
-                OnPropertyChanged(nameof(AgentID));
+                if (mAgentID != value)
+                {
+                    mAgentID = value;
+                    OnPropertyChanged(nameof(AgentID));
+                }
             }
         }
 

@@ -28,13 +28,14 @@ using System.Windows.Input;
 using System.Text.RegularExpressions;
 using Ginger.ValidationRules;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Configurations
 {
     /// <summary>
     /// Interaction logic for SealightsConfiguration.xaml
     /// </summary>
-    public partial class SealightsExternalConfigurationsPage : Page
+    public partial class SealightsExternalConfigurationsPage : GingerUIPage
     {
         SealightsConfiguration _SealightsConfiguration = new SealightsConfiguration();
 
@@ -48,6 +49,7 @@ namespace Ginger.Configurations
         {
             _SealightsConfiguration = WorkSpace.Instance.Solution.SealightsConfiguration;
             _SealightsConfiguration.StartDirtyTracking();
+            CurrentItem = WorkSpace.Instance.Solution;
             SetControls();
         }
 

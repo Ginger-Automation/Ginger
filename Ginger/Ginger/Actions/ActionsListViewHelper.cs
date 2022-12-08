@@ -118,11 +118,17 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
             else if(item is ucButton)
             {
-                mAction = (Act)(((ucButton)item).Tag);
+                if(((ucButton)item).Tag is Act)
+                {
+                    mAction = (Act)(((ucButton)item).Tag);
+                }                
             }
             else if (item is MenuItem)
             {
-                mAction = (Act)(((MenuItem)item).Tag);
+                if (((MenuItem)item).Tag is Act)
+                {
+                    mAction = ((Act)((MenuItem)item).Tag);
+                }
             }
             else if(item is ApplicationPOMModel)
             {

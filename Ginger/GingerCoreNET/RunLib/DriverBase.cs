@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
+using GingerCore.Actions.VisualTesting;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using static GingerCore.Actions.ActVisualTesting;
 
 namespace GingerCore.Drivers
 {
@@ -56,6 +58,43 @@ namespace GingerCore.Drivers
 
         // Used for Driver with WPF window
         public IDispatcher Dispatcher { get; set; }
+
+        private IVisualAnalyzer VisualAnalyzer = null;
+        public IVisualAnalyzer GetVisualAnalyzer(eVisualTestingAnalyzer VisualTestingAnalyzer)
+        {
+            //Check what kind of comparison we have - Applitools, simple Bitmap or Elements comparison
+            switch (VisualTestingAnalyzer)
+            {
+                case eVisualTestingAnalyzer.BitmapPixelsComparison:
+                    if (!(VisualAnalyzer is MagickAnalyzer))
+                    {
+                        VisualAnalyzer = new MagickAnalyzer();
+                    }
+                    break;
+
+                case eVisualTestingAnalyzer.Applitools:
+                    if (!(VisualAnalyzer is ApplitoolsAnalyzer))
+                    {
+                        VisualAnalyzer = new ApplitoolsAnalyzer();
+                    }
+                    break;
+
+                case eVisualTestingAnalyzer.UIElementsComparison:
+                    if (!(VisualAnalyzer is UIElementsAnalyzer))
+                    {
+                        VisualAnalyzer = new UIElementsAnalyzer();
+                    }
+                    break;
+
+                case eVisualTestingAnalyzer.VRT:
+                    if (!(VisualAnalyzer is VRTAnalyzer))
+                    {
+                        VisualAnalyzer = new VRTAnalyzer();
+                    }
+                    break;
+            }
+            return VisualAnalyzer;
+        }
 
         public virtual bool StopProcess { get; set; }
 

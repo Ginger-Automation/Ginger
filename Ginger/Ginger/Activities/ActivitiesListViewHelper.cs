@@ -25,6 +25,7 @@ using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
+using Ginger.Run;
 using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
@@ -306,15 +307,18 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(item);
             List<ListItemNotification> notificationsList = new List<ListItemNotification>();
 
-            ListItemNotification activitiesVarsDepInd = new ListItemNotification();
-            activitiesVarsDepInd.AutomationID = "activitiesVarsDepInd";
-            activitiesVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
-            activitiesVarsDepInd.ToolTip = string.Format("{0} {1}-{2} dependency is enabled", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
-            activitiesVarsDepInd.ImageSize = 14;
-            activitiesVarsDepInd.BindingObject = mContext.BusinessFlow;
-            activitiesVarsDepInd.BindingFieldName = nameof(BusinessFlow.EnableActivitiesVariablesDependenciesControl);
-            activitiesVarsDepInd.BindingConverter = new BoolVisibilityConverter();
-            notificationsList.Add(activitiesVarsDepInd);
+            if (PageViewMode != General.eRIPageViewMode.AddFromShardRepository)
+            {
+                ListItemNotification activitiesVarsDepInd = new ListItemNotification();
+                activitiesVarsDepInd.AutomationID = "activitiesVarsDepInd";
+                activitiesVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
+                activitiesVarsDepInd.ToolTip = string.Format("{0} {1}-{2} dependency is enabled", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
+                activitiesVarsDepInd.ImageSize = 14;
+                activitiesVarsDepInd.BindingObject = mContext.BusinessFlow;
+                activitiesVarsDepInd.BindingFieldName = nameof(BusinessFlow.EnableActivitiesVariablesDependenciesControl);
+                activitiesVarsDepInd.BindingConverter = new BoolVisibilityConverter();
+                notificationsList.Add(activitiesVarsDepInd);
+            }
 
             ListItemNotification mandatoryInd = new ListItemNotification();
             mandatoryInd.AutomationID = "mandatoryInd";
@@ -770,7 +774,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (mListView.List.SelectedItems != null && mListView.List.SelectedItems.Count > 0)
             {
                 Activity a = (Activity)mListView.CurrentItem;
-                GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(a, new Context() { Activity = a }, General.eRIPageViewMode.SharedReposiotry);
+                Context context = new Context()
+                {
+                    Activity = a,
+                    Runner = new GingerExecutionEngine(new GingerRunner())
+                };
+                GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(a, context, General.eRIPageViewMode.SharedReposiotry);
                 w.ShowAsWindow();
             }
             else

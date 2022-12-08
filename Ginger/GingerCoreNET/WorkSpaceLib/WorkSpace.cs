@@ -52,6 +52,7 @@ using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Ginger.Reports;
 using Ginger.Configurations;
+using Ginger.Repository;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -77,6 +78,37 @@ namespace amdocs.ginger.GingerCoreNET
             get
             {
                 return Amdocs.Ginger.Common.TargetFrameworkHelper.Helper;
+            }
+        }
+
+        private RepositoryItemBase mCurrentSelectedItem = null;
+        public RepositoryItemBase CurrentSelectedItem
+        {
+            get { return mCurrentSelectedItem; }
+            set
+            {
+                if (mCurrentSelectedItem != value)
+                {
+                    mCurrentSelectedItem = value;
+                    OnPropertyChanged(nameof(CurrentSelectedItem));
+                }
+            }
+        }
+
+        bool mSolutionLoaded;
+        public bool SolutionLoaded
+        {
+            get
+            {
+                return mSolutionLoaded;
+            }
+            set
+            {
+                if (mSolutionLoaded != value)
+                {
+                    mSolutionLoaded = value;
+                    OnPropertyChanged(nameof(SolutionLoaded));
+                }
             }
         }
 
@@ -111,6 +143,7 @@ namespace amdocs.ginger.GingerCoreNET
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
             mWorkSpace.OSHelper = OperatingSystemBase.CurrentOperatingSystem;
+            Instance.SharedRepositoryOperations = new SharedRepositoryOperations();
             if (startLocalGrid)
             {
                 mWorkSpace.InitLocalGrid();
@@ -388,6 +421,7 @@ namespace amdocs.ginger.GingerCoreNET
             {
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", solutionFolder));
                 LoadingSolution = true;
+                SolutionLoaded = false;
 
                 //Cleaning previous Solution load
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Cleaning previous Solution items");
@@ -524,6 +558,7 @@ namespace amdocs.ginger.GingerCoreNET
 
                 mWorkSpace.Telemetry.CheckSolutionInstanceForUserData();
 
+                SolutionLoaded = true;
                 return true;
             }
             catch (Exception ex)
@@ -935,8 +970,7 @@ namespace amdocs.ginger.GingerCoreNET
                 mTestArtifactsFolder = value;
             }
         }
-
-
+        public ISharedRepositoryOperations SharedRepositoryOperations { get { return GingerCoreCommonWorkSpace.Instance.SharedRepositoryOperations; } set { GingerCoreCommonWorkSpace.Instance.SharedRepositoryOperations = value; } }
 
     }
 }

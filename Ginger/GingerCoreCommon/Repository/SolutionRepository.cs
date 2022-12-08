@@ -88,6 +88,8 @@ namespace Amdocs.Ginger.Repository
             get { return mSolutionRootFolders; }
         }
 
+        public ObservableList<RepositoryItemBase> ModifiedFiles = new ObservableList<RepositoryItemBase>();
+
         Dictionary<Type, SolutionRepositoryItemInfoBase> mSolutionRepositoryItemInfoDictionary = new Dictionary<Type, SolutionRepositoryItemInfoBase>();
         public bool IsItemTypeHandled(RepositoryItemBase repositoryItem)
         {
@@ -174,6 +176,10 @@ namespace Amdocs.Ginger.Repository
             AddToTelemetry(repositoryItem);
 
             repositoryItem.CreateBackup();
+            if (ModifiedFiles.Contains(repositoryItem))
+            {
+                ModifiedFiles.Remove(repositoryItem);
+            }
         }
 
         private void AddToTelemetry(RepositoryItemBase repositoryItem)
@@ -341,7 +347,13 @@ namespace Amdocs.Ginger.Repository
         {
             RepositoryFolderBase itemFolder = GetItemRepositoryFolder(repositoryItem);
             if (itemFolder != null)
+            {
                 itemFolder.DeleteRepositoryItem(repositoryItem);
+                if (ModifiedFiles.Contains(repositoryItem))
+                {
+                    ModifiedFiles.Remove(repositoryItem);
+                }
+            }
         }
 
         /// <summary>
@@ -547,13 +559,14 @@ namespace Amdocs.Ginger.Repository
             SRII.ItemFileSystemRootFolder = rootFolder;
             SRII.PropertyForFileName = PropertyNameForFileName;
             SRII.Pattern = pattern;
+            SRII.DisplayName = displayName;
             SRII.ItemRootReposiotryfolder = new RepositoryFolder<T>(this, SRII, pattern, rootFolder, containRepositoryItems, displayName, true);
 
             mSolutionRepositoryItemInfoDictionary.Add(typeof(T), SRII);
             mSolutionRootFolders.Add((RepositoryFolderBase)SRII.ItemRootRepositoryFolder);
         }
 
-        private SolutionRepositoryItemInfoBase GetSolutionRepositoryItemInfo(Type type)
+        public SolutionRepositoryItemInfoBase GetSolutionRepositoryItemInfo(Type type)
         {
             SolutionRepositoryItemInfoBase SRII;
             mSolutionRepositoryItemInfoDictionary.TryGetValue(type, out SRII);
