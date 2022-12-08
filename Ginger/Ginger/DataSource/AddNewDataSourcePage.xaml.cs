@@ -161,9 +161,6 @@ namespace Ginger.DataSource
             }
 
             mTargetFolder.AddRepositoryItem(mDSDetails);
-
-            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.DataSource.ToString(), true, false);
-
             _pageGenericWin.Close();
         }
 

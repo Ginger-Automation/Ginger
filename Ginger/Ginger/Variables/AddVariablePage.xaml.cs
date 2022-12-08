@@ -156,7 +156,6 @@ namespace Ginger.Variables
             foreach (VariableBase varToAdd in xSharedRepoTabListView.List.SelectedItems)
             {
                 AddVarToParent((VariableBase)varToAdd.CreateInstance(true));
-                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString(), true, false);
             }
         }
 

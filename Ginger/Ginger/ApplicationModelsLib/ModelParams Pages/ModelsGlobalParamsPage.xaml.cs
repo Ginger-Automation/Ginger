@@ -442,7 +442,6 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                     break;
                 }
             }
-            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ModelParameters.ToString(), true, false);
         }
 
         private void BtnCopyGlobalParamsClicked(object sender, RoutedEventArgs e)

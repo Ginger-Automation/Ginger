@@ -420,7 +420,6 @@ namespace Ginger.Run
                 await RunRunset(doContinueRun);
                 return 1;
             });
-            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ParallelExecution.ToString(), true, true);
             return result;
         }
 
@@ -530,6 +529,7 @@ namespace Ginger.Run
                         // Wait one second before starting another runner
                         Thread.Sleep(1000);
                     }
+                    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ParallelExecution.ToString(), true, true);
                 }
                 else
                 {

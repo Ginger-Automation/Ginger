@@ -92,84 +92,84 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         public enum GingerUsedFeatures
         {
             [Description("POM")]
-            POM, //Need to specify when action of POM is running
+            POM,
             [Description("ApiModel")]
-            ApiModel, //Done
+            ApiModel, 
             [Description("DataSource")]
-            DataSource,//Done
+            DataSource,
             [Description("SharedRepository")]
-            SharedRepository,//Done
+            SharedRepository,
             [Description("ALM")]
-            ALM, //Done
+            ALM, 
             [Description("SourceControl")]
-            SourceControl,//Done
+            SourceControl,
             [Description("AlmImport")]
-            AlmImport,//Done
+            AlmImport,
             [Description("AlmExport")]
-            AlmExport,//Done
+            AlmExport,
             [Description("SourceControlDownload")]
-            SourceControlDownload,//Done
+            SourceControlDownload,
             [Description("SourceControlUpload")]
-            SourceControlUpload,//Done
+            SourceControlUpload,
             [Description("Analyzer")]
-            Analyzer,//Done
+            Analyzer,
             [Description("SelfHealing")]
-            SelfHealing,//Done
+            SelfHealing,
             [Description("Search")]
-            Search,//Done
+            Search,
             [Description("ParallelExecution")]
-            ParallelExecution, //Need to check if it's working correctly
+            ParallelExecution,
             [Description("RunsetOperationsMailReport")]
-            RunsetOperationsMailReport,//Done
+            RunsetOperationsMailReport,
             [Description("RunsetOperationsExportToAlm")]
-            RunsetOperationsExportToAlm,//Done
+            RunsetOperationsExportToAlm,
             [Description("RunSetActionHTMLReport")]
-            RunSetActionHTMLReport,//Done
+            RunSetActionHTMLReport,
             [Description("RunSetActionHTMLReportSendEmail")]
-            RunSetActionHTMLReportSendEmail,//Done
+            RunSetActionHTMLReportSendEmail,
             [Description("RunSetActionJSONSummaryOperations")]
-            RunSetActionJSONSummary,//Done
+            RunSetActionJSONSummary,
             [Description("RunSetActionGenerateTestNGReportOperations")]
-            RunSetActionGenerateTestNGReport,//Done
+            RunSetActionGenerateTestNGReport,
             [Description("RunSetActionSendFreeEmailOperations")]
-            RunSetActionSendFreeEmail,//Done
+            RunSetActionSendFreeEmail,
             [Description("RunSetActionSendSMSOperations")]
-            RunSetActionSendSMS,//Done
+            RunSetActionSendSMS,
             [Description("RunSetActionPublishToQCOperations")]
-            RunSetActionPublishToQC,//Done
+            RunSetActionPublishToQC,
             [Description("RunSetActionAutomatedALMDefects")]
-            RunSetActionAutomatedALMDefects,//Done
+            RunSetActionAutomatedALMDefects,
             [Description("RunSetActionScriptOperations")]
-            RunSetActionScript,//Done
+            RunSetActionScript,
             [Description("RunSetActionSendDataToExternalSourceOperations")]
-            RunSetActionSendDataToExternalSource,//Done
-            CustomizedReportTemplates,//Done
+            RunSetActionSendDataToExternalSource,
+            CustomizedReportTemplates,
             [Description("LiteDBLogger")]
-            LiteDB,//Done
+            LiteDB,
             [Description("TextFile")]
-            TextfileLogger,//Done
+            TextfileLogger,
             [Description("CentralizedReportLoggerPost")]
-            PostExecution,//Done
+            PostExecution,
             [Description("CentralizedReportLoggerDuring")]
-            DuringExecution,//Done
+            DuringExecution,
             [Description("Tags")]
-            Tags,//Done
+            Tags,
             [Description("VRT")]
-            VRT,//Done
+            VRT,
             [Description("Applitools")]
-            Applitools, //Done
+            Applitools, 
             [Description("Sealights")]
-            Sealights,//Done
+            Sealights,
             [Description("ModelParameters")]
-            ModelParameters,//Done
+            ModelParameters,
             [Description("Environments")]
-            Environments, //Done
+            Environments, 
             [Description("GlobalVaraibles")]
-            GlobalVaraibles,//Done
+            GlobalVaraibles,
             [Description("Documents")]
-            Documents,//Done
+            Documents,
             [Description("Plugins")]
-            Plugins, //Done
+            Plugins, 
             [Description("ActionResultSimulation")]
             ActionResultSimulation 
         }

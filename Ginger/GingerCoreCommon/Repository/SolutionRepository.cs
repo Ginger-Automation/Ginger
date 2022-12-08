@@ -185,25 +185,62 @@ namespace Amdocs.Ginger.Repository
                 case "ProjEnvironment":
                     {
                         GingerCoreCommonWorkSpace.Instance.Telemetry.UpdateTelemetrySessionUsedFeatures("Environments");
-                        //UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Environments.ToString(), true, false);
                         break;
                     }
                 case "ApplicationAPIModel":
                     {
-                        //UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ApiModel.ToString(), true, false);
+                        GingerCoreCommonWorkSpace.Instance.Telemetry.UpdateTelemetrySessionUsedFeatures("ApiModel");
                         break;
                     }
                 case "ApplicationPOMModel":
                     {
-                        //UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.POM.ToString(), true, false);
+                        GingerCoreCommonWorkSpace.Instance.Telemetry.UpdateTelemetrySessionUsedFeatures("POM");
                         break;
                     }
                 case "GlobalAppModelParameter":
                     {
-                        //UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ModelParameters.ToString(), true, false);
+                        GingerCoreCommonWorkSpace.Instance.Telemetry.UpdateTelemetrySessionUsedFeatures("ModelParameters");
+                        break;
+                    }
+                case "GingerLiteDB":
+                    {
+                        GingerCoreCommonWorkSpace.Instance.Telemetry.UpdateTelemetrySessionUsedFeatures("DataSource");
+                        break;
+                    }
+                case "PluginPackage":
+                    {
+                        GingerCoreCommonWorkSpace.Instance.Telemetry.UpdateTelemetrySessionUsedFeatures("Plugins");
+                        break;
+                    }
+                case "ActivitiesGroup":
+                    {
+                        GingerCoreCommonWorkSpace.Instance.Telemetry.UpdateTelemetrySessionUsedFeatures("SharedRepository");
+                        break;
+                    }
+                case "Activity":
+                    {
+                        GingerCoreCommonWorkSpace.Instance.Telemetry.UpdateTelemetrySessionUsedFeatures("SharedRepository");
+                        break;
+                    }
+                case "HTMLReportConfiguration":
+                    {
+                        GingerCoreCommonWorkSpace.Instance.Telemetry.UpdateTelemetrySessionUsedFeatures("CustomizedReportTemplates");
+                        break;
+                    }
+                default:
+                    {
+                        if (repoType.Name.Contains("Act"))
+                        {
+                            GingerCoreCommonWorkSpace.Instance.Telemetry.UpdateTelemetrySessionUsedFeatures("SharedRepository");
+                        }
+                        else if (repoType.Name.Contains("Variable"))
+                        {
+                            GingerCoreCommonWorkSpace.Instance.Telemetry.UpdateTelemetrySessionUsedFeatures("SharedRepository");
+                        }
                         break;
                     }
             }
+
         }
 
         public void Close()

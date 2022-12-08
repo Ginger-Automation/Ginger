@@ -32,8 +32,14 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             if (usedFeatureDetail != null)
             {
                 int index = WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.IndexOf(usedFeatureDetail);
-                usedFeatureDetail.IsUsed = isUsed;
-                usedFeatureDetail.IsConfigured = isConfigured;
+                if (usedFeatureDetail.IsUsed == false) 
+                {
+                    usedFeatureDetail.IsUsed = isUsed;
+                }
+                if (usedFeatureDetail.IsConfigured == false)
+                {
+                    usedFeatureDetail.IsConfigured = isConfigured;
+                }
                 usedFeatureDetail.PlatformType = platformType;
                 WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures[index] = usedFeatureDetail;
             }

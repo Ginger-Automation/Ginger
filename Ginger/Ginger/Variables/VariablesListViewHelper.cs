@@ -642,7 +642,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(sender);
             WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mVariable));
-            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString(), true, true);
         }
 
         private void AddSelectedToSRHandler(object sender, RoutedEventArgs e)

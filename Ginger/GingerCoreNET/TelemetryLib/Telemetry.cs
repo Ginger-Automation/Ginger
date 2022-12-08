@@ -102,6 +102,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             }
             WorkSpace.Instance.Telemetry = telemetry;
             InitClient();
+            TelemetryInstance = telemetry;
 
             //// run it on task so startup is not impacted
             //Task.Factory.StartNew(() => {
@@ -230,7 +231,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
             if (WorkSpace.Instance.Solution.SourceControl != null && WorkSpace.Instance.Solution.SourceControl.GetSourceControlType != eSourceControlType.None)
             {
-                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SourceControl.ToString(), true, true);
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SourceControl.ToString(), true, false, WorkSpace.Instance.Solution.SourceControl.GetSourceControlType.ToString());
             }
 
             #region Remove Code
@@ -471,11 +472,11 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             done = true;
         }
 
-        public ITelemetry TelemetryInterface { get { return GingerCoreCommonWorkSpace.Instance.Telemetry; } set { GingerCoreCommonWorkSpace.Instance.Telemetry = value; } }
+        public static ITelemetry TelemetryInstance { get { return GingerCoreCommonWorkSpace.Instance.Telemetry; } set { GingerCoreCommonWorkSpace.Instance.Telemetry = value; } }
         public void UpdateTelemetrySessionUsedFeatures(string feature)
         {
-            bool isLogger = Enum.TryParse(feature, out TelemetrySession.GingerUsedFeatures usedFeature);
-            if (isLogger)
+            bool isFeatureCorrect = Enum.TryParse(feature, out TelemetrySession.GingerUsedFeatures usedFeature);
+            if (isFeatureCorrect)
             {
                 UsedFeatureDetail.AddOrModifyFeatureDetail(usedFeature.ToString(), true, false);
             }

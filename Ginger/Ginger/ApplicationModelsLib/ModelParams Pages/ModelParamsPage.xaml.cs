@@ -42,6 +42,7 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using System;
 using Ginger.SolutionWindows.TreeViewItems;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 {
@@ -325,10 +326,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             ModelsGlobalParamsPage MGPP = new ModelsGlobalParamsPage(true);
             List<GlobalAppModelParameter> globalParamsToAdd = MGPP.ShowAsWindow();
             if (globalParamsToAdd != null)
+            {
                 foreach (GlobalAppModelParameter GAMP in globalParamsToAdd)
                 {
                     AddGlobalParametertoAPIGlobalParameterList(APIGlobalParamList, GAMP);
                 }
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ModelParameters.ToString(), true, false);
+            }
         }
 
         private void DeleteParams_Clicked(object sender, RoutedEventArgs e)

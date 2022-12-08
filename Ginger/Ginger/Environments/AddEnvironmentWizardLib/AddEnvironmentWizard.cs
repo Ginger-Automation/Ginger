@@ -59,8 +59,6 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
 
             //Save the Environment 
             EnvsFolder.AddRepositoryItem(NewEnvironment);
-
-            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Environments.ToString(), true, false);
         }
     }
 }

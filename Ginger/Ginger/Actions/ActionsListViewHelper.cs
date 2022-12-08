@@ -847,8 +847,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 mAction.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
             }
             WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mAction));
-
-            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SharedRepository.ToString(), true, true);
         }
 
 

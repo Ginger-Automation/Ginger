@@ -28,6 +28,7 @@ using System.IO;
 using GingerCoreNET.SourceControl;
 using amdocs.ginger.GingerCoreNET;
 using System.Diagnostics;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace GingerCore.SourceControl
 {
@@ -304,6 +305,7 @@ namespace GingerCore.SourceControl
                     error = ex.Message + Environment.NewLine + ex.InnerException;
                     return false;
                 }
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SourceControl.ToString(), true, true, WorkSpace.Instance.Solution.SourceControl.GetSourceControlType.ToString());
                 return true;
             }
             else
@@ -708,6 +710,7 @@ namespace GingerCore.SourceControl
                         b => b.UpstreamBranch = localBranch.CanonicalName);
                 }
                 repo.Network.Push(remote, @"refs/heads/" + SourceControlBranch, options);
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SourceControl.ToString(), true, true, WorkSpace.Instance.Solution.SourceControl.GetSourceControlType.ToString());
             }
         }
 

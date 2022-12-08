@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SourceControl;
 using SharpSvn;
@@ -287,6 +288,8 @@ namespace GingerCore.SourceControl
                     else
                         Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "The files are not connected to source control");
                 }
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SourceControl.ToString(), true, true, WorkSpace.Instance.Solution.SourceControl.GetSourceControlType.ToString());
+
             }
             catch (Exception ex)
             {
@@ -624,6 +627,7 @@ namespace GingerCore.SourceControl
                 sol.ExistInLocaly = false;
             sol.SourceControlLocation = SourceControlLocation;
             SourceControlSolutions.Add(sol);
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SourceControl.ToString(), true, true, WorkSpace.Instance.Solution.SourceControl.GetSourceControlType.ToString());
         }
 
         public override void Init()

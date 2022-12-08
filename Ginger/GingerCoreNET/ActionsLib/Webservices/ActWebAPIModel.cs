@@ -28,6 +28,7 @@ using GingerCoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.Run;
 using GingerCore.Platforms;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace GingerCore.Actions.WebServices.WebAPI
 {
@@ -254,7 +255,11 @@ namespace GingerCore.Actions.WebServices.WebAPI
                 p.ExecutionValue = p.GetDefaultValue();
 
             if (p is GlobalAppModelParameter && p.ExecutionValue.Equals(GlobalAppModelParameter.CURRENT_VALUE))
+            {
                 p.ExecutionValue = ((GlobalAppModelParameter)p).CurrentValue;
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ModelParameters.ToString(), true, true);
+            }
+
         }
 
         public void ParseOutput()
