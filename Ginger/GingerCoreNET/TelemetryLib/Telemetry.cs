@@ -344,20 +344,20 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             TelemetryRecords.CompleteAdding();
 
 
-            Task.Factory.StartNew(() =>
-            {
-                // TODO: add timeout to wait
-                while (!TelemetryRecords.IsCompleted) // Wait for all records to process
-                {
-                    Thread.Sleep(100);
-                }
+            //Task.Factory.StartNew(() =>
+            //{
+            //    // TODO: add timeout to wait
+            //    while (!TelemetryRecords.IsCompleted) // Wait for all records to process
+            //    {
+            //        Thread.Sleep(100);
+            //    }
 
-                //Compress();
-                while (!done)
-                {
-                    Thread.Sleep(100);
-                }
-            }).Wait(30000);  // Max 30 seconds to wait
+            //    //Compress();
+            //    while (!done)
+            //    {
+            //        Thread.Sleep(100);
+            //    }
+            //}).Wait(30000);  // Max 30 seconds to wait
         }
 
 
@@ -383,8 +383,16 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         BlockingCollection<object> TelemetryRecords = new BlockingCollection<object>();
         public void Add(string entityType, object data)
         {
-            TelemetryRecord telemetryRecord = new TelemetryRecord(entityType, data);
-            TelemetryRecords.Add(telemetryRecord);
+            try
+            {
+                TelemetryRecord telemetryRecord = new TelemetryRecord(entityType, data);
+                TelemetryRecords.Add(telemetryRecord);
+            }
+            catch(Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while adding to telemtry", e);
+            }
+
         }
 
 
