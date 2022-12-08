@@ -37,14 +37,14 @@ namespace Amdocs.Ginger.Common.UIElement
         string GetFocusedControl();
         ElementInfo GetControlFromMousePosition();       
         AppWindow GetActiveWindow();
-        Task<List<ElementInfo>> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false,string specificFramePath=null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null);
+        Task<List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null);
         List<ElementInfo> GetElementChildren(ElementInfo ElementInfo);
         // Get All element properties to be displayed in properties 
         ObservableList<ControlProperty> GetElementProperties(ElementInfo ElementInfo);
 
-        ObservableList<ElementLocator> GetElementLocators(ElementInfo ElementInfo);
+        ObservableList<ElementLocator> GetElementLocators(ElementInfo ElementInfo, PomSetting pomSetting = null);
 
-        ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo);
+        ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting pomSetting = null);
 
         ObservableList<OptionalValue> GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue);
 
@@ -79,7 +79,7 @@ namespace Amdocs.Ginger.Common.UIElement
         ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements);
 
         void StartSpying();
-        ElementInfo LearnElementInfoDetails(ElementInfo EI);
+        ElementInfo LearnElementInfoDetails(ElementInfo EI,PomSetting pomSetting=null);
         List<AppWindow> GetWindowAllFrames();
 
         string GetCurrentPageSourceString();

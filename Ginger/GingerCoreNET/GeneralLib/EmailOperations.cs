@@ -135,13 +135,15 @@ namespace GingerCore.GeneralLib
                 if (Email.ConfigureCredential)
                 {
                     string DecryptPass = EncryptionHandler.DecryptwithKey(Email.SMTPPass);
+                    mVE.Value = Email.SMTPUser;
+                    string smtpUser = mVE.ValueCalculated;
                     if (!string.IsNullOrEmpty(DecryptPass))
                     {
-                        smtp.Credentials = new NetworkCredential(Email.SMTPUser, DecryptPass);
+                        smtp.Credentials = new NetworkCredential(smtpUser, DecryptPass);
                     }
                     else
                     {
-                        smtp.Credentials = new NetworkCredential(Email.SMTPUser, Email.SMTPPass);
+                        smtp.Credentials = new NetworkCredential(smtpUser, Email.SMTPPass);
                     }
                 }
                 mVE.Value = Email.MailTo;

@@ -27,6 +27,7 @@ using mshtml;
 using GingerCore.Drivers.PBDriver;
 
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 
 namespace GingerCore.Drivers.Common
 {
@@ -70,9 +71,9 @@ namespace GingerCore.Drivers.Common
             return ((IXPath)mUIAutomationHelper).GetXPathHelper();
         }
 
-        ElementInfo IXPath.GetElementParent(ElementInfo ElementInfo)
+        ElementInfo IXPath.GetElementParent(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
-            return ((IXPath)mUIAutomationHelper).GetElementParent(ElementInfo);
+            return ((IXPath)mUIAutomationHelper).GetElementParent(ElementInfo,pomSetting);
         }
 
         string IXPath.GetElementProperty(ElementInfo ElementInfo, string PropertyName)

@@ -213,8 +213,8 @@ namespace Ginger.Run
                 if (mExecutionServiceURLUsed != value)
                 {
                     mExecutionServiceURLUsed = value;
+                    OnPropertyChanged(nameof(ExecutionServiceURLUsed));
                 }
-                OnPropertyChanged(nameof(ExecutionServiceURLUsed));
             }
         }
         // Only for Run time, no need to serialize        
@@ -336,8 +336,11 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
             }
             set
             {
-                mRunModeParallel = value;
-                OnPropertyChanged(nameof(this.RunModeParallel));
+                if (mRunModeParallel != value)
+                {
+                    mRunModeParallel = value;
+                    OnPropertyChanged(nameof(this.RunModeParallel));
+                }
             }
         }
 
@@ -351,8 +354,11 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
             }
             set
             {
-                mStopRunnersOnFailure = value;
-                OnPropertyChanged(nameof(this.StopRunnersOnFailure));
+                if (mStopRunnersOnFailure != value)
+                {
+                    mStopRunnersOnFailure = value;
+                    OnPropertyChanged(nameof(this.StopRunnersOnFailure));
+                }
             }
         }
 
@@ -366,8 +372,11 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
             }
             set
             {
-                mRunWithAnalyzer = value;
-                OnPropertyChanged(nameof(this.RunWithAnalyzer));
+                if (mRunWithAnalyzer != value)
+                {
+                    mRunWithAnalyzer = value;
+                    OnPropertyChanged(nameof(this.RunWithAnalyzer));
+                }
             }
         }
 

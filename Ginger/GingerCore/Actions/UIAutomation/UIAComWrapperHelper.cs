@@ -41,6 +41,7 @@ using System.IO;
 using GingerCore.Common;
 using GingerCore.GeneralLib;
 using System.Windows.Automation;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 
 // a lot of samples from Microsoft on UIA at: https://uiautomationverify.svn.codeplex.com/svn/UIAVerify/
 // DO NOT add any specific driver here, this is generic windows app driver helper 
@@ -6136,7 +6137,7 @@ namespace GingerCore.Drivers
             return mXPathHelper;
         }
 
-        ElementInfo IXPath.GetElementParent(ElementInfo ElementInfo)
+        ElementInfo IXPath.GetElementParent(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
             try
             {

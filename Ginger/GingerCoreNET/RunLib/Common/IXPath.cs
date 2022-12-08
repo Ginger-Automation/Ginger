@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using System.Collections.Generic;
 
@@ -44,7 +45,7 @@ namespace GingerCore.Drivers.Common
 
         ElementInfo UseRootElement();
         
-        ElementInfo GetElementParent(ElementInfo ElementInfo);
+        ElementInfo GetElementParent(ElementInfo ElementInfo, PomSetting pomSetting = null);
 
         string GetElementProperty(ElementInfo ElementInfo, string PropertyName);        
 
