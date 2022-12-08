@@ -155,9 +155,7 @@
             <GridSplitter x:Name="xRowSplitter" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ResizeDirection="Rows" Height="1" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource $Color_DarkBlue}"/>
             <GridSplitter x:Name="xColumnSplitter" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" ResizeDirection="Columns" Height="Auto" Width="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" Visibility="Collapsed"/>
 
-            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
-                <Ginger:UCElementDetails x:Name="xUCElementDetails" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-            </StackPanel>
+            <Ginger:UCElementDetails x:Name="xUCElementDetails" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
         </Grid>
 
         <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
