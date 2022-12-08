@@ -956,7 +956,7 @@ namespace Amdocs.Ginger.Repository
                     return mFilePath;
                 }
             }
-            set { mFilePath = value; OnPropertyChanged(nameof(FilePath)); }
+            set { if (mFilePath != value) { mFilePath = value; OnPropertyChanged(nameof(FilePath)); } }
         }
 
         public virtual eImageType ItemImageType

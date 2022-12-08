@@ -1683,11 +1683,14 @@ namespace GingerCore.Actions
             return updatedAct;
         }
 
-        public void Reset(bool reSetActionErrorHandlerExecutionStatus = false)
+        public void Reset(bool reSetActionErrorHandlerExecutionStatus = false, bool isActionDirtyTrackingPaused = false)
         {
             if (this != null)
             {
-                PauseDirtyTracking();
+                if (!isActionDirtyTrackingPaused)
+                {
+                    PauseDirtyTracking();
+                }
                 if (reSetActionErrorHandlerExecutionStatus)
                 {
                     this.ErrorHandlerExecuted = false;
@@ -1763,7 +1766,10 @@ namespace GingerCore.Actions
                     FC.Status = eStatus.Pending;
                 }
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
-                ResumeDirtyTracking();
+                if (!isActionDirtyTrackingPaused)
+                {
+                    ResumeDirtyTracking();
+                }
             }
         }    // end of Reset
 

@@ -101,8 +101,11 @@ namespace Amdocs.Ginger.Repository
 
             set
             {
-                mValue = value.ToString();
-                OnPropertyChanged(Value);
+                if (mValue != value.ToString())
+                {
+                    mValue = value.ToString();
+                    OnPropertyChanged(nameof(Value));
+                }
             }
         }
 
@@ -168,7 +171,7 @@ namespace Amdocs.Ginger.Repository
 
         private string mValueForDriver;
 
-        public string ValueForDriver { get { return mValueForDriver; } set { mValueForDriver = value; OnPropertyChanged(ValueForDriver); } }
+        public string ValueForDriver { get { return mValueForDriver; } set { if (mValueForDriver != value) { mValueForDriver = value; OnPropertyChanged(ValueForDriver); } } }
 
 
         public override string ItemName

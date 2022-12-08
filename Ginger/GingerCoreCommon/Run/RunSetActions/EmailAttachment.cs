@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -48,8 +48,11 @@ namespace Ginger.Run.RunSetActions
             }
             set
             {
-                mName = value;
-                OnPropertyChanged(nameof(Name));
+                if (mName != value)
+                {
+                    mName = value;
+                    OnPropertyChanged(nameof(Name));
+                }
             }
         }
 
@@ -67,8 +70,11 @@ namespace Ginger.Run.RunSetActions
             }
             set
             {
-                mExtraInformation = value;
-                OnPropertyChanged(nameof(ExtraInformation));
+                if (mExtraInformation != value)
+                {
+                    mExtraInformation = value;
+                    OnPropertyChanged(nameof(ExtraInformation));
+                }
             }
         }
 

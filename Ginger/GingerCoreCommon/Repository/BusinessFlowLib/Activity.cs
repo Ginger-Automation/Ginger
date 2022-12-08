@@ -300,7 +300,7 @@ namespace GingerCore
         /// </summary>
         //[IsSerializedForLocalRepository]    
         //TODO: check if status is different
-        public Amdocs.Ginger.CoreNET.Execution.eRunStatus? Status { get { return mStatus; } set { mStatus = value; OnPropertyChanged(nameof(Status)); } }
+        public Amdocs.Ginger.CoreNET.Execution.eRunStatus? Status { get { return mStatus; } set { if (mStatus != value) { mStatus = value; OnPropertyChanged(nameof(Status)); } } }
         //TODO: add change history log in class and save it
 
 
