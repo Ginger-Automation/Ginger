@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -16,12 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using System.Threading.Tasks;
 using GingerCore;
 
 namespace Amdocs.Ginger.Common.InterfacesLib
 {
     public interface ISharedRepositoryOperations
     {
-        void UpdateSharedRepositoryLinkedInstances(Activity activity);
+        Task UpdateSharedRepositoryLinkedInstances(Activity activity);
+        Task SaveLinkedActivityAndUpdateInstances(Activity LinkedActivity);
     }
 }

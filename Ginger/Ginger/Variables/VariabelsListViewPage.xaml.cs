@@ -161,7 +161,7 @@ namespace Ginger.BusinessFlowPages
                     }                   
                     else if (mPageViewMode == General.eRIPageViewMode.SharedReposiotry)
                     {
-                        mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.SharedRepository);
+                        mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.SharedRepository,parent: mVariabelsParent);
                     }
                     else
                     {

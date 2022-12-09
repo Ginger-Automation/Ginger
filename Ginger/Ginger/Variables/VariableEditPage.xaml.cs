@@ -505,7 +505,7 @@ namespace Ginger.Variables
 
         protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (editMode == eEditMode.SharedRepository && mVariable != null)
+            if (editMode == eEditMode.SharedRepository && mVariable != null && mParent == null)
             {
                 CurrentItemToSave = mVariable;
                 base.IsVisibleChangedHandler(sender, e);

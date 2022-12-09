@@ -55,8 +55,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mPageLoadFlow = value;
-                OnPropertyChanged(nameof(this.PageLoadFlow));
+                if (mPageLoadFlow != value)
+                {
+                    mPageLoadFlow = value;
+                    OnPropertyChanged(nameof(this.PageLoadFlow));
+                }
             }
         }
 
@@ -69,8 +72,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mPageURL = value;
-                OnPropertyChanged(nameof(this.PageURL));
+                if (mPageURL != value)
+                {
+                    mPageURL = value;
+                    OnPropertyChanged(nameof(this.PageURL));
+                }
             }
         }
 
@@ -84,8 +90,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mMappedBusinessFlow = value;
-                OnPropertyChanged(nameof(this.MappedBusinessFlow));
+                if (mMappedBusinessFlow != value)
+                {
+                    mMappedBusinessFlow = value;
+                    OnPropertyChanged(nameof(this.MappedBusinessFlow));
+                }
             }
         }
 

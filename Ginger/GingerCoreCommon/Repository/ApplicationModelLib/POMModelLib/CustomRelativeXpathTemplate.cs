@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -36,8 +36,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mValue = value;
-                OnPropertyChanged(nameof(Value));
+                if (mValue != value)
+                {
+                    mValue = value;
+                    OnPropertyChanged(nameof(Value));
+                }
             }
         }
 
@@ -50,8 +53,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mStatus = value;
-                OnPropertyChanged(nameof(Status));
+                if (mStatus != value)
+                {
+                    mStatus = value;
+                    OnPropertyChanged(nameof(Status));
+                }
             }
         }
         public override string ItemName

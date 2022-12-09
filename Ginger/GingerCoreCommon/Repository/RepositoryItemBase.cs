@@ -956,7 +956,7 @@ namespace Amdocs.Ginger.Repository
                     return mFilePath;
                 }
             }
-            set { mFilePath = value; OnPropertyChanged(nameof(FilePath)); }
+            set { if (mFilePath != value) { mFilePath = value; OnPropertyChanged(nameof(FilePath)); } }
         }
 
         public virtual eImageType ItemImageType
@@ -1478,6 +1478,14 @@ namespace Amdocs.Ginger.Repository
         /// </summary>
         public virtual void UpdateCopiedItem()
         {
+        }
+
+        public virtual void PostSaveHandler()
+        {
+        }
+        public virtual bool PreSaveHandler()
+        {
+            return false;
         }
 
         bool mPublish = false;

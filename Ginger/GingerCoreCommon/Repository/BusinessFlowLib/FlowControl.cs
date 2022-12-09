@@ -160,7 +160,7 @@ namespace GingerCore.FlowControlLib
         }
 
         private string mConditionCalculated { get; set; }
-        public string ConditionCalculated { get { return mConditionCalculated; } set { mConditionCalculated = value; OnPropertyChanged(Fields.ConditionCalculated); } }
+        public string ConditionCalculated { get { return mConditionCalculated; } set { if (mConditionCalculated != value) { mConditionCalculated = value; OnPropertyChanged(Fields.ConditionCalculated); } } }
 
         private eFlowControlAction mFlowControlAction;
         [IsSerializedForLocalRepository]
@@ -230,8 +230,11 @@ namespace GingerCore.FlowControlLib
             }
             set
             {
-                mValueCalculated = value;
-                OnPropertyChanged(Fields.ValueCalculated);
+                if (mValueCalculated != value)
+                {
+                    mValueCalculated = value;
+                    OnPropertyChanged(Fields.ValueCalculated);
+                }
             }
         }
 

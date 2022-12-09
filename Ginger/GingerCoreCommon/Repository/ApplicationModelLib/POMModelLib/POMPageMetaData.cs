@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -46,8 +46,11 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib
             }
             set
             {
-                mType = value;
-                OnPropertyChanged(nameof(Type));
+                if (mType != value)
+                {
+                    mType = value;
+                    OnPropertyChanged(nameof(Type));
+                }
             }
         }
 

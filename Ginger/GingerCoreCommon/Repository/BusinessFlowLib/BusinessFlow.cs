@@ -354,7 +354,7 @@ namespace GingerCore
                 if (mCurrentActivity != value)
                 {
                     mCurrentActivity = value;
-                    OnPropertyChanged("CurrentActivity");
+                    OnPropertyChanged(nameof(CurrentActivity));
                 }
             }
         }
@@ -692,8 +692,11 @@ namespace GingerCore
             }
             set
             {
-                mEnableActivitiesVariablesDependenciesControl = value;
-                OnPropertyChanged(nameof(EnableActivitiesVariablesDependenciesControl));
+                if (mEnableActivitiesVariablesDependenciesControl != value)
+                {
+                    mEnableActivitiesVariablesDependenciesControl = value;
+                    OnPropertyChanged(nameof(EnableActivitiesVariablesDependenciesControl));
+                }
             }
         }
 
@@ -1349,7 +1352,10 @@ namespace GingerCore
             set
             {
                 if (mPublishStatus != value)
-                { mPublishStatus = value; OnPropertyChanged(nameof(PublishStatus)); }
+                {
+                    mPublishStatus = value;
+                    OnPropertyChanged(nameof(PublishStatus));
+                }
             }
         }
 

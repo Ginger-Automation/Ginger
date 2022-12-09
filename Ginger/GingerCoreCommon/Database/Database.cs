@@ -84,15 +84,18 @@ namespace GingerCore.Environments
             }
             set
             {
-                mKeepConnectionOpen = value;
-                OnPropertyChanged(nameof(KeepConnectionOpen));
+                if (mKeepConnectionOpen != value)
+                {
+                    mKeepConnectionOpen = value;
+                    OnPropertyChanged(nameof(KeepConnectionOpen));
+                }
             }
         }
 
 
         private string mName;
         [IsSerializedForLocalRepository]
-        public string Name { get { return mName; } set { mName = value; OnPropertyChanged(nameof(Name)); } }
+        public string Name { get { return mName; } set { if (mName != value) { mName = value; OnPropertyChanged(nameof(Name)); } } }
 
         [IsSerializedForLocalRepository]
         public string Description { get; set; }
@@ -103,8 +106,11 @@ namespace GingerCore.Environments
             get { return mDBType; }
             set
             {
-                mDBType = value;
-                OnPropertyChanged(nameof(Type));
+                if (mDBType != value)
+                {
+                    mDBType = value;
+                    OnPropertyChanged(nameof(DBType)); // why we previously sent the property name as Sytem.Type rather than the DBType?
+                }
                 if (DBType == eDBTypes.Cassandra)
                 {
                     DBVer = "2.2";
@@ -119,23 +125,23 @@ namespace GingerCore.Environments
 
         private string mConnectionString;
         [IsSerializedForLocalRepository]
-        public string ConnectionString { get { return mConnectionString; } set { mConnectionString = value; OnPropertyChanged(nameof(ConnectionString)); } }
+        public string ConnectionString { get { return mConnectionString; } set { if (mConnectionString != value) { mConnectionString = value; OnPropertyChanged(nameof(ConnectionString)); } } }
 
         private string mTNS;
         [IsSerializedForLocalRepository]
-        public string TNS { get { return mTNS; } set { mTNS = value; OnPropertyChanged(nameof(TNS)); } }
+        public string TNS { get { return mTNS; } set { if (mTNS != value) { mTNS = value; OnPropertyChanged(nameof(TNS)); } } }
 
         private string mDBVer;
         [IsSerializedForLocalRepository]
-        public string DBVer { get { return mDBVer; } set { mDBVer = value; OnPropertyChanged(nameof(DBVer)); } }
+        public string DBVer { get { return mDBVer; } set { if (mDBVer != value) { mDBVer = value; OnPropertyChanged(nameof(DBVer)); } } }
 
         private string mUser;
         [IsSerializedForLocalRepository]
-        public string User { get { return mUser; } set { mUser = value; OnPropertyChanged(nameof(User)); } }
+        public string User { get { return mUser; } set { if (mUser != value) { mUser = value; OnPropertyChanged(nameof(User)); } } }
 
         private string mPass;
         [IsSerializedForLocalRepository]
-        public string Pass { get { return mPass; } set { mPass = value; OnPropertyChanged(nameof(Pass)); } }
+        public string Pass { get { return mPass; } set { if (mPass != value) { mPass = value; OnPropertyChanged(nameof(Pass)); } } }
 
         public static List<string> DbTypes
         {
