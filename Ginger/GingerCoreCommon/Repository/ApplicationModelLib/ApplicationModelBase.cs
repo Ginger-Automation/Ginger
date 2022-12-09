@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -42,8 +42,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mName = value;
-                OnPropertyChanged(nameof(this.Name));
+                if (mName != value)
+                {
+                    mName = value;
+                    OnPropertyChanged(nameof(this.Name));
+                }
             }
         }
 
@@ -62,8 +65,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mDescription = value;
-                OnPropertyChanged(nameof(this.Description));
+                if (mDescription != value)
+                {
+                    mDescription = value;
+                    OnPropertyChanged(nameof(this.Description));
+                }
             }
         }
 
@@ -132,8 +138,11 @@ namespace Amdocs.Ginger.Repository
             { return mSupportSimulation; }
             set
             {
-                mSupportSimulation = value;
-                OnPropertyChanged(nameof(SupportSimulation));
+                if (mSupportSimulation != value)
+                {
+                    mSupportSimulation = value;
+                    OnPropertyChanged(nameof(SupportSimulation));
+                }
             }
         }
         #endregion

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -31,8 +31,11 @@ namespace GingerCore
             }
             set
             {
-                mIsSelected = value;
-                OnPropertyChanged(nameof(IsSelected));
+                if (mIsSelected != value)
+                {
+                    mIsSelected = value;
+                    OnPropertyChanged(nameof(IsSelected));
+                }
             }
         }
         private string mErrorString;
@@ -45,8 +48,11 @@ namespace GingerCore
             }
             set
             {
-                mErrorString = value;
-                OnPropertyChanged(nameof(ErrorString));
+                if (mErrorString != value)
+                {
+                    mErrorString = value;
+                    OnPropertyChanged(nameof(ErrorString));
+                }
             }
         }
 
@@ -60,8 +66,11 @@ namespace GingerCore
             }
             set
             {
-                mErrorDescription = value;
-                OnPropertyChanged(nameof(ErrorDescription));
+                if (mErrorDescription != value)
+                {
+                    mErrorDescription = value;
+                    OnPropertyChanged(nameof(ErrorDescription));
+                }
             }
         }
         public override string ItemName { get => ErrorString; set { } }

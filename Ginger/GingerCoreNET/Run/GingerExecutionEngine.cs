@@ -1086,6 +1086,7 @@ namespace Ginger.Run
         {
             try
             {
+                //act.PauseDirtyTracking();
                 //init
                 act.SolutionFolder = SolutionFolder;
                 act.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
@@ -1142,6 +1143,7 @@ namespace Ginger.Run
                     mRunSource = null;
                     mErrorPostExecutionActionFlowBreaker = false;
                 }
+                //act.ResumeDirtyTracking();
             }
         }
 
@@ -2486,6 +2488,15 @@ namespace Ginger.Run
 
         private void ResetAction(Act act)
         {
+            /*
+            if (act.DirtyTracking == Amdocs.Ginger.Common.Enums.eDirtyTracking.Paused)
+            {
+                act.Reset(isActionDirtyTrackingPaused: true);
+            }
+            else
+            {
+                act.Reset();
+            }*/
             act.Reset();
         }
 

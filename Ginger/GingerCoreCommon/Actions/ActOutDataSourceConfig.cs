@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -25,14 +25,14 @@ namespace GingerCore.Actions
     {
         private bool mActive;
         public enum eOutputType
-        {    
-            Parameter,            
-            Path,            
+        {
+            Parameter,
+            Path,
             Actual,
             Parameter_Path
         }
 
-        public  static partial class Fields
+        public static partial class Fields
         {
             public static string DSName = "DSName";
             public static string DSTable = "DSTable";
@@ -48,16 +48,16 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public string DSTable { get; set; }
-        
+
         [IsSerializedForLocalRepository]
-        public bool Active { get { return mActive; } set { mActive = value; OnPropertyChanged(Fields.Active); } }
+        public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(Fields.Active); } } }
 
         [IsSerializedForLocalRepository]
         public string OutputType { get; set; }
 
         [IsSerializedForLocalRepository]
         public string OutParamMap { get; set; }
-        
+
         public override string ItemName
         {
             get
@@ -94,8 +94,11 @@ namespace GingerCore.Actions
             }
             set
             {
-                mTableColumn = value;
-                OnPropertyChanged(Fields.TableColumn);
+                if (mTableColumn != value)
+                {
+                    mTableColumn = value;
+                    OnPropertyChanged(Fields.TableColumn);
+                }
             }
         }
     }

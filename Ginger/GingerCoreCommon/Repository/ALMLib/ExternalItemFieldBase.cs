@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -80,8 +80,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mSelectedValue = value;
-                OnPropertyChanged(Fields.SelectedValue);
+                if (mSelectedValue != value)
+                {
+                    mSelectedValue = value;
+                    OnPropertyChanged(Fields.SelectedValue);
+                }
             }
         }
 

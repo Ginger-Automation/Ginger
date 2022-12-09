@@ -241,8 +241,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mSealightsURL = value;
-                OnPropertyChanged(nameof(SealightsURL));
+                if (mSealightsURL != value)
+                {
+                    mSealightsURL = value;
+                    OnPropertyChanged(nameof(SealightsURL));
+                }
             }
         }
 
@@ -256,8 +259,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mSealightsAgentToken = value;
-                OnPropertyChanged(nameof(SealightsAgentToken));
+                if (mSealightsAgentToken != value)
+                {
+                    mSealightsAgentToken = value;
+                    OnPropertyChanged(nameof(SealightsAgentToken));
+                }
             }
         }
 
@@ -270,8 +276,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mSealightsLabId = value;
-                OnPropertyChanged(nameof(SealightsLabId));
+                if (mSealightsLabId != value)
+                {
+                    mSealightsLabId = value;
+                    OnPropertyChanged(nameof(SealightsLabId));
+                }
             }
         }
 
@@ -284,8 +293,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mSealightsTestStage = value;
-                OnPropertyChanged(nameof(SealightsTestStage));
+                if (mSealightsTestStage != value)
+                {
+                    mSealightsTestStage = value;
+                    OnPropertyChanged(nameof(SealightsTestStage));
+                }
             }
         }
 
@@ -298,8 +310,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mSealightsBuildSessionID = value;
-                OnPropertyChanged(nameof(SealightsBuildSessionID));
+                if (mSealightsBuildSessionID != value)
+                {
+                    mSealightsBuildSessionID = value;
+                    OnPropertyChanged(nameof(SealightsBuildSessionID));
+                }
             }
         }        
 
@@ -312,8 +327,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mSealightsSessionTimeout = value;
-                OnPropertyChanged(nameof(SealightsSessionTimeout));
+                if (mSealightsSessionTimeout != value)
+                {
+                    mSealightsSessionTimeout = value;
+                    OnPropertyChanged(nameof(SealightsSessionTimeout));
+                }
             }
         }
 
@@ -326,8 +344,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mSealightsReportedEntityLevel = value;
-                OnPropertyChanged(nameof(SealightsReportedEntityLevel));
+                if (mSealightsReportedEntityLevel != value)
+                {
+                    mSealightsReportedEntityLevel = value;
+                    OnPropertyChanged(nameof(SealightsReportedEntityLevel));
+                }
             }
         }
         #endregion
