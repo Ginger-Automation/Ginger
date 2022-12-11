@@ -7,6 +7,7 @@ cd "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\Extensi
 $exitcode=0
 
 mkdir D:\a\Ginger\Ginger\TestResults\DotNetFramework
+mkdir D:\a\1\a
 
 ./vstest.console.exe "D:\a\Ginger\Ginger\Ginger\GingerCoreTest\bin\Release\net6.0-windows\GingerCoreTest.dll" /Logger:trx /ResultsDirectory:D:\a\Ginger\Ginger\TestResults\DotNetFramework
 Write-Host ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> LastExitCode: " $LastExitCode
