@@ -39,19 +39,19 @@ New-Item -Path "D:\a\1\a" -Name "TestCompleted.txt" -ItemType "file" -Value "Tes
 Write-Host "-------------------------------------------------------------"
 Write-Host "-                    print  path     1          -"
 Write-Host "-------------------------------------------------------------"
-D:\a\Ginger\Ginger\Ginger\GingerUtilsTest
+dir D:\a\Ginger\Ginger\Ginger\GingerUtilsTest
 Write-Host "-------------------------------------------------------------"
 Write-Host "-                    print  path     2          -"
 Write-Host "-------------------------------------------------------------"
-D:\a\Ginger\Ginger\Ginger\GingerUtilsTest\bin
+dir D:\a\Ginger\Ginger\Ginger\GingerUtilsTest\bin
 Write-Host "-------------------------------------------------------------"
 Write-Host "-                    print  path     3          -"
 Write-Host "-------------------------------------------------------------"
-D:\a\Ginger\Ginger\Ginger\GingerUtilsTest\bin\Release
+dir D:\a\Ginger\Ginger\Ginger\GingerUtilsTest\bin\Release
 Write-Host "-------------------------------------------------------------"
 Write-Host "-                    print  path     4          -"
 Write-Host "-------------------------------------------------------------"
-D:\a\Ginger\Ginger\Ginger\GingerUtilsTest\bin\Release\net6.0\
+dir D:\a\Ginger\Ginger\Ginger\GingerUtilsTest\bin\Release\net6.0\
 
 
 
