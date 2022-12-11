@@ -40,8 +40,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             {
                 if (Debugger == true || Runtime == "Debug")
                 {
-                    return true;
-                    //return false;
+                    return false;
                 }
                 else
                 {
