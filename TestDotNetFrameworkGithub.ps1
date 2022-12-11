@@ -21,7 +21,7 @@ if ($LastExitCode -ne 0)
 Write-Host "-------------------------------------------------------------"
 Write-Host "-                    print  path     1          -"
 Write-Host "-------------------------------------------------------------"
-dir D:\a\Ginger\Ginger\Ginger\GingerTest\bin\Release\
+dir D:\a\Ginger\Ginger\Ginger\GingerTest\bin\Release\net6.0-windows
 
 ./vstest.console.exe "D:\a\Ginger\Ginger\Ginger\GingerTest\bin\Release\net6.0-windows\Ginger.dll" /Logger:trx /ResultsDirectory:D:\a\Ginger\Ginger\TestResults\DotNetFramework
 Write-Host ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> LastExitCode: " $LastExitCode
