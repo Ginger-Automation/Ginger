@@ -17,7 +17,7 @@ Write-Host "-------------------------------------------------------------"
 dir D:\a\Ginger\Ginger\Ginger\GingerCoreTest\bin\Release
 
 
-./vstest.console.exe "D:\a\Ginger\Ginger\Ginger\GingerCoreTest\bin\Release\net6.0\GingerCoreTest.dll" /Logger:trx /ResultsDirectory:D:\a\Ginger\Ginger\TestResults\DotNetFramework
+./vstest.console.exe "D:\a\Ginger\Ginger\Ginger\GingerCoreTest\bin\Release\net6.0-windows\GingerCoreTest.dll" /Logger:trx /ResultsDirectory:D:\a\Ginger\Ginger\TestResults\DotNetFramework
 Write-Host ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> LastExitCode: " $LastExitCode
 if ($LastExitCode -ne 0)
 {
@@ -28,7 +28,7 @@ if ($LastExitCode -ne 0)
 Write-Host "-------------------------------------------------------------"
 Write-Host "-                    print  path     1          -"
 Write-Host "-------------------------------------------------------------"
-dir D:\a\Ginger\Ginger\Ginger\GingerCoreTest\bin\Release\net6.0
+dir D:\a\Ginger\Ginger\Ginger\GingerCoreTest\bin\Release\net6.0-windows
 
 ./vstest.console.exe "D:\a\Ginger\Ginger\Ginger\bin\Release\net6.0-windows\Ginger.dll" /Logger:trx /ResultsDirectory:D:\a\Ginger\Ginger\TestResults\DotNetFramework
 Write-Host ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> LastExitCode: " $LastExitCode
