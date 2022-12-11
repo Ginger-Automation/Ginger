@@ -17,7 +17,7 @@ if ($LastExitCode -ne 0)
 }
 
 
-./vstest.console.exe "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net6.0-windows\Ginger.dll" /Logger:trx /ResultsDirectory:D:\a\Ginger\Ginger\TestResults\DotNetFramework
+./vstest.console.exe "D:\a\Ginger\Ginger\Ginger\bin\Release\net6.0-windows\Ginger.dll" /Logger:trx /ResultsDirectory:D:\a\Ginger\Ginger\TestResults\DotNetFramework
 Write-Host ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> LastExitCode: " $LastExitCode
 if ($LastExitCode -ne 0)
 {
