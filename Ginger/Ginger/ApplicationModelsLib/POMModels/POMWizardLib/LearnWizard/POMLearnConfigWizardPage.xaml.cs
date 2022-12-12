@@ -311,7 +311,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             ElementLocator solutionItem = (ElementLocator)sender;
-            if(!solutionItem.Active && solutionItem.EnableFriendlyLocator == true)
+            if(!solutionItem.Active && solutionItem.EnableFriendlyLocator)
             {
                 solutionItem.EnableFriendlyLocator = false;
             }
