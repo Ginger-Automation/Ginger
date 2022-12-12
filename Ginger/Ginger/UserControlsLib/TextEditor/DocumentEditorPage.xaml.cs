@@ -90,7 +90,7 @@ namespace Ginger.UserControlsLib.TextEditor
                 }
             }
 
-            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Documents.ToString(), null, true);
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Documents.ToString(), false, true);
         }
 
 

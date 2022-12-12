@@ -622,10 +622,17 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
         protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (xModelsGlobalParamsGrid.grdMain.Items.Count != 0 && xModelsGlobalParamsGrid.grdMain.SelectedItems[0] != null)
+            try
             {
-                CurrentItem = (RepositoryItemBase)xModelsGlobalParamsGrid.grdMain.SelectedItems[0];
-                base.IsVisibleChangedHandler(sender, e);
+                if (xModelsGlobalParamsGrid.grdMain.Items.Count != 0 && xModelsGlobalParamsGrid.grdMain.SelectedItems[0] != null)
+                {
+                    CurrentItem = (RepositoryItemBase)xModelsGlobalParamsGrid.grdMain.SelectedItems[0];
+                    base.IsVisibleChangedHandler(sender, e);
+                }
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error: ", ex);
             }
         }
 

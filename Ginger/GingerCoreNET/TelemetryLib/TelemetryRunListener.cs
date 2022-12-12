@@ -66,15 +66,6 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
                 UsedActionDetail.AddOrModifyActionDetail(action);
 
-                //Finding if Action is using a Global Variable is not working because it does noe find any variable
-                var globalVariableName = action.ActInputValues.Where(x => x.Param == "VariableName").FirstOrDefault();
-                var variableList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>().Where(x => x.Name == globalVariableName.Value).ToList();
-                var allVariableList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
-                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>().Where(x => x.MappedOutputType == VariableBase.eOutputType.GlobalVariable && x.Name == globalVariableName.Value).ToList().Count > 0)
-                {
-                    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.GlobalVaraibles.ToString(), true, true);
-                }
-
                 //Check if the action is from POM Element
                 if (action.ActionType.Contains("UI Element Action"))
                 {

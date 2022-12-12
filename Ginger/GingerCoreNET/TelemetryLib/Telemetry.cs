@@ -339,7 +339,11 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             TimeSpan sp = TimeSpan.FromMilliseconds((double)TelemetrySession.OverallExecutionTimeNumber);
             TelemetrySession.OverallExecutionTime = sp.ToString(@"hh\:mm\:ss");
 
-            Add("sessionend", TelemetrySession);
+            if (TelemetrySession.IsUserSession)
+            {
+                Add("sessionend", TelemetrySession);
+            }
+            
 
             TelemetryRecords.CompleteAdding(); 
 

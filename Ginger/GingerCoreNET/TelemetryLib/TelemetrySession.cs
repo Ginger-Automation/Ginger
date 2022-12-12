@@ -24,13 +24,14 @@ using System.ComponentModel;
 using System.Reflection;
 using Newtonsoft.Json;
 using Amdocs.Ginger.Common;
+using NPOI.HSSF.Util;
 
 namespace Amdocs.Ginger.CoreNET.TelemetryLib
 {
     public class TelemetrySession
     {
-        public Guid Id { get; set; }
-        public string WorkStationId { get; set; }
+        public Guid SId { get; set; }
+        public Guid UId { get; set; }
         public string TimeZone { get; set; }
         public string GingerVersion { get; set; }
         [JsonIgnore]
@@ -40,7 +41,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             {
                 if (Debugger == true || Runtime == "Debug")
                 {
-                    return false;
+                    return true;
                 }
                 else
                 {
@@ -78,7 +79,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         public List<UsedActionDetail> ExecutedActionTypes { get; set; } = new List<UsedActionDetail>();
         public HashSet<string> ExecutedAutomatedPlatforms { get; set; } = new HashSet<string>();
         public List<UsedFeatureDetail> UsedFeatures { get; set; } = new List<UsedFeatureDetail>();
-        public List<string> ExceptionErrors { get; set; } = new List<string>();
+        public HashSet<string> ExceptionErrors { get; set; } = new HashSet<string>();
 
 
         public enum GingerExecutionContext
@@ -175,8 +176,8 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
         public TelemetrySession(Guid guid)
         {
-            Id = guid;
-            WorkStationId = guid.ToString();
+            SId = Guid.NewGuid();
+            UId = guid;
             StartTime = Telemetry.Time;
             TimeZone = TimeZoneInfo.Local.DisplayName;
             GingerVersion = ApplicationInfo.ApplicationVersion;

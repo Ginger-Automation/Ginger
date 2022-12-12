@@ -176,7 +176,7 @@ namespace Ginger
 
         private void ReporterDataChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(ReporterData.ErrorCounter))
+            if (e.PropertyName == nameof(ReporterData.ErrorCounter) && WorkSpace.Instance != null)
             {
                 if (!string.IsNullOrEmpty(Reporter.ReporterData.LastLoggedError))
                 {
@@ -203,7 +203,7 @@ namespace Ginger
             }
             if (e.PropertyName == nameof(ReporterData.LastLoggedError))
             {
-                if (!string.IsNullOrEmpty(Reporter.ReporterData.LastLoggedError))
+                if (!string.IsNullOrEmpty(Reporter.ReporterData.LastLoggedError) && WorkSpace.Instance != null)
                 {
                     WorkSpace.Instance.Telemetry.TelemetrySession.ExceptionErrors.Add(Reporter.ReporterData.LastLoggedError);
                 }

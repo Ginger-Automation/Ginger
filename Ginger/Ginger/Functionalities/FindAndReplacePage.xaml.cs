@@ -353,7 +353,7 @@ namespace Ginger.Functionalities
 
             ReplaceItemsAsync();
 
-            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Search.ToString(), null, true);
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Search.ToString(), false, true);
         }
 
         private async void ReplaceItemsAsync()
@@ -403,7 +403,7 @@ namespace Ginger.Functionalities
         {
             Find();
 
-            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Search.ToString(), null, true);
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Search.ToString(), false, true);
         }
 
         private void Find()
