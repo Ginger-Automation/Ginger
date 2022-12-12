@@ -40,6 +40,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -881,7 +882,7 @@ namespace Ginger
             OnSelectedItemChangedEvent(grdMain.SelectedItem);
         }
 
-        private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
+        private async void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             //Cancel editing incase of user started search without going out of cell edit.
             this.grdMain.CommitEdit(DataGridEditingUnit.Row, true);
@@ -915,7 +916,15 @@ namespace Ginger
             {
                 mObjList.CurrentItem = null;
 
-                if (mCollectionView != null)
+                // this inner method checks if user is still typing
+                async Task<bool> UserKeepsTyping()
+                {
+                    string txt = txtSearch.Text;
+                    await Task.Delay(1000);
+                    return txt != txtSearch.Text;
+                }
+
+                if (mCollectionView != null && !(await UserKeepsTyping()) && txtSearch.Text != mFilterSearchText)
                 {
                     this.Dispatcher.Invoke(() =>
                     {
