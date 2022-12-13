@@ -39,7 +39,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         {
             get
             {
-                if (Debugger == true || Runtime == "Debug")
+                if (Debugger || Runtime == "Debug")
                 {
                     return false;
                 }

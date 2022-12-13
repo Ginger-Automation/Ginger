@@ -269,7 +269,7 @@ namespace Amdocs.Ginger.Common
 
                 // if we have log to console event listener send the message 
                 logToConsoleEvent?.Invoke(logLevel, msg);
-                if (logLevel == eLogLevel.ERROR || logLevel == eLogLevel.FATAL)
+                if ((logLevel == eLogLevel.ERROR || logLevel == eLogLevel.FATAL) && exceptionToConsole != null)
                 {
                     ReporterData.LastLoggedError = "Error:" + exceptionToConsole.Message;
                 }

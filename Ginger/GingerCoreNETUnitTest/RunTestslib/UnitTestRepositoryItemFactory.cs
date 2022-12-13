@@ -116,7 +116,6 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
         {
-            //throw new NotImplementedException();
         }
 
         public bool GetLatest(string path, SourceControlBase SourceControl)

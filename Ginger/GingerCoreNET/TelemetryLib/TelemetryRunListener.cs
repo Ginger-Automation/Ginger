@@ -48,18 +48,13 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                     UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Plugins.ToString(), true, true, actPlugIn.ItemName);
                 }
 
-                switch (action.ActionType)
+                if (action.ActionType == "Data Source Manipulation")
                 {
-                    case "Data Source Manipulation":
-                        {
-                            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.DataSource.ToString(), true, true);
-                            break;
-                        }
-                    case "Web API Model Action":
-                        {
-                            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ApiModel.ToString(), true, true);
-                            break;
-                        }
+                    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.DataSource.ToString(), true, true);
+                }
+                else if (action.ActionType == "Web API Model Action")
+                {
+                    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ApiModel.ToString(), true, true);
                 }
 
                 WorkSpace.Instance.Telemetry.TelemetrySession.OverallExecutedActions += 1;
