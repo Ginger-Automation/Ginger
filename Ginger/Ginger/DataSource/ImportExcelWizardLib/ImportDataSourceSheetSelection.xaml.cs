@@ -46,7 +46,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         ImportOptionalValuesForParameters impParams;
 
         ImportDataSourceFromExcelWizard mWizard;
-        
+
         /// <summary>
         /// This method is default wizard action event
         /// </summary>
@@ -57,7 +57,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             {
                 case EventType.Init:
                     mWizard = (ImportDataSourceFromExcelWizard)WizardEventArgs.Wizard;
-                    xSheetNameComboBox.BindControl(mWizard, nameof(ImportDataSourceFromExcelWizard.SheetName));                    
+                    xSheetNameComboBox.BindControl(mWizard, nameof(ImportDataSourceFromExcelWizard.SheetName));
                     xSheetNameComboBox.AddValidationRule(new EmptyValidationRule());
 
                     chkHeadingRow.BindControl(mWizard, nameof(ImportDataSourceFromExcelWizard.HeadingRow));
@@ -72,36 +72,109 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                         List<string> SheetsList = impParams.GetSheets(false);
                         SheetsList.Insert(0, "-- All --");
                         GingerCore.General.FillComboFromList(xSheetNameComboBox, SheetsList);
-                        if(SheetsList.Contains(mWizard.SheetName))
+                        if (SheetsList.Contains(mWizard.SheetName))
                         {
                             xSheetNameComboBox.SelectedIndex = SheetsList.IndexOf(mWizard.SheetName);
                         }
-                    }                    
+                    }
+                    break;
+                case EventType.LeavingForNextPage:
+                    mWizard = (ImportDataSourceFromExcelWizard)WizardEventArgs.Wizard;
+                    string excelPathForSpaceCheck = mWizard.Path;
+
+                    string sheetName = mWizard.SheetName;
+                    bool headingRow = mWizard.HeadingRow;
+                    bool isModelParamsFile = mWizard.IsModelParamsFile;
+                    bool isImportEmptyColumns = mWizard.IsImportEmptyColumns;
+                    WizardEventArgs.CancelEvent = CheckIfCancelEvent(excelPathForSpaceCheck, sheetName, headingRow, isImportEmptyColumns, isModelParamsFile);
                     break;
                 default:
                     break;
             }
         }
 
+        private bool CheckIfCancelEvent(string Path, string SheetName, bool HeadingRow, bool IsImportEmptyColumns, bool IsModelParamsFile)
+        {
+            string outErrCol = string.Empty;
+            DataSet ExcelImportData;
+            impParams.ExcelFileName = Path;
+            if (SheetName != "-- All --")
+            {
+                if (SheetName.Contains(' '))
+                {
+                    Reporter.ToUser(eUserMsgKey.DataSourceSheetNameHasSpace);
+                    return true;
+                }
+                impParams.ExcelSheetName = SheetName;
+                impParams.ExcelWhereCondition = String.Empty;
+                ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, IsImportEmptyColumns, IsModelParamsFile);
+                if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
+                {
+                    var columnList = ExcelImportData.Tables[0].Columns;
+                    if (CheckIfColumnListContainsSpace(columnList, out outErrCol))
+                    {
+                        Reporter.ToUser(eUserMsgKey.DataSourceColumnHasSpace, outErrCol);
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                List<string> SheetsList = impParams.GetSheets(false);
+                if (SheetsList.Any(s => s.Contains(' ')))
+                {
+                    Reporter.ToUser(eUserMsgKey.DataSourceSheetNameHasSpace);
+                    return true;
+                }
+                ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, IsImportEmptyColumns, IsModelParamsFile);
+                if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
+                {
+                    foreach (DataTable dt in ExcelImportData.Tables)
+                    {
+                        if (CheckIfColumnListContainsSpace(dt.Columns, out outErrCol))
+                        {
+                            Reporter.ToUser(eUserMsgKey.DataSourceColumnHasSpace, outErrCol);
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        private bool CheckIfColumnListContainsSpace(DataColumnCollection colList, out string colName)
+        {
+            for (int i = 0; i < colList.Count; i++)
+            {
+                if (colList[i].ColumnName.Contains(' '))
+                {
+                    colName = colList[i].ColumnName;
+                    return true;
+                }
+            }
+            colName = string.Empty;
+            return false;
+        }
+
         /// <summary>
         /// Constructor for ImportDataSourceSheetSelection class
         /// </summary>
         public ImportDataSourceSheetSelection()
-        {           
+        {
             InitializeComponent();
             impParams = new ImportOptionalValuesForParameters();
             ShowRelevantPanel();
 
-            xSheetNameComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;            
+            xSheetNameComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             chkHeadingRow.Checked += ChkHeadingRow_Checked;
             chkModelParamsFile.Checked += ChkModelParamsFile_Checked;
-            chkImportEmptyColumns.Checked += ChkExactValues_Checked;            
+            chkImportEmptyColumns.Checked += ChkExactValues_Checked;
             xSheetNameComboBox.Focus();
         }
 
         private void ChkModelParamsFile_Checked(object sender, RoutedEventArgs e)
         {
-            mWizard.IsModelParamsFile = Convert.ToBoolean(chkModelParamsFile.IsChecked);            
+            mWizard.IsModelParamsFile = Convert.ToBoolean(chkModelParamsFile.IsChecked);
         }
 
         private void ChkHeadingRow_Checked(object sender, RoutedEventArgs e)
@@ -111,11 +184,6 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         private void ChkExactValues_Checked(object sender, RoutedEventArgs e)
         {
             mWizard.IsImportEmptyColumns = Convert.ToBoolean(chkImportEmptyColumns.IsChecked);
-        }
-
-        private void XSheetNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            mWizard.SheetName = xSheetNameComboBox.Text;
         }
 
         /// <summary>
@@ -135,7 +203,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-        
+
         /// <summary>
         /// This event is used for selection changed on the SheetName ComboBox
         /// </summary>
@@ -145,8 +213,13 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         {
             try
             {
-                if (xSheetNameComboBox.SelectedValue != null)
+                if (xSheetNameComboBox.SelectedValue != null && xSheetNameComboBox.SelectedValue.ToString() != "-- All --")
                 {
+                    if (xSheetNameComboBox.SelectedValue.ToString().Contains(' '))
+                    {
+                        Reporter.ToUser(eUserMsgKey.DataSourceSheetNameHasSpace);
+                        return;
+                    }
                     mWizard.SheetName = Convert.ToString(xSheetNameComboBox.SelectedValue);
                     impParams.ExcelSheetName = mWizard.SheetName;
                 }
