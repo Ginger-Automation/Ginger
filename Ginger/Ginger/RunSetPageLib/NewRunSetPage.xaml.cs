@@ -1431,6 +1431,7 @@ namespace Ginger.Run
                     CurrentItemToSave = mRunSetConfig;
                     mRunSetConfig.SaveBackup();
 
+                    mRunSetConfig.StartDirtyTracking();
                     mRunSetConfig.AllowAutoSave = false;
                     WorkSpace.Instance.RunsetExecutor.RunSetConfig = RunSetConfig;
 
@@ -1462,7 +1463,6 @@ namespace Ginger.Run
 
                     WorkSpace.Instance.UserProfile.RecentRunset = mRunSetConfig.Guid;//to be loaded automatically next time
                 });
-                mRunSetConfig.StartDirtyTracking();
             }
             finally
             {
