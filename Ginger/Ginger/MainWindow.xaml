@@ -85,16 +85,8 @@
                                     <GingerCore:ucTextDicResource x:Name="xRunListItemText"  Text="[RunSets]" Typography.Capitals="AllSmallCaps" FontSize="20" Margin="0,0,0,3"/>
                                 </ListViewItem.Content>
                             </ListViewItem>
-                            <ListViewItem x:Name="xConfigurationsListItem" Style="{StaticResource $TopListViewItemStyle}">
-                                <ListViewItem.Content>
-                                    <TextBlock Text="CONFIGURATIONS" Margin="0,0,0,3" FontSize="20"/>
-                                </ListViewItem.Content>
-                            </ListViewItem>
-                            <ListViewItem x:Name="xResourcesListItem" FontSize="20" Style="{StaticResource $TopListViewItemStyle}">
-                                <ListViewItem.Content>
-                                    <TextBlock Text="RESOURCES" Margin="0,0,0,3" FontSize="20"/>
-                                </ListViewItem.Content>
-                            </ListViewItem>
+                            <ListViewItem x:Name="xConfigurationsListItem" Style="{StaticResource $TopListViewItemStyle}">CONFIGURATIONS</ListViewItem>
+                            <ListViewItem x:Name="xResourcesListItem" Style="{StaticResource $TopListViewItemStyle}">RESOURCES</ListViewItem>
                         </ListView>
 
                         <!--Main Menu- Solution Operations-->
