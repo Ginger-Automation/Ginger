@@ -43,7 +43,9 @@ namespace GingerCore.GingerOCR
                 {
                     if (instance == null)
                     {
-                        instance = new TesseractEngine(@"./tessdata", "eng", EngineMode.Default);
+                        string exeFilePath = Path.GetDirectoryName(typeof(GingerOcrOperations).Assembly.Location);
+                        string tessDataFilePath = Path.Combine(exeFilePath, "tessdata");
+                        instance = new TesseractEngine(tessDataFilePath, "eng", EngineMode.Default);
                     }
                     return instance;
                 }
