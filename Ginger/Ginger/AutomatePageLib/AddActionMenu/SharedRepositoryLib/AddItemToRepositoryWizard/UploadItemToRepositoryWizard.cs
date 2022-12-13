@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.Linq;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository.ItemToRepositoryWizard;
 using GingerCore;

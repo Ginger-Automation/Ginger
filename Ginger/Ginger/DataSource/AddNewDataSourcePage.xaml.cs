@@ -29,7 +29,6 @@ using Ginger.UserControlsLib;
 using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using GingerCoreNET.DataSource;
-using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace Ginger.DataSource
 {
@@ -159,6 +158,8 @@ namespace Ginger.DataSource
                     fs.Dispose();
                 }
             }
+
+
 
             mTargetFolder.AddRepositoryItem(mDSDetails);
             _pageGenericWin.Close();

@@ -183,7 +183,6 @@ namespace Ginger.Run
             if (isEnum)
             {
                 UsedFeatureDetail.AddOrModifyFeatureDetail(usedRunsetOperation.ToString(), null, true);
-                //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(usedRunsetOperation.ToString());
             }
         }
         private void RunAll(object sender, RoutedEventArgs e)
@@ -197,7 +196,6 @@ namespace Ginger.Run
                 if (isEnum)
                 {
                     UsedFeatureDetail.AddOrModifyFeatureDetail(usedRunsetOperation.ToString(), null, true);
-                    //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(usedRunsetOperation.ToString());
                 }
 
             }

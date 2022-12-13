@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.Repository;
@@ -634,6 +633,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(sender);
             WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mVariable));
+
         }
 
         private void AddSelectedToSRHandler(object sender, RoutedEventArgs e)

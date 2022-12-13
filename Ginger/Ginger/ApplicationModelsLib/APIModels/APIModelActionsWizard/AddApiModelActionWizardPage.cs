@@ -114,7 +114,6 @@ namespace Ginger.ApiModelsFolder
                     mActions.Move(mActions.Count - 1, selectedActIndex + 1);
                 }
             }
-
         }
 
 

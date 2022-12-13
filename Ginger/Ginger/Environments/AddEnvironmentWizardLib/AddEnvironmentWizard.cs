@@ -16,9 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Environments;
 using GingerWPF.WizardLib;
@@ -59,6 +57,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
 
             //Save the Environment 
             EnvsFolder.AddRepositoryItem(NewEnvironment);
+
         }
     }
 }

@@ -119,7 +119,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             ImportAPIModels(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected == true).ToList()));
 
             UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ApiModel.ToString(), true, true);
-            //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.ApiModel);
         }
 
         private void ImportAPIModels(ObservableList<ApplicationAPIModel> SelectedAAMList)

@@ -24,7 +24,6 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
-using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Run;
 using Amdocs.Ginger.UserControls;
 using Ginger;

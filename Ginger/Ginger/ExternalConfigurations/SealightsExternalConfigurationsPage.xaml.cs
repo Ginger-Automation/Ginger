@@ -109,7 +109,6 @@ namespace Ginger.Configurations
             if (sealightsLog == SealightsConfiguration.eSealightsLog.Yes)
             {
                 UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Sealights.ToString(), true, true);
-                //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(Amdocs.Ginger.CoreNET.TelemetryLib.TelemetrySession.GingerUsedFeatures.Sealights.ToString());
             }
         }
 

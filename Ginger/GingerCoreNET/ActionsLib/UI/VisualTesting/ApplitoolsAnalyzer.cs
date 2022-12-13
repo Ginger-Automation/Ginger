@@ -208,9 +208,6 @@ namespace GingerCore.Actions.VisualTesting
                 mEyes.AddProperty("Environment ID", mDriver.GetEnvironment());
                 mResolution = mAct.GetWindowResolution();
                 mEyes.Open(mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
-
-
-                //WorkSpace.Instance.Telemetry.TelemetrySession.UsedFeatures.Add(TelemetrySession.GingerUsedFeatures.Applitools.ToString());
             }
             catch (Exception ex)
             {
@@ -326,7 +323,6 @@ namespace GingerCore.Actions.VisualTesting
                 mAct.CheckSetAppWindowSize();
                 mResolution = mAct.GetWindowResolution();
                 WebEyes.Open(mDriver.GetWebDriver(), mAppName, mTestName, new System.Drawing.Size(mResolution[0], mResolution[1]));
-
             }
             catch (Exception ex)
             {
