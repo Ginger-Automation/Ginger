@@ -301,7 +301,22 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 mWizard.mPomLearnUtils.ElementLocatorsSettingsList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetLearningLocators();
             }
             xElementLocatorsSettingsGrid.DataSourceList = mWizard.mPomLearnUtils.ElementLocatorsSettingsList;
+            foreach (ElementLocator elementLocator in mWizard.mPomLearnUtils.ElementLocatorsSettingsList)
+            {
+                elementLocator.PropertyChanged -= Item_PropertyChanged;
+                elementLocator.PropertyChanged += Item_PropertyChanged;
+            }
         }
+
+        private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            ElementLocator solutionItem = (ElementLocator)sender;
+            if(!solutionItem.Active && solutionItem.EnableFriendlyLocator)
+            {
+                solutionItem.EnableFriendlyLocator = false;
+            }
+        }
+
 
         private void xAutomaticElementConfigurationRadioButton_Checked(object sender, RoutedEventArgs e)
         {
