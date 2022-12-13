@@ -95,31 +95,37 @@ namespace Ginger.DataSource.ImportExcelWizardLib
 
         private bool CheckIfCancelEvent(string Path, string SheetName, bool HeadingRow, bool IsImportEmptyColumns, bool IsModelParamsFile)
         {
-
-            ImportOptionalValuesForParameters impParams = new ImportOptionalValuesForParameters();
             string outErrCol = string.Empty;
             DataSet ExcelImportData;
             impParams.ExcelFileName = Path;
             if (SheetName != "-- All --")
             {
+                if (SheetName.Contains(' '))
+                {
+                    Reporter.ToUser(eUserMsgKey.DataSourceSheetNameHasSpace);
+                    return true;
+                }
                 impParams.ExcelSheetName = SheetName;
                 impParams.ExcelWhereCondition = String.Empty;
                 ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, IsImportEmptyColumns, IsModelParamsFile);
                 if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
                 {
-                    if (ExcelImportData.Tables.Count == 1)
+                    var columnList = ExcelImportData.Tables[0].Columns;
+                    if (CheckIfColumnListContainsSpace(columnList, out outErrCol))
                     {
-                        var columnList = ExcelImportData.Tables[0].Columns;
-                        if (CheckIfColumnListContainsSpace(columnList, out outErrCol))
-                        {
-                            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Column names [" + outErrCol + "] cannot contain space, please remove space and try again");
-                            return true;
-                        }
+                        Reporter.ToUser(eUserMsgKey.DataSourceColumnHasSpace, outErrCol);
+                        return true;
                     }
                 }
             }
             else
             {
+                List<string> SheetsList = impParams.GetSheets(false);
+                if (SheetsList.Any(s => s.Contains(' ')))
+                {
+                    Reporter.ToUser(eUserMsgKey.DataSourceSheetNameHasSpace);
+                    return true;
+                }
                 ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, IsImportEmptyColumns, IsModelParamsFile);
                 if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
                 {
@@ -127,7 +133,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                     {
                         if (CheckIfColumnListContainsSpace(dt.Columns, out outErrCol))
                         {
-                            Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Column name [" + outErrCol + "] cannot contain space, please remove space and try again");
+                            Reporter.ToUser(eUserMsgKey.DataSourceColumnHasSpace, outErrCol);
                             return true;
                         }
                     }
@@ -180,11 +186,6 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             mWizard.IsImportEmptyColumns = Convert.ToBoolean(chkImportEmptyColumns.IsChecked);
         }
 
-        private void XSheetNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            mWizard.SheetName = xSheetNameComboBox.Text;
-        }
-
         /// <summary>
         /// This method is used to ShowRelevantPanel
         /// </summary>
@@ -212,8 +213,13 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         {
             try
             {
-                if (xSheetNameComboBox.SelectedValue != null)
+                if (xSheetNameComboBox.SelectedValue != null && xSheetNameComboBox.SelectedValue.ToString() != "-- All --")
                 {
+                    if (xSheetNameComboBox.SelectedValue.ToString().Contains(' '))
+                    {
+                        Reporter.ToUser(eUserMsgKey.DataSourceSheetNameHasSpace);
+                        return;
+                    }
                     mWizard.SheetName = Convert.ToString(xSheetNameComboBox.SelectedValue);
                     impParams.ExcelSheetName = mWizard.SheetName;
                 }
