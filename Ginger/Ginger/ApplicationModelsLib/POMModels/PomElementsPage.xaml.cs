@@ -768,6 +768,20 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 {
                     mSelectedElement.FriendlyLocators.CollectionChanged -= FriendlyLocators_CollectionChanged;
                     mSelectedElement.FriendlyLocators.CollectionChanged += FriendlyLocators_CollectionChanged;
+                    for (int j = 0; j < mSelectedElement.FriendlyLocators.Count; j++)
+                    {
+                        ElementLocator felementLocator = mSelectedElement.FriendlyLocators[j];
+                        ElementInfo newelementinfo = mElements.FirstOrDefault(x => x.Guid.ToString() == felementLocator.LocateValue);
+                        if (newelementinfo != null)
+                        {
+                            felementLocator.LocateValue = newelementinfo.Guid.ToString();
+                            felementLocator.ReferanceElement = newelementinfo.ElementName + "[" + newelementinfo.ElementType + "]";
+                        }
+                        else
+                        {
+                            mSelectedElement.FriendlyLocators.Remove(felementLocator);
+                        }
+                    }
                     xElementDetails.xFriendlyLocatorsGrid.DataSourceList = mSelectedElement.FriendlyLocators;
                     xElementDetails.xFriendlyLocatorsGrid.ShowAdd = Visibility.Collapsed;
                     xElementDetails.xFriendlyLocatorsGrid.ShowDelete = Visibility.Collapsed;
