@@ -38,6 +38,7 @@ using System.IO;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Run;
 using OpenQA.Selenium.Appium.Windows;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace GingerCore.Actions.VisualTesting
 {
@@ -184,7 +185,7 @@ namespace GingerCore.Actions.VisualTesting
                         break;
                 }
             }
-
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Applitools.ToString(), true, true);
         }
 
 

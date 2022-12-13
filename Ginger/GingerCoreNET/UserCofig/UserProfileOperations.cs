@@ -137,7 +137,7 @@ namespace Ginger
             if (solPath != null)
             {
                 UserProfile.RecentSolutions.Remove(solPath);
-                Solution sol = mRecentSolutionsAsObjects.Where(x => SolutionRepository.NormalizePath(x.Folder) == SolutionRepository.NormalizePath(solution.Folder)).FirstOrDefault();
+                Solution sol = RecentSolutionsAsObjects.Where(x => SolutionRepository.NormalizePath(x.Folder) == SolutionRepository.NormalizePath(solution.Folder)).FirstOrDefault();
                 if (sol != null)
                 {
                     mRecentSolutionsAsObjects.Remove(sol);

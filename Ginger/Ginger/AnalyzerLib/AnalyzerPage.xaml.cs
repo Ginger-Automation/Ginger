@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Ginger.Actions;
 using Ginger.BusinessFlowWindows;
 using Ginger.Run;
@@ -646,6 +647,7 @@ namespace Ginger.AnalyzerLib
                 finally
                 {
                     BusyInProcess = false;
+                    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Analyzer.ToString(), false, true);
                 }
                 SetStatus("Finished to Fix Selected Items.");
                 StatusLabel.Visibility = Visibility.Collapsed;               

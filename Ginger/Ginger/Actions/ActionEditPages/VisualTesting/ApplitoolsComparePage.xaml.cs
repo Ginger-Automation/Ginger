@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Ginger.Actions._Common.ActUIElementLib;
 using GingerCore;
 using GingerCore.Actions;
@@ -182,6 +183,8 @@ namespace Ginger.Actions.VisualTesting
                 {
                     //First try open with Chrome
                     System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "chrome.exe", Arguments = url , UseShellExecute = true });
+                    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Applitools.ToString(), true, true);
+
                 }
                 catch (Exception ex)
                 {
@@ -190,6 +193,7 @@ namespace Ginger.Actions.VisualTesting
                         //Try open with Firefox
                         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "firefox.exe", Arguments = url, UseShellExecute = true });
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                        UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Applitools.ToString(), true, true);
                     }
                     catch (Exception ee)
                     {

@@ -44,6 +44,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using Ginger.SolutionWindows.TreeViewItems;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Ginger.UserControlsLib;
 
 namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
@@ -529,11 +530,13 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         private void SaveAllGlobalParametersChanges(object sender, RoutedEventArgs e)
         {
             Save(true);
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ModelParameters.ToString(), true, false);
         }
 
         private void SaveSelectedGlobalParametersChanges(object sender, RoutedEventArgs e)
         {
             Save(false);
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ModelParameters.ToString(), true, false);
         }
 
         private void Save(bool saveAll)
@@ -619,10 +622,17 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
         protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (xModelsGlobalParamsGrid.grdMain.Items.Count != 0 && xModelsGlobalParamsGrid.grdMain.SelectedItems[0] != null)
+            try
             {
-                CurrentItem = (RepositoryItemBase)xModelsGlobalParamsGrid.grdMain.SelectedItems[0];
-                base.IsVisibleChangedHandler(sender, e);
+                if (xModelsGlobalParamsGrid.grdMain.Items.Count != 0 && xModelsGlobalParamsGrid.grdMain.SelectedItems[0] != null)
+                {
+                    CurrentItem = (RepositoryItemBase)xModelsGlobalParamsGrid.grdMain.SelectedItems[0];
+                    base.IsVisibleChangedHandler(sender, e);
+                }
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error: ", ex);
             }
         }
 

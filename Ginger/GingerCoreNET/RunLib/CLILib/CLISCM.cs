@@ -94,6 +94,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public async Task Execute(RunsetExecutor runsetExecutor)
         {
+            WorkSpace.Instance.Telemetry.TelemetrySession.CliType = "SCM";
             // NA            
         }
 

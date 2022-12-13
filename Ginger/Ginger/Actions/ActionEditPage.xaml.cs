@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Expressions;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.BusinessFlowPages;
@@ -475,7 +476,10 @@ namespace Ginger.Actions
         private void RefreshOutputColumns(object sender, RoutedEventArgs e)
         {
             if (mAction.SupportSimulation)
+            {
                 xOutputValuesGrid.ChangeGridView(eGridView.All.ToString());
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ActionResultSimulation.ToString(), true, true);
+            }
             else
                 xOutputValuesGrid.ChangeGridView(eGridView.NonSimulation.ToString());
         }

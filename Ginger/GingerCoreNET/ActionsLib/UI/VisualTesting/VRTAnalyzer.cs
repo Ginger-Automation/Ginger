@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using GingerCoreNET.GeneralLib;
 using System;
 using System.Collections.Generic;
@@ -133,6 +134,7 @@ namespace GingerCore.Actions.VisualTesting
                     StopVRT();
                     break;
             }
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.VRT.ToString(), true, true);
         }
 
         private void StartVRT()

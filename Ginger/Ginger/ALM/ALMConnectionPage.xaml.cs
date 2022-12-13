@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using GingerCore.ALM;
 using System;
 using System.Collections.Generic;
@@ -395,9 +396,12 @@ namespace Ginger.ALM
             if(ConnectProjectButton.Content.ToString() == "Save Project Mapping")
             {
                 SaveConnectionDetails();
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.AlmExport.ToString(), true, true);
                 return;
             }
             ConnectProject();
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.AlmImport.ToString(), true, true);
+
         }
 
         private void SaveConnectionDetails()

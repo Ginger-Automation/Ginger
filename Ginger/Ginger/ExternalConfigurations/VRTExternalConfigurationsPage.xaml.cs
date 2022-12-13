@@ -27,6 +27,7 @@ using amdocs.ginger.GingerCoreNET;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
 using Ginger.ValidationRules;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Ginger.UserControlsLib;
 
 namespace Ginger.Configurations
@@ -94,6 +95,7 @@ namespace Ginger.Configurations
         private void xSaveButton_Click(object sender, RoutedEventArgs e)
         {
             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.VRT.ToString(), true, false);
         }
 
         private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)

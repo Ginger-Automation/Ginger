@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using System;
@@ -119,6 +120,8 @@ namespace Ginger.Run.RunSetActions
                 var defectFields = defaultALMDefectProfile.ALMDefectProfileFields.Where(a => a.Mandatory || a.ToUpdate).ToList();
                 //update alm type to open defect
                 TargetFrameworkHelper.Helper.CreateNewALMDefects(defectsForOpening, defectFields, defaultALMDefectProfile.AlmType);
+
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.RunSetActionAutomatedALMDefects.ToString(), true, true);
             }
         }
 

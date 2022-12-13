@@ -28,6 +28,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using amdocs.ginger.GingerCoreNET;
 using System.Threading.Tasks;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace Ginger.SourceControl
 {
@@ -135,6 +136,7 @@ namespace Ginger.SourceControl
                 }
                 WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
                 Close();
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SourceControlDownload.ToString(), true, true);
             }
         }
         private void Close_Click(object sender, RoutedEventArgs e)

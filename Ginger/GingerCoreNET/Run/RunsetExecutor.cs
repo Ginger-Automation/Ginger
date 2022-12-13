@@ -43,6 +43,7 @@ using static Ginger.Reports.ExecutionLoggerConfiguration;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Ginger.Configurations;
 using DocumentFormat.OpenXml.Wordprocessing;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace Ginger.Run
 {
@@ -528,6 +529,7 @@ namespace Ginger.Run
                         // Wait one second before starting another runner
                         Thread.Sleep(1000);
                     }
+                    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ParallelExecution.ToString(), true, true);
                 }
                 else
                 {

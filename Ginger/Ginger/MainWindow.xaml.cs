@@ -176,8 +176,12 @@ namespace Ginger
 
         private void ReporterDataChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(ReporterData.ErrorCounter))
+            if (e.PropertyName == nameof(ReporterData.ErrorCounter) && WorkSpace.Instance != null)
             {
+                if (!string.IsNullOrEmpty(Reporter.ReporterData.LastLoggedError))
+                {
+                    WorkSpace.Instance.Telemetry.TelemetrySession.ExceptionErrors.Add(Reporter.ReporterData.LastLoggedError);
+                }
                 this.Dispatcher.BeginInvoke(
                 System.Windows.Threading.DispatcherPriority.Normal,
                 new Action(
@@ -196,6 +200,13 @@ namespace Ginger
                      }
                  }
               ));
+            }
+            if (e.PropertyName == nameof(ReporterData.LastLoggedError))
+            {
+                if (!string.IsNullOrEmpty(Reporter.ReporterData.LastLoggedError) && WorkSpace.Instance != null)
+                {
+                    WorkSpace.Instance.Telemetry.TelemetrySession.ExceptionErrors.Add(Reporter.ReporterData.LastLoggedError);
+                }
             }
         }
 
@@ -664,6 +675,7 @@ namespace Ginger
 
         private void btnSourceControlConnectionDetails_Click(object sender, RoutedEventArgs e)
         {
+
             SourceControlConnDetailsPage p = new SourceControlConnDetailsPage();
             p.ShowAsWindow(eWindowShowStyle.Dialog);
         }

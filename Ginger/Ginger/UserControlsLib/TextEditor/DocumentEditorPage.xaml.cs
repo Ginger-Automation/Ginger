@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.PlugInsWindows;
@@ -88,6 +89,8 @@ namespace Ginger.UserControlsLib.TextEditor
                     EditorFrame.Content = p;
                 }
             }
+
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Documents.ToString(), false, true);
         }
 
 

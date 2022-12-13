@@ -27,6 +27,7 @@ using amdocs.ginger.GingerCoreNET;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
 using Ginger.ValidationRules;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Ginger.UserControlsLib;
 
 namespace Ginger.Configurations
@@ -102,12 +103,20 @@ namespace Ginger.Configurations
         private void xSaveButton_Click(object sender, RoutedEventArgs e)
         {
             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
+
+            Enum.TryParse(sealightsRadioButtonValue, out SealightsConfiguration.eSealightsLog sealightsLog);
+
+            if (sealightsLog == SealightsConfiguration.eSealightsLog.Yes)
+            {
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Sealights.ToString(), true, true);
+            }
         }
 
+        string sealightsRadioButtonValue;
         private void SealightsLogRadioButton_CheckedHandler(object sender, RoutedEventArgs e)
         {
             string value = ((RadioButton)sender).Tag?.ToString();
-
+            sealightsRadioButtonValue = value;
             SealightsConfiguration.eSealightsLog sealightsLog;
 
             Enum.TryParse(value, out sealightsLog);

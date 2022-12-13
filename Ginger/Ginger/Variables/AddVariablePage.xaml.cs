@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.SolutionGeneral;
@@ -172,6 +173,7 @@ namespace Ginger.Variables
                         ((Solution)mVariablesParentObj).AddVariable(newVar);
                     }
                     ((Solution)mVariablesParentObj).Variables.CurrentItem = newVar;
+                    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.GlobalVaraibles.ToString(), true, false);
                     break;
                 case eVariablesLevel.BusinessFlow:
                     if (((BusinessFlow)mVariablesParentObj).Variables.CurrentItem != null)

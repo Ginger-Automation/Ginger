@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -27,6 +27,22 @@ namespace Amdocs.Ginger.Common
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+        string mLastLoggedError = string.Empty;
+        public string LastLoggedError
+        {
+            get
+            {
+                return mLastLoggedError;
+            }
+            set
+            {
+                mLastLoggedError = value;
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs(nameof(LastLoggedError)));
+                }
+            }
+        }
         int mErrorCounter = 0;
         public int ErrorCounter
         {
@@ -43,14 +59,16 @@ namespace Amdocs.Ginger.Common
                     {
                         PropertyChanged(this, new PropertyChangedEventArgs(nameof(ErrorCounter)));
                     }
-                }                
+                }
             }
         }
 
         public void ResetErrorCounter()
         {
             mErrorCounter = 0;
+            LastLoggedError = string.Empty;
             PropertyChanged(this, new PropertyChangedEventArgs(nameof(ErrorCounter)));
+            PropertyChanged(this, new PropertyChangedEventArgs(nameof(LastLoggedError)));
         }
     }
 }

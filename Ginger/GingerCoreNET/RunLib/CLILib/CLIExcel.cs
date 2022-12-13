@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Ginger.Run;
@@ -44,6 +45,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public async Task Execute(RunsetExecutor runsetExecutor)
         {
+            WorkSpace.Instance.Telemetry.TelemetrySession.CliType = "Excel";
             throw new NotImplementedException();
         }
 

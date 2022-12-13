@@ -28,6 +28,7 @@ using Amdocs.Ginger.Common;
 using GingerCore;
 using amdocs.ginger.GingerCoreNET;
 using static Ginger.Run.RunSetActions.RunSetActionBase;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -68,6 +69,8 @@ namespace Ginger.Run.RunSetActions
                     }
                 }
                 SaveBFResults((ReportInfo)RI, testNGReportPath, RunSetActionGenerateTestNGReport.IsStatusByActivitiesGroup);
+
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.RunSetActionGenerateTestNGReport.ToString(), true, true);
             }
             catch (Exception ex)
             {

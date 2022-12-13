@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Ginger.Reports;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
@@ -48,6 +49,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
             }
             string fileName = Path.Combine(jsonSummaryFolder, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "_" + timestamp + ".json.txt");//why not as .json?                
             System.IO.File.WriteAllText(fileName, json);
+
+            UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.RunSetActionJSONSummary.ToString(), true, true);
         }
     }
 }

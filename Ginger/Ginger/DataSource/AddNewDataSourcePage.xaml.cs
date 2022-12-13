@@ -159,9 +159,9 @@ namespace Ginger.DataSource
                 }
             }
 
+
+
             mTargetFolder.AddRepositoryItem(mDSDetails);
-
-
             _pageGenericWin.Close();
         }
 

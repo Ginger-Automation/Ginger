@@ -27,6 +27,12 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using GingerCore.Actions.PlugIns;
+using static GingerCore.BusinessFlow;
+using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common;
+using GingerCore.Variables;
+using System.IO;
 
 namespace Amdocs.Ginger.CoreNET.TelemetryLib
 {
@@ -34,53 +40,63 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
     {
         public override void ActionEnd(uint eventTime, Act action, bool offlineMode = false)
         {
-            if (action is ActPlugIn)
+            try
             {
-                ActPlugIn actPlugIn = ((ActPlugIn)action);
-
-
-                WorkSpace.Instance.Telemetry.Add("actionend",
-                new
+                if (action is ActPlugIn)
                 {
-                    ActionType = action.ActionType,
-                    Guid = action.Guid,
-                    Name = action.GetType().Name,
-                    Elasped = action.Elapsed,
-                    Status = action.Status.ToString(),
-                    Plugin = actPlugIn.PluginId,
-                    ServiceId = actPlugIn.ServiceId,
-                    ActionID = actPlugIn.ActionId
-                });
-            }
-            else
-            {
-                WorkSpace.Instance.Telemetry.Add("actionend",
-                new
+                    ActPlugIn actPlugIn = ((ActPlugIn)action);
+                    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.Plugins.ToString(), true, true, actPlugIn.ItemName);
+                }
+
+                if (action.ActionType == "Data Source Manipulation")
                 {
-                    ActionType = action.ActionType,
-                    Guid = action.Guid,
-                    Name = action.GetType().Name,
-                    Elasped = action.Elapsed,
-                    Status = action.Status.ToString()                    
-                });
-            }
+                    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.DataSource.ToString(), true, true);
+                }
+                else if (action.ActionType == "Web API Model Action")
+                {
+                    UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.ApiModel.ToString(), true, true);
+                }
+
+                WorkSpace.Instance.Telemetry.TelemetrySession.OverallExecutedActions += 1;
+
+                UsedActionDetail.AddOrModifyActionDetail(action);
+
+                //Check if the action is from POM Element
+                if (action.ActionType.Contains("UI Element Action"))
+                {
+                    if (((GingerCore.Actions.Common.ActUIElement)action).ElementLocateBy.ToString() == "POMElement")
+                    {
+                        ObservableList<ApplicationPOMModel> pomModels = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
+                        foreach (ApplicationPOMModel pomModel in pomModels)
+                        {
+                            if (pomModel.MappedUIElements.Where(x => ((GingerCore.Actions.Common.ActUIElement)action).ElementLocateValue.Contains(x.Guid.ToString())).FirstOrDefault() != null)
+                            {
+                                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.POM.ToString(), true, true, pomModel.ItemImageType.ToString());
+                                break;
+                            }
+                        }
+                    }
+                }
                 
+            }
+            catch(Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR ,"Failed to report to Telemetry about the ActionEnd", e);
+            }
         }
-        
+
 
         public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
         {
-            WorkSpace.Instance.Telemetry.Add("activityend",
-                new
-                {
-                    Guid = activity.Guid,
-                    Elapsed = activity.Elapsed,
-                    Platform = getAgentPlatform(activity),
-                    ActionCount = activity.Acts.Count,
-                    ActionsPass = (from x in activity.Acts where x.Status == Execution.eRunStatus.Passed select x).Count(),
-                    ActionsFail = (from x in activity.Acts where x.Status == Execution.eRunStatus.Failed select x).Count(),
-                    Status = activity.Status.ToString()
-                });
+            WorkSpace.Instance.Telemetry.TelemetrySession.OverallExecutedActivities += 1;
+            try
+            {
+                WorkSpace.Instance.Telemetry.TelemetrySession.ExecutedAutomatedPlatforms.Add(getAgentPlatform(activity).ToString());
+            }
+            catch (Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to report to Telemetry about the ActivityEnd", e);
+            }
         }
 
         private object getAgentPlatform(Activity activity)
@@ -93,24 +109,54 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             {
                 return null;
             }
-                
         }
 
         public override void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
         {
-            WorkSpace.Instance.Telemetry.Add("activitygroupend", new { Guid = activityGroup.Guid, Elapsed = activityGroup.Elapsed });
+            try
+            {
+                WorkSpace.Instance.Telemetry.TelemetrySession.OverallExecutedActivityGroups += 1;
+            }
+            catch (Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to report to Telemetry about the ActivityGroupEnd", e);
+            }
         }
 
         public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
         {
-            WorkSpace.Instance.Telemetry.Add("businessflowend", new { Guid = businessFlow.Guid, Elapsed = businessFlow.Elapsed, Status = businessFlow.RunStatus.ToString() });
+            try
+            {
+                WorkSpace.Instance.Telemetry.TelemetrySession.OverallExecutedBusinessFlows += 1;
+                WorkSpace.Instance.Telemetry.TelemetrySession.OverallExecutionTimeNumber += businessFlow.Elapsed;
+
+                if (businessFlow.RunStatus == eRunStatus.Passed)
+                {
+                    WorkSpace.Instance.Telemetry.TelemetrySession.PassedBusinessFlowsCount += 1;
+                }
+                if (businessFlow.RunStatus == eRunStatus.Failed)
+                {
+                    WorkSpace.Instance.Telemetry.TelemetrySession.FailedBusinessFlowsCount += 1;
+                }
+            }
+            catch (Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to report to Telemetry about the BusinessFlowEnd", e);
+            }
         }
-        
+
         public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
         {
-            WorkSpace.Instance.Telemetry.Add("runnerrunend", new { Guid = gingerRunner.Guid, Elapsed = gingerRunner.Executor.Elapsed, Status = gingerRunner.Status });
+            try
+            {
+                WorkSpace.Instance.Telemetry.TelemetrySession.OverallExecutedRunsets += 1;
+            }
+            catch (Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to report to Telemetry about the RunnerRunEnd", e);
+            }
         }
-        
+
 
 
     }

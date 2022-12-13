@@ -17,25 +17,45 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Repository;
+using DocumentFormat.OpenXml.Wordprocessing;
+using Ginger.Reports;
+using Ginger.SolutionGeneral;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Activities;
+using GingerCore.DataSource;
+using GingerCore.Environments;
+using GingerCore.Variables;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
+using static GingerCoreNET.SourceControl.SourceControlBase;
+using Amdocs.Ginger.Common.InterfacesLib;
+using System.Collections.Generic;
+using Amdocs.Ginger.Common.WorkSpaceLib;
+using Ginger.Repository;
 
 namespace Amdocs.Ginger.CoreNET.TelemetryLib
 {
-    public class Telemetry 
+    public class Telemetry : ITelemetry
     {
         public Guid Guid { get; set; } // keep public
-        public bool DoNotCollect { get; set; } = true; // keep public, default is do not collect
+        public bool DoNotCollect { get; set; } = false; // keep public, default is do not collect
 
-        TelemetrySession mTelemetrySession;
+        public TelemetrySession TelemetrySession { get; set; }
+
+
 
         static HttpClient mClient;
 
@@ -47,33 +67,33 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         {
             get
             {
-                if 
+                if
                     (mSessionFileName == null)
                 {
                     mSessionFileName = Path.Combine(TelemetryDataFolder, Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyyMMddhhmmss"));
-                }                
+                }
                 return mSessionFileName;
             }
         }
-    
-        public class TelemetryEventArgs  : EventArgs
+
+        public class TelemetryEventArgs : EventArgs
         {
             public string name { get; set; }
         }
 
-        public static TelemetryEventHandler eventHandler ;
+        public static TelemetryEventHandler eventHandler;
 
         public static void Init()
         {
             Telemetry telemetry;
-            
+
             string fileName = Path.Combine(TelemetryFolder, "Ginger.Telemetry.Config");
             if (!File.Exists(fileName))
             {
                 telemetry = new Telemetry();
                 telemetry.Guid = Guid.NewGuid();
                 string txt = JsonConvert.SerializeObject(telemetry);
-                File.WriteAllText(fileName, txt);                                
+                File.WriteAllText(fileName, txt);
             }
             else
             {
@@ -82,29 +102,30 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             }
             WorkSpace.Instance.Telemetry = telemetry;
             InitClient();
-            
+            TelemetryInstance = telemetry;
+
             //// run it on task so startup is not impacted
             //Task.Factory.StartNew(() => {
             //    Thread.Sleep(10000);  // Wait 10 seconds so main window and others can load
             //    Telemetry.CheckVersionAndNews();
             //});
-            
+
             StartProcessing();
-            
+
         }
-        
+
         private static void StartProcessing()
         {
             // start a long running task to process telemetry queue
-            Task task = new Task(() => WorkSpace.Instance.Telemetry.ProcessQueue(),                     
+            Task task = new Task(() => WorkSpace.Instance.Telemetry.ProcessQueue(),
                     TaskCreationOptions.LongRunning);
-            task.Start();               
+            task.Start();
         }
 
         private static void InitClient()
         {
-            mClient = new HttpClient();            
-            mClient.BaseAddress = new Uri("https://" + "gingertelemetry.azurewebsites.net" );            
+            mClient = new HttpClient();
+            mClient.BaseAddress = new Uri("https://" + "gingertelemetry.azurewebsites.net");
         }
 
 
@@ -122,17 +143,17 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             get
             {
                 if (mTelemetryFolder == null)
-                {                    
+                {
                     mTelemetryFolder = Path.Combine(General.LocalUserApplicationDataFolderPath, "Telemetry");
                     if (!Directory.Exists(mTelemetryFolder))
                     {
                         Directory.CreateDirectory(mTelemetryFolder);
                     }
-                }                
+                }
                 return mTelemetryFolder;
             }
         }
-        
+
 
 
         static bool NetworkAvailable
@@ -140,15 +161,15 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             get
             {
                 bool connection = NetworkInterface.GetIsNetworkAvailable();
-                return connection;                
+                return connection;
             }
         }
 
-        public static DateTime Time { get { return DateTime.UtcNow; }  }
+        public static DateTime Time { get { return DateTime.UtcNow; } }
 
 
-        public static string VersionAndNewsInfo { get; set; }        
-        
+        public static string VersionAndNewsInfo { get; set; }
+
         public static void CheckVersionAndNews()
         {
             if (!NetworkAvailable) return;
@@ -159,13 +180,13 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             }
         }
 
-        
+
 
         static async Task<string> CheckLatestVersionAndNews(string currver)
-        {            
+        {
             try
-            {                
-                HttpResponseMessage response = await mClient.GetAsync("api/version/" + currver);        
+            {
+                HttpResponseMessage response = await mClient.GetAsync("api/version/" + currver);
                 if (response.IsSuccessStatusCode)
                 {
                     string gingerVersionAndNews = await response.Content.ReadAsStringAsync();
@@ -175,9 +196,9 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 {
                     return response.Content.ReadAsStringAsync().Result;
                 }
-                
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Telemetry Ex: " + ex.Message);
             }
@@ -187,48 +208,68 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
         public void SessionStarted()
         {
-            mTelemetrySession = new TelemetrySession(Guid);
-            if (WorkSpace.Instance.Telemetry.DoNotCollect)  return;
-
-            
-
-            Add("sessionstart", mTelemetrySession);
-
-            // TODO: add selective collection per user permission
-            //Add("sessionstart", new
-            //{
-            //    id = mTelemetrySession.Guid,
-            //    zz = mTelemetrySession.Debugger
-            //});
+            TelemetrySession = new TelemetrySession(Guid);
+            if (WorkSpace.Instance.Telemetry.DoNotCollect) return;
         }
-        
+
+        public void CheckSolutionInstanceForUserData()
+        {
+            if (WorkSpace.Instance.Solution.SourceControl != null && WorkSpace.Instance.Solution.SourceControl.GetSourceControlType != eSourceControlType.None)
+            {
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.SourceControl.ToString(), true, false, WorkSpace.Instance.Solution.SourceControl.GetSourceControlType.ToString());
+            }
+
+            if (WorkSpace.Instance.UserProfile != null)
+            {
+                if (!string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.UserType.ToString()))
+                {
+                    TelemetrySession.UserType = WorkSpace.Instance.UserProfile.UserType.ToString();
+                }
+                if (!string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.UserRole.ToString()))
+                {
+                    TelemetrySession.UserRole = WorkSpace.Instance.UserProfile.UserRole.ToString();
+                }
+                if (!string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.TerminologyDictionaryType.ToString()))
+                {
+                    TelemetrySession.Terminology = WorkSpace.Instance.UserProfile.TerminologyDictionaryType.ToString();
+
+                }
+            }
+        }
+
         public void SessionEnd()
         {
             if (WorkSpace.Instance.Telemetry.DoNotCollect) return;
+            TelemetrySession.EndTime = Time;
+            TimeSpan ts = TelemetrySession.EndTime - TelemetrySession.StartTime;
+            TelemetrySession.OverallSessionTime = ts.ToString(@"hh\:mm\:ss");
 
-            mTelemetrySession.EndTime = Time;
-            TimeSpan ts = mTelemetrySession.EndTime - mTelemetrySession.StartTime;
-            mTelemetrySession.Elapsed = ts.ToString(@"hh\:mm\:ss");
-            Add("sessionend", mTelemetrySession);
+            TimeSpan sp = TimeSpan.FromMilliseconds((double)TelemetrySession.OverallExecutionTimeNumber);
+            TelemetrySession.OverallExecutionTime = sp.ToString(@"hh\:mm\:ss");
 
-            Add("dummy", new { a = 1}); // add another dummy to make sure session is written
-
-            TelemetryRecords.CompleteAdding();
+            if (TelemetrySession.IsUserSession)
+            {
+                Add("sessionend", TelemetrySession);
+            }
             
-            
-            Task.Factory.StartNew(() => {
-                // TODO: add timeout to wait
-                while(!TelemetryRecords.IsCompleted) // Wait for all records to process
-                {
-                    Thread.Sleep(100);
-                }
 
-                Compress();
-                while (!done)  
-                {
-                    Thread.Sleep(100);
-                }
-            }).Wait(30000);  // Max 30 seconds to wait
+            TelemetryRecords.CompleteAdding(); 
+
+
+            //Task.Factory.StartNew(() =>
+            //{
+            //    // TODO: add timeout to wait
+            //    while (!TelemetryRecords.IsCompleted) // Wait for all records to process
+            //    {
+            //        Thread.Sleep(100);
+            //    }
+
+            //    //Compress();
+            //    while (!done)
+            //    {
+            //        Thread.Sleep(100);
+            //    }
+            //}).Wait(30000);  // Max 30 seconds to wait
         }
 
 
@@ -253,39 +294,43 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         // Multi thread safe
         BlockingCollection<object> TelemetryRecords = new BlockingCollection<object>();
         public void Add(string entityType, object data)
-        {                      
-            TelemetryRecord telemetryRecord = new TelemetryRecord(entityType, data) ;
-            TelemetryRecords.Add(telemetryRecord);                                    
+        {
+            try
+            {
+                TelemetryRecord telemetryRecord = new TelemetryRecord(entityType, data);
+                TelemetryRecords.Add(telemetryRecord);
+            }
+            catch(Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while adding to telemtry", e);
+            }
+
         }
 
 
         public void ProcessQueue()
         {
             foreach (TelemetryRecord telemetryRecord in TelemetryRecords.GetConsumingEnumerable())
-            {                                
-                string indexHeader = JsonConvert.SerializeObject(telemetryRecord);
-                string objJSON = JsonConvert.SerializeObject(telemetryRecord.getTelemetry());
-                
-                // Adding timestamp, uid and sid
-                string controlfields = "\"timestamp\":\"" + Time + "\",\"sid\":\"" + mTelemetrySession.Guid.ToString() + "\",\"uid\":\"" + Guid.ToString() + "\",";
-                string fullobj = indexHeader + Environment.NewLine + "{" + controlfields + objJSON.Substring(1) + Environment.NewLine;
-                             
-                //TODO: add try catch
+            {
+                string objJSON = JsonConvert.SerializeObject(telemetryRecord.getTelemetry(), Formatting.Indented, new JsonSerializerSettings
+                {
+                    DefaultValueHandling = DefaultValueHandling.Ignore
+                });
 
-                File.AppendAllText(sessionFileName, fullobj);                             
+                File.AppendAllText(sessionFileName, objJSON);
             }
         }
 
         public void AddException(Exception ex)
-        {            
+        {
             Add("Exception", new { message = ex.Message, StackTrace = ex.StackTrace });
         }
-        
+
         bool done;
         private async void Compress()
         {
             try
-            {                
+            {
                 string zipFileName = Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyyMMddhhmmss") + "_Data_zip";
                 string zipFolder = Path.Combine(TelemetryFolder, "Zip");
 
@@ -295,15 +340,15 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 }
 
                 string LocalZipfileName = Path.Combine(zipFolder, zipFileName);
-                
-                ZipFile.CreateFromDirectory(TelemetryDataFolder, LocalZipfileName);                
+
+                ZipFile.CreateFromDirectory(TelemetryDataFolder, LocalZipfileName);
 
                 if (File.Exists(LocalZipfileName))
                 {
                     foreach (string fn in Directory.GetFiles(TelemetryDataFolder))
                     {
                         File.Delete(fn);
-                    }                    
+                    }
                 }
 
                 if (!NetworkAvailable) return;
@@ -336,20 +381,25 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                     {
                         // Failed to upload
                     }
-                    
+
                 }
-                
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Telemetry Ex: " + ex.Message);
             }
-
             done = true;
         }
 
-        
-
-
+        public static ITelemetry TelemetryInstance { get { return GingerCoreCommonWorkSpace.Instance.Telemetry; } set { GingerCoreCommonWorkSpace.Instance.Telemetry = value; } }
+        public void UpdateTelemetrySessionUsedFeatures(string feature)
+        {
+            bool isFeatureCorrect = Enum.TryParse(feature, out TelemetrySession.GingerUsedFeatures usedFeature);
+            if (isFeatureCorrect)
+            {
+                UsedFeatureDetail.AddOrModifyFeatureDetail(usedFeature.ToString(), true, false);
+            }
+        }
     }
 }

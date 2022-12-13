@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
+using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
@@ -432,6 +433,7 @@ namespace Ginger.Run.RunSetActions
                         Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to delete the eMail Report Temp Folder '{0}', Issue: '{1}'", tempFolder, ex.Message));
                     }
                 }
+                UsedFeatureDetail.AddOrModifyFeatureDetail(TelemetrySession.GingerUsedFeatures.RunSetActionHTMLReportSendEmail.ToString(), true, true);
             }
         }
 

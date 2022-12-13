@@ -57,7 +57,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
 
             //Save the Environment 
             EnvsFolder.AddRepositoryItem(NewEnvironment);
-            
+
         }
     }
 }

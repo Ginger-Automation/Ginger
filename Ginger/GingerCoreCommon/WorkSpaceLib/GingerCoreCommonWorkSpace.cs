@@ -54,6 +54,9 @@ namespace Amdocs.Ginger.Common.WorkSpaceLib
             get;
             set;
         }
+
+        public ITelemetry Telemetry { get; set; }
+        
         public ISharedRepositoryOperations SharedRepositoryOperations
         {
             get;
