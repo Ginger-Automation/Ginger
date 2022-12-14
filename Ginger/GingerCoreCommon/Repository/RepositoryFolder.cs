@@ -375,6 +375,19 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public override void StartFileWatcherRecursive(string newFolderName, string oldFolderName)
+        {
+            //string oldFolderName = FolderName;
+            FolderRelativePath = FolderRelativePath.Replace(oldFolderName, newFolderName); //parentFolderRelativePath + "/" + FolderName;
+
+            StartFileWatcher();
+            foreach (RepositoryFolderBase RF in GetSubFolders())
+            {
+                //RF.FolderRelativePath = Path.Combine(RF.FolderRelativePath.Substring(0, RF.FolderRelativePath.LastIndexOf(oldFolderName)), newFolderName);
+                RF.StartFileWatcherRecursive(newFolderName, oldFolderName);
+            }
+        }
+
         public override void PauseFileWatcher()
         {
             if (mFileWatcher == null)
@@ -828,7 +841,10 @@ namespace Amdocs.Ginger.Repository
             }
             else
             {
+                StopFileWatcherRecursive();
                 Directory.Move(PathHelper.GetLongPath(FolderFullPath), PathHelper.GetLongPath(newFullPath));
+
+                StartFileWatcherRecursive(newFolderName, FolderName);
             }
             //Enable file watcher to catch the change first, so it will be visible in UI
             Thread.Sleep(100);
