@@ -377,13 +377,11 @@ namespace Amdocs.Ginger.Repository
 
         public override void StartFileWatcherRecursive(string newFolderName, string oldFolderName)
         {
-            //string oldFolderName = FolderName;
-            FolderRelativePath = FolderRelativePath.Replace(oldFolderName, newFolderName); //parentFolderRelativePath + "/" + FolderName;
+            FolderRelativePath = FolderRelativePath.Replace(oldFolderName, newFolderName);
 
             StartFileWatcher();
             foreach (RepositoryFolderBase RF in GetSubFolders())
             {
-                //RF.FolderRelativePath = Path.Combine(RF.FolderRelativePath.Substring(0, RF.FolderRelativePath.LastIndexOf(oldFolderName)), newFolderName);
                 RF.StartFileWatcherRecursive(newFolderName, oldFolderName);
             }
         }
