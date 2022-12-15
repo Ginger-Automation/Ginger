@@ -112,7 +112,10 @@ namespace Ginger
                         BindingOperations.EnableCollectionSynchronization(mObjList, mObjList);//added to allow collection changes from other threads
                     }
 
-                    mCollectionView = new CollectionViewSource() { Source = mObjList }.View;
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        mCollectionView = new CollectionViewSource() { Source = mObjList }.View;
+                    });
 
                     if (mCollectionView != null)
                     {
