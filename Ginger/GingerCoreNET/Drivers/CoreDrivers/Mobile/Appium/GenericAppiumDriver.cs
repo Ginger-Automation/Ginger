@@ -2128,7 +2128,7 @@ namespace Amdocs.Ginger.CoreNET
             OnDriverMessage(eDriverMessageType.UnHighlightElement);
         }
 
-        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
         {
             if (AppType == eAppType.Web)
             {
