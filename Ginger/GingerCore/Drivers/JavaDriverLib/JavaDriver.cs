@@ -3709,7 +3709,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 Reporter.ToLog(eLogLevel.WARN, "failed to un-highlight object", ex);
             }
         }
-        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
         {
             try
             {

@@ -1332,7 +1332,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             throw new NotImplementedException();
         }
 
-        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
         {
             throw new NotImplementedException();
         }

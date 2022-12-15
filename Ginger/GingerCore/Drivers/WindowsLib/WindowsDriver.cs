@@ -1520,7 +1520,7 @@ namespace GingerCore.Drivers.WindowsLib
         {
         }
 
-        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
         {
             try
             {
