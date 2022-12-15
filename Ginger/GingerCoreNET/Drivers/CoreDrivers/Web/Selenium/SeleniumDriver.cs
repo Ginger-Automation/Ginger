@@ -3442,7 +3442,7 @@ namespace GingerCore.Drivers
                 locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
             }
 
-            foreach (ElementLocator locator in currentPOMElementInfo.Locators.Where(x => x.Active == true).ToList())
+            foreach(ElementLocator locator in currentPOMElementInfo.Locators.Where(x => x.Active == true).ToList())
             {
                 List<FriendlyLocatorElement> friendlyLocatorElementlist = new List<FriendlyLocatorElement>();
                 if (locator.EnableFriendlyLocator && !iscallfromFriendlyLocator)
@@ -5793,7 +5793,7 @@ namespace GingerCore.Drivers
             bool learnElement = true;
 
             //filter element if needed, in case we need to learn only the MappedElements .i.e., LearnMappedElementsOnly is checked
-            if (pomSetting.filteredElementType != null)
+            if (pomSetting?.filteredElementType != null)
             {
                 //Case Learn Only Mapped Element : set learnElement to false in case element doesn't exist in the filteredElementType List AND element is not frame element
                 if (!pomSetting.filteredElementType.Contains(elementTypeEnum.Item2))
@@ -8844,7 +8844,7 @@ namespace GingerCore.Drivers
             return true;
         }
 
-        bool IWindowExplorer.TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        bool IWindowExplorer.TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false,ApplicationPOMModel mPOM = null)
         {
             try
             {
@@ -8856,23 +8856,53 @@ namespace GingerCore.Drivers
                 }
 
                 List<ElementLocator> activesElementLocators = EI.Locators.Where(x => x.Active == true).ToList();
-                List<ElementLocator> FriendlyLocators = EI.FriendlyLocators.ToList();
+                List<ElementLocator> FriendlyLocator = EI.FriendlyLocators.Where(x => x.Active == true).ToList();
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
-
+                
                 foreach (ElementLocator el in activesElementLocators)
                 {
                     IWebElement webElement = null;
+                    List<FriendlyLocatorElement> friendlyLocatorElementlist = new List<FriendlyLocatorElement>();
+                    if (el.EnableFriendlyLocator)
+                    {
+                        IWebElement targetElement = null;
+
+                        foreach (ElementLocator FLocator in FriendlyLocator)
+                        {
+                            if (!FLocator.IsAutoLearned)
+                            {
+                                ElementLocator evaluatedLocator = FLocator.CreateInstance() as ElementLocator;
+                                ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+                                FLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
+                            }
+
+                            if (FLocator.LocateBy == eLocateBy.POMElement && mPOM != null)
+                            {
+                                ElementInfo ReferancePOMElementInfo = mPOM.MappedUIElements.FirstOrDefault(x=> x.Guid.ToString() == FLocator.LocateValue);
+
+                                targetElement = LocateElementByLocators(ReferancePOMElementInfo, true);
+                            }
+                            else
+                            {
+                                targetElement = LocateElementByLocator(FLocator);
+                            }
+                            if (targetElement != null)
+                            {
+                                FriendlyLocatorElement friendlyLocatorElement = new FriendlyLocatorElement();
+                                friendlyLocatorElement.position = FLocator.Position;
+                                friendlyLocatorElement.FriendlyElement = targetElement;
+                                friendlyLocatorElementlist.Add(friendlyLocatorElement);
+                            }
+                        }
+
+                    }
                     if (!el.IsAutoLearned)
                     {
-                        webElement = LocateElementIfNotAutoLeared(el);
-                    }
-                    else if(el.EnableFriendlyLocator)
-                    {
-                        webElement = LocateElementByLocator(FriendlyLocators.FirstOrDefault(x => x == el), null,true); 
+                        webElement = LocateElementIfNotAutoLeared(el, friendlyLocatorElementlist);
                     }
                     else
                     {
-                        webElement = LocateElementByLocator(el,null, true);
+                        webElement = LocateElementByLocator(el,friendlyLocatorElementlist, true);
                     }
                     if (webElement != null)
                     {

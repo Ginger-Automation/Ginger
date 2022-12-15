@@ -864,7 +864,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 var testElement = new ElementInfo();
                 testElement.Path = CurrentEI.Path;
                 testElement.Locators = new ObservableList<ElementLocator>() { mSelectedLocator };
-
+                testElement.FriendlyLocators = CurrentEI.FriendlyLocators;
                 //For Java Driver Widgets
 
                 if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey).Equals(ePlatformType.Java))
@@ -877,7 +877,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     }
                 }
 
-                mWinExplorer.TestElementLocators(testElement);
+                mWinExplorer.TestElementLocators(testElement,false,mPOM);
             }
         }
 
