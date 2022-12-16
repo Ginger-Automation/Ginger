@@ -8,6 +8,8 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>GingerIconNew.ico</ApplicationIcon>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <AssemblyVersion>5.1</AssemblyVersion>
+    <FileVersion>5.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
