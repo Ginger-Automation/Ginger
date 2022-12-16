@@ -83,7 +83,7 @@ namespace Amdocs.Ginger.Repository
         protected ConcurrentDictionary<string, object> mBackupDic;
         protected bool mBackupInProgress = false;
 
-        public bool IsBackupExist
+        public bool IsBackupExist 
         {
             get
             {
@@ -617,7 +617,7 @@ namespace Amdocs.Ginger.Repository
             }
             catch (Exception exc)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured in the Undo Process", exc);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred in the Undo Process", exc);
             }
             finally
             {
@@ -757,7 +757,7 @@ namespace Amdocs.Ginger.Repository
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Error occured during object copy of the item: '{0}', type: '{1}', property/field: '{2}'", this.ItemName, this.GetType(), mi.Name), ex);
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Error occurred during object copy of the item: '{0}', type: '{1}', property/field: '{2}'", this.ItemName, this.GetType(), mi.Name), ex);
                 }
             });
             //targetObj.PostDeserialization();
@@ -956,7 +956,7 @@ namespace Amdocs.Ginger.Repository
                     return mFilePath;
                 }
             }
-            set { mFilePath = value; OnPropertyChanged(nameof(FilePath)); }
+            set { if (mFilePath != value) { mFilePath = value; OnPropertyChanged(nameof(FilePath)); } }
         }
 
         public virtual eImageType ItemImageType
@@ -1062,7 +1062,7 @@ namespace Amdocs.Ginger.Repository
 
         private void DirtyCheck(string name)
         {
-            if (DirtyStatus != eDirtyStatus.NoTracked && DirtyTrackingFields != null && DirtyTrackingFields.Contains(name))
+            if (DirtyStatus != eDirtyStatus.NoTracked && DirtyTrackingFields != null && DirtyTrackingFields.Contains(name) && DirtyTracking != eDirtyTracking.Paused)
             {
                 DirtyStatus = eDirtyStatus.Modified;
                 // RaiseDirtyChangedEvent();
@@ -1072,7 +1072,10 @@ namespace Amdocs.Ginger.Repository
 
         internal void RaiseDirtyChanged(object sender, EventArgs e)
         {
-            DirtyStatus = eDirtyStatus.Modified;
+            if (DirtyTracking != eDirtyTracking.Paused)
+            {
+                DirtyStatus = eDirtyStatus.Modified;
+            }
             // RaiseDirtyChangedEvent();
         }
 
@@ -1081,24 +1084,60 @@ namespace Amdocs.Ginger.Repository
         internal void ChildCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             // each change in Observavle will mark the item modified - all NotifyCollectionChangedAction.*
-            DirtyStatus = eDirtyStatus.Modified;
-
-            // if item added set tracking too
-            if (e.Action == NotifyCollectionChangedAction.Add)
+            if (DirtyTracking != eDirtyTracking.Paused)
             {
-                foreach (object obj in e.NewItems)
+                DirtyStatus = eDirtyStatus.Modified;
+                #region Collection Action - Add
+                // if item added set tracking too
+                if (e.Action == NotifyCollectionChangedAction.Add)
                 {
-                    if (obj is RepositoryItemBase)
+                    foreach (object obj in e.NewItems)
                     {
-                        RepositoryItemBase repositoryItemBase = (RepositoryItemBase)obj;
-                        repositoryItemBase.StartDirtyTracking();
-                        repositoryItemBase.OnDirtyStatusChanged += this.RaiseDirtyChanged;
-                    }
-                    else
-                    {
-                        // not RI no tracking...
+                        if (obj is RepositoryItemBase)
+                        {
+                            RepositoryItemBase repositoryItemBase = (RepositoryItemBase)obj;
+                            repositoryItemBase.StartDirtyTracking();
+                            repositoryItemBase.OnDirtyStatusChanged += this.RaiseDirtyChanged;
+                            repositoryItemBase.DirtyStatus = eDirtyStatus.Modified;
+                        }
+                        else
+                        {
+                            // not RI no tracking...
+                        }
                     }
                 }
+                #endregion
+                #region Collection Action - Remove Or Move
+                else if (e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Move)
+                {
+                    foreach (object obj in e.OldItems)
+                    {
+                        if (obj is RepositoryItemBase)
+                        {
+                            ((RepositoryItemBase)obj).DirtyStatus = eDirtyStatus.Modified;
+                        }
+                    }
+                }
+                #endregion
+                #region Collection Action - Replace
+                else if (e.Action == NotifyCollectionChangedAction.Replace)
+                {
+                    foreach (object obj in e.NewItems)
+                    {
+                        if (obj is RepositoryItemBase)
+                        {
+                            ((RepositoryItemBase)obj).DirtyStatus = eDirtyStatus.Modified;
+                        }
+                    }
+                    foreach (object obj in e.OldItems)
+                    {
+                        if (obj is RepositoryItemBase)
+                        {
+                            ((RepositoryItemBase)obj).DirtyStatus = eDirtyStatus.Modified;
+                        }
+                    }
+                }
+                #endregion
             }
         }
 
@@ -1113,11 +1152,6 @@ namespace Amdocs.Ginger.Repository
 
         public void ResumeDirtyTracking()
         {
-            if (DirtyTracking == eDirtyTracking.NotStarted)
-            {
-                StartDirtyTracking();
-                return;
-            }
 
             if (DirtyTracking == eDirtyTracking.Paused)
             {
@@ -1156,7 +1190,6 @@ namespace Amdocs.Ginger.Repository
                 {
                     return;
                 }
-
                 DirtyTrackingFields.Add(PI.Name);
 
                 // We track observable list which are seriazlized - drill down recursivley in obj tree
@@ -1186,6 +1219,17 @@ namespace Amdocs.Ginger.Repository
                         return;
                     }
                     TrackObservableList((IObservableList)obj);
+                }
+                // track changes in childern which are RepositoryItemBase
+                if (typeof(RepositoryItemBase).IsAssignableFrom(PI.PropertyType))
+                {
+                    RepositoryItemBase obj = (RepositoryItemBase)PI.GetValue(this);
+
+                    if (obj == null)
+                    {
+                        return;
+                    }
+                    obj.OnDirtyStatusChanged += this.RaiseDirtyChanged;
                 }
             });
 
@@ -1279,6 +1323,16 @@ namespace Amdocs.Ginger.Repository
                     foreach (object o in obj)
                         if (o is RepositoryItemBase)
                             ((RepositoryItemBase)o).SetDirtyStatusToNoChange();
+                }
+                if (typeof(RepositoryItemBase).IsAssignableFrom(PI.PropertyType))
+                {
+                    RepositoryItemBase obj = (RepositoryItemBase)PI.GetValue(this);
+
+                    if (obj == null)
+                    {
+                        continue;
+                    }
+                    obj.SetDirtyStatusToNoChange();
                 }
             }
 
@@ -1424,6 +1478,14 @@ namespace Amdocs.Ginger.Repository
         /// </summary>
         public virtual void UpdateCopiedItem()
         {
+        }
+
+        public virtual void PostSaveHandler()
+        {
+        }
+        public virtual bool PreSaveHandler()
+        {
+            return false;
         }
 
         bool mPublish = false;

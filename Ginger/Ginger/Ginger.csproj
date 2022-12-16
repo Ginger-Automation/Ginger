@@ -586,8 +586,14 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\ios.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\iosOutline.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\iosWhite.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs-n.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs-new.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-light-grey-n.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-light-grey-new.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-light-grey.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\save-regular-amdocs-gradient.svg" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\save-regular-light-grey.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\VRTLogo.png" />
   </ItemGroup>
@@ -657,14 +663,14 @@
     <PackageReference Include="NSwag.Core.Yaml" Version="12.0.9" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.61" />
     <PackageReference Include="RoyWpf.System.Windows.Interactivity" Version="0.1.2" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="105.0.5195.5200" />
-    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.31.0.1" />
-    <PackageReference Include="Selenium.WebDriver.IEDriver" Version="4.2.0" />
-    <PackageReference Include="Selenium.WebDriver.MSEdgeDriver" Version="105.0.1343.27" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="108.0.5359.7100" />
+    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.32.0" />
+    <PackageReference Include="Selenium.WebDriver.IEDriver" Version="4.6.0" />
+    <PackageReference Include="Selenium.WebDriver.MSEdgeDriver" Version="107.0.1418.42" />
     <PackageReference Include="sharpadbclient" Version="2.3.23" />
     <PackageReference Include="Syncfusion.Shared.WPF" Version="20.1.0.55" />
     <PackageReference Include="System.Data.OleDb" Version="6.0.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     <PackageReference Include="System.Management" Version="7.0.0-preview.4.22229.4" />
     <PackageReference Include="System.Web.Services.Description" Version="4.9.0" />
     <PackageReference Include="System.Windows.Forms.DataVisualization" Version="1.0.0-prerelease.20110.1" />
@@ -2415,6 +2421,8 @@
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\save-all-regular-light-grey.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\save-regular-amdocs-gradient.svg" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\save-regular-light-grey.svg" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

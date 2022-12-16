@@ -1521,13 +1521,13 @@ namespace Amdocs.Ginger.CoreNET
                 return null;
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             if (AppType == eAppType.Web)
             {
-                mSeleniumDriver.ExtraLocatorsRequired = !(relativeXpathTemplateList == null || relativeXpathTemplateList.Count == 0);
+                mSeleniumDriver.ExtraLocatorsRequired = !(pomSetting.relativeXpathTemplateList == null || pomSetting.relativeXpathTemplateList.Count == 0);
 
-                return await Task.Run(() => ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(filteredElementType, foundElementsList, isPOMLearn, specificFramePath, relativeXpathTemplateList, LearnScreenshotsOfElements));
+                return await Task.Run(() => ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(pomSetting,foundElementsList));
             }
 
             try
@@ -1566,9 +1566,9 @@ namespace Amdocs.Ginger.CoreNET
                     ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
                     EI.IsAutoLearned = true;
 
-                    if (relativeXpathTemplateList != null && relativeXpathTemplateList.Count > 0)
+                    if (pomSetting.relativeXpathTemplateList != null && pomSetting.relativeXpathTemplateList.Count > 0)
                     {
-                        foreach (var template in relativeXpathTemplateList)
+                        foreach (var template in pomSetting.relativeXpathTemplateList)
                         {
                             eLocateBy CustomLocLocateBy = eLocateBy.ByRelXPath;
 
@@ -1583,8 +1583,8 @@ namespace Amdocs.Ginger.CoreNET
                         }
                     }
 
-                    if (filteredElementType == null ||
-                        (filteredElementType != null && filteredElementType.Contains(EI.ElementTypeEnum)))
+                    if (pomSetting.filteredElementType == null ||
+                        (pomSetting.filteredElementType != null && pomSetting.filteredElementType.Contains(EI.ElementTypeEnum)))
                         foundElementsList.Add(EI);
                 }
 
@@ -1871,11 +1871,11 @@ namespace Amdocs.Ginger.CoreNET
             return xmlNode.Attributes[attr].Value;
         }
 
-        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
+        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo,PomSetting pomSetting = null)
         {
             if (AppType == eAppType.Web)
             {
-                return ((IWindowExplorer)mSeleniumDriver).GetElementLocators(ElementInfo);
+                return ((IWindowExplorer)mSeleniumDriver).GetElementLocators(ElementInfo,pomSetting);
             }
 
             ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
@@ -2128,7 +2128,7 @@ namespace Amdocs.Ginger.CoreNET
             OnDriverMessage(eDriverMessageType.UnHighlightElement);
         }
 
-        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
         {
             if (AppType == eAppType.Web)
             {
@@ -2353,11 +2353,11 @@ namespace Amdocs.Ginger.CoreNET
             IsSpying = true;
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI,PomSetting pomSetting = null)
         {
             if (AppType == eAppType.Web)
             {
-                return ((IWindowExplorer)mSeleniumDriver).LearnElementInfoDetails(EI);
+                return ((IWindowExplorer)mSeleniumDriver).LearnElementInfoDetails(EI, pomSetting);
             }
 
             EI = GetElementInfoforXmlNode(EI.ElementObject as XmlNode).Result;
@@ -3125,7 +3125,7 @@ namespace Amdocs.Ginger.CoreNET
             return Driver.Manage().Window.Size.ToString();
         }
 
-        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo)
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
             throw new NotImplementedException();
         }

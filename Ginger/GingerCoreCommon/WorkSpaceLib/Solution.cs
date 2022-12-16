@@ -68,8 +68,11 @@ namespace Ginger.SolutionGeneral
             }
             set
             {
-                mName = value;
-                OnPropertyChanged(nameof(Name));
+                if (mName != value)
+                {
+                    mName = value;
+                    OnPropertyChanged(nameof(Name));
+                }
             }
         }
 

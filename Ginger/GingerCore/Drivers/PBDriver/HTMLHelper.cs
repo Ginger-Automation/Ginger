@@ -36,6 +36,7 @@ using System.Text.RegularExpressions;
 
 using Amdocs.Ginger.Common.UIElement;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 
 namespace GingerCore.Drivers.PBDriver
 {
@@ -1877,7 +1878,7 @@ namespace GingerCore.Drivers.PBDriver
             return root;
         }
 
-        ElementInfo IXPath.GetElementParent(ElementInfo ElementInfo)
+        ElementInfo IXPath.GetElementParent(ElementInfo ElementInfo, PomSetting pomSetting)
         {
             HTMLElementInfo elem = (HTMLElementInfo)ElementInfo;
             if (object.ReferenceEquals(((IHTMLElement)elem.ElementObject).parentElement, null)) return null;

@@ -1086,6 +1086,7 @@ namespace Ginger.Run
         {
             try
             {
+                //act.PauseDirtyTracking();
                 //init
                 act.SolutionFolder = SolutionFolder;
                 act.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
@@ -1142,6 +1143,7 @@ namespace Ginger.Run
                     mRunSource = null;
                     mErrorPostExecutionActionFlowBreaker = false;
                 }
+                //act.ResumeDirtyTracking();
             }
         }
 
@@ -2486,6 +2488,15 @@ namespace Ginger.Run
 
         private void ResetAction(Act act)
         {
+            /*
+            if (act.DirtyTracking == Amdocs.Ginger.Common.Enums.eDirtyTracking.Paused)
+            {
+                act.Reset(isActionDirtyTrackingPaused: true);
+            }
+            else
+            {
+                act.Reset();
+            }*/
             act.Reset();
         }
 
@@ -3925,15 +3936,15 @@ namespace Ginger.Run
                     {
                         ExecutingActivity.Status = eRunStatus.Running;
                         GiveUserFeedback();
-                        // We run the first Activity in Continue mode, if it came from RunFlow, then it is set to first action
-                        //if (FirstExecutedActivity.Equals(ExecutingActivity))
-                        //{
-                        //    RunActivity(ExecutingActivity, true, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
-                        //}
-                        //else
-                        //{
-                        RunActivity(ExecutingActivity, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
-                        //}
+                        if (doContinueRun && FirstExecutedActivity.Equals(ExecutingActivity))
+                        {
+                            // We run the first Activity in Continue mode, if it came from RunFlow, then it is set to first action
+                            RunActivity(ExecutingActivity, true, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
+                        }
+                        else
+                        {
+                            RunActivity(ExecutingActivity, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
+                        }
                         //TODO: Why this is here? do we need to rehook
                         CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
                         if (ExecutingActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)

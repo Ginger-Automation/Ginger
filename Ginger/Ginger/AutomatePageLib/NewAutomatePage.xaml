@@ -43,7 +43,7 @@
                         <Label HorizontalAlignment="Center" FontSize="20" Foreground="{StaticResource $BackgroundColor_DarkBlue}">></Label>
                         <ComboBox x:Name="xBusinessFlowItemComboBox" ContextMenu="{x:Null}" SelectionChanged="xBusinessFlowItemComboBox_SelectionChanged" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" FontSize="18" Height="30" Foreground="{StaticResource $SelectionColor_Pink}"/>
                     </StackPanel>
-                    <UserControls:ucButton x:Name="xSaveBusinessFlowBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="22" ButtonImageType="Save" Click="xSaveBusinessFlowBtn_Click" >
+                    <UserControls:ucButton x:Name="xSaveBusinessFlowBtn" ButtonType="ImageButton" HorizontalAlignment="Left" Visibility="Collapsed" VerticalAlignment="Center" ButtonFontImageSize="22" ButtonImageType="Save" Click="xSaveBusinessFlowBtn_Click" >
                         <UserControls:ucButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Save [BusinessFlow] Changes"></GingerCore:ucTextDicResource>
                         </UserControls:ucButton.ToolTip>
@@ -252,7 +252,7 @@
                                         <UserControls:ImageMakerControl ImageType="MapALM" SetAsFontImageWithSize="18" />
                                     </MenuItem.Icon>
                                     <MenuItem.Header>
-                                        <GingerCore:ucTextDicResource Text="Export [BusinessFlow] to ALM" />
+                                        <GingerCore:ucTextDicResource Text="Map [BusinessFlow] to ALM" />
                                     </MenuItem.Header>
                                 </MenuItem>
                                 <MenuItem x:Name="xRefreshFromAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xRefreshFromAlmMenuItem_Click">

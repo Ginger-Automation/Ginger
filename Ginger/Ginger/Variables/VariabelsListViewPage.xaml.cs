@@ -66,7 +66,10 @@ namespace Ginger.BusinessFlowPages
             mVariablesLevel = GetVariablesLevel();
             mContext = context;
             mPageViewMode = pageViewMode;
-            CurrentItem = WorkSpace.Instance.Solution;
+            if (pageViewMode == General.eRIPageViewMode.Standalone)
+            {
+                CurrentItemToSave = WorkSpace.Instance.Solution;
+            }
 
             SetListView();
             ShowHideEditPage(null);
@@ -158,7 +161,7 @@ namespace Ginger.BusinessFlowPages
                     }                   
                     else if (mPageViewMode == General.eRIPageViewMode.SharedReposiotry)
                     {
-                        mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.SharedRepository);
+                        mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.SharedRepository,parent: mVariabelsParent);
                     }
                     else
                     {

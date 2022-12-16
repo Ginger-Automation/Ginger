@@ -44,6 +44,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         public ObservableList<ElementLocator> ElementLocatorsSettingsList = new ObservableList<ElementLocator>();
         List<eLocateBy> mElementLocatorsList = new List<eLocateBy>();
         public ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();
+        public PomSetting pomSetting;
 
         bool mLearnOnlyMappedElements = true;
         public bool LearnOnlyMappedElements
@@ -160,12 +161,20 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         public void PrepareLearningConfigurations()
         {
+            pomSetting = new PomSetting();
             var uIElementList = new List<UIElementFilter>();
             uIElementList.AddRange(AutoMapBasicElementTypesList.ToList());
             uIElementList.AddRange(AutoMapAdvanceElementTypesList.ToList());
 
             SelectedElementTypesList = uIElementList.Where(x => x.Selected).Select(x => x.ElementType).ToList();
-            mElementLocatorsList = ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();           
+            mElementLocatorsList = ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();
+
+            pomSetting.filteredElementType = SelectedElementTypesList;
+            pomSetting.ElementLocatorsSettingsList = ElementLocatorsSettingsList;
+            pomSetting.isPOMLearn = true;
+            pomSetting.relativeXpathTemplateList = GetRelativeXpathTemplateList();
+            pomSetting.SpecificFramePath = SpecificFramePath;
+            pomSetting.LearnScreenshotsOfElements = LearnScreenshotsOfElements;
         }
 
         public void LearnScreenShot()
@@ -200,12 +209,13 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 if (SelectedElementTypesList.Count > 0)
                 {
-                    await IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList,true, SpecificFramePath,GetRelativeXpathTemplateList(), LearnScreenshotsOfElements, POM.ApplicationPOMMetaData);
+                    await IWindowExplorerDriver.GetVisibleControls(pomSetting,mElementsList, POM.ApplicationPOMMetaData);
                 }
             }
             else
             {
-               await IWindowExplorerDriver.GetVisibleControls(null, mElementsList,true, SpecificFramePath,GetRelativeXpathTemplateList(), LearnScreenshotsOfElements, POM.ApplicationPOMMetaData);
+                pomSetting.filteredElementType = null;
+               await IWindowExplorerDriver.GetVisibleControls(pomSetting, mElementsList, POM.ApplicationPOMMetaData);
             }
 
         }

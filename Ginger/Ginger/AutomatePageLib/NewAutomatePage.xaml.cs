@@ -407,7 +407,7 @@ namespace GingerWPF.BusinessFlowsLib
                 ResetPageUI();
 
                 mBusinessFlow = businessFlowToLoad;
-                CurrentItem = mBusinessFlow;
+                CurrentItemToSave = mBusinessFlow;
                 if (mBusinessFlow != null)
                 {
                     try

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -109,8 +109,11 @@ namespace GingerCoreNET.ALMLib
             }
             set
             {
-                mJiraTestingALM = value;
-                OnPropertyChanged(nameof(JiraTestingALM));
+                if (mJiraTestingALM != value)
+                {
+                    mJiraTestingALM = value;
+                    OnPropertyChanged(nameof(JiraTestingALM));
+                }
             }
         }
 

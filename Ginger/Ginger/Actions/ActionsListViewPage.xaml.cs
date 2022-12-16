@@ -206,6 +206,10 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mActionsListHelper.UpdatePageViewMode(mPageViewMode);
                 mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
+                if(mActionsListHelper.Context != null && mActivity != mActionsListHelper.Context.Activity)
+                {
+                    UpdateActivity(mActionsListHelper.Context.Activity);
+                }
             }
 
             if (mActivity != null)

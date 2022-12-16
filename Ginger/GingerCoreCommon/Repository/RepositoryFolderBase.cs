@@ -53,7 +53,7 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                if(mIsFolderExpanded != value)
+                if (mIsFolderExpanded != value)
                 {
                     mIsFolderExpanded = value;
                     OnPropertyChanged(nameof(FolderImageType));
@@ -66,11 +66,11 @@ namespace Amdocs.Ginger.Repository
             get
             {
                 if (IsFolderExpanded)
-                { 
+                {
                     return eImageType.OpenFolder;
                 }
                 else
-                { 
+                {
                     return eImageType.Folder;
                 }
             }
@@ -155,6 +155,11 @@ namespace Amdocs.Ginger.Repository
         }
 
         public virtual void ResumeFileWatcher()
+        {
+            // handled in Repository Folder
+        }
+
+        public virtual void StartFileWatcherRecursive(string newFolderName, string oldFolderName)
         {
             // handled in Repository Folder
         }

@@ -145,6 +145,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey) == ePlatformType.Web)
             {
                 isEnableFriendlyLocator = true;
+                xElementDetails.xFriendlyLocatorTab.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xElementDetails.xFriendlyLocatorTab.Visibility = Visibility.Collapsed;
             }
 
             SetElementsGridView();
@@ -759,12 +764,33 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mSelectedElement.Locators.CollectionChanged += Locators_CollectionChanged;
                 xElementDetails.xLocatorsGrid.DataSourceList = mSelectedElement.Locators;
                 UpdateLocatorsHeader();
-                mSelectedElement.FriendlyLocators.CollectionChanged -= FriendlyLocators_CollectionChanged;
-                mSelectedElement.FriendlyLocators.CollectionChanged += FriendlyLocators_CollectionChanged;
-                xElementDetails.xFriendlyLocatorsGrid.DataSourceList = mSelectedElement.FriendlyLocators;
-                xElementDetails.xFriendlyLocatorsGrid.ShowAdd = Visibility.Collapsed;
-                xElementDetails.xFriendlyLocatorsGrid.ShowDelete = Visibility.Collapsed;
-                UpdateFriendlyLocatorsHeader();
+                if (isEnableFriendlyLocator)
+                {
+                    mSelectedElement.FriendlyLocators.CollectionChanged -= FriendlyLocators_CollectionChanged;
+                    mSelectedElement.FriendlyLocators.CollectionChanged += FriendlyLocators_CollectionChanged;
+                    for (int j = 0; j < mSelectedElement.FriendlyLocators.Count; j++)
+                    {
+                        ElementLocator felementLocator = mSelectedElement.FriendlyLocators[j];
+                        ElementInfo newelementinfo = mElements.FirstOrDefault(x => x.Guid.ToString() == felementLocator.LocateValue);
+                        if (newelementinfo != null)
+                        {
+                            felementLocator.LocateValue = newelementinfo.Guid.ToString();
+                            felementLocator.ReferanceElement = newelementinfo.ElementName + "[" + newelementinfo.ElementType + "]";
+                        }
+                        else
+                        {
+                            mSelectedElement.FriendlyLocators.Remove(felementLocator);
+                        }
+                    }
+                    xElementDetails.xFriendlyLocatorsGrid.DataSourceList = mSelectedElement.FriendlyLocators;
+                    xElementDetails.xFriendlyLocatorsGrid.ShowAdd = Visibility.Collapsed;
+                    xElementDetails.xFriendlyLocatorsGrid.ShowDelete = Visibility.Collapsed;
+                    UpdateFriendlyLocatorsHeader();
+                }
+                else
+                {
+                    xElementDetails.xFriendlyLocatorTab.Visibility = Visibility.Collapsed;
+                }
 
                 mSelectedElement.Properties.CollectionChanged -= Properties_CollectionChanged;
                 mSelectedElement.Properties.CollectionChanged += Properties_CollectionChanged;
@@ -838,7 +864,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 var testElement = new ElementInfo();
                 testElement.Path = CurrentEI.Path;
                 testElement.Locators = new ObservableList<ElementLocator>() { mSelectedLocator };
-
+                testElement.FriendlyLocators = CurrentEI.FriendlyLocators;
                 //For Java Driver Widgets
 
                 if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey).Equals(ePlatformType.Java))
@@ -851,7 +877,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     }
                 }
 
-                mWinExplorer.TestElementLocators(testElement);
+                mWinExplorer.TestElementLocators(testElement,false,mPOM);
             }
         }
 

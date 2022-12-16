@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -60,8 +60,11 @@ namespace Amdocs.Ginger.Repository
 
             set
             {
-                mValueType = value;
-                OnPropertyChanged(Fields.ValueType);
+                if (mValueType != value)
+                {
+                    mValueType = value;
+                    OnPropertyChanged(Fields.ValueType);
+                }
                 OnPropertyChanged(nameof(IsBrowseNeeded));
             }
         }

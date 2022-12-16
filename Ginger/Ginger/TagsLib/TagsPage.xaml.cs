@@ -45,7 +45,7 @@ namespace Ginger.TagsLib
 
             mViewMode = viewMode;
             mTags = tags;
-            CurrentItem = WorkSpace.Instance.Solution;
+            CurrentItemToSave = WorkSpace.Instance.Solution;
             if (mViewMode == eViewMode.Solution)
             {
                  WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;

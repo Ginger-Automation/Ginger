@@ -47,9 +47,9 @@ namespace Ginger.Configurations
         private void Init()
         {
             _VRTConfiguration = WorkSpace.Instance.Solution.VRTConfiguration;
-            _VRTConfiguration.StartDirtyTracking();
-            CurrentItem = WorkSpace.Instance.Solution;
+            CurrentItemToSave = WorkSpace.Instance.Solution;
             SetControls();
+            _VRTConfiguration.StartDirtyTracking();
         }
 
         private void SetControls()
@@ -94,24 +94,6 @@ namespace Ginger.Configurations
         private void xSaveButton_Click(object sender, RoutedEventArgs e)
         {
             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
-        }
-
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (WorkSpace.Instance.Solution != null)
-            {
-                if ((bool)e.NewValue)
-                {
-                    WorkSpace.Instance.CurrentSelectedItem = WorkSpace.Instance.Solution;
-                }
-                else
-                {
-                    if (WorkSpace.Instance.CurrentSelectedItem == WorkSpace.Instance.Solution)
-                    {
-                        WorkSpace.Instance.CurrentSelectedItem = null;
-                    }
-                }
-            }
         }
     }
 }

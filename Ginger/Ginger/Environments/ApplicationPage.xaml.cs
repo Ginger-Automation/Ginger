@@ -43,7 +43,7 @@ namespace Ginger.Environments
             InitializeComponent();
             mEnvApplication = app;
             mContext = context;
-            CurrentItem = mContext.Environment;
+            CurrentItemToSave = mContext.Environment;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ApplicationNameTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DescriptionTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Description));
 

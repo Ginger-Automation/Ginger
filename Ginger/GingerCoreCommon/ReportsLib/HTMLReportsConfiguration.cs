@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -45,8 +45,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mLimitReportFolderSize = value;
-                OnPropertyChanged(nameof(LimitReportFolderSize));
+                if (mLimitReportFolderSize != value)
+                {
+                    mLimitReportFolderSize = value;
+                    OnPropertyChanged(nameof(LimitReportFolderSize));
+                }
             }
         }
 
@@ -64,8 +67,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mHTMLReportsFolder = value;
-                OnPropertyChanged(nameof(HTMLReportsFolder));
+                if (mHTMLReportsFolder != value)
+                {
+                    mHTMLReportsFolder = value;
+                    OnPropertyChanged(nameof(HTMLReportsFolder));
+                }
             }
         }
 
@@ -79,8 +85,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mHTMLReportsAutomaticProdIsEnabled = value;
-                OnPropertyChanged(nameof(HTMLReportsAutomaticProdIsEnabled));
+                if (mHTMLReportsAutomaticProdIsEnabled != value)
+                {
+                    mHTMLReportsAutomaticProdIsEnabled = value;
+                    OnPropertyChanged(nameof(HTMLReportsAutomaticProdIsEnabled));
+                }
             }
         }
 
@@ -94,8 +103,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mHTMLReportConfigurationMaximalFolderSize = value;
-                OnPropertyChanged(nameof(HTMLReportConfigurationMaximalFolderSize));
+                if (mHTMLReportConfigurationMaximalFolderSize != value)
+                {
+                    mHTMLReportConfigurationMaximalFolderSize = value;
+                    OnPropertyChanged(nameof(HTMLReportConfigurationMaximalFolderSize));
+                }
             }
         }
 
@@ -110,8 +122,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mHTMLReportTemplatesSeq = value;
-                OnPropertyChanged(nameof(HTMLReportTemplatesSeq));
+                if (mHTMLReportTemplatesSeq != value)
+                {
+                    mHTMLReportTemplatesSeq = value;
+                    OnPropertyChanged(nameof(HTMLReportTemplatesSeq));
+                }
             }
         }
 
@@ -128,8 +143,8 @@ namespace Ginger.Reports
                 if (mCentralizedReportDataServiceURL != value)
                 {
                     mCentralizedReportDataServiceURL = value;
+                    OnPropertyChanged(nameof(CentralizedReportDataServiceURL));
                 }
-                OnPropertyChanged(nameof(CentralizedReportDataServiceURL));
             }
         }
 
@@ -146,8 +161,8 @@ namespace Ginger.Reports
                 if (mCentralizedHtmlReportServiceURL != value)
                 {
                     mCentralizedHtmlReportServiceURL = value;
+                    OnPropertyChanged(nameof(CentralizedHtmlReportServiceURL));
                 }
-                OnPropertyChanged(nameof(CentralizedHtmlReportServiceURL));
             }
         }
 
@@ -161,8 +176,11 @@ namespace Ginger.Reports
             }
             set
             {
-                _HTMLReportsConfigurationSetName = value;
-                OnPropertyChanged(nameof(_HTMLReportsConfigurationSetName));
+                if (_HTMLReportsConfigurationSetName != value)
+                {
+                    _HTMLReportsConfigurationSetName = value;
+                    OnPropertyChanged(nameof(_HTMLReportsConfigurationSetName));
+                }
             }
         }
     }
