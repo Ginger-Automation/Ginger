@@ -1,5 +1,5 @@
 /*
-Copyright Â© 2014-2020 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -221,11 +221,13 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			    {	
 			    	try 
 			    	{
-			    		Thread.sleep(1000);
+			    		long sleepInterval = 100; //minimum sleep interval
+			    		sleepInterval += getSleepInterval();
+			    		Thread.sleep(sleepInterval);
 
-			    		iTimeout =iTimeout +1;
+			    		iTimeout += sleepInterval;
 
-			    		if(iTimeout>=mCommandTimeout)
+				    	if(iTimeout>=mCommandTimeout*1000)
 			    		{
 			    			mWaitForIdleHandler.isCommandTimedOut=true;	
 							
@@ -281,6 +283,35 @@ public PayLoad ProcessCommand(final PayLoad PL) {
         SunToolkit.flushPendingEvents();    
 		return response[0];
     }   
+
+	private long getSleepInterval()
+	{
+		long sleepInterval = 0;
+		
+		if(mWaitForIdle == null || "None".equals(mWaitForIdle))
+		{
+			return sleepInterval;
+		}
+		
+		if ("Short".equals(mWaitForIdle))
+		{
+			sleepInterval = 100; 	
+		}
+		else if ("Medium".equals(mWaitForIdle))
+		{
+			sleepInterval = 500; 
+		}
+		else if ("Long".equals(mWaitForIdle))
+		{
+			sleepInterval = 1000; 
+		}
+		else if ("VeryLong".equals(mWaitForIdle))
+		{
+			sleepInterval = 5000; 
+		}
+		
+		return sleepInterval;
+	}
 
 	private PayLoad runCommand(PayLoad PL) {
 		
@@ -1660,7 +1691,9 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			}		
 			
 			try {
-				Thread.sleep(500);
+				long sleepInterval = 5; //minimum sleep interval
+				sleepInterval += getSleepInterval();
+				Thread.sleep(sleepInterval);
 			} catch (InterruptedException e) {					
 				e.printStackTrace();
 			}
