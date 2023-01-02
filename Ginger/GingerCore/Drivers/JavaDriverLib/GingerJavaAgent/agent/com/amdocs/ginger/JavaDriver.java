@@ -133,7 +133,26 @@ public class JavaDriver {
 	private List<String> Scripts;
 	private String recordingJSFile;
 	   
-    
+    enum IdleWaitTime
+    {
+    	Short(100),
+    	Medium(500),
+    	Long(1000),
+    	VeryLong(5000);
+    	
+    	private long value;
+    	
+    	IdleWaitTime(long value)
+    	{
+    		this.value = value;
+    	}
+    	
+    	public long getValue()
+    	{
+    		return value;
+    	}
+    }
+	
 	enum CommandType
 	{
 		 AgentOperation,
@@ -283,34 +302,24 @@ public PayLoad ProcessCommand(final PayLoad PL) {
         SunToolkit.flushPendingEvents();    
 		return response[0];
     }   
-
+	
 	private long getSleepInterval()
 	{
-		long sleepInterval = 0;
+		final long defaultSleepInterval = 0;
 		
-		if(mWaitForIdle == null || "None".equals(mWaitForIdle))
+		try
 		{
-			return sleepInterval;
+			IdleWaitTime idleWaitTime = IdleWaitTime.valueOf(mWaitForIdle);
+			return idleWaitTime.getValue();
 		}
-		
-		if ("Short".equals(mWaitForIdle))
+		catch(IllegalArgumentException e)
 		{
-			sleepInterval = 100; 	
+			return defaultSleepInterval;
 		}
-		else if ("Medium".equals(mWaitForIdle))
+		catch(NullPointerException e)
 		{
-			sleepInterval = 500; 
+			return defaultSleepInterval;
 		}
-		else if ("Long".equals(mWaitForIdle))
-		{
-			sleepInterval = 1000; 
-		}
-		else if ("VeryLong".equals(mWaitForIdle))
-		{
-			sleepInterval = 5000; 
-		}
-		
-		return sleepInterval;
 	}
 
 	private PayLoad runCommand(PayLoad PL) {
