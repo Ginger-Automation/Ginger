@@ -372,15 +372,6 @@ namespace GingerCore.Drivers
             int x = (int)element.Current.BoundingRectangle.X + ((int)element.Current.BoundingRectangle.Width / 2);
             int y = (int)element.Current.BoundingRectangle.Y + ((int)element.Current.BoundingRectangle.Height / 2);
 
-            try
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, "Menu Item - Bounding Rectamgle x: " + ((int)element.Current.BoundingRectangle.X).ToString() + " y: " + ((int)element.Current.BoundingRectangle.Y).ToString());
-                Reporter.ToLog(eLogLevel.DEBUG, "Calculated value x: " + x.ToString() + " y: " + y.ToString());
-                Reporter.ToLog(eLogLevel.DEBUG, "Bounding Rectangle width: " + ((int)element.Current.BoundingRectangle.Width).ToString() + " height: " + ((int)element.Current.BoundingRectangle.Height).ToString());
-            }
-            catch(Exception ex)
-            {}
-
             ClickLeftMouseButton(x, y);
             System.Threading.Thread.Sleep(500);
             System.Windows.Forms.Cursor.Position = p;

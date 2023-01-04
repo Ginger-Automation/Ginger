@@ -2847,7 +2847,6 @@ namespace GingerCore.Drivers
         {
             Boolean status;
             UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
-            Reporter.ToLog(eLogLevel.DEBUG, "SelectControlbyIndex, ClassName: " + element.Current.ClassName);
             if (element.Current.ClassName == "PBTabControl32_100")
             {
                 //TOOD: Find a way to handle with UI Automation instead of Win API action
@@ -2886,21 +2885,12 @@ namespace GingerCore.Drivers
             {
                 startPoint = (int)element.Current.BoundingRectangle.X + 5;
                 y1 = (int)((element.Current.BoundingRectangle.Y + initialTab.Current.BoundingRectangle.Y) / 2);
-                Reporter.ToLog(eLogLevel.DEBUG, "Inside if loop. y1: " + y1);
             }
     
             while (startPoint < endPoint && !taskFinished)
             {                
                 winAPI.SendClickOnXYPoint(element,startPoint, y1);
                 UIAuto.AutomationElement currentAE = element.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, tabSelectCondition);
-
-                try
-                {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Current tab: " + currentAE.Current.Name + "   Expected tab: " + value + "   SearchByIndex = " + searchByIndx);
-                    Reporter.ToLog(eLogLevel.DEBUG, "Current tab: " + currentAE.Current.Name);
-                    Reporter.ToLog(eLogLevel.DEBUG, "Child tab: " + ((childAE != null) ? childAE.Current.Name : "child tab is null"));
-                }
-                catch (Exception ex) { }
 
                 if (currentAE != childAE)
                 {
@@ -4640,9 +4630,16 @@ namespace GingerCore.Drivers
         
         public override Bitmap GetAppWindowAsBitmap(AppWindow aw)  //******************        
         {
-            UIAuto.AutomationElement tempWindow = (UIAuto.AutomationElement)((UIAElementInfo)aw.RefObject).ElementObject;
-            Bitmap bmp = WindowToBitmap(tempWindow);
-            return bmp;
+            try
+            {
+                UIAuto.AutomationElement tempWindow = (UIAuto.AutomationElement)((UIAElementInfo)aw.RefObject).ElementObject;
+                Bitmap bmp = WindowToBitmap(tempWindow);
+                return bmp;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
 
         public override List<Bitmap> GetAppDialogAsBitmap(AppWindow aw)  ///********
