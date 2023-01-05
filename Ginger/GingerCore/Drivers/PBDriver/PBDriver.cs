@@ -235,7 +235,8 @@ namespace GingerCore.Drivers.PBDriver
                                 foreach (AppWindow aw in list)
                                 {
                                     Bitmap bmp = mUIAutomationHelper.GetAppWindowAsBitmap(aw);
-                                    act.AddScreenShot(bmp);
+                                    if(bmp != null)
+                                        act.AddScreenShot(bmp); 
                                     bList = mUIAutomationHelper.GetAppDialogAsBitmap(aw);
                                     foreach (Bitmap tempbmp in bList)
                                     {
