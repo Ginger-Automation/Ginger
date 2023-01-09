@@ -65,8 +65,11 @@ namespace Ginger.Reports
             }
             set
             {
-                mIsDefualt = value;
-                OnPropertyChanged(nameof(IsDefault));
+                if (mIsDefualt != value)
+                {
+                    mIsDefualt = value;
+                    OnPropertyChanged(nameof(IsDefault));
+                }
             }
         }
 
@@ -103,7 +106,6 @@ namespace Ginger.Reports
         public string ReportLowerLevelToShow { get { return mReportLowerLevelToShow; } set { if (mReportLowerLevelToShow != value) { mReportLowerLevelToShow = value; OnPropertyChanged(nameof(ReportLowerLevelToShow)); } } }
 
         private bool bIsEnableReportActivityGroup;
-
         [IsSerializedForLocalRepository]
         public bool IsEnableReportActivityGroup { get { return bIsEnableReportActivityGroup; } set { if (bIsEnableReportActivityGroup != value) { bIsEnableReportActivityGroup = value; OnPropertyChanged(nameof(IsEnableReportActivityGroup)); } } }
 
@@ -113,7 +115,7 @@ namespace Ginger.Reports
 
         private bool bIsEnableExecutionJsonActivityGroup;
         [IsSerializedForLocalRepository]
-        public bool IsEnableExecutionJsonActivityGroup { get { return bIsEnableExecutionJsonActivityGroup; } set { if (bIsEnableExecutionJsonActivityGroup != value) { bIsEnableExecutionJsonActivityGroup = value; OnPropertyChanged(nameof(ExecutionJsonDataLowerLevelToShow)); } } }
+        public bool IsEnableExecutionJsonActivityGroup { get { return bIsEnableExecutionJsonActivityGroup; } set { if (bIsEnableExecutionJsonActivityGroup != value) { bIsEnableExecutionJsonActivityGroup = value; OnPropertyChanged(nameof(IsEnableExecutionJsonActivityGroup)); } } } // we sent the property name ExecutionJsonDataLowerLevelToShow instead of IsEnableExecutionJsonActivityGroup
 
         public enum ReportsLevel
         {

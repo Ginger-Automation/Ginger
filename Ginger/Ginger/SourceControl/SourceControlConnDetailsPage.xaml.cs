@@ -109,9 +109,9 @@ namespace Ginger.SourceControl
             SourceControlIntegration.Init(WorkSpace.Instance.Solution.SourceControl);
         }
 
-        public bool TestSourceControlConnection()
+        public bool TestSourceControlConnection(bool ignorePopup = false)
         {
-            bool result = SourceControlUI.TestConnection(WorkSpace.Instance.Solution.SourceControl, false);
+            bool result = SourceControlUI.TestConnection(WorkSpace.Instance.Solution.SourceControl, ignorePopup);
             Mouse.OverrideCursor = null;
             return result;
         }
@@ -123,7 +123,7 @@ namespace Ginger.SourceControl
 
         private void SaveConfiguration_Click(object sender, RoutedEventArgs e)
         {
-            if (TestSourceControlConnection())
+            if (TestSourceControlConnection(true))
             {
                 if (SourceControlClassTextBox.Text != SourceControlBase.eSourceControlType.GIT.ToString())
                 {
@@ -133,7 +133,9 @@ namespace Ginger.SourceControl
                         return;
                     }
                 }
+                WorkSpace.Instance.UserProfile.SourceControlPass = WorkSpace.Instance.Solution.SourceControl.SourceControlPass;
                 WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
+                WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
                 Close();
             }
         }

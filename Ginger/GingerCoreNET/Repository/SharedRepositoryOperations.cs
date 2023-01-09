@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
@@ -37,7 +38,7 @@ using GingerWPF.WizardLib;
 
 namespace Ginger.Repository
 {
-    public class SharedRepositoryOperations
+    public class SharedRepositoryOperations : ISharedRepositoryOperations
     {        
         //public void AddItemsToRepository(Context context, List<RepositoryItemBase> listSelectedRepoItems)
         //{
@@ -516,6 +517,15 @@ namespace Ginger.Repository
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Activity not found in shared repository.");
             }
+        }
+        public async Task UpdateSharedRepositoryLinkedInstances(Activity activity)
+        {
+            await UpdateLinkedInstances(activity);
+        }
+
+        public async Task SaveLinkedActivityAndUpdateInstances(Activity LinkedActivity)
+        {
+            await SaveLinkedActivity(LinkedActivity, String.Empty);
         }
     }
 }

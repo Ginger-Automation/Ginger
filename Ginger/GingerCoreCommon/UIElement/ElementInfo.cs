@@ -42,6 +42,10 @@ namespace Amdocs.Ginger.Common.UIElement
         [IsSerializedForLocalRepository]
         public ObservableList<ControlProperty> Properties = new ObservableList<ControlProperty>();
 
+        [IsSerializedForLocalRepository]
+        public ObservableList<ElementLocator> FriendlyLocators = new ObservableList<ElementLocator>();
+
+
         string mScreenShotImage;
         [IsSerializedForLocalRepository]
         public string ScreenShotImage { get { return mScreenShotImage; } set { if (mScreenShotImage != value) { mScreenShotImage = value; OnPropertyChanged(nameof(ScreenShotImage)); } } }
@@ -70,7 +74,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public bool IsAutoLearned
         {
             get { return mIsAutoLearned; }
-            set { mIsAutoLearned = value; OnPropertyChanged(nameof(IsAutoLearned)); }
+            set { if (mIsAutoLearned != value) { mIsAutoLearned = value; OnPropertyChanged(nameof(IsAutoLearned)); } }
         }
 
         private string mLastUpdatedTime;
@@ -113,8 +117,11 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             set
             {
-                mSelfHealingInfo = value;
-                OnPropertyChanged(nameof(SelfHealingInfo));
+                if (mSelfHealingInfo != value)
+                {
+                    mSelfHealingInfo = value;
+                    OnPropertyChanged(nameof(SelfHealingInfo));
+                }
             }
         }
 
@@ -209,8 +216,11 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             set
             {
-                mDescription = value;
-                OnPropertyChanged(nameof(Description));
+                if (mDescription != value)
+                {
+                    mDescription = value;
+                    OnPropertyChanged(nameof(Description));
+                }
             }
         }
 
@@ -228,8 +238,11 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             set
             {
-                mElementName = value;
-                OnPropertyChanged(nameof(ElementName));
+                if (mElementName != value)
+                {
+                    mElementName = value;
+                    OnPropertyChanged(nameof(ElementName));
+                }
             }
         }
 
@@ -255,8 +268,11 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             set
             {
-                mElementTypeEnum = value;
-                OnPropertyChanged(nameof(ElementTypeEnum));
+                if (mElementTypeEnum != value)
+                {
+                    mElementTypeEnum = value;
+                    OnPropertyChanged(nameof(ElementTypeEnum));
+                }
                 OnPropertyChanged(nameof(ElementTypeImage));
             }
         }
@@ -436,8 +452,11 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             set
             {
-                mXPath = value;
-                OnPropertyChanged(nameof(this.XPath));  // fix for 6342
+                if (mXPath != value)
+                {
+                    mXPath = value;
+                    OnPropertyChanged(nameof(this.XPath));  // fix for 6342
+                }
             }
         }
 
@@ -463,6 +482,11 @@ namespace Amdocs.Ginger.Common.UIElement
         public ObservableList<ElementLocator> GetElementLocators()
         {
             return this.WindowExplorer.GetElementLocators(this);
+        }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators()
+        {
+            return this.WindowExplorer.GetElementFriendlyLocators(this);
         }
 
         public object GetElementData(eLocateBy elementLocateBy = eLocateBy.ByXPath, string elementLocateValue = "")
@@ -586,6 +610,8 @@ namespace Amdocs.Ginger.Common.UIElement
         ByContentDescription,
         [EnumValueDescription("By Text")]
         ByText,
+        [EnumValueDescription("By Tag Name")]
+        ByTagName,
         [EnumValueDescription("By Elements Repository")]
         ByElementsRepository,
         [EnumValueDescription("By Model Name")]
@@ -662,4 +688,18 @@ namespace Amdocs.Ginger.Common.UIElement
         [EnumValueDescription("Element updated during self healing operation")]
         ElementModified
     }
+    public enum ePosition
+    {
+        [EnumValueDescription("LeftOf")]
+        left,
+        [EnumValueDescription("RightOf")]
+        right,
+        [EnumValueDescription("Above")]
+        above,
+        [EnumValueDescription("Below")]
+        below,
+        [EnumValueDescription("Near")]
+        near
+    }
+
 }

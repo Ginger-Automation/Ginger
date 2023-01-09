@@ -41,7 +41,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     {
         private AddPOMWizard mWizard;
         private ePlatformType mAppPlatform;
-
+        public bool isEnableFriendlyLocator = false;
         public POMLearnConfigWizardPage()
         {
             InitializeComponent();
@@ -69,6 +69,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     SetAutoMapElementTypesGridView();
                     xLearnOnlyMappedElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
                     xLearnScreenshotsOfElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnScreenshotsOfElements));
+                    if(mAppPlatform == ePlatformType.Web)
+                    {
+                        isEnableFriendlyLocator = true;
+                    }
                     SetElementLocatorsSettingsGridView();
                     UpdateConfigsBasedOnAgentStatus();
                     PlatformSpecificUIManipulations();
@@ -134,11 +138,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if (mAppPlatform == ePlatformType.Web)
             {
                 xLearnScreenshotsOfElements.Visibility = Visibility.Visible;
+                isEnableFriendlyLocator = true;
             }
             else
             {
                 xLearnScreenshotsOfElements.Visibility = Visibility.Collapsed;
+                isEnableFriendlyLocator = false;
             }
+            SetElementLocatorsSettingsGridView();
             mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
             foreach (Agent agent in mWizard.OptionalAgentsList)
             {
@@ -231,6 +238,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.EnableFriendlyLocator),Visible = isEnableFriendlyLocator , Header = "Friendly Locator", WidthWeight = 25, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 25, ReadOnly = true });
 
             xElementLocatorsSettingsGrid.SetAllColumnsDefaultView(defView);
@@ -293,7 +301,22 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 mWizard.mPomLearnUtils.ElementLocatorsSettingsList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetLearningLocators();
             }
             xElementLocatorsSettingsGrid.DataSourceList = mWizard.mPomLearnUtils.ElementLocatorsSettingsList;
+            foreach (ElementLocator elementLocator in mWizard.mPomLearnUtils.ElementLocatorsSettingsList)
+            {
+                elementLocator.PropertyChanged -= Item_PropertyChanged;
+                elementLocator.PropertyChanged += Item_PropertyChanged;
+            }
         }
+
+        private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            ElementLocator solutionItem = (ElementLocator)sender;
+            if(!solutionItem.Active && solutionItem.EnableFriendlyLocator)
+            {
+                solutionItem.EnableFriendlyLocator = false;
+            }
+        }
+
 
         private void xAutomaticElementConfigurationRadioButton_Checked(object sender, RoutedEventArgs e)
         {

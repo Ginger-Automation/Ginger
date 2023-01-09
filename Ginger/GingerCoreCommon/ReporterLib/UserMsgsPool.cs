@@ -90,7 +90,7 @@ namespace Amdocs.Ginger.Common
         AskIfToGenerateAutoRunDescription,
         MissingApplicationPlatform,
         NoActivitiesGroupWasSelected, ActivitiesGroupActivitiesNotFound, PartOfActivitiesGroupActsNotFound, SureWantToDeleteGroup,
-        ItemNameExistsInRepository, ItemExistsInRepository, ItemExternalExistsInRepository, ItemParentExistsInRepository, AskIfWantsToUpdateRepoItemInstances, AskIfWantsToChangeeRepoItem, AskIfWantsToUpdateAllLinkedRepoItem,AskIfWantsToChangeLinkedRepoItem, GetRepositoryItemUsagesFailed, UpdateRepositoryItemUsagesSuccess, FailedToAddItemToSharedRepository, OfferToUploadAlsoTheActivityGroupToRepository,
+        ItemNameExistsInRepository, ItemExistsInRepository, ItemExternalExistsInRepository, ItemParentExistsInRepository, AskIfWantsToUpdateRepoItemInstances, AskIfWantsToChangeeRepoItem, AskIfWantsToUpdateAllLinkedRepoItem, AskIfWantsToChangeLinkedRepoItem, GetRepositoryItemUsagesFailed, UpdateRepositoryItemUsagesSuccess, FailedToAddItemToSharedRepository, OfferToUploadAlsoTheActivityGroupToRepository,
         ConnectionCloseWarning,
         InvalidCharactersWarning,
         InvalidValueExpression,
@@ -112,6 +112,7 @@ namespace Amdocs.Ginger.Common
         CurrentActionNotSaved,
         LoseChangesWarn,
         BFNotExistInDB,
+        RemoteExecutionResultsCannotBeAccessed,
         // Merged from GingerCore        
         CopiedVariableSuccessfully, AskIfShareVaribalesInRunner, ShareVariableNotSelected,
         WarnOnDynamicActivities,
@@ -142,11 +143,11 @@ namespace Amdocs.Ginger.Common
         POMSearchByGUIDFailed, POMElementSearchByGUIDFailed, NoRelevantAgentInRunningStatus, SolutionSaveWarning,
         InvalidIndexValue, FileOperationError, FolderOperationError, ObjectUnavailable, PatternNotHandled, LostConnection, AskToSelectBusinessflow,
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, RunSetNotExecuted, OperationNotSupported, ValueIssue, MissingTargetApplication,
-        ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, CopiedErrorInfo, RepositoryNameCantEmpty,
+        ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, SaveAllModifiedItems, CopiedErrorInfo, RepositoryNameCantEmpty,
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
         POMElementNotExist, UpdateExistingPOMElement, POMMoveElementFromUnmappedToMapped, SavePOMChanges,
         AskIfToUndoChanges, AskIfToUndoItemChanges, FileAlreadyExistWarn,
-        POMDeltaWizardReLearnWillEraseModification,WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
+        POMDeltaWizardReLearnWillEraseModification, WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
         PluginDownloadInProgress, SaveRunsetChanges, LegacyActionsCleanup,
         MissingImplementationForPlatform,
         WarnAddSwingOrWidgetElement,
@@ -162,7 +163,7 @@ namespace Amdocs.Ginger.Common
         UploadSolutionInfo,
         UploadSolutionToSourceControl,
         UploadSolutionFailed,
-        SourceControlBranchNameEmpty
+        SourceControlBranchNameEmpty, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace
     }
 
     public static class UserMsgsPool
@@ -239,9 +240,9 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.OfferToUploadAlsoTheActivityGroupToRepository, new UserMsg(eUserMsgType.QUESTION, "Add the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " to Repository", "The " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '{0}' is part of the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " '{1}', do you want to add the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " to the shared repository as well?" + System.Environment.NewLine + System.Environment.NewLine + "Note: If you select Yes, only the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " will be added to the repository and not all of it " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ".", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.PublishRepositoryInfo, new UserMsg(eUserMsgType.INFO, "Item Repository Publish Info", "Repository item is published to selected BusinessFlow.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToPublishRepositoryInfo, new UserMsg(eUserMsgType.ERROR, "Failed to pulblish Repository Item", "Failed to publish in one or more Business flows.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToPublishRepositoryInfo, new UserMsg(eUserMsgType.ERROR, "Failed to publish Repository Item", "Failed to publish in one or more Business flows.", eUserMsgOption.OK, eUserMsgSelection.None));
 
-            Reporter.UserMsgsPool.Add(eUserMsgKey.MissingErrorString, new UserMsg(eUserMsgType.ERROR, "Missing Error String details", "Error String is missing for one or more row."+ Environment.NewLine +"Please add error string for missing rows", eUserMsgOption.OK,eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.MissingErrorString, new UserMsg(eUserMsgType.ERROR, "Missing Error String details", "Error String is missing for one or more row." + Environment.NewLine + "Please add error string for missing rows", eUserMsgOption.OK, eUserMsgSelection.None));
 
             #endregion Repository
 
@@ -292,7 +293,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDoRevert, new UserMsg(eUserMsgType.QUESTION, "Undo Changes", "Are you sure you want to revert changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDoCheckIn, new UserMsg(eUserMsgType.QUESTION, "Check-In Changes", "Are you sure you want to check-in changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UploadSolutionInfo, new UserMsg(eUserMsgType.INFO, "Upload Solution", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.UploadSolutionToSourceControl, new UserMsg(eUserMsgType.QUESTION, "Upload Solution", "The solution was created and loaded successfully.\nPlease make a note of the encryption key provided from solution details page."+Environment.NewLine + "Do you want to upload the Solution: '{0}' to Source Control?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.UploadSolutionToSourceControl, new UserMsg(eUserMsgType.QUESTION, "Upload Solution", "The solution was created and loaded successfully.\nPlease make a note of the encryption key provided from solution details page." + Environment.NewLine + "Do you want to upload the Solution: '{0}' to Source Control?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UploadSolutionFailed, new UserMsg(eUserMsgType.ERROR, "Upload Solution", "Failed to Upload Solution to Source Control" + Environment.NewLine + "'{0}'", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlBranchNameEmpty, new UserMsg(eUserMsgType.ERROR, "Upload Solution", "Branch name cannot be empty.", eUserMsgOption.OK, eUserMsgSelection.None));
             #endregion SourceControl Messages
@@ -374,7 +375,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.ImportSeleniumScriptError, new UserMsg(eUserMsgType.ERROR, "Import Selenium Script Error", "Error occurred while trying to import Selenium Script, please make sure the html file is a Selenium script generated by Selenium IDE.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.WarnAddLegacyAction, new UserMsg(eUserMsgType.WARN, "Legacy Action Warning", "This Action is part of the Legacy Actions which will be deprecated soon and not recommended to be used anymore." + Environment.NewLine + "Do you still interested adding it?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.WarnAddLegacyActionAndOfferNew, new UserMsg(eUserMsgType.WARN, "Legacy Action Warning", "This Action is part of the Legacy Actions which will be deprecated soon and not recommended to be used anymore." + Environment.NewLine + "Do you prefer to add the replacement Action ({0}) for it?", eUserMsgOption.YesNoCancel, eUserMsgSelection.Yes));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.WarnAddSwingOrWidgetElement, new UserMsg(eUserMsgType.WARN, "Add Element Type Warning" , "Do you want to add widget element?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.WarnAddSwingOrWidgetElement, new UserMsg(eUserMsgType.WARN, "Add Element Type Warning", "Do you want to add widget element?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             #endregion Actions Messages
 
@@ -554,6 +555,9 @@ namespace Amdocs.Ginger.Common
 
             #endregion Reports
 
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RemoteExecutionResultsCannotBeAccessed, new UserMsg(eUserMsgType.INFO, "Remote Data deletion", "Remote Execution Results will not be deleted.", eUserMsgOption.OK, eUserMsgSelection.OK));
+
             Reporter.UserMsgsPool.Add(eUserMsgKey.ApplicationNotFoundInEnvConfig, new UserMsg(eUserMsgType.ERROR, "Application Not Found In EnvConfig", "Application = {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExecutionReportSent, new UserMsg(eUserMsgType.INFO, "Publish", "Execution report sent by email", eUserMsgOption.OK, eUserMsgSelection.None));
@@ -565,16 +569,16 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.CannotAddGinger, new UserMsg(eUserMsgType.ERROR, "Cannot Add Ginger", "Number of Gingers is limited to 12 Gingers.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.ShortcutCreated, new UserMsg(eUserMsgType.INFO, "New Shortcut created", "Shortcut created on selected path - {0}", eUserMsgOption.OK, eUserMsgSelection.None));
-            
+
             Reporter.UserMsgsPool.Add(eUserMsgKey.ShortcutCreationFailed, new UserMsg(eUserMsgType.ERROR, "Shortcut creation Failed", "Cannot create shortcut.Please avoid special characters in the Name/Description. Details: -{0}", eUserMsgOption.OK, eUserMsgSelection.None));
-            
+
             Reporter.UserMsgsPool.Add(eUserMsgKey.CannotRunShortcut, new UserMsg(eUserMsgType.ERROR, "Shortcut Execution Failed", "Cannot execute shortcut. Details: -{0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.SolutionFileNotFound, new UserMsg(eUserMsgType.ERROR, "Solution File Not Found", "Cannot find Solution File at - {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.PlugInFileNotFound, new UserMsg(eUserMsgType.ERROR, "Plugin Configuration File Not Found", "Cannot find Plugin Configuration File at - {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
-            Reporter.UserMsgsPool.Add(eUserMsgKey.PluginDownloadInProgress, new UserMsg(eUserMsgType.WARN,"Plugins Download is in Progress" ,"Missing Plugins download is in progress, please wait for it to finish and then try to load page again.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.PluginDownloadInProgress, new UserMsg(eUserMsgType.WARN, "Plugins Download is in Progress", "Missing Plugins download is in progress, please wait for it to finish and then try to load page again.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.ActionIDNotFound, new UserMsg(eUserMsgType.ERROR, "Action ID Not Found", "Cannot find action with ID - {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
@@ -645,6 +649,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.ParameterDelete, new UserMsg(eUserMsgType.WARN, "Delete Parameter", "{0}", eUserMsgOption.YesNo, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SaveAll, new UserMsg(eUserMsgType.WARN, "Save All", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SaveSelected, new UserMsg(eUserMsgType.WARN, "Save Selected", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SaveAllModifiedItems, new UserMsg(eUserMsgType.WARN, "Save All", "{0}", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.CopiedErrorInfo, new UserMsg(eUserMsgType.INFO, "Copied Error information", "Error Information copied to Clipboard", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.RepositoryNameCantEmpty, new UserMsg(eUserMsgType.WARN, "QTP to Ginger Converter", "Object Repository name cannot be empty", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExcelProcessingError, new UserMsg(eUserMsgType.ERROR, "Excel processing error", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
@@ -691,7 +696,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.RunSetReloadhWarn, new UserMsg(eUserMsgType.WARN, "Reload " + GingerDicser.GetTermResValue(eTermResKey.RunSet), "Reload process will cause all un-saved changes to be lost." + Environment.NewLine + Environment.NewLine + " To continue with reload?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.CantDeleteRunner, new UserMsg(eUserMsgType.WARN, "Delete Runner", "You can't delete last Runner, you must have at least one.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DuplicateRunsetName, new UserMsg(eUserMsgType.WARN, "Duplicate Runset Name", "'{0}' already exists, please use different name", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.WarnOnDynamicActivities, new UserMsg(eUserMsgType.QUESTION, "Dynamic " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " Warning", "The dynamically added Shared Repository " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " will not be saved (but they will continue to appear on the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString:")") + System.Environment.NewLine + System.Environment.NewLine + "To continue with Save?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.WarnOnDynamicActivities, new UserMsg(eUserMsgType.QUESTION, "Dynamic " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " Warning", "The dynamically added Shared Repository " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " will not be saved (but they will continue to appear on the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ")") + System.Environment.NewLine + System.Environment.NewLine + "To continue with Save?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.WarnOnLinkSharedActivities, new UserMsg(eUserMsgType.QUESTION, "Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " Warning", "The Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " are readonly and any changes done will not be saved." + System.Environment.NewLine + System.Environment.NewLine + "Do you want to save other changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.WarnOnEditLinkSharedActivities, new UserMsg(eUserMsgType.QUESTION, "Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " Warning", "Any updates to linked shared repository auto update the shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " and all it's usage in other flows." + System.Environment.NewLine + System.Environment.NewLine + "Do you want to proceed with Edit?", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -775,6 +780,8 @@ namespace Amdocs.Ginger.Common
                "Missing Target Platform for Conversion", "For {0}, you need to add a Target Application of type {1}. Please add it to your " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + Environment.NewLine +
                "Do you want to continue with the conversion?",
                eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.DataSourceSheetNameHasSpace, new UserMsg(eUserMsgType.ERROR, "Sheet Name Cannot Contain Space", " Sheet Name cannot contain space, please remove space and try again", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.DataSourceColumnHasSpace, new UserMsg(eUserMsgType.ERROR, "Column Name Cannot Contain Space", " Column Name [ {0} ] cannot contain space, please remove space and try again", eUserMsgOption.OK, eUserMsgSelection.OK));
         }
     }
 }

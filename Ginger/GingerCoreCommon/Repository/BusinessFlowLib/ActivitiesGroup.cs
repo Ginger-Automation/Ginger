@@ -373,7 +373,7 @@ namespace GingerCore.Activities
         }
 
         double? mElapsed;
-        [IsSerializedForLocalRepository]    // !!!!!!!!!!!!!!!!!!!!! Why serialized?
+        //[IsSerializedForLocalRepository]    // !!!!!!!!!!!!!!!!!!!!! Why serialized?
         public double? Elapsed
         {
             get { return mElapsed; }

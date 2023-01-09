@@ -44,10 +44,11 @@ using System.Windows.Data;
 using System.Windows.Media;
 using Ginger.SolutionWindows.TreeViewItems;
 using Amdocs.Ginger.Common.Repository;
+using Ginger.UserControlsLib;
 
 namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 {
-    public partial class ModelsGlobalParamsPage : Page
+    public partial class ModelsGlobalParamsPage : GingerUIPage
     {
         public ObservableList<GlobalAppModelParameter> mModelsGlobalParamsList;
         GenericWindow mGenericWindow = null;
@@ -96,7 +97,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
             if (!mSelectionModePage)
             {
-                xModelsGlobalParamsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Parameter, "Applications Models Global Parameters", saveAllHandler: SaveAllGlobalParametersChanges, addHandler: AddGlobalParam);
+                xModelsGlobalParamsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Parameter, "Applications Models Global Parameters", saveAllHandler: SaveAllGlobalParametersChanges, addHandler: AddGlobalParam,true);
 
                 view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, MaxWidth=30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["OpenEditPossibleValuesPage"] });
                 view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.CurrentValue), Header = "Current Value", WidthWeight = 20, AllowSorting = true });
@@ -108,7 +109,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 xModelsGlobalParamsGrid.SetbtnPastHandler(BtnPastGlobalParamsClicked);
 
                 xModelsGlobalParamsGrid.ShowSaveAllChanges = Visibility.Collapsed;
-                xModelsGlobalParamsGrid.ShowSaveSelectedChanges = Visibility.Visible;
+                xModelsGlobalParamsGrid.ShowSaveSelectedChanges = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.ShowEdit = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.ShowCopy = Visibility.Visible;
                 xModelsGlobalParamsGrid.ShowPaste = Visibility.Visible;
@@ -135,7 +136,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             {
                 foreach (GlobalAppModelParameter param in mModelsGlobalParamsList)
                 {
-                    param.StartDirtyTracking();
+                    StartTrackingModelGlobalParameter(param);
                 }
             }
             xModelsGlobalParamsGrid.DataSourceList = mModelsGlobalParamsList;
@@ -433,7 +434,8 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 {
                     newModelGlobalParam.OptionalValuesList.Add(new OptionalValue() { Value = GlobalAppModelParameter.CURRENT_VALUE, IsDefault = true });
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newModelGlobalParam);
-                    newModelGlobalParam.StartDirtyTracking();
+                    StartTrackingModelGlobalParameter(newModelGlobalParam);
+                    xModelsGlobalParamsGrid.Grid.SelectedIndex = xModelsGlobalParamsGrid.Grid.Items.Count-1;
 
                     //making sure rows numbers are ok
                     xModelsGlobalParamsGrid.Grid.UpdateLayout();
@@ -502,9 +504,18 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 {
                     List<GlobalAppModelParameter> selectedItemsToDelete = new List<GlobalAppModelParameter>();
                     foreach (GlobalAppModelParameter selectedParam in xModelsGlobalParamsGrid.Grid.SelectedItems)
+
+                    {
                         selectedItemsToDelete.Add(selectedParam);
+                    }
                     foreach (GlobalAppModelParameter paramToDelete in selectedItemsToDelete)
+                    {
                         DeleteGlobalParam(paramToDelete);
+                    }
+                    if (xModelsGlobalParamsGrid.Grid.SelectedItems.Count == 0)
+                    {
+                        WorkSpace.Instance.CurrentSelectedItem = null;
+                    }
                 }
             }
         }
@@ -515,8 +526,13 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             {
                 string message = "After deletion there will be no way to restore deleted parameters.\nAre you sure that you want to delete All parameters?";
                 if (Reporter.ToUser(eUserMsgKey.ParameterDelete, message) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                {
                     while (xModelsGlobalParamsGrid.Grid.SelectedItems.Count > 0)
+                    {
                         DeleteGlobalParam((RepositoryItemBase)xModelsGlobalParamsGrid.Grid.SelectedItems[0]);
+                    }
+                    WorkSpace.Instance.CurrentSelectedItem = null;
+                }
             }
         }
 
@@ -614,6 +630,31 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         {
             SelectedGlobalParamsFromDialogPage = null;
             mGenericWindow.Close();
+        }
+        private void StartTrackingModelGlobalParameter (GlobalAppModelParameter GAMP)
+        {
+            GAMP.StartDirtyTracking();
+        }
+
+        protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (xModelsGlobalParamsGrid.Grid.Items.Count != 0 && xModelsGlobalParamsGrid.Grid.SelectedItems.Count != 0 && xModelsGlobalParamsGrid.Grid.SelectedItems[0] != null)
+            {
+                CurrentItemToSave = (RepositoryItemBase)xModelsGlobalParamsGrid.Grid.SelectedItems[0];
+                base.IsVisibleChangedHandler(sender, e);
+            }
+            else
+            {
+                WorkSpace.Instance.CurrentSelectedItem = null;
+            }
+        }
+
+        private void xModelsGlobalParamsGrid_SelectedItemChanged(object selectedItem)
+        {
+            if (selectedItem != null && selectedItem != WorkSpace.Instance.CurrentSelectedItem)
+            {
+                WorkSpace.Instance.CurrentSelectedItem = (Amdocs.Ginger.Repository.RepositoryItemBase)selectedItem;
+            }
         }
     }
 }

@@ -81,8 +81,11 @@ namespace Ginger.Run
             }
             set
             {
-                mRunOption = value;
-                OnPropertyChanged(nameof(GingerRunner.RunOption));
+                if (mRunOption != value)
+                {
+                    mRunOption = value;
+                    OnPropertyChanged(nameof(GingerRunner.RunOption));
+                }
             }
         }
         [IsSerializedForLocalRepository]
@@ -93,9 +96,9 @@ namespace Ginger.Run
 
 
 
-
+        private int mAutoWait;
         [IsSerializedForLocalRepository]
-        public int AutoWait { get; set; } = 0;
+        public int AutoWait { get { return mAutoWait; } set { if (mAutoWait != value) { mAutoWait = value; OnPropertyChanged(nameof(AutoWait)); } } }
 
         private string mName;
         [IsSerializedForLocalRepository]
@@ -104,8 +107,11 @@ namespace Ginger.Run
             get { return mName; }
             set
             {
-                mName = value;
-                OnPropertyChanged(nameof(Name));
+                if (mName != value)
+                {
+                    mName = value;
+                    OnPropertyChanged(nameof(Name));
+                }
             }
         }
 
@@ -167,8 +173,11 @@ namespace Ginger.Run
             }
             set
             {
-                mSpecificEnvironmentName = value;
-                OnPropertyChanged(nameof(SpecificEnvironmentName));
+                if (mSpecificEnvironmentName != value)
+                {
+                    mSpecificEnvironmentName = value;
+                    OnPropertyChanged(nameof(SpecificEnvironmentName));
+                }
             }
         }
 
@@ -206,8 +215,11 @@ namespace Ginger.Run
             }
             set
             {
-                mRunInSimulationMode = value;
-                OnPropertyChanged(nameof(GingerRunner.RunInSimulationMode));
+                if (mRunInSimulationMode != value)
+                {
+                    mRunInSimulationMode = value;
+                    OnPropertyChanged(nameof(GingerRunner.RunInSimulationMode));
+                }
             }
         }
 
@@ -221,8 +233,11 @@ namespace Ginger.Run
             }
             set
             {
-                mKeepAgentsOn = value;
-                OnPropertyChanged(nameof(GingerRunner.KeepAgentsOn));
+                if (mKeepAgentsOn != value)
+                {
+                    mKeepAgentsOn = value;
+                    OnPropertyChanged(nameof(GingerRunner.KeepAgentsOn));
+                }
             }
         }
 
@@ -236,8 +251,11 @@ namespace Ginger.Run
             }
             set
             {
-                mRunInVisualTestingMode = value;
-                OnPropertyChanged(nameof(GingerRunner.RunInVisualTestingMode));
+                if (mRunInVisualTestingMode != value)
+                {
+                    mRunInVisualTestingMode = value;
+                    OnPropertyChanged(nameof(GingerRunner.RunInVisualTestingMode));
+                }
             }
         }
 

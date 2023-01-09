@@ -151,7 +151,6 @@ namespace GingerCore
         }
 
         double? mElapsed;
-        [IsSerializedForLocalRepository]     // TODO: Needed?
         public double? Elapsed
         {
             get { return mElapsed; }
@@ -355,7 +354,7 @@ namespace GingerCore
                 if (mCurrentActivity != value)
                 {
                     mCurrentActivity = value;
-                    OnPropertyChanged("CurrentActivity");
+                    OnPropertyChanged(nameof(CurrentActivity));
                 }
             }
         }
@@ -693,8 +692,11 @@ namespace GingerCore
             }
             set
             {
-                mEnableActivitiesVariablesDependenciesControl = value;
-                OnPropertyChanged(nameof(EnableActivitiesVariablesDependenciesControl));
+                if (mEnableActivitiesVariablesDependenciesControl != value)
+                {
+                    mEnableActivitiesVariablesDependenciesControl = value;
+                    OnPropertyChanged(nameof(EnableActivitiesVariablesDependenciesControl));
+                }
             }
         }
 
@@ -1272,7 +1274,7 @@ namespace GingerCore
             {
                 if (userSelection == eUserMsgSelection.None)
                 {
-                    userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Target Application is not mapped to selected BF. Ginger will map the Activies Target application to BF.");
+                    userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Target Application is not mapped to selected BF. Ginger will map the Activity's Target application to BF.");
                 }
 
                 if (userSelection == eUserMsgSelection.OK)
@@ -1350,7 +1352,10 @@ namespace GingerCore
             set
             {
                 if (mPublishStatus != value)
-                { mPublishStatus = value; OnPropertyChanged(nameof(PublishStatus)); }
+                {
+                    mPublishStatus = value;
+                    OnPropertyChanged(nameof(PublishStatus));
+                }
             }
         }
 

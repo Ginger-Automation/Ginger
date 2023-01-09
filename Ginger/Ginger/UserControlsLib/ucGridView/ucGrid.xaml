@@ -24,7 +24,7 @@
             <GridSplitter Height="1" ResizeDirection="Rows" DockPanel.Dock="Bottom" Grid.Row="0" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,5,0,5" IsEnabled="False" Background="LightGray" />
             <DockPanel x:Name="xEnhancedHeaderToolsPnl" DockPanel.Dock="Bottom" Margin="0,20,0,0" HorizontalAlignment="Left">
                 <usercontrols:ucButton x:Name="xEnhancedHeaderAddButton" AutomationProperties.AutomationId="AddButton" ToolTip="Add Item" VerticalAlignment="Bottom" HorizontalAlignment="Left" DockPanel.Dock="Left" ButtonType="CircleImageButton"  ButtonFontImageSize="15" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Add"  Visibility="Visible" Margin="0,0,0,0"/>
-                <usercontrols:ucButton x:Name="xEnhancedHeaderSaveAllButton" ToolTip="Save All Changed Items" VerticalAlignment="Bottom" HorizontalAlignment="Left" DockPanel.Dock="Left" ButtonType="CircleImageButton"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Save" Visibility="Visible" Margin="-5,0,0,0"></usercontrols:ucButton>
+                <usercontrols:ucButton x:Name="xEnhancedHeaderSaveAllButton" ToolTip="Save All Changed Items" VerticalAlignment="Bottom" HorizontalAlignment="Left" DockPanel.Dock="Left" ButtonType="CircleImageButton"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Save" Visibility="Collapsed" Margin="-5,0,0,0"></usercontrols:ucButton>
             </DockPanel>
         </DockPanel>
 

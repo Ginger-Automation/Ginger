@@ -199,5 +199,10 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             throw new System.NotImplementedException();
         }
+
+        public override List<ePosition> GetElementPositionList()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

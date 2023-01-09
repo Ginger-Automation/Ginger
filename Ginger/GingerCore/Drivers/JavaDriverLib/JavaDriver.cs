@@ -2103,7 +2103,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return true;
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null,List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             return await Task.Run(() =>
             {
@@ -2113,11 +2113,11 @@ namespace GingerCore.Drivers.JavaDriverLib
                 PayLoad Request;
                 PayLoad Response;
                 //Get Current window, Specific Frame controls
-                if (!string.IsNullOrEmpty(specificFramePath))
+                if (!string.IsNullOrEmpty(pomSetting.SpecificFramePath))
                 {
                     Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
                     Request.AddEnumValue(WindowExplorerOperationType.GetFrameControls);
-                    Request.AddValue(specificFramePath);
+                    Request.AddValue(pomSetting.SpecificFramePath);
                     Request.ClosePackage();
                 }
                 //Get Current window all Controls
@@ -2145,20 +2145,20 @@ namespace GingerCore.Drivers.JavaDriverLib
                         }
                         JavaElementInfo ci = (JavaElementInfo)GetControlInfoFromPayLoad(pl);
 
-                        if (isPOMLearn)
+                        if (pomSetting.isPOMLearn)
                         {
                             if (ci.ElementType.Contains("browser") && ci.ElementTypeEnum.Equals(eElementType.Browser))
                             {
-                                GetWidgetsElementList(filteredElementType, foundElementsList, ci.XPath);
+                                GetWidgetsElementList(pomSetting.filteredElementType, foundElementsList, ci.XPath);
                             }
                             else
                             {
                                 ((IWindowExplorer)this).LearnElementInfoDetails(ci);
                                 // set the Flag in case you wish to learn the element or not
                                 bool learnElement = true;
-                                if (filteredElementType != null)
+                                if (pomSetting.filteredElementType != null)
                                 {
-                                    if (!filteredElementType.Contains(ci.ElementTypeEnum))
+                                    if (!pomSetting.filteredElementType.Contains(ci.ElementTypeEnum))
                                         learnElement = false;
                                 }
                                 if (learnElement)
@@ -2199,7 +2199,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     }
                 }
 
-                if (isPOMLearn)
+                if (pomSetting.isPOMLearn)
                 {
                     list = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
                 }
@@ -2631,7 +2631,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
         }
 
-        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
+        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo,PomSetting pomSetting= null)
         {
             ObservableList<ElementLocator> locatorList = new ObservableList<ElementLocator>();
             String bName;
@@ -2715,7 +2715,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
         }
 
-        ElementInfo IWindowExplorer.LearnElementInfoDetails(ElementInfo EI)
+        ElementInfo IWindowExplorer.LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting = null)
         {
             EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
             EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
@@ -3709,7 +3709,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 Reporter.ToLog(eLogLevel.WARN, "failed to un-highlight object", ex);
             }
         }
-        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
         {
             try
             {
@@ -4117,6 +4117,17 @@ namespace GingerCore.Drivers.JavaDriverLib
             size.Height = Height;
             size.Width = Width;
             return size.ToString();
+        }
+
+        public ObservableList<ElementLocator> GetElement
+            (ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting pomSetting= null)
+        {
+            throw new NotImplementedException();
         }
     }
 }

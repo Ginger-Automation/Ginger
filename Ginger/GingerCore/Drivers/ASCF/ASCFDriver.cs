@@ -987,7 +987,7 @@ namespace GingerCore.Drivers.ASCF
             return null;
         }
 
-        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
+        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo,PomSetting pomSetting=null)
         {
             return null;
         }
@@ -1415,7 +1415,7 @@ namespace GingerCore.Drivers.ASCF
 
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true, ObservableList<POMPageMetaData> PomMetaData = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             //DOTO add grid view contol lists
             return new List<ElementInfo>();
@@ -1432,7 +1432,7 @@ namespace GingerCore.Drivers.ASCF
         }
 
 
-        bool IWindowExplorer.TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        bool IWindowExplorer.TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
         {
             throw new NotImplementedException();
         }
@@ -1452,7 +1452,7 @@ namespace GingerCore.Drivers.ASCF
             throw new NotImplementedException();
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting=null)
         {
             return EI;
         }
@@ -1510,6 +1510,11 @@ namespace GingerCore.Drivers.ASCF
         public string GetCurrentPageSourceString()
         {
             return null;
+        }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting pomSetting=null)
+        {
+            throw new NotImplementedException();
         }
     }
 }

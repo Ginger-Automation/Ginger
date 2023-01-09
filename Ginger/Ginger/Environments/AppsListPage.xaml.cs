@@ -26,13 +26,14 @@ using GingerCore;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using GingerCore.GeneralLib;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Environments
 {
     /// <summary>
     /// Interaction logic for AppsListPage.xaml
     /// </summary>
-    public partial class AppsListPage : Page
+    public partial class AppsListPage : GingerUIPage
     {
         public ProjEnvironment AppEnvironmnet { get; set; }
         public AppsListPage(ProjEnvironment env)
@@ -40,6 +41,7 @@ namespace Ginger.Environments
             InitializeComponent();
 
             AppEnvironmnet = env;
+            CurrentItemToSave = AppEnvironmnet;
             //Set grid look and data
             SetGridView();
             SetGridData();

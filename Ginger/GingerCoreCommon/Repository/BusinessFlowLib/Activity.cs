@@ -25,6 +25,7 @@ using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Variables;
+using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -300,7 +301,7 @@ namespace GingerCore
         /// </summary>
         //[IsSerializedForLocalRepository]    
         //TODO: check if status is different
-        public Amdocs.Ginger.CoreNET.Execution.eRunStatus? Status { get { return mStatus; } set { mStatus = value; OnPropertyChanged(nameof(Status)); } }
+        public Amdocs.Ginger.CoreNET.Execution.eRunStatus? Status { get { return mStatus; } set { if (mStatus != value) { mStatus = value; OnPropertyChanged(nameof(Status)); } } }
         //TODO: add change history log in class and save it
 
 
@@ -357,8 +358,11 @@ namespace GingerCore
             get { return mType; }
             set
             {
-                mType = value;
-                OnPropertyChanged(nameof(Type));
+                if (mType != value)
+                {
+                    mType = value;
+                    OnPropertyChanged(nameof(Type));
+                }
             }
         }
 
@@ -455,8 +459,11 @@ namespace GingerCore
             }
             set
             {
-                mEnableActionsVariablesDependenciesControl = value;
-                OnPropertyChanged(nameof(EnableActionsVariablesDependenciesControl));
+                if (mEnableActionsVariablesDependenciesControl != value)
+                {
+                    mEnableActionsVariablesDependenciesControl = value;
+                    OnPropertyChanged(nameof(EnableActionsVariablesDependenciesControl));
+                }
             }
         }
 
@@ -1022,6 +1029,16 @@ namespace GingerCore
         public override string GetItemType()
         {
             return nameof(Activity);
+        }
+
+        public override void PostSaveHandler()
+        {
+            // saving from Shared repository tab
+            GingerCoreCommonWorkSpace.Instance.SharedRepositoryOperations.UpdateSharedRepositoryLinkedInstances(this);
+        }
+        public override bool PreSaveHandler()
+        {
+            return Reporter.ToUser(eUserMsgKey.WarnOnEditLinkSharedActivities) == Amdocs.Ginger.Common.eUserMsgSelection.No;
         }
 
         public bool IsAutoLearned { get; set; }

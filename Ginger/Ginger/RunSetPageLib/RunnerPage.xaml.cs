@@ -257,6 +257,7 @@ namespace Ginger.Run
             {
                 BusinessFlow bff = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
                 ExecutorEngine.BusinessFlows.Remove(bff);
+                mExecutorEngine.GingerRunner.DirtyStatus = eDirtyStatus.Modified;
             }
         }
 
@@ -285,6 +286,7 @@ namespace Ginger.Run
             {
                 mExecutorEngine.BusinessFlows.Add(bf);
             }
+            mExecutorEngine.GingerRunner.DirtyStatus = eDirtyStatus.Modified;
         }
 
         public void LoadBusinessflowRunnerItem(bool ViewMode = false)
@@ -421,6 +423,7 @@ namespace Ginger.Run
             {
                 ((RunnerItemPage)sender).xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
             }
+            mExecutorEngine.GingerRunner.DirtyStatus = eDirtyStatus.Modified;
         }
         private void Businessflow_ClickAutomate(object sender, RoutedEventArgs e)
         {
@@ -728,7 +731,9 @@ namespace Ginger.Run
             GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(mExecutorEngine, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext);
             PACW.ShowAsWindow();
 
+            mExecutorEngine.GingerRunner.PauseDirtyTracking();
             UpdateRunnerInfo();
+            mExecutorEngine.GingerRunner.ResumeDirtyTracking();
         }
 
         private void xContinueRunnerBtn_Click(object sender, RoutedEventArgs e)

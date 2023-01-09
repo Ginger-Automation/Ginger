@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.SolutionGeneral;
@@ -49,6 +50,11 @@ namespace Amdocs.Ginger.Common.WorkSpaceLib
         }
 
         public SolutionRepository SolutionRepository
+        {
+            get;
+            set;
+        }
+        public ISharedRepositoryOperations SharedRepositoryOperations
         {
             get;
             set;

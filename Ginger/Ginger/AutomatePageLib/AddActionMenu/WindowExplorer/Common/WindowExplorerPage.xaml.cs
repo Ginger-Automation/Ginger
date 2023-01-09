@@ -66,6 +66,7 @@ using GingerCore.Actions.VisualTesting;
 using HtmlAgilityPack;
 using Ginger.ApplicationModelsLib.POMModels;
 using GingerCoreNET.Application_Models;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 
 namespace Ginger.WindowExplorer
 {
@@ -885,7 +886,9 @@ namespace Ginger.WindowExplorer
                 try
                 {
                     //StatusTextBlock.Text = "Loading";
-                    List<ElementInfo> list = await mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList());
+                    PomSetting pomSetting = new PomSetting();
+                    pomSetting.filteredElementType = CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList();
+                    List<ElementInfo> list = await mWindowExplorerDriver.GetVisibleControls(pomSetting);
 
                     // Convert to obserable for the grid
                     VisibleElementsInfoList.Clear();

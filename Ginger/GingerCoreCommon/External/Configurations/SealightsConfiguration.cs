@@ -53,7 +53,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mSealightsLog = value;
+                if (mSealightsLog != value)
+                { 
+                    mSealightsLog = value;
+                    OnPropertyChanged(nameof(SealightsLog));
+                }
             }
         }
 
@@ -68,8 +72,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mSealightsURL = value;
-                OnPropertyChanged(nameof(SealightsURL));
+                if (mSealightsURL != value)
+                {
+                    mSealightsURL = value;
+                    OnPropertyChanged(nameof(SealightsURL));
+                }
             }
         }
 
@@ -84,8 +91,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mSealightsAgentToken = value;
-                OnPropertyChanged(nameof(SealightsAgentToken));
+                if (mSealightsAgentToken != value)
+                {
+                    mSealightsAgentToken = value;
+                    OnPropertyChanged(nameof(SealightsAgentToken));
+                }
             }
         }
 
@@ -99,8 +109,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mSealightsLabId = value;
-                OnPropertyChanged(nameof(SealightsLabId));
+                if (mSealightsLabId != value)
+                {
+                    mSealightsLabId = value;
+                    OnPropertyChanged(nameof(SealightsLabId));
+                }
             }
         }
 
@@ -114,8 +127,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mSealightsTestStage = value;
-                OnPropertyChanged(nameof(SealightsTestStage));
+                if (mSealightsTestStage != value)
+                {
+                    mSealightsTestStage = value;
+                    OnPropertyChanged(nameof(SealightsTestStage));
+                }
             }
         }
 
@@ -129,8 +145,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mSealightsBuildSessionID = value;
-                OnPropertyChanged(nameof(SealightsBuildSessionID));
+                if (mSealightsBuildSessionID != value)
+                {
+                    mSealightsBuildSessionID = value;
+                    OnPropertyChanged(nameof(SealightsBuildSessionID));
+                }
             }
         }
 
@@ -144,8 +163,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mSealightsSessionTimeout = value;
-                OnPropertyChanged(nameof(SealightsSessionTimeout));
+                if (mSealightsSessionTimeout != value)
+                {
+                    mSealightsSessionTimeout = value;
+                    OnPropertyChanged(nameof(SealightsSessionTimeout));
+                }
             }
         }
 
@@ -159,8 +181,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mSealightsReportedEntityLevel = value;
-                OnPropertyChanged(nameof(SealightsReportedEntityLevel));
+                if (mSealightsReportedEntityLevel != value)
+                {
+                    mSealightsReportedEntityLevel = value;
+                    OnPropertyChanged(nameof(SealightsReportedEntityLevel));
+                }
             }
         }
         public enum eSealightsTestRecommendations
@@ -180,7 +205,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mSealightsTestRecommendations = value;
+                if (mSealightsTestRecommendations != value)
+                {
+                    mSealightsTestRecommendations = value;
+                    OnPropertyChanged(nameof(SealightsTestRecommendations));
+                }
             }
         }
 
