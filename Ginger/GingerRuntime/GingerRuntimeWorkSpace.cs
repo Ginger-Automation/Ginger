@@ -92,5 +92,10 @@ namespace Amdocs.Ginger.GingerRuntime
         {
             throw new NotImplementedException();
         }
+
+        public string GetClipboardText()
+        {
+            return string.Empty;
+        }
     }
 }

@@ -39,5 +39,7 @@ namespace amdocs.ginger.GingerCoreNET
         void ShowUpgradeSolutionItems(SolutionUpgradePageViewMode upgradeSolution, string solutionFolder, string solutionName, List<string> list);
         void SetSolutionSourceControl(Solution solution, ref string RepositoryRootFolder);
         bool OpenEncryptionKeyHandler(Solution solution);
+
+        string GetClipboardText();
     }
 }

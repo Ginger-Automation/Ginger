@@ -1,5 +1,5 @@
 /*
-Copyright Â© 2014-2020 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -133,7 +133,26 @@ public class JavaDriver {
 	private List<String> Scripts;
 	private String recordingJSFile;
 	   
-    
+    enum IdleWaitTime
+    {
+    	Short(100),
+    	Medium(500),
+    	Long(1000),
+    	VeryLong(5000);
+    	
+    	private long value;
+    	
+    	IdleWaitTime(long value)
+    	{
+    		this.value = value;
+    	}
+    	
+    	public long getValue()
+    	{
+    		return value;
+    	}
+    }
+	
 	enum CommandType
 	{
 		 AgentOperation,
@@ -221,11 +240,13 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			    {	
 			    	try 
 			    	{
-			    		Thread.sleep(1000);
+			    		long sleepInterval = 100; //minimum sleep interval
+			    		sleepInterval += getSleepInterval();
+			    		Thread.sleep(sleepInterval);
 
-			    		iTimeout =iTimeout +1;
+			    		iTimeout += sleepInterval;
 
-			    		if(iTimeout>=mCommandTimeout)
+				    	if(iTimeout>=mCommandTimeout*1000)
 			    		{
 			    			mWaitForIdleHandler.isCommandTimedOut=true;	
 							
@@ -281,6 +302,25 @@ public PayLoad ProcessCommand(final PayLoad PL) {
         SunToolkit.flushPendingEvents();    
 		return response[0];
     }   
+	
+	private long getSleepInterval()
+	{
+		final long defaultSleepInterval = 0;
+		
+		try
+		{
+			IdleWaitTime idleWaitTime = IdleWaitTime.valueOf(mWaitForIdle);
+			return idleWaitTime.getValue();
+		}
+		catch(IllegalArgumentException e)
+		{
+			return defaultSleepInterval;
+		}
+		catch(NullPointerException e)
+		{
+			return defaultSleepInterval;
+		}
+	}
 
 	private PayLoad runCommand(PayLoad PL) {
 		
@@ -1660,7 +1700,9 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			}		
 			
 			try {
-				Thread.sleep(500);
+				long sleepInterval = 5; //minimum sleep interval
+				sleepInterval += getSleepInterval();
+				Thread.sleep(sleepInterval);
 			} catch (InterruptedException e) {					
 				e.printStackTrace();
 			}
