@@ -115,5 +115,10 @@ namespace GingerWPF.WorkSpaceLib
                 return solutionPage.ShowAsWindow(solution);
             }
         }
+
+        public string GetClipboardText()
+        {
+            return GingerCore.General.GetClipboardText();
+        }
     }
 }

@@ -1148,6 +1148,11 @@ namespace GingerCore
             return false;
         }
 
+        public static string GetClipboardText()
+        {
+            return Clipboard.GetText();
+        }
+
     }
 }
 

@@ -67,5 +67,10 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             throw new NotImplementedException();
         }
+
+        public string GetClipboardText()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
