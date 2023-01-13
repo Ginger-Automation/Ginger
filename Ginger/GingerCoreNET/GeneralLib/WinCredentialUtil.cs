@@ -44,7 +44,7 @@ namespace GingerCore.GeneralLib
         {
             try
             {
-                if (string.IsNullOrEmpty(target) || string.IsNullOrEmpty(password))
+                if (string.IsNullOrEmpty(target) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 {
                     return true;
                 }

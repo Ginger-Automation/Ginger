@@ -688,10 +688,18 @@ namespace GingerCore.ALM
                 });
                 AddEntityFieldValues(runFields.ToList(), runSuiteToExport, "run_suite");
                 runSuiteToExport.SetValue("description", publishToALMConfig.VariableForTCRunName);
-                runSuiteToExport = Task.Run(() =>
+                try
                 {
-                    return this.octaneRepository.CreateEntity<RunSuite>(GetLoginDTO(), runSuiteToExport, null);
-                }).Result;
+                    runSuiteToExport = Task.Run(() =>
+                    {
+                        return this.octaneRepository.CreateEntity<RunSuite>(GetLoginDTO(), runSuiteToExport, null);
+                    }).Result;
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "In CreateRunSuite/OctaneCore.cs method ", ex);
+                }
+                
                 UpdateRunSuite(runSuiteToExport);
                 return runSuiteToExport;
             }
@@ -1520,8 +1528,8 @@ namespace GingerCore.ALM
 
             int testSuiteId = Convert.ToInt32(created.Id.ToString());
 
-            DeleteLinkTestCasesToTestSuite(testSuiteId);
-            LinkTestCasesToTestSuite(testSuiteId, businessFlow.ActivitiesGroups.Select(f => int.Parse(f.ExternalID)).ToList());
+            DeleteLinkTestCasesToTestSuite(testSuiteId,businessFlow);
+            
 
             return testSuiteId;
         }
@@ -1547,13 +1555,14 @@ namespace GingerCore.ALM
         }
 
 
-        private void DeleteLinkTestCasesToTestSuite(int testSuiteId)
+        private async void DeleteLinkTestCasesToTestSuite(int testSuiteId,BusinessFlow businessFlow)
         {
             CrossQueryPhrase qd = new CrossQueryPhrase("test_suite", new LogicalQueryPhrase("id", testSuiteId, ComparisonOperator.Equal));
-            Task.Run(() =>
+            await Task.Run(() =>
             {
                 this.octaneRepository.DeleteEntity<TestSuiteLinkToTests>(GetLoginDTO(), new List<IQueryPhrase>() { qd });
             });
+            LinkTestCasesToTestSuite(testSuiteId, businessFlow.ActivitiesGroups.Select(f => int.Parse(f.ExternalID)).ToList());
         }
         public string GetLastTestPlanIdFromPath(string path)
         {
