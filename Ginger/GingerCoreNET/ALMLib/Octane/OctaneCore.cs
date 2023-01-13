@@ -1520,9 +1520,7 @@ namespace GingerCore.ALM
 
             int testSuiteId = Convert.ToInt32(created.Id.ToString());
 
-            DeleteLinkTestCasesToTestSuite(testSuiteId);
-            LinkTestCasesToTestSuite(testSuiteId, businessFlow.ActivitiesGroups.Select(f => int.Parse(f.ExternalID)).ToList());
-
+            DeleteLinkTestCasesToTestSuite(testSuiteId,businessFlow);
             return testSuiteId;
         }
 
@@ -1547,13 +1545,14 @@ namespace GingerCore.ALM
         }
 
 
-        private void DeleteLinkTestCasesToTestSuite(int testSuiteId)
+        private async void DeleteLinkTestCasesToTestSuite(int testSuiteId,BusinessFlow businessFlow)
         {
             CrossQueryPhrase qd = new CrossQueryPhrase("test_suite", new LogicalQueryPhrase("id", testSuiteId, ComparisonOperator.Equal));
             Task.Run(() =>
             {
                 this.octaneRepository.DeleteEntity<TestSuiteLinkToTests>(GetLoginDTO(), new List<IQueryPhrase>() { qd });
             });
+            LinkTestCasesToTestSuite(testSuiteId, businessFlow.ActivitiesGroups.Select(f => int.Parse(f.ExternalID)).ToList());
         }
         public string GetLastTestPlanIdFromPath(string path)
         {
