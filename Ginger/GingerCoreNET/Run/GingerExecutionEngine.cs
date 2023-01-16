@@ -39,6 +39,7 @@ using GingerCore.Actions.PlugIns;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.DataSource;
+using GingerCore.Drivers;
 using GingerCore.Environments;
 using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
@@ -52,6 +53,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -1993,7 +1995,11 @@ namespace Ginger.Run
                 {
                     try
                     {
-                        if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)
+                        if(act.WindowsToCapture == Act.eWindowsToCapture.FullPageWithDesktopScreen)
+                        {
+                            TakeFullPageWithDesktopScreenScreenShot(act);
+                        }
+                        else if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)
                         {
                             TakeDesktopScreenShotIntoAction(act);
                         }
@@ -2062,6 +2068,28 @@ namespace Ginger.Run
             {
                 TakeDesktopScreenShotIntoAction(act);
             }
+        }
+
+        private void TakeFullPageWithDesktopScreenScreenShot(Act act)
+        {
+            DriverBase driver = ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Driver;
+            if (!driver.GetType().IsAssignableTo(typeof(SeleniumDriver)))
+                throw new NotImplementedException($"Full page screen shot with desktop screen is not supported for {driver.GetType().Name}");
+            SeleniumDriver seleniumDriver = (SeleniumDriver)driver;
+
+            Bitmap browserWindowScreenshot = seleniumDriver.GetScreenShot(false);
+            Bitmap browserFullPageScreenshot = seleniumDriver.GetScreenShot(true);
+
+            Bitmap browserHeaderScreenshot = TargetFrameworkHelper.Helper.GetBrowserHeaderScreenshot(browserWindowScreenshot);
+            Bitmap taskbarScreenshot = TargetFrameworkHelper.Helper.GetTaskbarScreenshot();
+
+            string filepath = TargetFrameworkHelper.Helper.MergeVerticallyAndSaveBitmaps(
+                browserHeaderScreenshot, 
+                browserFullPageScreenshot, 
+                taskbarScreenshot);
+
+            act.ScreenShotsNames.Add(seleniumDriver.GetWebDriver().Title);
+            act.ScreenShots.Add(filepath);
         }
 
         private void TakeDesktopScreenShotIntoAction(Act act)

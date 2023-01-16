@@ -434,6 +434,21 @@ namespace Ginger
             return GingerCore.General.TakeDesktopScreenShot(true);
         }
 
+        public Bitmap GetBrowserHeaderScreenshot(Bitmap browserWindowScreenshot)
+        {
+            return GingerCore.General.GetBrowserHeaderScreenshot(browserWindowScreenshot);
+        }
+
+        public Bitmap GetTaskbarScreenshot()
+        {
+            return GingerCore.General.GetTaskbarScreenshot();
+        }
+
+        public string MergeVerticallyAndSaveBitmaps(params Bitmap[] bitmaps)
+        {
+            return GingerCore.General.MergeVerticallyAndSaveBitmaps(bitmaps);
+        }
+
         public void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
         {
             ALM.ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, eALMConnectType.Silence);

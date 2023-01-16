@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using SkiaSharp.Views.Desktop;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
@@ -26,6 +27,7 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralFunctions;
 using GingerCore.GeneralLib;
+using SkiaSharp;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -871,6 +873,61 @@ namespace GingerCore
             return imagePaths;
         }
 
+        public static Bitmap GetBrowserHeaderScreenshot(Bitmap browserWindowScreenshot)
+        {
+            SKBitmap browserWindowScreenshotAsSKBitmap = browserWindowScreenshot.ToSKBitmap();
+            Rectangle browserWindowBounds = new(0, 0, browserWindowScreenshotAsSKBitmap.Width, browserWindowScreenshotAsSKBitmap.Height);
+            System.Windows.Forms.Screen primaryScreen = System.Windows.Forms.Screen.PrimaryScreen;
+            Bitmap browserHeaderScreenshot = new(primaryScreen.Bounds.Width, primaryScreen.WorkingArea.Height - browserWindowBounds.Height);
+            using (Graphics graphics = Graphics.FromImage(browserHeaderScreenshot))
+            {
+                System.Drawing.Point upperLeftSource = new(x: 0, y: 0);
+                System.Drawing.Point upperLeftDestination = new(x: 0, y: 0);
+                graphics.CopyFromScreen(upperLeftSource, upperLeftDestination, browserHeaderScreenshot.Size);
+            }
+            return browserHeaderScreenshot;
+        }
+
+        public static Bitmap GetTaskbarScreenshot()
+        {
+            System.Windows.Forms.Screen primaryScreen = System.Windows.Forms.Screen.PrimaryScreen;
+            Bitmap taskbarScreenshot = new(primaryScreen.Bounds.Width, primaryScreen.Bounds.Height - primaryScreen.WorkingArea.Height);
+            using(Graphics graphics = Graphics.FromImage(taskbarScreenshot))
+            {
+                System.Drawing.Point upperLeftSource = new(x: 0, y: primaryScreen.WorkingArea.Height);
+                System.Drawing.Point uppderLeftDestination = new(x: 0, y: 0);
+                graphics.CopyFromScreen(upperLeftSource, uppderLeftDestination, taskbarScreenshot.Size);
+            }
+            return taskbarScreenshot;
+        }
+
+        public static string MergeVerticallyAndSaveBitmaps(params Bitmap[] bitmaps)
+        {
+            IEnumerable<SKBitmap> skBitmaps = bitmaps.Select(bitmap => bitmap.ToSKBitmap());
+            return MergeVerticallyAndSaveBitmaps(skBitmaps);
+        }
+
+        private static string MergeVerticallyAndSaveBitmaps(IEnumerable<SKBitmap> bitmaps)
+        {
+            int maxWidth = bitmaps.Max(skBitmap => skBitmap.Width);
+            int mergedHeight = bitmaps.Aggregate(0, (totalHeight, skBitmap) => totalHeight + skBitmap.Height);
+
+            SKBitmap mergedBitmap = new(maxWidth, mergedHeight);
+            using SKCanvas canvas = new(mergedBitmap);
+            int currentDrawnHeight = 0;
+            foreach (SKBitmap bitmap in bitmaps)
+            {
+                float drawingXCoordinate = (float)(maxWidth - bitmap.Width) / 2;
+                float drawingYCoordinate = currentDrawnHeight;
+
+                canvas.DrawBitmap(bitmap, drawingXCoordinate, drawingYCoordinate);
+
+                currentDrawnHeight += bitmap.Height;
+            }
+
+            string filePath = BitmapImageToFile(mergedBitmap.ToBitmap());
+            return filePath;
+        }
 
         /// <summary>
         /// Replaces invalid XML characters in a string with their valid XML equivalent.
