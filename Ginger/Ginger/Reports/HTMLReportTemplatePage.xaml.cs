@@ -254,6 +254,10 @@ namespace Ginger.Reports
             htmlShowFirstIterationOffRadioBtn.IsChecked = !_HTMLReportConfiguration.ShowAllIterationsElements;
             htmlUseLocalStoredStylingOnRadioBtn.IsChecked = _HTMLReportConfiguration.UseLocalStoredStyling;
             htmlUseLocalStoredStylingOffRadioBtn.IsChecked = !_HTMLReportConfiguration.UseLocalStoredStyling;
+            xIgnoreSkippedActivitiesYesRadioBtn.IsChecked = _HTMLReportConfiguration.IgnoreSkippedActivities;
+            xIgnoreSkippedActivitiesNoRadioBtn.IsChecked = !_HTMLReportConfiguration.IgnoreSkippedActivities;
+            xIgnoreSkippedActionsYesRadioBtn.IsChecked = _HTMLReportConfiguration.IgnoreSkippedActions;
+            xIgnoreSkippedActionsNoRadioBtn.IsChecked = !_HTMLReportConfiguration.IgnoreSkippedActions;
             SetControlsEvents();
 
             switch ((HTMLReportConfiguration.ReportsLevel)Enum.Parse(typeof(HTMLReportConfiguration.ReportsLevel), _HTMLReportConfiguration.ReportLowerLevelToShow))
@@ -675,6 +679,27 @@ namespace Ginger.Reports
         {
             _HTMLReportConfiguration.ExecutionStatisticsCountBy = HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions;
         }
+
+        private void xIgnoreSkippedActivitiesYesRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            _HTMLReportConfiguration.IgnoreSkippedActivities = true;
+        }
+
+        private void xIgnoreSkippedActivitiesNoRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            _HTMLReportConfiguration.IgnoreSkippedActivities = false;
+        }
+
+        private void xIgnoreSkippedActionsYesRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            _HTMLReportConfiguration.IgnoreSkippedActions = true;
+        }
+
+        private void xIgnoreSkippedActionsNoRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            _HTMLReportConfiguration.IgnoreSkippedActions = false;
+        }
+
         private void SelectHTMLReportsImageFolderButton_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog();
