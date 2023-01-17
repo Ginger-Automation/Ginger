@@ -1,0 +1,8 @@
+name: Reusable workflow Runner
+
+on:
+    workflow_dispatch: 
+
+jobs:
+    Build:
+        uses: ./Build.yml
