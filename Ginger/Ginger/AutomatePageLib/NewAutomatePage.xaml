@@ -164,6 +164,14 @@
                                     <GingerCore:ucTextDicResource Text="Auto Produce [BusinessFlow] Execution Report after Flow Execution" />
                                 </MenuItem.Header>
                             </MenuItem>
+                            <MenuItem x:Name="xExcludeSkippedItemsMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExcludeSkippedItemsMenuItem_Click">
+                                <MenuItem.Icon>
+                                    <UserControls:ImageMakerControl x:Name="xExcludeSkippedItemsMenuItemIcon" ImageType="Active" SetAsFontImageWithSize="13" />
+                                </MenuItem.Icon>
+                                <MenuItem.Header>
+                                    <GingerCore:ucTextDicResource Text="Exclude skipped items from execution report" />
+                                </MenuItem.Header>
+                            </MenuItem>
                         </MenuItem>
                     </Menu>
 

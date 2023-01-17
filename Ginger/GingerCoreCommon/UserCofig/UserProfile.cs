@@ -223,6 +223,23 @@ namespace Ginger
             }
         }
 
+        bool mExcludeSkippedItemsFromReport;
+        public bool ExcludeSkippedItemsFromReport 
+        {
+            get
+            {
+                return mExcludeSkippedItemsFromReport;
+            }
+            set
+            {
+                if(mExcludeSkippedItemsFromReport != value)
+                {
+                    mExcludeSkippedItemsFromReport = value;
+                    OnPropertyChanged(nameof(ExcludeSkippedItemsFromReport));
+                }
+            }
+        }
+
         public string SourceControlPass
         {
             get; set;

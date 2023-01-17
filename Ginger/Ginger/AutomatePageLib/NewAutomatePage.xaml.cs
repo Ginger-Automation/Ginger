@@ -199,7 +199,7 @@ namespace GingerWPF.BusinessFlowsLib
 
             BindingHandler.ObjFieldBinding(xAutoAnalyzeConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoRunAutomatePageAnalyzer), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
             BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoGenerateAutomatePageReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
-
+            BindingHandler.ObjFieldBinding(xExcludeSkippedItemsMenuItemIcon, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.ExcludeSkippedItemsFromReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
             mApplicationAgentsMapPage = new ApplicationAgentsMapPage(mExecutionEngine, mContext);
             xAppsAgentsMappingFrame.SetContent(mApplicationAgentsMapPage);
             SetEnvsCombo();
@@ -1535,6 +1535,11 @@ namespace GingerWPF.BusinessFlowsLib
         private void xAutoReportConfigMenuItem_Click(object sender, RoutedEventArgs e)
         {
             WorkSpace.Instance.UserProfile.AutoGenerateAutomatePageReport = !WorkSpace.Instance.UserProfile.AutoGenerateAutomatePageReport;
+        }
+
+        private void xExcludeSkippedItemsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            WorkSpace.Instance.UserProfile.ExcludeSkippedItemsFromReport = !WorkSpace.Instance.UserProfile.ExcludeSkippedItemsFromReport;
         }
 
         private void xContinueRunsetBtn_Click(object sender, RoutedEventArgs e)

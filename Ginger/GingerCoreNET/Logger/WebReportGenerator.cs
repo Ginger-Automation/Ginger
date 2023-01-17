@@ -99,6 +99,8 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));              
                 lightDbRunSet = dbManager.GetLatestExecutionRunsetData(runSetGuid);
                 PopulateMissingFields(lightDbRunSet, ReportrootPath);
+                if(WorkSpace.Instance.UserProfile.ExcludeSkippedItemsFromReport)
+                    RemoveSkippedActions(lightDbRunSet);
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject(lightDbRunSet);
                 response = RunClientApp(json, ReportrootPath, openObject, shouldDisplayReport);
             }
@@ -107,6 +109,21 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 Reporter.ToLog(eLogLevel.ERROR, "RunNewHtmlReport,error :"+ex.ToString());
             }
             return lightDbRunSet;
+        }
+
+        private void RemoveSkippedActions(LiteDbRunSet liteDbRunSet)
+        {
+            foreach(LiteDbRunner runner in liteDbRunSet.RunnersColl)
+            {
+                foreach(LiteDbBusinessFlow businessFlow in runner.BusinessFlowsColl)
+                {
+                    businessFlow.ActivitiesColl = businessFlow.ActivitiesColl.Where(activity => activity.RunStatus != eRunStatus.Skipped.ToString()).ToList();
+                    foreach (LiteDbActivity activity in businessFlow.ActivitiesColl)
+                    {
+                        activity.ActionsColl = activity.ActionsColl.Where(action => action.RunStatus != eRunStatus.Skipped.ToString()).ToList();
+                    }
+                }
+            }
         }
 
 
