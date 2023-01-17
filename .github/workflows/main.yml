@@ -5,4 +5,4 @@ on:
 
 jobs:
     Build:
-        uses: ./Build.yml
+        uses: nadeemjazmawe/Ginger/.github/workflows/Build.yml@master
