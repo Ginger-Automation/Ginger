@@ -1995,7 +1995,7 @@ namespace Ginger.Run
                 {
                     try
                     {
-                        if(act.WindowsToCapture == Act.eWindowsToCapture.FullPageWithDesktopScreen)
+                        if(act.WindowsToCapture == Act.eWindowsToCapture.FullPageWithUrlAndTimestamp)
                         {
                             TakeFullPageWithDesktopScreenScreenShot(act);
                         }

@@ -397,8 +397,8 @@ namespace Ginger.Actions
                     //remove full page for other platforms excepts web
                     if (mAction.Platform != GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
                     {
-                        var comboEnumItem = xWindowsToCaptureCombo.Items.Cast<ComboEnumItem>().Where(x => x.Value.ToString() == Act.eWindowsToCapture.FullPage.ToString()).FirstOrDefault();
-                        xWindowsToCaptureCombo.Items.Remove(comboEnumItem);
+                        RemoveCaptureTypeFromComboItems(Act.eWindowsToCapture.FullPage);
+                        RemoveCaptureTypeFromComboItems(Act.eWindowsToCapture.FullPageWithUrlAndTimestamp);
                     }
                     SetScreenshotsPnlView();
                     UpdateScreenShots();
@@ -408,6 +408,12 @@ namespace Ginger.Actions
             {
                 xExecutionDetailsExpander.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void RemoveCaptureTypeFromComboItems(Act.eWindowsToCapture captureType)
+        {
+            var comboEnumItem = xWindowsToCaptureCombo.Items.Cast<ComboEnumItem>().Where(x => x.Value.ToString() == captureType.ToString()).FirstOrDefault();
+            xWindowsToCaptureCombo.Items.Remove(comboEnumItem);
         }
 
         private void InitHelpTabView()

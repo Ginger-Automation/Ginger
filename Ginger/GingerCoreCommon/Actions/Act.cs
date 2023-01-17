@@ -68,8 +68,8 @@ namespace GingerCore.Actions
             DesktopScreen = 2,
             [EnumValueDescription("Full Page Screenshot")]
             FullPage = 3,
-            [EnumValueDescription("Full Page With Desktop Screen")]
-            FullPageWithDesktopScreen = 4
+            [EnumValueDescription("Full Page With URL and Timestamp")]
+            FullPageWithUrlAndTimestamp = 4
         }
 
 
