@@ -10,10 +10,12 @@ jobs:
      
     Release:
         name: Release
+        needs: CI
         uses: nadeemjazmawe/Ginger/.github/workflows/Release.yml@master
      
     Deploy:
         name: Deploy
+        needs: Release
         uses: nadeemjazmawe/Ginger/.github/workflows/Deploy.yml@master
         
         
