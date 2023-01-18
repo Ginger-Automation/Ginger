@@ -61,6 +61,26 @@ namespace GingerCore.Platforms
                             possibleAgents.Add(agent);
                         }
                     }
+
+                    //adding special case for Web on which also Mobile Web Agents are allowed
+                    if(appPlatform == ePlatformType.Web)
+                    {
+                        List<Agent> mobileAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.Platform == ePlatformType.Mobile).ToList();
+                        if (mobileAgents != null)
+                        {
+                            foreach (IAgent mobileAgent in mobileAgents)
+                            {
+                                if (((Agent)mobileAgent).DriverConfiguration.Where(x => x.ItemName == "AppType" && x.Value == "Web").FirstOrDefault() != null)
+                                {
+                                    if (((Agent)mobileAgent).AgentOperations == null)
+                                    {
+                                        ((Agent)mobileAgent).AgentOperations = new AgentOperations((Agent)mobileAgent);
+                                    }
+                                    possibleAgents.Add(mobileAgent);
+                                }
+                            }
+                        }
+                    }
                 }
                 return possibleAgents;
             }
