@@ -7,3 +7,13 @@ jobs:
     CI:
         name: CI
         uses: nadeemjazmawe/Ginger/.github/workflows/main.yml@master
+     
+    Release:
+        name: Release
+        uses: nadeemjazmawe/Ginger/.github/workflows/Release.yml@master
+     
+    Deploy:
+        name: Deploy
+        uses: nadeemjazmawe/Ginger/.github/workflows/Deploy.yml@master
+        
+        
