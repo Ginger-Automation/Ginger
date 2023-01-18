@@ -6,3 +6,9 @@ on:
 jobs:
     Build:
         uses: nadeemjazmawe/Ginger/.github/workflows/Build.yml@master
+        
+    Test:
+        uses: nadeemjazmawe/Ginger/.github/workflows/Test.yml@master
+
+        
+        
