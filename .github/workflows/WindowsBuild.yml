@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-
+    name: Windows Test
     runs-on: windows-latest
     
     env:
