@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-
+    name: Linux Test
     runs-on: ubuntu-latest
     
     env:
