@@ -1,4 +1,4 @@
-name: Ginger Mac Build
+name: Ginger MacOS Test
 
 on:
   workflow_call: 
