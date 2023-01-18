@@ -1,0 +1,104 @@
+name: Ginger Linux Build2
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  build:
+  
+    strategy: 
+      matrix:
+        os: [macos-latest, ubuntu-latest] 
+
+    env:
+      BUILD_CONFIGURATION: Release
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:     
+      - name: Download Airtifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: ginger-artifact
+      
+# ------------------------------------------------------------------------------------------------------
+# Install .Net core SDK 6.0.301
+# ------------------------------------------------------------------------------------------------------
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.301'
+      
+    
+# ------------------------------------------------------------------------------------------------------
+# start Testing 
+# ------------------------------------------------------------------------------------------------------
+      - name: Testing GingerUtilsTest
+        run: |
+          dotnet test  Ginger/GingerUtilsTest --configuration $env:BUILD_CONFIGURATION --logger trx --verbosity=normal
+          echo ***************
+          ls -alt Ginger/GingerUtilsTest/bin
+        
+      - name: 'printing file - GingerConsole.dll'
+        if: success() || failure()        # run this step even if previous step failed
+        run: | 
+          ls -alt Ginger/GingerUtilsTest 
+      
+      - name: 'Testing GingerCoreCommonTest'
+        run: dotnet test  Ginger/GingerCoreCommonTest --configuration ${BUILD_CONFIGURATION} --logger trx --verbosity=normal
+
+        # for GingerCoreNET we use run setting to limit to have one worker thread due to workspace limitation
+      - name: 'Testing GingerCoreNETUnitTest'
+        run: dotnet test  Ginger/GingerCoreNETUnitTest --configuration ${BUILD_CONFIGURATION} --logger trx --verbosity=normal
+
+      - name: 'Testing GingerPluginCoreTest'
+        run: dotnet test  Ginger/GingerPluginCoreTest --configuration ${BUILD_CONFIGURATION} --logger trx --verbosity=normal
+
+      - name: 'Testing GingerConsoleTest'
+        run: dotnet test  Ginger/GingerConsoleTest --configuration ${BUILD_CONFIGURATION} --logger trx --verbosity=normal
+
+      - name: 'Testing GingerAutoPilotTest'
+        run: dotnet test  Ginger/GingerAutoPilotTest --configuration ${BUILD_CONFIGURATION} --logger trx --verbosity=normal
+        
+        
+        
+# ------------------------------------------------------------------------------------------------------
+# Publish GingerRuntime
+# ------------------------------------------------------------------------------------------------------
+      - name: 'Publish GingerRuntime'
+        if: matrix.os == 'ubuntu-latest'
+        run: dotnet publish  Ginger/GingerRuntime -c ${BUILD_CONFIGURATION}
+        
+        
+        
+# ------------------------------------------------------------------------------------------------------
+# Publish Test Results
+# ------------------------------------------------------------------------------------------------------   
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: matrix.os == 'ubuntu-latest' && (success() || failure())        # run this step even if previous step failed
+        with:
+          name: Ginger Ubuntu UnitTests    # Name of the check run which will be created
+          path: "**/*.trx"                # Path to test results
+          reporter: dotnet-trx            # Format of test results
+          
+          
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if:  matrix.os == 'macos-latest' && (success() || failure())         # run this step even if previous step failed
+        with:
+          name: "Ginger ${{ matrix.os }} UnitTests"    # Name of the check run which will be created
+          path: "**/*.trx"                # Path to test results
+          reporter: dotnet-trx            # Format of test results
+      
+
+      
+          
+# ------------------------------------------------------------------------------------------------------
+# Run Standalone CLI Test
+# ------------------------------------------------------------------------------------------------------          
+      - name: Run Standalone CLI Test
+        if: matrix.os == 'ubuntu-latest' && (success() || failure())        # run this step even if previous step failed
+        run: |
+          chmod +x CLITestsGithub.ps1
+          ./CLITestsGithub.ps1
