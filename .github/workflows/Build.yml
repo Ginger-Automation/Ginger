@@ -5,7 +5,6 @@ on:
 
 jobs:
   build:
-    name: Build12
     runs-on: windows-latest
     
     env:
