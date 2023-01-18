@@ -114,6 +114,9 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 case CellType.Blank:
                     cellVal = null;
                     break;
+                case CellType.Error:
+                    cellVal = cell.ErrorCellValue;
+                    break;
                 default:
                     cellVal = cell.RichStringCellValue;
                     break;

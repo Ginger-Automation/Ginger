@@ -546,14 +546,14 @@ namespace GingerWPF.BusinessFlowsLib
             mGenericWin.Close();
         }
 
-        private async void SharedRepoSaveBtn_Click(object sender, RoutedEventArgs e)
+        private void SharedRepoSaveBtn_Click(object sender, RoutedEventArgs e)
         {
             if (mPageViewMode == Ginger.General.eRIPageViewMode.SharedReposiotry)
             {
                 if (SharedRepositoryOperations.CheckIfSureDoingChange(mActivity, "change") == true)
                 {
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivity);
-                    await SharedRepositoryOperations.UpdateLinkedInstances(mActivity); 
+                    //await SharedRepositoryOperations.UpdateLinkedInstances(mActivity); //this method is already being called from Activity.PostSaveHandler
                     mSaveWasDone = true;
                     mGenericWin.Close();
                 }
