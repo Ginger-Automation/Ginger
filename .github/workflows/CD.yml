@@ -1,0 +1,9 @@
+name: CD
+
+on:
+    workflow_dispatch: 
+
+jobs:
+    CI:
+        name: CI
+        uses: nadeemjazmawe/Ginger/.github/workflows/main.yml@master
