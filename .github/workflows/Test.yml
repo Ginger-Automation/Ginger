@@ -11,7 +11,7 @@ jobs:
     uses: nadeemjazmawe/Ginger/.github/workflows/LinuxBuild.yml@master
     
   MacOS:
-    uses: nadeemjazmawe/Ginger/.github/workflows/macBuild.yml@master
+    uses: nadeemjazmawe/Ginger/.github/workflows/MacBuild.yml@master
 
 
 # jobs:
