@@ -4,6 +4,11 @@ on:
     workflow_dispatch: 
 
 jobs:
+    Codacy:
+        name: Code_Quality
+        runs-on: ubuntu-latest
+        
+
     Build:
         uses: nadeemjazmawe/Ginger/.github/workflows/Build.yml@master
         
