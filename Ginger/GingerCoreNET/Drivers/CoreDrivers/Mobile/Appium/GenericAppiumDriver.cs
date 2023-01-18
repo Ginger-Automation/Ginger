@@ -41,6 +41,7 @@ using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
+//using DocumentFormat.OpenXml.Bibliography;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
@@ -51,6 +52,7 @@ using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NPOI.HPSF;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
@@ -62,6 +64,7 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -123,6 +126,16 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Determine if auto set the default capabilities based on OS and application type selection")]
         public bool AutoSetCapabilities { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Set UFTM Server capabilities autumatically")]
+        public bool UFTMServerCapabilities { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Set UFTM simulations automatically")]
+        public bool UFTMSupportSimulationsCapabiliy { get; set; }
 
         [UserConfigured]
         [UserConfiguredMultiValues]

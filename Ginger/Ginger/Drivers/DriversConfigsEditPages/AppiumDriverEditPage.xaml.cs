@@ -70,6 +70,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Description));           
            
             BindingHandler.ObjFieldBinding(xAutoUpdateCapabiltiies, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AutoSetCapabilities), "true"), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
+            BindingHandler.ObjFieldBinding(xUFTMServerCapabilities, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.UFTMServerCapabilities)), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
+            BindingHandler.ObjFieldBinding(xUFTMSupportSimulations, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.UFTMSupportSimulationsCapabiliy)), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
 
             BindRadioButtons();
 
@@ -135,6 +137,23 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
             AddOrUpdateCapability(platformName);
             AddOrUpdateCapability(automationName);
+        }
+
+        private void SetUFTMServerCapabilities()
+        {
+            DriverConfigParam uftClientId = new DriverConfigParam() { Parameter = "uftm:oauthClientId", Description = "UFT Execution key Client Id" };
+            DriverConfigParam uftClientSecret = new DriverConfigParam() { Parameter = "uftm:oauthClientSecret", Description = "UFT Execution key Client Password" };
+            DriverConfigParam uftTenantId = new DriverConfigParam() { Parameter = "uftm:tenantId",Value = "\"999999999\"", Description = "Default value (Need to change only when using UFT shared spaces))" };
+
+            AddOrUpdateCapability(uftClientId);
+            AddOrUpdateCapability(uftClientSecret);
+            AddOrUpdateCapability(uftTenantId);
+        }
+        private void SetUFTMSupportSimulationsCapabilities()
+        {
+            DriverConfigParam installPackagedApp = new DriverConfigParam() { Parameter = "uftm:installPackagedApp",Value="true", Description = "Install app that supports UFT simulations" };
+
+            AddOrUpdateCapability(installPackagedApp);
         }
 
         private void SetApplicationCapabilities(bool init=false)
@@ -364,7 +383,56 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 BindRadioButtons();
             }
         }
+
+        private void xUFTMServerCapabilities_Click(object sender, RoutedEventArgs e)
+        {
+            if (xAutoUpdateCapabiltiies.IsChecked == true)
+            {
+                if (xUFTMServerCapabilities.IsChecked == true)
+                {
+                    SetUFTMServerCapabilities();
+                    if (xUFTMSupportSimulations.IsChecked == true)
+                    {
+                        SetUFTMSupportSimulationsCapabilities();
+                    }
+                }
+                else
+                {
+                    DeleteUFTMServerCapabilities();
+                    DeleteUFTMSupportSimulationsCapabilities();
+                }
+            }
+        }
+
+        private void DeleteUFTMServerCapabilities()
+        {
+            DeleteCapabilityIfExist("uftm:oauthClientId");
+            DeleteCapabilityIfExist("uftm:oauthClientSecret");
+            DeleteCapabilityIfExist("uftm:tenantId");
+        }
+
+
+        private void xSupportSimulations_Click(object sender, RoutedEventArgs e)
+        {
+            if (xAutoUpdateCapabiltiies.IsChecked == true)
+            {
+                if (xUFTMSupportSimulations.IsChecked == true)
+                {
+                    SetUFTMSupportSimulationsCapabilities();
+                }
+                else
+                {
+                    DeleteUFTMSupportSimulationsCapabilities();
+                }
+            }
+        }
+
+        private void DeleteUFTMSupportSimulationsCapabilities()
+        {
+            DeleteCapabilityIfExist("uftm:installPackagedApp");
+        }
     }
+
 
     public class RadioBtnEnumConfigConverter : IValueConverter
     {

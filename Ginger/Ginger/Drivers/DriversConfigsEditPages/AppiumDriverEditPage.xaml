@@ -10,6 +10,10 @@
       d:DesignHeight="450" d:DesignWidth="800" Loaded="Page_Loaded"
       Title="AppiumDriverEditPage">
 
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="b2v" />
+    </Page.Resources>
+    
     <Grid x:Name="xPageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.Resources>
             <DataTemplate x:Key="ParamValueExpressionButton">
@@ -32,6 +36,7 @@
                             </Hyperlink>):
                         </TextBlock>
                         <Actions:UCValueExpression x:Name="xServerURLTextBox" HorizontalAlignment="Stretch" VerticalAlignment="Top"  DockPanel.Dock="Top"/>
+                        <CheckBox x:Name="xUFTMServerCapabilities" Style="{StaticResource $CeckBoxStyle}" Content="Add Micro-Focus UFTM Capabilities" Margin="0,5,0,5" IsChecked="False" Click="xUFTMServerCapabilities_Click"/>
                         <CheckBox x:Name="xLoadDeviceWindow" Style="{StaticResource $CeckBoxStyle}" Content="Load device window" Margin="0,5,0,0" IsChecked="True" Checked="xLoadDeviceWindow_Checked" Unchecked="xLoadDeviceWindow_Checked"/>
                         <StackPanel x:Name="xAutoRefreshModePnl" Orientation="Horizontal" Margin="0,5,0,0">
                             <Label  Content="Auto refresh mode:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
@@ -80,6 +85,7 @@
                             <RadioButton x:Name="xWebRdBtn" Content="Web" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AppType" VerticalAlignment="Center" Margin="7,0,0,0" Checked="ActivityTypeSelectionChanged"/>
                         </StackPanel>
                         <StackPanel Orientation="Vertical"  Margin="0,5,0,0">
+                            <CheckBox x:Name="xUFTMSupportSimulations" Content="Add Micro-Focus UFTM Support Simulations Capability" Style="{StaticResource $CeckBoxStyle}" Margin="0,4.5,5,0" IsChecked="False" Click="xSupportSimulations_Click" Visibility="{Binding IsChecked, ElementName=xUFTMServerCapabilities,Converter={StaticResource b2v}}"/>
                             <CheckBox x:Name="xAutoUpdateCapabiltiies" Content="Auto update capabilities table" Style="{StaticResource $CeckBoxStyle}" Margin="0,4.5,5,0" IsChecked="True" Checked="xAutoUpdateCapabiltiies_Checked"/>
                             <TextBlock Style="{StaticResource $TextBlockStyle}" Margin="0,5,0,0"> 
                             (for full Appium desired capabilities list,
