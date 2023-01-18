@@ -11,9 +11,12 @@ jobs:
             - uses: actions/checkout@v3
     
     Build:
+        name: Build Stage
+        needs: Codacy   
         uses: nadeemjazmawe/Ginger/.github/workflows/Build.yml@master
         
     Test:
+        name: Test Stage
         needs: Build
         uses: nadeemjazmawe/Ginger/.github/workflows/Test.yml@master
 
