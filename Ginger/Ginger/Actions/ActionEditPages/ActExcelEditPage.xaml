@@ -71,7 +71,7 @@
                 <Button x:Name="xOpenExcelButton"  Style="{StaticResource @InputButtonStyle}" Click="xOpenExcelButton_Click" Content="Open Excel" DockPanel.Dock="Right" HorizontalAlignment="Right" Width="80" Padding="5,0,5,0" Margin="5,0,5,0" />
             </DockPanel>
 
-            <DataGrid x:Name="ExcelDataGrid" DockPanel.Dock="Top">
+            <DataGrid x:Name="ExcelDataGrid" DockPanel.Dock="Top" AutoGenerateColumns="False">
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="{x:Type DataGridColumnHeader}">
                         <Setter Property="Template">
