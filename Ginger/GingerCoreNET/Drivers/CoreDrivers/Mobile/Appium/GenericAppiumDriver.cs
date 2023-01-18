@@ -135,11 +135,6 @@ namespace Amdocs.Ginger.CoreNET
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Set UFTM Server capabilities autumatically")]
-        public bool UFTMServerCapabilities { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Set UFTM simulations automatically")]
         public bool UFTMSupportSimulationsCapabiliy { get; set; }
 

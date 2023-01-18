@@ -72,7 +72,6 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Description));           
            
             BindingHandler.ObjFieldBinding(xAutoUpdateCapabiltiies, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AutoSetCapabilities), "true"), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
-            //BindingHandler.ObjFieldBinding(xUFTMServerCapabilities, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.UFTMServerCapabilities)), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
             BindingHandler.ObjFieldBinding(xUFTMSupportSimulations, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.UFTMSupportSimulationsCapabiliy)), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
 
             mAppiumCapabilities = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppiumCapabilities));
@@ -387,7 +386,6 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             if (this.IsLoaded && xAutoUpdateCapabiltiies != null && xAutoUpdateCapabiltiies.IsChecked == true)
             {
                 SetDeviceSourceCapabilities();
-                SetApplicationCapabilities();
             }
         }
 
@@ -432,26 +430,6 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 BindRadioButtons();
             }
         }
-
-        //private void xUFTMServerCapabilities_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (xAutoUpdateCapabiltiies.IsChecked == true)
-        //    {
-        //        if (xUFTMServerCapabilities.IsChecked == true)
-        //        {
-        //            SetDeviceSourceCapabilities();
-        //            if (xUFTMSupportSimulations.IsChecked == true)
-        //            {
-        //                SetUFTMSupportSimulationsCapabilities();
-        //            }
-        //        }
-        //        else
-        //        {
-        //            DeleteUFTMServerCapabilities();
-        //            DeleteUFTMSupportSimulationsCapabilities();
-        //        }
-        //    }
-        //}
 
         private void DeleteUFTMServerCapabilities()
         {
