@@ -8,6 +8,7 @@ jobs:
         uses: nadeemjazmawe/Ginger/.github/workflows/Build.yml@master
         
     Test:
+        needs: Build
         uses: nadeemjazmawe/Ginger/.github/workflows/Test.yml@master
 
         
