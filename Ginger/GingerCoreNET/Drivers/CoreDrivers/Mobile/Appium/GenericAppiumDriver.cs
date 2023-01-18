@@ -41,7 +41,6 @@ using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
-//using DocumentFormat.OpenXml.Bibliography;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
@@ -52,7 +51,6 @@ using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NPOI.HPSF;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
@@ -64,7 +62,6 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -108,7 +105,7 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfigured]
         [UserConfiguredEnumType(typeof(eDeviceSource))]
         [UserConfiguredDefault("LocalAppium")]
-        [UserConfiguredDescription("Device Source is 'Local Appium' or 'MF UFTM Lab'")]
+        [UserConfiguredDescription("Connected mobile device source lab")]
         public eDeviceSource DeviceSource { get; set; }
 
         [UserConfigured]
@@ -135,7 +132,7 @@ namespace Amdocs.Ginger.CoreNET
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Set UFTM simulations automatically")]
+        [UserConfiguredDescription("Define if to include capability for allowing UFTM simulation capabilities")]
         public bool UFTMSupportSimulationsCapabiliy { get; set; }
 
         [UserConfigured]

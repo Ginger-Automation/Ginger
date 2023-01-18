@@ -99,14 +99,14 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
             if (!IsUFTCapabilityExist())
             {
-                mDeviceSource = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceSource), "LocalAppium");
+                mDeviceSource = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceSource), eDeviceSource.LocalAppium.ToString());
             }
             else
             {
-                mDeviceSource = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceSource), "MicroFocusUFT");
+                mDeviceSource = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceSource), eDeviceSource.MicroFoucsUFTMLab.ToString());
             }
             BindingHandler.ObjFieldBinding(xLocalAppiumRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDeviceSource.LocalAppium.ToString());
-            BindingHandler.ObjFieldBinding(xUFTRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDeviceSource.MicroFocusUFT.ToString());
+            BindingHandler.ObjFieldBinding(xUFTRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDeviceSource.MicroFoucsUFTMLab.ToString());
 
             mAppType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppType));
             BindingHandler.ObjFieldBinding(xNativeHybRdBtn, RadioButton.IsCheckedProperty, mAppType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAppType.NativeHybride.ToString());
@@ -159,7 +159,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 DeleteUFTMServerCapabilities();
                 DeleteUFTMSupportSimulationsCapabilities();
             }
-            else if (mDeviceSource.Value == eDeviceSource.MicroFocusUFT.ToString())
+            else if (mDeviceSource.Value == eDeviceSource.MicroFoucsUFTMLab.ToString())
             {
                 DriverConfigParam uftClientId = new DriverConfigParam() { Parameter = "uftm:oauthClientId", Description = "UFT Execution key Client Id" };
                 DriverConfigParam uftClientSecret = new DriverConfigParam() { Parameter = "uftm:oauthClientSecret", Description = "UFT Execution key Client Password" };

@@ -30,7 +30,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile
     public enum eDeviceSource
     {
         LocalAppium = 0,
-        MicroFocusUFT = 1
+        MicroFoucsUFTMLab = 1
     }
 
     public enum eAppType
