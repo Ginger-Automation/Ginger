@@ -251,7 +251,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             throw new NotImplementedException();
         }
 
-        public Bitmap GetBrowserHeaderScreenshot(Bitmap browserWindowScreenshot)
+        public Bitmap GetBrowserHeaderScreenshot(Point windowPosition, Size windowSize, Size viewportSize, double devicePixelRatio)
         {
             throw new NotImplementedException();
         }

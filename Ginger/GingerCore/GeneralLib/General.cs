@@ -873,15 +873,12 @@ namespace GingerCore
             return imagePaths;
         }
 
-        public static Bitmap GetBrowserHeaderScreenshot(Bitmap browserWindowScreenshot)
+        public static Bitmap GetBrowserHeaderScreenshot(System.Drawing.Point windowPosition, System.Drawing.Size windowSize, System.Drawing.Size viewportSize, double devicePixelRatio)
         {
-            SKBitmap browserWindowScreenshotAsSKBitmap = browserWindowScreenshot.ToSKBitmap();
-            Rectangle browserWindowBounds = new(0, 0, browserWindowScreenshotAsSKBitmap.Width, browserWindowScreenshotAsSKBitmap.Height);
-            System.Windows.Forms.Screen primaryScreen = System.Windows.Forms.Screen.PrimaryScreen;
-            Bitmap browserHeaderScreenshot = new(primaryScreen.Bounds.Width, primaryScreen.WorkingArea.Height - browserWindowBounds.Height);
+            Bitmap browserHeaderScreenshot = new((int)(windowSize.Width * devicePixelRatio), (int)((windowSize.Height - viewportSize.Height) * devicePixelRatio));
             using (Graphics graphics = Graphics.FromImage(browserHeaderScreenshot))
             {
-                System.Drawing.Point upperLeftSource = new(x: 0, y: 0);
+                System.Drawing.Point upperLeftSource = new((int)(windowPosition.X * devicePixelRatio), (int)(windowPosition.Y * devicePixelRatio));
                 System.Drawing.Point upperLeftDestination = new(x: 0, y: 0);
                 graphics.CopyFromScreen(upperLeftSource, upperLeftDestination, browserHeaderScreenshot.Size);
             }

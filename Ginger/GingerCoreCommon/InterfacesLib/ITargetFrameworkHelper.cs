@@ -59,7 +59,7 @@ namespace Amdocs.Ginger.Common
 
         void CreateCustomerLogo(Object a, string t);
         Dictionary<string, string> TakeDesktopScreenShot(bool v);
-        Bitmap GetBrowserHeaderScreenshot(Bitmap browserWindowScreenshot);
+        Bitmap GetBrowserHeaderScreenshot(Point windowPosition, Size windowSize, Size viewportSize, double devicePixelRatio);
         Bitmap GetTaskbarScreenshot();
         string MergeVerticallyAndSaveBitmaps(params Bitmap[] bitmaps);
 

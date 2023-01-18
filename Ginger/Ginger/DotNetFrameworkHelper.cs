@@ -434,9 +434,9 @@ namespace Ginger
             return GingerCore.General.TakeDesktopScreenShot(true);
         }
 
-        public Bitmap GetBrowserHeaderScreenshot(Bitmap browserWindowScreenshot)
+        public Bitmap GetBrowserHeaderScreenshot(Point windowPosition, Size windowSize, Size viewportSize, double devicePixelRatio)
         {
-            return GingerCore.General.GetBrowserHeaderScreenshot(browserWindowScreenshot);
+            return GingerCore.General.GetBrowserHeaderScreenshot(windowPosition, windowSize, viewportSize, devicePixelRatio);
         }
 
         public Bitmap GetTaskbarScreenshot()

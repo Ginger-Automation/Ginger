@@ -2075,21 +2075,40 @@ namespace Ginger.Run
             DriverBase driver = ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Driver;
             if (!driver.GetType().IsAssignableTo(typeof(SeleniumDriver)))
                 throw new NotImplementedException($"Full page screen shot with desktop screen is not supported for {driver.GetType().Name}");
+
             SeleniumDriver seleniumDriver = (SeleniumDriver)driver;
 
-            Bitmap browserWindowScreenshot = seleniumDriver.GetScreenShot(false);
+            List<Bitmap> bitmapsToMerge = new();
+            Bitmap browserHeaderScreenshot = GetBrowserHeaderScreenShot(seleniumDriver);
+            if(browserHeaderScreenshot != null)
+                bitmapsToMerge.Add(browserHeaderScreenshot);
+
             Bitmap browserFullPageScreenshot = seleniumDriver.GetScreenShot(true);
-
-            Bitmap browserHeaderScreenshot = TargetFrameworkHelper.Helper.GetBrowserHeaderScreenshot(browserWindowScreenshot);
+            bitmapsToMerge.Add(browserFullPageScreenshot);
             Bitmap taskbarScreenshot = TargetFrameworkHelper.Helper.GetTaskbarScreenshot();
+            bitmapsToMerge.Add(taskbarScreenshot);
 
-            string filepath = TargetFrameworkHelper.Helper.MergeVerticallyAndSaveBitmaps(
-                browserHeaderScreenshot, 
-                browserFullPageScreenshot, 
-                taskbarScreenshot);
+            string filepath = TargetFrameworkHelper.Helper.MergeVerticallyAndSaveBitmaps(bitmapsToMerge.ToArray());
 
             act.ScreenShotsNames.Add(seleniumDriver.GetWebDriver().Title);
             act.ScreenShots.Add(filepath);
+        }
+
+        private Bitmap GetBrowserHeaderScreenShot(SeleniumDriver seleniumDriver)
+        {
+            if (seleniumDriver.HeadlessBrowserMode)
+                return null;
+
+            OpenQA.Selenium.IJavaScriptExecutor javaScriptExecutor = (OpenQA.Selenium.IJavaScriptExecutor)seleniumDriver.GetWebDriver();
+            
+            Point browserWindowPosition = seleniumDriver.GetWebDriver().Manage().Window.Position;
+            Size browserWindowSize = seleniumDriver.GetWindowSize();
+            Size viewportSize = new();
+            viewportSize.Width = (int)(long)javaScriptExecutor.ExecuteScript("return window.innerWidth");
+            viewportSize.Height = (int)(long)javaScriptExecutor.ExecuteScript("return window.innerHeight");
+            double devicePixelRatio = (double)javaScriptExecutor.ExecuteScript("return window.devicePixelRatio");
+
+            return TargetFrameworkHelper.Helper.GetBrowserHeaderScreenshot(browserWindowPosition, browserWindowSize, viewportSize, devicePixelRatio);
         }
 
         private void TakeDesktopScreenShotIntoAction(Act act)
