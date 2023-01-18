@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -25,6 +25,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile
     {
         Android = 0,
         iOS = 1
+    }
+
+    public enum eDeviceSource
+    {
+        LocalAppium = 0,
+        MicroFocusUFT = 1
     }
 
     public enum eAppType

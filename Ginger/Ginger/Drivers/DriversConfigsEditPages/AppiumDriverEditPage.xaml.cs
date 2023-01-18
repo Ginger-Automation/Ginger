@@ -43,6 +43,8 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         DriverConfigParam mAppType;
         DriverConfigParam mAppiumCapabilities;
         DriverConfigParam mDeviceAutoScreenshotRefreshMode;
+        DriverConfigParam mDeviceSource;
+
 
         public AppiumDriverEditPage(Agent appiumAgent)
         {
@@ -70,12 +72,13 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Description));           
            
             BindingHandler.ObjFieldBinding(xAutoUpdateCapabiltiies, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AutoSetCapabilities), "true"), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
-            BindingHandler.ObjFieldBinding(xUFTMServerCapabilities, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.UFTMServerCapabilities)), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
+            //BindingHandler.ObjFieldBinding(xUFTMServerCapabilities, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.UFTMServerCapabilities)), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
             BindingHandler.ObjFieldBinding(xUFTMSupportSimulations, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.UFTMSupportSimulationsCapabiliy)), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
+
+            mAppiumCapabilities = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppiumCapabilities));
 
             BindRadioButtons();
 
-            mAppiumCapabilities = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppiumCapabilities));
             if (mAppiumCapabilities.MultiValues == null || mAppiumCapabilities.MultiValues.Count == 0)
             {
                 mAppiumCapabilities.MultiValues = new ObservableList<DriverConfigParam>();
@@ -94,6 +97,17 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             mDevicePlatformType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DevicePlatformType));
             BindingHandler.ObjFieldBinding(xAndroidRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDevicePlatformType.Android.ToString());
             BindingHandler.ObjFieldBinding(xIOSRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDevicePlatformType.iOS.ToString());
+
+            if (!IsUFTCapabilityExist())
+            {
+                mDeviceSource = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceSource), "LocalAppium");
+            }
+            else
+            {
+                mDeviceSource = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceSource), "MicroFocusUFT");
+            }
+            BindingHandler.ObjFieldBinding(xLocalAppiumRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDeviceSource.LocalAppium.ToString());
+            BindingHandler.ObjFieldBinding(xUFTRdBtn, RadioButton.IsCheckedProperty, mDeviceSource, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDeviceSource.MicroFocusUFT.ToString());
 
             mAppType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppType));
             BindingHandler.ObjFieldBinding(xNativeHybRdBtn, RadioButton.IsCheckedProperty, mAppType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAppType.NativeHybride.ToString());
@@ -139,15 +153,28 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             AddOrUpdateCapability(automationName);
         }
 
-        private void SetUFTMServerCapabilities()
+        private void SetDeviceSourceCapabilities()
         {
-            DriverConfigParam uftClientId = new DriverConfigParam() { Parameter = "uftm:oauthClientId", Description = "UFT Execution key Client Id" };
-            DriverConfigParam uftClientSecret = new DriverConfigParam() { Parameter = "uftm:oauthClientSecret", Description = "UFT Execution key Client Password" };
-            DriverConfigParam uftTenantId = new DriverConfigParam() { Parameter = "uftm:tenantId",Value = "\"999999999\"", Description = "Default value (Need to change only when using UFT shared spaces))" };
+            if (mDeviceSource.Value == eDeviceSource.LocalAppium.ToString())
+            {
+                DeleteUFTMServerCapabilities();
+                DeleteUFTMSupportSimulationsCapabilities();
+            }
+            else if (mDeviceSource.Value == eDeviceSource.MicroFocusUFT.ToString())
+            {
+                DriverConfigParam uftClientId = new DriverConfigParam() { Parameter = "uftm:oauthClientId", Description = "UFT Execution key Client Id" };
+                DriverConfigParam uftClientSecret = new DriverConfigParam() { Parameter = "uftm:oauthClientSecret", Description = "UFT Execution key Client Password" };
+                DriverConfigParam uftTenantId = new DriverConfigParam() { Parameter = "uftm:tenantId", Value = "\"999999999\"", Description = "Default value (Need to change only when using UFT shared spaces))" };
 
-            AddOrUpdateCapability(uftClientId);
-            AddOrUpdateCapability(uftClientSecret);
-            AddOrUpdateCapability(uftTenantId);
+                AddOrUpdateCapability(uftClientId);
+                AddOrUpdateCapability(uftClientSecret);
+                AddOrUpdateCapability(uftTenantId);
+
+                if (xUFTMSupportSimulations.IsChecked == true)
+                {
+                    SetUFTMSupportSimulationsCapabilities();
+                }
+            }
         }
         private void SetUFTMSupportSimulationsCapabilities()
         {
@@ -252,6 +279,19 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
         }
 
+        private bool IsUFTCapabilityExist()
+        {
+            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.Where(x => x.Parameter == "uftm:oauthClientSecret").FirstOrDefault();
+            if (existingCap != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         private void SetCurrentCapabilityValue(DriverConfigParam capability)
         {
             DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.Where(x => x.Parameter == capability.Parameter).FirstOrDefault();
@@ -342,6 +382,15 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
         }
 
+        private void DeviceSourceSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            if (this.IsLoaded && xAutoUpdateCapabiltiies != null && xAutoUpdateCapabiltiies.IsChecked == true)
+            {
+                SetDeviceSourceCapabilities();
+                SetApplicationCapabilities();
+            }
+        }
+
         private void ActivityTypeSelectionChanged(object sender, RoutedEventArgs e)
         {
             if (this.IsLoaded && xAutoUpdateCapabiltiies != null && xAutoUpdateCapabiltiies.IsChecked == true)
@@ -384,25 +433,25 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
         }
 
-        private void xUFTMServerCapabilities_Click(object sender, RoutedEventArgs e)
-        {
-            if (xAutoUpdateCapabiltiies.IsChecked == true)
-            {
-                if (xUFTMServerCapabilities.IsChecked == true)
-                {
-                    SetUFTMServerCapabilities();
-                    if (xUFTMSupportSimulations.IsChecked == true)
-                    {
-                        SetUFTMSupportSimulationsCapabilities();
-                    }
-                }
-                else
-                {
-                    DeleteUFTMServerCapabilities();
-                    DeleteUFTMSupportSimulationsCapabilities();
-                }
-            }
-        }
+        //private void xUFTMServerCapabilities_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (xAutoUpdateCapabiltiies.IsChecked == true)
+        //    {
+        //        if (xUFTMServerCapabilities.IsChecked == true)
+        //        {
+        //            SetDeviceSourceCapabilities();
+        //            if (xUFTMSupportSimulations.IsChecked == true)
+        //            {
+        //                SetUFTMSupportSimulationsCapabilities();
+        //            }
+        //        }
+        //        else
+        //        {
+        //            DeleteUFTMServerCapabilities();
+        //            DeleteUFTMSupportSimulationsCapabilities();
+        //        }
+        //    }
+        //}
 
         private void DeleteUFTMServerCapabilities()
         {

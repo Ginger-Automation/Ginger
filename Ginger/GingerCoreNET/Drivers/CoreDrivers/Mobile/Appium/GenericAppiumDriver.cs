@@ -106,6 +106,12 @@ namespace Amdocs.Ginger.CoreNET
         public eDevicePlatformType DevicePlatformType { get; set; }
 
         [UserConfigured]
+        [UserConfiguredEnumType(typeof(eDeviceSource))]
+        [UserConfiguredDefault("LocalAppium")]
+        [UserConfiguredDescription("Device Source is 'Local Appium' or 'MF UFTM Lab'")]
+        public eDeviceSource DeviceSource { get; set; }
+
+        [UserConfigured]
         [UserConfiguredEnumType(typeof(eAppType))]
         [UserConfiguredDefault("NativeHybride")]
         [UserConfiguredDescription("The tested application type 'NativeHybride' or 'Web'")]
