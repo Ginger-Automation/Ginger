@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-
+    name: MacOS Test
     runs-on: macOS-latest
     
     env:
