@@ -1,7 +1,7 @@
 name: Ginger-Tests
 
 on:
-  workflow_dispatch:
+  workflow_call
 
 
 jobs:
