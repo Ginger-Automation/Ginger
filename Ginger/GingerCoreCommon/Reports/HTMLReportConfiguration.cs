@@ -77,38 +77,20 @@ namespace Ginger.Reports
         [IsSerializedForLocalRepository]
         public bool ShowAllIterationsElements { get { return mShowAllIterationsElements; } set { if (mShowAllIterationsElements != value) { mShowAllIterationsElements = value; OnPropertyChanged(nameof(ShowAllIterationsElements)); } } }
 
-        bool mIgnoreSkippedActivities;
+        bool mIgnoreSkippedEntities;
         [IsSerializedForLocalRepository]
-        public bool IgnoreSkippedActivities
+        public bool IgnoreSkippedEntities
         {
             get
             {
-                return mIgnoreSkippedActivities;
+                return mIgnoreSkippedEntities;
             }
             set
             {
-                if(mIgnoreSkippedActivities != value)
+                if(mIgnoreSkippedEntities != value)
                 {
-                    mIgnoreSkippedActivities = value;
-                    OnPropertyChanged(nameof(IgnoreSkippedActivities));
-                }
-            }
-        }
-
-        bool mIgnoreSkippedActions;
-        [IsSerializedForLocalRepository]
-        public bool IgnoreSkippedActions
-        {
-            get
-            {
-                return mIgnoreSkippedActions;
-            }
-            set
-            {
-                if (mIgnoreSkippedActions != value)
-                {
-                    mIgnoreSkippedActions = value;
-                    OnPropertyChanged(nameof(IgnoreSkippedActions));
+                    mIgnoreSkippedEntities = value;
+                    OnPropertyChanged(nameof(IgnoreSkippedEntities));
                 }
             }
         }

@@ -99,7 +99,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));              
                 lightDbRunSet = dbManager.GetLatestExecutionRunsetData(runSetGuid);
                 PopulateMissingFields(lightDbRunSet, ReportrootPath);
-                RemoveSkippedActions(lightDbRunSet);
+                RemoveSkippedItems(lightDbRunSet);
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject(lightDbRunSet);
                 response = RunClientApp(json, ReportrootPath, openObject, shouldDisplayReport);
             }
@@ -110,26 +110,28 @@ namespace Amdocs.Ginger.CoreNET.Logger
             return lightDbRunSet;
         }
 
-        private void RemoveSkippedActions(LiteDbRunSet liteDbRunSet)
+        private void RemoveSkippedItems(LiteDbRunSet liteDbRunSet)
         {
             HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Where(x => (x.IsDefault == true)).FirstOrDefault();
 
-            static bool ActivityNotSkipped(LiteDbActivity activity) => activity.RunStatus != eRunStatus.Skipped.ToString();
-            static bool ActionNotSkipped(LiteDbAction action) => action.RunStatus != eRunStatus.Skipped.ToString();
+            if (!_HTMLReportConfig.IgnoreSkippedEntities)
+            {
+                return;
+            }
+
+            static bool IsBusinessFlowNotSkipped(LiteDbBusinessFlow businessFlow) => businessFlow.RunStatus != eRunStatus.Skipped.ToString();
+            static bool IsActivityNotSkipped(LiteDbActivity activity) => activity.RunStatus != eRunStatus.Skipped.ToString();
+            static bool IsActionNotSkipped(LiteDbAction action) => action.RunStatus != eRunStatus.Skipped.ToString();
 
             foreach (LiteDbRunner runner in liteDbRunSet.RunnersColl)
             {
+                runner.BusinessFlowsColl = runner.BusinessFlowsColl.Where(IsBusinessFlowNotSkipped).ToList();
                 foreach(LiteDbBusinessFlow businessFlow in runner.BusinessFlowsColl)
                 {
-                    if(_HTMLReportConfig.IgnoreSkippedActivities)
-                        businessFlow.ActivitiesColl = businessFlow.ActivitiesColl.Where(ActivityNotSkipped).ToList();
-
-                    if (!_HTMLReportConfig.IgnoreSkippedActions)
-                        continue;
-                    
+                    businessFlow.ActivitiesColl = businessFlow.ActivitiesColl.Where(IsActivityNotSkipped).ToList();
                     foreach (LiteDbActivity activity in businessFlow.ActivitiesColl)
                     {
-                        activity.ActionsColl = activity.ActionsColl.Where(ActionNotSkipped).ToList();
+                        activity.ActionsColl = activity.ActionsColl.Where(IsActionNotSkipped).ToList();
                     }
                 }
             }
