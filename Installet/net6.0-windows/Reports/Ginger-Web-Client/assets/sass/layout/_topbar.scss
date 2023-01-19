@@ -1,0 +1,157 @@
+.layout-wrapper {
+    .layout-topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 998;
+        height: 60px;
+        @include background-gradient-diagonal($topbarLeftBgColor, $topbarRightBgColor);
+        @include border-box();
+
+        .logo {
+            @include border-box();
+            width: 230px;
+            padding: 10px 0;
+            display: inline-block;
+            text-align: center;
+
+            img {
+                height: 40px;
+            }
+        }
+
+        .usermenu {
+            a {
+                position: relative;
+
+                .layout-menuitem-toggler {
+                    position: absolute;
+                    right: 12px;
+                    top: 11px;
+                }
+            }
+
+            > li {
+                &.menuitem-active {
+                    > a {
+                        i {
+                            color: $topbarTextColor;
+                        }
+
+                        span {
+                            color: $topbarTextColor;
+                        }
+                    }
+                }
+            }
+        }
+
+        #menu-button {
+            position: absolute;
+            left: 230px;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            font-size: 30px;
+            color: $topbarTextColor;
+            text-align: center;
+            @include transition(background-color $transitionDuration);
+
+            &:hover {
+                background-color: $topbarIconHoverBgColor;
+            }
+
+            i {
+                line-height: inherit;
+                font-size: 28px;
+            }
+        }
+
+        #right-sidebar-button {
+            display: inline-block;
+            position: absolute;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            font-size: 30px;
+            color: $topbarTextColor;
+            text-align: center;
+            @include transition(background-color $transitionDuration);
+
+            &:hover {
+                background-color: $topbarIconHoverBgColor;
+            }
+
+            i {
+                line-height: inherit;
+                font-size: 28px;
+            }
+        }
+
+        #topbar-menu-button {
+            display: block;
+            position: absolute;
+            right: 80px;
+            top: 10px;
+            height: 40px;
+            color: $topbarTextColor;
+
+            img {
+                display: inline-block;
+                vertical-align: middle;
+                width: 40px;
+                height: 40px;
+            }
+
+            span {
+                display: inline-block;
+                vertical-align: middle;
+
+                &:hover {
+                  text-decoration: underline;
+                }
+            }
+        }
+    }
+
+    @media screen and (max-width: $mobileBreakPoint) {
+      .layout-topbar {
+        height: 105px;
+
+        .logo {
+          margin-left: 60px;
+        }
+
+        #menu-button {
+          left: 0;
+        }
+
+        #topbar-menu-button {
+            right: 65px;
+          span {
+            display: none;
+          }
+        }
+
+        #right-sidebar-button {
+          right: 0;
+        }
+      }
+
+    }
+
+    @media screen and (max-width: $mobileBreakPoint / 2) {
+        .layout-topbar {
+            #right-sidebar-button {
+                width: 48px;
+            }
+
+            #topbar-menu-button {
+                right: 48px;
+            }
+        }
+    }
+
+}

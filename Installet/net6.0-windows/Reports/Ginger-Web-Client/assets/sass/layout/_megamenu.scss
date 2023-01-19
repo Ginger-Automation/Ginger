@@ -1,0 +1,190 @@
+.layout-wrapper {
+    #layout-megamenu-button {
+        position: absolute;
+        left: 290px;
+        height: 60px;
+        width: 140px;
+        color: $megamenuButtonTextColor;
+        text-align: center;
+        line-height: 60px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        font-weight: 600;
+        @include transition(background-color $transitionDuration);
+        &:hover {
+            background-color: $topbarIconHoverBgColor;
+        }
+        i {
+            width: 15px;
+            height: 15px;
+            font-size: 1em;
+            text-align: center;
+            margin-right: 2px;
+            vertical-align: middle;
+        }
+    }
+    .layout-megamenu {
+        z-index: 998;
+        position: fixed;
+        left: 290px;
+        top: 60px;
+        background-color: $megamenuBgColor;
+        max-width: 700px;
+        list-style-type: none;
+        border: solid 1px $megamenuBorderColor;
+        padding: 16px;
+        padding-bottom: 20px;
+        display: none;
+        text-align: left;
+        text-transform: none;
+        letter-spacing: 0;
+        font-weight: normal;
+
+        .layout-megamenu-submenu {
+            padding: 0;
+            overflow: hidden;
+            .content-img {
+                padding: 16px;
+                position: relative;
+                box-sizing: border-box;
+                img {
+                    width: 135px;
+                }
+                .img-header {
+                    position: absolute;
+                    top: 20px;
+                    color: $darkMegamenuTextColor;
+                    font-weight: 700;
+                    font-size: 13px;
+                    line-height: 14px;
+                    text-shadow: 0px 0px 2px $darkMegamenuHeaderShadowColor;
+                }
+                .img-subheader {
+                    color: #ffffff;
+                    font-size: 12px;
+                    font-weight: 400;
+                    line-height: 14px;
+                    position: absolute;
+                    top: 40px;
+                    text-shadow: 0px 0px 2px $darkMegamenuHeaderShadowColor;
+                }
+                .p-button {
+                    margin-top: 10px;
+                    border-radius: 3px;
+                    .p-button-text {
+                        padding: 4px 16px;
+                    }
+                }
+            }
+            h6 {
+                color: $megamenuHeaderColor;
+                font-weight: 700;
+                line-height: 20px;
+                text-align: left;
+                margin: 20px 0 0 14px;
+            }
+            ul {
+                padding: 0;
+                list-style-type: none;
+                li {
+                    line-height: 35px;
+                    border-left: 4px solid transparent;
+                    i {
+                        color: $megamenuIconColor;
+                        font-size: inherit;
+                        display: inline-block;
+                        vertical-align: middle;
+                        margin-right: 12px;
+                        margin-left: 10px;
+                    }
+                    span {
+                        color: $megamenuTextColor;
+                        display: inline-block;
+                        vertical-align: middle;
+                    }
+                    &:hover {
+                        background-color: $megamenuHoverBgColor;
+                    }
+                    &:active {
+                        border-left: 4px solid $megamenuActiveTextColor;
+                        color: $megamenuActiveTextColor;
+                        span {
+                            color: $megamenuActiveTextColor;
+                        }
+                        i {
+                            color: $megamenuActiveTextColor;
+                        }
+                    }
+                }
+            }
+        }
+        &.layout-megamenu-dark {
+            background-color: $darkMegamenuBgColor;
+            border: none;
+            h6 {
+                color: $darkMegamenuTextColor;
+            }
+            ul {
+                li {
+                    i {
+                        color: $darkMegamenuIconColor;
+                    }
+                    span {
+                        color: $darkMegamenuTextColor;
+                    }
+                    &:hover {
+                        background-color: $darkMegamenuHoverBgColor;
+                    }
+                    &:active {
+                        border-left: 4px solid $darkMegamenuHoverTextColor;
+                        color: $darkMegamenuHoverTextColor;
+                        span {
+                            color: $darkMegamenuHoverTextColor;
+                        }
+                        i {
+                            color: $darkMegamenuHoverTextColor;
+                        }
+                    }
+                }
+            }
+        }
+        &.layout-megamenu-gradient {
+            background-image: linear-gradient(to top, $gradientMegamenuBottomBgColor, $gradientMegamenuTopBgColor);
+            border: none;
+        }
+        &.layout-megamenu-active {
+            display: block;
+        }
+    }
+}
+
+@media screen and (max-width: $mobileBreakPoint) {
+    .layout-wrapper {
+        #layout-megamenu-button {
+            left: 0;
+            margin-top: 60px;
+            width: 100%;
+            text-align: center;
+            height: 45px;
+            line-height: 45px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background-color: $megamenuMobileBgColor;
+            font-weight: 600;
+            &:hover {
+                background-color: $megamenuMobileHoverBgColor;
+            }
+        }
+        .layout-megamenu {
+            top: 105px;
+            left: 0;
+            width: 100%;
+            max-width: 100%;
+            height: calc(100% - 105px);
+            overflow: auto;
+        }
+    }
+    body.body-megamenu-active {
+        overflow: hidden;
+    }
+}

@@ -1,0 +1,676 @@
+body {
+    .ui-breadcrumb {
+        background-color: $panelContentBgColor;
+        border: $panelContentBorder;
+        padding: $panelContentPadding;
+
+        ul {
+            li {
+                .ui-menuitem-link {
+                    color: $primaryColor;
+                    margin: 0;
+                }
+
+                &.ui-breadcrumb-chevron {
+                    margin: 0 $inlineSpacing 0 $inlineSpacing;
+                    color: $textSecondaryColor;
+                }
+
+                &:first-child {
+                    a {
+                        color: $textSecondaryColor;
+                        margin: 0;
+                    }
+                }
+
+                .ui-menuitem-icon {
+                    color: $textSecondaryColor;
+                }
+            }
+        }
+    }
+
+    .ui-steps {
+        position: relative;
+
+        .ui-steps-item {
+            background-color: transparent;
+            text-align: center;
+
+            .ui-menuitem-link {
+                display: inline-block;
+                text-align: center;
+                background-color: transparent;
+                overflow: hidden;
+
+                .ui-steps-number {
+                    @include border-radius(50%);
+                    display: inline-block;
+                    color: $stepsItemNumberColor;
+                    background-color: $stepsItemBgColor;
+                    border: $stepsItemBorder;
+                    position: relative;
+                    top: $fontSize + 2;
+                    margin-bottom: $fontSize;
+                    width: $stepsItemWidth;
+                    height: $stepsItemHeight;
+                    font-size: $fontSize + 2;
+                    line-height: $stepsItemHeight - 4;
+                    text-align: center;
+                }
+
+                .ui-steps-title {
+                    display: block;
+                    margin-top: 6px;
+                    color: $stepsItemTextColor;
+                }
+            }
+
+            &.ui-state-highlight {
+                .ui-steps-number {
+                    background: $highlightBgColor;
+                    color: $highlightColorText;
+                }
+
+                .ui-steps-title {
+                    font-weight: 700;
+                    color: $textColor;
+                }
+            }
+
+            &:last-child {
+                .ui-menuitem-link {
+                    display: block;
+                }
+            }
+        }
+
+        &:before {
+            content:' ';
+            border-top: $panelContentBorder;
+            width: 100%;
+            top: 45%;
+            left: 0;
+            display: block;
+            position: absolute;
+        }
+    }
+
+    .ui-menu .ui-menuitem-link,
+    .ui-menubar .ui-menuitem-link,
+    .ui-tieredmenu .ui-menuitem-link,
+    .ui-contextmenu .ui-menuitem-link,
+    .ui-megamenu .ui-menuitem-link,
+    .ui-slidemenu .ui-menuitem-link {
+        padding: $menuitemPadding;
+        color: $menuitemTextColor;
+        font-weight: normal;
+        @include border-radius(0);
+
+        .ui-menuitem-text {
+            color: $menuitemTextColor;
+        }
+
+        .ui-menuitem-icon {
+            color: $menuitemIconColor;
+            margin-right: $inlineSpacing;
+        }
+
+        &:hover {
+            background-color: $menuitemHoverBgColor;
+
+            .ui-menuitem-text {
+                color: $menuitemHoverTextColor;
+            }
+
+            .ui-menuitem-icon {
+                color: $menuitemHoverIconColor;
+            }
+
+            .ui-submenu-icon {
+                color: $menuitemActiveIconColor;
+            }
+        }
+    }
+
+    .ui-menu {
+        padding: $menuPadding;
+        background-color: $menuBgColor;
+        border: $menuBorder;
+
+        .ui-menuitem {
+            margin: $menuitemMargin;
+            .ui-menuitem-link {
+                border-left: 4px solid transparent;
+                &:hover {
+                    border-left: 4px solid $primaryColor;
+                }
+            }
+        }
+
+        &.ui-shadow {
+            border: $overlayMenuBorder;
+            @include shadow($overlayMenuShadow);
+        }
+
+        .ui-submenu-header {
+            margin: $submenuHeaderMargin;
+            padding: $menuitemPadding;
+            color: $panelHeaderTextColor;
+            background-color: $panelHeaderBgColor;
+            font-weight: $panelHeaderFontWeight;
+            border: 0 none;
+        }
+
+        .ui-menu-separator {
+            border: $menuBorder;
+            border-width: 1px 0 0 0;
+        }
+    }
+
+    .ui-menubar {
+        padding: 0;
+        background-color: $menuBgColor;
+        border: $menuBorder;
+
+        .ui-menubar-root-list {
+            > .ui-menuitem {
+                > .ui-menuitem-link {
+                    padding: $menuitemPadding;
+                    border-top: 4px solid transparent;
+                    border-bottom: 4px solid transparent;
+                }
+                &.ui-menuitem-active {
+                    > .ui-menuitem-link {
+                        border-bottom: 4px solid $primaryColor;
+                    }
+                }
+            }
+        }
+
+        .ui-submenu-list {
+            padding: $submenuPadding;
+            background-color: $menuBgColor;
+            border: $overlayMenuBorder;
+            @include shadow($overlayMenuShadow);
+
+            .ui-menuitem {
+                margin: $menuitemMargin;
+                .ui-menuitem-link {
+                    border-left: 4px solid transparent;
+                    &:hover {
+                        border-left: 4px solid $primaryColor;
+                    }
+                }
+                &.ui-menuitem-active {
+                    > .ui-menuitem-link {
+                        border-left: 4px solid $primaryColor;
+                    }
+                }
+            }
+
+            .ui-menu-separator {
+                border: $menuBorder;
+                border-width: 1px 0 0 0;
+            }
+        }
+
+        .ui-menuitem {
+            margin: $menuitemMargin;
+
+            &.ui-menuitem-active {
+                > .ui-menuitem-link {
+                    background-color: $menuitemActiveBgColor;
+
+                    .ui-menuitem-text {
+                        color: $menuitemActiveTextColor;
+                    }
+
+                    .ui-menuitem-icon {
+                        color: $menuitemActiveIconColor;
+                    }
+
+                    .ui-submenu-icon {
+                        color: $menuitemActiveIconColor;
+                    }
+                }
+            }
+        }
+    }
+
+    .ui-contextmenu {
+        padding: $menuPadding;
+        background-color: $menuBgColor;
+        border: $overlayMenuBorder;
+        @include shadow($overlayMenuShadow);
+
+        .ui-submenu-list {
+            padding: $submenuPadding;
+            background-color: $menuBgColor;
+            border: $overlayMenuBorder;
+            @include shadow($overlayMenuShadow);
+        }
+
+        .ui-menuitem {
+            margin: $menuitemMargin;
+
+            .ui-menuitem-link {
+                border-left: 4px solid transparent;
+                .ui-submenu-icon {
+                    right: 0.429em;
+                }
+            }
+
+            &.ui-menuitem-active {
+                > .ui-menuitem-link {
+                    border-left: 4px solid $primaryColor;
+                    background-color: $menuitemActiveBgColor;
+
+                    .ui-menuitem-text {
+                        color: $menuitemActiveTextColor;
+                    }
+
+                    .ui-menuitem-icon {
+                        color: $menuitemActiveIconColor;
+                    }
+
+                    .ui-submenu-icon {
+                        color: $menuitemActiveIconColor;
+                    }
+                }
+            }
+        }
+
+        .ui-menu-separator {
+            border: $menuBorder;
+            border-width: 1px 0 0 0;
+        }
+    }
+
+    .ui-tieredmenu {
+        padding: $menuPadding;
+        background-color: $menuBgColor;
+        border: $menuBorder;
+
+        .ui-submenu-list {
+            padding: $submenuPadding;
+            background-color: $menuBgColor;
+            border: $overlayMenuBorder;
+            @include shadow($overlayMenuShadow);
+        }
+
+        .ui-menuitem {
+            margin: $menuitemMargin;
+
+            .ui-menuitem-link {
+                border-left: 4px solid transparent;
+                .ui-submenu-icon {
+                    right: 0.429em;
+                }
+            }
+
+            &.ui-menuitem-active {
+                > .ui-menuitem-link {
+                    border-left: 4px solid $primaryColor;
+                    background-color: $menuitemActiveBgColor;
+
+                    .ui-menuitem-text {
+                        color: $menuitemActiveTextColor;
+                    }
+
+                    .ui-menuitem-icon {
+                        color: $menuitemActiveIconColor;
+                    }
+
+                    .ui-submenu-icon {
+                        color: $menuitemActiveIconColor;
+                    }
+                }
+            }
+        }
+
+        .ui-menu-separator {
+            border: $menuBorder;
+            border-width: 1px 0 0 0;
+        }
+    }
+
+    .ui-slidemenu {
+        padding: $menuPadding;
+        background-color: $menuBgColor;
+        border: $menuBorder;
+
+        .ui-submenu-list {
+            padding: $submenuPadding;
+            background-color: $menuBgColor;
+            border: 0 none;
+        }
+
+        .ui-menuitem {
+            margin: $menuitemMargin;
+
+            .ui-menuitem-link {
+                border-left: 4px solid transparent;
+                .ui-submenu-icon {
+                    right: 0.429em;
+                }
+                &:hover {
+                    border-left: 4px solid $primaryColor;
+
+                    .ui-submenu-icon {
+                        color: $menuitemActiveIconColor;
+                    }
+                }
+            }
+
+            &.ui-menuitem-active {
+                > .ui-menuitem-link {
+                    border-left: 4px solid $primaryColor;
+                    background-color: $menuitemActiveBgColor;
+
+                    .ui-menuitem-text {
+                        color: $menuitemActiveTextColor;
+                    }
+
+                    .ui-menuitem-icon {
+                        color: $menuitemActiveIconColor;
+                    }
+
+                    .ui-submenu-icon {
+                        color: $menuitemActiveIconColor;
+                    }
+                }
+            }
+        }
+
+        .ui-slidemenu-backward {
+            margin: $submenuHeaderMargin;
+            padding: $panelHeaderPadding;
+            color: $panelHeaderTextColor;
+            background-color: $panelHeaderBgColor;
+            font-weight: $panelHeaderFontWeight;
+            border: 0 none;
+
+            &:hover {
+            }
+        }
+
+        .ui-menu-separator {
+            border: $menuBorder;
+            border-width: 1px 0 0 0;
+        }
+    }
+
+    .ui-tabmenu {
+        border: 0 none;
+
+        .ui-tabmenu-nav {
+            padding: 0;
+            background: $primaryColor;
+            border: 0 none;
+
+            .ui-tabmenuitem {
+                position: static;
+                background-color: $panelHeaderBgColor;
+                margin: 0;
+                @include transition($panelHeaderTransition);
+                border-top: 4px solid transparent;
+                border-bottom: 4px solid transparent;
+
+                .ui-menuitem-link {
+                    color: $panelHeaderTextColor;
+                    padding: $panelHeaderPadding;
+
+                    .ui-menuitem-text {
+                        color: $panelHeaderTextColor;
+                        margin-right: $inlineSpacing;
+                    }
+
+                    .ui-menuitem-icon {
+                        color: $panelHeaderIconColor;
+                        margin-right: $inlineSpacing;
+                    }
+                }
+
+                &:not(.ui-state-active):not(.ui-state-disabled):hover {
+                    background-color: $menuitemHoverBgColor;
+                    border-bottom: 4px solid $menuitemHoverBgColor;
+
+                    .ui-menuitem-link {
+                        .ui-menuitem-text {
+                            color: $menuitemHoverTextColor;
+                        }
+
+                        .ui-menuitem-icon {
+                            color: $menuitemHoverTextColor;
+                        }
+                    }
+                }
+
+                &.ui-state-active {
+                    background-color: $primaryColor;
+                    border-bottom: 4px solid $primaryDarkerColor;
+
+                    .ui-menuitem-link {
+                        .ui-menuitem-text {
+                            color: $panelHeaderActiveTextColor;
+                        }
+
+                        .ui-menuitem-icon {
+                            color: $panelHeaderActiveIconColor;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .ui-megamenu {
+        padding: 0;
+        background-color: $menuBgColor;
+        border: $menuBorder;
+
+        .ui-megamenu-submenu-header {
+            margin: $submenuHeaderMargin;
+            padding: $panelHeaderPadding;
+            color: $panelHeaderTextColor;
+            background-color: $panelHeaderBgColor;
+            font-weight: $panelHeaderFontWeight;
+            border: 0 none;
+        }
+
+        .ui-megamenu-panel {
+            padding: $submenuPadding;
+            background-color: $menuBgColor;
+            border: $overlayMenuBorder;
+            @include shadow($overlayMenuShadow);
+        }
+
+        .ui-menuitem {
+            margin: $menuitemMargin;
+
+            .ui-menuitem-link {
+                .ui-submenu-icon {
+                    right: 0.429em;
+                }
+            }
+
+            &.ui-menuitem-active {
+                > .ui-menuitem-link {
+                    background-color: $menuitemActiveBgColor;
+
+                    .ui-menuitem-text {
+                        color: $menuitemActiveTextColor;
+                    }
+
+                    .ui-menuitem-icon {
+                        color: $menuitemActiveIconColor;
+                    }
+
+                    .ui-submenu-icon {
+                        color: $menuitemActiveIconColor;
+                    }
+                }
+            }
+        }
+
+
+        .ui-megamenu-submenu {
+            .ui-menuitem {
+                .ui-menuitem-link {
+                    border-left: 4px solid transparent;
+                    &:hover {
+                        border-left: 4px solid $primaryColor;
+                    }
+                }
+                &.ui-menuitem-active {
+                    > .ui-menuitem-link {
+                        border-left: 4px solid $primaryColor;
+                    }
+                }
+            }
+        }
+
+        &.ui-megamenu-horizontal {
+            .ui-megamenu-root-list {
+                > .ui-menuitem {
+                    > .ui-menuitem-link {
+                        border-top: 4px solid transparent;
+                        border-bottom: 4px solid transparent;
+                    }
+                    &.ui-menuitem-active {
+                        > .ui-menuitem-link {
+                            border-bottom: 4px solid $primaryColor;
+                        }
+                    }
+                }
+            }
+        }
+
+        &.ui-megamenu-vertical {
+            .ui-megamenu-root-list {
+                > .ui-menuitem {
+                    > .ui-menuitem-link {
+                        border-left: 4px solid transparent;
+                        > .ui-submenu-icon {
+                            right: 0.429em;
+                        }
+                    }
+
+                    &.ui-menuitem-active {
+                        > .ui-menuitem-link {
+                            border-left: 4px solid $primaryColor;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .ui-panelmenu {
+        .ui-icon {
+            position: static;
+        }
+
+        .ui-panelmenu-header {
+            padding: 0;
+
+            > a {
+                border: $panelHeaderBorder;
+                background-color: $panelHeaderBgColor;
+                color: $panelHeaderTextColor;
+                padding: $menuitemPadding;
+                font-weight: $panelHeaderFontWeight;
+                position: static;
+                font-size: $fontSize;
+                @include transition($panelHeaderTransition);
+
+                .ui-panelmenu-icon {
+                    color: $panelHeaderIconColor;
+
+                    &.pi-caret-right {
+                        @include icon_override("\e901");
+                    }
+
+                    &.pi-caret-down {
+                        @include icon_override("\e902");
+                    }
+                }
+            }
+
+            &:not(.ui-state-active) {
+                > a:hover {
+                    outline: 0 none;
+                    border: 1px solid $primaryDarkColor;
+                    background-color: $primaryDarkColor;
+                    color: $primaryTextColor;
+
+                    .ui-panelmenu-icon {
+                        color: $primaryTextColor;
+                    }
+                }
+            }
+
+            &.ui-state-active {
+                > a {
+                    border: $panelHeaderActiveBorder;
+                    background-color: $panelHeaderActiveBgColor;
+                    color: $panelHeaderActiveTextColor;
+
+                    .ui-panelmenu-icon {
+                        color: $panelHeaderActiveIconColor;
+                    }
+
+                    &:hover {
+                        outline: 0 none;
+                        border: $panelHeaderActiveHoverBorder;
+                        background-color: $panelHeaderActiveHoverBgColor;
+                        color: $panelHeaderActiveHoverTextColor;
+
+                        .ui-panelmenu-icon {
+                            color: $panelHeaderActiveHoverIconColor;
+                        }
+                    }
+                }
+            }
+        }
+
+        .ui-panelmenu-panel {
+            margin-top: $accordionSpacing;
+
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+
+        .ui-panelmenu-content {
+            padding: $menuPadding;
+            background-color: $menuBgColor;
+            border: $menuBorder;
+            margin-top: 0;
+            position: static;
+            border-top: 0 none;
+
+            .ui-menuitem {
+                margin: $menuitemMargin;
+
+                .ui-menuitem-link {
+                    padding: $menuitemPadding;
+                    color: $menuitemTextColor;
+
+                    &:hover {
+                        background-color: $menuitemHoverBgColor;
+
+                        .ui-menuitem-icon, .ui-panelmenu-icon {
+                            color: $menuitemHoverIconColor;
+                        }
+
+                        .ui-menuitem-text {
+                            color: $menuitemHoverTextColor;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,343 @@
+body {
+    .ui-widget-content {
+        p {
+            line-height: 1.5;
+            margin: 0;
+        }
+    }
+
+    .ui-panel {
+        padding: 0;
+        border: 0 none;
+
+        .ui-panel-titlebar {
+            border: $panelHeaderBorder;
+            padding: $panelHeaderPadding;
+            background-color: $panelHeaderBgColor;
+            color: $panelHeaderTextColor;
+            @include border-radius-top($borderRadius);
+            @include border-radius-bottom(0);
+
+            .ui-panel-title {
+                vertical-align: middle;
+                font-weight: $panelHeaderFontWeight;
+            }
+
+            .ui-panel-titlebar-icon {
+                margin: 0;
+                position: relative;
+                font-size: $fontSize;
+                color: $panelHeaderIconColor;
+                border: 1px solid transparent;
+                @include transition($panelHeaderIconTransition);
+
+                &:hover {
+                    color: $panelHeaderIconHoverColor;
+                }
+            }
+        }
+
+        .ui-panel-content {
+            padding: $panelContentPadding;
+            border: $panelContentBorder;
+            background-color: $panelContentBgColor;
+            color: $panelContentTextColor;
+            padding: $panelContentPadding;
+            border-top: 0 none;
+        }
+
+        .ui-panel-footer {
+            padding: $panelFooterPadding;
+            border: $panelFooterBorder;
+            background-color: $panelFooterBgColor;
+            color: $panelFooterTextColor;
+            border-top: 0 none;
+            margin: 0;
+        }
+    }
+
+    .ui-fieldset {
+        border: $panelContentBorder;
+        background-color: $panelContentBgColor;
+        color: $panelContentTextColor;
+
+        .ui-fieldset-legend {
+            a {
+                padding: $panelHeaderPadding;
+                border: $headerLightBorder;
+                background-color: $headerLightBgColor;
+                color: $headerLightTextColor;
+                @include transition($panelHeaderTransition);
+
+                .ui-fieldset-toggler {
+                    float: none;
+                    display: inline-block;
+                    vertical-align: middle;
+                    margin-right: .5em;
+                    color: $headerLightTextColor;
+                }
+
+                .ui-fieldset-legend-text{
+                    padding: 0;
+                }
+            }
+        }
+
+        &.ui-fieldset-toggleable {
+            .ui-fieldset-legend {
+                a {
+                    &:hover {
+                        background-color: $panelHeaderHoverBgColor;
+                        border: $panelHeaderHoverBorder;
+                        color: $panelHeaderHoverTextColor;
+
+                        .ui-fieldset-toggler {
+                            color: $panelHeaderHoverIconColor;
+                        }
+                    }
+                }
+            }
+        }
+
+        .ui-fieldset-content {
+            padding: 0;
+        }
+    }
+
+    .ui-accordion {
+        .ui-accordion-header {
+            margin-bottom: $accordionSpacing;
+
+            a {
+                padding: $panelHeaderPadding;
+                border: $headerLightBorder;
+                color: $headerLightTextColor;
+                background-color: $headerLightBgColor;
+                font-weight: $panelHeaderFontWeight;
+                @include transition($panelHeaderTransition);
+
+                .ui-accordion-toggle-icon {
+                    color: $headerLightTextColor;
+
+                    &.pi-caret-right {
+                        @include icon_override("\e901");
+                    }
+
+                    &.pi-caret-down {
+                        @include icon_override("\e902");
+                    }
+                }
+            }
+
+            &:not(.ui-state-active):not(.ui-state-disabled):hover {
+                a {
+                    background-color: $panelHeaderHoverBgColor;
+                    border: $panelHeaderHoverBorder;
+                    color: $panelHeaderHoverTextColor;
+
+                    .ui-accordion-toggle-icon {
+                        color: $panelHeaderHoverIconColor;
+                    }
+                }
+            }
+
+            :focus {
+                background-color: $headerLightHoverBgColor;
+                color: $headerLightTextColor;
+                outline: 0 none;
+            }
+
+            &:not(.ui-state-disabled).ui-state-active {
+                a {
+                    background-color: $panelHeaderActiveBgColor;
+                    border: $panelHeaderActiveBorder;
+                    color: $panelHeaderActiveTextColor;
+
+                    .ui-accordion-toggle-icon {
+                        color: $panelHeaderActiveIconColor;
+                    }
+
+                    &:focus {
+                        background-color: $primaryDarkColor;
+                    }
+                }
+
+                &:hover {
+                    a {
+                        border: $panelHeaderActiveHoverBorder;
+                        background-color: $panelHeaderActiveHoverBgColor;
+                        color: $panelHeaderActiveHoverTextColor;
+
+                        .ui-accordion-toggle-icon {
+                            color: $panelHeaderActiveHoverIconColor;
+                        }
+                    }
+                }
+            }
+        }
+
+        .ui-accordion-content {
+            padding: $panelContentPadding;
+            border: none;
+            background-color: $panelContentBgColor;
+            color: $panelContentTextColor;
+        }
+    }
+
+    .ui-tabview {
+        &.ui-tabview-top,
+        &.ui-tabview-bottom,
+        &.ui-tabview-left,
+        &.ui-tabview-right {
+            border: 0 none;
+
+            .ui-tabview-nav {
+                padding: 0;
+                background: $tabsNavBgColor;
+
+                li {
+                    border: $headerLightBorder;
+                    top: 4px;
+                    @include transition($panelHeaderTransition);
+
+                    a {
+                        float: none;
+                        display: inline-block;
+                        color: $headerLightTextColor;
+                        padding: $panelHeaderPadding;
+                        font-weight: $panelHeaderFontWeight;
+
+                        .ui-tabview-left-icon {
+                            margin-right: $inlineSpacing;
+                        }
+
+                        .ui-tabview-right-icon {
+                            margin-left: $inlineSpacing;
+                        }
+                    }
+
+                    .ui-tabview-close {
+                        color: $panelHeaderIconColor;
+                        margin: 0 $inlineSpacing 0 0;
+                        vertical-align: middle;
+                    }
+
+                    &:not(.ui-state-active):not(.ui-state-disabled):hover {
+
+                        a {
+                            color: $primaryColor;
+                        }
+
+                        .ui-tabview-close {
+                            color: $primaryColor;
+                        }
+                    }
+
+                    &.ui-state-active {
+                        top: 1px;
+                        border-top: 4px solid $primaryColor;
+
+                        a {
+                            color: $primaryColor;
+                        }
+
+                        .ui-tabview-close {
+                            color: $primaryColor;
+                        }
+
+                        &:hover {
+
+                            a {
+                                color: $primaryColor;
+
+                                .ui-tabview-left-icon, .ui-tabview-right-icon{
+                                    color: $primaryColor;
+                                }
+                            }
+                        }
+                    }
+
+                    &.ui-tabview-selected {
+                        a {
+                            cursor: pointer;
+                        }
+                    }
+                }
+            }
+        }
+
+        &.ui-tabview-top {
+            .ui-tabview-nav {
+                margin-bottom: -1px;
+
+                li {
+                    margin-right: $tabHeaderSpacing;
+                }
+            }
+        }
+
+        &.ui-tabview-bottom {
+            .ui-tabview-nav {
+                margin-top: -1px;
+
+                li {
+                    margin-right: $tabHeaderSpacing;
+                }
+            }
+        }
+
+        &.ui-tabview-left {
+            .ui-tabview-nav {
+                margin-right: -px;
+
+                li {
+                    margin-bottom: $tabHeaderSpacing;
+                }
+            }
+        }
+
+        &.ui-tabview-right {
+            .ui-tabview-nav {
+                margin-right: -1px;
+
+                li {
+                    margin-bottom: $tabHeaderSpacing;
+                }
+            }
+        }
+
+        .ui-tabview-panels {
+            background-color: $panelContentBgColor;
+            padding: $panelContentPadding;
+            border: $panelContentBorder;
+            color: $panelContentTextColor;
+
+            .ui-tabview-panel {
+                padding: 0;
+            }
+        }
+    }
+
+    .ui-toolbar {
+        border: $headerLightBorder;
+        color: $headerLightTextColor;
+        background-color: $headerLightBgColor;
+        padding: $panelHeaderPadding;
+
+        button {
+            vertical-align: middle;
+        }
+
+        .ui-toolbar-separator {
+            vertical-align: middle;
+            color: $headerLightTextColor;
+            margin: 0 $inlineSpacing;
+        }
+    }
+
+    .ui-card {
+        background-color: $panelContentBgColor;
+        color: $panelContentTextColor;
+        @include shadow($cardShadow);
+    }
+}
