@@ -1,0 +1,26 @@
+name: CI
+
+on:
+    workflow_dispatch: 
+    
+    workflow_call:
+
+jobs:
+    Codacy:
+        name: Code_Quality
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+    
+    Build:
+        name: Build Stage
+        needs: Codacy   
+        uses: nadeemjazmawe/Ginger/.github/workflows/Build.yml@master
+        
+    Test:
+        name: Test Stage
+        needs: Build
+        uses: nadeemjazmawe/Ginger/.github/workflows/Test.yml@master
+
+        
+        

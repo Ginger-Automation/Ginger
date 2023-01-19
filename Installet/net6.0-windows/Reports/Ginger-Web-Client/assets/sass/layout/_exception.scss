@@ -1,0 +1,46 @@
+.exception-body {
+    .exception-topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 99999;
+        @include border-box();
+        height: 60px;
+        @include background-gradient-diagonal($topbarLeftBgColor, $topbarRightBgColor);
+        .logo {
+            @include border-box();
+            width: 230px;
+            padding: 10px 100px;
+            display: inline-block;
+            text-align: center;
+            img {
+                height: 40px;
+            }
+        }
+    }
+    .exception-image {
+        position: absolute;
+        top: 60px;
+        width: 100%;
+    }
+    .exception-panel {
+        @include border-box();
+        padding: 24% 0 0 100px;
+        width: 500px;
+        .exception-icon {
+            max-width: 75px;
+            max-height: 75px;
+        }
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .exception-body {
+        .exception-panel {
+            padding: 200px 25px 0 25px;
+            width: 100%;
+            text-align: center;
+        }
+    }
+}

@@ -1,0 +1,102 @@
+.usermenu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+
+    &.usermenu-overlay {
+        position: fixed;
+        background: $topbarRightBgColor;
+        width: 200px;
+        z-index: 999;
+        display: none;
+        @include shadow(0 2px 4px 0 rgba(0, 0, 0, 0.5));
+
+        li {
+            a {
+                &:hover {
+                    background-color: $topbarIconHoverBgColor;
+                }
+            }
+        }
+    }
+
+    &.usermenu-active {
+        display: block;
+        top: 60px;
+        right: 0px;
+        left: auto;
+    }
+
+    li {
+        a {
+            display: block;
+            padding: 6px 12px;
+            color: $topbarTextColor;
+            text-align: left;
+
+            i {
+                margin-right: 9px;
+                vertical-align: middle;
+
+                &.layout-menuitem-toggler {
+                    @include transition(transform $transitionDuration);
+                }
+            }
+
+            span, img {
+                display: inline-block;
+                vertical-align: middle;
+            }
+
+            &:hover {
+                background-color: $sidebarMenuitemHoverBgColor;
+            }
+        }
+
+        ul {
+            max-height: 0;
+            overflow: hidden;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+
+            a {
+                padding-left: 24px;
+
+                span, img {
+                    vertical-align: middle;
+                }
+
+                img {
+                    margin-right: 8px;
+                }
+            }
+        }
+    }
+
+    > li {
+        &.menuitem-active {
+            > a {
+                padding-left: 8px;
+                border-left: 4px solid $sidebarMenuitemActiveBorderLeftColor;
+                color: $sidebarMenuitemActiveTextColor;
+
+                i {
+                    color: $sidebarMenuitemActiveTextColor;
+                }
+
+                span {
+                    color: $sidebarMenuitemActiveTextColor;
+                }
+
+                i.layout-menuitem-toggler {
+                    @include rotate(-180deg);
+                }
+            }
+            > ul {
+                max-height: 1000px;
+            }
+        }
+    }
+}
