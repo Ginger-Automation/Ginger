@@ -142,22 +142,22 @@
                                         </RadioButton>
                                     </StackPanel>
                                 </StackPanel>
+                                <Label Style="{StaticResource @LabelStyle}" FontSize="10" Content="Note: Supported only in case the selected Execution Logger type is DB." Padding="15,0,0,0"/>
                                 <StackPanel x:Name="xIgnoreSkippedEntitiesPnl" Margin="10,10,0,0" Orientation="Horizontal" ToolTip="Ignore skipped emtities from HTML report.">
                                     <Label Content="Ignore Skipped Entities:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
-                                        <StackPanel x:Name="xIgnoreSkippedEntitiesBtnsPnl" Margin="10,0,0,0" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <RadioButton x:Name="xIgnoreSkippedEntitiesYesRadioBtn" Padding="5,0,15,0" Checked="xIgnoreSkippedEntitiesYesRadioBtn_Checked" Style="{StaticResource @InputRadioButtonStyle}">
+                                    <StackPanel x:Name="xIgnoreSkippedEntitiesBtnsPnl" Margin="10,0,0,0" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <RadioButton x:Name="xIgnoreSkippedEntitiesYesRadioBtn" Padding="5,0,15,0" Checked="xIgnoreSkippedEntitiesYesRadioBtn_Checked" Style="{StaticResource @InputRadioButtonStyle}">
                                             <RadioButton.Content>
                                                 <GingerCore:ucTextDicResource Text="Yes"/>
                                             </RadioButton.Content>
                                         </RadioButton>
-                                            <RadioButton x:Name="xIgnoreSkippedEntitiesNoRadioBtn" Padding="5,0,0,0" Checked="xIgnoreSkippedEntitiesNoRadioBtn_Checked" Style="{StaticResource @InputRadioButtonStyle}">
+                                        <RadioButton x:Name="xIgnoreSkippedEntitiesNoRadioBtn" Padding="5,0,0,0" Checked="xIgnoreSkippedEntitiesNoRadioBtn_Checked" Style="{StaticResource @InputRadioButtonStyle}">
                                             <RadioButton.Content>
                                                 <GingerCore:ucTextDicResource Text="No"/>
                                             </RadioButton.Content>
                                         </RadioButton>
                                     </StackPanel>
                                 </StackPanel>
-                                    <Label Style="{StaticResource @LabelStyle}" FontSize="10" Content="Note: Supported only in case the selected Execution Logger type is DB." Padding="15,0,0,0"/>
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="50*"/>
