@@ -1,12 +1,19 @@
-name: Ginger MacOS Test
+name: Ginger Mac Build
 
 on:
-  workflow_call: 
+  pull_request:
+    branches: 
+      - master
+      - Features/Linux-Migration
+      - Releases/*
+      - Releases/*/*
+      
+  workflow_dispatch: 
 
 
 jobs:
   build:
-    name: MacOS Test
+
     runs-on: macOS-latest
     
     env:

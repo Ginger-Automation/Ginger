@@ -21,10 +21,10 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\Amdocs\{#MyAppName}
-LicenseFile=D:\a\Ginger\Ginger\Installet\extention\License.rtf
-OutputDir=D:\a\Installers
+LicenseFile=D:\BuildConfigs\InnoSetupLicense\License.rtf
+OutputDir=D:\BuildConfigs\Publish\Installers
 OutputBaseFilename="Ginger.3.0.6.11"
-SetupIconFile=D:\a\Ginger\Ginger\Installet\extention\GingerIconNew.ico
+SetupIconFile=D:\BuildConfigs\GingerIconNew.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 UninstallDisplayName= {#MyAppName} 
 Compression=lzma
@@ -42,14 +42,14 @@ Type: filesandordirs; Name: {app}\*
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-\Ginger\Ginger\bin\Release\net6.0-windows
+
 
 [Files]
-Source: "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net6.0-windows\Ginger.exe"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall:DetectAndInstallPrerequisites;
-Source: "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net6.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;
-Source: "D:\a\Ginger\Ginger\Installet\extention\DotnetDependencies\netcorecheck_x64.exe"; Flags: dontcopy deleteafterinstall noencryption
-Source: "D:\a\Ginger\Ginger\Installet\extention\DotnetDependencies\windowsdesktop-runtime-6.0.6-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
-Source: "D:\a\Ginger\Ginger\Installet\extention\DotnetDependencies\aspnetcore-runtime-6.0.6-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
+Source: "D:\BuildConfigs\ReleaseOutput\BuildOutput\Ginger.exe"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall:DetectAndInstallPrerequisites;
+Source: "D:\BuildConfigs\ReleaseOutput\BuildOutput\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;
+Source: "D:\BuildConfigs\DotnetDependencies\netcorecheck_x64.exe"; Flags: dontcopy deleteafterinstall noencryption
+Source: "D:\BuildConfigs\DotnetDependencies\windowsdesktop-runtime-6.0.6-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
+Source: "D:\BuildConfigs\DotnetDependencies\aspnetcore-runtime-6.0.6-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
 ;NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 
