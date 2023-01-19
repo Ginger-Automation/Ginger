@@ -1,11 +1,18 @@
-name: Ginger Windows Test
+name: Ginger Windows Build
 
 on:
-  workflow_call:
+  pull_request:
+    branches: 
+      - master
+      - Features/Linux-Migration
+      - Releases/*
+      - Releases/*/*
+      
+  workflow_dispatch: 
 
 jobs:
   build:
-    name: Windows Test
+
     runs-on: windows-latest
     
     env:

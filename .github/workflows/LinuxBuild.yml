@@ -1,11 +1,19 @@
-name: Ginger Linux Test
+name: Ginger Linux Build
 
 on:
-  workflow_call:
+  pull_request:
+    branches: 
+      - master
+      - Features/Linux-Migration
+      - Releases/*
+      - Releases/*/*
+      
+  workflow_dispatch: 
+
 
 jobs:
   build:
-    name: Linux Test
+
     runs-on: ubuntu-latest
     
     env:
