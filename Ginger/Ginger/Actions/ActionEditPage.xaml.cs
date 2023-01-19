@@ -119,6 +119,7 @@ namespace Ginger.Actions
             EditMode = editMode;
 
             mAction = act;
+            mAction.PauseDirtyTracking();
             if (editMode != General.eRIPageViewMode.View && editMode != General.eRIPageViewMode.ViewAndExecute && editMode != General.eRIPageViewMode.Explorer)
             {
                 mAction.SaveBackup();
@@ -162,6 +163,7 @@ namespace Ginger.Actions
             GingerHelpProvider.SetHelpString(this, act.ActionDescription);
 
             InitView();
+            mAction.ResumeDirtyTracking();
         }
 
         private void InitView()
@@ -395,8 +397,8 @@ namespace Ginger.Actions
                     //remove full page for other platforms excepts web
                     if (mAction.Platform != GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
                     {
-                        var comboEnumItem = xWindowsToCaptureCombo.Items.Cast<ComboEnumItem>().Where(x => x.Value.ToString() == Act.eWindowsToCapture.FullPage.ToString()).FirstOrDefault();
-                        xWindowsToCaptureCombo.Items.Remove(comboEnumItem);
+                        RemoveCaptureTypeFromComboItems(Act.eWindowsToCapture.FullPage);
+                        RemoveCaptureTypeFromComboItems(Act.eWindowsToCapture.FullPageWithUrlAndTimestamp);
                     }
                     SetScreenshotsPnlView();
                     UpdateScreenShots();
@@ -406,6 +408,12 @@ namespace Ginger.Actions
             {
                 xExecutionDetailsExpander.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void RemoveCaptureTypeFromComboItems(Act.eWindowsToCapture captureType)
+        {
+            var comboEnumItem = xWindowsToCaptureCombo.Items.Cast<ComboEnumItem>().Where(x => x.Value.ToString() == captureType.ToString()).FirstOrDefault();
+            xWindowsToCaptureCombo.Items.Remove(comboEnumItem);
         }
 
         private void InitHelpTabView()
@@ -1849,7 +1857,7 @@ namespace Ginger.Actions
         {
             if (EditMode == General.eRIPageViewMode.SharedReposiotry && mAction != null && !String.IsNullOrEmpty(mAction.ContainingFolder))
             {
-                CurrentItem = mAction;
+                CurrentItemToSave = mAction;
                 base.IsVisibleChangedHandler(sender, e);
             }
         }

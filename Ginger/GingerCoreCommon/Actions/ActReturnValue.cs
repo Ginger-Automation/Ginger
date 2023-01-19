@@ -63,30 +63,29 @@ namespace Amdocs.Ginger.Repository
         public string ParamCalculated { get; set; }
 
         [IsSerializedForLocalRepository]
-        public string Param { get { return mParam; } set { mParam = value; OnPropertyChanged(Fields.Param); } }
+        public string Param { get { return mParam; } set { if (mParam != value) { mParam = value; OnPropertyChanged(Fields.Param); } } }
 
         public string PathCalculated { get; set; }
 
         private string mPath;
         [IsSerializedForLocalRepository]
-        public string Path { get { return mPath; } set { mPath = value; OnPropertyChanged(Fields.Path); } }
+        public string Path { get { return mPath; } set { if (mPath != value) { mPath = value; OnPropertyChanged(Fields.Path); } } }
 
         private string mActual;
-        public string Actual { get { return mActual; } set { mActual = value; OnPropertyChanged(Fields.Actual); } }
+        public string Actual { get { return mActual; } set { if (mActual != value) { mActual = value; OnPropertyChanged(Fields.Actual); } } }
 
         private string mSimulatedActual;
         [IsSerializedForLocalRepository]
-        public string SimulatedActual { get { return mSimulatedActual; } set { mSimulatedActual = value; OnPropertyChanged(Fields.SimulatedActual); } }
-
-        [IsSerializedForLocalRepository]
+        public string SimulatedActual { get { return mSimulatedActual; } set { if (mSimulatedActual != value) { mSimulatedActual = value; OnPropertyChanged(Fields.SimulatedActual); } } }
+        [IsSerializedForLocalRepository] // we serializing the field rather than the property, why?
         public string mExpected { get; set; }
-        public string Expected { get { return mExpected; } set { mExpected = value; OnPropertyChanged(Fields.Expected); } }
+        public string Expected { get { return mExpected; } set { if (mExpected != value) { mExpected = value; OnPropertyChanged(Fields.Expected); } } }
 
         private string mExpectedCalculated;
-        public string ExpectedCalculated { get { return mExpectedCalculated; } set { mExpectedCalculated = value; OnPropertyChanged(Fields.ExpectedCalculated); } }
+        public string ExpectedCalculated { get { return mExpectedCalculated; } set { if (mExpectedCalculated != value) { mExpectedCalculated = value; OnPropertyChanged(Fields.ExpectedCalculated); } } }
         public string ExpectedCalculatedValue { get; set; }
         private eStatus mStatus { get; set; }
-        public eStatus Status { get { return mStatus; } set { mStatus = value; OnPropertyChanged(Fields.Status); } }
+        public eStatus Status { get { return mStatus; } set { if (mStatus != value) { mStatus = value; OnPropertyChanged(Fields.Status); } } }
 
         private eOperator? mOperator;
         [IsSerializedForLocalRepository]
@@ -126,8 +125,11 @@ namespace Amdocs.Ginger.Repository
 
             set
             {
-                mStoreTo = value;
-                OnPropertyChanged(Fields.StoreTo);
+                if (mStoreTo != value)
+                {
+                    mStoreTo = value;
+                    OnPropertyChanged(Fields.StoreTo);
+                }
             }
         }
 
@@ -141,8 +143,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mStoreToValue = value;
-                OnPropertyChanged(Fields.StoreToValue);
+                if (mStoreToValue != value)
+                {
+                    mStoreToValue = value;
+                    OnPropertyChanged(Fields.StoreToValue);
+                }
             }
         }
 

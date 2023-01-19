@@ -39,6 +39,7 @@ using GingerCore.Actions.PlugIns;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.DataSource;
+using GingerCore.Drivers;
 using GingerCore.Environments;
 using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
@@ -52,6 +53,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -1086,6 +1088,7 @@ namespace Ginger.Run
         {
             try
             {
+                //act.PauseDirtyTracking();
                 //init
                 act.SolutionFolder = SolutionFolder;
                 act.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
@@ -1142,6 +1145,7 @@ namespace Ginger.Run
                     mRunSource = null;
                     mErrorPostExecutionActionFlowBreaker = false;
                 }
+                //act.ResumeDirtyTracking();
             }
         }
 
@@ -1991,7 +1995,11 @@ namespace Ginger.Run
                 {
                     try
                     {
-                        if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)
+                        if(act.WindowsToCapture == Act.eWindowsToCapture.FullPageWithUrlAndTimestamp)
+                        {
+                            TakeFullPageWithDesktopScreenScreenShot(act);
+                        }
+                        else if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)
                         {
                             TakeDesktopScreenShotIntoAction(act);
                         }
@@ -2060,6 +2068,47 @@ namespace Ginger.Run
             {
                 TakeDesktopScreenShotIntoAction(act);
             }
+        }
+
+        private void TakeFullPageWithDesktopScreenScreenShot(Act act)
+        {
+            DriverBase driver = ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Driver;
+            if (!driver.GetType().IsAssignableTo(typeof(SeleniumDriver)))
+                throw new NotImplementedException($"Full page screen shot with desktop screen is not supported for {driver.GetType().Name}");
+
+            SeleniumDriver seleniumDriver = (SeleniumDriver)driver;
+
+            List<Bitmap> bitmapsToMerge = new();
+            Bitmap browserHeaderScreenshot = GetBrowserHeaderScreenShot(seleniumDriver);
+            if(browserHeaderScreenshot != null)
+                bitmapsToMerge.Add(browserHeaderScreenshot);
+
+            Bitmap browserFullPageScreenshot = seleniumDriver.GetScreenShot(true);
+            bitmapsToMerge.Add(browserFullPageScreenshot);
+            Bitmap taskbarScreenshot = TargetFrameworkHelper.Helper.GetTaskbarScreenshot();
+            bitmapsToMerge.Add(taskbarScreenshot);
+
+            string filepath = TargetFrameworkHelper.Helper.MergeVerticallyAndSaveBitmaps(bitmapsToMerge.ToArray());
+
+            act.ScreenShotsNames.Add(seleniumDriver.GetWebDriver().Title);
+            act.ScreenShots.Add(filepath);
+        }
+
+        private Bitmap GetBrowserHeaderScreenShot(SeleniumDriver seleniumDriver)
+        {
+            if (seleniumDriver.HeadlessBrowserMode)
+                return null;
+
+            OpenQA.Selenium.IJavaScriptExecutor javaScriptExecutor = (OpenQA.Selenium.IJavaScriptExecutor)seleniumDriver.GetWebDriver();
+            
+            Point browserWindowPosition = seleniumDriver.GetWebDriver().Manage().Window.Position;
+            Size browserWindowSize = seleniumDriver.GetWindowSize();
+            Size viewportSize = new();
+            viewportSize.Width = (int)(long)javaScriptExecutor.ExecuteScript("return window.innerWidth");
+            viewportSize.Height = (int)(long)javaScriptExecutor.ExecuteScript("return window.innerHeight");
+            double devicePixelRatio = (double)javaScriptExecutor.ExecuteScript("return window.devicePixelRatio");
+
+            return TargetFrameworkHelper.Helper.GetBrowserHeaderScreenshot(browserWindowPosition, browserWindowSize, viewportSize, devicePixelRatio);
         }
 
         private void TakeDesktopScreenShotIntoAction(Act act)
@@ -2486,6 +2535,15 @@ namespace Ginger.Run
 
         private void ResetAction(Act act)
         {
+            /*
+            if (act.DirtyTracking == Amdocs.Ginger.Common.Enums.eDirtyTracking.Paused)
+            {
+                act.Reset(isActionDirtyTrackingPaused: true);
+            }
+            else
+            {
+                act.Reset();
+            }*/
             act.Reset();
         }
 
@@ -3925,15 +3983,15 @@ namespace Ginger.Run
                     {
                         ExecutingActivity.Status = eRunStatus.Running;
                         GiveUserFeedback();
-                        // We run the first Activity in Continue mode, if it came from RunFlow, then it is set to first action
-                        //if (FirstExecutedActivity.Equals(ExecutingActivity))
-                        //{
-                        //    RunActivity(ExecutingActivity, true, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
-                        //}
-                        //else
-                        //{
-                        RunActivity(ExecutingActivity, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
-                        //}
+                        if (doContinueRun && FirstExecutedActivity.Equals(ExecutingActivity))
+                        {
+                            // We run the first Activity in Continue mode, if it came from RunFlow, then it is set to first action
+                            RunActivity(ExecutingActivity, true, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
+                        }
+                        else
+                        {
+                            RunActivity(ExecutingActivity, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
+                        }
                         //TODO: Why this is here? do we need to rehook
                         CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
                         if (ExecutingActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)

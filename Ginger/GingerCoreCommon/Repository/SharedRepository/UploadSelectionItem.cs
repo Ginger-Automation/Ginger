@@ -116,8 +116,11 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             }
             set
             {
-                mSelected = value;
-                OnPropertyChanged(nameof(Selected));
+                if (mSelected != value)
+                {
+                    mSelected = value;
+                    OnPropertyChanged(nameof(Selected));
+                }
             }
         }
 
@@ -132,8 +135,11 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             }
             set
             {
-                mSelectedItemPart = value;
-                OnPropertyChanged(nameof(SelectedItemPart));
+                if (mSelectedItemPart != value)
+                {
+                    mSelectedItemPart = value;
+                    OnPropertyChanged(nameof(SelectedItemPart));
+                }
             }
         }
 
@@ -210,8 +216,11 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             }
             set
             {
-                mReplaceType = value;
-                OnPropertyChanged(nameof(ReplaceType));
+                if (mReplaceType != value)
+                {
+                    mReplaceType = value;
+                    OnPropertyChanged(nameof(ReplaceType));
+                }
             }
         }
     }

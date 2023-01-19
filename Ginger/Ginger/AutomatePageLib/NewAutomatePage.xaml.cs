@@ -199,7 +199,6 @@ namespace GingerWPF.BusinessFlowsLib
 
             BindingHandler.ObjFieldBinding(xAutoAnalyzeConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoRunAutomatePageAnalyzer), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
             BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoGenerateAutomatePageReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
-
             mApplicationAgentsMapPage = new ApplicationAgentsMapPage(mExecutionEngine, mContext);
             xAppsAgentsMappingFrame.SetContent(mApplicationAgentsMapPage);
             SetEnvsCombo();
@@ -407,7 +406,7 @@ namespace GingerWPF.BusinessFlowsLib
                 ResetPageUI();
 
                 mBusinessFlow = businessFlowToLoad;
-                CurrentItem = mBusinessFlow;
+                CurrentItemToSave = mBusinessFlow;
                 if (mBusinessFlow != null)
                 {
                     try

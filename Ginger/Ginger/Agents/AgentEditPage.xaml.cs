@@ -53,7 +53,7 @@ namespace Ginger.Agents
             if (agent != null)
             {               
                 mAgent = agent;
-                CurrentItem = mAgent;
+                CurrentItemToSave = mAgent;
                 xShowIDUC.Init(mAgent);
                 BindingHandler.ObjFieldBinding(xAgentNameTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Name));
                 xAgentNameTextBox.AddValidationRule(new AgentNameValidationRule());

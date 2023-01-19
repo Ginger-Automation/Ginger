@@ -154,6 +154,10 @@ namespace Amdocs.Ginger.Repository
             {
                 throw new Exception("Cannot save item, there is no containing folder defined - " + repositoryItem.GetType().FullName + ", " + repositoryItem.GetNameForFileName());
             }
+            if(repositoryItem.PreSaveHandler())
+            {
+                return;
+            }
 
             repositoryItem.UpdateBeforeSave();
 
@@ -177,6 +181,7 @@ namespace Amdocs.Ginger.Repository
             {
                 ModifiedFiles.Remove(repositoryItem);
             }
+            repositoryItem.PostSaveHandler();
         }
 
         public void Close()

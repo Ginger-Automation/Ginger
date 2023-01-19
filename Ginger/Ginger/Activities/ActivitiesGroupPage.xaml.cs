@@ -262,7 +262,7 @@ namespace Ginger.Activities
         {
             if (mEditMode == eEditMode.SharedRepository && mActivitiesGroup != null && !String.IsNullOrEmpty(mActivitiesGroup.ContainingFolder))
             {
-                CurrentItem = mActivitiesGroup;
+                CurrentItemToSave = mActivitiesGroup;
                 base.IsVisibleChangedHandler(sender, e);
             }
         }

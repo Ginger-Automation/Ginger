@@ -65,5 +65,10 @@ namespace Amdocs.Ginger
         {
             throw new NotImplementedException();
         }
+
+        public string GetClipboardText()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

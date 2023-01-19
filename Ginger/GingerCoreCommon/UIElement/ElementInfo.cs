@@ -74,7 +74,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public bool IsAutoLearned
         {
             get { return mIsAutoLearned; }
-            set { mIsAutoLearned = value; OnPropertyChanged(nameof(IsAutoLearned)); }
+            set { if (mIsAutoLearned != value) { mIsAutoLearned = value; OnPropertyChanged(nameof(IsAutoLearned)); } }
         }
 
         private string mLastUpdatedTime;
@@ -117,8 +117,11 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             set
             {
-                mSelfHealingInfo = value;
-                OnPropertyChanged(nameof(SelfHealingInfo));
+                if (mSelfHealingInfo != value)
+                {
+                    mSelfHealingInfo = value;
+                    OnPropertyChanged(nameof(SelfHealingInfo));
+                }
             }
         }
 
@@ -213,8 +216,11 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             set
             {
-                mDescription = value;
-                OnPropertyChanged(nameof(Description));
+                if (mDescription != value)
+                {
+                    mDescription = value;
+                    OnPropertyChanged(nameof(Description));
+                }
             }
         }
 
@@ -232,8 +238,11 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             set
             {
-                mElementName = value;
-                OnPropertyChanged(nameof(ElementName));
+                if (mElementName != value)
+                {
+                    mElementName = value;
+                    OnPropertyChanged(nameof(ElementName));
+                }
             }
         }
 
@@ -259,8 +268,11 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             set
             {
-                mElementTypeEnum = value;
-                OnPropertyChanged(nameof(ElementTypeEnum));
+                if (mElementTypeEnum != value)
+                {
+                    mElementTypeEnum = value;
+                    OnPropertyChanged(nameof(ElementTypeEnum));
+                }
                 OnPropertyChanged(nameof(ElementTypeImage));
             }
         }
@@ -440,8 +452,11 @@ namespace Amdocs.Ginger.Common.UIElement
             }
             set
             {
-                mXPath = value;
-                OnPropertyChanged(nameof(this.XPath));  // fix for 6342
+                if (mXPath != value)
+                {
+                    mXPath = value;
+                    OnPropertyChanged(nameof(this.XPath));  // fix for 6342
+                }
             }
         }
 

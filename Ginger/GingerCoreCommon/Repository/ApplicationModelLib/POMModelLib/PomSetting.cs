@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2022 European Support Limited
 
@@ -16,19 +16,29 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
-using OpenQA.Selenium;
-using System.Collections;
+
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Amdocs.Ginger.Common.UIElement;
 
-namespace GingerCoreNET.Drivers.CommonLib
+namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib
 {
-    public class FriendlyLocatorElement
+    public class PomSetting
     {
-        public ePosition position { get; set; }
+        public List<eElementType> filteredElementType { get; set; }
 
-        public IWebElement FriendlyElement { get; set; }
+        public ObservableList<ElementLocator> ElementLocatorsSettingsList { get; set; }
+
+        public string SpecificFramePath { get; set; }
+
+        public List<string> relativeXpathTemplateList { get; set; }
+
+        public bool LearnScreenshotsOfElements { get; set; }
+
+        public bool isPOMLearn { get; set; }
+
     }
 }

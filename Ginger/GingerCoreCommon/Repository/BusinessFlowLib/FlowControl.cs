@@ -129,13 +129,14 @@ namespace GingerCore.FlowControlLib
        
         public string GUID_NAME_SEPERATOR = "#GUID_NAME#";
 
+        private bool mActive;
         [IsSerializedForLocalRepository]
-        public bool Active { get; set; }
+        public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
         private string mCondition;
 
         [IsSerializedForLocalRepository]
-        public string Condition { get { return mCondition; } set { mCondition = value; OnPropertyChanged(Fields.Condition); } }
+        public string Condition { get { return mCondition; } set { if (mCondition != value) { mCondition = value; OnPropertyChanged(Fields.Condition); } } }
 
 
         /// <summary>
@@ -159,13 +160,15 @@ namespace GingerCore.FlowControlLib
         }
 
         private string mConditionCalculated { get; set; }
-        public string ConditionCalculated { get { return mConditionCalculated; } set { mConditionCalculated = value; OnPropertyChanged(Fields.ConditionCalculated); } }
+        public string ConditionCalculated { get { return mConditionCalculated; } set { if (mConditionCalculated != value) { mConditionCalculated = value; OnPropertyChanged(Fields.ConditionCalculated); } } }
 
+        private eFlowControlAction mFlowControlAction;
         [IsSerializedForLocalRepository]
-        public eFlowControlAction FlowControlAction { get; set; }
+        public eFlowControlAction FlowControlAction { get { return mFlowControlAction; } set { if (mFlowControlAction != value) { mFlowControlAction = value; OnPropertyChanged(nameof(FlowControlAction)); } } }
 
+        private eBusinessFlowControlAction mBusinessFlowControlAction;
         [IsSerializedForLocalRepository]
-        public eBusinessFlowControlAction BusinessFlowControlAction { get; set; }
+        public eBusinessFlowControlAction BusinessFlowControlAction { get { return mBusinessFlowControlAction; } set { if (mBusinessFlowControlAction != value) { mBusinessFlowControlAction = value; OnPropertyChanged(nameof(BusinessFlowControlAction)); } } }
 
         private string mValue { set; get; }
         [IsSerializedForLocalRepository]
@@ -177,8 +180,11 @@ namespace GingerCore.FlowControlLib
             }
             set
             {
-                mValue = value;
-                OnPropertyChanged(Fields.Value);
+                if (mValue != value)
+                {
+                    mValue = value;
+                    OnPropertyChanged(Fields.Value);
+                }
             }
         }
 
@@ -199,7 +205,11 @@ namespace GingerCore.FlowControlLib
 
             set
             {
-                mOperator = value;
+                if (mOperator != value)
+                {
+                    mOperator = value;
+                    OnPropertyChanged(nameof(Operator));
+                }
                 if(!(mOperator.Value==eFCOperator.Legacy||mOperator.Value==eFCOperator.CSharp))
                 {
                     Condition = string.Empty;
@@ -220,14 +230,17 @@ namespace GingerCore.FlowControlLib
             }
             set
             {
-                mValueCalculated = value;
-                OnPropertyChanged(Fields.ValueCalculated);
+                if (mValueCalculated != value)
+                {
+                    mValueCalculated = value;
+                    OnPropertyChanged(Fields.ValueCalculated);
+                }
             }
         }
 
-        [IsSerializedForLocalRepository]
         private eStatus mStatus { get; set; }
-        public eStatus Status { get { return mStatus; } set { mStatus = value; OnPropertyChanged(Fields.Status); } }
+        [IsSerializedForLocalRepository]
+        public eStatus Status { get { return mStatus; } set { if (mStatus != value) { mStatus = value; OnPropertyChanged(Fields.Status); } } }
 
 
         public void CalculateCondition(BusinessFlow BusinessFlow, Environments.ProjEnvironment ProjEnvironment, Act act, Activity LastExecutedActivity, ObservableList<DataSourceBase> DSList)

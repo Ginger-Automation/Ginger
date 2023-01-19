@@ -177,7 +177,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                     mObjList = value;
 
-                    filteredView = CollectionViewSource.GetDefaultView(mObjList);
+                    filteredView = new CollectionViewSource() { Source = mObjList }.View;
 
                     if (filteredView != null)
                     {
@@ -186,7 +186,7 @@ namespace Ginger.UserControlsLib.UCListView
                         filteredView.Filter = LVItemFilter;
                     }
 
-                    xListView.ItemsSource = mObjList;
+                    xListView.ItemsSource = filteredView;
 
                     this.Dispatcher.BeginInvoke((Action)(() =>
                     {

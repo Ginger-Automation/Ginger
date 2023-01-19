@@ -78,7 +78,7 @@ namespace Ginger.Reports
             _HTMLReportConfiguration.HTMLReportConfigurationOperations = reportConfigurationOperations;
 
             _HTMLReportConfiguration = new HTMLReportConfiguration("", false, reportConfigurationOperations);
-            CurrentItem = _HTMLReportConfiguration;
+            CurrentItemToSave = _HTMLReportConfiguration;
             
 
             InitializeComponent();
@@ -95,7 +95,7 @@ namespace Ginger.Reports
             _existingTemplatePage = true;
             _HTMLReportConfiguration = EnchancingLoadedFieldsWithDataAndValidating(HTMLReportConfiguration);
             _HTMLReportConfiguration.PropertyChanged += _HTMLReportConfiguration_PropertyChanged;
-            CurrentItem = _HTMLReportConfiguration;
+            CurrentItemToSave = _HTMLReportConfiguration;
             SetControls();
             SetLoadedLogoImage();
             SetHTMLReportsConfigFieldsGridsView();
@@ -254,6 +254,8 @@ namespace Ginger.Reports
             htmlShowFirstIterationOffRadioBtn.IsChecked = !_HTMLReportConfiguration.ShowAllIterationsElements;
             htmlUseLocalStoredStylingOnRadioBtn.IsChecked = _HTMLReportConfiguration.UseLocalStoredStyling;
             htmlUseLocalStoredStylingOffRadioBtn.IsChecked = !_HTMLReportConfiguration.UseLocalStoredStyling;
+            xIgnoreSkippedEntitiesYesRadioBtn.IsChecked = _HTMLReportConfiguration.IgnoreSkippedEntities;
+            xIgnoreSkippedEntitiesNoRadioBtn.IsChecked = !_HTMLReportConfiguration.IgnoreSkippedEntities;
             SetControlsEvents();
 
             switch ((HTMLReportConfiguration.ReportsLevel)Enum.Parse(typeof(HTMLReportConfiguration.ReportsLevel), _HTMLReportConfiguration.ReportLowerLevelToShow))
@@ -524,11 +526,18 @@ namespace Ginger.Reports
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            _HTMLReportConfiguration.Name = NewTemplateNameTextBox.Text.ToString();
-            _HTMLReportConfiguration.Description = TemplateDescriptionTextBox.Text.ToString();
-            _newHTMLReportConfiguration = _HTMLReportConfiguration;
-            _pageGenericWin.Hide();
-            WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Any(x => x.Name == _HTMLReportConfiguration.Name.ToString()))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "HTML Report with same name: " + "'" + _HTMLReportConfiguration.Name.ToString() + "'" + " already exists.");// it won't get save
+            }
+            else
+            {
+                _HTMLReportConfiguration.Name = NewTemplateNameTextBox.Text.ToString();
+                _HTMLReportConfiguration.Description = TemplateDescriptionTextBox.Text.ToString();
+                _newHTMLReportConfiguration = _HTMLReportConfiguration;
+                _pageGenericWin.Hide();
+                WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ReportConfiguration);
+            }
 
             if (_existingTemplatePage)
             {
@@ -668,6 +677,17 @@ namespace Ginger.Reports
         {
             _HTMLReportConfiguration.ExecutionStatisticsCountBy = HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions;
         }
+
+        private void xIgnoreSkippedEntitiesYesRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            _HTMLReportConfiguration.IgnoreSkippedEntities = true;
+        }
+
+        private void xIgnoreSkippedEntitiesNoRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            _HTMLReportConfiguration.IgnoreSkippedEntities = false;
+        }
+
         private void SelectHTMLReportsImageFolderButton_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog();

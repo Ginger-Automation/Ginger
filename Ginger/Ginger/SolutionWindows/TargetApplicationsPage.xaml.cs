@@ -48,7 +48,7 @@ namespace Ginger.SolutionWindows
 
             mSolution =  WorkSpace.Instance.Solution;
              WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
-            CurrentItem = mSolution;
+            CurrentItemToSave = mSolution;
 
             LoadGridData();
             SetAppsGrid();

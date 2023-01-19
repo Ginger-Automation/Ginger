@@ -108,7 +108,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             InitializeComponent();
             mPOM = POM;
-            CurrentItem = mPOM;
+            CurrentItemToSave = mPOM;
             mEditMode = editMode;
 
             mBusinessFlowControl = new ucBusinessFlowMap(mPOM, nameof(mPOM.MappedBusinessFlow));

@@ -29,21 +29,21 @@ namespace Amdocs.Ginger.Common.UIElement
         private bool mActive { get; set; }
 
         [IsSerializedForLocalRepository]
-        public bool Active { get { return mActive; } set { mActive = value; OnPropertyChanged(nameof(Active)); } }
+        public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
         private ePosition mPosition { get; set; }
         /// <summary>
         /// It is used of Friendly Locator Position e.g. Left, Right, Above etc.
         /// </summary>
         [IsSerializedForLocalRepository]
-        public ePosition Position { get { return mPosition; } set { mPosition = value; OnPropertyChanged(nameof(Position)); } }
+        public ePosition Position { get { return mPosition; } set { if (mPosition != value) { mPosition = value; OnPropertyChanged(nameof(Position)); } } }
 
         private eLocateBy mLocateBy;
         [IsSerializedForLocalRepository]
         public eLocateBy LocateBy
         {
             get { return mLocateBy; }
-            set { mLocateBy = value; OnPropertyChanged(nameof(LocateBy)); }
+            set { if (mLocateBy != value) { mLocateBy = value; OnPropertyChanged(nameof(LocateBy)); } }
         }
 
         bool mIsAutoLearned;
@@ -51,7 +51,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public bool IsAutoLearned
         {
             get { return mIsAutoLearned; }
-            set { mIsAutoLearned = value; OnPropertyChanged(nameof(IsAutoLearned)); }
+            set { if (mIsAutoLearned != value) { mIsAutoLearned = value; OnPropertyChanged(nameof(IsAutoLearned)); } }
         }
 
         private string mLocateValue { get; set; }
@@ -59,21 +59,22 @@ namespace Amdocs.Ginger.Common.UIElement
         public string LocateValue
         {
             get { return mLocateValue; }
-            set { mLocateValue = value; OnPropertyChanged(nameof(LocateValue)); } }
+            set { if (mLocateValue != value) { mLocateValue = value; OnPropertyChanged(nameof(LocateValue)); } }
+        }
 
         private string mReferanceElement { get; set; }
         public string ReferanceElement
         {
             get { return mReferanceElement; }
-            set { mReferanceElement = value; OnPropertyChanged(nameof(ReferanceElement)); }
+            set { if (mReferanceElement != value) { mReferanceElement = value; OnPropertyChanged(nameof(ReferanceElement)); } }
         }
 
         private string mHelp { get; set; }
 
-        public string Help { get { return mHelp; } set { mHelp = value; OnPropertyChanged(nameof(Help)); } }
+        public string Help { get { return mHelp; } set { if (mHelp != value) { mHelp = value; OnPropertyChanged(nameof(Help)); } } }
 
         private int? mCount { get; set; }
-        public int? Count { get { return mCount; } set { mCount = value; OnPropertyChanged(nameof(Count)); } }
+        public int? Count { get { return mCount; } set { if (mCount != value) { mCount = value; OnPropertyChanged(nameof(Count)); } } }
 
         private string mItemName;
 
@@ -154,6 +155,6 @@ namespace Amdocs.Ginger.Common.UIElement
         private bool mEnableFriendlyLocator { get; set; }
 
         [IsSerializedForLocalRepository]
-        public bool EnableFriendlyLocator { get { return mEnableFriendlyLocator; } set { mEnableFriendlyLocator = value; OnPropertyChanged(nameof(EnableFriendlyLocator)); } }
+        public bool EnableFriendlyLocator { get { return mEnableFriendlyLocator; } set { if (mEnableFriendlyLocator != value) { mEnableFriendlyLocator = value; OnPropertyChanged(nameof(EnableFriendlyLocator)); } } }
     }
 }

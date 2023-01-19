@@ -518,9 +518,14 @@ namespace Ginger.Repository
                 Reporter.ToLog(eLogLevel.ERROR, "Activity not found in shared repository.");
             }
         }
-        public void UpdateSharedRepositoryLinkedInstances(Activity activity)
+        public async Task UpdateSharedRepositoryLinkedInstances(Activity activity)
         {
-            UpdateLinkedInstances(activity);
+            await UpdateLinkedInstances(activity);
+        }
+
+        public async Task SaveLinkedActivityAndUpdateInstances(Activity LinkedActivity)
+        {
+            await SaveLinkedActivity(LinkedActivity, String.Empty);
         }
     }
 }

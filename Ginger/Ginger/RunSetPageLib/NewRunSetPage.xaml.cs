@@ -556,6 +556,7 @@ namespace Ginger.Run
             else if (e.Action == NotifyCollectionChangedAction.Move)
             {
                 mCurrentSelectedRunner.BusinessflowRunnerItems.Move(e.OldStartingIndex, e.NewStartingIndex);
+                mCurrentSelectedRunner.ExecutorEngine.GingerRunner.DirtyStatus = eDirtyStatus.Modified;
             }
             this.Dispatcher.Invoke(() =>
             {
@@ -1212,7 +1213,9 @@ namespace Ginger.Run
             RunnerPage rp = (RunnerPage)((FlowElement)sender).GetCustomeShape().Content;
             GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(rp.ExecutorEngine, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext);
             PACW.ShowAsWindow();
+            rp.ExecutorEngine.GingerRunner.PauseDirtyTracking();
             rp.UpdateRunnerInfo();
+            rp.ExecutorEngine.GingerRunner.ResumeDirtyTracking();
         }
 
         private void GRP_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -1425,7 +1428,7 @@ namespace Ginger.Run
                     xRunSetLoadingPnl.Visibility = Visibility.Visible;
                     xRunsetPageGrid.Visibility = Visibility.Collapsed;
                     mRunSetConfig = runSetConfig;
-                    CurrentItem = mRunSetConfig;
+                    CurrentItemToSave = mRunSetConfig;
                     mRunSetConfig.SaveBackup();
 
                     mRunSetConfig.StartDirtyTracking();
@@ -1460,7 +1463,6 @@ namespace Ginger.Run
 
                     WorkSpace.Instance.UserProfile.RecentRunset = mRunSetConfig.Guid;//to be loaded automatically next time
                 });
-
             }
             finally
             {

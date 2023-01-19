@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Drawing;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionAutoSaveAndRecover;
@@ -58,6 +59,9 @@ namespace Amdocs.Ginger.Common
 
         void CreateCustomerLogo(Object a, string t);
         Dictionary<string, string> TakeDesktopScreenShot(bool v);
+        Bitmap GetBrowserHeaderScreenshot(Point windowPosition, Size windowSize, Size viewportSize, double devicePixelRatio);
+        Bitmap GetTaskbarScreenshot();
+        string MergeVerticallyAndSaveBitmaps(params Bitmap[] bitmaps);
 
         void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence);
 

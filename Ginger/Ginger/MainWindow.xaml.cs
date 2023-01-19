@@ -1515,5 +1515,14 @@ namespace Ginger
                 AddSubMenuItem(xExtraSolutionOperationsMainMenuItem, "ALM Defect's Profiles", "ALM", ALMDefectsProfiles_Click, insertIndex, iconType: eImageType.Bug);
             }
         }
+
+        private void xSaveCurrentBtn_MouseEnter(object sender, MouseEventArgs e)
+        {
+            xSaveCurrentBtn.ButtonImageType = eImageType.SaveGradient;
+        }
+        private void xSaveCurrentBtn_MouseLeave(object sender, MouseEventArgs e)
+        {
+            xSaveCurrentBtn.ButtonImageType = eImageType.SaveLightGrey;
+        }
     }
 }

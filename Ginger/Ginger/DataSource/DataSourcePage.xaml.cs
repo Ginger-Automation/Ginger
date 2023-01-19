@@ -56,17 +56,17 @@ namespace Ginger.DataSource
         public DataSourcePage(DataSourceBase dsDetails)
         {
             InitializeComponent();
-           
-            if (dsDetails != null)    
+
+            if (dsDetails != null)
             {
                 mDSDetails = dsDetails;
-                CurrentItem= mDSDetails;
+                CurrentItemToSave = mDSDetails;
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DataSourceNameTextBox, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.Name);
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDataSourcePath, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.FilePath, BindingMode.OneWay);
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DataSourceTypeTextBox, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.DSType, BindingMode.OneWay);
-                                
+
                 SetGridView();
-                SetGridData();                
+                SetGridData();
             }
             grdTableList.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddTable));
             grdTableList.btnEdit.AddHandler(Button.ClickEvent, new RoutedEventHandler(RenameTable));
@@ -81,8 +81,8 @@ namespace Ginger.DataSource
             //Set the grid name
             grdTableList.Title = "'" + mDSDetails.Name + "' Tables List";
             //Set the Tool Bar look
-            
-            grdTableList.ShowUpDown = Visibility.Collapsed;            
+
+            grdTableList.ShowUpDown = Visibility.Collapsed;
             grdTableList.ShowUndo = Visibility.Collapsed;
 
             //Set the Data Grid columns            
@@ -90,18 +90,18 @@ namespace Ginger.DataSource
             view.GridColsView = new ObservableList<GridColView>();
 
             view.GridColsView.Add(new GridColView() { Field = DataSourceTable.Fields.Name, Header = "Table Name", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = DataSourceTable.Fields.DSTableType,Header = "Table Type", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = DataSourceTable.Fields.DSTableType, Header = "Table Type", WidthWeight = 150 });
 
             grdTableList.SetAllColumnsDefaultView(view);
             grdTableList.InitViewItems();
         }
-        
+
         private void SetGridData()
         {
-            mDSTableList = mDSDetails.GetTablesList();           
-            grdTableList.DataSourceList = mDSTableList;           
+            mDSTableList = mDSDetails.GetTablesList();
+            grdTableList.DataSourceList = mDSTableList;
         }
-        
+
         private void DeleteSelectedTables(object sender, RoutedEventArgs e)
         {
             if (grdTableList.Grid.SelectedItems.Count == 0)
@@ -134,7 +134,7 @@ namespace Ginger.DataSource
                     mDSDetails.DeleteTable(dsTable.Name);
 
                 SetGridData();
-            }           
+            }
         }
         private void SaveAllTables(object sender, RoutedEventArgs e)
         {
@@ -167,31 +167,49 @@ namespace Ginger.DataSource
                 {
                     string oldName = ((DataSourceTable)o).Name;
                     InputBoxWindow.OpenDialog("Rename", "Table Name:", ((DataSourceTable)o), DataSourceBase.Fields.Name);
-                    ((DataSourceTable)o).DSC.RenameTable(oldName, ((DataSourceTable)o).Name);                   
+                    ((DataSourceTable)o).DSC.RenameTable(oldName, ((DataSourceTable)o).Name);
                 }
             }
             SetGridData();
         }
 
-            private void AddTable(object sender, RoutedEventArgs e)
+        private void AddTable(object sender, RoutedEventArgs e)
         {
             AddNewTablePage ANTP = new AddNewTablePage();
             ANTP.ShowAsWindow();
 
             DataSourceTable dsTableDetails = ANTP.DSTableDetails;
-            
+
 
             if (dsTableDetails != null)
             {
                 dsTableDetails.DSC = mDSDetails;
-                                
+
                 if (dsTableDetails.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue)
-                    dsTableDetails.DSC.AddTable(dsTableDetails.Name, "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text");
+                {
+                    if (dsTableDetails.DSC.DSType.Equals(DataSourceBase.eDSType.LiteDataBase))
+                    {
+                        dsTableDetails.DSC.AddTable(dsTableDetails.Name, "GINGER_ID AUTOINCREMENT,GINGER_KEY_NAME Text,GINGER_KEY_VALUE Text,GINGER_LAST_UPDATED_BY Text,GINGER_LAST_UPDATE_DATETIME Text");
+                    }
+                    else if (dsTableDetails.DSC.DSType.Equals(DataSourceBase.eDSType.MSAccess))
+                    {
+                        dsTableDetails.DSC.AddTable(dsTableDetails.Name, "[GINGER_ID] AUTOINCREMENT,[GINGER_KEY_NAME] Text,[GINGER_KEY_VALUE] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text");
+                    }
+                }
                 else if (dsTableDetails.DSTableType == DataSourceTable.eDSTableType.Customized)
-                    dsTableDetails.DSC.AddTable(dsTableDetails.Name, "[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text");
-                
+                {
+                    if (dsTableDetails.DSC.DSType.Equals(DataSourceBase.eDSType.LiteDataBase))
+                    {
+                        dsTableDetails.DSC.AddTable(dsTableDetails.Name, "GINGER_ID AUTOINCREMENT,GINGER_USED Text,GINGER_LAST_UPDATED_BY Text,GINGER_LAST_UPDATE_DATETIME Text");
+                    }
+                    else if (dsTableDetails.DSC.DSType.Equals(DataSourceBase.eDSType.MSAccess))
+                    {
+                        dsTableDetails.DSC.AddTable(dsTableDetails.Name, "[GINGER_ID] AUTOINCREMENT,[GINGER_USED] Text,[GINGER_LAST_UPDATED_BY] Text,[GINGER_LAST_UPDATE_DATETIME] Text");
+                    }
+                }
+
                 mDSTableList.Add(dsTableDetails);
-            }           
+            }
         }
 
         #endregion Functions

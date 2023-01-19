@@ -9,7 +9,6 @@ $exitcode=0
 mkdir D:\a\Ginger\Ginger\TestResults\DotNetFramework
 mkdir D:\a\1\a
 
-
 ./vstest.console.exe "D:\a\Ginger\Ginger\Ginger\GingerCoreTest\bin\Release\net6.0-windows\GingerCoreTest.dll" /Logger:trx /ResultsDirectory:D:\a\Ginger\Ginger\TestResults\DotNetFramework
 Write-Host ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> LastExitCode: " $LastExitCode
 if ($LastExitCode -ne 0)
@@ -17,11 +16,6 @@ if ($LastExitCode -ne 0)
 	$exitcode = 1
 }
 
-
-Write-Host "-------------------------------------------------------------"
-Write-Host "-                    print  path     1          -"
-Write-Host "-------------------------------------------------------------"
-dir D:\a\Ginger\Ginger\Ginger\GingerTest\bin\Release\net6.0-windows
 
 ./vstest.console.exe "D:\a\Ginger\Ginger\Ginger\GingerTest\bin\Release\net6.0-windows\GingerTest.dll" /Logger:trx /ResultsDirectory:D:\a\Ginger\Ginger\TestResults\DotNetFramework
 Write-Host ">>>>>>>>>>>>>>>>>>>>>>>>>>>>> LastExitCode: " $LastExitCode
@@ -40,26 +34,6 @@ Write-Host "-------------------------------------------------------------"
 Write-Host "-                    Copy Test Artifacts                    -"
 Write-Host "-------------------------------------------------------------"
 New-Item -Path "D:\a\1\a" -Name "TestCompleted.txt" -ItemType "file" -Value "Test Completed Artifacts"
-
-
-# Write-Host "-------------------------------------------------------------"
-# Write-Host "-                    print  path     1          -"
-# Write-Host "-------------------------------------------------------------"
-# dir D:\a\Ginger\Ginger\Ginger\GingerUtilsTest
-# Write-Host "-------------------------------------------------------------"
-# Write-Host "-                    print  path     2          -"
-# Write-Host "-------------------------------------------------------------"
-# dir D:\a\Ginger\Ginger\Ginger\GingerUtilsTest\bin
-# Write-Host "-------------------------------------------------------------"
-# Write-Host "-                    print  path     3          -"
-# Write-Host "-------------------------------------------------------------"
-# dir D:\a\Ginger\Ginger\Ginger\GingerUtilsTest\bin\Release
-# Write-Host "-------------------------------------------------------------"
-# Write-Host "-                    print  path     4          -"
-# Write-Host "-------------------------------------------------------------"
-# dir D:\a\Ginger\Ginger\Ginger\GingerUtilsTest\bin\Release\net6.0\
-
-
 
 Compress-Archive -Path 'D:\a\Ginger\Ginger\Ginger\GingerUtilsTest\bin\Release\net6.0\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerUtilsTestArtifacts'
 Compress-Archive -Path 'D:\a\Ginger\Ginger\Ginger\GingerCoreCommonTest\bin\Release\net6.0\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerCoreCommonTestArtifacts'

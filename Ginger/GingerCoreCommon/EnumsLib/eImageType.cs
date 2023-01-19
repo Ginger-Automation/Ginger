@@ -118,6 +118,8 @@ namespace Amdocs.Ginger.Common.Enums
         RunSingle,
         Continue,
         Save,
+        SaveLightGrey,
+        SaveGradient,
         SaveAll,
         SaveAllGradient,
         Open,

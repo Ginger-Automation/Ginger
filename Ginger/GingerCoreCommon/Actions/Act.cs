@@ -67,7 +67,9 @@ namespace GingerCore.Actions
             [EnumValueDescription("Desktop Screen")]
             DesktopScreen = 2,
             [EnumValueDescription("Full Page Screenshot")]
-            FullPage = 3
+            FullPage = 3,
+            [EnumValueDescription("Full Page With URL and Timestamp")]
+            FullPageWithUrlAndTimestamp = 4
         }
 
 
@@ -1683,10 +1685,15 @@ namespace GingerCore.Actions
             return updatedAct;
         }
 
-        public void Reset(bool reSetActionErrorHandlerExecutionStatus = false)
+        public void Reset(bool reSetActionErrorHandlerExecutionStatus = false, bool isActionDirtyTrackingPaused = false)
         {
             if (this != null)
             {
+                /* added the flag in order to avoid resuming the dirty tracking when this method is being called after RunAction method from GingerExecutionEngine. commented this as it need further testing
+                if (!isActionDirtyTrackingPaused)
+                {
+                    PauseDirtyTracking();
+                }*/
                 if (reSetActionErrorHandlerExecutionStatus)
                 {
                     this.ErrorHandlerExecuted = false;
@@ -1761,8 +1768,12 @@ namespace GingerCore.Actions
                 {
                     FC.Status = eStatus.Pending;
                 }
-
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+                /*  commented this as it need further testing
+                 * if (!isActionDirtyTrackingPaused)
+                {
+                    ResumeDirtyTracking();
+                }*/
             }
         }    // end of Reset
 
