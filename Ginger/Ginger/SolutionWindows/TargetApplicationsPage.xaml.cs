@@ -91,12 +91,14 @@ namespace Ginger.SolutionWindows
         public bool NameAlreadyExists(string value)
         {
             if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(obj => obj.AppName == value).FirstOrDefault() == null)
+            {
                 return false; //no name like it in the group 
-
+            }
             List<ApplicationPlatform> sameNameObjList = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(obj => obj.AppName == value).ToList<ApplicationPlatform>();
             if (sameNameObjList.Count == 1 && sameNameObjList[0].AppName == value)
+            {
                 return false; //Same internal object 
-
+            }
             return true;
         }
         private void LoadGridData()
