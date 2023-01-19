@@ -103,6 +103,12 @@ namespace Amdocs.Ginger.CoreNET
         public eDevicePlatformType DevicePlatformType { get; set; }
 
         [UserConfigured]
+        [UserConfiguredEnumType(typeof(eDeviceSource))]
+        [UserConfiguredDefault("LocalAppium")]
+        [UserConfiguredDescription("Connected mobile device source lab")]
+        public eDeviceSource DeviceSource { get; set; }
+
+        [UserConfigured]
         [UserConfiguredEnumType(typeof(eAppType))]
         [UserConfiguredDefault("NativeHybride")]
         [UserConfiguredDescription("The tested application type 'NativeHybride' or 'Web'")]
@@ -123,6 +129,11 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Determine if auto set the default capabilities based on OS and application type selection")]
         public bool AutoSetCapabilities { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Define if to include capability for allowing UFTM simulation capabilities")]
+        public bool UFTMSupportSimulationsCapabiliy { get; set; }
 
         [UserConfigured]
         [UserConfiguredMultiValues]
