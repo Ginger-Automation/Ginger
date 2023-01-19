@@ -1387,8 +1387,8 @@ namespace Ginger.Drivers.DriversWindows
 
                 if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS) // && mDriver.GetAppType() == eAppType.NativeHybride)
                 {
-                    ratio_X = (xDeviceScreenshotImage.Source.Width / 2) / xDeviceScreenshotImage.ActualWidth;
-                    ratio_Y = (xDeviceScreenshotImage.Source.Height / 2) / xDeviceScreenshotImage.ActualHeight;
+                    ratio_X = (xDeviceScreenshotImage.Source.Width) / xDeviceScreenshotImage.ActualWidth;
+                    ratio_Y = (xDeviceScreenshotImage.Source.Height) / xDeviceScreenshotImage.ActualHeight;
                 }
                 else
                 {
