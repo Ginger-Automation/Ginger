@@ -1,5 +1,13 @@
-﻿using System;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Ginger.Run.RunSetActions;
+using Ginger.UserControls;
+using GingerCore;
+using GingerCore.Actions.Communication;
+using GingerCore.GeneralLib;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Printing;
 using System.Text;
@@ -16,17 +24,18 @@ using System.Windows.Shapes;
 
 namespace Ginger.UserControlsLib.UCSendEMailConfig
 {
-    public static class BodyContentTypeFlag
+    public enum eBodyContentType
     {
-        public const int FreeText = 1<<0; //1
-        public const int HTMLReport = 1<<1; //2
+        FreeText,
+        HTMLReport
     }
 
-    public enum eEmailMethod
+    public enum eAttachmentType
     {
-        SMTP,
-        Outlook
+        File,
+        HTMLReport
     }
+
     /// <summary>
     /// Interaction logic for UCSendEMailConfigView.xaml
     /// </summary>
@@ -34,68 +43,92 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
     {
         public class Options
         {
-            public int SupportedBodyContentType { get; set; } = BodyContentTypeFlag.HTMLReport;
+            public eBodyContentType[] SupportedBodyContentTypes { get; set; } = { eBodyContentType.FreeText };
             public int MaxBodyCharCount { get; set; } = 0;
-            public bool FromDisplayEnabled { get; set; } = true;
+            public bool FromDisplayNameEnabled { get; set; } = true;
             public bool CCEnabled { get; set; } = true;
-            public eEmailMethod DefaultEmailMethod { get; set; } = eEmailMethod.SMTP;
+            public bool AttachmentsEnabled { get; set; } = true;
+            public bool AllowAttachmentExtraInformation { get; set; } = false;
+            public bool AllowZippedAttachment { get; set; } = false;
+            public eAttachmentType[] SupportedAttachmentTypes { get; set; } = { eAttachmentType.File };
+            public Email.eEmailMethod DefaultEmailMethod { get; set; } = Email.eEmailMethod.SMTP;
         }
 
-        private bool isFromDisplayEnabled;
+        public interface IAttachmentBindingAdapter : INotifyPropertyChanged
+        {
+            public eAttachmentType Type { get; }
+            public string Name { get; set; }
+            public string ExtraInformation { get; set; }
+            public bool Zipped { get; set; }
+        }
 
-        public delegate void EmailMethodChangeHandler(eEmailMethod selectedEmailMethod);
+        private bool isDisplayNameFieldEnabled;
+
+        public delegate void EmailMethodChangeHandler(Email.eEmailMethod selectedEmailMethod);
         public event EmailMethodChangeHandler? EmailMethodChanged;
+
+        public event RoutedEventHandler? FileAdded;
+        public event RoutedEventHandler? HTMLReportAdded;
 
         public UCSendEMailConfigView()
         {
             InitializeComponent();
+            AddEncryptionHandlerForPasswordControls();
+        }
+
+        private void AddEncryptionHandlerForPasswordControls()
+        {
+            xSMTPPasswordTextBox.LostFocus += (sender, e) => xSMTPPasswordTextBox.Text = Encrypt(xSMTPPasswordTextBox.Text);
+            xCertificatePasswordTextBox.LostFocus += (sender, e) => xCertificatePasswordTextBox.Text = Encrypt(xCertificatePasswordTextBox.Text);
         }
 
         public void Initialize(Options options)
         {
-            SetBodyContentType(options.SupportedBodyContentType);
+            SetBodyContentType(options.SupportedBodyContentTypes);
             SetMaxBodyCharCount(options.MaxBodyCharCount);
-            isFromDisplayEnabled = options.FromDisplayEnabled;
+            isDisplayNameFieldEnabled = options.FromDisplayNameEnabled;
             SetCCVisibility(ConvertBooleanToVisibility(options.CCEnabled));
+            if (options.AttachmentsEnabled)
+                InitializeAttachmentsGrid(options);
             SetDefaultEmailMethod(options.DefaultEmailMethod);
         }
 
-        private void SetBodyContentType(int supportedBodyContentType)
+        private void SetBodyContentType(eBodyContentType[] supportedBodyContentTypes)
         {
-            bool doesSupportMultipleBodyContentType = CountSetBits(supportedBodyContentType) > 1;
+            bool doesSupportMultipleBodyContentType = supportedBodyContentTypes.Length > 1;
             if (doesSupportMultipleBodyContentType)
-                ShowBodyContentTypeRadioButtons();
+                ShowBodyContentTypeRadioButtons(supportedBodyContentTypes);
             else
-                ShowOnlySupportedBodyContentType(supportedBodyContentType);
+                MakeBodyContentTypeContainerVisible(supportedBodyContentTypes[0]);
         }
 
-        private void ShowBodyContentTypeRadioButtons()
+        private void ShowBodyContentTypeRadioButtons(eBodyContentType[] supportedBodyContentTypes)
         {
             xBodyContentTypeRadioButtonsContainer.Visibility = Visibility.Visible;
-            SelectDefaultBodyContentTypeRadioButton();
+
+            Dictionary<eBodyContentType, RadioButton> contentTypeRadioButtonMap = new()
+            {
+                { eBodyContentType.FreeText, xBodyContentTypeFreeTextRadioButton },
+                { eBodyContentType.HTMLReport, xBodyContentTypeHTMLReportRadioButton }
+            };
+
+            bool isDefaultValueSet = false;
+            foreach (eBodyContentType bodyContenType in supportedBodyContentTypes)
+            {
+                contentTypeRadioButtonMap[bodyContenType].Visibility = Visibility.Visible;
+                if(!isDefaultValueSet)
+                {
+                    contentTypeRadioButtonMap[bodyContenType].IsChecked = true;
+                }
+            }
         }
 
-        private void SelectDefaultBodyContentTypeRadioButton()
+        private void MakeBodyContentTypeContainerVisible(eBodyContentType bodyContentType)
         {
-            xBodyContentTypeFreeTextRadioButton.IsChecked = true;
-        }
-
-        private void ShowOnlySupportedBodyContentType(int supportedBodyContentType)
-        {
-            if ((supportedBodyContentType & BodyContentTypeFlag.FreeText) > 0)
+            if (bodyContentType == eBodyContentType.FreeText)
                 xBodyContentTypeFreeTextContainer.Visibility = Visibility.Visible;
-            else if ((supportedBodyContentType & BodyContentTypeFlag.HTMLReport) > 0)
+            else if (bodyContentType == eBodyContentType.HTMLReport)
                 xBodyContentTypeHTMLReportContainer.Visibility = Visibility.Visible;
-        }
-
-        /// <summary>
-        /// Counts the number of set bits in the given integer.
-        /// </summary>
-        private int CountSetBits(int num)
-        {
-            if (num <= 0)
-                return 0;
-            return (num % 2 == 0 ? 0 : 1) + CountSetBits(num / 2);
         }
 
         private void SetMaxBodyCharCount(int maxBodyCharCount)
@@ -103,7 +136,7 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             if (maxBodyCharCount <= 0 || maxBodyCharCount == int.MaxValue)
                 return;
 
-            xBodyValueExpression.ValueTextBox.MaxLength = maxBodyCharCount;
+            xBodyFreeTextVE.ValueTextBox.MaxLength = maxBodyCharCount;
             xMaxBodyLengthLabel.Content = $"(upto {maxBodyCharCount} characters)";
             xMaxBodyLengthLabel.Visibility = Visibility.Visible;
         }
@@ -113,18 +146,83 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             xCCContainer.Visibility = visibility;
         }
 
-        private void SetDefaultEmailMethod(eEmailMethod defaultEmailMethod)
+        private void InitializeAttachmentsGrid(Options options)
+        {
+            xAttachmentsTab.Visibility = Visibility.Visible;
+            SetAttachmentsGridViewDef(options.AllowAttachmentExtraInformation, options.AllowZippedAttachment);
+
+            if(options.SupportedAttachmentTypes.Contains(eAttachmentType.HTMLReport))
+                xAttachmentsGrid.AddToolbarTool("@AddHTMLReport_16x16.png", "Add Report", TriggerHTMLReportAddedEvent);
+            if(options.SupportedAttachmentTypes.Contains(eAttachmentType.File))
+                xAttachmentsGrid.AddToolbarTool("@AddScript_16x16.png", "Add File", TriggerFileAddedEvent);
+
+            //xAttachmentsGrid.DataSourceList = runSetActionHTMLReportSendEmail.EmailAttachments;
+        }
+
+        private void SetAttachmentsGridViewDef(bool allowExtraInformation, bool allowZippedAttachment)
+        {
+            GridViewDef gridViewDef = new GridViewDef(GridViewDef.DefaultViewName);
+            ObservableList<GridColView> gridColsView = new ObservableList<GridColView>();
+            gridViewDef.GridColsView = gridColsView;
+
+            gridColsView.Add(new GridColView()
+            {
+                Header = "Type",
+                Field = nameof(IAttachmentBindingAdapter.Type),
+                WidthWeight = 100,
+                BindingMode = BindingMode.OneTime
+            });
+            gridColsView.Add(new GridColView() 
+            { 
+                Header = "Name", 
+                Field = nameof(IAttachmentBindingAdapter.Name), 
+                WidthWeight = 200 
+            });
+            gridColsView.Add(new GridColView() 
+            { 
+                Field = "...", 
+                Header = "...", 
+                WidthWeight = 20,
+                StyleType = GridColView.eGridColStyleType.Template, 
+                CellTemplate = (DataTemplate)xAttachmentsTab.Resources["NameVEButtonCellTemplate"] });
+
+            if (allowExtraInformation)
+            {
+                gridColsView.Add(new GridColView() 
+                { 
+                    Header = "Extra Information", 
+                    Field = nameof(IAttachmentBindingAdapter.ExtraInformation), 
+                    WidthWeight = 250 
+                });
+            }
+            if (allowZippedAttachment)
+            {
+                gridColsView.Add(new GridColView() 
+                { 
+                    Header = "Zipped", 
+                    Field = nameof(IAttachmentBindingAdapter.Zipped), 
+                    WidthWeight = 50, 
+                    HorizontalAlignment = HorizontalAlignment.Center, 
+                    StyleType = GridColView.eGridColStyleType.Template, 
+                    CellTemplate = (DataTemplate)xAttachmentsTab.Resources["ZippedCellTemplate"] });
+            }
+
+            xAttachmentsGrid.SetAllColumnsDefaultView(gridViewDef);
+            xAttachmentsGrid.InitViewItems();
+        }
+
+        private void SetDefaultEmailMethod(Email.eEmailMethod defaultEmailMethod)
         {
             switch(defaultEmailMethod)
             {
-                case eEmailMethod.SMTP:
+                case Email.eEmailMethod.SMTP:
                     xEmailMethodSMTP.IsSelected = true;
                     return;
-                case eEmailMethod.Outlook:
+                case Email.eEmailMethod.OUTLOOK:
                     xEmailMethodOutlook.IsSelected = true;
                     return;
                 default:
-                    throw new NotImplementedException($"setting {defaultEmailMethod} as default email method is not implemented");
+                    throw new NotImplementedException($"logic for setting {defaultEmailMethod} as default email method is not implemented");
             }
         }
 
@@ -139,17 +237,100 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             return boolean ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        private void TriggerFileAddedEvent(object sender, RoutedEventArgs e)
+        {
+            FileAdded?.Invoke(sender, e);
+        }
+
+        private void TriggerHTMLReportAddedEvent(object sender, RoutedEventArgs e)
+        {
+            HTMLReportAdded?.Invoke(sender, e);
+        }
+
         private void xEmailMethod_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (xEmailMethodSMTP.IsSelected && isFromDisplayEnabled)
+            ChangeFromDisplayFieldVisibility();
+            TriggerEmailMethodChangedEvent();
+        }
+
+        private void ChangeFromDisplayFieldVisibility()
+        {
+            if (!isDisplayNameFieldEnabled)
+                return;
+
+            if (xEmailMethodSMTP.IsSelected)
                 xFromDisplayContainer.Visibility = Visibility.Visible;
             else
                 xFromDisplayContainer.Visibility = Visibility.Collapsed;
-
-            ComboBoxItem selectedEmailMethodComboBoxItem = 
-            TriggerEmailMethodChangedEvent()
         }
 
+        private void TriggerEmailMethodChangedEvent()
+        {
+            ComboBoxItem selectedEmailMethodComboBoxItem = (ComboBoxItem)xEmailMethod.SelectedItem;
+            Email.eEmailMethod selectedEmailMethod = Enum.Parse<Email.eEmailMethod>((string)selectedEmailMethodComboBoxItem.Tag);
+            EmailMethodChanged?.Invoke(selectedEmailMethod);
+        }
 
+        private void xNameVEButton_Click(object sender, RoutedEventArgs e)
+        {
+            IAttachmentBindingAdapter item = (IAttachmentBindingAdapter)xAttachmentsGrid.CurrentItem;
+
+            if (item.Type == eAttachmentType.File)
+            {
+                ValueExpressionEditorPage veEditorPage = new(xAttachmentsGrid.CurrentItem, nameof(EmailAttachment.Name), null);
+                veEditorPage.ShowAsWindow();
+            }
+        }
+
+        private string Encrypt(string value)
+        {
+            if (EncryptionHandler.IsStringEncrypted(value))
+                return value;
+
+            return EncryptionHandler.EncryptwithKey(value);
+        }
+
+        private void xBrowseCertificateButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
+
+            openFileDialog.DefaultExt = "*.crt";
+            openFileDialog.Filter = "CRT Files (*.crt)|*.crt";
+            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string filename = openFileDialog.FileName.ToUpper();
+                if (filename.Contains(SolutionFolder))
+                {
+                    filename = filename.Replace(SolutionFolder, @"~\");
+                }
+                filename = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(filename);
+                xCertificatePathTextBox.Text = filename;
+                string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\EmailCertificates");
+                if (!System.IO.Directory.Exists(targetPath))
+                {
+                    System.IO.Directory.CreateDirectory(targetPath);
+                }
+
+                string destinationFilePath = System.IO.Path.Combine(targetPath, System.IO.Path.GetFileName(filename));
+
+                int fileNum = 1;
+                string copySufix = "_Copy";
+                while (System.IO.File.Exists(destinationFilePath))
+                {
+                    fileNum++;
+                    string newFileName = System.IO.Path.GetFileNameWithoutExtension(destinationFilePath);
+                    if (newFileName.IndexOf(copySufix) != -1)
+                    {
+                        newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
+                    }
+                    newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destinationFilePath);
+                    destinationFilePath = System.IO.Path.Combine(targetPath, newFileName);
+                }
+
+                System.IO.File.Copy(filename, destinationFilePath, true);
+                xCertificatePathTextBox.Text = @"~\Documents\EmailCertificates\" + System.IO.Path.GetFileName(destinationFilePath);
+            }
+        }
     }
 }
