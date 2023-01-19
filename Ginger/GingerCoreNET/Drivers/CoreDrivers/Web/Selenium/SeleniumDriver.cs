@@ -9169,15 +9169,15 @@ namespace GingerCore.Drivers
 
         public void SetCurrentPageLoadStrategy(DriverOptions options)
         {
-            if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Normal).ToLower())
+            if (PageLoadStrategy!= null && PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Normal).ToLower())
             {
                 options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Normal;
             }
-            else if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Eager).ToLower())
+            else if (PageLoadStrategy != null && PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Eager).ToLower())
             {
                 options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Eager;
             }
-            else if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.None).ToLower())
+            else if (PageLoadStrategy != null && PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.None).ToLower())
             {
                 options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.None;
             }

@@ -68,7 +68,7 @@ namespace Ginger.ALM
                     break;
 
                 case eALMType.RQM:
-                    //AlmCore = new RQMCore();
+                    AlmCore = new RQMCore();
                     AlmRepo = new RQMRepository();
                     break;
 

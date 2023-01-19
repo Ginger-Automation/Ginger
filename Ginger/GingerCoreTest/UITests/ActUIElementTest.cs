@@ -34,7 +34,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.UITests
 {
-    [Ignore]
     [Level3]
     [TestClass]
     public class ActUIElementTest
@@ -60,6 +59,7 @@ namespace UnitTests.UITests
             mBF.AddVariable(v1);
 
             mGR = new GingerRunner();
+            mGR.Executor = new GingerExecutionEngine(mGR);
             mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
             Agent a = new Agent();

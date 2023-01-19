@@ -128,7 +128,8 @@ namespace Ginger.ALM
             ConfigPackageTextBox.IsEnabled = true;
             if (CurrentAlmConfigurations.AlmType == eALMType.RQM)
             {
-                ServerURLTextBox.IsEnabled = false;
+                ServerURLTextBox.IsEnabled = true;
+                ServerURLTextBox.IsReadOnly = false;
             }
             else
             {
