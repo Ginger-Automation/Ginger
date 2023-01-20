@@ -121,7 +121,7 @@
                             <CheckBox x:Name="xIntegratePOMChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10" Style="{StaticResource $CeckBoxStyle}" 
                                       Content="Integrate POM" IsChecked="{x:Null}" Checked="xIntegratePOMChkBox_Checked" Unchecked="xIntegratePOMChkBox_Unchecked" >
                             </CheckBox>
-                            <Frame x:Name="xPOMSelectionFrame" Visibility="Visible" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,5,0,0"/>
+                            <Frame x:Name="xPOMSelectionFrame" Visibility="Visible" VerticalAlignment="Center" MaxWidth="300" HorizontalAlignment="Left" Margin="0,5,0,0"/>
                             <StackPanel Orientation="Horizontal" x:Name="xPOMOperationsPanel" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center">
                                 <CheckBox x:Name="xAutoSavePOMChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" 
                                       Style="{StaticResource $CeckBoxStyle}" Content="Auto Save" IsChecked="False">

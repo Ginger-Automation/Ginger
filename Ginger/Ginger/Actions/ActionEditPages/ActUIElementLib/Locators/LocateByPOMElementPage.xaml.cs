@@ -133,7 +133,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     }
                     else
                     {
-                        SetPOMPathToShow();
+                        SetPOMPathToShow(onlyPOMRequest);
                         if (!mOnlyPOMRequest)
                         {
                             xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
@@ -265,13 +265,17 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
-        private void SetPOMPathToShow()
+        private void SetPOMPathToShow(bool onlyPOMRequest = false)
         {
             //string pathToShow;
             //pathToShow = mSelectedPOM.FilePath.Substring(0, mSelectedPOM.FilePath.LastIndexOf("\\")).Substring(mPOMModelFolder.FolderFullPath.Length) + @"\" + mSelectedPOM.ItemName;
             xPomPathTextBox.Text = SelectedPOM.NameWithRelativePath; 
             xViewPOMBtn.Visibility = Visibility.Visible;
-            xViewPOMElementBtn.Visibility = Visibility.Visible;
+            if (onlyPOMRequest)
+            {
+                xViewPOMElementBtn.Visibility = Visibility.Visible;
+            }
+            
         }
 
         private void POMElementComboBox_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
