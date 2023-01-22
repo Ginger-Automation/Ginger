@@ -18,7 +18,7 @@
     </Page.Resources>
 
     <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-        <ListBox x:Name="xAppAgentsListBox" Background="Transparent" Style="{DynamicResource $ListBoxTransparntSelectedItem}" VerticalAlignment="Center" BorderThickness="0" Height="60" >
+        <ListBox x:Name="xAppAgentsListBox" Background="Transparent" Style="{DynamicResource $ListBoxTransparntSelectedItem}" VerticalAlignment="Center" BorderThickness="0"  >
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" Height="22" VerticalAlignment="Center">
