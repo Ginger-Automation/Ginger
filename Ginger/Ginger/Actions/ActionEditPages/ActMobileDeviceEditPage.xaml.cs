@@ -21,6 +21,11 @@ using System.Windows.Controls;
 using System.Windows;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using System.Windows.Media.Imaging;
+using System.IO;
+using System;
+using Ginger.Actions.UserControls;
+using System.Drawing;
 
 namespace Ginger.Actions
 {
@@ -47,11 +52,57 @@ namespace Ginger.Actions
             xOperationNameComboBox.Init(mAct, nameof(mAct.MobileDeviceAction), typeof(ActMobileDevice.eMobileDeviceAction), ActionNameComboBox_SelectionChanged);
 
             xKeyPressComboBox.Init(mAct, nameof(mAct.MobilePressKey), typeof(ActMobileDevice.ePressKey));
-           
+
             xX1TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.X1, nameof(ActInputValue.Value));
             xY1TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.Y1, nameof(ActInputValue.Value));
             xX2TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.X2, nameof(ActInputValue.Value));
             xY2TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.Y2, nameof(ActInputValue.Value));
+
+            xPhotoSumilationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActMobileDevice.SimulatedPhotoPath)), true, true, UCValueExpression.eBrowserType.File, "*", BaseLineFileSelected_Click);
+
+        }
+
+        private void BaseLineFileSelected_Click(object sender, RoutedEventArgs e)
+        {
+            string BaselineFileSavingNameTypeAndPath = General.ConvertSolutionRelativePath(xPhotoSumilationTxtBox.ValueTextBox.Text);
+            UpdateBaseLineImage();
+        }
+
+        private void UpdateBaseLineImage()
+        {
+            string FileName = General.GetFullFilePath(xPhotoSumilationTxtBox.ValueTextBox.Text);
+            BitmapImage b = null;
+            if (File.Exists(FileName))
+            {
+                b = GetFreeBitmapCopy(FileName);
+            }
+            // send with null bitmap will show image not found
+            ScreenShotViewPage p = new ScreenShotViewPage("Baseline Image", b);
+            SimulatedPhotoFrame.Content = p;
+        }
+        private BitmapImage GetFreeBitmapCopy(String filePath)
+        {
+            // make sure we load bitmap and the file is readonly not get locked
+            Bitmap bmp = new Bitmap(filePath);
+            BitmapImage bi = BitmapToImageSource(bmp);
+            bmp.Dispose();
+            return bi;
+        }
+
+        private BitmapImage BitmapToImageSource(Bitmap bitmap)
+        {
+            using (MemoryStream memory = new MemoryStream())
+            {
+                bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Png);
+                memory.Position = 0;
+                BitmapImage bitmapimage = new BitmapImage();
+                bitmapimage.BeginInit();
+                bitmapimage.StreamSource = memory;
+                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapimage.EndInit();
+
+                return bitmapimage;
+            }
         }
 
         private void ActionNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -64,6 +115,8 @@ namespace Ginger.Actions
             xKeyPressPnl.Visibility = Visibility.Collapsed;
             xXY1Pnl.Visibility = Visibility.Collapsed;
             xXY2Pnl.Visibility = Visibility.Collapsed;
+            xPhotoSimulationPnl.Visibility = Visibility.Collapsed;
+
 
             switch (mAct.MobileDeviceAction)
             {
@@ -83,8 +136,11 @@ namespace Ginger.Actions
                     xXY1Pnl.Visibility = Visibility.Visible;
                     xXY2Pnl.Visibility = Visibility.Visible;
                     break;
+                case ActMobileDevice.eMobileDeviceAction.SimulatePhoto:
+                    xPhotoSimulationPnl.Visibility = Visibility.Visible;
+                    break;
             }
-        }      
+        }
 
 
     }
