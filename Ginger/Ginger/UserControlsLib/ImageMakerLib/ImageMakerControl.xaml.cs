@@ -972,8 +972,11 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Window:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_WindowMaximize);
                     break;
-                case eImageType.Toggle:
+                case eImageType.ToggleOn:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ToggleOn);
+                    break;
+                case eImageType.ToggleOff:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ToggleOff);
                     break;
                 case eImageType.Table:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Table);
