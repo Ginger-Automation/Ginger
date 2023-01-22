@@ -183,7 +183,7 @@ namespace Ginger.Drivers.DriversWindows
         private void DrawRectangle(System.Drawing.Point ElementStartPoint, System.Drawing.Point ElementMaxPoint, Amdocs.Ginger.Common.UIElement.ElementInfo elementInfo)
         {
             ((DriverBase)mDriver).SetRectangleProperties(ref ElementStartPoint, ref ElementMaxPoint, xDeviceScreenshotImage.Source.Width, xDeviceScreenshotImage.Source.Height,
-                xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight, elementInfo);
+                xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight, elementInfo, false);
 
             xHighlighterBorder.SetValue(Canvas.LeftProperty, ElementStartPoint.X + ((xDeviceScreenshotCanvas.ActualWidth - xDeviceScreenshotImage.ActualWidth) / 2));
             xHighlighterBorder.SetValue(Canvas.TopProperty, ElementStartPoint.Y + ((xDeviceScreenshotCanvas.ActualHeight - xDeviceScreenshotImage.ActualHeight) / 2));
