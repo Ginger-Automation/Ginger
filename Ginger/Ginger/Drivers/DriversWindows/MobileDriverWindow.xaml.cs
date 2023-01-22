@@ -183,7 +183,7 @@ namespace Ginger.Drivers.DriversWindows
         private void DrawRectangle(System.Drawing.Point ElementStartPoint, System.Drawing.Point ElementMaxPoint, Amdocs.Ginger.Common.UIElement.ElementInfo elementInfo)
         {
             ((DriverBase)mDriver).SetRectangleProperties(ref ElementStartPoint, ref ElementMaxPoint, xDeviceScreenshotImage.Source.Width, xDeviceScreenshotImage.Source.Height,
-                xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight, elementInfo, false);
+                xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight, elementInfo);
 
             xHighlighterBorder.SetValue(Canvas.LeftProperty, ElementStartPoint.X + ((xDeviceScreenshotCanvas.ActualWidth - xDeviceScreenshotImage.ActualWidth) / 2));
             xHighlighterBorder.SetValue(Canvas.TopProperty, ElementStartPoint.Y + ((xDeviceScreenshotCanvas.ActualHeight - xDeviceScreenshotImage.ActualHeight) / 2));
@@ -195,6 +195,11 @@ namespace Ginger.Drivers.DriversWindows
                 calcHeight = 0 - calcHeight;
             }
             xHighlighterBorder.Height = calcHeight;
+            if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
+            {
+                xHighlighterBorder.Width = xHighlighterBorder.Width / 1.65;
+                xHighlighterBorder.Height = xHighlighterBorder.Height / 1.5;
+            }
             xHighlighterBorder.Visibility = Visibility.Visible;
         }
 
