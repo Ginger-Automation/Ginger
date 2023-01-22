@@ -2716,8 +2716,8 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     else
                     {
-                        ratio_X = (SrcWidth / 2) / ActWidth;
-                        ratio_Y = (SrcHeight / 2) / ActHeight;
+                        ratio_X = SrcWidth / ActWidth;
+                        ratio_Y = SrcHeight / ActHeight;
                     }
 
                     break;
@@ -2786,8 +2786,11 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     else
                     {
-                        ratio_X = (SrcWidth / 2) / ActWidth;
-                        ratio_Y = (SrcHeight / 2) / ActHeight;
+                        if (AutoCorrectRectPropRequired)
+                            AutoCorrectRectProp = 2;
+
+                        ratio_X = (SrcWidth / AutoCorrectRectProp) / ActWidth;
+                        ratio_Y = (SrcHeight / AutoCorrectRectProp) / ActHeight;
 
                         string x = GetAttrValue(rectangleXmlNode, "x");
                         string y = GetAttrValue(rectangleXmlNode, "y");
@@ -2796,9 +2799,6 @@ namespace Amdocs.Ginger.CoreNET
 
                         ElementStartPoints.X = (int)(Convert.ToInt32(x) / ratio_X);
                         ElementStartPoints.Y = (int)(Convert.ToInt32(y) / ratio_Y);
-
-                        if (AutoCorrectRectPropRequired)
-                            AutoCorrectRectProp = 2;
 
                         ElementMaxPoints.X = ElementStartPoints.X + (Convert.ToInt32(wdth) * AutoCorrectRectProp);
                         ElementMaxPoints.Y = ElementStartPoints.Y + (Convert.ToInt32(hgt) * AutoCorrectRectProp);
