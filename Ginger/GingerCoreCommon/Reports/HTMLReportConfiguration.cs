@@ -77,6 +77,24 @@ namespace Ginger.Reports
         [IsSerializedForLocalRepository]
         public bool ShowAllIterationsElements { get { return mShowAllIterationsElements; } set { if (mShowAllIterationsElements != value) { mShowAllIterationsElements = value; OnPropertyChanged(nameof(ShowAllIterationsElements)); } } }
 
+        bool mIgnoreSkippedEntities;
+        [IsSerializedForLocalRepository]
+        public bool IgnoreSkippedEntities
+        {
+            get
+            {
+                return mIgnoreSkippedEntities;
+            }
+            set
+            {
+                if(mIgnoreSkippedEntities != value)
+                {
+                    mIgnoreSkippedEntities = value;
+                    OnPropertyChanged(nameof(IgnoreSkippedEntities));
+                }
+            }
+        }
+
         eExecutionStatisticsCountBy mExecutionStatisticsCountBy;
         [IsSerializedForLocalRepository]
         public eExecutionStatisticsCountBy ExecutionStatisticsCountBy { get { return mExecutionStatisticsCountBy; } set { if (mExecutionStatisticsCountBy != value) { mExecutionStatisticsCountBy = value; OnPropertyChanged(nameof(ExecutionStatisticsCountBy)); } } }
