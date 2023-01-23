@@ -195,6 +195,11 @@ namespace Ginger.Drivers.DriversWindows
                 calcHeight = 0 - calcHeight;
             }
             xHighlighterBorder.Height = calcHeight;
+            if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
+            {
+                xHighlighterBorder.Width = xHighlighterBorder.Width / 1.65;
+                xHighlighterBorder.Height = xHighlighterBorder.Height / 1.5;
+            }
             xHighlighterBorder.Visibility = Visibility.Visible;
         }
 
