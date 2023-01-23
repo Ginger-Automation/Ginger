@@ -84,8 +84,11 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void SetIconImageType()
         {
-            xIconImage.ImageType = Activity.TargetApplicationPlatformImage;
-            xIconImage.ToolTip = Activity.TargetApplicationPlatformName;
+            Dispatcher.Invoke(() =>
+            {
+                xIconImage.ImageType = Activity.TargetApplicationPlatformImage;
+                xIconImage.ToolTip = Activity.TargetApplicationPlatformName;
+            });
         }
 
         public void SetUIElementsBehaverBasedOnRunnerStatus(bool IsRunning)
