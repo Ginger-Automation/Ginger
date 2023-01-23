@@ -29,6 +29,8 @@ using System.ComponentModel;
 using NUglify.Helpers;
 using System.Diagnostics.CodeAnalysis;
 using NPOI.HPSF;
+using System.Dynamic;
+using System.Collections.Generic;
 
 namespace Ginger.Actions.Communication
 {
@@ -56,27 +58,8 @@ namespace Ginger.Actions.Communication
                 attachmentFilenames = "";
 
             mAttachments = new(attachmentFilenames.Split(";", StringSplitOptions.RemoveEmptyEntries).Select(filename => new Attachment(filename)));
-
             mAttachments.ForEach(attachment => attachment.PropertyChanged += Attachment_PropertyChanged);
             mAttachments.CollectionChanged += mAttachments_CollectionChanged;
-        }
-
-        private void InitializeXSendEMailConfigView()
-        {
-            Enum.TryParse(mAct.MailOption, out Email.eEmailMethod defaultEmailMethod);
-            UCSendEMailConfigView.Options options = new()
-            {
-                AttachmentsEnabled = true,
-                SupportedAttachmentTypes = new eAttachmentType[] { eAttachmentType.File },
-                AllowAttachmentExtraInformation = false,
-                AllowZippedAttachment = false,
-                CCEnabled = true,
-                DefaultEmailMethod = defaultEmailMethod,
-                FromDisplayNameEnabled = true,
-                SupportedBodyContentTypes = new eBodyContentType[] { eBodyContentType.FreeText }
-            };
-            xSendEMailConfigView.Initialize(options);
-            BindSendEMailConfigView();
         }
 
         private void Attachment_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -100,6 +83,39 @@ namespace Ginger.Actions.Communication
             mAct.AttachmentFileName = mAttachments.Select(attachment => attachment.Name).Aggregate((aggr, filename) => $"{aggr};{filename}");
         }
 
+        private void InitializeXSendEMailConfigView()
+        {
+            if (!Enum.TryParse(mAct.MailOption, out Email.eEmailMethod defaultEmailMethod))
+            {
+                mAct.MailOption = defaultEmailMethod.ToString();
+            }
+
+            UCSendEMailConfigView.Options options = new()
+            {
+                AttachmentsEnabled = true,
+                SupportedAttachmentTypes = new eAttachmentType[] { eAttachmentType.File },
+                AllowAttachmentExtraInformation = false,
+                AllowZippedAttachment = false,
+                AttachmentGridBindingMap = new()
+                {
+                    Type = nameof(Attachment.Type),
+                    Name = nameof(Attachment.Name)
+                },
+                CCEnabled = true,
+                DefaultEmailMethod = defaultEmailMethod,
+                FromDisplayNameEnabled = true,
+                SupportedBodyContentTypes = new eBodyContentType[] { eBodyContentType.FreeText }
+            };
+            xSendEMailConfigView.Initialize(options);
+
+            if (string.IsNullOrEmpty(mAct.MailFromDisplayName))
+            {
+                mAct.MailFromDisplayName = "_Amdocs Ginger Automation";
+            }
+
+            BindSendEMailConfigView();
+        }
+
         private void BindSendEMailConfigView()
         {
             xSendEMailConfigView.xFromVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFrom));
@@ -120,8 +136,19 @@ namespace Ginger.Actions.Communication
 
             xSendEMailConfigView.xAttachmentsGrid.DataSourceList = mAttachments;
 
-            xSendEMailConfigView.FileAdded += xSendEMailConfigView_FileAdded;
+            xSendEMailConfigView.AddFileAttachment += xSendEMailConfigView_FileAdded;
             xSendEMailConfigView.EmailMethodChanged += xSendEMailConfigView_EmailMethodChanged;
+            xSendEMailConfigView.NameValueExpressionButtonClick += xSendEMailConfigView_NameValueExpressionButtonClick;
+        }
+
+        private void xSendEMailConfigView_NameValueExpressionButtonClick(object sender, RoutedEventArgs e)
+        {
+            Attachment currentItem = (Attachment)xSendEMailConfigView.xAttachmentsGrid.CurrentItem;
+            int index = mAttachments.IndexOf(currentItem);
+            ValueExpressionEditorPage veEditorPage = new(currentItem, nameof(Attachment.Name), null);
+            veEditorPage.ShowAsWindow();
+            mAttachments.RemoveAt(index);
+            mAttachments.Insert(index, currentItem);
         }
 
         private void xSendEMailConfigView_FileAdded(object sender, RoutedEventArgs e)
@@ -146,39 +173,27 @@ namespace Ginger.Actions.Communication
             mAct.MailOption = selectedEmailMethod.ToString();
         }
 
-        private sealed class Attachment : UCSendEMailConfigView.IAttachmentBindingAdapter
+        public sealed class Attachment : INotifyPropertyChanged
         {
             public eAttachmentType Type { get => eAttachmentType.File; }
-
-            private string mName;
+            private string filename;
             public string Name
             {
-                get
-                {
-                    return mName;
-                }
+                get => filename;
                 set
                 {
-                    if (value == mName)
+                    if (value == filename)
                         return;
-                    mName = value;
-                    OnPropertyChanged(nameof(Name));
+                    filename = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
                 }
             }
-            public string ExtraInformation { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-            public bool Zipped { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-            public event PropertyChangedEventHandler? PropertyChanged;
-
             public Attachment(string filename)
             {
-                mName = filename;
+                this.filename = filename;
             }
 
-            public void OnPropertyChanged(string name)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-            }
+            public event PropertyChangedEventHandler? PropertyChanged;
         }
     }
 }
