@@ -2755,7 +2755,7 @@ namespace Amdocs.Ginger.CoreNET
                         ratio_X = SrcWidth / ActWidth;
                         ratio_Y = SrcHeight / ActHeight;
 
-                        string bounds = rectangleXmlNode != null ? rectangleXmlNode.Attributes["bounds"].Value : "";
+                        string bounds = rectangleXmlNode != null ? (rectangleXmlNode.Attributes["bounds"] != null ? rectangleXmlNode.Attributes["bounds"].Value : "") : "";
                         bounds = bounds.Replace("[", ",");
                         bounds = bounds.Replace("]", ",");
                         string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
