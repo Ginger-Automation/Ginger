@@ -32,7 +32,9 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
 
     public enum eAttachmentType
     {
+        [EnumValueDescription("File")]
         File,
+        [EnumValueDescription("Report")]
         HTMLReport
     }
 
@@ -51,15 +53,17 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             public bool AllowAttachmentExtraInformation { get; set; } = false;
             public bool AllowZippedAttachment { get; set; } = false;
             public eAttachmentType[] SupportedAttachmentTypes { get; set; } = { eAttachmentType.File };
+            public AttachmentGridBindingMap AttachmentGridBindingMap { get; set; } = new AttachmentGridBindingMap();
             public Email.eEmailMethod DefaultEmailMethod { get; set; } = Email.eEmailMethod.SMTP;
+            public eBodyContentType DefaultBodyContentType { get; set; } = eBodyContentType.FreeText;
         }
 
-        public interface IAttachmentBindingAdapter : INotifyPropertyChanged
+        public sealed class AttachmentGridBindingMap
         {
-            public eAttachmentType Type { get; }
-            public string Name { get; set; }
-            public string ExtraInformation { get; set; }
-            public bool Zipped { get; set; }
+            public string Type { get; set; } = nameof(Type);
+            public string Name { get; set; } = nameof(Name);
+            public string ExtraInformation { get; set; } = nameof(ExtraInformation);
+            public string Zipped { get; set; } = nameof(Zipped);
         }
 
         private bool isDisplayNameFieldEnabled;
@@ -67,8 +71,9 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
         public delegate void EmailMethodChangeHandler(Email.eEmailMethod selectedEmailMethod);
         public event EmailMethodChangeHandler? EmailMethodChanged;
 
-        public event RoutedEventHandler? FileAdded;
-        public event RoutedEventHandler? HTMLReportAdded;
+        public event RoutedEventHandler? AddFileAttachment;
+        public event RoutedEventHandler? AddHTMLReportAttachment;
+        public event RoutedEventHandler? NameValueExpressionButtonClick;
 
         public UCSendEMailConfigView()
         {
@@ -91,6 +96,7 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             if (options.AttachmentsEnabled)
                 InitializeAttachmentsGrid(options);
             SetDefaultEmailMethod(options.DefaultEmailMethod);
+            SetDefaultBodyContentType(options.DefaultBodyContentType, options.SupportedBodyContentTypes);
         }
 
         private void SetBodyContentType(eBodyContentType[] supportedBodyContentTypes)
@@ -149,62 +155,73 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
         private void InitializeAttachmentsGrid(Options options)
         {
             xAttachmentsTab.Visibility = Visibility.Visible;
-            SetAttachmentsGridViewDef(options.AllowAttachmentExtraInformation, options.AllowZippedAttachment);
+            SetAttachmentsGridViewDef(options);
 
             if(options.SupportedAttachmentTypes.Contains(eAttachmentType.HTMLReport))
                 xAttachmentsGrid.AddToolbarTool("@AddHTMLReport_16x16.png", "Add Report", TriggerHTMLReportAddedEvent);
             if(options.SupportedAttachmentTypes.Contains(eAttachmentType.File))
                 xAttachmentsGrid.AddToolbarTool("@AddScript_16x16.png", "Add File", TriggerFileAddedEvent);
-
-            //xAttachmentsGrid.DataSourceList = runSetActionHTMLReportSendEmail.EmailAttachments;
         }
 
-        private void SetAttachmentsGridViewDef(bool allowExtraInformation, bool allowZippedAttachment)
+        private void SetAttachmentsGridViewDef(Options options)
         {
-            GridViewDef gridViewDef = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> gridColsView = new ObservableList<GridColView>();
+            bool isMultipleFileTypeSupported = options.SupportedAttachmentTypes.Length > 1;
+            bool isExtraInformationAllowed = options.AllowAttachmentExtraInformation;
+            bool isZippedAttachmentAllowed = options.AllowZippedAttachment;
+            AttachmentGridBindingMap bindingMap = options.AttachmentGridBindingMap;
+
+            GridViewDef gridViewDef = new(GridViewDef.DefaultViewName);
+            ObservableList<GridColView> gridColsView = new();
             gridViewDef.GridColsView = gridColsView;
 
-            gridColsView.Add(new GridColView()
+            if (isMultipleFileTypeSupported)
             {
-                Header = "Type",
-                Field = nameof(IAttachmentBindingAdapter.Type),
-                WidthWeight = 100,
-                BindingMode = BindingMode.OneTime
-            });
+                gridColsView.Add(new GridColView()
+                {
+                    Header = "Type",
+                    Field = bindingMap.Type,
+                    WidthWeight = 100,
+                    BindingMode = BindingMode.OneTime
+                });
+            }
+
             gridColsView.Add(new GridColView() 
             { 
                 Header = "Name", 
-                Field = nameof(IAttachmentBindingAdapter.Name), 
-                WidthWeight = 200 
+                Field = bindingMap.Name, 
+                WidthWeight = 200
             });
+
             gridColsView.Add(new GridColView() 
             { 
                 Field = "...", 
                 Header = "...", 
                 WidthWeight = 20,
                 StyleType = GridColView.eGridColStyleType.Template, 
-                CellTemplate = (DataTemplate)xAttachmentsTab.Resources["NameVEButtonCellTemplate"] });
+                CellTemplate = (DataTemplate)xAttachmentsTab.Resources["NameVEButtonCellTemplate"] 
+            });
 
-            if (allowExtraInformation)
+            if (isExtraInformationAllowed)
             {
                 gridColsView.Add(new GridColView() 
                 { 
                     Header = "Extra Information", 
-                    Field = nameof(IAttachmentBindingAdapter.ExtraInformation), 
+                    Field = bindingMap.ExtraInformation, 
                     WidthWeight = 250 
                 });
             }
-            if (allowZippedAttachment)
+
+            if (isZippedAttachmentAllowed)
             {
                 gridColsView.Add(new GridColView() 
                 { 
                     Header = "Zipped", 
-                    Field = nameof(IAttachmentBindingAdapter.Zipped), 
+                    Field = bindingMap.Zipped, 
                     WidthWeight = 50, 
                     HorizontalAlignment = HorizontalAlignment.Center, 
                     StyleType = GridColView.eGridColStyleType.Template, 
-                    CellTemplate = (DataTemplate)xAttachmentsTab.Resources["ZippedCellTemplate"] });
+                    CellTemplate = (DataTemplate)xAttachmentsTab.Resources["ZippedCellTemplate"] 
+                });
             }
 
             xAttachmentsGrid.SetAllColumnsDefaultView(gridViewDef);
@@ -226,6 +243,27 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             }
         }
 
+        private void SetDefaultBodyContentType(eBodyContentType defaultBodyContentType, eBodyContentType[] supportedBodyContentType)
+        {
+            bool supportsOnlyOneBodyContentType = supportedBodyContentType.Length < 2;
+            bool doesNotContainDefaultBodyContentType = !supportedBodyContentType.Contains(defaultBodyContentType);
+
+            if (supportsOnlyOneBodyContentType || doesNotContainDefaultBodyContentType)
+                return;
+
+            switch(defaultBodyContentType)
+            {
+                case eBodyContentType.FreeText:
+                    xBodyContentTypeFreeTextRadioButton.IsChecked = true;
+                    return;
+                case eBodyContentType.HTMLReport:
+                    xBodyContentTypeHTMLReportRadioButton.IsChecked = true;
+                    return;
+                default:
+                    throw new NotImplementedException($"logic for setting {defaultBodyContentType} as default body content type is not implemented");
+            }
+        }
+
         private void xBodyContentType_Changed(object sender, RoutedEventArgs e)
         {
             xBodyContentTypeFreeTextContainer.Visibility = ConvertBooleanToVisibility(xBodyContentTypeFreeTextRadioButton.IsChecked ?? false);
@@ -239,12 +277,12 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
 
         private void TriggerFileAddedEvent(object sender, RoutedEventArgs e)
         {
-            FileAdded?.Invoke(sender, e);
+            AddFileAttachment?.Invoke(sender, e);
         }
 
         private void TriggerHTMLReportAddedEvent(object sender, RoutedEventArgs e)
         {
-            HTMLReportAdded?.Invoke(sender, e);
+            AddHTMLReportAttachment?.Invoke(sender, e);
         }
 
         private void xEmailMethod_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -273,13 +311,7 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
 
         private void xNameVEButton_Click(object sender, RoutedEventArgs e)
         {
-            IAttachmentBindingAdapter item = (IAttachmentBindingAdapter)xAttachmentsGrid.CurrentItem;
-
-            if (item.Type == eAttachmentType.File)
-            {
-                ValueExpressionEditorPage veEditorPage = new(xAttachmentsGrid.CurrentItem, nameof(EmailAttachment.Name), null);
-                veEditorPage.ShowAsWindow();
-            }
+            NameValueExpressionButtonClick?.Invoke(sender, e);
         }
 
         private string Encrypt(string value)
