@@ -208,7 +208,7 @@ namespace GingerCore.Actions.Java
         }
 
         //TODO: Change icon to Java
-        public override eImageType Image { get { return eImageType.Coffee; } }
+        public override eImageType Image { get { return eImageType.Java; } }
         
         public PayLoad Pack()
         {

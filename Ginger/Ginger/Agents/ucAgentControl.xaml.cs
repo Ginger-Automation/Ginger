@@ -23,6 +23,7 @@ using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -183,6 +184,7 @@ namespace Ginger.Agents
             {                
                 xAgentStatusBtn.ButtonImageForground = Brushes.Gray;
                 xAgentStatusBtn.ToolTip = "Please select Agent";
+                xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.ToggleOff;
                 xAgentConfigsExpander.Visibility = Visibility.Collapsed;
                 xAgentConfigsExpander.IsEnabled = false;
                 xAgentConfigurationsGrid.IsEnabled = false;
@@ -196,6 +198,7 @@ namespace Ginger.Agents
                     xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Power;
                     xAgentStatusBtn.ButtonImageForground = Brushes.Red;
                     xAgentStatusBtn.ToolTip = "Agent is Off, click to turn it On";
+                    xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.ToggleOff;
                     xAgentConfigsExpander.Visibility = Visibility.Collapsed;
                     xAgentConfigsExpander.IsEnabled = false;
                     xAgentConfigurationsGrid.IsEnabled = false;
@@ -205,6 +208,7 @@ namespace Ginger.Agents
                     xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
                     xAgentStatusBtn.ButtonImageForground = Brushes.Orange;                    
                     xAgentStatusBtn.ToolTip = "Agent is starting...";
+                    xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.ToggleOff;
                     xAgentConfigsExpander.Visibility = Visibility.Collapsed;
                     xAgentConfigsExpander.IsEnabled = false;
                     xAgentConfigurationsGrid.IsEnabled = false;
@@ -216,6 +220,7 @@ namespace Ginger.Agents
                     xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Power;
                     xAgentStatusBtn.ButtonImageForground = Brushes.Green;                   
                     xAgentStatusBtn.ToolTip = "Agent is On, click to turn it Off";
+                    xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.ToggleOn;
                     xAgentConfigsExpander.Visibility = Visibility.Visible;
                     xAgentConfigsExpander.IsEnabled = true;
                     xAgentConfigurationsGrid.IsEnabled = true;
@@ -334,4 +339,27 @@ namespace Ginger.Agents
             IWindowExplorerDriver.SwitchWindow(page.Title);
         }
     }
+
+    //public class AgentStatusColorTypeConverter : IValueConverter
+    //{
+    //    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        switch ((Agent.eStatus)value)
+    //        {
+    //            case Agent.eStatus.Running:
+    //                return (SolidColorBrush)(new BrushConverter().ConvertFrom("#109717"));//green
+
+    //            case Agent.eStatus.Starting:
+    //                return (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC268"));//yellow
+
+    //            default:
+    //                return (SolidColorBrush)(new BrushConverter().ConvertFrom("#DC3812"));//red
+    //        }
+    //    }
+
+    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 }

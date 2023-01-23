@@ -4231,6 +4231,7 @@ namespace GingerCore.Drivers
         }
         private ObservableList<ElementInfo> GetAllElementsFromPage(string path, PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
         {
+            PomMetaData = new ObservableList<POMPageMetaData>();
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
             List<HtmlNode> formElementsList = new List<HtmlNode>();
@@ -4262,7 +4263,7 @@ namespace GingerCore.Drivers
                         bool learnElement = true;
 
                         //filter element if needed, in case we need to learn only the MappedElements .i.e., LearnMappedElementsOnly is checked
-                        if (pomSetting.filteredElementType != null)
+                        if (pomSetting != null && pomSetting.filteredElementType != null)
                         {
                             //Case Learn Only Mapped Element : set learnElement to false in case element doesn't exist in the filteredElementType List AND element is not frame element
                             if (!pomSetting.filteredElementType.Contains(elementTypeEnum.Item2))
@@ -4311,7 +4312,7 @@ namespace GingerCore.Drivers
                             {
                                 GetRelativeXpathElementLocators(foundElemntInfo);
 
-                                if (pomSetting.relativeXpathTemplateList != null && pomSetting.relativeXpathTemplateList.Count > 0)
+                                if ( pomSetting != null && pomSetting.relativeXpathTemplateList != null && pomSetting.relativeXpathTemplateList.Count > 0)
                                 {
                                     foreach (var template in pomSetting.relativeXpathTemplateList)
                                     {

@@ -103,6 +103,12 @@ namespace Amdocs.Ginger.CoreNET
         public eDevicePlatformType DevicePlatformType { get; set; }
 
         [UserConfigured]
+        [UserConfiguredEnumType(typeof(eDeviceSource))]
+        [UserConfiguredDefault("LocalAppium")]
+        [UserConfiguredDescription("Connected mobile device source lab")]
+        public eDeviceSource DeviceSource { get; set; }
+
+        [UserConfigured]
         [UserConfiguredEnumType(typeof(eAppType))]
         [UserConfiguredDefault("NativeHybride")]
         [UserConfiguredDescription("The tested application type 'NativeHybride' or 'Web'")]
@@ -123,6 +129,11 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Determine if auto set the default capabilities based on OS and application type selection")]
         public bool AutoSetCapabilities { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Define if to include capability for allowing UFTM simulation capabilities")]
+        public bool UFTMSupportSimulationsCapabiliy { get; set; }
 
         [UserConfigured]
         [UserConfiguredMultiValues]
@@ -2705,8 +2716,8 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     else
                     {
-                        ratio_X = (SrcWidth / 2) / ActWidth;
-                        ratio_Y = (SrcHeight / 2) / ActHeight;
+                        ratio_X = SrcWidth / ActWidth;
+                        ratio_Y = SrcHeight / ActHeight;
                     }
 
                     break;
@@ -2744,7 +2755,7 @@ namespace Amdocs.Ginger.CoreNET
                         ratio_X = SrcWidth / ActWidth;
                         ratio_Y = SrcHeight / ActHeight;
 
-                        string bounds = rectangleXmlNode != null ? rectangleXmlNode.Attributes["bounds"].Value : "";
+                        string bounds = rectangleXmlNode != null ? (rectangleXmlNode.Attributes["bounds"] != null ? rectangleXmlNode.Attributes["bounds"].Value : "") : "";
                         bounds = bounds.Replace("[", ",");
                         bounds = bounds.Replace("]", ",");
                         string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -2775,8 +2786,11 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     else
                     {
-                        ratio_X = (SrcWidth / 2) / ActWidth;
-                        ratio_Y = (SrcHeight / 2) / ActHeight;
+                        if (AutoCorrectRectPropRequired)
+                            AutoCorrectRectProp = 2;
+
+                        ratio_X = (SrcWidth / AutoCorrectRectProp) / ActWidth;
+                        ratio_Y = (SrcHeight / AutoCorrectRectProp) / ActHeight;
 
                         string x = GetAttrValue(rectangleXmlNode, "x");
                         string y = GetAttrValue(rectangleXmlNode, "y");
@@ -2785,9 +2799,6 @@ namespace Amdocs.Ginger.CoreNET
 
                         ElementStartPoints.X = (int)(Convert.ToInt32(x) / ratio_X);
                         ElementStartPoints.Y = (int)(Convert.ToInt32(y) / ratio_Y);
-
-                        if (AutoCorrectRectPropRequired)
-                            AutoCorrectRectProp = 2;
 
                         ElementMaxPoints.X = ElementStartPoints.X + (Convert.ToInt32(wdth) * AutoCorrectRectProp);
                         ElementMaxPoints.Y = ElementStartPoints.Y + (Convert.ToInt32(hgt) * AutoCorrectRectProp);
