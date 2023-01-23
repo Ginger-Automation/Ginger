@@ -130,16 +130,16 @@ namespace GingerCore.Actions
         }
 
         public string mSimulatedPhotoPath;
-        public string SimulatedPhotoPath
+        public ActInputValue SimulatedPhotoPath
         {
             get
             {
-                return this.GetOrCreateInputParam(nameof(mSimulatedPhotoPath)).Value;
+                return this.GetOrCreateInputParam(nameof(SimulatedPhotoPath), "");
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(mSimulatedPhotoPath), value);
-                OnPropertyChanged(nameof(mSimulatedPhotoPath));
+                this.GetOrCreateInputParam(nameof(SimulatedPhotoPath), value.ToString());
+                OnPropertyChanged(nameof(SimulatedPhotoPath));
             }
         }
 

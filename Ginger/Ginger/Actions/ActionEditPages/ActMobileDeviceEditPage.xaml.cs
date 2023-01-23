@@ -26,6 +26,7 @@ using System.IO;
 using System;
 using Ginger.Actions.UserControls;
 using System.Drawing;
+using System.Linq;
 
 namespace Ginger.Actions
 {
@@ -58,13 +59,14 @@ namespace Ginger.Actions
             xX2TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.X2, nameof(ActInputValue.Value));
             xY2TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.Y2, nameof(ActInputValue.Value));
 
-            xPhotoSumilationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActMobileDevice.SimulatedPhotoPath)), true, true, UCValueExpression.eBrowserType.File, "*", BaseLineFileSelected_Click);
-
+            xPhotoSumilationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActMobileDevice.SimulatedPhotoPath)), true, true, UCValueExpression.eBrowserType.File, "*");
+            UpdateBaseLineImage();
+            xPhotoSumilationTxtBox.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
         }
 
-        private void BaseLineFileSelected_Click(object sender, RoutedEventArgs e)
+
+        private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string BaselineFileSavingNameTypeAndPath = General.ConvertSolutionRelativePath(xPhotoSumilationTxtBox.ValueTextBox.Text);
             UpdateBaseLineImage();
         }
 
@@ -83,10 +85,32 @@ namespace Ginger.Actions
         private BitmapImage GetFreeBitmapCopy(String filePath)
         {
             // make sure we load bitmap and the file is readonly not get locked
-            Bitmap bmp = new Bitmap(filePath);
-            BitmapImage bi = BitmapToImageSource(bmp);
-            bmp.Dispose();
-            return bi;
+            try
+            {
+                Bitmap bmp = new Bitmap(filePath);
+                BitmapImage bi = BitmapToImageSource(bmp);
+                bmp.Dispose();
+                return bi;
+            }
+            catch (Exception)
+            {
+                Reporter.ToUser(eUserMsgKey.FileExtensionNotSupported, "jpg/jpeg/png");
+                UserMsg messageToShow = null;
+                if ((Reporter.UserMsgsPool != null) && Reporter.UserMsgsPool.Keys.Contains(eUserMsgKey.FileExtensionNotSupported))
+                {
+                    messageToShow = Reporter.UserMsgsPool[eUserMsgKey.FileExtensionNotSupported];
+                }
+                if (messageToShow != null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format(messageToShow.Message, "jpg/jpeg/png"));
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "File extention not supported. Supported extentions: jpg/jpeg/png");
+                }
+                return null;
+            }
+            
         }
 
         private BitmapImage BitmapToImageSource(Bitmap bitmap)

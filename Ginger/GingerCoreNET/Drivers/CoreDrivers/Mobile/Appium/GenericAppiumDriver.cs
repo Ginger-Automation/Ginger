@@ -1002,7 +1002,11 @@ namespace Amdocs.Ginger.CoreNET
                         break;
                     case ActMobileDevice.eMobileDeviceAction.SimulatePhoto:
                         string photoString = act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).Value;
-                        Bitmap picture = new Bitmap(photoString);
+                        Bitmap picture = null;
+                        if (isValidPhotoExtention(photoString))
+                        {
+                            picture = new Bitmap(photoString);
+                        }
                         string photoSimulation = CameraSimulation(picture, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
                         break;
                     default:
@@ -1015,13 +1019,32 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
+        public bool isValidPhotoExtention(string photo)
+        {
+            if (string.IsNullOrEmpty(photo))
+            {
+                return false;
+            }
+            string extention = photo.Substring(photo.LastIndexOf('.') + 1);
+            if (extention == "jpg" || extention == "jpeg" || extention == "png")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         public string CameraSimulation(Bitmap picture, ImageFormat format, string contentType, string fileName, string action)
         {
             MemoryStream ms = new MemoryStream();
-            picture.Save(ms, format);
-            Byte[] bytes = ms.ToArray();
-            string encodeString = Convert.ToBase64String(bytes);
-
+            string encodeString = "0";
+            if (picture != null)
+            {
+                picture.Save(ms, format);
+                Byte[] bytes = ms.ToArray();
+                encodeString = Convert.ToBase64String(bytes);
+            }
             Dictionary<string, string> sensorSimulationMap = new Dictionary<string, string>
             {
                 { "uploadMedia", encodeString },

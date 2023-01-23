@@ -39,7 +39,7 @@
                 <Label Style="{StaticResource $LabelStyle}" Content="Choose Photo:" Margin="0 0 0 0"/>
                 <Actions:UCValueExpression x:Name="xPhotoSumilationTxtBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" />
             </StackPanel>
-            <Frame x:Name="SimulatedPhotoFrame" Background="White" Margin="5,5,0,0"></Frame>
+            <Frame x:Name="SimulatedPhotoFrame" Background="White" Margin="0,5,0,0" Width="370" Height="325"></Frame>
         </StackPanel>
 
     </DockPanel>
