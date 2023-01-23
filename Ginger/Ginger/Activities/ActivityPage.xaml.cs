@@ -34,12 +34,8 @@ using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Media;
 
 namespace GingerWPF.BusinessFlowsLib
@@ -84,6 +80,12 @@ namespace GingerWPF.BusinessFlowsLib
             mPageViewMode = pageViewMod;
             SetUIView();
            
+        }
+
+        private void SetIconImageType()
+        {
+            xIconImage.ImageType = Activity.TargetApplicationPlatformImage;
+            xIconImage.ToolTip = Activity.TargetApplicationPlatformName;
         }
 
         public void SetUIElementsBehaverBasedOnRunnerStatus(bool IsRunning)
@@ -168,6 +170,7 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.ToolTipProperty, mActivity, nameof(Activity.ActivityName));
             mActivity.PropertyChanged -= mActivity_PropertyChanged;
             mActivity.PropertyChanged += mActivity_PropertyChanged;
+            SetIconImageType();
             UpdateDescription();
             //xSharedRepoInstanceUC.Init(mActivity, mContext.BusinessFlow);
 
@@ -347,6 +350,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void mActivity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            SetIconImageType();
             UpdateDescription();
         }
 
