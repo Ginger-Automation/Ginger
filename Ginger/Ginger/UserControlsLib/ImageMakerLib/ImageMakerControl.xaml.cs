@@ -747,7 +747,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_TimesCircle);
                     break;
                 case eImageType.Coffee:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Coffee, Brushes.Red);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MugHot, Brushes.Red);
                     break;
                 case eImageType.MapSigns:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MapSigns);
@@ -797,7 +797,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Chrome);
                     break;
                 case eImageType.Java:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Coffee);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Java);
                     break;
                 case eImageType.KeyboardLayout:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Keyboard);
@@ -812,11 +812,27 @@ namespace Amdocs.Ginger.UserControls
                     break;
 
                 case eImageType.Mobile:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Mobile);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MobileAlt);
                     break;
 
                 case eImageType.Codepen:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Codepen);
+                    break;
+
+                case eImageType.Code:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Code);
+                    break;
+
+                case eImageType.Runing:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Running);
+                    break;
+
+                case eImageType.Dos:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SquareFull);
+                    break;
+
+                case eImageType.Server:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Server);
                     break;
 
                 case eImageType.MousePointer:
@@ -956,8 +972,11 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Window:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_WindowMaximize);
                     break;
-                case eImageType.Toggle:
+                case eImageType.ToggleOn:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ToggleOn);
+                    break;
+                case eImageType.ToggleOff:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ToggleOff);
                     break;
                 case eImageType.Table:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Table);
