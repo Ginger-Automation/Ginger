@@ -29,8 +29,6 @@ using System.Drawing;
 using System.Linq;
 using amdocs.ginger.GingerCoreNET;
 using GingerCore;
-using GingerCore.Variables;
-using NPOI.SS.Formula.Functions;
 
 namespace Ginger.Actions
 {
@@ -67,8 +65,6 @@ namespace Ginger.Actions
             xY2TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.Y2, nameof(ActInputValue.Value));
 
             xPhotoSumilationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActMobileDevice.SimulatedPhotoPath)), true, true, UCValueExpression.eBrowserType.File, "*", ValueTextBox_LostFocus);
-            //GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ImportFileCheckBox, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(nameof(ActMobileDevice.ImportPhotoToSolutionFolder)));
-
 
             UpdateBaseLineImage(true);
 
@@ -99,13 +95,6 @@ namespace Ginger.Actions
             }
 
             ProcessInputForDriver();
-
-            bool isImportedFile;
-            //Boolean.TryParse(mAct.GetInputParamCalculatedValue(nameof(ActMobileDevice.ImportPhotoToSolutionFolder)), out isImportedFile);
-            //if (!isImportedFile)
-            //{
-            //    return;
-            //}
 
             string SolutionFolder = WorkSpace.Instance.Solution.Folder;
             string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\MobileSimulations\Photos");

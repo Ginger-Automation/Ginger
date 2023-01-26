@@ -1001,7 +1001,7 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         break;
                     case ActMobileDevice.eMobileDeviceAction.SimulatePhoto:
-                        string photoString = act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).Value;
+                        string photoString = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).Value); ;
                         Bitmap picture = null;
                         if (isValidPhotoExtention(photoString))
                         {

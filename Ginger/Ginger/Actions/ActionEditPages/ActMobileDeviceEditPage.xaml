@@ -39,7 +39,6 @@
                 <Label Style="{StaticResource $LabelStyle}" Content="Choose Photo:" Margin="0 0 0 0"/>
                 <Actions:UCValueExpression x:Name="xPhotoSumilationTxtBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="600" />
             </StackPanel>
-            <!--<CheckBox x:Name="ImportFileCheckBox"  Content="Import photo file to Solution folder" ToolTip="If checked the selected photo will be imported to ~Documents\MobileSimulations\Photos" HorizontalAlignment="Left" Margin="5,10,0,10"/>-->
             <Frame x:Name="SimulatedPhotoFrame" Background="White" Margin="-5,5,0,0" Width="670" Height="470"></Frame>
         </StackPanel>
 
