@@ -113,7 +113,9 @@ namespace Ginger.Actions
                 fileNum++;
                 string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
                 if (newFileName.IndexOf(copySufix) != -1)
+                {
                     newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
+                }
                 newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
                 destFile = System.IO.Path.Combine(targetPath, newFileName);
             }
