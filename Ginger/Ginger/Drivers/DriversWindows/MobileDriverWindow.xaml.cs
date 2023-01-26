@@ -258,6 +258,7 @@ namespace Ginger.Drivers.DriversWindows
                 case DriverBase.eDriverMessageType.ActionPerformed:
                     if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
                     {
+                        UnHighlightElementEvent();
                         await RefreshDeviceScreenshotAsync(100);
                     }
                     break;
@@ -809,6 +810,7 @@ namespace Ginger.Drivers.DriversWindows
                 }
                 if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
                 {
+                    UnHighlightElementEvent();
                     RefreshDeviceScreenshotAsync();
                 }
                 SetOrientationButton();
@@ -862,6 +864,7 @@ namespace Ginger.Drivers.DriversWindows
                 mDriver.PerformBackButtonPress();
                 if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
                 {
+                    UnHighlightElementEvent();
                     RefreshDeviceScreenshotAsync(100);
                 }
             }
@@ -884,6 +887,7 @@ namespace Ginger.Drivers.DriversWindows
                 mDriver.PerformHomeButtonPress();
                 if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
                 {
+                    UnHighlightElementEvent();
                     RefreshDeviceScreenshotAsync(100);
                 }
             }
@@ -906,6 +910,7 @@ namespace Ginger.Drivers.DriversWindows
                 mDriver.PerformMenuButtonPress();
                 if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
                 {
+                    UnHighlightElementEvent();
                     RefreshDeviceScreenshotAsync(100);
                 }
             }
@@ -1111,6 +1116,11 @@ namespace Ginger.Drivers.DriversWindows
             {
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Operation failed, Error: " + ex.Message);
             }
+        }
+
+        private void xClearHighlightsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            UnHighlightElementEvent();
         }
         #endregion Events
 
