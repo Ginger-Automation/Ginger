@@ -617,7 +617,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.FileImportedSuccessfully, new UserMsg(eUserMsgType.INFO, "File imported successfully", "The File was imported successfully", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToUndoChanges, new UserMsg(eUserMsgType.QUESTION, "Undo Changes?", "Do you want to undo changes (in case changes were done) and close?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToUndoItemChanges, new UserMsg(eUserMsgType.QUESTION, "Undo Changes?", "Do you want to undo changes for '{0}'?", eUserMsgOption.YesNo, eUserMsgSelection.No));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToImportFile, new UserMsg(eUserMsgType.QUESTION, "Import File?", "Do you want to import the file into the solution folder?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToImportFile, new UserMsg(eUserMsgType.QUESTION, "Import File?", "Do you want to import the file into the following folder: '{0}'?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.InvalidIndexValue, new UserMsg(eUserMsgType.ERROR, "Invalid index value", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FileOperationError, new UserMsg(eUserMsgType.ERROR, "Error occurred during file operation", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FolderOperationError, new UserMsg(eUserMsgType.ERROR, "Error occurred during folder operation", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));

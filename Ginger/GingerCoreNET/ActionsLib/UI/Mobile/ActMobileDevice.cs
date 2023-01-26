@@ -223,6 +223,8 @@ namespace GingerCore.Actions
             GetDeviceGeneralInfo,
             [EnumValueDescription("Simulate Photo")]
             SimulatePhoto,
+            [EnumValueDescription("Stop Simulate Photo\\Video")]
+            StopSimulatePhotoOrVideo,
         }
 
         public enum ePressKey

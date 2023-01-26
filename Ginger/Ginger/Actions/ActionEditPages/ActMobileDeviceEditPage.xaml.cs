@@ -64,7 +64,7 @@ namespace Ginger.Actions
             xX2TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.X2, nameof(ActInputValue.Value));
             xY2TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.Y2, nameof(ActInputValue.Value));
 
-            xPhotoSumilationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActMobileDevice.SimulatedPhotoPath)), true, true, UCValueExpression.eBrowserType.File, "*", ValueTextBox_LostFocus);
+            xPhotoSumilationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActMobileDevice.SimulatedPhotoPath)), true, true, UCValueExpression.eBrowserType.File, "*", ValueTextBox_ClickBrowse);
 
             UpdateBaseLineImage(true);
 
@@ -85,19 +85,19 @@ namespace Ginger.Actions
 
         private void ImportPhotoToSolutionFolder(string filePath)
         {
-            if (string.IsNullOrEmpty(filePath) || filePath.Substring(0, 1) == "~")
+            if (string.IsNullOrEmpty(filePath) || filePath.Substring(0, 1) == "~" || filePath.Contains(WorkSpace.Instance.Solution.Folder))
             {
                 return;
             }
-            if (Reporter.ToUser(eUserMsgKey.AskIfToImportFile) == eUserMsgSelection.No)
+            string SolutionFolder = WorkSpace.Instance.Solution.Folder;
+            string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\MobileSimulations\Photos");
+            if (Reporter.ToUser(eUserMsgKey.AskIfToImportFile, targetPath) == eUserMsgSelection.No)
             {
                 return;
             }
 
             ProcessInputForDriver();
 
-            string SolutionFolder = WorkSpace.Instance.Solution.Folder;
-            string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\MobileSimulations\Photos");
             if (!System.IO.Directory.Exists(targetPath))
             {
                 System.IO.Directory.CreateDirectory(targetPath);
@@ -105,20 +105,6 @@ namespace Ginger.Actions
 
             string fileName = System.IO.Path.GetFileName(filePath);
             string destFile = System.IO.Path.Combine(targetPath, fileName);
-
-            int fileNum = 1;
-            string copySufix = "_Copy";
-            while (System.IO.File.Exists(destFile))
-            {
-                fileNum++;
-                string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
-                if (newFileName.IndexOf(copySufix) != -1)
-                {
-                    newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
-                }
-                newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
-                destFile = System.IO.Path.Combine(targetPath, newFileName);
-            }
 
             System.IO.File.Copy(filePath, destFile, true);
             if (!isValueExpression)
@@ -129,6 +115,11 @@ namespace Ginger.Actions
 
         private void ValueTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
+            UpdateBaseLineImage();
+        }
+
+        private void ValueTextBox_ClickBrowse(object sender, RoutedEventArgs e)
+        {
             string filePath = UpdateBaseLineImage();
             ImportPhotoToSolutionFolder(filePath);
         }
@@ -136,10 +127,8 @@ namespace Ginger.Actions
         private string UpdateBaseLineImage(bool firstTime = false)
         {
             string FileName = General.GetFullFilePath(xPhotoSumilationTxtBox.ValueTextBox.Text);
-            BitmapImage b = null;
             if (File.Exists(FileName))
             {
-                b = GetFreeBitmapCopy(FileName, firstTime);
                 isValueExpression = false;
             }
             else
@@ -147,70 +136,16 @@ namespace Ginger.Actions
 
                 ValueExpression ve = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, Context.GetAsContext(mAct.Context), null);
                 FileName = ve.Calculate(FileName);
-                if (File.Exists(FileName))
-                {
-                    b = GetFreeBitmapCopy(FileName, firstTime);
-                }
                 isValueExpression = true;
             }
             // send with null bitmap will show image not found
-            ScreenShotViewPage p = new ScreenShotViewPage("Baseline Image", b);
+            ScreenShotViewPage p = new ScreenShotViewPage("Baseline Image", FileName);
             SimulatedPhotoFrame.Content = p;
-            //if b is null then photo is not in required format, so return empty string to not try to import photo
-            if (b == null)
+            if (p.BitmapImage == null)
             {
                 return string.Empty;
             }
             return FileName;
-        }
-        private BitmapImage GetFreeBitmapCopy(String filePath, bool firstTime = false)
-        {
-            // make sure we load bitmap and the file is readonly not get locked
-            try
-            {
-                Bitmap bmp = new Bitmap(filePath);
-                BitmapImage bi = BitmapToImageSource(bmp);
-                bmp.Dispose();
-                return bi;
-            }
-            catch (Exception)
-            {
-                if (!firstTime)
-                {
-                    Reporter.ToUser(eUserMsgKey.FileExtensionNotSupported, "jpg/jpeg/png");
-                }
-                UserMsg messageToShow = null;
-                if ((Reporter.UserMsgsPool != null) && Reporter.UserMsgsPool.Keys.Contains(eUserMsgKey.FileExtensionNotSupported))
-                {
-                    messageToShow = Reporter.UserMsgsPool[eUserMsgKey.FileExtensionNotSupported];
-                }
-                if (messageToShow != null)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format(messageToShow.Message, "jpg/jpeg/png"));
-                }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "File extention not supported. Supported extentions: jpg/jpeg/png");
-                }
-                return null;
-            }
-
-        }
-
-        private BitmapImage BitmapToImageSource(Bitmap bitmap)
-        {
-            using (MemoryStream memory = new MemoryStream())
-            {
-                bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Png);
-                memory.Position = 0;
-                BitmapImage bitmapimage = new BitmapImage();
-                bitmapimage.BeginInit();
-                bitmapimage.StreamSource = memory;
-                bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapimage.EndInit();
-
-                return bitmapimage;
-            }
         }
 
         private void ActionNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

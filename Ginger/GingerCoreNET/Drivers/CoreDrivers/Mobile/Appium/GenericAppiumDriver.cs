@@ -1008,6 +1008,9 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         string photoSimulation = CameraSimulation(picture, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
                         break;
+                    case ActMobileDevice.eMobileDeviceAction.StopSimulatePhotoOrVideo:
+                        CameraSimulation(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
+                        break;
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
                 }
