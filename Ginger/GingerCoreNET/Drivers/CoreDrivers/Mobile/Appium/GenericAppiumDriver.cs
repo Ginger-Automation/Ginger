@@ -51,7 +51,6 @@ using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NPOI.HPSF;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
@@ -1005,8 +1004,16 @@ namespace Amdocs.Ginger.CoreNET
                         if (isValidPhotoExtention(photoString))
                         {
                             picture = new Bitmap(photoString);
+                            string photoSimulation = CameraSimulation(picture, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
+                            if (photoSimulation != "success")
+                            {
+                                act.Error = "An Error occured during camera simulation. Error: " + photoSimulation;
+                            }
                         }
-                        string photoSimulation = CameraSimulation(picture, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
+                        else
+                        {
+                            act.Error = "File is not supported. Upload a supported file to use Camera simulation";
+                        }
                         break;
                     case ActMobileDevice.eMobileDeviceAction.StopSimulatePhotoOrVideo:
                         CameraSimulation(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
