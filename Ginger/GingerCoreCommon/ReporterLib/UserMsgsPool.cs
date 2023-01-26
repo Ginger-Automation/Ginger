@@ -146,7 +146,7 @@ namespace Amdocs.Ginger.Common
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, SaveAllModifiedItems, CopiedErrorInfo, RepositoryNameCantEmpty,
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
         POMElementNotExist, UpdateExistingPOMElement, POMMoveElementFromUnmappedToMapped, SavePOMChanges,
-        AskIfToUndoChanges, AskIfToUndoItemChanges, FileAlreadyExistWarn,
+        AskIfToUndoChanges, AskIfToUndoItemChanges, AskIfToImportFile, FileAlreadyExistWarn,
         POMDeltaWizardReLearnWillEraseModification, WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
         PluginDownloadInProgress, SaveRunsetChanges, LegacyActionsCleanup,
         MissingImplementationForPlatform,
@@ -617,6 +617,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.FileImportedSuccessfully, new UserMsg(eUserMsgType.INFO, "File imported successfully", "The File was imported successfully", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToUndoChanges, new UserMsg(eUserMsgType.QUESTION, "Undo Changes?", "Do you want to undo changes (in case changes were done) and close?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToUndoItemChanges, new UserMsg(eUserMsgType.QUESTION, "Undo Changes?", "Do you want to undo changes for '{0}'?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToImportFile, new UserMsg(eUserMsgType.QUESTION, "Import File?", "Do you want to import the file into the solution folder?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.InvalidIndexValue, new UserMsg(eUserMsgType.ERROR, "Invalid index value", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FileOperationError, new UserMsg(eUserMsgType.ERROR, "Error occurred during file operation", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FolderOperationError, new UserMsg(eUserMsgType.ERROR, "Error occurred during folder operation", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));

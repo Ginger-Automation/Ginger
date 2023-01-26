@@ -27,6 +27,10 @@ using System;
 using Ginger.Actions.UserControls;
 using System.Drawing;
 using System.Linq;
+using amdocs.ginger.GingerCoreNET;
+using GingerCore;
+using GingerCore.Variables;
+using NPOI.SS.Formula.Functions;
 
 namespace Ginger.Actions
 {
@@ -37,12 +41,15 @@ namespace Ginger.Actions
     {
 
         ActMobileDevice mAct;
+        Context mContext;
+        bool isValueExpression;
 
         public ActMobileDeviceEditPage(ActMobileDevice Act)
         {
             InitializeComponent();
 
             mAct = Act;
+            mContext = Context.GetAsContext(Act.Context);
 
             BindControls();
             SetControlsView();
@@ -59,30 +66,113 @@ namespace Ginger.Actions
             xX2TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.X2, nameof(ActInputValue.Value));
             xY2TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.Y2, nameof(ActInputValue.Value));
 
-            xPhotoSumilationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActMobileDevice.SimulatedPhotoPath)), true, true, UCValueExpression.eBrowserType.File, "*");
-            UpdateBaseLineImage();
-            xPhotoSumilationTxtBox.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
+            xPhotoSumilationTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActMobileDevice.SimulatedPhotoPath)), true, true, UCValueExpression.eBrowserType.File, "*", ValueTextBox_LostFocus);
+            //GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ImportFileCheckBox, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(nameof(ActMobileDevice.ImportPhotoToSolutionFolder)));
+
+
+            UpdateBaseLineImage(true);
+
+            xPhotoSumilationTxtBox.ValueTextBox.LostFocus -= ValueTextBox_LostFocus;
+            xPhotoSumilationTxtBox.ValueTextBox.LostFocus += ValueTextBox_LostFocus;
+
+            xPhotoSumilationTxtBox.OpenExpressionEditorButton.Click -= ValueTextBox_LostFocus;
+            xPhotoSumilationTxtBox.OpenExpressionEditorButton.Click += ValueTextBox_LostFocus;
         }
 
-
-        private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void ProcessInputForDriver()
         {
-            UpdateBaseLineImage();
+            if (mContext != null)
+            {
+                mContext.Runner.ProcessInputValueForDriver(mAct);
+            }
         }
 
-        private void UpdateBaseLineImage()
+        private void ImportPhotoToSolutionFolder(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath) || filePath.Substring(0, 1) == "~")
+            {
+                return;
+            }
+            if (Reporter.ToUser(eUserMsgKey.AskIfToImportFile) == eUserMsgSelection.No)
+            {
+                return;
+            }
+
+            ProcessInputForDriver();
+
+            bool isImportedFile;
+            //Boolean.TryParse(mAct.GetInputParamCalculatedValue(nameof(ActMobileDevice.ImportPhotoToSolutionFolder)), out isImportedFile);
+            //if (!isImportedFile)
+            //{
+            //    return;
+            //}
+
+            string SolutionFolder = WorkSpace.Instance.Solution.Folder;
+            string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\MobileSimulations\Photos");
+            if (!System.IO.Directory.Exists(targetPath))
+            {
+                System.IO.Directory.CreateDirectory(targetPath);
+            }
+
+            string fileName = System.IO.Path.GetFileName(filePath);
+            string destFile = System.IO.Path.Combine(targetPath, fileName);
+
+            int fileNum = 1;
+            string copySufix = "_Copy";
+            while (System.IO.File.Exists(destFile))
+            {
+                fileNum++;
+                string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
+                if (newFileName.IndexOf(copySufix) != -1)
+                    newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
+                newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
+                destFile = System.IO.Path.Combine(targetPath, newFileName);
+            }
+
+            System.IO.File.Copy(filePath, destFile, true);
+            if (!isValueExpression)
+            {
+                xPhotoSumilationTxtBox.ValueTextBox.Text = @"~\Documents\MobileSimulations\Photos\" + System.IO.Path.GetFileName(destFile);
+            }
+        }
+
+        private void ValueTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            string filePath = UpdateBaseLineImage();
+            ImportPhotoToSolutionFolder(filePath);
+        }
+
+        private string UpdateBaseLineImage(bool firstTime = false)
         {
             string FileName = General.GetFullFilePath(xPhotoSumilationTxtBox.ValueTextBox.Text);
             BitmapImage b = null;
             if (File.Exists(FileName))
             {
-                b = GetFreeBitmapCopy(FileName);
+                b = GetFreeBitmapCopy(FileName, firstTime);
+                isValueExpression = false;
+            }
+            else
+            {
+
+                ValueExpression ve = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, Context.GetAsContext(mAct.Context), null);
+                FileName = ve.Calculate(FileName);
+                if (File.Exists(FileName))
+                {
+                    b = GetFreeBitmapCopy(FileName, firstTime);
+                }
+                isValueExpression = true;
             }
             // send with null bitmap will show image not found
             ScreenShotViewPage p = new ScreenShotViewPage("Baseline Image", b);
             SimulatedPhotoFrame.Content = p;
+            //if b is null then photo is not in required format, so return empty string to not try to import photo
+            if (b == null)
+            {
+                return string.Empty;
+            }
+            return FileName;
         }
-        private BitmapImage GetFreeBitmapCopy(String filePath)
+        private BitmapImage GetFreeBitmapCopy(String filePath, bool firstTime = false)
         {
             // make sure we load bitmap and the file is readonly not get locked
             try
@@ -94,7 +184,10 @@ namespace Ginger.Actions
             }
             catch (Exception)
             {
-                Reporter.ToUser(eUserMsgKey.FileExtensionNotSupported, "jpg/jpeg/png");
+                if (!firstTime)
+                {
+                    Reporter.ToUser(eUserMsgKey.FileExtensionNotSupported, "jpg/jpeg/png");
+                }
                 UserMsg messageToShow = null;
                 if ((Reporter.UserMsgsPool != null) && Reporter.UserMsgsPool.Keys.Contains(eUserMsgKey.FileExtensionNotSupported))
                 {
@@ -110,7 +203,7 @@ namespace Ginger.Actions
                 }
                 return null;
             }
-            
+
         }
 
         private BitmapImage BitmapToImageSource(Bitmap bitmap)
