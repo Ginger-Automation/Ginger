@@ -171,6 +171,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
                 {
                     emptyPOM.TargetApplicationKey = TargetApplications[0].Key;
                 }
+                emptyPOM.Name = NewPOMName;
                 var PomLearnUtils = new Amdocs.Ginger.CoreNET.Application_Models.PomLearnUtils(emptyPOM, pomModelsFolder: mPOMModelFolder);
                 PomLearnUtils.SaveLearnedPOM();
             }
