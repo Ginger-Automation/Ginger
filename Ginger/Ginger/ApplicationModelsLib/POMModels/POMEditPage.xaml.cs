@@ -150,7 +150,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 xPomActivitiesTabItem.Visibility = Visibility.Visible;
 
             }
-            else 
+            else
             {
                 xPomActivitiesTabItem.Visibility = Visibility.Collapsed;
             }
@@ -159,6 +159,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
             ObservableList<Agent> optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
+            foreach (Agent agent in optionalAgentsList)
+            {
+                if (agent.AgentOperations == null)
+                {
+                    AgentOperations agentOperations = new AgentOperations(agent);
+                    agent.AgentOperations = agentOperations;
+                }
+            }
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
             xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);
 
