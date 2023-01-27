@@ -31,11 +31,11 @@
         <Grid x:Name="xSubGrid" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="ControlsViewGridRow" Height="50*" />
-                <RowDefinition x:Name="xElementDetailGridRow" Height="0" />
+                <RowDefinition x:Name="xElementDetailGridRow" Height="50*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="xControlsViewGridColumn" Width="50*" />
-                <ColumnDefinition x:Name="xElementDetailGridColumn" Width="0" />
+                <ColumnDefinition x:Name="xControlsViewGridColumn" Width="50*"/>
+                <ColumnDefinition x:Name="xElementDetailGridColumn" Width="50*"  />
             </Grid.ColumnDefinitions>
 
             <TabControl x:Name="xViewsTabs" Margin="0,5,0,0" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="ViewsTabs_SelectionChanged" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
@@ -155,7 +155,7 @@
             <GridSplitter x:Name="xRowSplitter" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ResizeDirection="Rows" Height="1" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource $Color_DarkBlue}"/>
             <GridSplitter x:Name="xColumnSplitter" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" ResizeDirection="Columns" Height="Auto" Width="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" Visibility="Collapsed"/>
 
-            <Ginger:UCElementDetails x:Name="xUCElementDetails" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
+            <Ginger:UCElementDetails x:Name="xUCElementDetails" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
         </Grid>
 
         <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
