@@ -133,7 +133,7 @@ namespace GingerCore
 
 
 
-        public void StartDriver()
+        public async void StartDriver()
         {
             //WorkSpace.Instance.Telemetry.Add("startagent", new { AgentType = Agent.AgentType.ToString(), DriverType = Agent.DriverType.ToString() });
 
@@ -205,7 +205,10 @@ namespace GingerCore
                         }
                         else
                         {
-                            Driver.StartDriver();
+                            await Task.Run(() =>
+                            {
+                                Driver.StartDriver();
+                            });
                         }
                         if (VirtualDriver != null)
                         {
@@ -323,8 +326,8 @@ namespace GingerCore
                 Agent.OnPropertyChanged(nameof(AgentOperations.Status));
             }
         }
-        
-       
+
+
         public void SetDriverConfiguration()
         {
             if (Agent.DriverConfiguration == null)
@@ -670,7 +673,7 @@ namespace GingerCore
 
 
 
-        public void Close()
+        public async void Close()
         {
             try
             {
@@ -681,6 +684,7 @@ namespace GingerCore
                         // this is plugin driver on local machine
 
                         GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
+
                         GingerNodeProxy.CloseDriver();
 
 
@@ -730,7 +734,10 @@ namespace GingerCore
                 }
                 else
                 {
-                    Driver.CloseDriver();
+                    await Task.Run(() =>
+                    {
+                        Driver.CloseDriver();
+                    });
                 }
                 if (MSTATask != null)
                 {
@@ -776,15 +783,14 @@ namespace GingerCore
         {
             if (Driver != null)
             {
-                Driver.HighlightActElement(act); 
+                Driver.HighlightActElement(act);
             }
         }
 
 
 
         public void WaitForAgentToBeReady()
-        {
-
+        {            
             int Counter = 0;
             while (Status != Agent.eStatus.Running && String.IsNullOrEmpty(Driver.ErrorMessageFromDriver))
             {
@@ -830,7 +836,7 @@ namespace GingerCore
                 {
                     Reporter.ToUser(eUserMsgKey.TestagentSucceed);
                 }
-                else if(Driver.ErrorMessageFromDriver.Contains("Chrome driver version mismatch"))
+                else if (Driver.ErrorMessageFromDriver.Contains("Chrome driver version mismatch"))
                 {
                     Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Agent.Name, "Chrome driver version mismatch. Please run Ginger as Admin to Auto update the chrome driver.");
                 }
