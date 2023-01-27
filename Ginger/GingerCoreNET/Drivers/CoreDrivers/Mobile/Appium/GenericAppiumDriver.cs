@@ -62,6 +62,7 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -105,8 +106,8 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfigured]
         [UserConfiguredEnumType(typeof(eDeviceSource))]
         [UserConfiguredDefault("LocalAppium")]
-        [UserConfiguredDescription("Connected mobile device source lab")]
-        public eDeviceSource DeviceSource { get; set; }
+        [UserConfiguredDescription("Device Source is Local Appium or UFTM Mobile Lab")]
+        public eDevicePlatformType DeviceSource { get; set; }
 
         [UserConfigured]
         [UserConfiguredEnumType(typeof(eAppType))]
@@ -132,7 +133,12 @@ namespace Amdocs.Ginger.CoreNET
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Define if to include capability for allowing UFTM simulation capabilities")]
+        [UserConfiguredDescription("Set UFTM Server capabilities autumatically")]
+        public bool UFTMServerCapabilities { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Set UFTM simulations automatically")]
         public bool UFTMSupportSimulationsCapabiliy { get; set; }
 
         [UserConfigured]
@@ -992,6 +998,26 @@ namespace Amdocs.Ginger.CoreNET
                             act.AddOrUpdateReturnParamActual(entry.Key, entry.Value.ToString());
                         }
                         break;
+                    case ActMobileDevice.eMobileDeviceAction.SimulatePhoto:
+                        string photoString = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).ValueForDriver);
+                        Bitmap picture = null;
+                        if (isValidPhotoExtention(photoString))
+                        {
+                            picture = new Bitmap(photoString);
+                            string photoSimulation = CameraSimulation(picture, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
+                            if (photoSimulation != "success")
+                            {
+                                act.Error = "An Error occured during camera simulation. Error: " + photoSimulation;
+                            }
+                        }
+                        else
+                        {
+                            act.Error = "File is not supported. Upload a supported file to use Camera simulation";
+                        }
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.StopSimulatePhotoOrVideo:
+                        CameraSimulation(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
+                        break;
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
                 }
@@ -1000,6 +1026,44 @@ namespace Amdocs.Ginger.CoreNET
             {
                 act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
             }
+        }
+
+        public bool isValidPhotoExtention(string photo)
+        {
+            if (string.IsNullOrEmpty(photo))
+            {
+                return false;
+            }
+            string extention = photo.Substring(photo.LastIndexOf('.') + 1);
+            if (extention == "jpg" || extention == "jpeg" || extention == "png")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public string CameraSimulation(Bitmap picture, ImageFormat format, string contentType, string fileName, string action)
+        {
+            MemoryStream ms = new MemoryStream();
+            string encodeString = "0";
+            if (picture != null)
+            {
+                picture.Save(ms, format);
+                Byte[] bytes = ms.ToArray();
+                encodeString = Convert.ToBase64String(bytes);
+            }
+            Dictionary<string, string> sensorSimulationMap = new Dictionary<string, string>
+            {
+                { "uploadMedia", encodeString },
+                { "contentType", contentType },
+                { "fileName", fileName },
+                { "action", action }
+            };
+
+            string simulationResult = JsonConvert.SerializeObject(Driver.ExecuteScript("mc:sensorSimulation", sensorSimulationMap));
+            return JToken.Parse(simulationResult)["message"].ToString();
         }
 
         private string DictionaryToString(Dictionary<string, string> dict)
@@ -1538,7 +1602,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 mSeleniumDriver.ExtraLocatorsRequired = !(pomSetting.relativeXpathTemplateList == null || pomSetting.relativeXpathTemplateList.Count == 0);
 
-                return await Task.Run(() => ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(pomSetting,foundElementsList));
+                return await Task.Run(() => ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(pomSetting, foundElementsList));
             }
 
             try
@@ -1882,11 +1946,11 @@ namespace Amdocs.Ginger.CoreNET
             return xmlNode.Attributes[attr].Value;
         }
 
-        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo,PomSetting pomSetting = null)
+        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
             if (AppType == eAppType.Web)
             {
-                return ((IWindowExplorer)mSeleniumDriver).GetElementLocators(ElementInfo,pomSetting);
+                return ((IWindowExplorer)mSeleniumDriver).GetElementLocators(ElementInfo, pomSetting);
             }
 
             ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
@@ -2364,7 +2428,7 @@ namespace Amdocs.Ginger.CoreNET
             IsSpying = true;
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI,PomSetting pomSetting = null)
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting = null)
         {
             if (AppType == eAppType.Web)
             {

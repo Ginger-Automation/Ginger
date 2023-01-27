@@ -1112,6 +1112,11 @@ namespace Ginger.Drivers.DriversWindows
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Operation failed, Error: " + ex.Message);
             }
         }
+
+        private void xClearHighlightsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            UnHighlightElementEvent();
+        }
         #endregion Events
 
 
@@ -1273,6 +1278,7 @@ namespace Ginger.Drivers.DriversWindows
                     return false;
                 }
 
+                UnHighlightElementEvent();
                 int waitingRatio = 1;
                 if (mDeviceAutoScreenshotRefreshMode != eAutoScreenshotRefreshMode.Live)
                 {
@@ -1450,6 +1456,7 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     RefreshDeviceScreenshotAsync(100);
                 }
+                UnHighlightElementEvent();
             }
             catch (Exception ex)
             {

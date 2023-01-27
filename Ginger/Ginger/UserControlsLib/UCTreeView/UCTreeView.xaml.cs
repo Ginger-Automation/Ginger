@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -289,25 +290,28 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 TVI.Items.Clear();
                 if (Childs != null)
                 {
-                    foreach (ITreeViewItem item in Childs)
+                    Task.Run(() =>
                     {
-                        if (TreeChildFolderOnly == true && item.IsExpandable() == false)
+                        foreach (ITreeViewItem item in Childs)
                         {
-                            continue;
-                        }
-                        if (TreeNodesFilterByField != null)
-                        {
-                            if (IsTreeItemFitsFilter(item))
+                            if (TreeChildFolderOnly == true && item.IsExpandable() == false)
                             {
-                                AddItem(item, TVI);
+                                continue;
                             }
+                            if (TreeNodesFilterByField != null)
+                            {
+                                if (IsTreeItemFitsFilter(item))
+                                {
+                                    Dispatcher.Invoke(() => AddItem(item, TVI));
+                                }
+                            }
+                            else
+                            {
+                                Dispatcher.Invoke(() => AddItem(item, TVI));
+                            }
+                            Thread.Sleep(2);
                         }
-                        else
-                        {
-                            AddItem(item, TVI);
-                        }
-
-                    }
+                    });
                 }
             }
         }

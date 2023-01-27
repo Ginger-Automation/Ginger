@@ -71,7 +71,7 @@
                 </Expander.Header>
                 <Expander.Content>
                     <StackPanel>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
                             <Label  Content="Device Source:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
                             <RadioButton x:Name="xLocalAppiumRdBtn" Content="Local Appium" Style="{StaticResource $InputRadioButtonStyle}" GroupName="DeviceSource" VerticalAlignment="Center" IsChecked="True" Checked="DeviceSourceSelectionChanged"/>
                             <RadioButton x:Name="xUFTRdBtn" Content="MF UFTM Lab" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="DeviceSource" VerticalAlignment="Center" Margin="10,0,0,0" Checked="DeviceSourceSelectionChanged"/>
