@@ -15,8 +15,6 @@ namespace GingerCore.GeneralLib
 {
     public sealed class EmailReadOperations : IEmailReadOperations
     {
-        private const string AmdocsClientId = "f2334122-a71a-4315-a362-76137098eac8";
-        private const string AmdocsTenantId = "c8eca3ca-1276-46d5-9d9d-a0f2a028920f";
         private static readonly IEnumerable<string> Scopes = new string[]
         {
             "email",
@@ -205,14 +203,6 @@ namespace GingerCore.GeneralLib
 
         private GraphServiceClient CreateGraphServiceClient(MSGraphConfig config)
         {
-            string clientId = AmdocsClientId;
-            if (!string.IsNullOrEmpty(config.ClientId))
-                clientId = config.ClientId;
-
-            string tenantId = AmdocsTenantId;
-            if (!string.IsNullOrEmpty(config.TenantId))
-                tenantId = config.TenantId;
-
             TokenCredentialOptions options = new()
             {
                 AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
@@ -221,7 +211,7 @@ namespace GingerCore.GeneralLib
             mValueExpression.Value = config.UserEmail;
             string userEmail = mValueExpression.ValueCalculated;
             string userPassword = EncryptionHandler.DecryptwithKey(config.UserPassword);
-            UsernamePasswordCredential userNamePasswordCredential = new(userEmail, userPassword, tenantId, clientId, options);
+            UsernamePasswordCredential userNamePasswordCredential = new(userEmail, userPassword, config.TenantId, config.ClientId, options);
 
             return new GraphServiceClient(userNamePasswordCredential, Scopes);
         }
