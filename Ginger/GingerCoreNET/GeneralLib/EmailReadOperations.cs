@@ -437,7 +437,7 @@ namespace GingerCore.GeneralLib
             {
                 From = message.From.EmailAddress.Address,
                 Subject = message.Subject,
-                ReceivedDateTime = message.ReceivedDateTime?.Date.ToLocalTime() ?? DateTime.MinValue,
+                ReceivedDateTime = message.ReceivedDateTime?.DateTime.ToLocalTime() ?? DateTime.MinValue,
                 HasAttachments = (message.HasAttachments ?? false) && attachments != null && attachments.Count() > 0,
                 Attachments = attachments
             };

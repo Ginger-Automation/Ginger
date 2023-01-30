@@ -32,6 +32,7 @@ using NPOI.HPSF;
 using System.Dynamic;
 using System.Collections.Generic;
 using System.Xml.Schema;
+using System.Linq.Dynamic.Core;
 
 namespace Ginger.Actions.Communication
 {
@@ -154,7 +155,9 @@ namespace Ginger.Actions.Communication
             xSendEMailConfigView.xFilterFromVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterFrom));
             xSendEMailConfigView.xFilterToVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterTo));
             xSendEMailConfigView.xFilterSubjectVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterSubject));
-            xSendEMailConfigView.xHasAttachmentsComboBox.SelectedItem = mAct.FilterHasAttachments;
+            xSendEMailConfigView.xHasAttachmentsComboBox.SelectedItem = FindComboBoxItem(
+                xSendEMailConfigView.xHasAttachmentsComboBox, 
+                item => (EmailReadFilters.eHasAttachmentsFilter)item.Value == mAct.FilterHasAttachments);
             xSendEMailConfigView.xFilterAttachmentContentTypeVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterAttachmentContentType));
             xSendEMailConfigView.xDownloadAttachmentYesRadioButton.IsChecked = mAct.DownloadAttachments;
             xSendEMailConfigView.xDownloadAttachmentNoRadioButton.IsChecked = !mAct.DownloadAttachments;
@@ -171,6 +174,17 @@ namespace Ginger.Actions.Communication
             xSendEMailConfigView.NameValueExpressionButtonClick += xSendEMailConfigView_NameValueExpressionButtonClick;
             xSendEMailConfigView.ActionTypeChanged += xSendEMailConfigView_ActionTypeChanged;
             xSendEMailConfigView.HasAttachmentsSelectionChanged += xSendEMailConfigView_HasAttachmentsSelectionChanged;
+        }
+
+        private static ComboEnumItem FindComboBoxItem(ComboBox comboBox, Predicate<ComboEnumItem> predicate)
+        {
+            foreach(ComboEnumItem item in comboBox.Items)
+            {
+                if (predicate(item))
+                    return item;
+            }
+
+            return null;
         }
 
         private void xFilterFolderRadioButton_SelectionChanged(object sender, RoutedEventArgs e)

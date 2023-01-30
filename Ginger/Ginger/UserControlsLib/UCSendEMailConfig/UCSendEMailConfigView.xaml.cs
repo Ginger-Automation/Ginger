@@ -422,5 +422,17 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
                 xCertificatePathTextBox.Text = @"~\Documents\EmailCertificates\" + System.IO.Path.GetFileName(destinationFilePath);
             }
         }
+
+        private void xReceivedStartDateDatePicker_TextChanged(object sender, EventArgs e)
+        {
+            DateTime dateTime = new(xReceivedStartDateDatePicker.Value.Ticks, DateTimeKind.Local);
+            xFilterReceivedStartDateVE.ValueTextBox.Text = dateTime.ToString("yyyy-MM-ddTHH:mm:ssK");
+        }
+
+        private void xReceivedEndDateDatePicker_TextChanged(object sender, EventArgs e)
+        {
+            DateTime dateTime = new(xReceivedEndDateDatePicker.Value.Ticks, DateTimeKind.Local);
+            xFilterReceivedEndDateVE.ValueTextBox.Text = dateTime.ToString("yyyy-MM-ddTHH:mm:ssK");
+        }
     }
 }
