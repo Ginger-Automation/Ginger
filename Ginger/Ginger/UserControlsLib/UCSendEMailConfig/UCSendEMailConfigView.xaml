@@ -12,7 +12,7 @@
         <StackPanel.Resources>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
             <GridLength x:Key="LabelColumnWidth">180</GridLength>
-            <GridLength x:Key="ValueColumnWidth">1*</GridLength>
+            <GridLength x:Key="ValueColumnWidth">550</GridLength>
             <Thickness x:Key="RowMargin">0 2 0 2</Thickness>
             <Style x:Key="RadioButtonStyle" TargetType="RadioButton">
                 <Setter Property="Margin" Value="0 0 8 0"/>
@@ -334,7 +334,7 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Attachment Content Type:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Attachment Content Type:" ToolTip="MIME type for the attachment"/>
                         <Actions:UCValueExpression x:Name="xFilterAttachmentContentTypeVE" Grid.Column="1"/>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
@@ -415,29 +415,22 @@
                         <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="User Password:"/>
                         <TextBox x:Name="xUserPasswordTextBox" Grid.Column="1"/>
                     </Grid>
-                    <Expander x:Name="xAdvancedExpander" IsExpanded="False">
-                        <Expander.Header>
-                            <Label Content="Advanced"/>
-                        </Expander.Header>
-                        <StackPanel Orientation="Vertical">
-                            <Grid Margin="{StaticResource RowMargin}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
-                                    <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
-                                </Grid.ColumnDefinitions>
-                                <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Client Id:"/>
-                                <Actions:UCValueExpression x:Name="xClientIdVE" Grid.Column="1"/>
-                            </Grid>
-                            <Grid Margin="{StaticResource RowMargin}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
-                                    <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
-                                </Grid.ColumnDefinitions>
-                                <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Tenant Id:"/>
-                                <Actions:UCValueExpression x:Name="xTenantIdVE" Grid.Column="1"/>
-                            </Grid>
-                        </StackPanel>
-                    </Expander>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Client Id:"/>
+                        <Actions:UCValueExpression x:Name="xClientIdVE" Grid.Column="1"/>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Tenant Id:"/>
+                        <Actions:UCValueExpression x:Name="xTenantIdVE" Grid.Column="1"/>
+                    </Grid>
                 </StackPanel>
             </TabItem>
         </TabControl>
