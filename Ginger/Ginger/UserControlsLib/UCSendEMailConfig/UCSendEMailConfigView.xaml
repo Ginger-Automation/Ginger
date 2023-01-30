@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:window="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              xmlns:local="clr-namespace:Ginger.UserControlsLib.UCSendEMailConfig" 
              xmlns:Actions="clr-namespace:Ginger.BusinessFlowWindows" 
              xmlns:Ginger="clr-namespace:Ginger"
@@ -392,7 +394,16 @@
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Received Start Date:"/>
-                        <Actions:UCValueExpression x:Name="xFilterReceivedStartDateVE" Grid.Column="1"/>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="25"/>
+                            </Grid.ColumnDefinitions>
+                            <Actions:UCValueExpression x:Name="xFilterReceivedStartDateVE" Grid.Column="0"/>
+                            <window:WindowsFormsHost Grid.Column="1" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Margin="2,0,0,0" Width="25">
+                                <wf:DateTimePicker  x:Name="xReceivedStartDateDatePicker" TextChanged="xReceivedStartDateDatePicker_TextChanged" Format="Custom" Width="25"/>
+                            </window:WindowsFormsHost>
+                        </Grid>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.ColumnDefinitions>
@@ -400,7 +411,16 @@
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Received End Date:"/>
-                        <Actions:UCValueExpression x:Name="xFilterReceivedEndDateVE" Grid.Column="1"/>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="25"/>
+                            </Grid.ColumnDefinitions>
+                            <Actions:UCValueExpression x:Name="xFilterReceivedEndDateVE" Grid.Column="0"/>
+                            <window:WindowsFormsHost Grid.Column="1" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Margin="2,0,0,0" Width="25">
+                                <wf:DateTimePicker  x:Name="xReceivedEndDateDatePicker" TextChanged="xReceivedEndDateDatePicker_TextChanged" Format="Custom" Width="25"/>
+                            </window:WindowsFormsHost>
+                        </Grid>
                     </Grid>
                 </StackPanel>
             </TabItem>
