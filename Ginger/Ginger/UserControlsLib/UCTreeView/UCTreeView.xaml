@@ -12,8 +12,7 @@
         </Style>
     </UserControl.Resources>
     <Grid>
-        <TreeView x:Name="Tree" Background="Transparent" ItemContainerStyle="{StaticResource $UcTreeViewItemStyle}" VirtualizingStackPanel.IsVirtualizing="True"
-            VirtualizingStackPanel.VirtualizationMode="Recycling">
+        <TreeView x:Name="Tree" Background="Transparent" ItemContainerStyle="{StaticResource $UcTreeViewItemStyle}">
             <TreeView.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                       Color="Transparent" />
