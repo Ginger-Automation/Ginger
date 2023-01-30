@@ -114,6 +114,11 @@ namespace Ginger.Actions.Communication
                 mAct.MailFromDisplayName = "_Amdocs Ginger Automation";
             }
 
+            if(string.IsNullOrEmpty(mAct.AttachmentDownloadPath))
+            {
+                mAct.AttachmentDownloadPath = @"~\\Documents\EmailAttachments";
+            }
+
             BindSendEMailConfigView();
         }
 

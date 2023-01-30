@@ -653,17 +653,21 @@ namespace GingerCore.Actions.Communication
                 AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Subject), email.Subject, index.ToString());
                 AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.HasAttachments), email.HasAttachments.ToString(), index.ToString());
                 AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.ReceivedDateTime), email.ReceivedDateTime.ToString(), index.ToString());
-                if (DownloadAttachments)
+                if (DownloadAttachments && FilterHasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes)
                 {
-                    DownloadAttachmentFiles(email);
+                    IEnumerable<(string filename, string filepath)> fileNamesAndPaths = DownloadAttachmentFiles(email);
+                    foreach((string filename, string filepath) in fileNamesAndPaths)
+                    {
+                        AddOrUpdateReturnParamActualWithPath(filename, filepath, index.ToString());
+                    }
                 }
                 index++;
             }).Wait();
         }
 
-        private void DownloadAttachmentFiles(ReadEmail email)
+        private IEnumerable<(string filename, string filepath)> DownloadAttachmentFiles(ReadEmail email)
         {
-            if (string.IsNullOrEmpty(AttachmentDownloadPath) || !System.IO.Directory.Exists(AttachmentDownloadPath))
+            if (string.IsNullOrEmpty(AttachmentDownloadPath))
             {
                 throw new InvalidOperationException("Invalid attachment download path");
             }
@@ -674,6 +678,8 @@ namespace GingerCore.Actions.Communication
                 expectedContentTypes = FilterAttachmentContentType.Split(";", StringSplitOptions.RemoveEmptyEntries);
             }
 
+            List<(string filename, string filepath)> fileNamesAndPaths = new List<(string filename, string filepath)>();
+
             foreach (ReadEmail.Attachment attachment in email.Attachments)
             {
                 if (expectedContentTypes != null && expectedContentTypes.Count() > 0 && 
@@ -681,11 +687,17 @@ namespace GingerCore.Actions.Communication
                 {
                     continue;
                 }
-                string filePath = Path.Combine(AttachmentDownloadPath, attachment.Name);
+                string downloadFolder = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(AttachmentDownloadPath);
+                if (!System.IO.Directory.Exists(downloadFolder))
+                    System.IO.Directory.CreateDirectory(downloadFolder);
+                string filePath = Path.Combine(downloadFolder, attachment.Name);
                 if (File.Exists(filePath))
                     File.Delete(filePath);
                 File.WriteAllBytes(filePath, attachment.ContentBytes);
+                fileNamesAndPaths.Add((attachment.Name, filePath));
             }
+
+            return fileNamesAndPaths;
         }
     }
 }
