@@ -277,7 +277,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
         }
 
-        private void SetTreeNodeItemChilds(TreeViewItem TVI)
+        private async void SetTreeNodeItemChilds(TreeViewItem TVI)
         {
             // TODO: remove temp code after cleanup 
             if (TVI.Tag is ITreeViewItem)
@@ -290,7 +290,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 TVI.Items.Clear();
                 if (Childs != null)
                 {
-                    Task.Run(() =>
+                    await Task.Run(() =>
                     {
                         foreach (ITreeViewItem item in Childs)
                         {
@@ -777,7 +777,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             TreeViewItem TVIChild = ExpandNodeByNameTVIRecursive(TVI, nodeName, true, false);
             TVIChild.Focus();
-
+            
             return (ITreeViewItem)TVIChild.Tag;
         }
 
