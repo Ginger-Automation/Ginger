@@ -1326,6 +1326,10 @@ namespace GingerCore.Drivers
                     Bitmap img = GetScreenShot(true);
                     act.AddScreenShot(img, Driver.Title);
                 }
+                else if(act.WindowsToCapture == Act.eWindowsToCapture.FullPageWithUrlAndTimestamp)
+                {
+                    TakeFullPageWithDesktopScreenScreenShot(act);
+                }
                 else
                 {
                     //keep the current window and switch back at the end
@@ -1347,6 +1351,41 @@ namespace GingerCore.Drivers
                 act.Error = "Failed to create Selenuim WebDriver browser page screenshot. Error= " + ex.Message;
                 return;
             }
+        }
+
+        private void TakeFullPageWithDesktopScreenScreenShot(Act act)
+        {
+            List<Bitmap> bitmapsToMerge = new();
+            Bitmap browserHeaderScreenshot = GetBrowserHeaderScreenShot();
+            if (browserHeaderScreenshot != null)
+                bitmapsToMerge.Add(browserHeaderScreenshot);
+
+            Bitmap browserFullPageScreenshot = GetScreenShot(true);
+            bitmapsToMerge.Add(browserFullPageScreenshot);
+            Bitmap taskbarScreenshot = TargetFrameworkHelper.Helper.GetTaskbarScreenshot();
+            bitmapsToMerge.Add(taskbarScreenshot);
+
+            string filepath = TargetFrameworkHelper.Helper.MergeVerticallyAndSaveBitmaps(bitmapsToMerge.ToArray());
+
+            act.ScreenShotsNames.Add(Driver.Title);
+            act.ScreenShots.Add(filepath);
+        }
+
+        private Bitmap GetBrowserHeaderScreenShot()
+        {
+            if (HeadlessBrowserMode)
+                return null;
+
+            IJavaScriptExecutor javaScriptExecutor = (IJavaScriptExecutor)Driver;
+
+            Point browserWindowPosition = Driver.Manage().Window.Position;
+            Size browserWindowSize = GetWindowSize();
+            Size viewportSize = new();
+            viewportSize.Width = (int)(long)javaScriptExecutor.ExecuteScript("return window.innerWidth");
+            viewportSize.Height = (int)(long)javaScriptExecutor.ExecuteScript("return window.innerHeight");
+            double devicePixelRatio = (double)javaScriptExecutor.ExecuteScript("return window.devicePixelRatio");
+
+            return TargetFrameworkHelper.Helper.GetBrowserHeaderScreenshot(browserWindowPosition, browserWindowSize, viewportSize, devicePixelRatio);
         }
 
         private void AddCurrentScreenShot(ActScreenShot act)
