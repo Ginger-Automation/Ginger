@@ -32,15 +32,6 @@ namespace GingerCore.GeneralLib
         };
         private const int MessageRequestPageSize = 10;
 
-        private readonly ValueExpression mValueExpression;
-
-        public EmailReadOperations()
-        {
-            ProjEnvironment projEnvironment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment;
-            ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            mValueExpression = new ValueExpression(projEnvironment, BF: null, DSList, bUpdate: false, UpdateValue: "", bDone: false);
-        }
-
         public async Task ReadEmails(EmailReadFilters filters, MSGraphConfig config, Action<ReadEmail> emailProcessor)
         {
             GraphServiceClient graphServiceClient = CreateGraphServiceClient(config);
@@ -208,10 +199,8 @@ namespace GingerCore.GeneralLib
                 AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
             };
 
-            mValueExpression.Value = config.UserEmail;
-            string userEmail = mValueExpression.ValueCalculated;
             string userPassword = EncryptionHandler.DecryptwithKey(config.UserPassword);
-            UsernamePasswordCredential userNamePasswordCredential = new(userEmail, userPassword, config.TenantId, config.ClientId, options);
+            UsernamePasswordCredential userNamePasswordCredential = new(config.UserEmail, userPassword, config.TenantId, config.ClientId, options);
 
             return new GraphServiceClient(userNamePasswordCredential, Scopes);
         }
