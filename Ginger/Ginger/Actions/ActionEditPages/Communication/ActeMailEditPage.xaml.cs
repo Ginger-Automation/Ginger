@@ -31,6 +31,7 @@ using System.Diagnostics.CodeAnalysis;
 using NPOI.HPSF;
 using System.Dynamic;
 using System.Collections.Generic;
+using System.Xml.Schema;
 
 namespace Ginger.Actions.Communication
 {
@@ -118,6 +119,8 @@ namespace Ginger.Actions.Communication
 
         private void BindSendEMailConfigView()
         {
+            xSendEMailConfigView.xActionTypeSendRadioButton.IsChecked = mAct.eMailActionType == ActeMail.eEmailActionType.SendEmail;
+            xSendEMailConfigView.xActionTypeReadRadioButton.IsChecked = mAct.eMailActionType == ActeMail.eEmailActionType.ReadEmail;
             xSendEMailConfigView.xFromVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFrom));
             xSendEMailConfigView.xFromDisplayNameVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFromDisplayName));
             xSendEMailConfigView.xToVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Mailto));
@@ -134,11 +137,48 @@ namespace Ginger.Actions.Communication
             xSendEMailConfigView.xSMTPUserVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.User));
             BindingHandler.ObjFieldBinding(xSendEMailConfigView.xSMTPPasswordTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.Pass));
 
+            xSendEMailConfigView.xUserEmailVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.ReadUserEmail));
+            BindingHandler.ObjFieldBinding(xSendEMailConfigView.xUserPasswordTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.ReadUserPassword));
+            xSendEMailConfigView.xClientIdVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MSGraphClientId));
+            xSendEMailConfigView.xTenantIdVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MSGraphTenantId));
+            xSendEMailConfigView.xFilterFolderAllRadioButton.IsChecked = mAct.FilterFolder == EmailReadFilters.eFolderFilter.All;
+            xSendEMailConfigView.xFilterFolderSpecificRadioButton.IsChecked = mAct.FilterFolder == EmailReadFilters.eFolderFilter.Specific;
+            xSendEMailConfigView.xFilterFolderAllRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
+            xSendEMailConfigView.xFilterFolderSpecificRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
+            xSendEMailConfigView.xFilterFolderNameVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterFolderName));
+            xSendEMailConfigView.xFilterFromVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterFrom));
+            xSendEMailConfigView.xFilterToVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterTo));
+            xSendEMailConfigView.xFilterSubjectVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterSubject));
+            xSendEMailConfigView.xHasAttachmentsComboBox.SelectedItem = mAct.FilterHasAttachments;
+            xSendEMailConfigView.xFilterAttachmentContentTypeVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterAttachmentContentType));
+            xSendEMailConfigView.xDownloadAttachmentYesRadioButton.IsChecked = mAct.DownloadAttachments;
+            xSendEMailConfigView.xDownloadAttachmentNoRadioButton.IsChecked = !mAct.DownloadAttachments;
+            xSendEMailConfigView.xDownloadAttachmentYesRadioButton.Checked += (sender, e) => 
+                mAct.DownloadAttachments = xSendEMailConfigView.xDownloadAttachmentYesRadioButton.IsChecked ?? false;
+            xSendEMailConfigView.xAttachmentDownloadPathVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.AttachmentDownloadPath));
+            xSendEMailConfigView.xFilterReceivedStartDateVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterReceivedStartDate));
+            xSendEMailConfigView.xFilterReceivedEndDateVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterReceivedEndDate));
+
             xSendEMailConfigView.xAttachmentsGrid.DataSourceList = mAttachments;
 
             xSendEMailConfigView.AddFileAttachment += xSendEMailConfigView_FileAdded;
             xSendEMailConfigView.EmailMethodChanged += xSendEMailConfigView_EmailMethodChanged;
             xSendEMailConfigView.NameValueExpressionButtonClick += xSendEMailConfigView_NameValueExpressionButtonClick;
+            xSendEMailConfigView.ActionTypeChanged += xSendEMailConfigView_ActionTypeChanged;
+            xSendEMailConfigView.HasAttachmentsSelectionChanged += xSendEMailConfigView_HasAttachmentsSelectionChanged;
+        }
+
+        private void xFilterFolderRadioButton_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            if (xSendEMailConfigView.xFilterFolderAllRadioButton.IsChecked ?? false)
+                mAct.FilterFolder = EmailReadFilters.eFolderFilter.All;
+            else if (xSendEMailConfigView.xFilterFolderSpecificRadioButton.IsChecked ?? false)
+                mAct.FilterFolder = EmailReadFilters.eFolderFilter.Specific;
+        }
+
+        private void xSendEMailConfigView_ActionTypeChanged(ActeMail.eEmailActionType selectedActionType)
+        {
+            mAct.eMailActionType = selectedActionType;
         }
 
         private void xSendEMailConfigView_NameValueExpressionButtonClick(object sender, RoutedEventArgs e)
@@ -171,6 +211,11 @@ namespace Ginger.Actions.Communication
         private void xSendEMailConfigView_EmailMethodChanged(Email.eEmailMethod selectedEmailMethod)
         {
             mAct.MailOption = selectedEmailMethod.ToString();
+        }
+
+        private void xSendEMailConfigView_HasAttachmentsSelectionChanged(EmailReadFilters.eHasAttachmentsFilter selectedValue)
+        {
+            mAct.FilterHasAttachments = selectedValue;
         }
 
         public sealed class Attachment : INotifyPropertyChanged
