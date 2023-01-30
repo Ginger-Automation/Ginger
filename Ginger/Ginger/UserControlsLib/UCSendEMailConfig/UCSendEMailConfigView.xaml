@@ -323,13 +323,19 @@
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Has Attachments:"/>
-                        <ComboBox x:Name="xHasAttachmentsComboBox" Grid.Column="1">
-                            <ComboBoxItem Content="" Tag="Either"/>
-                            <ComboBoxItem Content="Yes" Tag="Yes"/>
-                            <ComboBoxItem Content="No" Tag="No"/>
-                        </ComboBox>
+                        <ComboBox x:Name="xHasAttachmentsComboBox" Grid.Column="1"/>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=xHasAttachmentsComboBox, Path=SelectedValue}" Value="Yes">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
@@ -363,9 +369,13 @@
                             <Style TargetType="Grid">
                                 <Setter Property="Visibility" Value="Collapsed"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ElementName=xDownloadAttachmentYesRadioButton, Path=IsChecked}" Value="True">
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding ElementName=xHasAttachmentsComboBox, Path=SelectedValue}" Value="Yes"/>
+                                            <Condition Binding="{Binding ElementName=xDownloadAttachmentYesRadioButton, Path=IsChecked}" Value="True"/>
+                                        </MultiDataTrigger.Conditions>
                                         <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
+                                    </MultiDataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </Grid.Style>
