@@ -1995,11 +1995,11 @@ namespace Ginger.Run
                 {
                     try
                     {
-                        if(act.WindowsToCapture == Act.eWindowsToCapture.FullPageWithUrlAndTimestamp)
+                        /*if(act.WindowsToCapture == Act.eWindowsToCapture.FullPageWithUrlAndTimestamp)
                         {
                             TakeFullPageWithDesktopScreenScreenShot(act);
                         }
-                        else if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)
+                        else*/ if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)
                         {
                             TakeDesktopScreenShotIntoAction(act);
                         }
@@ -2070,46 +2070,46 @@ namespace Ginger.Run
             }
         }
 
-        private void TakeFullPageWithDesktopScreenScreenShot(Act act)
-        {
-            DriverBase driver = ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Driver;
-            if (!driver.GetType().IsAssignableTo(typeof(SeleniumDriver)))
-                throw new NotImplementedException($"Full page screen shot with desktop screen is not supported for {driver.GetType().Name}");
+        //private void TakeFullPageWithDesktopScreenScreenShot(Act act)
+        //{
+        //    DriverBase driver = ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Driver;
+        //    if (!driver.GetType().IsAssignableTo(typeof(SeleniumDriver)))
+        //        throw new NotImplementedException($"Full page screen shot with desktop screen is not supported for {driver.GetType().Name}");
 
-            SeleniumDriver seleniumDriver = (SeleniumDriver)driver;
+        //    SeleniumDriver seleniumDriver = (SeleniumDriver)driver;
 
-            List<Bitmap> bitmapsToMerge = new();
-            Bitmap browserHeaderScreenshot = GetBrowserHeaderScreenShot(seleniumDriver);
-            if(browserHeaderScreenshot != null)
-                bitmapsToMerge.Add(browserHeaderScreenshot);
+        //    List<Bitmap> bitmapsToMerge = new();
+        //    Bitmap browserHeaderScreenshot = GetBrowserHeaderScreenShot(seleniumDriver);
+        //    if(browserHeaderScreenshot != null)
+        //        bitmapsToMerge.Add(browserHeaderScreenshot);
 
-            Bitmap browserFullPageScreenshot = seleniumDriver.GetScreenShot(true);
-            bitmapsToMerge.Add(browserFullPageScreenshot);
-            Bitmap taskbarScreenshot = TargetFrameworkHelper.Helper.GetTaskbarScreenshot();
-            bitmapsToMerge.Add(taskbarScreenshot);
+        //    Bitmap browserFullPageScreenshot = seleniumDriver.GetScreenShot(true);
+        //    bitmapsToMerge.Add(browserFullPageScreenshot);
+        //    Bitmap taskbarScreenshot = TargetFrameworkHelper.Helper.GetTaskbarScreenshot();
+        //    bitmapsToMerge.Add(taskbarScreenshot);
 
-            string filepath = TargetFrameworkHelper.Helper.MergeVerticallyAndSaveBitmaps(bitmapsToMerge.ToArray());
+        //    string filepath = TargetFrameworkHelper.Helper.MergeVerticallyAndSaveBitmaps(bitmapsToMerge.ToArray());
 
-            act.ScreenShotsNames.Add(seleniumDriver.GetWebDriver().Title);
-            act.ScreenShots.Add(filepath);
-        }
+        //    act.ScreenShotsNames.Add(seleniumDriver.GetWebDriver().Title);
+        //    act.ScreenShots.Add(filepath);
+        //}
 
-        private Bitmap GetBrowserHeaderScreenShot(SeleniumDriver seleniumDriver)
-        {
-            if (seleniumDriver.HeadlessBrowserMode)
-                return null;
+        //private Bitmap GetBrowserHeaderScreenShot(SeleniumDriver seleniumDriver)
+        //{
+        //    if (seleniumDriver.HeadlessBrowserMode)
+        //        return null;
 
-            OpenQA.Selenium.IJavaScriptExecutor javaScriptExecutor = (OpenQA.Selenium.IJavaScriptExecutor)seleniumDriver.GetWebDriver();
+        //    OpenQA.Selenium.IJavaScriptExecutor javaScriptExecutor = (OpenQA.Selenium.IJavaScriptExecutor)seleniumDriver.GetWebDriver();
             
-            Point browserWindowPosition = seleniumDriver.GetWebDriver().Manage().Window.Position;
-            Size browserWindowSize = seleniumDriver.GetWindowSize();
-            Size viewportSize = new();
-            viewportSize.Width = (int)(long)javaScriptExecutor.ExecuteScript("return window.innerWidth");
-            viewportSize.Height = (int)(long)javaScriptExecutor.ExecuteScript("return window.innerHeight");
-            double devicePixelRatio = (double)javaScriptExecutor.ExecuteScript("return window.devicePixelRatio");
+        //    Point browserWindowPosition = seleniumDriver.GetWebDriver().Manage().Window.Position;
+        //    Size browserWindowSize = seleniumDriver.GetWindowSize();
+        //    Size viewportSize = new();
+        //    viewportSize.Width = (int)(long)javaScriptExecutor.ExecuteScript("return window.innerWidth");
+        //    viewportSize.Height = (int)(long)javaScriptExecutor.ExecuteScript("return window.innerHeight");
+        //    double devicePixelRatio = (double)javaScriptExecutor.ExecuteScript("return window.devicePixelRatio");
 
-            return TargetFrameworkHelper.Helper.GetBrowserHeaderScreenshot(browserWindowPosition, browserWindowSize, viewportSize, devicePixelRatio);
-        }
+        //    return TargetFrameworkHelper.Helper.GetBrowserHeaderScreenshot(browserWindowPosition, browserWindowSize, viewportSize, devicePixelRatio);
+        //}
 
         private void TakeDesktopScreenShotIntoAction(Act act)
         {
