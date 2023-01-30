@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Printing;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -70,6 +71,10 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
 
         public delegate void EmailMethodChangeHandler(Email.eEmailMethod selectedEmailMethod);
         public event EmailMethodChangeHandler? EmailMethodChanged;
+        public delegate void ActionTypeChangedHandler(ActeMail.eEmailActionType selectedActionType);
+        public event ActionTypeChangedHandler? ActionTypeChanged;
+        public delegate void HasAttachmentsSelectionChangedHandler(EmailReadFilters.eHasAttachmentsFilter selectedValue);
+        public event HasAttachmentsSelectionChangedHandler? HasAttachmentsSelectionChanged;
 
         public event RoutedEventHandler? AddFileAttachment;
         public event RoutedEventHandler? AddHTMLReportAttachment;
@@ -85,27 +90,33 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
         {
             xSMTPPasswordTextBox.LostFocus += (sender, e) => xSMTPPasswordTextBox.Text = Encrypt(xSMTPPasswordTextBox.Text);
             xCertificatePasswordTextBox.LostFocus += (sender, e) => xCertificatePasswordTextBox.Text = Encrypt(xCertificatePasswordTextBox.Text);
+            xUserPasswordTextBox.LostFocus += (sender, e) => xUserPasswordTextBox.Text = Encrypt(xUserPasswordTextBox.Text);
         }
 
         public void Initialize(Options options)
         {
-            SetBodyContentType(options.SupportedBodyContentTypes);
+            SetBodyContentType(options.SupportedBodyContentTypes, options.DefaultBodyContentType);
             SetMaxBodyCharCount(options.MaxBodyCharCount);
             isDisplayNameFieldEnabled = options.FromDisplayNameEnabled;
             SetCCVisibility(ConvertBooleanToVisibility(options.CCEnabled));
             if (options.AttachmentsEnabled)
                 InitializeAttachmentsGrid(options);
             SetDefaultEmailMethod(options.DefaultEmailMethod);
-            SetDefaultBodyContentType(options.DefaultBodyContentType, options.SupportedBodyContentTypes);
+            InitializeHasAttachmentsComboBoxItems();
         }
 
-        private void SetBodyContentType(eBodyContentType[] supportedBodyContentTypes)
+        private void SetBodyContentType(eBodyContentType[] supportedBodyContentTypes, eBodyContentType defaultBodyContentType)
         {
             bool doesSupportMultipleBodyContentType = supportedBodyContentTypes.Length > 1;
             if (doesSupportMultipleBodyContentType)
+            {
                 ShowBodyContentTypeRadioButtons(supportedBodyContentTypes);
+            }
             else
+            {
                 MakeBodyContentTypeContainerVisible(supportedBodyContentTypes[0]);
+            }
+            SetDefaultBodyContentType(defaultBodyContentType, supportedBodyContentTypes);
         }
 
         private void ShowBodyContentTypeRadioButtons(eBodyContentType[] supportedBodyContentTypes)
@@ -119,12 +130,12 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             };
 
             bool isDefaultValueSet = false;
-            foreach (eBodyContentType bodyContenType in supportedBodyContentTypes)
+            foreach (eBodyContentType bodyContentType in supportedBodyContentTypes)
             {
-                contentTypeRadioButtonMap[bodyContenType].Visibility = Visibility.Visible;
+                contentTypeRadioButtonMap[bodyContentType].Visibility = Visibility.Visible;
                 if(!isDefaultValueSet)
                 {
-                    contentTypeRadioButtonMap[bodyContenType].IsChecked = true;
+                    contentTypeRadioButtonMap[bodyContentType].IsChecked = true;
                 }
             }
         }
@@ -243,6 +254,18 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             }
         }
 
+        private void InitializeHasAttachmentsComboBoxItems()
+        {
+            xHasAttachmentsComboBox.BindControl(Enum.GetValues<EmailReadFilters.eHasAttachmentsFilter>());
+            xHasAttachmentsComboBox.SelectionChanged += (sender, e) => TriggerHasAttachmentsSelectionChanged();
+        }
+
+        private void TriggerHasAttachmentsSelectionChanged()
+        {
+            EmailReadFilters.eHasAttachmentsFilter selectedValue = (EmailReadFilters.eHasAttachmentsFilter)xHasAttachmentsComboBox.SelectedValue;
+            HasAttachmentsSelectionChanged?.Invoke(selectedValue);
+        }
+
         private void SetDefaultBodyContentType(eBodyContentType defaultBodyContentType, eBodyContentType[] supportedBodyContentType)
         {
             bool supportsOnlyOneBodyContentType = supportedBodyContentType.Length < 2;
@@ -262,6 +285,41 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
                 default:
                     throw new NotImplementedException($"logic for setting {defaultBodyContentType} as default body content type is not implemented");
             }
+        }
+
+        private void xActionType_Changed(object sender, RoutedEventArgs e)
+        {
+            ChangeDetailContainerVisibility();
+            TriggerActionTypeChangedEvent();
+        }
+
+        private void ChangeDetailContainerVisibility()
+        {
+            if (xSendDetailContainer == null || xReadDetailContainer == null)
+                return;
+
+            if (xActionTypeSendRadioButton.IsChecked ?? false)
+            {
+                xSendDetailContainer.Visibility = Visibility.Visible;
+                xReadDetailContainer.Visibility = Visibility.Collapsed;
+            }
+            else if (xActionTypeReadRadioButton.IsChecked ?? false)
+            {
+                xSendDetailContainer.Visibility = Visibility.Collapsed;
+                xReadDetailContainer.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void TriggerActionTypeChangedEvent()
+        {
+            ActeMail.eEmailActionType selectedActionType = default;
+
+            if (xActionTypeSendRadioButton.IsChecked ?? false)
+                selectedActionType = ActeMail.eEmailActionType.SendEmail;
+            else if (xActionTypeReadRadioButton.IsChecked ?? false)
+                selectedActionType = ActeMail.eEmailActionType.ReadEmail;
+
+            ActionTypeChanged?.Invoke(selectedActionType);
         }
 
         private void xBodyContentType_Changed(object sender, RoutedEventArgs e)

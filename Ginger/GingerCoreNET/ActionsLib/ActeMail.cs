@@ -37,6 +37,14 @@ using OpenQA.Selenium.DevTools.V99.DOM;
 using static System.Net.WebRequestMethods;
 using File = System.IO.File;
 using DocumentFormat.OpenXml.EMMA;
+using Microsoft.Graph;
+using Azure.Identity;
+using System.Text;
+using System.Threading.Tasks;
+using MongoDB.Driver;
+using Microsoft.Graph.Extensions;
+using System.Linq;
+using System.Diagnostics;
 
 namespace GingerCore.Actions.Communication
 {
@@ -72,6 +80,7 @@ namespace GingerCore.Actions.Communication
         public enum eEmailActionType
         {
             SendEmail = 1,
+            ReadEmail = 2
         }
 
         public new static partial class Fields
@@ -114,7 +123,232 @@ namespace GingerCore.Actions.Communication
             get { return "Email" + eMailActionType.ToString(); }
         }
 
-        public eEmailActionType eMailActionType { get; set; }
+        public eEmailActionType eMailActionType 
+        { 
+            get
+            {
+                return GetOrCreateInputParam(nameof(eMailActionType), eEmailActionType.SendEmail);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(eMailActionType), value.ToString());
+                OnPropertyChanged(nameof(eMailActionType));
+            }
+        }
+
+        public enum eReadAuthenticationType
+        {
+            OAuth,
+            Credentials
+        }
+
+        public string ReadAuthenticationType
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ReadAuthenticationType), default(eReadAuthenticationType).ToString()).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ReadAuthenticationType), value);
+                OnPropertyChanged(nameof(ReadAuthenticationType));
+            }
+        }
+
+        public string ReadUserEmail
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ReadUserEmail), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ReadUserEmail), value);
+                OnPropertyChanged(nameof(ReadUserEmail));
+            }
+        }
+
+        public string ReadUserPassword
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ReadUserPassword), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ReadUserPassword), value);
+                OnPropertyChanged(nameof(ReadUserPassword));
+            }
+        }
+
+        public string MSGraphClientId
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(MSGraphClientId), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(MSGraphClientId), value);
+                OnPropertyChanged(nameof(MSGraphClientId));
+            }
+        }
+        
+        public string MSGraphTenantId
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(MSGraphTenantId), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(MSGraphTenantId), value);
+                OnPropertyChanged(nameof(MSGraphTenantId));
+            }
+        }
+
+        public EmailReadFilters.eFolderFilter FilterFolder
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterFolder), EmailReadFilters.eFolderFilter.All);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterFolder), value.ToString());
+                OnPropertyChanged(nameof(FilterFolder));
+            }
+        }
+
+        public string FilterFolderName
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterFolderName), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterFolderName), value.ToString());
+                OnPropertyChanged(nameof(FilterFolderName));
+            }
+        }
+
+        public string FilterFrom
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterFrom), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterFrom), value);
+                OnPropertyChanged(nameof(FilterFrom));
+            }
+        }
+
+        public string FilterTo
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterTo), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterTo), value);
+                OnPropertyChanged(nameof(FilterTo));
+            }
+        }
+
+        public string FilterSubject
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterSubject), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterSubject), value);
+                OnPropertyChanged(nameof(FilterSubject));
+            }
+        }
+
+        public EmailReadFilters.eHasAttachmentsFilter FilterHasAttachments
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterHasAttachments), EmailReadFilters.eHasAttachmentsFilter.Either);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterHasAttachments), value.ToString());
+                OnPropertyChanged(nameof(FilterHasAttachments));
+            }
+        }
+
+        public string FilterAttachmentContentType
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterAttachmentContentType), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterAttachmentContentType), value);
+                OnPropertyChanged(nameof(FilterAttachmentContentType));
+            }
+        }
+
+        public bool DownloadAttachments
+        {
+            get
+            {
+                return bool.Parse(GetOrCreateInputParam(nameof(DownloadAttachments), false.ToString()).Value);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(DownloadAttachments), value.ToString());
+                OnPropertyChanged(nameof(DownloadAttachments));
+            }
+        }
+
+        public string AttachmentDownloadPath
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(AttachmentDownloadPath)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(AttachmentDownloadPath), value);
+                OnPropertyChanged(nameof(AttachmentDownloadPath));
+            }
+        }
+
+        public string FilterReceivedStartDate
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterReceivedStartDate), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterReceivedStartDate), value);
+                OnPropertyChanged(nameof(FilterReceivedStartDate));
+            }
+        }
+
+        public string FilterReceivedEndDate
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterReceivedEndDate), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterReceivedEndDate), value);
+                OnPropertyChanged(nameof(FilterReceivedEndDate));
+            }
+        }
 
         public string Host
         {
@@ -265,6 +499,14 @@ namespace GingerCore.Actions.Communication
 
         public override void Execute()
         {
+            if (eMailActionType == eEmailActionType.SendEmail)
+                SendEmail();
+            else if (eMailActionType == eEmailActionType.ReadEmail)
+                ReadEmails();
+        }
+
+        private void SendEmail()
+        {
             Email email = new Email();
             EmailOperations emailOperations = new EmailOperations(email);
             email.EmailOperations = emailOperations;
@@ -373,6 +615,76 @@ namespace GingerCore.Actions.Communication
             if (email.Event != null && email.Event.IndexOf("Failed") >= 0)
             {
                 Error = email.Event;
+            }
+        }
+
+        private void ReadEmails()
+        {
+            IEmailReadOperations emailReadOperations = new EmailReadOperations();
+            DateTime receivedStartDate = DateTime.MinValue;
+            if (!string.IsNullOrEmpty(FilterReceivedStartDate))
+                receivedStartDate = DateTime.Parse(FilterReceivedStartDate);
+            DateTime receivedEndDate = DateTime.Now;
+            if (!string.IsNullOrEmpty(FilterReceivedEndDate))
+                receivedEndDate = DateTime.Parse(FilterReceivedEndDate);
+            EmailReadFilters filters = new()
+            {
+                Folder = FilterFolder,
+                FolderName = FilterFolderName,
+                From = FilterFrom,
+                To = FilterTo,
+                HasAttachments = FilterHasAttachments,
+                AttachmentContentType = FilterAttachmentContentType,
+                AttachmentDownloadPath = AttachmentDownloadPath,
+                ReceivedStartDate = receivedStartDate,
+                ReceivedEndDate = receivedEndDate
+            };
+            MSGraphConfig config = new()
+            {
+                UserEmail = ReadUserEmail,
+                UserPassword = ReadUserPassword,
+                ClientId = MSGraphClientId,
+                TenantId = MSGraphTenantId
+            };
+            int index = 1;
+            emailReadOperations.ReadEmails(filters, config, email => 
+            {
+                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.From), email.From, index.ToString());
+                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Subject), email.Subject, index.ToString());
+                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.HasAttachments), email.HasAttachments.ToString(), index.ToString());
+                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.ReceivedDateTime), email.ReceivedDateTime.ToString(), index.ToString());
+                if (DownloadAttachments)
+                {
+                    DownloadAttachmentFiles(email);
+                }
+                index++;
+            }).Wait();
+        }
+
+        private void DownloadAttachmentFiles(ReadEmail email)
+        {
+            if (string.IsNullOrEmpty(AttachmentDownloadPath) || !System.IO.Directory.Exists(AttachmentDownloadPath))
+            {
+                throw new InvalidOperationException("Invalid attachment download path");
+            }
+
+            IEnumerable<string> expectedContentTypes = null;
+            if (!string.IsNullOrEmpty(FilterAttachmentContentType))
+            {
+                expectedContentTypes = FilterAttachmentContentType.Split(";", StringSplitOptions.RemoveEmptyEntries);
+            }
+
+            foreach (ReadEmail.Attachment attachment in email.Attachments)
+            {
+                if (expectedContentTypes != null && expectedContentTypes.Count() > 0 && 
+                    !expectedContentTypes.Any(expectedContentType => expectedContentType.Equals(attachment.ContentType)))
+                {
+                    continue;
+                }
+                string filePath = Path.Combine(AttachmentDownloadPath, attachment.Name);
+                if (File.Exists(filePath))
+                    File.Delete(filePath);
+                File.WriteAllBytes(filePath, attachment.ContentBytes);
             }
         }
     }
