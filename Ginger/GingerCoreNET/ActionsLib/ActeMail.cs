@@ -45,6 +45,8 @@ using MongoDB.Driver;
 using Microsoft.Graph.Extensions;
 using System.Linq;
 using System.Diagnostics;
+using GingerCore.DataSource;
+using GingerCore.Environments;
 
 namespace GingerCore.Actions.Communication
 {
@@ -621,31 +623,8 @@ namespace GingerCore.Actions.Communication
         private void ReadEmails()
         {
             IEmailReadOperations emailReadOperations = new EmailReadOperations();
-            DateTime receivedStartDate = DateTime.MinValue;
-            if (!string.IsNullOrEmpty(FilterReceivedStartDate))
-                receivedStartDate = DateTime.Parse(FilterReceivedStartDate);
-            DateTime receivedEndDate = DateTime.Now;
-            if (!string.IsNullOrEmpty(FilterReceivedEndDate))
-                receivedEndDate = DateTime.Parse(FilterReceivedEndDate);
-            EmailReadFilters filters = new()
-            {
-                Folder = FilterFolder,
-                FolderName = FilterFolderName,
-                From = FilterFrom,
-                To = FilterTo,
-                HasAttachments = FilterHasAttachments,
-                AttachmentContentType = FilterAttachmentContentType,
-                AttachmentDownloadPath = AttachmentDownloadPath,
-                ReceivedStartDate = receivedStartDate,
-                ReceivedEndDate = receivedEndDate
-            };
-            MSGraphConfig config = new()
-            {
-                UserEmail = ReadUserEmail,
-                UserPassword = ReadUserPassword,
-                ClientId = MSGraphClientId,
-                TenantId = MSGraphTenantId
-            };
+            EmailReadFilters filters = CreateEmailReadFilters();
+            MSGraphConfig config = CreateMSGraphConfig();
             int index = 1;
             emailReadOperations.ReadEmails(filters, config, email => 
             {
@@ -663,6 +642,82 @@ namespace GingerCore.Actions.Communication
                 }
                 index++;
             }).Wait();
+        }
+
+        private EmailReadFilters CreateEmailReadFilters()
+        {
+            ProjEnvironment projEnvironment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment;
+            ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            ValueExpression valueExpression = new(projEnvironment, BF: null, DSList, bUpdate: false, UpdateValue: "", bDone: false);
+
+            valueExpression.Value = FilterFolderName;
+            string calculatedFolderName = valueExpression.ValueCalculated;
+
+            valueExpression.Value = FilterFrom;
+            string calculatedFrom = valueExpression.ValueCalculated;
+
+            valueExpression.Value = FilterTo;
+            string calculatedTo = valueExpression.ValueCalculated;
+
+            valueExpression.Value = FilterAttachmentContentType;
+            string calculatedAttachmentContentType = valueExpression.ValueCalculated;
+
+            valueExpression.Value = AttachmentDownloadPath;
+            string calculatedAttachmentDownloadPath = valueExpression.ValueCalculated;
+
+            valueExpression.Value = FilterReceivedStartDate;
+            string calculatedReceivedStartDate = valueExpression.ValueCalculated;
+            DateTime receivedStartDate = DateTime.MinValue;
+            if (!string.IsNullOrEmpty(calculatedReceivedStartDate))
+                receivedStartDate = DateTime.Parse(calculatedReceivedStartDate);
+
+            valueExpression.Value = FilterReceivedEndDate;
+            string calculatedReceivedEndDate = valueExpression.ValueCalculated;
+            DateTime receivedEndDate = DateTime.Now;
+            if (!string.IsNullOrEmpty(calculatedReceivedEndDate))
+                receivedEndDate = DateTime.Parse(calculatedReceivedEndDate);
+
+
+            EmailReadFilters filters = new()
+            {
+                Folder = FilterFolder,
+                FolderName = calculatedFolderName,
+                From = calculatedFrom,
+                To = calculatedTo,
+                HasAttachments = FilterHasAttachments,
+                AttachmentContentType = calculatedAttachmentContentType,
+                AttachmentDownloadPath = calculatedAttachmentDownloadPath,
+                ReceivedStartDate = receivedStartDate,
+                ReceivedEndDate = receivedEndDate
+            };
+
+            return filters;
+        }
+
+        private MSGraphConfig CreateMSGraphConfig()
+        {
+            ProjEnvironment projEnvironment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment;
+            ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            ValueExpression valueExpression = new(projEnvironment, BF: null, DSList, bUpdate: false, UpdateValue: "", bDone: false);
+
+            valueExpression.Value = ReadUserEmail;
+            string calculatedUserEmail = valueExpression.ValueCalculated;
+
+            valueExpression.Value = MSGraphClientId;
+            string calculatedMSGraphClientId = valueExpression.ValueCalculated;
+
+            valueExpression.Value = MSGraphTenantId;
+            string calculatedMSGraphTenantId = valueExpression.ValueCalculated;
+
+            MSGraphConfig config = new()
+            {
+                UserEmail = calculatedUserEmail,
+                UserPassword = ReadUserPassword,
+                ClientId = calculatedMSGraphClientId,
+                TenantId = calculatedMSGraphTenantId
+            };
+
+            return config;
         }
 
         private IEnumerable<(string filename, string filepath)> DownloadAttachmentFiles(ReadEmail email)
