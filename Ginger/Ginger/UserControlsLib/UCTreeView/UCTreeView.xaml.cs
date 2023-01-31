@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -60,9 +61,9 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         }
 
 
-        public TreeViewItem  LastSelectedTVI
+        public TreeViewItem LastSelectedTVI
         {
-            get;set;
+            get; set;
 
         }
 
@@ -82,7 +83,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     return null;
             }
         }
-        
+
         public void ClearTreeItems()
         {
             Tree.Items.Clear();
@@ -93,11 +94,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             InitializeComponent();
 
             Tree.SelectedItemChanged += Tree_SelectedItemChanged;
-          
+
 
             //Hook Drag Drop handler
             //TODO: add flag to decide if Drag and drop is needed          
-            
+
         }
 
         bool mEnableRightClick = true;
@@ -109,7 +110,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
             set
             {
-                if(value)
+                if (value)
                 {
                     Tree.PreviewMouseRightButtonDown += Tree_PreviewMouseRightButtonDown;
                 }
@@ -187,7 +188,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             {
                 if (LastSelectedTVI != null)
                     LastSelectedTVI.Header = SetUnSelectedTreeNodeHeaderStyle((StackPanel)LastSelectedTVI.Header);
-                ((TreeViewItem)Tree.SelectedItem).Header= SetSelectedTreeNodeHeaderStyle((StackPanel)((TreeViewItem)Tree.SelectedItem).Header);
+                ((TreeViewItem)Tree.SelectedItem).Header = SetSelectedTreeNodeHeaderStyle((StackPanel)((TreeViewItem)Tree.SelectedItem).Header);
 
                 //Check if there is event hooked
                 if (ItemSelected != null)
@@ -348,9 +349,9 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 return true;
             }
 
-            if(FilterType == eFilteroperationType.Contains)
+            if (FilterType == eFilteroperationType.Contains)
             {
-                if(Convert.ToString(filterByObject).Contains(filterbyValue))
+                if (Convert.ToString(filterByObject).Contains(filterbyValue))
                 {
                     return true;
                 }
@@ -555,13 +556,13 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         /// </summary>
         /// <param name="itemCollection"></param>
         /// <param name="txt"></param>
-        public void FilterItemsByText(ItemCollection itemCollection, string txt, CancellationToken cancellationToken=new CancellationToken())
+        public void FilterItemsByText(ItemCollection itemCollection, string txt, CancellationToken cancellationToken = new CancellationToken())
         {
             // Filter not working for new TVI            
             foreach (TreeViewItem tvi in itemCollection)
             {
 
-                if(cancellationToken.IsCancellationRequested)
+                if (cancellationToken.IsCancellationRequested)
                 {
                     List<TreeViewItem> pathNodes = new List<TreeViewItem>();
                     if (LastSelectedTVI != null)
@@ -617,7 +618,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 // Goto sub items
                 if (tvi.HasItems)
                 {
-                    FilterItemsByText(tvi.Items, txt,cancellationToken);
+                    FilterItemsByText(tvi.Items, txt, cancellationToken);
                 }
             }
             //Show the root item
@@ -1026,7 +1027,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             bool validationRes = false;
             foreach (eUcTreeValidationRules rule in ValidationRules)
             {
-                if(rule == eUcTreeValidationRules.NoItemSelected)
+                if (rule == eUcTreeValidationRules.NoItemSelected)
                 {
                     if (Tree.SelectedItem == null)
                     {
@@ -1037,7 +1038,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             //set border color based on validation
             if (validationRes == true)
-            { Tree.BorderThickness = new Thickness(1);
+            {
+                Tree.BorderThickness = new Thickness(1);
                 Tree.BorderBrush = System.Windows.Media.Brushes.Red;
             }
             else
