@@ -1,0 +1,21 @@
+name: CD
+
+on:
+    workflow_dispatch: 
+
+jobs:
+               
+    CI:
+        name: CI
+        uses: Ginger-Automation/Ginger/.github/workflows/CI.yml@master
+        secrets: inherit
+     
+    Release:
+        name: Release
+        needs: CI
+        uses: Ginger-Automation/Ginger/.github/workflows/Release.yml@master
+     
+    Deploy:
+        name: Deploy
+        needs: Release
+        uses: Ginger-Automation/Ginger/.github/workflows/Deploy.yml@master

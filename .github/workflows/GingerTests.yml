@@ -1,0 +1,15 @@
+name: Ginger-Tests
+
+on:
+  workflow_call
+
+jobs:
+  windows:
+    uses: Ginger-Automation/Ginger/.github/workflows/WindowsTest.yml@master
+    secrets: inherit
+    
+  Linux:
+    uses: Ginger-Automation/Ginger/.github/workflows/LinuxTest.yml@master
+    
+  MacOS:
+    uses: Ginger-Automation/Ginger/.github/workflows/MacOSTest.yml@master
