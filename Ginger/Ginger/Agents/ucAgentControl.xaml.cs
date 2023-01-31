@@ -241,10 +241,7 @@ namespace Ginger.Agents
                     Reporter.ToStatus(eStatusMsgKey.StartAgent, null, SelectedAgent.Name, "");
                     if (((AgentOperations)SelectedAgent.AgentOperations).Status == Agent.eStatus.Running)
                     {
-                        await Task.Run(() =>
-                        {
-                            SelectedAgent.AgentOperations.Close();
-                        });
+                        SelectedAgent.AgentOperations.Close();
                     }
                     SelectedAgent.SolutionFolder = WorkSpace.Instance.Solution.Folder;
                     SelectedAgent.ProjEnvironment = null;// App.AutomateTabEnvironment;

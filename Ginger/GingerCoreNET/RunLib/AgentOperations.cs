@@ -205,10 +205,7 @@ namespace GingerCore
                         }
                         else
                         {
-                            await Task.Run(() =>
-                            {
                                 Driver.StartDriver();
-                            });
                         }
                         if (VirtualDriver != null)
                         {
