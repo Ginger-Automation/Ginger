@@ -393,42 +393,55 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Received Start Date:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Received Date:"/>
                         <Grid Grid.Column="1">
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="35"/>
                                 <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="25"/>
+                                <ColumnDefinition Width="35"/>
+                                <ColumnDefinition Width="1*"/>
                             </Grid.ColumnDefinitions>
-                            <Actions:UCValueExpression x:Name="xFilterReceivedStartDateVE" Grid.Column="0"/>
-                            <window:WindowsFormsHost Grid.Column="1" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Margin="2,0,0,0" Width="25">
-                                <wf:DateTimePicker  x:Name="xReceivedStartDateDatePicker" TextChanged="xReceivedStartDateDatePicker_TextChanged" Format="Custom" Width="25"/>
-                            </window:WindowsFormsHost>
+                            <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Start:" Margin="-5 0 0 0"/>
+                            <Grid Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="24"/>
+                                </Grid.ColumnDefinitions>
+                                <Actions:UCValueExpression x:Name="xFilterReceivedStartDateVE" Grid.Column="0"/>
+                                <window:WindowsFormsHost Grid.Column="1" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Margin="2,0,0,0" Width="24">
+                                    <wf:DateTimePicker  x:Name="xReceivedStartDateDatePicker" TextChanged="xReceivedStartDateDatePicker_TextChanged" Format="Custom" Width="24"/>
+                                </window:WindowsFormsHost>
+                            </Grid>
+                            <Label Grid.Column="2" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="End:"/>
+                            <Grid Grid.Column="3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="24"/>
+                                </Grid.ColumnDefinitions>
+                                <Actions:UCValueExpression x:Name="xFilterReceivedEndDateVE" Grid.Column="0"/>
+                                <window:WindowsFormsHost Grid.Column="1" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Margin="2,0,0,0" Width="24">
+                                    <wf:DateTimePicker  x:Name="xReceivedEndDateDatePicker" TextChanged="xReceivedEndDateDatePicker_TextChanged" Format="Custom" Width="24"/>
+                                </window:WindowsFormsHost>
+                            </Grid>
                         </Grid>
                     </Grid>
+                </StackPanel>
+            </TabItem>
+            <TabItem Background="{StaticResource $BackgroundColor_LightGray}">
+                <TabItem.Header>
+                    <Label Content="Configuration"/>
+                </TabItem.Header>
+                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Received End Date:"/>
-                        <Grid Grid.Column="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="25"/>
-                            </Grid.ColumnDefinitions>
-                            <Actions:UCValueExpression x:Name="xFilterReceivedEndDateVE" Grid.Column="0"/>
-                            <window:WindowsFormsHost Grid.Column="1" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Margin="2,0,0,0" Width="25">
-                                <wf:DateTimePicker  x:Name="xReceivedEndDateDatePicker" TextChanged="xReceivedEndDateDatePicker_TextChanged" Format="Custom" Width="25"/>
-                            </window:WindowsFormsHost>
-                        </Grid>
+                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Email Method:"/>
+                        <ComboBox x:Name="xEmailReadMethod" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}">
+                            <ComboBoxItem x:Name="xEmailReadMethodMSGraph" Content="MS Graph" Tag="MSGraph" IsSelected="True" />
+                        </ComboBox>
                     </Grid>
-                </StackPanel>
-            </TabItem>
-            <TabItem>
-                <TabItem.Header>
-                    <Label Content="Configuration"/>
-                </TabItem.Header>
-                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
