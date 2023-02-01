@@ -147,11 +147,6 @@
                 <TabItem.Header>
                     <Label Content="Configuration"/>
                 </TabItem.Header>
-                <TabItem.Resources>
-                    <GridLength x:Key="LabelColumnWidth">180</GridLength>
-                    <GridLength x:Key="ValueColumnWidth">1*</GridLength>
-                    <Thickness x:Key="RowMargin">0 2 0 2</Thickness>
-                </TabItem.Resources>
                 <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.ColumnDefinitions>
