@@ -39,13 +39,13 @@ namespace GingerCore.GeneralLib
             ICollectionPage<Message> messages;
             try
             {
-                if (filters.Folder == EmailReadFilters.eFolderFilter.All)
+            if (filters.Folder == EmailReadFilters.eFolderFilter.All)
                 {
-                    messages = await GetUserMessages(graphServiceClient, filters);
+                messages = await GetUserMessages(graphServiceClient, filters);
                 }
-                else
+            else
                 {
-                    messages = await GetFolderMessages(graphServiceClient, filters);
+                messages = await GetFolderMessages(graphServiceClient, filters);
                 }
             }
             catch(Exception e)
@@ -168,6 +168,35 @@ namespace GingerCore.GeneralLib
             return hasAnyAttachmentWithExpectedContentType;
         }
 
+        private Task<IMessageAttachmentsCollectionPage> GetMessageAttachments(GraphServiceClient graphServiceClient, string messageId,
+            IEnumerable<string> expectedContentTypes)
+        {
+            StringBuilder filterParameter = new();
+            filterParameter.Append("isInline eq false");
+            filterParameter.Append(" and ");
+
+            filterParameter.Append("contentType in (");
+            foreach (string expectedContentType in expectedContentTypes)
+            {
+                filterParameter.Append($"'{expectedContentType}',");
+            }
+
+            if (filterParameter.Length > 0 && filterParameter[^1] == ',')
+            {
+                filterParameter.Remove(filterParameter.Length - 1, 1);
+            }
+            filterParameter.Append(')');
+
+            return graphServiceClient
+                .Me
+                .Messages[messageId]
+                .Attachments
+                .Request()
+                .Filter(filterParameter.ToString())
+                .Top(10)
+                .GetAsync();
+        }
+
         private bool HasAllExpectedRecipient(IEnumerable<string> expectedRecipients, IEnumerable<string> actualRecipients)
         {
             foreach (string expectedRecipient in expectedRecipients)
@@ -240,7 +269,9 @@ namespace GingerCore.GeneralLib
             StringBuilder filterParameter = new();
 
             AppendReceivedDateTimeFilter(filterParameter, filters);
+
             AppendFromFilter(filterParameter, filters);
+
             AppendSubjectFilter(filterParameter, filters);
             //AppendBodyFilter(filterParameter, filters);
             AppendHasAttachmentsFilter(filterParameter, filters);
