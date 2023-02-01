@@ -269,11 +269,8 @@ namespace GingerCore.GeneralLib
             StringBuilder filterParameter = new();
 
             AppendReceivedDateTimeFilter(filterParameter, filters);
-
             AppendFromFilter(filterParameter, filters);
-
             AppendSubjectFilter(filterParameter, filters);
-            //AppendBodyFilter(filterParameter, filters);
             AppendHasAttachmentsFilter(filterParameter, filters);
 
             return (filterParameter.ToString(), orderBy);

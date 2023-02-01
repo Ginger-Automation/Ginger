@@ -147,11 +147,6 @@
                 <TabItem.Header>
                     <Label Content="Configuration"/>
                 </TabItem.Header>
-                <TabItem.Resources>
-                    <GridLength x:Key="LabelColumnWidth">180</GridLength>
-                    <GridLength x:Key="ValueColumnWidth">1*</GridLength>
-                    <Thickness x:Key="RowMargin">0 2 0 2</Thickness>
-                </TabItem.Resources>
                 <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.ColumnDefinitions>
@@ -438,43 +433,6 @@
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Attachment Download Path:"/>
                         <Actions:UCValueExpression x:Name="xAttachmentDownloadPathVE" Grid.Column="1"/>
-                    </Grid>
-                    <Grid Margin="{StaticResource RowMargin}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
-                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Received Date:"/>
-                        <Grid Grid.Column="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="35"/>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="35"/>
-                                <ColumnDefinition Width="1*"/>
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Start:" Margin="-5 0 0 0"/>
-                            <Grid Grid.Column="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*"/>
-                                    <ColumnDefinition Width="24"/>
-                                </Grid.ColumnDefinitions>
-                                <Actions:UCValueExpression x:Name="xFilterReceivedStartDateVE" Grid.Column="0"/>
-                                <window:WindowsFormsHost Grid.Column="1" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Margin="2,0,0,0" Width="24">
-                                    <wf:DateTimePicker  x:Name="xReceivedStartDateDatePicker" TextChanged="xReceivedStartDateDatePicker_TextChanged" Format="Custom" Width="24"/>
-                                </window:WindowsFormsHost>
-                            </Grid>
-                            <Label Grid.Column="2" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="End:"/>
-                            <Grid Grid.Column="3">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*"/>
-                                    <ColumnDefinition Width="24"/>
-                                </Grid.ColumnDefinitions>
-                                <Actions:UCValueExpression x:Name="xFilterReceivedEndDateVE" Grid.Column="0"/>
-                                <window:WindowsFormsHost Grid.Column="1" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Margin="2,0,0,0" Width="24">
-                                    <wf:DateTimePicker  x:Name="xReceivedEndDateDatePicker" TextChanged="xReceivedEndDateDatePicker_TextChanged" Format="Custom" Width="24"/>
-                                </window:WindowsFormsHost>
-                            </Grid>
-                        </Grid>
                     </Grid>
                 </StackPanel>
             </TabItem>
