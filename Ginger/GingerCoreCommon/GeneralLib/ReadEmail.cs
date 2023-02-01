@@ -10,6 +10,7 @@ namespace GingerCore.GeneralLib
     {
         public string From { get; init; }
         public string Subject { get; init; }
+        public string Body { get; init; }
         public DateTime ReceivedDateTime { get; init; }
         public bool HasAttachments { get; init; }
         public IEnumerable<Attachment> Attachments { get; init; }

@@ -32,6 +32,7 @@ namespace GingerCore.GeneralLib
         public string From { get; set; }
         public string To { get; set; }
         public string Subject { get; set; }
+        public string Body { get; set; }
         public eHasAttachmentsFilter HasAttachments { get; set; }
         public string AttachmentContentType { get; set; }
         public string AttachmentDownloadPath { get; set; }

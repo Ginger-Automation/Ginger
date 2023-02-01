@@ -155,6 +155,7 @@ namespace Ginger.Actions.Communication
             xSendEMailConfigView.xFilterFromVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterFrom));
             xSendEMailConfigView.xFilterToVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterTo));
             xSendEMailConfigView.xFilterSubjectVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterSubject));
+            xSendEMailConfigView.xFilterBodyVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterBody));
             xSendEMailConfigView.xHasAttachmentsComboBox.SelectedItem = FindComboBoxItem(
                 xSendEMailConfigView.xHasAttachmentsComboBox, 
                 item => (EmailReadFilters.eHasAttachmentsFilter)item.Value == mAct.FilterHasAttachments);

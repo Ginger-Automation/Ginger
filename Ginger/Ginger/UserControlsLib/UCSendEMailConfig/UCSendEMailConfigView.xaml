@@ -23,11 +23,12 @@
         </StackPanel.Resources>
         <Grid x:Name="xActionTypeRadioButtonContainer" Margin="{StaticResource RowMargin}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                <ColumnDefinition Width="11.6"/>
+                <window:ColumnDefinition Width="168.4"/>
                 <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Action Type:"/>
-            <StackPanel Grid.Column="1" Orientation="Horizontal">
+            <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Action Type:" window:Grid.ColumnSpan="2"/>
+            <StackPanel window:Grid.Column="2" Orientation="Horizontal">
                 <RadioButton GroupName="ActionTypeRadioButtonGroup" x:Name="xActionTypeSendRadioButton" Content="Send" Style="{StaticResource RadioButtonStyle}" Checked="xActionType_Changed" Unchecked="xBodyContentType_Changed"/>
                 <RadioButton GroupName="ActionTypeRadioButtonGroup" x:Name="xActionTypeReadRadioButton" Content="Read" Style="{StaticResource RadioButtonStyle}" Checked="xActionType_Changed" Unchecked="xBodyContentType_Changed"/>
             </StackPanel>
@@ -43,7 +44,7 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="From:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="From:"/>
                         <Actions:UCValueExpression x:Name="xFromVE" Grid.Column="1"/>
                     </Grid>
                     <Grid x:Name="xFromDisplayContainer" Margin="{StaticResource RowMargin}">
@@ -51,7 +52,7 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="From Display:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="From Display:"/>
                         <Actions:UCValueExpression x:Name="xFromDisplayNameVE" Grid.Column="1"/>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
@@ -59,7 +60,7 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="To:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="To:"/>
                         <Actions:UCValueExpression x:Name="xToVE" Grid.Column="1"/>
                     </Grid>
                     <Grid x:Name="xCCContainer" Margin="{StaticResource RowMargin}">
@@ -67,7 +68,7 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="CC:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="CC:"/>
                         <Actions:UCValueExpression x:Name="xCCVE" Grid.Column="1"/>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
@@ -75,7 +76,7 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Subject:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Subject:"/>
                         <Actions:UCValueExpression x:Name="xSubjectVE" Grid.Column="1"/>
                     </Grid>
                     <Grid x:Name="xBodyContentTypeRadioButtonsContainer" Margin="{StaticResource RowMargin}" Visibility="Collapsed">
@@ -83,7 +84,7 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Body Content Type:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Body Content Type:"/>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <StackPanel.Resources>
                                 <Style x:Key="RadioButtonStyle" TargetType="RadioButton">
@@ -104,7 +105,7 @@
                             <RowDefinition/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-                        <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Body:"/>
+                        <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Body:"/>
                         <Actions:UCValueExpression x:Name="xBodyFreeTextVE" Grid.Column="1" Grid.Row="0"/>
                         <Label x:Name="xMaxBodyLengthLabel" Grid.Column="1" Grid.Row="1" Style="{StaticResource $LabelStyle}" FontSize="10" Visibility="Collapsed"/>
                     </Grid>
@@ -114,7 +115,7 @@
                                 <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                                 <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                             </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0" Grid.Row="1" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Email Body Report Template:"/>
+                            <Label Grid.Column="0" Grid.Row="1" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Email Body Report Template:"/>
                             <ComboBox x:Name="xBodyReportTemplate" Grid.Column="1"/>
                         </Grid>
                         <Grid Margin="{StaticResource RowMargin}">
@@ -122,7 +123,7 @@
                                 <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                                 <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                             </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Comment:"/>
+                            <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Comment:"/>
                             <Actions:UCValueExpression x:Name="xBodyCommentVE" Grid.Column="1"/>
                         </Grid>
                     </StackPanel>
@@ -157,7 +158,7 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Grid.Row="1" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Email Method:"/>
+                        <Label Grid.Column="0" Grid.Row="1" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Email Method:"/>
                         <ComboBox x:Name="xEmailMethod" SelectionChanged="xEmailMethod_SelectionChanged" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}">
                             <ComboBoxItem x:Name="xEmailMethodSMTP" Content="SMTP" Tag="SMTP"/>
                             <ComboBoxItem x:Name="xEmailMethodOutlook" Content="Outlook" Tag="OUTLOOK"/>
@@ -179,7 +180,7 @@
                                 <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                                 <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                             </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="SMTP Host:"/>
+                            <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="SMTP Host:"/>
                             <Actions:UCValueExpression x:Name="xSMTPHostVE" Grid.Column="1"/>
                         </Grid>
                         <Grid Margin="{StaticResource RowMargin}">
@@ -187,46 +188,10 @@
                                 <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                                 <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                             </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="SMTP Port:"/>
+                            <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="SMTP Port:"/>
                             <Actions:UCValueExpression x:Name="xSMTPPortVE" Grid.Column="1"/>
                         </Grid>
                         <CheckBox x:Name="xEnableSSLOrTLS" Margin="{StaticResource RowMargin}" Content="Enable SSL/TLS" Style="{StaticResource @CheckBoxStyle}"/>
-                        <CheckBox x:Name="xAddCustomCertificate" Margin="{StaticResource RowMargin}" Content="Add Custom Certificate" Style="{StaticResource @CheckBoxStyle}"/>
-                        <StackPanel>
-                            <StackPanel.Style>
-                                <Style TargetType="StackPanel">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ElementName=xAddCustomCertificate, Path=IsChecked}" Value="True">
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </StackPanel.Style>
-                            <Grid Margin="{StaticResource RowMargin}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
-                                    <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
-                                </Grid.ColumnDefinitions>
-                                <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Certificate Path:"/>
-                                <Grid Grid.Column="1">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="1*"/>
-                                        <ColumnDefinition Width="60"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBox x:Name="xCertificatePathTextBox" Grid.Column="0" Style="{StaticResource @TextBoxStyle}"/>
-                                    <Button x:Name="xBrowseCertificateButton" Grid.Column="1" Click="xBrowseCertificateButton_Click" Content="Upload" Style="{StaticResource  $InputButtonStyle}"/>
-                                </Grid>
-                            </Grid>
-                            <Grid Margin="{StaticResource RowMargin}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
-                                    <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
-                                </Grid.ColumnDefinitions>
-                                <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Certificate Password:"/>
-                                <TextBox x:Name="xCertificatePasswordTextBox" Grid.Column="1" Style="{StaticResource @TextBoxStyle}"/>
-                            </Grid>
-                        </StackPanel>
                         <CheckBox x:Name="xConfigureCredentials" Margin="{StaticResource RowMargin}" Content="Configure Credentials" Style="{StaticResource @CheckBoxStyle}"/>
                         <StackPanel>
                             <StackPanel.Style>
@@ -244,7 +209,7 @@
                                     <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                                     <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                                 </Grid.ColumnDefinitions>
-                                <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="SMTP User:"/>
+                                <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="SMTP User:"/>
                                 <Actions:UCValueExpression x:Name="xSMTPUserVE" Grid.Column="1"/>
                             </Grid>
                             <Grid Margin="{StaticResource RowMargin}">
@@ -252,8 +217,44 @@
                                     <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                                     <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                                 </Grid.ColumnDefinitions>
-                                <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="SMTP Password:"/>
+                                <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="SMTP Password:"/>
                                 <TextBox x:Name="xSMTPPasswordTextBox" Grid.Column="1" Style="{StaticResource @TextBoxStyle}"/>
+                            </Grid>
+                        </StackPanel>
+                        <CheckBox x:Name="xAddCustomCertificate" Margin="{StaticResource RowMargin}" Content="Add Custom Certificate" Style="{StaticResource @CheckBoxStyle}"/>
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=xAddCustomCertificate, Path=IsChecked}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <Grid Margin="{StaticResource RowMargin}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                    <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Certificate Path:"/>
+                                <Grid Grid.Column="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="60"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="xCertificatePathTextBox" Grid.Column="0" Style="{StaticResource @TextBoxStyle}"/>
+                                    <Button x:Name="xBrowseCertificateButton" Grid.Column="1" Click="xBrowseCertificateButton_Click" Content="Upload" Style="{StaticResource  $InputButtonStyle}"/>
+                                </Grid>
+                            </Grid>
+                            <Grid Margin="{StaticResource RowMargin}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                    <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Certificate Password:"/>
+                                <TextBox x:Name="xCertificatePasswordTextBox" Grid.Column="1" Style="{StaticResource @TextBoxStyle}"/>
                             </Grid>
                         </StackPanel>
                     </StackPanel>
@@ -271,7 +272,7 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Folder:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Folder:"/>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderAllRadioButton" Content="All" Style="{StaticResource RadioButtonStyle}"/>
                             <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderSpecificRadioButton" Content="Specific" Style="{StaticResource RadioButtonStyle}"/>
@@ -292,7 +293,7 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Folder Name:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Folder Name:"/>
                         <Actions:UCValueExpression x:Name="xFilterFolderNameVE" Grid.Column="1"/>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
@@ -300,7 +301,7 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="From:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="From:"/>
                         <Actions:UCValueExpression x:Name="xFilterFromVE" Grid.Column="1"/>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
@@ -308,7 +309,7 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="To:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="To:"/>
                         <Actions:UCValueExpression x:Name="xFilterToVE" Grid.Column="1"/>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
@@ -316,7 +317,7 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Subject:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Subject:"/>
                         <Actions:UCValueExpression x:Name="xFilterSubjectVE" Grid.Column="1"/>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
@@ -324,7 +325,52 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Has Attachments:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Body:"/>
+                        <Actions:UCValueExpression x:Name="xFilterBodyVE" Grid.Column="1"/>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Received Date:"/>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="35"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="35"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Start:" Margin="-5 0 0 0"/>
+                            <Grid Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="24"/>
+                                </Grid.ColumnDefinitions>
+                                <Actions:UCValueExpression x:Name="xFilterReceivedStartDateVE" Grid.Column="0"/>
+                                <window:WindowsFormsHost Grid.Column="1" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Margin="2,0,0,0" Width="24">
+                                    <wf:DateTimePicker  x:Name="xReceivedStartDateDatePicker" TextChanged="xReceivedStartDateDatePicker_TextChanged" Format="Custom" Width="24"/>
+                                </window:WindowsFormsHost>
+                            </Grid>
+                            <Label Grid.Column="2" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="End:"/>
+                            <Grid Grid.Column="3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="24"/>
+                                </Grid.ColumnDefinitions>
+                                <Actions:UCValueExpression x:Name="xFilterReceivedEndDateVE" Grid.Column="0"/>
+                                <window:WindowsFormsHost Grid.Column="1" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Margin="2,0,0,0" Width="24">
+                                    <wf:DateTimePicker  x:Name="xReceivedEndDateDatePicker" TextChanged="xReceivedEndDateDatePicker_TextChanged" Format="Custom" Width="24"/>
+                                </window:WindowsFormsHost>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Has Attachments:"/>
                         <ComboBox x:Name="xHasAttachmentsComboBox" Grid.Column="1"/>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
@@ -342,8 +388,13 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Attachment Content Type:" ToolTip="MIME type for the attachment"/>
-                        <Actions:UCValueExpression x:Name="xFilterAttachmentContentTypeVE" Grid.Column="1"/>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Attachment Content Type:"/>
+                        <Actions:UCValueExpression x:Name="xFilterAttachmentContentTypeVE" Grid.Column="1" Grid.Row="0" ToolTip="MIME type for the attachment."/>
+                        <Label Grid.Column="1" Grid.Row="1" Style="{StaticResource $LabelStyle}" FontSize="10" Content="Attachment MIME type (e.g. use application/pdf to filter for pdf attachments)"/>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.Style>
@@ -360,7 +411,7 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Download Attachments:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Download Attachments:"/>
                         <StackPanel Orientation="Horizontal" Grid.Column="1">
                             <RadioButton GroupName="DownloadAttachmentsRadioButtonGroup" x:Name="xDownloadAttachmentYesRadioButton" Content="Yes" Style="{StaticResource RadioButtonStyle}"/>
                             <RadioButton GroupName="DownloadAttachmentsRadioButtonGroup" x:Name="xDownloadAttachmentNoRadioButton" Content="No" Style="{StaticResource RadioButtonStyle}"/>
@@ -385,45 +436,8 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Attachment Download Path:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Attachment Download Path:"/>
                         <Actions:UCValueExpression x:Name="xAttachmentDownloadPathVE" Grid.Column="1"/>
-                    </Grid>
-                    <Grid Margin="{StaticResource RowMargin}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
-                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Received Date:"/>
-                        <Grid Grid.Column="1">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="35"/>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="35"/>
-                                <ColumnDefinition Width="1*"/>
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Start:" Margin="-5 0 0 0"/>
-                            <Grid Grid.Column="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*"/>
-                                    <ColumnDefinition Width="24"/>
-                                </Grid.ColumnDefinitions>
-                                <Actions:UCValueExpression x:Name="xFilterReceivedStartDateVE" Grid.Column="0"/>
-                                <window:WindowsFormsHost Grid.Column="1" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Margin="2,0,0,0" Width="24">
-                                    <wf:DateTimePicker  x:Name="xReceivedStartDateDatePicker" TextChanged="xReceivedStartDateDatePicker_TextChanged" Format="Custom" Width="24"/>
-                                </window:WindowsFormsHost>
-                            </Grid>
-                            <Label Grid.Column="2" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="End:"/>
-                            <Grid Grid.Column="3">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1*"/>
-                                    <ColumnDefinition Width="24"/>
-                                </Grid.ColumnDefinitions>
-                                <Actions:UCValueExpression x:Name="xFilterReceivedEndDateVE" Grid.Column="0"/>
-                                <window:WindowsFormsHost Grid.Column="1" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Margin="2,0,0,0" Width="24">
-                                    <wf:DateTimePicker  x:Name="xReceivedEndDateDatePicker" TextChanged="xReceivedEndDateDatePicker_TextChanged" Format="Custom" Width="24"/>
-                                </window:WindowsFormsHost>
-                            </Grid>
-                        </Grid>
                     </Grid>
                 </StackPanel>
             </TabItem>
@@ -437,9 +451,9 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Email Method:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Email Method:"/>
                         <ComboBox x:Name="xEmailReadMethod" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}">
-                            <ComboBoxItem x:Name="xEmailReadMethodMSGraph" Content="MS Graph" Tag="MSGraph" IsSelected="True" />
+                            <ComboBoxItem x:Name="xEmailReadMethodMSGraph" Content="MS Graph API" Tag="MSGraphAPI" IsSelected="True" />
                         </ComboBox>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
@@ -447,7 +461,7 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="User Email:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="User Email:"/>
                         <Actions:UCValueExpression x:Name="xUserEmailVE" Grid.Column="1"/>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
@@ -455,15 +469,22 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="User Password:"/>
-                        <TextBox x:Name="xUserPasswordTextBox" Grid.Column="1"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="User Password:"/>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="30"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="xUserPasswordTextBox" Grid.Column="0" Style="{StaticResource @TextBoxStyle}"/>
+                            <Button x:Name="xUserPasswordVEEditorButton" Grid.Column="1" Content="..." VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="2,0,0,0" />
+                        </Grid>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Client Id:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Client Id:"/>
                         <Actions:UCValueExpression x:Name="xClientIdVE" Grid.Column="1"/>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
@@ -471,7 +492,7 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Tenant Id:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Tenant Id:"/>
                         <Actions:UCValueExpression x:Name="xTenantIdVE" Grid.Column="1"/>
                     </Grid>
                 </StackPanel>

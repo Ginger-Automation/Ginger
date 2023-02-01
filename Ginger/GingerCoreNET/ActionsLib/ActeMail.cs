@@ -274,6 +274,19 @@ namespace GingerCore.Actions.Communication
             }
         }
 
+        public string FilterBody
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterBody), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterBody), value);
+                OnPropertyChanged(nameof(FilterBody));
+            }
+        }
+
         public EmailReadFilters.eHasAttachmentsFilter FilterHasAttachments
         {
             get
@@ -630,6 +643,7 @@ namespace GingerCore.Actions.Communication
             {
                 AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.From), email.From, index.ToString());
                 AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Subject), email.Subject, index.ToString());
+                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Body), email.Body, index.ToString());
                 AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.HasAttachments), email.HasAttachments.ToString(), index.ToString());
                 AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.ReceivedDateTime), email.ReceivedDateTime.ToString(), index.ToString());
                 if (DownloadAttachments && FilterHasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes)
@@ -659,6 +673,12 @@ namespace GingerCore.Actions.Communication
             valueExpression.Value = FilterTo;
             string calculatedTo = valueExpression.ValueCalculated;
 
+            valueExpression.Value = FilterSubject;
+            string calculatedSubject = valueExpression.ValueCalculated;
+
+            valueExpression.Value = FilterBody;
+            string calculatedBody = valueExpression.ValueCalculated;
+
             valueExpression.Value = FilterAttachmentContentType;
             string calculatedAttachmentContentType = valueExpression.ValueCalculated;
 
@@ -684,6 +704,8 @@ namespace GingerCore.Actions.Communication
                 FolderName = calculatedFolderName,
                 From = calculatedFrom,
                 To = calculatedTo,
+                Subject = calculatedSubject,
+                Body = calculatedBody,
                 HasAttachments = FilterHasAttachments,
                 AttachmentContentType = calculatedAttachmentContentType,
                 AttachmentDownloadPath = calculatedAttachmentDownloadPath,
@@ -703,6 +725,13 @@ namespace GingerCore.Actions.Communication
             valueExpression.Value = ReadUserEmail;
             string calculatedUserEmail = valueExpression.ValueCalculated;
 
+            valueExpression.Value = ReadUserPassword;
+            valueExpression.DecryptFlag = true;
+            string calculatedUserPassword = valueExpression.ValueCalculated;
+            valueExpression.DecryptFlag = false;
+            if (EncryptionHandler.IsStringEncrypted(calculatedUserPassword))
+                calculatedUserPassword = EncryptionHandler.DecryptwithKey(calculatedUserPassword);
+            
             valueExpression.Value = MSGraphClientId;
             string calculatedMSGraphClientId = valueExpression.ValueCalculated;
 
@@ -712,7 +741,7 @@ namespace GingerCore.Actions.Communication
             MSGraphConfig config = new()
             {
                 UserEmail = calculatedUserEmail,
-                UserPassword = ReadUserPassword,
+                UserPassword = calculatedUserPassword,
                 ClientId = calculatedMSGraphClientId,
                 TenantId = calculatedMSGraphTenantId
             };
@@ -733,7 +762,7 @@ namespace GingerCore.Actions.Communication
                 expectedContentTypes = FilterAttachmentContentType.Split(";", StringSplitOptions.RemoveEmptyEntries);
             }
 
-            List<(string filename, string filepath)> fileNamesAndPaths = new List<(string filename, string filepath)>();
+            List<(string filename, string filepath)> fileNamesAndPaths = new();
 
             foreach (ReadEmail.Attachment attachment in email.Attachments)
             {
@@ -746,13 +775,34 @@ namespace GingerCore.Actions.Communication
                 if (!System.IO.Directory.Exists(downloadFolder))
                     System.IO.Directory.CreateDirectory(downloadFolder);
                 string filePath = Path.Combine(downloadFolder, attachment.Name);
-                if (File.Exists(filePath))
-                    File.Delete(filePath);
-                File.WriteAllBytes(filePath, attachment.ContentBytes);
-                fileNamesAndPaths.Add((attachment.Name, filePath));
+                string uniqueFilePath = GetUniqueFilePath(filePath);
+                File.WriteAllBytes(uniqueFilePath, attachment.ContentBytes);
+                fileNamesAndPaths.Add((attachment.Name, uniqueFilePath));
             }
 
             return fileNamesAndPaths;
+        }
+
+        private string GetUniqueFilePath(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                return filePath;
+            }
+
+            string directory = Path.GetDirectoryName(filePath);
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
+            string fileExtension = Path.GetExtension(filePath);
+
+            int copyKey = 0;
+            string uniqueFilePath;
+            do
+            {
+                copyKey++;
+                uniqueFilePath = Path.Combine(directory, $"{fileNameWithoutExtension}_Copy{copyKey}{fileExtension}");
+            } while (File.Exists(uniqueFilePath));
+
+            return uniqueFilePath;
         }
     }
 }

@@ -90,7 +90,12 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
         {
             xSMTPPasswordTextBox.LostFocus += (sender, e) => xSMTPPasswordTextBox.Text = Encrypt(xSMTPPasswordTextBox.Text);
             xCertificatePasswordTextBox.LostFocus += (sender, e) => xCertificatePasswordTextBox.Text = Encrypt(xCertificatePasswordTextBox.Text);
-            xUserPasswordTextBox.LostFocus += (sender, e) => xUserPasswordTextBox.Text = Encrypt(xUserPasswordTextBox.Text);
+            xUserPasswordTextBox.LostFocus += (sender, e) => xUserPasswordTextBox.Text = Encrypt(xUserPasswordTextBox.Text); 
+            xUserPasswordVEEditorButton.Click += (sender, e) =>
+            {
+                ValueExpressionEditorPage veEditorPage = new(xUserPasswordTextBox, nameof(TextBox.Text), null);
+                veEditorPage.ShowAsWindow();
+            };
         }
 
         public void Initialize(Options options)

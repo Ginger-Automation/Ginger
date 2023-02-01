@@ -24,6 +24,7 @@ namespace GingerCore.GeneralLib
         private static readonly IEnumerable<string> SelectedMessageFields = new string[]
         {
             "from",
+            "body",
             "toRecipients",
             "subject",
             "receivedDateTime",
@@ -36,10 +37,21 @@ namespace GingerCore.GeneralLib
         {
             GraphServiceClient graphServiceClient = CreateGraphServiceClient(config);
             ICollectionPage<Message> messages;
-            if (filters.Folder == EmailReadFilters.eFolderFilter.All)
-                messages = await GetUserMessages(graphServiceClient, filters);
-            else
-                messages = await GetFolderMessages(graphServiceClient, filters);
+            try
+            {
+                if (filters.Folder == EmailReadFilters.eFolderFilter.All)
+                {
+                    messages = await GetUserMessages(graphServiceClient, filters);
+                }
+                else
+                {
+                    messages = await GetFolderMessages(graphServiceClient, filters);
+                }
+            }
+            catch(Exception e)
+            {
+                throw e.InnerException;
+            }
 
             IEnumerable<string> expectedRecipients = null;
             if (!string.IsNullOrEmpty(filters.To))
@@ -54,6 +66,10 @@ namespace GingerCore.GeneralLib
                         return true;
                     }
                     if (!DoesSatisfyAttachmentFilter(graphServiceClient, message, filters).Result)
+                    {
+                        return true;
+                    }
+                    if(!DoesSatisfyBodyFilter(message, filters.Body))
                     {
                         return true;
                     }
@@ -152,35 +168,6 @@ namespace GingerCore.GeneralLib
             return hasAnyAttachmentWithExpectedContentType;
         }
 
-        private Task<IMessageAttachmentsCollectionPage> GetMessageAttachments(GraphServiceClient graphServiceClient, string messageId,
-            IEnumerable<string> expectedContentTypes)
-        {
-            StringBuilder filterParameter = new();
-            filterParameter.Append("isInline eq false");
-            filterParameter.Append(" and ");
-
-            filterParameter.Append("contentType in (");
-            foreach (string expectedContentType in expectedContentTypes)
-            {
-                filterParameter.Append($"'{expectedContentType}',");
-            }
-
-            if (filterParameter.Length > 0 && filterParameter[^1] == ',')
-            {
-                filterParameter.Remove(filterParameter.Length - 1, 1);
-            }
-            filterParameter.Append(')');
-
-            return graphServiceClient
-                .Me
-                .Messages[messageId]
-                .Attachments
-                .Request()
-                .Filter(filterParameter.ToString())
-                .Top(10)
-                .GetAsync();
-        }
-
         private bool HasAllExpectedRecipient(IEnumerable<string> expectedRecipients, IEnumerable<string> actualRecipients)
         {
             foreach (string expectedRecipient in expectedRecipients)
@@ -192,6 +179,11 @@ namespace GingerCore.GeneralLib
             return true;
         }
 
+        private bool DoesSatisfyBodyFilter(Message message, string expectedBody)
+        {
+            return message.Body.Content.Contains(expectedBody);
+        }
+
         private GraphServiceClient CreateGraphServiceClient(MSGraphConfig config)
         {
             TokenCredentialOptions options = new()
@@ -199,20 +191,22 @@ namespace GingerCore.GeneralLib
                 AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
             };
 
-            string userPassword = EncryptionHandler.DecryptwithKey(config.UserPassword);
+            string userPassword = config.UserPassword;
             UsernamePasswordCredential userNamePasswordCredential = new(config.UserEmail, userPassword, config.TenantId, config.ClientId, options);
 
             return new GraphServiceClient(userNamePasswordCredential, Scopes);
         }
 
-        private Task<IUserMessagesCollectionPage> GetUserMessages(GraphServiceClient graphServiceClient, EmailReadFilters filters)
+        private async Task<IUserMessagesCollectionPage> GetUserMessages(GraphServiceClient graphServiceClient, EmailReadFilters filters)
         {
             (string filterParameter, string orderByParameter) = BuildReadRequestFilterAndOrderParameters(filters);
-            return graphServiceClient
+            string selectParameter = SelectedMessageFields.Aggregate((aggr, value) => $"{aggr},{value}");
+            return await graphServiceClient
                 .Me
                 .Messages
                 .Request()
-                .Select(SelectedMessageFields.Aggregate((aggr, value) => $"{aggr},{value}"))
+                .Header("Prefer", "outlook.body-content-type='text'")
+                .Select(selectParameter)
                 .Filter(filterParameter)
                 .OrderBy(orderByParameter)
                 .Expand("attachments")
@@ -223,13 +217,15 @@ namespace GingerCore.GeneralLib
         private async Task<IMailFolderMessagesCollectionPage> GetFolderMessages(GraphServiceClient graphServiceClient, EmailReadFilters filters)
         {
             (string filterParameter, string orderByParameter) = BuildReadRequestFilterAndOrderParameters(filters);
+            string selectParameter = SelectedMessageFields.Aggregate((aggr, value) => $"{aggr},{value}");
             string folderId = await GetFolderId(graphServiceClient, filters.FolderName);
             return await graphServiceClient
                 .Me
                 .MailFolders[folderId]
                 .Messages
                 .Request()
-                .Select(SelectedMessageFields.Aggregate((aggr, value) => $"{aggr},{value}"))
+                .Header("Prefer", "outlook.body-content-type='text'")
+                .Select(selectParameter)
                 .Filter(filterParameter)
                 .OrderBy(orderByParameter)
                 .Expand("attachments")
@@ -244,11 +240,9 @@ namespace GingerCore.GeneralLib
             StringBuilder filterParameter = new();
 
             AppendReceivedDateTimeFilter(filterParameter, filters);
-
             AppendFromFilter(filterParameter, filters);
-
             AppendSubjectFilter(filterParameter, filters);
-
+            //AppendBodyFilter(filterParameter, filters);
             AppendHasAttachmentsFilter(filterParameter, filters);
 
             return (filterParameter.ToString(), orderBy);
@@ -426,6 +420,7 @@ namespace GingerCore.GeneralLib
             {
                 From = message.From.EmailAddress.Address,
                 Subject = message.Subject,
+                Body = message.Body.Content,
                 ReceivedDateTime = message.ReceivedDateTime?.DateTime.ToLocalTime() ?? DateTime.MinValue,
                 HasAttachments = (message.HasAttachments ?? false) && attachments != null && attachments.Count() > 0,
                 Attachments = attachments
