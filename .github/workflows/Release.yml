@@ -39,7 +39,20 @@ jobs:
                 uses: actions/download-artifact@v3
                 with:
                   name: ginger-artifact         
-                     
+
+            -   name: 'delete Help\Library'
+                run: rmdir /s /q Ginger\Ginger\bin\Release\net6.0-windows\Help\Library
+                shell: cmd
+                
+            -   name: 'add help Library'
+                shell: cmd
+                run: |
+                    cd Ginger\Ginger\bin\Release\net6.0-windows\Help
+                    git clone https://github.com/Ginger-Automation/Ginger-Web-Help.git
+                    move Ginger-Web-Help\docs .
+                    rename docs Library
+                    rmdir /s /q Ginger-Web-Help       
+
             -   uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
                 with: 
                     filepath: './Ginger/GingerInstallerScriptGithub.iss'
