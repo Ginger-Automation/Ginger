@@ -103,7 +103,9 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             mIsDisplayNameFieldEnabled = options.FromDisplayNameEnabled;
             SetCCVisibility(ConvertBooleanToVisibility(options.CCEnabled));
             if (options.AttachmentsEnabled)
+            {
                 InitializeAttachmentsGrid(options);
+            }
             SetDefaultEmailMethod(options.DefaultEmailMethod);
             InitializeHasAttachmentsComboBoxItems();
         }

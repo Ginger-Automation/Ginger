@@ -57,7 +57,9 @@ namespace Ginger.Actions.Communication
         {
             string attachmentFilenames = mAct.AttachmentFileName;
             if (attachmentFilenames == null)
+            {
                 attachmentFilenames = "";
+            }
 
             mAttachments = new(attachmentFilenames.Split(";", StringSplitOptions.RemoveEmptyEntries).Select(filename => new Attachment(filename)));
             mAttachments.ForEach(attachment => attachment.PropertyChanged += Attachment_PropertyChanged);
@@ -259,7 +261,10 @@ namespace Ginger.Actions.Communication
                         return;
                     }
                     filename = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+                    if (PropertyChanged != null)
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs(nameof(Name)));
+                    }
                 }
             }
             public Attachment(string filename)
