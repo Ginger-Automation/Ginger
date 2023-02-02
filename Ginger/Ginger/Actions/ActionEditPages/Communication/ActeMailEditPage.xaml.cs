@@ -94,6 +94,7 @@ namespace Ginger.Actions.Communication
 
             UCSendEMailConfigView.Options options = new()
             {
+                Context = Context.GetAsContext(mAct.Context),
                 AttachmentsEnabled = true,
                 SupportedAttachmentTypes = new eAttachmentType[] { eAttachmentType.File },
                 AllowAttachmentExtraInformation = false,

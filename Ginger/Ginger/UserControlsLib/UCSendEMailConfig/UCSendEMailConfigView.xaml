@@ -331,12 +331,12 @@
                         <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Received Date:"/>
                         <Grid Grid.Column="1">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="35"/>
+                                <ColumnDefinition Width="30"/>
                                 <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="35"/>
+                                <ColumnDefinition Width="30"/>
                                 <ColumnDefinition Width="1*"/>
                             </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Start:" Margin="-5 0 0 0"/>
+                            <Label Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Start:" Margin="-5 0 0 0"/>
                             <Grid Grid.Column="1">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="1*"/>
@@ -357,7 +357,7 @@
                                 </window:WindowsFormsHost>-->
                                 <Button x:Name="xFilterReceivedStartDateVEEditorButton" Grid.Column="2" Click="xFilterReceivedStartDateVEEditorButton_Click" Content="..." VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="2,0,0,0" />
                             </Grid>
-                            <Label Grid.Column="2" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="End:"/>
+                            <Label Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" Content="End:"/>
                             <Grid Grid.Column="3">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="1*"/>
@@ -386,7 +386,7 @@
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Has Attachments:"/>
-                        <ComboBox x:Name="xHasAttachmentsComboBox" Grid.Column="1"/>
+                        <ComboBox x:Name="xHasAttachmentsComboBox" Style="{StaticResource @InputComboBoxStyle}" Grid.Column="1"/>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.Style>
@@ -491,7 +491,7 @@
                                 <ColumnDefinition Width="30"/>
                             </Grid.ColumnDefinitions>
                             <TextBox x:Name="xUserPasswordTextBox" Grid.Column="0" Style="{StaticResource @TextBoxStyle}"/>
-                            <Button x:Name="xUserPasswordVEEditorButton" Grid.Column="1" Content="..." VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="2,0,0,0" />
+                            <Button x:Name="xUserPasswordVEEditorButton" Grid.Column="1" Click="xUserPasswordVEEditorButton_Click" Content="..." VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="2,0,0,0" />
                         </Grid>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">

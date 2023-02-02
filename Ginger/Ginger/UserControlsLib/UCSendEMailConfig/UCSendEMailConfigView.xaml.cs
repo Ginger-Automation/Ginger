@@ -46,6 +46,7 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
     {
         public class Options
         {
+            public Context? Context { get; set; } = null;
             public eBodyContentType[] SupportedBodyContentTypes { get; set; } = { eBodyContentType.FreeText };
             public int MaxBodyCharCount { get; set; } = 0;
             public bool FromDisplayNameEnabled { get; set; } = true;
@@ -67,7 +68,8 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             public string Zipped { get; set; } = nameof(Zipped);
         }
 
-        private bool isDisplayNameFieldEnabled;
+        private bool mIsDisplayNameFieldEnabled;
+        private Context? mContext;
 
         public delegate void EmailMethodChangeHandler(Email.eEmailMethod selectedEmailMethod);
         public event EmailMethodChangeHandler? EmailMethodChanged;
@@ -84,11 +86,6 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
         {
             InitializeComponent();
             AddEncryptionHandlerForPasswordControls();
-            xFilterReceivedEndDateVEEditorButton.Click += (sender, e) =>
-            {
-                ValueExpressionEditorPage veEditorPage = new(xFilterReceivedEndDateTextBox, nameof(TextBox.Text), null);
-                veEditorPage.ShowAsWindow();
-            };
         }
 
         private void AddEncryptionHandlerForPasswordControls()
@@ -100,9 +97,10 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
 
         public void Initialize(Options options)
         {
+            mContext = options.Context;
             SetBodyContentType(options.SupportedBodyContentTypes, options.DefaultBodyContentType);
             SetMaxBodyCharCount(options.MaxBodyCharCount);
-            isDisplayNameFieldEnabled = options.FromDisplayNameEnabled;
+            mIsDisplayNameFieldEnabled = options.FromDisplayNameEnabled;
             SetCCVisibility(ConvertBooleanToVisibility(options.CCEnabled));
             if (options.AttachmentsEnabled)
                 InitializeAttachmentsGrid(options);
@@ -356,7 +354,7 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
 
         private void ChangeFromDisplayFieldVisibility()
         {
-            if (!isDisplayNameFieldEnabled)
+            if (!mIsDisplayNameFieldEnabled)
                 return;
 
             if (xEmailMethodSMTP.IsSelected)
@@ -442,7 +440,7 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
 
         private void xFilterReceivedStartDateVEEditorButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage veEditorPage = new(xFilterReceivedStartDateTextBox, nameof(TextBox.Text), null);
+            ValueExpressionEditorPage veEditorPage = new(xFilterReceivedStartDateTextBox, nameof(TextBox.Text), mContext!);
             veEditorPage.ShowAsWindow();
         }
 
@@ -456,7 +454,7 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
 
         private void xFilterReceivedEndDateVEEditorButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpressionEditorPage veEditorPage = new(xFilterReceivedEndDateTextBox, nameof(TextBox.Text), null);
+            ValueExpressionEditorPage veEditorPage = new(xFilterReceivedEndDateTextBox, nameof(TextBox.Text), mContext!);
             veEditorPage.ShowAsWindow();
         }
 
@@ -466,6 +464,12 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             DateTime dateTime = new(selectedDate.Ticks, DateTimeKind.Local);
 
             xFilterReceivedEndDateTextBox.Text = dateTime.ToString("yyyy-MM-ddTHH:mm:ssK");
+        }
+
+        private void xUserPasswordVEEditorButton_Click(object sender, RoutedEventArgs e)
+        {
+            ValueExpressionEditorPage veEditorPage = new(xUserPasswordTextBox, nameof(TextBox.Text), mContext!);
+            veEditorPage.ShowAsWindow();
         }
     }
 }

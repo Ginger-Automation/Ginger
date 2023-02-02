@@ -37,20 +37,13 @@ namespace GingerCore.GeneralLib
         {
             GraphServiceClient graphServiceClient = CreateGraphServiceClient(config);
             ICollectionPage<Message> messages;
-            try
-            {
             if (filters.Folder == EmailReadFilters.eFolderFilter.All)
-                {
-                messages = await GetUserMessages(graphServiceClient, filters);
-                }
-            else
-                {
-                messages = await GetFolderMessages(graphServiceClient, filters);
-                }
-            }
-            catch(Exception e)
             {
-                throw e.InnerException;
+                messages = await GetUserMessages(graphServiceClient, filters);
+            }
+            else
+            {
+                messages = await GetFolderMessages(graphServiceClient, filters);
             }
 
             IEnumerable<string> expectedRecipients = null;
@@ -201,20 +194,24 @@ namespace GingerCore.GeneralLib
         {
             foreach (string expectedRecipient in expectedRecipients)
             {
-                bool hasThisExpectedRecipient = actualRecipients.Any(actualRecipient => actualRecipient.Equals(expectedRecipient));
-                if (!hasThisExpectedRecipient)
+                bool hasExpectedRecipient = actualRecipients.Any(actualRecipient => 
+                    actualRecipient.Equals(expectedRecipient, StringComparison.OrdinalIgnoreCase));
+                if (!hasExpectedRecipient)
+                {
                     return false;
+                }
             }
             return true;
         }
 
         private bool DoesSatisfyBodyFilter(Message message, string expectedBody)
         {
-            return message.Body.Content.Contains(expectedBody);
+            return message.Body.Content.Contains(expectedBody, StringComparison.OrdinalIgnoreCase);
         }
 
         private GraphServiceClient CreateGraphServiceClient(MSGraphConfig config)
         {
+            ValidateMSGraphConfig(config);
             TokenCredentialOptions options = new()
             {
                 AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
@@ -226,21 +223,52 @@ namespace GingerCore.GeneralLib
             return new GraphServiceClient(userNamePasswordCredential, Scopes);
         }
 
+        private void ValidateMSGraphConfig(MSGraphConfig config)
+        {
+            if(string.IsNullOrEmpty(config.UserEmail))
+            {
+                throw new ArgumentException("user email is required");
+            }
+            if (string.IsNullOrEmpty(config.UserPassword))
+            {
+                throw new ArgumentException("user password is required");
+            }
+            if (string.IsNullOrEmpty(config.TenantId))
+            {
+                throw new ArgumentException("tenant id is required");
+            }
+            if (string.IsNullOrEmpty(config.ClientId))
+            {
+                throw new ArgumentException("client id is required");
+            }
+        }
+
         private async Task<IUserMessagesCollectionPage> GetUserMessages(GraphServiceClient graphServiceClient, EmailReadFilters filters)
         {
             (string filterParameter, string orderByParameter) = BuildReadRequestFilterAndOrderParameters(filters);
             string selectParameter = SelectedMessageFields.Aggregate((aggr, value) => $"{aggr},{value}");
-            return await graphServiceClient
-                .Me
-                .Messages
-                .Request()
-                .Header("Prefer", "outlook.body-content-type='text'")
-                .Select(selectParameter)
-                .Filter(filterParameter)
-                .OrderBy(orderByParameter)
-                .Expand("attachments")
-                .Top(MessageRequestPageSize)
-                .GetAsync();
+            try
+            {
+                return await graphServiceClient
+                    .Me
+                    .Messages
+                    .Request()
+                    .Header("Prefer", "outlook.body-content-type='text'")
+                    .Select(selectParameter)
+                    .Filter(filterParameter)
+                    .OrderBy(orderByParameter)
+                    .Expand("attachments")
+                    .Top(MessageRequestPageSize)
+                    .GetAsync();
+            }
+            catch(Exception e)
+            {
+                if(e.InnerException != null)
+                {
+                    throw e.InnerException;
+                }    
+                throw;
+            }
         }
 
         private async Task<IMailFolderMessagesCollectionPage> GetFolderMessages(GraphServiceClient graphServiceClient, EmailReadFilters filters)
@@ -248,18 +276,29 @@ namespace GingerCore.GeneralLib
             (string filterParameter, string orderByParameter) = BuildReadRequestFilterAndOrderParameters(filters);
             string selectParameter = SelectedMessageFields.Aggregate((aggr, value) => $"{aggr},{value}");
             string folderId = await GetFolderId(graphServiceClient, filters.FolderName);
-            return await graphServiceClient
-                .Me
-                .MailFolders[folderId]
-                .Messages
-                .Request()
-                .Header("Prefer", "outlook.body-content-type='text'")
-                .Select(selectParameter)
-                .Filter(filterParameter)
-                .OrderBy(orderByParameter)
-                .Expand("attachments")
-                .Top(MessageRequestPageSize)
-                .GetAsync();
+            try
+            {
+                return await graphServiceClient
+                    .Me
+                    .MailFolders[folderId]
+                    .Messages
+                    .Request()
+                    .Header("Prefer", "outlook.body-content-type='text'")
+                    .Select(selectParameter)
+                    .Filter(filterParameter)
+                    .OrderBy(orderByParameter)
+                    .Expand("attachments")
+                    .Top(MessageRequestPageSize)
+                    .GetAsync();
+            }
+            catch(Exception e)
+            {
+                if(e.InnerException != null)
+                {
+                    throw e.InnerException;
+                }
+                throw;
+            }
         }
 
         private (string filter, string orderBy) BuildReadRequestFilterAndOrderParameters(EmailReadFilters filters)

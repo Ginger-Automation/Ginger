@@ -662,37 +662,19 @@ namespace GingerCore.Actions.Communication
         {
             ProjEnvironment projEnvironment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment;
             ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            ValueExpression valueExpression = new(projEnvironment, BF: null, DSList, bUpdate: false, UpdateValue: "", bDone: false);
 
-            valueExpression.Value = FilterFolderName;
-            string calculatedFolderName = valueExpression.ValueCalculated;
-
-            valueExpression.Value = FilterFrom;
-            string calculatedFrom = valueExpression.ValueCalculated;
-
-            valueExpression.Value = FilterTo;
-            string calculatedTo = valueExpression.ValueCalculated;
-
-            valueExpression.Value = FilterSubject;
-            string calculatedSubject = valueExpression.ValueCalculated;
-
-            valueExpression.Value = FilterBody;
-            string calculatedBody = valueExpression.ValueCalculated;
-
-            valueExpression.Value = FilterAttachmentContentType;
-            string calculatedAttachmentContentType = valueExpression.ValueCalculated;
-
-            valueExpression.Value = AttachmentDownloadPath;
-            string calculatedAttachmentDownloadPath = valueExpression.ValueCalculated;
-
-            valueExpression.Value = FilterReceivedStartDate;
-            string calculatedReceivedStartDate = valueExpression.ValueCalculated;
+            string calculatedFolderName = GetInputParamCalculatedValue(nameof(FilterFolderName));
+            string calculatedFrom = GetInputParamCalculatedValue(nameof(FilterFrom));
+            string calculatedTo = GetInputParamCalculatedValue(nameof(FilterTo));
+            string calculatedSubject = GetInputParamCalculatedValue(nameof(FilterSubject));
+            string calculatedBody = GetInputParamCalculatedValue(nameof(FilterBody));
+            string calculatedAttachmentContentType = GetInputParamCalculatedValue(nameof(FilterAttachmentContentType));
+            string calculatedAttachmentDownloadPath = GetInputParamCalculatedValue(nameof(AttachmentDownloadPath));
+            string calculatedReceivedStartDate = GetInputParamCalculatedValue(nameof(FilterReceivedStartDate));
             DateTime receivedStartDate = DateTime.MinValue;
             if (!string.IsNullOrEmpty(calculatedReceivedStartDate))
                 receivedStartDate = DateTime.Parse(calculatedReceivedStartDate);
-
-            valueExpression.Value = FilterReceivedEndDate;
-            string calculatedReceivedEndDate = valueExpression.ValueCalculated;
+            string calculatedReceivedEndDate = GetInputParamCalculatedValue(nameof(FilterReceivedEndDate));
             DateTime receivedEndDate = DateTime.Now;
             if (!string.IsNullOrEmpty(calculatedReceivedEndDate))
                 receivedEndDate = DateTime.Parse(calculatedReceivedEndDate);
@@ -720,23 +702,15 @@ namespace GingerCore.Actions.Communication
         {
             ProjEnvironment projEnvironment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment;
             ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            ValueExpression valueExpression = new(projEnvironment, BF: null, DSList, bUpdate: false, UpdateValue: "", bDone: false);
 
-            valueExpression.Value = ReadUserEmail;
-            string calculatedUserEmail = valueExpression.ValueCalculated;
-
-            valueExpression.Value = ReadUserPassword;
-            valueExpression.DecryptFlag = true;
-            string calculatedUserPassword = valueExpression.ValueCalculated;
-            valueExpression.DecryptFlag = false;
+            string calculatedUserEmail = GetInputParamCalculatedValue(nameof(ReadUserEmail));
+            string calculatedUserPassword = GetInputParamCalculatedValue(nameof(ReadUserPassword));
             if (EncryptionHandler.IsStringEncrypted(calculatedUserPassword))
+            {
                 calculatedUserPassword = EncryptionHandler.DecryptwithKey(calculatedUserPassword);
-            
-            valueExpression.Value = MSGraphClientId;
-            string calculatedMSGraphClientId = valueExpression.ValueCalculated;
-
-            valueExpression.Value = MSGraphTenantId;
-            string calculatedMSGraphTenantId = valueExpression.ValueCalculated;
+            }
+            string calculatedMSGraphClientId = GetInputParamCalculatedValue(nameof(MSGraphClientId));
+            string calculatedMSGraphTenantId = GetInputParamCalculatedValue(nameof(MSGraphTenantId));
 
             MSGraphConfig config = new()
             {
@@ -751,15 +725,17 @@ namespace GingerCore.Actions.Communication
 
         private IEnumerable<(string filename, string filepath)> DownloadAttachmentFiles(ReadEmail email)
         {
-            if (string.IsNullOrEmpty(AttachmentDownloadPath))
+            string calculatedAttachmentDownloadPath = GetInputParamCalculatedValue(nameof(AttachmentDownloadPath));
+            if (string.IsNullOrEmpty(calculatedAttachmentDownloadPath))
             {
                 throw new InvalidOperationException("Invalid attachment download path");
             }
 
             IEnumerable<string> expectedContentTypes = null;
-            if (!string.IsNullOrEmpty(FilterAttachmentContentType))
+            string calculatedAttachmentContentType = GetInputParamCalculatedValue(nameof(FilterAttachmentContentType));
+            if (!string.IsNullOrEmpty(calculatedAttachmentContentType))
             {
-                expectedContentTypes = FilterAttachmentContentType.Split(";", StringSplitOptions.RemoveEmptyEntries);
+                expectedContentTypes = calculatedAttachmentContentType.Split(";", StringSplitOptions.RemoveEmptyEntries);
             }
 
             List<(string filename, string filepath)> fileNamesAndPaths = new();
@@ -771,9 +747,11 @@ namespace GingerCore.Actions.Communication
                 {
                     continue;
                 }
-                string downloadFolder = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(AttachmentDownloadPath);
+                string downloadFolder = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedAttachmentDownloadPath);
                 if (!System.IO.Directory.Exists(downloadFolder))
+                {
                     System.IO.Directory.CreateDirectory(downloadFolder);
+                }
                 string filePath = Path.Combine(downloadFolder, attachment.Name);
                 string uniqueFilePath = GetUniqueFilePath(filePath);
                 File.WriteAllBytes(uniqueFilePath, attachment.ContentBytes);
