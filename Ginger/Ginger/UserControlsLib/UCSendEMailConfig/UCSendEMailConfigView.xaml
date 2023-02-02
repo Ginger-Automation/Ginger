@@ -135,10 +135,10 @@
                 </TabItem.Header>
                 <TabItem.Resources>
                     <DataTemplate x:Key="ZippedCellTemplate">
-                        <CheckBox x:Name="xZippedCheckBox" Style="{StaticResource @CheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                        <CheckBox x:Name="xAttachmentZippedCheckBox" Style="{StaticResource @CheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
                     </DataTemplate>
                     <DataTemplate x:Key="NameVEButtonCellTemplate" >
-                        <Button x:Name="xNameVEButton" Content="..." Click="xNameVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+                        <Button x:Name="xAttachmentNameVEButton" Content="..." Click="xAttachmentNameVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
                     </DataTemplate>
                 </TabItem.Resources>
                 <Ginger:ucGrid x:Name="xAttachmentsGrid" Title="Attachments" ShowAdd="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>

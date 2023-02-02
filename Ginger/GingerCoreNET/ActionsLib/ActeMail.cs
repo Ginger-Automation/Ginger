@@ -230,7 +230,7 @@ namespace GingerCore.Actions.Communication
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(FilterFolderName), value.ToString());
+                AddOrUpdateInputParamValue(nameof(FilterFolderName), value);
                 OnPropertyChanged(nameof(FilterFolderName));
             }
         }
@@ -515,9 +515,13 @@ namespace GingerCore.Actions.Communication
         public override void Execute()
         {
             if (eMailActionType == eEmailActionType.SendEmail)
+            {
                 SendEmail();
+            }
             else if (eMailActionType == eEmailActionType.ReadEmail)
+            {
                 ReadEmails();
+            }
         }
 
         private void SendEmail()
@@ -673,12 +677,15 @@ namespace GingerCore.Actions.Communication
             string calculatedReceivedStartDate = GetInputParamCalculatedValue(nameof(FilterReceivedStartDate));
             DateTime receivedStartDate = DateTime.MinValue;
             if (!string.IsNullOrEmpty(calculatedReceivedStartDate))
+            {
                 receivedStartDate = DateTime.Parse(calculatedReceivedStartDate);
+            }
             string calculatedReceivedEndDate = GetInputParamCalculatedValue(nameof(FilterReceivedEndDate));
             DateTime receivedEndDate = DateTime.Now;
             if (!string.IsNullOrEmpty(calculatedReceivedEndDate))
+            {
                 receivedEndDate = DateTime.Parse(calculatedReceivedEndDate);
-
+            }
 
             EmailReadFilters filters = new()
             {

@@ -80,7 +80,7 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
 
         public event RoutedEventHandler? AddFileAttachment;
         public event RoutedEventHandler? AddHTMLReportAttachment;
-        public event RoutedEventHandler? NameValueExpressionButtonClick;
+        public event RoutedEventHandler? AttachmentNameVEButtonClick;
 
         public UCSendEMailConfigView()
         {
@@ -90,9 +90,9 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
 
         private void AddEncryptionHandlerForPasswordControls()
         {
-            xSMTPPasswordTextBox.LostFocus += (sender, e) => xSMTPPasswordTextBox.Text = Encrypt(xSMTPPasswordTextBox.Text);
-            xCertificatePasswordTextBox.LostFocus += (sender, e) => xCertificatePasswordTextBox.Text = Encrypt(xCertificatePasswordTextBox.Text);
-            xUserPasswordTextBox.LostFocus += (sender, e) => xUserPasswordTextBox.Text = Encrypt(xUserPasswordTextBox.Text);
+            xSMTPPasswordTextBox.LostFocus += (_, _) => xSMTPPasswordTextBox.Text = Encrypt(xSMTPPasswordTextBox.Text);
+            xCertificatePasswordTextBox.LostFocus += (_, _) => xCertificatePasswordTextBox.Text = Encrypt(xCertificatePasswordTextBox.Text);
+            xUserPasswordTextBox.LostFocus += (_, _) => xUserPasswordTextBox.Text = Encrypt(xUserPasswordTextBox.Text);
         }
 
         public void Initialize(Options options)
@@ -146,15 +146,21 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
         private void MakeBodyContentTypeContainerVisible(eBodyContentType bodyContentType)
         {
             if (bodyContentType == eBodyContentType.FreeText)
+            {
                 xBodyContentTypeFreeTextContainer.Visibility = Visibility.Visible;
+            }
             else if (bodyContentType == eBodyContentType.HTMLReport)
+            {
                 xBodyContentTypeHTMLReportContainer.Visibility = Visibility.Visible;
+            }
         }
 
         private void SetMaxBodyCharCount(int maxBodyCharCount)
         {
             if (maxBodyCharCount <= 0 || maxBodyCharCount == int.MaxValue)
+            {
                 return;
+            }
 
             xBodyFreeTextVE.ValueTextBox.MaxLength = maxBodyCharCount;
             xMaxBodyLengthLabel.Content = $"(upto {maxBodyCharCount} characters)";
@@ -171,10 +177,14 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             xAttachmentsTab.Visibility = Visibility.Visible;
             SetAttachmentsGridViewDef(options);
 
-            if(options.SupportedAttachmentTypes.Contains(eAttachmentType.HTMLReport))
+            if (options.SupportedAttachmentTypes.Contains(eAttachmentType.HTMLReport))
+            {
                 xAttachmentsGrid.AddToolbarTool("@AddHTMLReport_16x16.png", "Add Report", TriggerHTMLReportAddedEvent);
-            if(options.SupportedAttachmentTypes.Contains(eAttachmentType.File))
+            }
+            if (options.SupportedAttachmentTypes.Contains(eAttachmentType.File))
+            {
                 xAttachmentsGrid.AddToolbarTool("@AddScript_16x16.png", "Add File", TriggerFileAddedEvent);
+            }
         }
 
         private void SetAttachmentsGridViewDef(Options options)
@@ -260,7 +270,7 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
         private void InitializeHasAttachmentsComboBoxItems()
         {
             xHasAttachmentsComboBox.BindControl(Enum.GetValues<EmailReadFilters.eHasAttachmentsFilter>());
-            xHasAttachmentsComboBox.SelectionChanged += (sender, e) => TriggerHasAttachmentsSelectionChanged();
+            xHasAttachmentsComboBox.SelectionChanged += (_, _) => TriggerHasAttachmentsSelectionChanged();
         }
 
         private void TriggerHasAttachmentsSelectionChanged()
@@ -275,7 +285,9 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             bool doesNotContainDefaultBodyContentType = !supportedBodyContentType.Contains(defaultBodyContentType);
 
             if (supportsOnlyOneBodyContentType || doesNotContainDefaultBodyContentType)
+            {
                 return;
+            }
 
             switch(defaultBodyContentType)
             {
@@ -299,7 +311,9 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
         private void ChangeDetailContainerVisibility()
         {
             if (xSendDetailContainer == null || xReadDetailContainer == null)
+            {
                 return;
+            }
 
             if (xActionTypeSendRadioButton.IsChecked ?? false)
             {
@@ -318,9 +332,13 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             ActeMail.eEmailActionType selectedActionType = default;
 
             if (xActionTypeSendRadioButton.IsChecked ?? false)
+            {
                 selectedActionType = ActeMail.eEmailActionType.SendEmail;
+            }
             else if (xActionTypeReadRadioButton.IsChecked ?? false)
+            {
                 selectedActionType = ActeMail.eEmailActionType.ReadEmail;
+            }
 
             ActionTypeChanged?.Invoke(selectedActionType);
         }
@@ -355,12 +373,18 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
         private void ChangeFromDisplayFieldVisibility()
         {
             if (!mIsDisplayNameFieldEnabled)
+            {
                 return;
+            }
 
             if (xEmailMethodSMTP.IsSelected)
+            {
                 xFromDisplayContainer.Visibility = Visibility.Visible;
+            }
             else
+            {
                 xFromDisplayContainer.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void TriggerEmailMethodChangedEvent()
@@ -370,15 +394,17 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             EmailMethodChanged?.Invoke(selectedEmailMethod);
         }
 
-        private void xNameVEButton_Click(object sender, RoutedEventArgs e)
+        private void xAttachmentNameVEButton_Click(object sender, RoutedEventArgs e)
         {
-            NameValueExpressionButtonClick?.Invoke(sender, e);
+            AttachmentNameVEButtonClick?.Invoke(sender, e);
         }
 
         private string Encrypt(string value)
         {
             if (EncryptionHandler.IsStringEncrypted(value))
+            {
                 return value;
+            }
 
             return EncryptionHandler.EncryptwithKey(value);
         }

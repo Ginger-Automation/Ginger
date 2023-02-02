@@ -163,7 +163,7 @@ namespace Ginger.Actions.Communication
             xSendEMailConfigView.xFilterAttachmentContentTypeVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterAttachmentContentType));
             xSendEMailConfigView.xDownloadAttachmentYesRadioButton.IsChecked = mAct.DownloadAttachments;
             xSendEMailConfigView.xDownloadAttachmentNoRadioButton.IsChecked = !mAct.DownloadAttachments;
-            xSendEMailConfigView.xDownloadAttachmentYesRadioButton.Checked += (sender, e) => 
+            xSendEMailConfigView.xDownloadAttachmentYesRadioButton.Checked += (_, _) => 
                 mAct.DownloadAttachments = xSendEMailConfigView.xDownloadAttachmentYesRadioButton.IsChecked ?? false;
             xSendEMailConfigView.xAttachmentDownloadPathVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.AttachmentDownloadPath));
             BindingHandler.ObjFieldBinding(xSendEMailConfigView.xFilterReceivedStartDateTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.FilterReceivedStartDate));
@@ -173,7 +173,7 @@ namespace Ginger.Actions.Communication
 
             xSendEMailConfigView.AddFileAttachment += xSendEMailConfigView_FileAdded;
             xSendEMailConfigView.EmailMethodChanged += xSendEMailConfigView_EmailMethodChanged;
-            xSendEMailConfigView.NameValueExpressionButtonClick += xSendEMailConfigView_NameValueExpressionButtonClick;
+            xSendEMailConfigView.AttachmentNameVEButtonClick += xSendEMailConfigView_NameValueExpressionButtonClick;
             xSendEMailConfigView.ActionTypeChanged += xSendEMailConfigView_ActionTypeChanged;
             xSendEMailConfigView.HasAttachmentsSelectionChanged += xSendEMailConfigView_HasAttachmentsSelectionChanged;
         }
@@ -183,18 +183,24 @@ namespace Ginger.Actions.Communication
             foreach(ComboEnumItem item in comboBox.Items)
             {
                 if (predicate(item))
+                {
                     return item;
+                }
             }
 
-            return null;
+            return null!;
         }
 
         private void xFilterFolderRadioButton_SelectionChanged(object sender, RoutedEventArgs e)
         {
             if (xSendEMailConfigView.xFilterFolderAllRadioButton.IsChecked ?? false)
+            {
                 mAct.FilterFolder = EmailReadFilters.eFolderFilter.All;
+            }
             else if (xSendEMailConfigView.xFilterFolderSpecificRadioButton.IsChecked ?? false)
+            {
                 mAct.FilterFolder = EmailReadFilters.eFolderFilter.Specific;
+            }
         }
 
         private void xSendEMailConfigView_ActionTypeChanged(ActeMail.eEmailActionType selectedActionType)
@@ -206,7 +212,7 @@ namespace Ginger.Actions.Communication
         {
             Attachment currentItem = (Attachment)xSendEMailConfigView.xAttachmentsGrid.CurrentItem;
             int index = mAttachments.IndexOf(currentItem);
-            ValueExpressionEditorPage veEditorPage = new(currentItem, nameof(Attachment.Name), null);
+            ValueExpressionEditorPage veEditorPage = new(currentItem, nameof(Attachment.Name), Context.GetAsContext(mAct.Context));
             veEditorPage.ShowAsWindow();
             mAttachments.RemoveAt(index);
             mAttachments.Insert(index, currentItem);
@@ -249,7 +255,9 @@ namespace Ginger.Actions.Communication
                 set
                 {
                     if (value == filename)
+                    {
                         return;
+                    }
                     filename = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
                 }

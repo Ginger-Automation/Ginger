@@ -7,7 +7,7 @@ using Amdocs.Ginger.Common;
 
 namespace GingerCore.GeneralLib
 {
-    public struct EmailReadFilters
+    public struct EmailReadFilters : IEquatable<EmailReadFilters>
     {
         public enum eFolderFilter
         {
@@ -38,5 +38,10 @@ namespace GingerCore.GeneralLib
         public string AttachmentDownloadPath { get; set; }
         public DateTime ReceivedStartDate { get; set; }
         public DateTime ReceivedEndDate { get; set; }
+
+        public bool Equals(EmailReadFilters other)
+        {
+            return base.Equals(other);
+        }
     }
 }
