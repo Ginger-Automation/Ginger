@@ -84,6 +84,11 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
         {
             InitializeComponent();
             AddEncryptionHandlerForPasswordControls();
+            xFilterReceivedEndDateVEEditorButton.Click += (sender, e) =>
+            {
+                ValueExpressionEditorPage veEditorPage = new(xFilterReceivedEndDateTextBox, nameof(TextBox.Text), null);
+                veEditorPage.ShowAsWindow();
+            };
         }
 
         private void AddEncryptionHandlerForPasswordControls()
@@ -91,11 +96,6 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             xSMTPPasswordTextBox.LostFocus += (sender, e) => xSMTPPasswordTextBox.Text = Encrypt(xSMTPPasswordTextBox.Text);
             xCertificatePasswordTextBox.LostFocus += (sender, e) => xCertificatePasswordTextBox.Text = Encrypt(xCertificatePasswordTextBox.Text);
             xUserPasswordTextBox.LostFocus += (sender, e) => xUserPasswordTextBox.Text = Encrypt(xUserPasswordTextBox.Text);
-            xUserPasswordVEEditorButton.Click += (sender, e) =>
-            {
-                ValueExpressionEditorPage veEditorPage = new(xUserPasswordTextBox, nameof(TextBox.Text), null);
-                veEditorPage.ShowAsWindow();
-            };
         }
 
         public void Initialize(Options options)
@@ -428,16 +428,44 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             }
         }
 
-        private void xReceivedStartDateDatePicker_TextChanged(object sender, EventArgs e)
+        //private void xReceivedStartDateDatePicker_TextChanged(object sender, EventArgs e)
+        //{
+        //    DateTime dateTime = new(xReceivedStartDateDatePicker.Value.Ticks, DateTimeKind.Local);
+        //    xFilterReceivedStartDateVE.ValueTextBox.Text = dateTime.ToString("yyyy-MM-ddTHH:mm:ssK");
+        //}
+
+        //private void xReceivedEndDateDatePicker_TextChanged(object sender, EventArgs e)
+        //{
+        //    DateTime dateTime = new(xReceivedEndDateDatePicker.Value.Ticks, DateTimeKind.Local);
+        //    xFilterReceivedEndDateTextBox.Text = dateTime.ToString("yyyy-MM-ddTHH:mm:ssK");
+        //}
+
+        private void xFilterReceivedStartDateVEEditorButton_Click(object sender, RoutedEventArgs e)
         {
-            DateTime dateTime = new(xReceivedStartDateDatePicker.Value.Ticks, DateTimeKind.Local);
-            xFilterReceivedStartDateVE.ValueTextBox.Text = dateTime.ToString("yyyy-MM-ddTHH:mm:ssK");
+            ValueExpressionEditorPage veEditorPage = new(xFilterReceivedStartDateTextBox, nameof(TextBox.Text), null);
+            veEditorPage.ShowAsWindow();
         }
 
-        private void xReceivedEndDateDatePicker_TextChanged(object sender, EventArgs e)
+        private void xReceivedStartDateDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-            DateTime dateTime = new(xReceivedEndDateDatePicker.Value.Ticks, DateTimeKind.Local);
-            xFilterReceivedEndDateVE.ValueTextBox.Text = dateTime.ToString("yyyy-MM-ddTHH:mm:ssK");
+            DateTime selectedDate = xReceivedStartDateDatePicker.SelectedDate ?? DateTime.Now;
+            DateTime dateTime = new(selectedDate.Ticks, DateTimeKind.Local);
+
+            xFilterReceivedStartDateTextBox.Text = dateTime.ToString("yyyy-MM-ddTHH:mm:ssK");
+        }
+
+        private void xFilterReceivedEndDateVEEditorButton_Click(object sender, RoutedEventArgs e)
+        {
+            ValueExpressionEditorPage veEditorPage = new(xFilterReceivedEndDateTextBox, nameof(TextBox.Text), null);
+            veEditorPage.ShowAsWindow();
+        }
+
+        private void xReceivedEndDateDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            DateTime selectedDate = xReceivedEndDateDatePicker.SelectedDate ?? DateTime.Now;
+            DateTime dateTime = new(selectedDate.Ticks, DateTimeKind.Local);
+
+            xFilterReceivedEndDateTextBox.Text = dateTime.ToString("yyyy-MM-ddTHH:mm:ssK");
         }
     }
 }

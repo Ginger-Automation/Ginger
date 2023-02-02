@@ -165,8 +165,10 @@ namespace Ginger.Actions.Communication
             xSendEMailConfigView.xDownloadAttachmentYesRadioButton.Checked += (sender, e) => 
                 mAct.DownloadAttachments = xSendEMailConfigView.xDownloadAttachmentYesRadioButton.IsChecked ?? false;
             xSendEMailConfigView.xAttachmentDownloadPathVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.AttachmentDownloadPath));
-            xSendEMailConfigView.xFilterReceivedStartDateVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterReceivedStartDate));
-            xSendEMailConfigView.xFilterReceivedEndDateVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterReceivedEndDate));
+            //xSendEMailConfigView.xFilterReceivedStartDateVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterReceivedStartDate));
+            BindingHandler.ObjFieldBinding(xSendEMailConfigView.xFilterReceivedStartDateTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.FilterReceivedStartDate));
+            //xSendEMailConfigView.xFilterReceivedEndDateVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterReceivedEndDate));
+            BindingHandler.ObjFieldBinding(xSendEMailConfigView.xFilterReceivedEndDateTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.FilterReceivedEndDate));
 
             xSendEMailConfigView.xAttachmentsGrid.DataSourceList = mAttachments;
 
