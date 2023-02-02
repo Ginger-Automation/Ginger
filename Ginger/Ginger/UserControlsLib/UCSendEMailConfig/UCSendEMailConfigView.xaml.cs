@@ -426,18 +426,6 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             }
         }
 
-        //private void xReceivedStartDateDatePicker_TextChanged(object sender, EventArgs e)
-        //{
-        //    DateTime dateTime = new(xReceivedStartDateDatePicker.Value.Ticks, DateTimeKind.Local);
-        //    xFilterReceivedStartDateVE.ValueTextBox.Text = dateTime.ToString("yyyy-MM-ddTHH:mm:ssK");
-        //}
-
-        //private void xReceivedEndDateDatePicker_TextChanged(object sender, EventArgs e)
-        //{
-        //    DateTime dateTime = new(xReceivedEndDateDatePicker.Value.Ticks, DateTimeKind.Local);
-        //    xFilterReceivedEndDateTextBox.Text = dateTime.ToString("yyyy-MM-ddTHH:mm:ssK");
-        //}
-
         private void xFilterReceivedStartDateVEEditorButton_Click(object sender, RoutedEventArgs e)
         {
             ValueExpressionEditorPage veEditorPage = new(xFilterReceivedStartDateTextBox, nameof(TextBox.Text), mContext!);

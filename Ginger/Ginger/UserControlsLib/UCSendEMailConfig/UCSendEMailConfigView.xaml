@@ -352,9 +352,6 @@
                                         </Style>
                                     </DatePicker.Resources>
                                 </DatePicker>
-                                <!--<window:WindowsFormsHost Grid.Column="1" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Margin="2,0,0,0" Width="24">
-                                    <wf:DateTimePicker  x:Name="xReceivedStartDateDatePicker" TextChanged="xReceivedStartDateDatePicker_TextChanged" Format="Custom" Width="24"/>
-                                </window:WindowsFormsHost>-->
                                 <Button x:Name="xFilterReceivedStartDateVEEditorButton" Grid.Column="2" Click="xFilterReceivedStartDateVEEditorButton_Click" Content="..." VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="2,0,0,0" />
                             </Grid>
                             <Label Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" Content="End:"/>
@@ -373,9 +370,6 @@
                                         </Style>
                                     </DatePicker.Resources>
                                 </DatePicker>
-                                <!--<window:WindowsFormsHost Grid.Column="1" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Margin="2,0,0,0" Width="24">
-                                    <wf:DateTimePicker x:Name="xReceivedEndDateDatePicker" TextChanged="xReceivedEndDateDatePicker_TextChanged" Format="Custom" Width="24"/>
-                                </window:WindowsFormsHost>-->
                                 <Button x:Name="xFilterReceivedEndDateVEEditorButton" Grid.Column="2" Click="xFilterReceivedEndDateVEEditorButton_Click" Content="..." VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="2,0,0,0" />
                             </Grid>
                         </Grid>
