@@ -664,9 +664,6 @@ namespace GingerCore.Actions.Communication
 
         private EmailReadFilters CreateEmailReadFilters()
         {
-            ProjEnvironment projEnvironment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment;
-            ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-
             string calculatedFolderName = GetInputParamCalculatedValue(nameof(FilterFolderName));
             string calculatedFrom = GetInputParamCalculatedValue(nameof(FilterFrom));
             string calculatedTo = GetInputParamCalculatedValue(nameof(FilterTo));
@@ -707,9 +704,6 @@ namespace GingerCore.Actions.Communication
 
         private MSGraphConfig CreateMSGraphConfig()
         {
-            ProjEnvironment projEnvironment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment;
-            ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-
             string calculatedUserEmail = GetInputParamCalculatedValue(nameof(ReadUserEmail));
             string calculatedUserPassword = GetInputParamCalculatedValue(nameof(ReadUserPassword));
             if (EncryptionHandler.IsStringEncrypted(calculatedUserPassword))
