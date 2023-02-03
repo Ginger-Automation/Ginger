@@ -48,7 +48,9 @@ namespace GingerCore.GeneralLib
 
             IEnumerable<string> expectedRecipients = null;
             if (!string.IsNullOrEmpty(filters.To))
+            {
                 expectedRecipients = filters.To.Split(";", StringSplitOptions.RemoveEmptyEntries);
+            }
             PageIterator<Message> messageIterator = PageIterator<Message>.CreatePageIterator(
                 graphServiceClient,
                 messages,
@@ -331,9 +333,13 @@ namespace GingerCore.GeneralLib
         private Task<MailFolder> GetFolderByName(GraphServiceClient graphServiceClient, string folderName, MailFolder parentFolder = null)
         {
             if (parentFolder == null)
+            {
                 return GetUserMailFolderByName(graphServiceClient, folderName);
+            }
             else
+            {
                 return GetChildMailFolderByName(graphServiceClient, folderName, parentFolder);
+            }
         }
 
         private async Task<MailFolder> GetUserMailFolderByName(GraphServiceClient graphServiceClient, string folderName)
