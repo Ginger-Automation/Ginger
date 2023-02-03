@@ -15,13 +15,13 @@ namespace GingerCore.GeneralLib
 {
     public sealed class EmailReadOperations : IEmailReadOperations
     {
-        private static readonly IEnumerable<string> Scopes = new string[]
+        private static readonly IEnumerable<string> Scopes = new[]
         {
             "email",
             "offline_access",
             "https://graph.microsoft.com/Mail.Read"
         };
-        private static readonly IEnumerable<string> SelectedMessageFields = new string[]
+        private static readonly IEnumerable<string> SelectedMessageFields = new[]
         {
             "from",
             "body",
@@ -325,6 +325,11 @@ namespace GingerCore.GeneralLib
             for(int index = 0; index < folderNames.Count(); index++)
             {
                 currentFolder = await GetFolderByName(graphServiceClient, folderNames.ElementAt(index), currentFolder);
+            }
+
+            if(currentFolder == null)
+            {
+                throw new InvalidOperationException($"No user folder found by name {aggregatedFolderName}");
             }
 
             return currentFolder.Id;
