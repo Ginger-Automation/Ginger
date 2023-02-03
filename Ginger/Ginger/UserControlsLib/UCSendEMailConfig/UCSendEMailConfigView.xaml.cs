@@ -358,18 +358,14 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
 
         private void TriggerAddFileAttachmentEvent(object sender, RoutedEventArgs e)
         {
-            if (AddFileAttachment != null)
-            {
-                AddFileAttachment(sender, e);
-            }
+            RoutedEventHandler? handler = AddFileAttachment;
+            handler?.Invoke(sender, e);
         }
 
         private void TriggerAddHTMLReportAttachmentEvent(object sender, RoutedEventArgs e)
         {
-            if (AddHTMLReportAttachment != null)
-            {
-                AddHTMLReportAttachment(sender, e);
-            }
+            RoutedEventHandler? handler = AddHTMLReportAttachment;
+            handler?.Invoke(sender, e);
         }
 
         private void xEmailMethod_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -404,10 +400,8 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
 
         private void xAttachmentNameVEButton_Click(object sender, RoutedEventArgs e)
         {
-            if (AttachmentNameVEButtonClick != null)
-            {
-                AttachmentNameVEButtonClick(sender, e);
-            }
+            RoutedEventHandler? handler = AttachmentNameVEButtonClick;
+            handler?.Invoke(sender, e);
         }
 
         private string Encrypt(string value)

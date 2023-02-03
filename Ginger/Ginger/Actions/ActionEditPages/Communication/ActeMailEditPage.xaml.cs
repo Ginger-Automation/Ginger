@@ -262,10 +262,7 @@ namespace Ginger.Actions.Communication
                     }
                     filename = value;
                     PropertyChangedEventHandler? handler = PropertyChanged;
-                    if (handler != null)
-                    {
-                        handler(this, new PropertyChangedEventArgs(nameof(Name)));
-                    }
+                    handler?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
                 }
             }
             public Attachment(string filename)
