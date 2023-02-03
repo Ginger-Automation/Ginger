@@ -261,9 +261,10 @@ namespace Ginger.Actions.Communication
                         return;
                     }
                     filename = value;
-                    if (PropertyChanged != null)
+                    PropertyChangedEventHandler? handler = PropertyChanged;
+                    if (handler != null)
                     {
-                        PropertyChanged(this, new PropertyChangedEventArgs(nameof(Name)));
+                        handler(this, new PropertyChangedEventArgs(nameof(Name)));
                     }
                 }
             }

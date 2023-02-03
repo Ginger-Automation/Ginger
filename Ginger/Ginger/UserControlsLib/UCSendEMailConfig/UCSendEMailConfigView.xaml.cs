@@ -181,11 +181,11 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
 
             if (options.SupportedAttachmentTypes.Contains(eAttachmentType.HTMLReport))
             {
-                xAttachmentsGrid.AddToolbarTool("@AddHTMLReport_16x16.png", "Add Report", TriggerHTMLReportAddedEvent);
+                xAttachmentsGrid.AddToolbarTool("@AddHTMLReport_16x16.png", "Add Report", TriggerAddHTMLReportAttachmentEvent);
             }
             if (options.SupportedAttachmentTypes.Contains(eAttachmentType.File))
             {
-                xAttachmentsGrid.AddToolbarTool("@AddScript_16x16.png", "Add File", TriggerFileAddedEvent);
+                xAttachmentsGrid.AddToolbarTool("@AddScript_16x16.png", "Add File", TriggerAddFileAttachmentEvent);
             }
         }
 
@@ -356,7 +356,7 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             return boolean ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private void TriggerFileAddedEvent(object sender, RoutedEventArgs e)
+        private void TriggerAddFileAttachmentEvent(object sender, RoutedEventArgs e)
         {
             if (AddFileAttachment != null)
             {
@@ -364,7 +364,7 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             }
         }
 
-        private void TriggerHTMLReportAddedEvent(object sender, RoutedEventArgs e)
+        private void TriggerAddHTMLReportAttachmentEvent(object sender, RoutedEventArgs e)
         {
             if (AddHTMLReportAttachment != null)
             {
