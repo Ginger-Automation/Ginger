@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using SkiaSharp.Views.Desktop;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
@@ -26,6 +27,7 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralFunctions;
 using GingerCore.GeneralLib;
+using SkiaSharp;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -871,6 +873,58 @@ namespace GingerCore
             return imagePaths;
         }
 
+        public static Bitmap GetBrowserHeaderScreenshot(System.Drawing.Point windowPosition, System.Drawing.Size windowSize, System.Drawing.Size viewportSize, double devicePixelRatio)
+        {
+            Bitmap browserHeaderScreenshot = new((int)(windowSize.Width * devicePixelRatio), (int)((windowSize.Height - viewportSize.Height) * devicePixelRatio));
+            using (Graphics graphics = Graphics.FromImage(browserHeaderScreenshot))
+            {
+                System.Drawing.Point upperLeftSource = new((int)(windowPosition.X * devicePixelRatio), (int)(windowPosition.Y * devicePixelRatio));
+                System.Drawing.Point upperLeftDestination = new(x: 0, y: 0);
+                graphics.CopyFromScreen(upperLeftSource, upperLeftDestination, browserHeaderScreenshot.Size);
+            }
+            return browserHeaderScreenshot;
+        }
+
+        public static Bitmap GetTaskbarScreenshot()
+        {
+            System.Windows.Forms.Screen primaryScreen = System.Windows.Forms.Screen.PrimaryScreen;
+            Bitmap taskbarScreenshot = new(primaryScreen.Bounds.Width, primaryScreen.Bounds.Height - primaryScreen.WorkingArea.Height);
+            using(Graphics graphics = Graphics.FromImage(taskbarScreenshot))
+            {
+                System.Drawing.Point upperLeftSource = new(x: 0, y: primaryScreen.WorkingArea.Height);
+                System.Drawing.Point uppderLeftDestination = new(x: 0, y: 0);
+                graphics.CopyFromScreen(upperLeftSource, uppderLeftDestination, taskbarScreenshot.Size);
+            }
+            return taskbarScreenshot;
+        }
+
+        public static string MergeVerticallyAndSaveBitmaps(params Bitmap[] bitmaps)
+        {
+            IEnumerable<SKBitmap> skBitmaps = bitmaps.Select(bitmap => bitmap.ToSKBitmap());
+            return MergeVerticallyAndSaveBitmaps(skBitmaps);
+        }
+
+        private static string MergeVerticallyAndSaveBitmaps(IEnumerable<SKBitmap> bitmaps)
+        {
+            int maxWidth = bitmaps.Max(skBitmap => skBitmap.Width);
+            int mergedHeight = bitmaps.Aggregate(0, (totalHeight, skBitmap) => totalHeight + skBitmap.Height);
+
+            SKBitmap mergedBitmap = new(maxWidth, mergedHeight);
+            using SKCanvas canvas = new(mergedBitmap);
+            int currentDrawnHeight = 0;
+            foreach (SKBitmap bitmap in bitmaps)
+            {
+                float drawingXCoordinate = (float)(maxWidth - bitmap.Width) / 2;
+                float drawingYCoordinate = currentDrawnHeight;
+
+                canvas.DrawBitmap(bitmap, drawingXCoordinate, drawingYCoordinate);
+
+                currentDrawnHeight += bitmap.Height;
+            }
+
+            string filePath = BitmapImageToFile(mergedBitmap.ToBitmap());
+            return filePath;
+        }
 
         /// <summary>
         /// Replaces invalid XML characters in a string with their valid XML equivalent.
@@ -1146,6 +1200,11 @@ namespace GingerCore
                 Reporter.ToLog(eLogLevel.WARN, "Configuration package not exist in solution, Settings not exist at: " + Path.Combine(PackagePath, settingsFolder));
             }
             return false;
+        }
+
+        public static string GetClipboardText()
+        {
+            return Clipboard.GetText();
         }
 
     }

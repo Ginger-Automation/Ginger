@@ -23,6 +23,7 @@ using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,7 +50,7 @@ namespace Ginger.Agents
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)
             {
-                handler(this, new PropertyChangedEventArgs(name));                
+                handler(this, new PropertyChangedEventArgs(name));
             }
         }
 
@@ -73,7 +74,7 @@ namespace Ginger.Agents
         }
 
         public static readonly DependencyProperty SelectedAgentProperty = DependencyProperty.Register("SelectedAgent", typeof(Agent), typeof(ucAgentControl), new PropertyMetadata(null, new PropertyChangedCallback(OnSelectedAgentChanged)));
-      
+
 
         public Agent SelectedAgent
         {
@@ -96,7 +97,7 @@ namespace Ginger.Agents
                 OnPropertyChanged(nameof(SelectedAgent));
                 OnPropertyChanged(nameof(AgentIsRunning));
             }
-           
+
         }
         private static void OnSelectedAgentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -114,12 +115,12 @@ namespace Ginger.Agents
                     return null;
             }
         }
-        
+
         public bool AgentIsRunning
         {
             get
             {
-                if(SelectedAgent != null && ((AgentOperations)SelectedAgent.AgentOperations).Status == Agent.eStatus.Running)
+                if (SelectedAgent != null && ((AgentOperations)SelectedAgent.AgentOperations).Status == Agent.eStatus.Running)
                     return true;
                 else
                     return false;
@@ -146,9 +147,9 @@ namespace Ginger.Agents
                     SelectedAgent = mOptionalAgentsList[0];
                 }
             }
-            
+
             SetAgentStatusView();
-        }       
+        }
 
         private void xAgentsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -178,24 +179,26 @@ namespace Ginger.Agents
         }
 
         private void SetAgentStatusView()
-        { 
+        {
             if (SelectedAgent == null)
-            {                
+            {
                 xAgentStatusBtn.ButtonImageForground = Brushes.Gray;
                 xAgentStatusBtn.ToolTip = "Please select Agent";
+                xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.ToggleOff;
                 xAgentConfigsExpander.Visibility = Visibility.Collapsed;
                 xAgentConfigsExpander.IsEnabled = false;
                 xAgentConfigurationsGrid.IsEnabled = false;
                 return;
-            }         
+            }
 
-            switch(((AgentOperations)SelectedAgent.AgentOperations).Status)
+            switch (((AgentOperations)SelectedAgent.AgentOperations).Status)
             {
                 case Agent.eStatus.FailedToStart:
                 case Agent.eStatus.NotStarted:
                     xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Power;
                     xAgentStatusBtn.ButtonImageForground = Brushes.Red;
                     xAgentStatusBtn.ToolTip = "Agent is Off, click to turn it On";
+                    xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.ToggleOff;
                     xAgentConfigsExpander.Visibility = Visibility.Collapsed;
                     xAgentConfigsExpander.IsEnabled = false;
                     xAgentConfigurationsGrid.IsEnabled = false;
@@ -203,8 +206,9 @@ namespace Ginger.Agents
 
                 case Agent.eStatus.Starting:
                     xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
-                    xAgentStatusBtn.ButtonImageForground = Brushes.Orange;                    
+                    xAgentStatusBtn.ButtonImageForground = Brushes.Orange;
                     xAgentStatusBtn.ToolTip = "Agent is starting...";
+                    xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.ToggleOff;
                     xAgentConfigsExpander.Visibility = Visibility.Collapsed;
                     xAgentConfigsExpander.IsEnabled = false;
                     xAgentConfigurationsGrid.IsEnabled = false;
@@ -214,8 +218,9 @@ namespace Ginger.Agents
                 case Agent.eStatus.Ready:
                 case Agent.eStatus.Running:
                     xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Power;
-                    xAgentStatusBtn.ButtonImageForground = Brushes.Green;                   
+                    xAgentStatusBtn.ButtonImageForground = Brushes.Green;
                     xAgentStatusBtn.ToolTip = "Agent is On, click to turn it Off";
+                    xAgentStatusBtn.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.ToggleOn;
                     xAgentConfigsExpander.Visibility = Visibility.Visible;
                     xAgentConfigsExpander.IsEnabled = true;
                     xAgentConfigurationsGrid.IsEnabled = true;
@@ -225,7 +230,7 @@ namespace Ginger.Agents
             GingerCore.General.DoEvents();
         }
 
-        private void xAgentStatusBtn_Click(object sender, RoutedEventArgs e)
+        private async void xAgentStatusBtn_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedAgent == null) return;
 
@@ -234,8 +239,11 @@ namespace Ginger.Agents
                 case Agent.eStatus.FailedToStart:
                 case Agent.eStatus.NotStarted:
                     Reporter.ToStatus(eStatusMsgKey.StartAgent, null, SelectedAgent.Name, "");
-                    if (((AgentOperations)SelectedAgent.AgentOperations).Status == Agent.eStatus.Running) SelectedAgent.AgentOperations.Close();
-                    SelectedAgent.SolutionFolder =  WorkSpace.Instance.Solution.Folder;
+                    if (((AgentOperations)SelectedAgent.AgentOperations).Status == Agent.eStatus.Running)
+                    {
+                        SelectedAgent.AgentOperations.Close();
+                    }
+                    SelectedAgent.SolutionFolder = WorkSpace.Instance.Solution.Folder;
                     SelectedAgent.ProjEnvironment = null;// App.AutomateTabEnvironment;
                     SelectedAgent.BusinessFlow = null; //App.BusinessFlow; ;                    
                     SelectedAgent.DSList = null; //WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
@@ -243,7 +251,9 @@ namespace Ginger.Agents
                     Reporter.HideStatusMessage();
                     //If there is errorMessageFromDriver is populated then do not wait. 
                     if (((AgentOperations)SelectedAgent.AgentOperations).Driver != null && String.IsNullOrEmpty(((AgentOperations)SelectedAgent.AgentOperations).Driver.ErrorMessageFromDriver))
+                    {
                         SelectedAgent.AgentOperations.WaitForAgentToBeReady();
+                    }
                     Agent.eStatus Status = ((AgentOperations)SelectedAgent.AgentOperations).Status;
                     if (Status != Agent.eStatus.Running && Status != Agent.eStatus.Starting)
                     {
@@ -334,4 +344,27 @@ namespace Ginger.Agents
             IWindowExplorerDriver.SwitchWindow(page.Title);
         }
     }
+
+    //public class AgentStatusColorTypeConverter : IValueConverter
+    //{
+    //    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        switch ((Agent.eStatus)value)
+    //        {
+    //            case Agent.eStatus.Running:
+    //                return (SolidColorBrush)(new BrushConverter().ConvertFrom("#109717"));//green
+
+    //            case Agent.eStatus.Starting:
+    //                return (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC268"));//yellow
+
+    //            default:
+    //                return (SolidColorBrush)(new BrushConverter().ConvertFrom("#DC3812"));//red
+    //        }
+    //    }
+
+    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 }

@@ -1,9 +1,10 @@
-    <Page x:Class="Ginger.Actions.ActMobileDeviceEditPage"
+<Page x:Class="Ginger.Actions.ActMobileDeviceEditPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:UserControlsLib1="clr-namespace:Ginger.UserControlsLib" xmlns:Actions="clr-namespace:Ginger.Activities"
+      xmlns:UserControlsLib1="clr-namespace:Ginger.UserControlsLib" xmlns:Activities="clr-namespace:Ginger.Activities"
+        xmlns:Actions="clr-namespace:Ginger.Actions"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
 	Title="ActMobileDeviceEditPage">
@@ -28,9 +29,17 @@
 
         <StackPanel x:Name="xXY2Pnl" HorizontalAlignment="Left" Orientation="Horizontal"  DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed">
             <Label Style="{StaticResource $LabelStyle}" Content="X:" Margin="0 0 0 0"/>
-            <Actions:UCValueExpression x:Name="xX2TxtBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" />
+            <Activities:UCValueExpression x:Name="xX2TxtBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" />
             <Label Style="{StaticResource $LabelStyle}" Content="Y:" Margin="10 0 0 0"/>
-            <Actions:UCValueExpression x:Name="xY2TxtBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100"/>
+            <Activities:UCValueExpression x:Name="xY2TxtBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100"/>
+        </StackPanel>
+
+        <StackPanel x:Name="xPhotoSimulationPnl" HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed">
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal"  DockPanel.Dock="Top">
+                <Label Style="{StaticResource $LabelStyle}" Content="Choose Photo:" Margin="0 0 0 0"/>
+                <Actions:UCValueExpression x:Name="xPhotoSumilationTxtBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="600" />
+            </StackPanel>
+            <Frame x:Name="SimulatedPhotoFrame" Background="White" Margin="-5,5,0,0" Width="670" Height="470"></Frame>
         </StackPanel>
 
     </DockPanel>

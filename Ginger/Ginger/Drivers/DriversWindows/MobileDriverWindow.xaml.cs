@@ -195,6 +195,11 @@ namespace Ginger.Drivers.DriversWindows
                 calcHeight = 0 - calcHeight;
             }
             xHighlighterBorder.Height = calcHeight;
+            if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
+            {
+                xHighlighterBorder.Width = xHighlighterBorder.Width / 1.65;
+                xHighlighterBorder.Height = xHighlighterBorder.Height / 1.5;
+            }
             xHighlighterBorder.Visibility = Visibility.Visible;
         }
 
@@ -1107,6 +1112,11 @@ namespace Ginger.Drivers.DriversWindows
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Operation failed, Error: " + ex.Message);
             }
         }
+
+        private void xClearHighlightsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            UnHighlightElementEvent();
+        }
         #endregion Events
 
 
@@ -1268,6 +1278,7 @@ namespace Ginger.Drivers.DriversWindows
                     return false;
                 }
 
+                UnHighlightElementEvent();
                 int waitingRatio = 1;
                 if (mDeviceAutoScreenshotRefreshMode != eAutoScreenshotRefreshMode.Live)
                 {
@@ -1387,8 +1398,8 @@ namespace Ginger.Drivers.DriversWindows
 
                 if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS) // && mDriver.GetAppType() == eAppType.NativeHybride)
                 {
-                    ratio_X = (xDeviceScreenshotImage.Source.Width / 2) / xDeviceScreenshotImage.ActualWidth;
-                    ratio_Y = (xDeviceScreenshotImage.Source.Height / 2) / xDeviceScreenshotImage.ActualHeight;
+                    ratio_X = (xDeviceScreenshotImage.Source.Width) / xDeviceScreenshotImage.ActualWidth;
+                    ratio_Y = (xDeviceScreenshotImage.Source.Height) / xDeviceScreenshotImage.ActualHeight;
                 }
                 else
                 {
@@ -1445,6 +1456,7 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     RefreshDeviceScreenshotAsync(100);
                 }
+                UnHighlightElementEvent();
             }
             catch (Exception ex)
             {

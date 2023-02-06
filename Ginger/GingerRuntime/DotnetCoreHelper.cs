@@ -41,6 +41,7 @@ using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Drawing;
 using System.Linq;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
@@ -246,6 +247,21 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         }
 
         public Dictionary<string, string> TakeDesktopScreenShot(bool v)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Bitmap GetBrowserHeaderScreenshot(Point windowPosition, Size windowSize, Size viewportSize, double devicePixelRatio)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Bitmap GetTaskbarScreenshot()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string MergeVerticallyAndSaveBitmaps(params Bitmap[] bitmaps)
         {
             throw new NotImplementedException();
         }

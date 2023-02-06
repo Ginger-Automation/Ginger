@@ -34,12 +34,8 @@ using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Media;
 
 namespace GingerWPF.BusinessFlowsLib
@@ -84,6 +80,15 @@ namespace GingerWPF.BusinessFlowsLib
             mPageViewMode = pageViewMod;
             SetUIView();
            
+        }
+
+        private void SetIconImageType()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xIconImage.ImageType = Activity.TargetApplicationPlatformImage;
+                xIconImage.ToolTip = Activity.TargetApplicationPlatformName;
+            });
         }
 
         public void SetUIElementsBehaverBasedOnRunnerStatus(bool IsRunning)
@@ -168,6 +173,7 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.ToolTipProperty, mActivity, nameof(Activity.ActivityName));
             mActivity.PropertyChanged -= mActivity_PropertyChanged;
             mActivity.PropertyChanged += mActivity_PropertyChanged;
+            SetIconImageType();
             UpdateDescription();
             //xSharedRepoInstanceUC.Init(mActivity, mContext.BusinessFlow);
 
@@ -347,6 +353,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void mActivity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            SetIconImageType();
             UpdateDescription();
         }
 
@@ -546,14 +553,14 @@ namespace GingerWPF.BusinessFlowsLib
             mGenericWin.Close();
         }
 
-        private async void SharedRepoSaveBtn_Click(object sender, RoutedEventArgs e)
+        private void SharedRepoSaveBtn_Click(object sender, RoutedEventArgs e)
         {
             if (mPageViewMode == Ginger.General.eRIPageViewMode.SharedReposiotry)
             {
                 if (SharedRepositoryOperations.CheckIfSureDoingChange(mActivity, "change") == true)
                 {
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivity);
-                    await SharedRepositoryOperations.UpdateLinkedInstances(mActivity); 
+                    //await SharedRepositoryOperations.UpdateLinkedInstances(mActivity); //this method is already being called from Activity.PostSaveHandler
                     mSaveWasDone = true;
                     mGenericWin.Close();
                 }

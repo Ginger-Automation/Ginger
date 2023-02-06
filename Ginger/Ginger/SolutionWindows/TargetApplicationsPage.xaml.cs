@@ -29,9 +29,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Castle.Components.DictionaryAdapter;
-using DocumentFormat.OpenXml.Office.CustomUI;
-using System.Windows.Controls.Primitives;
 
 namespace Ginger.SolutionWindows
 {
@@ -41,6 +38,7 @@ namespace Ginger.SolutionWindows
     public partial class TargetApplicationsPage : GingerUIPage
     {
         Solution mSolution;
+        string AppName;
 
         public TargetApplicationsPage()
         {
@@ -68,11 +66,10 @@ namespace Ginger.SolutionWindows
             xTargetApplicationsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Application, "Target Applications", saveAllHandler: SaveHandler, addHandler: AddApplication, true);
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            //List<string> platformesTypesList = GingerCore.General.GetEnumValues(typeof(ePlatformType));
-            //view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 15, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = platformesTypesList });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 15, ReadOnly=true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.AppName), Header = "Name", WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Description), Header = "Description", WidthWeight = 40 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 15, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.CoreVersion), Header = "Version", WidthWeight = 15 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Guid), Header = "ID", WidthWeight = 15, ReadOnly = true });
 
@@ -89,7 +86,16 @@ namespace Ginger.SolutionWindows
         }
         public bool NameAlreadyExists(string value)
         {
-            return WorkSpace.Instance.Solution.ApplicationPlatforms.Any(x => x.AppName == value);
+            if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(obj => obj.AppName == value).FirstOrDefault() == null)
+            {
+                return false; //no name like it in the group 
+            }
+            List<ApplicationPlatform> sameNameObjList = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(obj => obj.AppName == value).ToList<ApplicationPlatform>();
+            if (sameNameObjList.Count == 1 && sameNameObjList[0].AppName == value)
+            {
+                return false; //Same internal object 
+            }
+            return true;
         }
         private void LoadGridData()
         {
@@ -131,21 +137,23 @@ namespace Ginger.SolutionWindows
             AAP.ShowAsWindow();
         }
 
-        private void ApplicationGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
+        private void ApplicationGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e) 
         {
-            if (e.Column.DisplayIndex == 0)//App Name Column
-            {
-                ApplicationPlatform currentApp = (ApplicationPlatform)xTargetApplicationsGrid.CurrentItem;
-                currentApp.NameBeforeEdit = currentApp.AppName;
+            if (e.Column.DisplayIndex == 1)//App Name Column 
+            { 
+                ApplicationPlatform currentApp = (ApplicationPlatform)xTargetApplicationsGrid.CurrentItem; 
+                currentApp.NameBeforeEdit = currentApp.AppName; 
+                AppName = currentApp.NameBeforeEdit;
             }
         }
         private ObservableList<ApplicationPlatform> Applications;
         private void ApplicationGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            //Validate the name of the App is unique
-            if (e.Column.DisplayIndex == 1)//App Name Column
+            //Validate the name of the App is unique 
+            if (e.Column.DisplayIndex == 1)//App Name Column 
             {
                 ApplicationPlatform currentApp = (ApplicationPlatform)xTargetApplicationsGrid.CurrentItem;
+                currentApp.NameBeforeEdit = AppName;
                 mSolution.SetUniqueApplicationName(currentApp);
 
                 if (currentApp.AppName != currentApp.NameBeforeEdit)
@@ -161,7 +169,7 @@ namespace Ginger.SolutionWindows
                         return ;
                     }
                     UpdateApplicationNameChangeInSolution(currentApp);
-                }                    
+                }
             }
         }
 
@@ -175,24 +183,28 @@ namespace Ginger.SolutionWindows
 
             foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
             {
-                //update the BF target applications
-                foreach (TargetApplication bfApp in bf.TargetApplications)
+                //update the BF target applications 
+                foreach (var bfApp in bf.TargetApplications)
                 {
-                    if (bfApp.AppName == app.NameBeforeEdit)
-                    {                        
-                        bfApp.AppName = app.AppName;
-
-                        //update the bf activities
-                        foreach (Activity activity in bf.Activities)
+                    //donot check for TargetPlugins, only for TargetApplications 
+                    if (bfApp.GetType() == typeof(TargetApplication))
+                    {
+                        if (((TargetApplication)bfApp).AppName == app.NameBeforeEdit)
                         {
-                            if (activity.TargetApplication == app.NameBeforeEdit)
-                            {
-                                activity.TargetApplication = app.AppName;
-                            }
-                        }
+                            ((TargetApplication)bfApp).AppName = app.AppName;
 
-                        numOfAfectedBFs++;
-                        break;
+                            //update the bf activities 
+                            foreach (Activity activity in bf.Activities)
+                            {
+                                if (activity.TargetApplication == app.NameBeforeEdit)
+                                {
+                                    activity.TargetApplication = app.AppName;
+                                }
+                            }
+
+                            numOfAfectedBFs++;
+                            break;
+                        }
                     }
                 }
             }

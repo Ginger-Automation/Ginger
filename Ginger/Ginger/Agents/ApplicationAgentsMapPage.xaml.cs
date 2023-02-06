@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.UserControls;
 using Ginger.Run;
@@ -40,7 +41,7 @@ namespace Ginger.Agents
     /// Interaction logic for ApplicationAgentsMapPage.xaml
     /// </summary>
     public partial class ApplicationAgentsMapPage : Page
-    {        
+    {
         public ObservableList<ApplicationAgent> ApplicationAgents;
         GingerExecutionEngine mRunner;
         Context mContext;
@@ -52,7 +53,7 @@ namespace Ginger.Agents
             get { return xAppAgentsListBox; }
         }
 
-        public ApplicationAgentsMapPage(GingerExecutionEngine runner, Context context, bool allowAgentsManipulation=true)
+        public ApplicationAgentsMapPage(GingerExecutionEngine runner, Context context, bool allowAgentsManipulation = true)
         {
             InitializeComponent();
             mRunner = runner;
@@ -67,7 +68,7 @@ namespace Ginger.Agents
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xKeepAgentsOn, CheckBox.IsCheckedProperty, mRunner.GingerRunner, nameof(GingerRunner.KeepAgentsOn));
                 xKeepAgentsOn.Visibility = Visibility.Visible;
             }
-            
+
             RefreshApplicationAgentsList();
         }
 
@@ -101,28 +102,43 @@ namespace Ginger.Agents
             });
         }
 
-        private void xStartCloseAgentBtn_Click(object sender, RoutedEventArgs e)
+        private async void xStartCloseAgentBtn_Click(object sender, RoutedEventArgs e)
         {
             if (AllowAgentsManipulation)
             {
-                ApplicationAgent AG = (ApplicationAgent)((ucButton)sender).DataContext;
-                Agent agent = ((Agent)AG.Agent);
-                if (((AgentOperations)agent.AgentOperations).Status != Agent.eStatus.Running)
+                try
                 {
-                    //start Agent
-                    Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
-                    ((Agent)AG.Agent).ProjEnvironment = mContext.Environment;
-                    ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow;
-                    ((Agent)AG.Agent).SolutionFolder = WorkSpace.Instance.Solution.Folder;
-                    ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-                    ((Agent)AG.Agent).AgentOperations.StartDriver();
+                    ApplicationAgent AG = (ApplicationAgent)((ucButton)sender).DataContext;
+                    Agent agent = ((Agent)AG.Agent);
+                    if (((AgentOperations)agent.AgentOperations).Status != Agent.eStatus.Running)
+                    {
+                        //start Agent
+                        Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
+
+                        ((Agent)AG.Agent).ProjEnvironment = mContext.Environment;
+                        ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow;
+                        ((Agent)AG.Agent).SolutionFolder = WorkSpace.Instance.Solution.Folder;
+                        ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+                        await System.Threading.Tasks.Task.Run(() =>
+                        {
+                            ((Agent)AG.Agent).AgentOperations.StartDriver();
+                        });
+                    }
+                    else
+                    {
+                        //close Agent
+                        Reporter.ToStatus(eStatusMsgKey.StopAgent, null, AG.AgentName, AG.AppName);
+                        await System.Threading.Tasks.Task.Run(() =>
+                        {
+                            agent.AgentOperations.Close();
+                        });
+                    }
+                }
+                finally
+                {
                     Reporter.HideStatusMessage();
                 }
-                else
-                {
-                    //close Agent
-                    agent.AgentOperations.Close();
-                }
+
             }
         }
 
@@ -151,7 +167,7 @@ namespace Ginger.Agents
                 }
             }
         }
-       
+
     }
 
     public class AgentForgroundTypeConverter : IValueConverter
@@ -178,13 +194,13 @@ namespace Ginger.Agents
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            switch((Agent.eStatus)value)
+            switch ((Agent.eStatus)value)
             {
                 case Agent.eStatus.Running:
                     return (SolidColorBrush)(new BrushConverter().ConvertFrom("#109717"));//green
 
                 case Agent.eStatus.Starting:
-                    return (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC268"));//orange
+                    return (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC268"));//yellow
 
                 default:
                     return (SolidColorBrush)(new BrushConverter().ConvertFrom("#DC3812"));//red
@@ -231,6 +247,29 @@ namespace Ginger.Agents
 
                 default:
                     return "Agent is Not Running, Click to Start it";
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class AgentStartImageTypeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            switch ((Agent.eStatus)value)
+            {
+                case Agent.eStatus.Running:
+                    return eImageType.ToggleOn;
+
+                case Agent.eStatus.Starting:
+                    return eImageType.ToggleOff;
+
+                default:
+                    return eImageType.ToggleOff;
             }
         }
 

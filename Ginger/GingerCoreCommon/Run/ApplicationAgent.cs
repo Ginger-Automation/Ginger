@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
@@ -76,6 +77,50 @@ namespace GingerCore.Platforms
                 }
             }
         }
+
+        ApplicationPlatform mAppPlatform = null;
+        public ApplicationPlatform AppPlatform
+        {
+            get
+            {
+                if (mAppPlatform == null)
+                {
+                    mAppPlatform = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == AppName).FirstOrDefault();
+                }
+                return mAppPlatform;
+            }
+        }
+
+        public eImageType AppPlatformImage
+        {
+            get
+            {
+                if (AppPlatform != null)
+                {
+                    return AppPlatform.PlatformImage;
+                }
+                else
+                {
+                    return eImageType.Null;
+                }
+            }
+        }
+
+        public string AppPlatformName
+        {
+            get
+            {
+                if (AppPlatform != null)
+                {
+                    return AppPlatform.Platform.ToString();
+                }
+                else
+                {
+                    return ePlatformType.NA.ToString();
+                }
+            }
+        }
+
 
         // No need to serialized as it used only in runtime        
         public Agent Agent
