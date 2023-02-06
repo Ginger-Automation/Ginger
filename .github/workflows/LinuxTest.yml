@@ -78,10 +78,15 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Run Standalone CLI Test
 # ------------------------------------------------------------------------------------------------------          
-#       - name: Run Standalone CLI Test
-#         if: success() || failure()        # run this step even if previous step failed
-#         run: |
-#           pwd 
-#           ls -alt
-#           chmod +x CLITestsGithub.sh
-#           ./CLITestsGithub.sh
+      - name: Run Standalone CLI Test
+        if: success() || failure()        # run this step even if previous step failed
+        shell: bash
+        run: |
+          pwd 
+          ls -alt
+          chmod +x CLITestsGithub.sh
+          sudo apt install dos2unix
+          dos2unix -b CLITestsGithub.sh
+          ./CLITestsGithub.sh
+          
+          
