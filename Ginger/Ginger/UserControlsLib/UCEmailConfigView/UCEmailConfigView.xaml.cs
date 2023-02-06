@@ -23,7 +23,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Ginger.UserControlsLib.UCSendEMailConfig
+namespace Ginger.UserControlsLib.UCEmailConfigView
 {
     public enum eBodyContentType
     {
@@ -40,9 +40,9 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
     }
 
     /// <summary>
-    /// Interaction logic for UCSendEMailConfigView.xaml
+    /// Interaction logic for UCEmailConfigView.xaml
     /// </summary>
-    public partial class UCSendEMailConfigView : UserControl
+    public partial class UCEmailConfigView : UserControl
     {
         public class Options
         {
@@ -82,7 +82,7 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
         public event RoutedEventHandler? AddHTMLReportAttachment;
         public event RoutedEventHandler? AttachmentNameVEButtonClick;
 
-        public UCSendEMailConfigView()
+        public UCEmailConfigView()
         {
             InitializeComponent();
             AddEncryptionHandlerForPasswordControls();
@@ -138,7 +138,7 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
             foreach (eBodyContentType bodyContentType in supportedBodyContentTypes)
             {
                 contentTypeRadioButtonMap[bodyContentType].Visibility = Visibility.Visible;
-                if(!isDefaultValueSet)
+                if (!isDefaultValueSet)
                 {
                     contentTypeRadioButtonMap[bodyContentType].IsChecked = true;
                 }
@@ -211,42 +211,42 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
                 });
             }
 
-            gridColsView.Add(new GridColView() 
-            { 
-                Header = "Name", 
-                Field = bindingMap.Name, 
+            gridColsView.Add(new GridColView()
+            {
+                Header = "Name",
+                Field = bindingMap.Name,
                 WidthWeight = 200
             });
 
-            gridColsView.Add(new GridColView() 
-            { 
-                Field = "...", 
-                Header = "...", 
+            gridColsView.Add(new GridColView()
+            {
+                Field = "...",
+                Header = "...",
                 WidthWeight = 20,
-                StyleType = GridColView.eGridColStyleType.Template, 
-                CellTemplate = (DataTemplate)xAttachmentsTab.Resources["NameVEButtonCellTemplate"] 
+                StyleType = GridColView.eGridColStyleType.Template,
+                CellTemplate = (DataTemplate)xAttachmentsTab.Resources["NameVEButtonCellTemplate"]
             });
 
             if (isExtraInformationAllowed)
             {
-                gridColsView.Add(new GridColView() 
-                { 
-                    Header = "Extra Information", 
-                    Field = bindingMap.ExtraInformation, 
-                    WidthWeight = 250 
+                gridColsView.Add(new GridColView()
+                {
+                    Header = "Extra Information",
+                    Field = bindingMap.ExtraInformation,
+                    WidthWeight = 250
                 });
             }
 
             if (isZippedAttachmentAllowed)
             {
-                gridColsView.Add(new GridColView() 
-                { 
-                    Header = "Zipped", 
-                    Field = bindingMap.Zipped, 
-                    WidthWeight = 50, 
-                    HorizontalAlignment = HorizontalAlignment.Center, 
-                    StyleType = GridColView.eGridColStyleType.Template, 
-                    CellTemplate = (DataTemplate)xAttachmentsTab.Resources["ZippedCellTemplate"] 
+                gridColsView.Add(new GridColView()
+                {
+                    Header = "Zipped",
+                    Field = bindingMap.Zipped,
+                    WidthWeight = 50,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    StyleType = GridColView.eGridColStyleType.Template,
+                    CellTemplate = (DataTemplate)xAttachmentsTab.Resources["ZippedCellTemplate"]
                 });
             }
 
@@ -256,7 +256,7 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
 
         private void SetDefaultEmailMethod(Email.eEmailMethod defaultEmailMethod)
         {
-            switch(defaultEmailMethod)
+            switch (defaultEmailMethod)
             {
                 case Email.eEmailMethod.SMTP:
                     xEmailMethodSMTP.IsSelected = true;
@@ -291,7 +291,7 @@ namespace Ginger.UserControlsLib.UCSendEMailConfig
                 return;
             }
 
-            switch(defaultBodyContentType)
+            switch (defaultBodyContentType)
             {
                 case eBodyContentType.FreeText:
                     xBodyContentTypeFreeTextRadioButton.IsChecked = true;

@@ -4,11 +4,11 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:solutioncategory="clr-namespace:Amdocs.Ginger.CoreNET.Run.SolutionCategory;assembly=GingerCoreCommon" 
-      xmlns:ucsendemailconfig="clr-namespace:Ginger.UserControlsLib.UCSendEMailConfig" 
+      xmlns:ucemailconfig="clr-namespace:Ginger.UserControlsLib.UCEmailConfigView" 
       d:DataContext="{d:DesignInstance Type=solutioncategory:SolutionCategory}"
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="300"
 	Title="ActeMailEditPage">
 
-    <ucsendemailconfig:UCSendEMailConfigView x:Name="xSendEMailConfigView"/>
+    <ucemailconfig:UCEmailConfigView x:Name="xEmailConfigView"/>
 </Page>
