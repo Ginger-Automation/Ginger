@@ -61,7 +61,7 @@ jobs:
 # Publish GingerRuntime
 # ------------------------------------------------------------------------------------------------------
       - name: 'Publish GingerRuntime'
-        if: ${{github.event_name == 'workflow_dispatch' }}
+        if: ${{github.event_name == 'Ginger Linux Test' }}
         run: dotnet publish  Ginger/GingerRuntime -c Release
           
 # ------------------------------------------------------------------------------------------------------
