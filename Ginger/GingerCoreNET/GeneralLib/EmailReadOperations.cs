@@ -1,5 +1,6 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Azure.Identity;
 using GingerCore.DataSource;
 using GingerCore.Environments;
