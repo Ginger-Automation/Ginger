@@ -100,7 +100,7 @@
             <TextBlock x:Name="xDescriptionTextBlock"  Grid.Column="0" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Activity Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontSize="16" Style="{StaticResource $TextBlockStyle}"/>
             <Ginger:ucSharedRepoInstance x:Name="xSharedRepoInstanceUC" Grid.Column="1" HorizontalAlignment="Right"/>
         </Grid>-->
-        <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1"  Grid.Column="0" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Activity Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontSize="16" Style="{StaticResource $TextBlockStyle}"/>
+        <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1"  Grid.Column="0" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Activity Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontSize="13" Style="{StaticResource $TextBlockStyle}"/>
 
         <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="XItemsTabs_SelectionChanged">
             <TabItem x:Name="xActionsTab"  Style="{StaticResource $CoolTab}" TabIndex="1">
