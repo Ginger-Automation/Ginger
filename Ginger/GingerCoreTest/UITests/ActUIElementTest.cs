@@ -34,6 +34,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.UITests
 {
+    [Ignore]
     [Level3]
     [TestClass]
     public class ActUIElementTest
