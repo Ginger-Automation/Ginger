@@ -137,7 +137,7 @@
                 </DockPanel>
             </ScrollViewer>
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                <TextBlock x:Name="xDescriptionTextBlock"  TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Runset Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontSize="16" Style="{StaticResource $TextBlockStyle}"/>
+                <TextBlock x:Name="xDescriptionTextBlock"  TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Runset Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontSize="13" Style="{StaticResource $TextBlockStyle}"/>
             </ScrollViewer>
 
 
