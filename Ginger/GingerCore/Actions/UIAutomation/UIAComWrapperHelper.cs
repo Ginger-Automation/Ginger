@@ -4630,9 +4630,16 @@ namespace GingerCore.Drivers
         
         public override Bitmap GetAppWindowAsBitmap(AppWindow aw)  //******************        
         {
-            UIAuto.AutomationElement tempWindow = (UIAuto.AutomationElement)((UIAElementInfo)aw.RefObject).ElementObject;
-            Bitmap bmp = WindowToBitmap(tempWindow);
-            return bmp;
+            try
+            {
+                UIAuto.AutomationElement tempWindow = (UIAuto.AutomationElement)((UIAElementInfo)aw.RefObject).ElementObject;
+                Bitmap bmp = WindowToBitmap(tempWindow);
+                return bmp;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
 
         public override List<Bitmap> GetAppDialogAsBitmap(AppWindow aw)  ///********

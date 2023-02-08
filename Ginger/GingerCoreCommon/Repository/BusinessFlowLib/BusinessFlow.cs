@@ -342,6 +342,23 @@ namespace GingerCore
         [IsSerializedForLocalRepository]
         public ObservableList<TargetBase> TargetApplications = new ObservableList<TargetBase>();
 
+        public ObservableList<ApplicationPlatform> TargetApplicationPlatforms
+        {
+            get
+            {
+                ObservableList<ApplicationPlatform> appsPlatform = new ObservableList<ApplicationPlatform>();
+                foreach (TargetBase target in TargetApplications)
+                {
+                    ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == target.Name).FirstOrDefault();
+                    if (appPlat != null)
+                    {
+                        appsPlatform.Add(appPlat);
+                    }
+                }
+                return appsPlatform;
+            }
+        }
+
         private Activity mCurrentActivity { get; set; }
 
         public bool disableChangeonClick = true;

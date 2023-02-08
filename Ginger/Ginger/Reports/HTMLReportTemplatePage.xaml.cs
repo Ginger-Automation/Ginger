@@ -254,6 +254,8 @@ namespace Ginger.Reports
             htmlShowFirstIterationOffRadioBtn.IsChecked = !_HTMLReportConfiguration.ShowAllIterationsElements;
             htmlUseLocalStoredStylingOnRadioBtn.IsChecked = _HTMLReportConfiguration.UseLocalStoredStyling;
             htmlUseLocalStoredStylingOffRadioBtn.IsChecked = !_HTMLReportConfiguration.UseLocalStoredStyling;
+            xIgnoreSkippedEntitiesYesRadioBtn.IsChecked = _HTMLReportConfiguration.IgnoreSkippedEntities;
+            xIgnoreSkippedEntitiesNoRadioBtn.IsChecked = !_HTMLReportConfiguration.IgnoreSkippedEntities;
             SetControlsEvents();
 
             switch ((HTMLReportConfiguration.ReportsLevel)Enum.Parse(typeof(HTMLReportConfiguration.ReportsLevel), _HTMLReportConfiguration.ReportLowerLevelToShow))
@@ -675,6 +677,17 @@ namespace Ginger.Reports
         {
             _HTMLReportConfiguration.ExecutionStatisticsCountBy = HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions;
         }
+
+        private void xIgnoreSkippedEntitiesYesRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            _HTMLReportConfiguration.IgnoreSkippedEntities = true;
+        }
+
+        private void xIgnoreSkippedEntitiesNoRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            _HTMLReportConfiguration.IgnoreSkippedEntities = false;
+        }
+
         private void SelectHTMLReportsImageFolderButton_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog();

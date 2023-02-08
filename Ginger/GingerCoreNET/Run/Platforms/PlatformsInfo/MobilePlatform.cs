@@ -178,7 +178,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
             learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Very Recommended (usually unique)" });
             learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Recommended (sensitive to page design changes)" });
-
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByTagName, Help = "Recommended" });
             return learningLocatorsList;
         }
 

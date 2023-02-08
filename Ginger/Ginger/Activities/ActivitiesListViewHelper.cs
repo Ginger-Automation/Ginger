@@ -184,12 +184,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemIconField()
         {
-            return nameof(RepositoryItemBase.ItemImageType);
+            return nameof(Activity.TargetApplicationPlatformImage);
         }
 
         public string GetItemIconTooltipField()
         {
-            return nameof(Activity.ActivityType);
+            return nameof(Activity.TargetApplicationPlatformName);
         }
 
         public List<ListItemOperation> GetListOperations()

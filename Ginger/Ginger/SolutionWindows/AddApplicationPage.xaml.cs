@@ -76,11 +76,11 @@ namespace Ginger.SolutionWindows
             SelectApplicationGrid.ShowUpDown = System.Windows.Visibility.Collapsed;
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.AppName), Header = "Application", WidthWeight = 60 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Core), WidthWeight = 60 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.CoreVersion), WidthWeight = 20 });      
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Description), WidthWeight = 60 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 40 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.AppName), Header = "Name", WidthWeight = 60 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Description), WidthWeight = 60 });
+            
             SelectApplicationGrid.SetAllColumnsDefaultView(view);
             SelectApplicationGrid.InitViewItems();
         }

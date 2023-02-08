@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Data.Common;
 using Amdocs.Ginger.CoreNET.Drivers.WebServicesDriver;
 using Ginger.Repository;
+using System.Drawing;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
@@ -175,6 +176,21 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
 
         public bool ExportVirtualBusinessFlowToALM(BusinessFlow businessFlow, PublishToALMConfig publishToALMConfig, bool performSaveAfterExport = false, ALMIntegrationEnums.eALMConnectType almConnectStyle = ALMIntegrationEnums.eALMConnectType.Silence, string testPlanUploadPath = null, string testLabUploadPath = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Bitmap GetBrowserHeaderScreenshot(Point windowPosition, Size windowSize, Size viewportSize, double devicePixelRatio)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Bitmap GetTaskbarScreenshot()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string MergeVerticallyAndSaveBitmaps(params Bitmap[] bitmaps)
         {
             throw new NotImplementedException();
         }

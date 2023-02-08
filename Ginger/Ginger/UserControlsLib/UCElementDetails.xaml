@@ -45,8 +45,8 @@
 
         <Grid.RowDefinitions>
             <RowDefinition x:Name="xTitleSection" Height="0"/>
-            <RowDefinition MaxHeight="100" />
-            <RowDefinition Height="1*" />
+            <RowDefinition Height="50*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -59,7 +59,7 @@
 
         <Frame x:Name="xElementScreenShotFrameTop" Visibility="Collapsed" Grid.Column="0" Grid.Row="1" Margin="5,0,0,0" MaxHeight="100" VerticalAlignment="Top"></Frame>
 
-        <TabControl x:Name="xElementDetailsTabs" Grid.Row="2" Grid.Column="0" Margin="5,5,0,0" HorizontalAlignment="Stretch" SelectionChanged="ElementDetailsTabs_SelectionChanged" >
+        <TabControl x:Name="xElementDetailsTabs" Grid.Row="2" Grid.Column="0" Margin="5,5,0,0" HorizontalAlignment="Stretch" SelectionChanged="ElementDetailsTabs_SelectionChanged" Height="Auto" >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
@@ -121,15 +121,15 @@
                             <CheckBox x:Name="xIntegratePOMChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10" Style="{StaticResource $CeckBoxStyle}" 
                                       Content="Integrate POM" IsChecked="{x:Null}" Checked="xIntegratePOMChkBox_Checked" Unchecked="xIntegratePOMChkBox_Unchecked" >
                             </CheckBox>
-                            <Frame x:Name="xPOMSelectionFrame" Visibility="Visible" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,5,0,0"/>
-                            <StackPanel Orientation="Horizontal" x:Name="xPOMOperationsPanel" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center">
-                                <CheckBox x:Name="xAutoSavePOMChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" 
+                            <Frame x:Name="xPOMSelectionFrame" Visibility="Visible" VerticalAlignment="Center" MaxWidth="300" HorizontalAlignment="Left" Margin="0,5,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" x:Name="xPOMOperationsPanel" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center">
+                            <CheckBox x:Name="xAutoSavePOMChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" 
                                       Style="{StaticResource $CeckBoxStyle}" Content="Auto Save" IsChecked="False">
-                                </CheckBox>
-                                <CheckBox x:Name="xAutoUpdatePOMElementChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" 
+                            </CheckBox>
+                            <CheckBox x:Name="xAutoUpdatePOMElementChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" 
                                       Style="{StaticResource $CeckBoxStyle}" Content="Auto Update" IsChecked="False">
-                                </CheckBox>
-                            </StackPanel>
+                            </CheckBox>
                         </StackPanel>
 
                         <DockPanel x:Name="xAddRunOperationPanel" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center" >

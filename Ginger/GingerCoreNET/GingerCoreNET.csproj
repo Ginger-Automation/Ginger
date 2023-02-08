@@ -222,6 +222,8 @@
   
     <PackageReference Include="Appium.WebDriver" Version="5.0.0-beta01" />
   
+    <PackageReference Include="Azure.Identity" Version="1.8.1" />
+  
     <PackageReference Include="CassandraCSharpDriver" Version="3.10.0" />
   
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
@@ -266,6 +268,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.7.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.7.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Graph" Version="4.51.0" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.8.1" />
     <PackageReference Include="MySql.Data" Version="8.0.16" />

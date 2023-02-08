@@ -62,6 +62,7 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -103,6 +104,12 @@ namespace Amdocs.Ginger.CoreNET
         public eDevicePlatformType DevicePlatformType { get; set; }
 
         [UserConfigured]
+        [UserConfiguredEnumType(typeof(eDeviceSource))]
+        [UserConfiguredDefault("LocalAppium")]
+        [UserConfiguredDescription("Device Source is Local Appium or UFTM Mobile Lab")]
+        public eDevicePlatformType DeviceSource { get; set; }
+
+        [UserConfigured]
         [UserConfiguredEnumType(typeof(eAppType))]
         [UserConfiguredDefault("NativeHybride")]
         [UserConfiguredDescription("The tested application type 'NativeHybride' or 'Web'")]
@@ -123,6 +130,16 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Determine if auto set the default capabilities based on OS and application type selection")]
         public bool AutoSetCapabilities { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Set UFTM Server capabilities autumatically")]
+        public bool UFTMServerCapabilities { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Set UFTM simulations automatically")]
+        public bool UFTMSupportSimulationsCapabiliy { get; set; }
 
         [UserConfigured]
         [UserConfiguredMultiValues]
@@ -981,6 +998,26 @@ namespace Amdocs.Ginger.CoreNET
                             act.AddOrUpdateReturnParamActual(entry.Key, entry.Value.ToString());
                         }
                         break;
+                    case ActMobileDevice.eMobileDeviceAction.SimulatePhoto:
+                        string photoString = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).ValueForDriver);
+                        Bitmap picture = null;
+                        if (isValidPhotoExtention(photoString))
+                        {
+                            picture = new Bitmap(photoString);
+                            string photoSimulation = CameraSimulation(picture, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
+                            if (photoSimulation != "success")
+                            {
+                                act.Error = "An Error occured during camera simulation. Error: " + photoSimulation;
+                            }
+                        }
+                        else
+                        {
+                            act.Error = "File is not supported. Upload a supported file to use Camera simulation";
+                        }
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.StopSimulatePhotoOrVideo:
+                        CameraSimulation(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
+                        break;
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
                 }
@@ -989,6 +1026,44 @@ namespace Amdocs.Ginger.CoreNET
             {
                 act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
             }
+        }
+
+        public bool isValidPhotoExtention(string photo)
+        {
+            if (string.IsNullOrEmpty(photo))
+            {
+                return false;
+            }
+            string extention = photo.Substring(photo.LastIndexOf('.') + 1);
+            if (extention == "jpg" || extention == "jpeg" || extention == "png")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public string CameraSimulation(Bitmap picture, ImageFormat format, string contentType, string fileName, string action)
+        {
+            MemoryStream ms = new MemoryStream();
+            string encodeString = "0";
+            if (picture != null)
+            {
+                picture.Save(ms, format);
+                Byte[] bytes = ms.ToArray();
+                encodeString = Convert.ToBase64String(bytes);
+            }
+            Dictionary<string, string> sensorSimulationMap = new Dictionary<string, string>
+            {
+                { "uploadMedia", encodeString },
+                { "contentType", contentType },
+                { "fileName", fileName },
+                { "action", action }
+            };
+
+            string simulationResult = JsonConvert.SerializeObject(Driver.ExecuteScript("mc:sensorSimulation", sensorSimulationMap));
+            return JToken.Parse(simulationResult)["message"].ToString();
         }
 
         private string DictionaryToString(Dictionary<string, string> dict)
@@ -1527,7 +1602,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 mSeleniumDriver.ExtraLocatorsRequired = !(pomSetting.relativeXpathTemplateList == null || pomSetting.relativeXpathTemplateList.Count == 0);
 
-                return await Task.Run(() => ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(pomSetting,foundElementsList));
+                return await Task.Run(() => ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(pomSetting, foundElementsList));
             }
 
             try
@@ -1871,11 +1946,11 @@ namespace Amdocs.Ginger.CoreNET
             return xmlNode.Attributes[attr].Value;
         }
 
-        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo,PomSetting pomSetting = null)
+        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
             if (AppType == eAppType.Web)
             {
-                return ((IWindowExplorer)mSeleniumDriver).GetElementLocators(ElementInfo,pomSetting);
+                return ((IWindowExplorer)mSeleniumDriver).GetElementLocators(ElementInfo, pomSetting);
             }
 
             ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
@@ -2353,7 +2428,7 @@ namespace Amdocs.Ginger.CoreNET
             IsSpying = true;
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI,PomSetting pomSetting = null)
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting = null)
         {
             if (AppType == eAppType.Web)
             {
@@ -2705,8 +2780,8 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     else
                     {
-                        ratio_X = (SrcWidth / 2) / ActWidth;
-                        ratio_Y = (SrcHeight / 2) / ActHeight;
+                        ratio_X = SrcWidth / ActWidth;
+                        ratio_Y = SrcHeight / ActHeight;
                     }
 
                     break;
@@ -2744,7 +2819,7 @@ namespace Amdocs.Ginger.CoreNET
                         ratio_X = SrcWidth / ActWidth;
                         ratio_Y = SrcHeight / ActHeight;
 
-                        string bounds = rectangleXmlNode != null ? rectangleXmlNode.Attributes["bounds"].Value : "";
+                        string bounds = rectangleXmlNode != null ? (rectangleXmlNode.Attributes["bounds"] != null ? rectangleXmlNode.Attributes["bounds"].Value : "") : "";
                         bounds = bounds.Replace("[", ",");
                         bounds = bounds.Replace("]", ",");
                         string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -2775,8 +2850,11 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     else
                     {
-                        ratio_X = (SrcWidth / 2) / ActWidth;
-                        ratio_Y = (SrcHeight / 2) / ActHeight;
+                        if (AutoCorrectRectPropRequired)
+                            AutoCorrectRectProp = 2;
+
+                        ratio_X = (SrcWidth / AutoCorrectRectProp) / ActWidth;
+                        ratio_Y = (SrcHeight / AutoCorrectRectProp) / ActHeight;
 
                         string x = GetAttrValue(rectangleXmlNode, "x");
                         string y = GetAttrValue(rectangleXmlNode, "y");
@@ -2785,9 +2863,6 @@ namespace Amdocs.Ginger.CoreNET
 
                         ElementStartPoints.X = (int)(Convert.ToInt32(x) / ratio_X);
                         ElementStartPoints.Y = (int)(Convert.ToInt32(y) / ratio_Y);
-
-                        if (AutoCorrectRectPropRequired)
-                            AutoCorrectRectProp = 2;
 
                         ElementMaxPoints.X = ElementStartPoints.X + (Convert.ToInt32(wdth) * AutoCorrectRectProp);
                         ElementMaxPoints.Y = ElementStartPoints.Y + (Convert.ToInt32(hgt) * AutoCorrectRectProp);

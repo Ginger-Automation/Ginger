@@ -25,6 +25,7 @@ using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Variables;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
@@ -345,6 +346,40 @@ namespace GingerCore
                 {
                     mTargetApplication = value;
                     OnPropertyChanged(nameof(TargetApplication));
+                    OnPropertyChanged(nameof(TargetApplicationPlatformImage));
+                    OnPropertyChanged(nameof(TargetApplicationPlatformName));
+                }
+            }
+        }
+
+        public eImageType TargetApplicationPlatformImage
+        {
+            get
+            {
+                ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == TargetApplication).FirstOrDefault();
+                if (appPlat != null)
+                {
+                    return appPlat.PlatformImage;
+                }
+                else
+                {
+                    return eImageType.Null;
+                }
+            }
+        }
+
+        public string TargetApplicationPlatformName
+        {
+            get
+            {
+                ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == TargetApplication).FirstOrDefault();
+                if (appPlat != null)
+                {
+                    return appPlat.Platform.ToString();
+                }
+                else
+                {
+                    return ePlatformType.NA.ToString();
                 }
             }
         }
