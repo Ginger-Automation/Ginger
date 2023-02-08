@@ -183,7 +183,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             ListItemOperation ViewLinkedInstances = new ListItemOperation();
             ViewLinkedInstances.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromModel };
             ViewLinkedInstances.AutomationID = "HighlightElement";
-            ViewLinkedInstances.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Pointer;
+            ViewLinkedInstances.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Visible;
             ViewLinkedInstances.ToolTip = "Highlight Element";
             ViewLinkedInstances.OperationHandler = HighlightElementClicked;
             operationsList.Add(ViewLinkedInstances);
