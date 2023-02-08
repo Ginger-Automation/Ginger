@@ -868,7 +868,7 @@ namespace GingerCore.ALM.RQM
             IProjectDefinitions currentProj = rqmProjectsDataList.Where(prj => prj.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName)).FirstOrDefault();
             string rqmDomain = currentProj.Prefix;
             string rqmProject = currentProj.ProjectName;
-
+            string rqmProjectGuid = currentProj.Guid;
             //------------------------------- Improved solution
 
             string baseUri_ = string.Empty;
@@ -884,7 +884,7 @@ namespace GingerCore.ALM.RQM
                 //TODO: Populate list fields with CategoryTypes
                 populatedValue = "Starting fields retrieve process... ";
                 bw.ReportProgress(totalValues, populatedValue);
-                RqmResponseData categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + rqmDomain + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + rqmProject + "/categoryType"));
+                RqmResponseData categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + rqmDomain + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + rqmProjectGuid + "/categoryType"));
                 XmlDocument categoryTypeList = new XmlDocument();
 
 
@@ -985,9 +985,9 @@ namespace GingerCore.ALM.RQM
                                 string categoryTypeItemType = string.Empty; //-->itemfield.ItemType
                                 string categoryTypeMandatory = string.Empty; // --> itemfield.Mandatory & initial value for : --> itemfield.ToUpdate
 
-                                string typeIdentifier = categoryTypeListing.GetElementsByTagName("ns3:identifier").Item(0).InnerText;
+                                string typeIdentifier = categoryTypeListing.GetElementsByTagName("ns4:identifier").Item(0).InnerText;
                                 categoryTypeID = typeIdentifier.Substring(typeIdentifier.LastIndexOf(':') + 1);
-                                categoryTypeName = categoryTypeListing.GetElementsByTagName("ns3:title").Item(0).InnerText;
+                                categoryTypeName = categoryTypeListing.GetElementsByTagName("ns4:title").Item(0).InnerText;
                                 categoryTypeItemType = categoryTypeListing.GetElementsByTagName("ns2:scope").Item(0).InnerText;
                                 categoryTypeMandatory = categoryTypeListing.GetElementsByTagName("ns2:required").Item(0).InnerText;
 
@@ -1060,9 +1060,9 @@ namespace GingerCore.ALM.RQM
                             string categoryTypeItemType = string.Empty; //-->itemfield.ItemType
                             string categoryTypeMandatory = string.Empty; // --> itemfield.Mandatory & initial value for : --> itemfield.ToUpdate
 
-                            string typeIdentifier = categoryTypeListing.GetElementsByTagName("ns3:identifier").Item(0).InnerText;
+                            string typeIdentifier = categoryTypeListing.GetElementsByTagName("ns4:identifier").Item(0).InnerText;
                             categoryTypeID = typeIdentifier.Substring(typeIdentifier.LastIndexOf(':') + 1);
-                            categoryTypeName = categoryTypeListing.GetElementsByTagName("ns3:title").Item(0).InnerText;
+                            categoryTypeName = categoryTypeListing.GetElementsByTagName("ns4:title").Item(0).InnerText;
                             categoryTypeItemType = categoryTypeListing.GetElementsByTagName("ns2:scope").Item(0).InnerText;
                             categoryTypeMandatory = categoryTypeListing.GetElementsByTagName("ns2:required").Item(0).InnerText;
 
@@ -1202,7 +1202,7 @@ namespace GingerCore.ALM.RQM
                                             catTypeLink = categoryTypeNode.Attributes["href"].Value.ToString();
 
                                             categoryTypeID = catTypeLink.Substring(catTypeLink.LastIndexOf(':') + 1);
-                                            categoryValue = categoryValueXML.GetElementsByTagName("ns3:title").Item(0).InnerText;  // --> itemfield.PossibleValues.Add(ccNode.Name);
+                                            categoryValue = categoryValueXML.GetElementsByTagName("ns4:title").Item(0).InnerText;  // --> itemfield.PossibleValues.Add(ccNode.Name);
 
                                             valuesItemfield.ID = categoryTypeID;
 
