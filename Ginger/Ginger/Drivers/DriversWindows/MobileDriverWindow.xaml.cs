@@ -1269,6 +1269,7 @@ namespace Ginger.Drivers.DriversWindows
             });
         }
 
+        bool clearedHighlights = false;
         private async Task<bool> RefreshDeviceScreenshotAsync(int waitingTimeInMiliSeconds = 0)
         {
             try
@@ -1278,7 +1279,16 @@ namespace Ginger.Drivers.DriversWindows
                     return false;
                 }
 
-                UnHighlightElementEvent();
+                if (!clearedHighlights) //bool is for clearing only once in 2 refresh for allowing user to see the highlighted area
+                {
+                    UnHighlightElementEvent();
+                    clearedHighlights = true;
+                }
+                else
+                {
+                    clearedHighlights = false;
+                }
+
                 int waitingRatio = 1;
                 if (mDeviceAutoScreenshotRefreshMode != eAutoScreenshotRefreshMode.Live)
                 {
