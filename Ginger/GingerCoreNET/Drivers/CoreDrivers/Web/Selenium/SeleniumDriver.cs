@@ -4270,7 +4270,10 @@ namespace GingerCore.Drivers
         }
         private ObservableList<ElementInfo> GetAllElementsFromPage(string path, PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
         {
-            PomMetaData = new ObservableList<POMPageMetaData>();
+            if (PomMetaData == null)
+            {
+                PomMetaData = new ObservableList<POMPageMetaData>();
+            }
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
             List<HtmlNode> formElementsList = new List<HtmlNode>();
