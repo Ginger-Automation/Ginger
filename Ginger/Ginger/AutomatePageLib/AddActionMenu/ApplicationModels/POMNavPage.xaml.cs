@@ -165,23 +165,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     xPomElementsListView.Visibility = Visibility.Visible;
                     xPOMSplitter.IsEnabled = true;
 
-                    if (WorkSpace.Instance.BetaFeatures.AutoGenerateActivities)
-                    {
-                        //POM Activities to show
-                        ObservableList<Activity> pomActivities = AutoGenerateFlows.CreatePOMActivitiesFromMetadata(mPOM);
-                        //Shared Activities which uses current POM
-                        ObservableList<Activity> sharedActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                        IEnumerable<Activity> pomSharedActivities = sharedActivities.Where(x => x.Acts.Any(a => a is ActUIElement && ((ActUIElement)a).ElementLocateValue != null && ((ActUIElement)a).ElementLocateValue.Contains(mPOM.Guid.ToString())));
-                        pomSharedActivities.ToList().ForEach(item => pomActivities.Add(item));
+                    //Suggested Activities to show
+                    ObservableList<Activity> suggestedActivities = AutoGenerateFlows.CreatePOMActivitiesFromMetadata(mPOM);
+                    //Shared Activities which uses current POM
+                    ObservableList<Activity> sharedActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                    IEnumerable<Activity> pomSharedActivities = sharedActivities.Where(x => x.Acts.Any(a => a is ActUIElement && ((ActUIElement)a).ElementLocateValue != null && ((ActUIElement)a).ElementLocateValue.Contains(mPOM.Guid.ToString())));
+                    pomSharedActivities.ToList().ForEach(item => suggestedActivities.Add(item));
 
-                        mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(pomActivities, mContext, true);
-                        xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
-                        xPomActivitiesTabItem.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        xPomActivitiesTabItem.Visibility = Visibility.Collapsed;
-                    }
+                    mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(suggestedActivities, mContext, true);
+                    xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
                 }
             }
             else
