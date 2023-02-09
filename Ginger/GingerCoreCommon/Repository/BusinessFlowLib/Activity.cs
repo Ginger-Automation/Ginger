@@ -502,6 +502,21 @@ namespace GingerCore
             }
         }
 
+        private Guid mPOMPageMetaDataId;
+        [IsSerializedForLocalRepository]
+        public Guid POMPageMetaDataId
+        {
+            get { return mPOMPageMetaDataId; }
+            set
+            {
+                if(mPOMPageMetaDataId != value)
+                {
+                    mPOMPageMetaDataId = value;
+                    OnPropertyChanged(nameof(POMPageMetaDataId));
+                }
+            }
+        }
+
         public string VariablesNames
         {
             get
