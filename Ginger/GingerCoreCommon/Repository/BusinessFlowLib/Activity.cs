@@ -502,6 +502,21 @@ namespace GingerCore
             }
         }
 
+        private Guid mPOMMetaDataId;
+        [IsSerializedForLocalRepository]
+        public Guid POMMetaDataId
+        {
+            get { return mPOMMetaDataId; }
+            set
+            {
+                if(mPOMMetaDataId != value)
+                {
+                    mPOMMetaDataId = value;
+                    OnPropertyChanged(nameof(POMMetaDataId));
+                }
+            }
+        }
+
         public string VariablesNames
         {
             get
