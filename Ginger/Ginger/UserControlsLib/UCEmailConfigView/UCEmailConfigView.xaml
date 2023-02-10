@@ -288,8 +288,13 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Folder Name:"/>
-                        <Actions:UCValueExpression x:Name="xFilterFolderNameVE" Grid.Column="1"/>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Folder Names:"/>
+                        <Actions:UCValueExpression x:Name="xFilterFolderNameVE" Grid.Column="1" Grid.Row="0" ToolTip="Separate multiple folder names using semi-colon(;)"/>
+                        <Label Grid.Column="1" Grid.Row="1" Style="{StaticResource $LabelStyle}" FontSize="10" Content="To specify multiple folder names separate them using semi-colon(;) (e.g. Inbox;Sent Items;Archives)"/>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.ColumnDefinitions>

@@ -28,7 +28,7 @@ namespace GingerCore.GeneralLib
         }
 
         public eFolderFilter Folder { get; set; }
-        public string FolderName { get; set; }
+        public string FolderNames { get; set; }
         public string From { get; set; }
         public string To { get; set; }
         public string Subject { get; set; }
