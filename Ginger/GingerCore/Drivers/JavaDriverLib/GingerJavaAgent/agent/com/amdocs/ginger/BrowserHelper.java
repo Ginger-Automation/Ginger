@@ -22,8 +22,12 @@ import java.util.List;
 
 public class BrowserHelper
 {
+	 private final String JxBrowserVersion6x = "JxBrowser_6x";
+	 private final String JxBrowserVersion7x = "JxBrowser_7x";
+	 
 	 private Component mBrowser = null;
 	 private String mBrowserType = null;
+	 private String mJxBrowserVersion = null;
 	 private String mBrowserXPath = null;	 
 
 	 public BrowserHelper(Component browser) 
@@ -132,6 +136,7 @@ public class BrowserHelper
 			  {
 				  GingerAgent.WriteLog("Inside JxBrowserBrowserComponent");
 			      objRC = ExecuteScriptInJxBrowser(JavaScript);
+			      GingerAgent.WriteLog("Executed Script in JxBrowser Version: "+mJxBrowserVersion);
 			  }
 			  else if (mBrowserType.contains("JExplorer"))
 			  {
@@ -157,13 +162,32 @@ public class BrowserHelper
 	private Object ExecuteScriptInJxBrowser(String javascript)
 	{
 		Object[] result = new Object[1];
-		if(TryExecuteScriptInJxBrowserVersion6x(javascript, result))
+		
+		boolean isJxBrowserVersion6x = mJxBrowserVersion != null && mJxBrowserVersion.equals(JxBrowserVersion6x);
+		boolean isJxBrowserVersion7x = mJxBrowserVersion != null && mJxBrowserVersion.equals(JxBrowserVersion7x);
+		
+		if(isJxBrowserVersion6x)
 		{
+			TryExecuteScriptInJxBrowserVersion6x(javascript, result);
 			return result[0];
 		}
-		else if(TryExecuteScriptInJxBrowserVersion7x(javascript, result))
+		else if(isJxBrowserVersion7x)
 		{
+			TryExecuteScriptInJxBrowserVersion7x(javascript, result);
 			return result[0];
+		}
+		else
+		{
+			if(TryExecuteScriptInJxBrowserVersion6x(javascript, result))
+			{
+				mJxBrowserVersion = JxBrowserVersion6x;
+				return result[0];
+			}
+			else if(TryExecuteScriptInJxBrowserVersion7x(javascript, result))
+			{
+				mJxBrowserVersion = JxBrowserVersion7x;
+				return result[0];
+			}
 		}
 		throw new RuntimeException("Failed to execute script in JxBrowser version 6 and 7");
 	}
