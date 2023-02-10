@@ -222,16 +222,16 @@ namespace GingerCore.Actions.Communication
             }
         }
 
-        public string FilterFolderName
+        public string FilterFolderNames
         {
             get
             {
-                return GetOrCreateInputParam(nameof(FilterFolderName), "").Value;
+                return GetOrCreateInputParam(nameof(FilterFolderNames), "").Value;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(FilterFolderName), value);
-                OnPropertyChanged(nameof(FilterFolderName));
+                AddOrUpdateInputParamValue(nameof(FilterFolderNames), value);
+                OnPropertyChanged(nameof(FilterFolderNames));
             }
         }
 
@@ -664,7 +664,7 @@ namespace GingerCore.Actions.Communication
 
         private EmailReadFilters CreateEmailReadFilters()
         {
-            string calculatedFolderName = GetInputParamCalculatedValue(nameof(FilterFolderName));
+            string calculatedFolderName = GetInputParamCalculatedValue(nameof(FilterFolderNames));
             string calculatedFrom = GetInputParamCalculatedValue(nameof(FilterFrom));
             string calculatedTo = GetInputParamCalculatedValue(nameof(FilterTo));
             string calculatedSubject = GetInputParamCalculatedValue(nameof(FilterSubject));
@@ -687,7 +687,7 @@ namespace GingerCore.Actions.Communication
             EmailReadFilters filters = new()
             {
                 Folder = FilterFolder,
-                FolderName = calculatedFolderName,
+                FolderNames = calculatedFolderName,
                 From = calculatedFrom,
                 To = calculatedTo,
                 Subject = calculatedSubject,
