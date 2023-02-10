@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1269,6 +1269,7 @@ namespace Ginger.Drivers.DriversWindows
             });
         }
 
+        bool clearedHighlights = false;
         private async Task<bool> RefreshDeviceScreenshotAsync(int waitingTimeInMiliSeconds = 0)
         {
             try
@@ -1278,7 +1279,16 @@ namespace Ginger.Drivers.DriversWindows
                     return false;
                 }
 
-                UnHighlightElementEvent();
+                if (!clearedHighlights) //bool is for clearing only once in 2 refresh for allowing user to see the highlighted area
+                {
+                    UnHighlightElementEvent();
+                    clearedHighlights = true;
+                }
+                else
+                {
+                    clearedHighlights = false;
+                }
+
                 int waitingRatio = 1;
                 if (mDeviceAutoScreenshotRefreshMode != eAutoScreenshotRefreshMode.Live)
                 {
