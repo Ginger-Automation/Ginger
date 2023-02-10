@@ -45,6 +45,8 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 activity.Active = true;
                 activity.IsAutoLearned = true;
                 activity.ActivityName = metaData.Name;
+                activity.POMMetaDataId = metaData.Guid;
+                activity.TargetApplication = POM.TargetApplicationKey.ItemName;
 
                 //add GoTo url action
                 WebPlatform webPlatform = new WebPlatform();
