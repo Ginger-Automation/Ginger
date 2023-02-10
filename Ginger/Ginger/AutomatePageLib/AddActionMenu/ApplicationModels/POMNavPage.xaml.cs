@@ -165,15 +165,19 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     xPomElementsListView.Visibility = Visibility.Visible;
                     xPOMSplitter.IsEnabled = true;
 
-                    //Suggested Activities to show
-                    ObservableList<Activity> suggestedActivities = AutoGenerateFlows.CreatePOMActivitiesFromMetadata(mPOM);
-                    //Shared Activities which uses current POM
-                    ObservableList<Activity> sharedActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                    IEnumerable<Activity> pomSharedActivities = sharedActivities.Where(x => x.Acts.Any(a => a is ActUIElement && ((ActUIElement)a).ElementLocateValue != null && ((ActUIElement)a).ElementLocateValue.Contains(mPOM.Guid.ToString())));
-                    pomSharedActivities.ToList().ForEach(item => suggestedActivities.Add(item));
+                    if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey) == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
+                    {
+                        //Suggested Activities to show
+                        ObservableList<Activity> suggestedActivities = AutoGenerateFlows.CreatePOMActivitiesFromMetadata(mPOM);
 
-                    mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(suggestedActivities, mContext, true);
-                    xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
+                        mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(suggestedActivities, mContext, true);
+                        xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
+                        xSuggestedActivitiesTabItem.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        xSuggestedActivitiesTabItem.Visibility = Visibility.Collapsed;
+                    }
                 }
             }
             else
