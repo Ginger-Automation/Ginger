@@ -502,17 +502,17 @@ namespace GingerCore
             }
         }
 
-        private Guid mPOMPageMetaDataId;
+        private Guid mPOMMetaDataId;
         [IsSerializedForLocalRepository]
-        public Guid POMPageMetaDataId
+        public Guid POMMetaDataId
         {
-            get { return mPOMPageMetaDataId; }
+            get { return mPOMMetaDataId; }
             set
             {
-                if(mPOMPageMetaDataId != value)
+                if(mPOMMetaDataId != value)
                 {
-                    mPOMPageMetaDataId = value;
-                    OnPropertyChanged(nameof(POMPageMetaDataId));
+                    mPOMMetaDataId = value;
+                    OnPropertyChanged(nameof(POMMetaDataId));
                 }
             }
         }
