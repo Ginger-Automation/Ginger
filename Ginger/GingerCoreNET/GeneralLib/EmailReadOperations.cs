@@ -37,43 +37,53 @@ namespace GingerCore.GeneralLib
         public async Task ReadEmails(EmailReadFilters filters, MSGraphConfig config, Action<ReadEmail> emailProcessor)
         {
             GraphServiceClient graphServiceClient = CreateGraphServiceClient(config);
-            ICollectionPage<Message> messages;
+            IEnumerable<ICollectionPage<Message>> messageCollections;
             if (filters.Folder == EmailReadFilters.eFolderFilter.All)
             {
-                messages = await GetUserMessages(graphServiceClient, filters);
+                messageCollections = new List<ICollectionPage<Message>>() { await GetUserMessages(graphServiceClient, filters) };
             }
             else
             {
-                messages = await GetFolderMessages(graphServiceClient, filters);
+                messageCollections = await GetFoldersMessages(graphServiceClient, filters);
             }
 
+            await IterateMessages(messageCollections, filters, graphServiceClient, emailProcessor);
+        }
+
+        private async Task IterateMessages(IEnumerable<ICollectionPage<Message>> messageCollections, EmailReadFilters filters, 
+            GraphServiceClient graphServiceClient, Action<ReadEmail> emailProcessor)
+        {
             IEnumerable<string> expectedRecipients = null;
             if (!string.IsNullOrEmpty(filters.To))
             {
                 expectedRecipients = filters.To.Split(";", StringSplitOptions.RemoveEmptyEntries);
             }
-            PageIterator<Message> messageIterator = PageIterator<Message>.CreatePageIterator(
-                graphServiceClient,
-                messages,
-                message =>
-                {
-                    if (!DoesSatisfyToFilter(message, expectedRecipients))
-                    {
-                        return true;
-                    }
-                    if (!DoesSatisfyAttachmentFilter(graphServiceClient, message, filters).Result)
-                    {
-                        return true;
-                    }
-                    if(!DoesSatisfyBodyFilter(message, filters.Body))
-                    {
-                        return true;
-                    }
 
-                    emailProcessor(ConvertMessageToReadEmail(message));
-                    return true;
-                });
-            await messageIterator.IterateAsync();
+            foreach (ICollectionPage<Message> messageCollection in messageCollections)
+            {
+                PageIterator<Message> messageIterator = PageIterator<Message>.CreatePageIterator(
+                    graphServiceClient,
+                    messageCollection,
+                    message =>
+                    {
+                        if (!DoesSatisfyToFilter(message, expectedRecipients))
+                        {
+                            return true;
+                        }
+                        if (!DoesSatisfyAttachmentFilter(graphServiceClient, message, filters).Result)
+                        {
+                            return true;
+                        }
+                        if (!DoesSatisfyBodyFilter(message, filters.Body))
+                        {
+                            return true;
+                        }
+
+                        emailProcessor(ConvertMessageToReadEmail(message));
+                        return true;
+                    });
+                await messageIterator.IterateAsync();
+            }
         }
 
         private bool DoesSatisfyToFilter(Message message, IEnumerable<string> expectedRecipients)
@@ -274,11 +284,24 @@ namespace GingerCore.GeneralLib
             }
         }
 
-        private async Task<IMailFolderMessagesCollectionPage> GetFolderMessages(GraphServiceClient graphServiceClient, EmailReadFilters filters)
+        private async Task<IEnumerable<IMailFolderMessagesCollectionPage>> GetFoldersMessages(GraphServiceClient graphServiceClient, EmailReadFilters filters)
+        {
+            IEnumerable<string> folderNames = filters.FolderNames.Split(";", StringSplitOptions.RemoveEmptyEntries);
+            List<IMailFolderMessagesCollectionPage> foldersMessages = new();
+            foreach(string folderName in folderNames)
+            {
+                foldersMessages.Add(await GetFolderMessages(folderName, graphServiceClient, filters));
+            }
+
+            return foldersMessages;
+        }
+
+        private async Task<IMailFolderMessagesCollectionPage> GetFolderMessages(string folderName, GraphServiceClient graphServiceClient, 
+            EmailReadFilters filters)
         {
             (string filterParameter, string orderByParameter) = BuildReadRequestFilterAndOrderParameters(filters);
             string selectParameter = SelectedMessageFields.Aggregate((aggr, value) => $"{aggr},{value}");
-            string folderId = await GetFolderId(graphServiceClient, filters.FolderName);
+            string folderId = await GetFolderId(graphServiceClient, folderName);
             try
             {
                 return await graphServiceClient
@@ -294,9 +317,9 @@ namespace GingerCore.GeneralLib
                     .Top(MessageRequestPageSize)
                     .GetAsync();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                if(e.InnerException != null)
+                if (e.InnerException != null)
                 {
                     throw e.InnerException;
                 }

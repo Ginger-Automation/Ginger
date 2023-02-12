@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -136,24 +136,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
             xUIElementsFrame.Content = mPomAllElementsPage;
-
-            if (WorkSpace.Instance.BetaFeatures.AutoGenerateActivities)
-            {
-                ObservableList<Activity> pomActivities = AutoGenerateFlows.CreatePOMActivitiesFromMetadata(mPOM);
-                //Shared Activities which uses current POM
-                ObservableList<Activity> sharedActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                IEnumerable<Activity> pomSharedActivities = sharedActivities.Where(x => x.Acts.Any(act => act is ActUIElement && ((ActUIElement)act).ElementLocateValue != null && ((ActUIElement)act).ElementLocateValue.Contains(mPOM.Guid.ToString())));
-                pomSharedActivities.ToList().ForEach(item => pomActivities.Add(item));
-
-                mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(pomActivities, new Context());
-                xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
-                xPomActivitiesTabItem.Visibility = Visibility.Visible;
-
-            }
-            else
-            {
-                xPomActivitiesTabItem.Visibility = Visibility.Collapsed;
-            }
             mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
             UIElementTabTextBlockUpdate();
 
