@@ -14,6 +14,7 @@ jobs:
         name: Release
         needs: CI
         uses: Ginger-Automation/Ginger/.github/workflows/Release.yml@master
+        secrets: inherit
      
     Deploy:
         name: Deploy
