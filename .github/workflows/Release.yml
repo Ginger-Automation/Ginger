@@ -62,4 +62,10 @@ jobs:
                 with:
                   name: WindowsInstaller
                   path: D:/a/Installers
-                    
+                  
+            -   uses: nadeemjazmawe/Sign-action-signtool.exe@v0.1
+                with: 
+                  filepath: 'D:\a\Installers\Ginger.exe'   
+                  certificate: ${{ secrets.PEM }}
+                  cert-password: ${{ secrets.PEM_PASS }}
+
