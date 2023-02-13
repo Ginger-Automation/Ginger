@@ -9212,22 +9212,26 @@ namespace GingerCore.Drivers
 
         public void SetCurrentPageLoadStrategy(DriverOptions options)
         {
-            if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Normal).ToLower())
+            if (PageLoadStrategy != null)
             {
-                options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Normal;
+                if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Normal).ToLower())
+                {
+                    options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Normal;
+                }
+                else if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Eager).ToLower())
+                {
+                    options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Eager;
+                }
+                else if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.None).ToLower())
+                {
+                    options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.None;
+                }
+                else
+                {
+                    options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Default;
+                }
             }
-            else if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Eager).ToLower())
-            {
-                options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Eager;
-            }
-            else if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.None).ToLower())
-            {
-                options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.None;
-            }
-            else
-            {
-                options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Default;
-            }
+            
         }
 
 
