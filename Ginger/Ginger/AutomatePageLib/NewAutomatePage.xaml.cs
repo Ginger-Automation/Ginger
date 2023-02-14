@@ -1303,7 +1303,7 @@ namespace GingerWPF.BusinessFlowsLib
         FindAndReplacePage mfindAndReplacePageAutomate = null;
         private void xSearchBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (mfindAndReplacePageAutomate == null)
+            if (mfindAndReplacePageAutomate == null || mfindAndReplacePageAutomate.ItemToSearchOn != mBusinessFlow)
             {
                 mfindAndReplacePageAutomate = new FindAndReplacePage(FindAndReplacePage.eContext.AutomatePage, mBusinessFlow);
             }
