@@ -72,6 +72,8 @@ namespace Ginger.Functionalities
 
         public eContext mContext;
 
+        public object ItemToSearchOn => mItemToSearchOn;
+
 
         public FindAndReplacePage(eContext context, object itemToSearchOn = null)
         {

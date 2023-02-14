@@ -6579,7 +6579,7 @@ namespace GingerCore.Drivers
             actUI.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, Convert.ToString(configArgs.Type));
             actUI.ElementLocateBy = GetLocateBy(Convert.ToString(configArgs.LocateBy));
             actUI.ElementLocateValue = configArgs.LocateValue;
-            actUI.ElementType = GetElementTypeEnum(null, Convert.ToString(configArgs.Type)).Item2;
+            actUI.ElementType = (eElementType)configArgs.Type;
             if (Enum.IsDefined(typeof(ActUIElement.eElementAction), configArgs.Operation))
                 actUI.ElementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), configArgs.Operation);
             else
