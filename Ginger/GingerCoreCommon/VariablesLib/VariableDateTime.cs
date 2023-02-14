@@ -82,7 +82,7 @@ namespace GingerCore.Variables
             }
             set
             {
-                if (mMinDateTime != null && mMaxDateTime == null && !CheckDateTimeWithInRange(value))
+                if (mMinDateTime != null && mMaxDateTime != null && !CheckDateTimeWithInRange(value))
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Initial DateTime[{value}] is not in Range:- Min.DateTime [{MinDateTime}], Max.DateTime [{MaxDateTime}]");
                 }
