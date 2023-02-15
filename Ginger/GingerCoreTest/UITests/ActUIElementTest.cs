@@ -60,6 +60,7 @@ namespace UnitTests.UITests
             mBF.AddVariable(v1);
 
             mGR = new GingerRunner();
+            mGR.Executor = new GingerExecutionEngine(mGR);
             mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
             Agent a = new Agent();

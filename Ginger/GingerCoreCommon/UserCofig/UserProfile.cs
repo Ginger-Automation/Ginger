@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -197,7 +197,7 @@ namespace Ginger
             }
             set
             {
-                if (mAutoRunAutomatePageAnalyzer)
+                if (mAutoRunAutomatePageAnalyzer || value)
                 {
                     mAutoRunAutomatePageAnalyzer = value;
                     OnPropertyChanged(nameof(AutoRunAutomatePageAnalyzer));

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -82,7 +82,7 @@ namespace GingerCore.Variables
             }
             set
             {
-                if (!CheckDateTimeWithInRange(value))
+                if (mMinDateTime != null && mMaxDateTime != null && !CheckDateTimeWithInRange(value))
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Initial DateTime[{value}] is not in Range:- Min.DateTime [{MinDateTime}], Max.DateTime [{MaxDateTime}]");
                 }
@@ -143,7 +143,7 @@ namespace GingerCore.Variables
         {
             get
             {
-                if(string.IsNullOrEmpty(mDateTimeFormat))
+                if (string.IsNullOrEmpty(mDateTimeFormat))
                 {
                     return @"MM/dd/yyyy hh:mm:ss tt";
                 }
@@ -153,7 +153,7 @@ namespace GingerCore.Variables
             {
                 mDateTimeFormat = value;
 
-                if(mInitialDateTime != null)
+                if (mInitialDateTime != null)
                 {
                     InitialDateTime = ConvertDateTimeToSpecificFormat(mDateTimeFormat, mInitialDateTime);
                 }
@@ -220,8 +220,8 @@ namespace GingerCore.Variables
 
         public bool CheckDateTimeWithInRange(string dateTimeValue)
         {
-            if (DateTime.Parse(dateTimeValue) >= DateTime.Parse(ConvertDateTimeToSpecificFormat(DateTimeFormat, MinDateTime)) &&
-                DateTime.Parse(dateTimeValue) <= DateTime.Parse(ConvertDateTimeToSpecificFormat(DateTimeFormat, MaxDateTime)))
+            if (DateTime.Parse(ConvertDateTimeToSpecificFormat(DateTimeFormat, dateTimeValue)) >= DateTime.Parse(ConvertDateTimeToSpecificFormat(DateTimeFormat, MinDateTime)) &&
+                DateTime.Parse(ConvertDateTimeToSpecificFormat(DateTimeFormat, dateTimeValue)) <= DateTime.Parse(ConvertDateTimeToSpecificFormat(DateTimeFormat, MaxDateTime)))
             {
                 return true;
             }

@@ -48,6 +48,8 @@ namespace Ginger
 
         private Dictionary<string, Int32> mExceptionsDic = new Dictionary<string, int>();
 
+
+
         public static void LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType SkinDicType = Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType TerminologyType = GingerCore.eTerminologyType.Default)
         {
             //Clear all Dictionaries

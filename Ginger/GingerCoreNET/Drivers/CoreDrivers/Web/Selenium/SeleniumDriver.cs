@@ -6579,7 +6579,7 @@ namespace GingerCore.Drivers
             actUI.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, Convert.ToString(configArgs.Type));
             actUI.ElementLocateBy = GetLocateBy(Convert.ToString(configArgs.LocateBy));
             actUI.ElementLocateValue = configArgs.LocateValue;
-            actUI.ElementType = GetElementTypeEnum(null, Convert.ToString(configArgs.Type)).Item2;
+            actUI.ElementType = (eElementType)configArgs.Type;
             if (Enum.IsDefined(typeof(ActUIElement.eElementAction), configArgs.Operation))
                 actUI.ElementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), configArgs.Operation);
             else
@@ -9212,22 +9212,26 @@ namespace GingerCore.Drivers
 
         public void SetCurrentPageLoadStrategy(DriverOptions options)
         {
-            if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Normal).ToLower())
+            if (PageLoadStrategy != null)
             {
-                options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Normal;
+                if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Normal).ToLower())
+                {
+                    options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Normal;
+                }
+                else if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Eager).ToLower())
+                {
+                    options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Eager;
+                }
+                else if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.None).ToLower())
+                {
+                    options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.None;
+                }
+                else
+                {
+                    options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Default;
+                }
             }
-            else if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.Eager).ToLower())
-            {
-                options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Eager;
-            }
-            else if (PageLoadStrategy.ToLower() == nameof(OpenQA.Selenium.PageLoadStrategy.None).ToLower())
-            {
-                options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.None;
-            }
-            else
-            {
-                options.PageLoadStrategy = OpenQA.Selenium.PageLoadStrategy.Default;
-            }
+            
         }
 
 

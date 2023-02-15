@@ -41,8 +41,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
                 if (mGingerLogFile == null)
                 {                 
                     mGingerLogFile = Path.Combine(Common.GeneralLib.General.LocalUserApplicationDataFolderPath, "WorkingFolder", "Logs", "Ginger_Log.txt");
-                }
-                return mGingerLogFile;
+                }                return mGingerLogFile;
             }
         }
 
