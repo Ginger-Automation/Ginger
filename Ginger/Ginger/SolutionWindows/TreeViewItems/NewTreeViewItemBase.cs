@@ -494,10 +494,8 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 Childrens.Add(GetTreeItem(subFolder));
             }
-
             subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // track sub folders
             subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
-
 
             //Add direct children's        
             ObservableList<T> folderItems = RF.GetFolderItems();
