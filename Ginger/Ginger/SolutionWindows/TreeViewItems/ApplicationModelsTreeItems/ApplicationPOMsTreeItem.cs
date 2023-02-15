@@ -22,6 +22,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib;
 using Ginger.SourceControl;
+using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -86,28 +87,8 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-
-            ObservableList<RepositoryFolder<ApplicationPOMModel>> subFolders = mPOMModelFolder.GetSubFolders();
-            foreach (RepositoryFolder<ApplicationPOMModel> pomFolder in subFolders)
-            {
-                ApplicationPOMsTreeItem pomFTVI = new ApplicationPOMsTreeItem(pomFolder);
-                Childrens.Add(pomFTVI);
-            }
-            subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // untrack sub folders
-            subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
-
-            //Add direct children's        
-            mChildPoms = mPOMModelFolder.GetFolderItems();
-            mChildPoms.CollectionChanged -= TreeFolderItems_CollectionChanged;
-            mChildPoms.CollectionChanged += TreeFolderItems_CollectionChanged;//adding event handler to add/remove tree items automatically based on folder items collection changes
-            foreach (ApplicationPOMModel pom in mChildPoms.OrderBy(nameof(ApplicationPOMModel.Name)))
-            {
-                ApplicationPOMTreeItem pomTI = new ApplicationPOMTreeItem(pom);
-                Childrens.Add(pomTI);
-            }
-
-            return Childrens;
+            //return Childrens;
+            return GetChildrentGeneric<ApplicationPOMModel>(mPOMModelFolder);
         }
 
         bool ITreeViewItem.IsExpandable()

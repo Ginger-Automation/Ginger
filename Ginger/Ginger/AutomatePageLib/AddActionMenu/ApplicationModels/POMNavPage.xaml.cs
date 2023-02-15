@@ -104,6 +104,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xPomElementsListView.ListSelectionMode = SelectionMode.Extended;
             mPOMListHelper.ListView = xPomElementsListView;
 
+            ConfigurePOMPage();
+        }
+
+        private void ConfigurePOMPage()
+        {
             ApplicationPOMsTreeItem mPOMsRoot = new ApplicationPOMsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>());
             mItemTypeRootNode = mPOMsRoot;
             mPOMPage = new SingleItemTreeViewSelectionPage("Page Object Models", eImageType.ApplicationPOMModel, mItemTypeRootNode, SingleItemTreeViewSelectionPage.eItemSelectionType.Multi, true,
@@ -113,7 +118,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mPOMPage.xTreeView.SetTopToolBarTools(mPOMsRoot.SaveAllTreeFolderItemsHandler, mPOMsRoot.AddPOM, RefreshTreeItems);
             mContext.PropertyChanged += MContext_PropertyChanged;
             mPOMPage.OnSelect += MainTreeView_ItemSelected;
-            //SetElementsGridView();
             mPOMPage.HorizontalAlignment = HorizontalAlignment.Stretch;
             mPOMPage.xTreeView.HorizontalAlignment = HorizontalAlignment.Stretch;
             mPOMPage.xTreeView.SetAddButtonToArrow();
@@ -141,10 +145,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (mContext.Activity != null)
             {
-                mPOMPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication);
-                mPOMPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
-                mPOMPage.xTreeView.Tree.SelectItem(mItemTypeRootNode);
-                mPOMPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
+                ConfigurePOMPage();
             }
         }
 
@@ -196,7 +197,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         public void ReLoadPageItems()
         {
-            UpdatePOMTree();
+            //UpdatePOMTree();
             mAgent = mContext.Agent;
         }
 
