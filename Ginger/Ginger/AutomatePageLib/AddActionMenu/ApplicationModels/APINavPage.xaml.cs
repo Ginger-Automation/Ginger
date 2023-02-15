@@ -45,6 +45,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mContext = context;
 
             ConfigureAPIPage();
+            mContext.PropertyChanged += MContext_PropertyChanged;
         }
 
         private void ConfigureAPIPage()
@@ -58,7 +59,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mItemTypeRootNode.SetTools(mAPIPage.xTreeView);
             mAPIPage.xTreeView.SetTopToolBarTools(mAPIsRoot.SaveAllTreeFolderItemsHandler, mAPIsRoot.AddAPIModelFromDocument, RefreshTreeItems, AddActionToListHandler);
 
-            mContext.PropertyChanged += MContext_PropertyChanged;
             xAPIFrame.Content = mAPIPage;
         }
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

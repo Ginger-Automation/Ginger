@@ -105,6 +105,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mPOMListHelper.ListView = xPomElementsListView;
 
             ConfigurePOMPage();
+            mContext.PropertyChanged += MContext_PropertyChanged;
         }
 
         private void ConfigurePOMPage()
@@ -116,7 +117,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                                             UCTreeView.eFilteroperationType.Equals, showAlerts: false);
             mItemTypeRootNode.SetTools(mPOMPage.xTreeView);
             mPOMPage.xTreeView.SetTopToolBarTools(mPOMsRoot.SaveAllTreeFolderItemsHandler, mPOMsRoot.AddPOM, RefreshTreeItems);
-            mContext.PropertyChanged += MContext_PropertyChanged;
             mPOMPage.OnSelect += MainTreeView_ItemSelected;
             mPOMPage.HorizontalAlignment = HorizontalAlignment.Stretch;
             mPOMPage.xTreeView.HorizontalAlignment = HorizontalAlignment.Stretch;
