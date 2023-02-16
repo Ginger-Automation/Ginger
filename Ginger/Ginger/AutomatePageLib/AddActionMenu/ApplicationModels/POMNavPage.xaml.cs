@@ -197,7 +197,6 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         public void ReLoadPageItems()
         {
-            //UpdatePOMTree();
             mAgent = mContext.Agent;
         }
 

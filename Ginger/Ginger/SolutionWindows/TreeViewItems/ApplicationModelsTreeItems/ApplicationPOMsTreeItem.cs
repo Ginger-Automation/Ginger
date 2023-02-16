@@ -87,7 +87,6 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            //return Childrens;
             return GetChildrentGeneric<ApplicationPOMModel>(mPOMModelFolder);
         }
 
