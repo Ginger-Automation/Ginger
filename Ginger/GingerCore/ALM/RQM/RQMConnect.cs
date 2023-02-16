@@ -276,8 +276,7 @@ namespace GingerCore.ALM.RQM
                 string importConfigTemplate = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Import", "RQM_ImportConfigs_Template.xml");
                 if (File.Exists(importConfigTemplate))
                 {
-                    XmlSerializer serializer = new
-                    XmlSerializer(typeof(RQMProjectListConfiguration));
+                    XmlSerializer serializer = new XmlSerializer(typeof(RQMProjectListConfiguration));
 
                     FileStream fs = new FileStream(importConfigTemplate, FileMode.Open);
                     XmlReader reader = XmlReader.Create(fs);
@@ -332,7 +331,7 @@ namespace GingerCore.ALM.RQM
                                             rQMTestSuite.RQMID = responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteAsItemMapping.RQMID, nsmgrTestSuite).InnerText.ToString();
                                             rQMTestSuite.Name = responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteAsItemMapping.Name, nsmgrTestSuite).InnerText.ToString();
                                             // TestSuite data from RQM
-                                            RqmResponseData responseDataTestSuiteExecutionRecords = RQMRep.GetTestSuiteExecutionRecordsByTestSuite(loginData, currentProj.Prefix, currentProj.Guid, testSuitesURInode.Attributes[0].InnerText.ToString());
+                                            RqmResponseData responseDataTestSuiteExecutionRecords = RQMRep.GetTestSuiteExecutionRecordsByTestSuite(loginData, currentProj.Prefix, currentProj.Guid, testPlan.Attributes[0].InnerText.ToString());
                                             XmlDocument docTestSuiteExecutionRecords = new XmlDocument();
                                             docTestSuiteExecutionRecords.LoadXml(responseDataTestSuiteExecutionRecords.responseText.ToString());
                                             XmlNamespaceManager nsmgrTestSuiteExecutionRecords = new XmlNamespaceManager(reader.NameTable);
@@ -435,12 +434,15 @@ namespace GingerCore.ALM.RQM
                                                                                                          responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.RQMID, nsmgrTS).InnerText.ToString());
 
                                 RQMTestSuite currentTestSuite = testPlan.TestSuites.Where(z => z.RQMID == responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.RQMID, nsmgrTS).InnerText.ToString()).FirstOrDefault();
+                                if(currentTestSuite != null)
+                                {
+                                    currentTestSuite.Name = responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.Name, nsmgrTS).InnerText.ToString();
+                                    currentTestSuite.CreatedBy = responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.RQMID, nsmgrTS).InnerText.ToString();
+                                    currentTestSuite.Description = responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.Description, nsmgrTS).InnerText.ToString();
+                                    currentTestSuite.CreationDate = DateTime.Parse(responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.CreationDate, nsmgrTS).InnerText.ToString()).ToLocalTime();
+                                    currentTestSuite.TestCases = currentSuiteTestCases;
 
-                                currentTestSuite.Name = responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.Name, nsmgrTS).InnerText.ToString();
-                                currentTestSuite.CreatedBy = responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.RQMID, nsmgrTS).InnerText.ToString();
-                                currentTestSuite.Description = responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.Description, nsmgrTS).InnerText.ToString();
-                                currentTestSuite.CreationDate = DateTime.Parse(responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.CreationDate, nsmgrTS).InnerText.ToString()).ToLocalTime();
-                                currentTestSuite.TestCases = currentSuiteTestCases;
+                                }
 
                                 // adding current's test suite list of tests cases to overall (test plan's) list of test cases - to be presented at ginger together
                                 currentSuiteTestCases.Where(y => !testPlan.TestCases.Select(x => x.RQMID).ToList().Contains(y.RQMID)).ToList().ForEach(z => testPlan.TestCases.Add(z));
@@ -560,7 +562,8 @@ namespace GingerCore.ALM.RQM
                                 newStep = new RQMStep(step.SelectSingleNode(currentRQMProjectMapping.RQMStepMapping.Name, nsmgr).InnerText.ToString(),
                                                       responseDataNodeTestScript.SelectSingleNode(currentRQMProjectMapping.RQMTestScriptMapping.RQMID, nsmgr).InnerText.ToString() + "_" + step.Attributes[0].InnerText.ToString(),
                                                       ImportFromRQM.StripHTML(step.SelectSingleNode(currentRQMProjectMapping.RQMStepMapping.Description, nsmgr).InnerText.ToString()),
-                                                      ImportFromRQM.StripHTML(step.SelectSingleNode(currentRQMProjectMapping.RQMStepMapping.ExpectedResult, nsmgr).InnerText.ToString()));
+                                                      ImportFromRQM.StripHTML(step.SelectSingleNode(currentRQMProjectMapping.RQMStepMapping.ExpectedResult, nsmgr).InnerText.ToString())
+                                                      );
                                 newRQMTestScript.Steps.Add(newStep);
                             }
                             catch
