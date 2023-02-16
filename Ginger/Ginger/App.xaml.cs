@@ -266,7 +266,7 @@ namespace Ginger
                 {
                     try
                     {
-                        if (System.Diagnostics.Trace.Listeners.Contains(CustomTraceListener.Instance) == false)
+                        if (!System.Diagnostics.Trace.Listeners.Contains(CustomTraceListener.Instance))
                         {
                             System.Diagnostics.Trace.Listeners.Add(CustomTraceListener.Instance);
 

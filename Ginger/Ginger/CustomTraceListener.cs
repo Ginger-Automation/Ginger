@@ -44,7 +44,7 @@ namespace Ginger
         //_sessionID indicate what is the message session ID
         private string _sessionID = string.Empty;
         //_subAppName indicate what is the message sub Application source
-        private string _subAppName = string.Empty;
+        
         //_isVerifiedToWrite determine if to write or not according to the Trace switches
         private Boolean _isVerifiedToWrite = false;
 
@@ -60,9 +60,10 @@ namespace Ginger
             Trace.Listeners.Clear();
 
             //getting switchs values from config file
-            _traceActivateSwitch = WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug ? true : false; //ReadBoolValueFromConfig(System.Configuration.ConfigurationManager.AppSettings["TraceActivateSwitch"].ToString());
-            _traceLevelSwitch_Error = WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug ? true : false; //ReadBoolValueFromConfig(System.Configuration.ConfigurationManager.AppSettings["TraceLevelSwitch_Error"].ToString());
-            _traceLevelSwitch_Info = WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug ? true : false; //ReadBoolValueFromConfig(System.Configuration.ConfigurationManager.AppSettings["TraceLevelSwitch_Info"].ToString());
+            bool tracelog = WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug ? true : false;
+            _traceActivateSwitch = tracelog; 
+            _traceLevelSwitch_Error = tracelog;
+            _traceLevelSwitch_Info = tracelog;
 
             //getting log files definitions from config file
             _maxFileLength = (Int64.Parse(System.Configuration.ConfigurationManager.AppSettings["TRACE_MAX_LOG_FILE_SIZE_(MB)"].ToString()) * 1000000);
@@ -90,14 +91,14 @@ namespace Ginger
         private void AddFileStreamToList(string subAppName)
         {
             //disable log files creation if traceActivateSwitch == false
-            if (_traceActivateSwitch == false)
+            if (!_traceActivateSwitch)
             {
                 return;
             }
             if ((subAppName != null) && (subAppName != string.Empty))
             {
                 //Split subapps name (if there is more then one)
-                ArrayList subAppNamesList = new ArrayList(subAppName.ToString().ToUpper().Split(new char[] { ',' }));
+                ArrayList subAppNamesList = new ArrayList(subAppName.ToUpper().Split(new char[] { ',' }));
 
                 foreach (string subAppNameFromList in subAppNamesList)
                 {
@@ -148,6 +149,7 @@ namespace Ginger
 
         private void SetupTraceMessagDefinitions(string traceMessagDefinitions)
         {
+            string _subAppName = string.Empty;
             _pointingFS = null;
             _traceLevel = string.Empty;
             _sessionID = string.Empty;
@@ -158,9 +160,16 @@ namespace Ginger
             {
                 //Adding the Session ID details 
                 if (Thread.CurrentPrincipal != null)
+                {
                     if (Thread.CurrentPrincipal.Identity != null)
+                    {
                         if (Thread.CurrentPrincipal.Identity.Name != null)
+                        {
                             traceMessagDefinitions += "#" + Thread.CurrentPrincipal.Identity.Name.ToString() + "#Default";
+                        }
+                    }
+                }
+                    
 
                 //split definitions
                 ArrayList MessagDefinitions = new ArrayList(traceMessagDefinitions.ToString().ToUpper().Split(new Char[] { '#' }));
@@ -201,16 +210,25 @@ namespace Ginger
                         }
                     }
                     else
+                    {
                         isConfigreAble = false;
+                    }
+                        
                 }
                 else
+                {
                     isConfigreAble = false;
+                }
+                    
             }
             else
+            {
                 isConfigreAble = false;
+            }
+                
 
             //Default Setup
-            if (isConfigreAble == false)
+            if (!isConfigreAble)
             {
                 CustomFileStream tempFS = (CustomFileStream)_customFileStreamsList[0]; //Default FS
                 _pointingFS = tempFS.fileStream;
@@ -222,15 +240,15 @@ namespace Ginger
 
         private void CheckIfVerifiedToWrite()
         {
-            if (_traceActivateSwitch == true)
+            if (_traceActivateSwitch)
             {
                 if ((_pointingFS != null) && (_traceLevel != null) && (_sessionID != null))
                 {
-                    if ((_traceLevel.ToUpper() == "ERROR") && ((_traceLevelSwitch_Error == true) || (_traceLevelSwitch_Info == true)))
+                    if ((_traceLevel.ToUpper() == "ERROR") && ((_traceLevelSwitch_Error) || (_traceLevelSwitch_Info)))
                     {
                         _isVerifiedToWrite = true;
                     }
-                    else if ((_traceLevel.ToUpper() == "INFO") && (_traceLevelSwitch_Info == true))
+                    else if ((_traceLevel.ToUpper() == "INFO") && (_traceLevelSwitch_Info))
                     {
                         _isVerifiedToWrite = true;
                     }
@@ -288,6 +306,7 @@ namespace Ginger
 
         public override void WriteLine(string message, string traceMessagDefinitions)
         {
+            string _subAppName = string.Empty;
             try
             {
                 SetupTraceMessagDefinitions(traceMessagDefinitions);
@@ -319,11 +338,12 @@ namespace Ginger
         {
             try
             {
+                string _subAppName = string.Empty;
                 SetupTraceMessagDefinitions(traceMessagDefinitions);
 
                 CheckIfVerifiedToWrite();
 
-                if ((_isVerifiedToWrite == true) && (value != null))
+                if (_isVerifiedToWrite && (value != null))
                 {
                     if (value is Exception)
                     {
@@ -434,9 +454,15 @@ namespace Ginger
             private void Init(string path, long maxFileLength, int maxFileCount, FileMode mode)
             {
                 if (maxFileLength <= 0)
+                {
                     throw new ArgumentOutOfRangeException("Invalid maximum file length");
+                }
+                    
                 if (maxFileCount <= 0)
+                {
                     throw new ArgumentOutOfRangeException("Invalid maximum file count");
+                }
+                  
 
                 m_maxFileLength = maxFileLength;
                 m_maxFileCount = maxFileCount;
@@ -464,7 +490,10 @@ namespace Ginger
                         {
                             string file = GetBackupFileName(iFile);
                             if (System.IO.File.Exists(file))
+                            {
                                 System.IO.File.Delete(file);
+                            }
+                                
                         }
                         break;
 
@@ -473,10 +502,16 @@ namespace Ginger
                         for (int iFile = 0; iFile < m_maxFileCount; ++iFile)
                         {
                             if (System.IO.File.Exists(GetBackupFileName(iFile)))
+                            {
                                 m_nextFileIndex = iFile + 1;
+                            }
+                                
                         }
                         if (m_nextFileIndex == m_maxFileCount)
+                        {
                             m_nextFileIndex = 0;
+                        }
+                            
                         Seek(0, SeekOrigin.End);
                         break;
                 }
@@ -490,7 +525,10 @@ namespace Ginger
 
                 ++m_nextFileIndex;
                 if (m_nextFileIndex >= m_maxFileCount)
+                {
                     m_nextFileIndex = 0;
+                }
+                    
             }
 
             private string GetBackupFileName(int index)
@@ -499,9 +537,14 @@ namespace Ginger
                 format.AppendFormat("D{0}", m_fileDecimals);
                 StringBuilder sb = new StringBuilder();
                 if (m_fileExt.Length > 0)
+                {
                     sb.AppendFormat("{0}_Old_{1}{2}", m_fileBase, index.ToString(format.ToString()), m_fileExt);
+                }
                 else
+                {
                     sb.AppendFormat("{0}{1}", m_fileBase, index.ToString(format.ToString()));
+                }
+                    
                 return Path.Combine(m_fileDir, sb.ToString());
             }
 
@@ -565,9 +608,14 @@ namespace Ginger
         public static Boolean ReadBoolValueFromConfig(string value)
         {
             if (value.ToUpper() == "TRUE")
+            {
                 return (true);
+            }
             else
+            {
                 return (false);
+            }
+                
         }
     }
 }
