@@ -264,12 +264,20 @@ namespace Ginger
             {
                 if(WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug)
                 {
-                    if (System.Diagnostics.Trace.Listeners.Contains(CustomTraceListener.Instance) == false)
+                    try
                     {
-                        System.Diagnostics.Trace.Listeners.Add(CustomTraceListener.Instance);
+                        if (System.Diagnostics.Trace.Listeners.Contains(CustomTraceListener.Instance) == false)
+                        {
+                            System.Diagnostics.Trace.Listeners.Add(CustomTraceListener.Instance);
 
-                        System.Diagnostics.Trace.WriteLine("Ginger Start up", "Info");
+                            System.Diagnostics.Trace.WriteLine("Ginger Start up", "Info");
+                        }
                     }
+                    catch(Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Custom Trace listerner ", ex.InnerException);
+                    }
+                    
                 }
                 HideConsoleWindow();                
                 StartGingerUI();// start regular Ginger UI

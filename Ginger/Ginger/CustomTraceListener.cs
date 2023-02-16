@@ -123,19 +123,19 @@ namespace Ginger
 
                         CustomFileStream newFileStream = new CustomFileStream();
                         newFileStream.subApplicationName = subAppNameFromList.Trim().ToUpper();
-
+                        DateTime date = DateTime.Now;
                         if (newFileStream.subApplicationName == "DEFAULT")
                         {
                             newFileStream.fileStream = new FileStreamWithBackup(
                                      (logsDirectory.FullName + '\\' +
-                                      System.Configuration.ConfigurationManager.AppSettings["TRACE_DEFUALT_LOG_FILE_NAME"].ToString().ToUpper() + " -Client.log"),
+                                      System.Configuration.ConfigurationManager.AppSettings["TRACE_DEFUALT_LOG_FILE_NAME"].ToString().ToUpper() + "_" + date.Year.ToString()+"_"+date.Month.ToString()+"_"+date.Day.ToString()+"_"+date.Millisecond.ToString() +  " -Client.log"),
                                       _maxFileLength, _maxFileCount, FileMode.Append);
                         }
                         else
                         {
                             newFileStream.fileStream = new FileStreamWithBackup(
                                      (logsDirectory.FullName + '\\' +
-                                      newFileStream.subApplicationName + " -Client.log"),
+                                      newFileStream.subApplicationName +"_"+ date.Year.ToString() + "_" + date.Month.ToString() + "_" + date.Day.ToString() + "_" + date.Millisecond.ToString() + " -Client.log"),
                                       _maxFileLength, _maxFileCount, FileMode.Append);
                         }
 
