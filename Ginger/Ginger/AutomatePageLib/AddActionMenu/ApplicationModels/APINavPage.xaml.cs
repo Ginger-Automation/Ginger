@@ -44,6 +44,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             mContext = context;
 
+            ConfigureAPIPage();
+            mContext.PropertyChanged += MContext_PropertyChanged;
+        }
+
+        private void ConfigureAPIPage()
+        {
             AppApiModelsFolderTreeItem mAPIsRoot = new AppApiModelsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>(), true);
             mItemTypeRootNode = mAPIsRoot;
             mAPIPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, mItemTypeRootNode, SingleItemTreeViewSelectionPage.eItemSelectionType.Multi, true,
@@ -53,10 +59,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mItemTypeRootNode.SetTools(mAPIPage.xTreeView);
             mAPIPage.xTreeView.SetTopToolBarTools(mAPIsRoot.SaveAllTreeFolderItemsHandler, mAPIsRoot.AddAPIModelFromDocument, RefreshTreeItems, AddActionToListHandler);
 
-            mContext.PropertyChanged += MContext_PropertyChanged;
             xAPIFrame.Content = mAPIPage;
         }
-
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (this.IsVisible && MainAddActionsNavigationPage.IsPanelExpanded)
@@ -89,12 +93,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (mContext.Activity != null)
             {
-                mAPIPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey)
-                                                                    + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication);
-                mAPIPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
+                ConfigureAPIPage();
             }
-            mAPIPage.xTreeView.Tree.SelectItem(mItemTypeRootNode);
-            mAPIPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
         }
 
         public void ReLoadPageItems()
