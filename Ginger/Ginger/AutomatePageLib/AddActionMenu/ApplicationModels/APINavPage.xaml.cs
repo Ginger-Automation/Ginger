@@ -99,6 +99,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         public void ReLoadPageItems()
         {
+            UpdateAPITree();
         }
     }
 }
