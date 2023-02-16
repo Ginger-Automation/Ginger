@@ -244,13 +244,7 @@ namespace Ginger
         {            
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.InitLog4Net();
 
-            if (System.Diagnostics.Trace.Listeners.Contains(CustomTraceListener.Instance) == false)
-            {
-                System.Diagnostics.Trace.Listeners.Add(CustomTraceListener.Instance);
-
-                System.Diagnostics.Trace.WriteLine("Ginger Start up", "Info");
-            }
-
+            
 
             bool startGrid = e.Args.Length == 0; // no need to start grid if we have args
             WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
@@ -268,6 +262,15 @@ namespace Ginger
 
             if (!WorkSpace.Instance.RunningInExecutionMode)
             {
+                if(WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug)
+                {
+                    if (System.Diagnostics.Trace.Listeners.Contains(CustomTraceListener.Instance) == false)
+                    {
+                        System.Diagnostics.Trace.Listeners.Add(CustomTraceListener.Instance);
+
+                        System.Diagnostics.Trace.WriteLine("Ginger Start up", "Info");
+                    }
+                }
                 HideConsoleWindow();                
                 StartGingerUI();// start regular Ginger UI
             }

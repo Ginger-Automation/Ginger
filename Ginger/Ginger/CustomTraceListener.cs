@@ -14,7 +14,8 @@ using System.IO;
 using System.Configuration;
 using System.Collections;
 using System.Threading;
-
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 
 namespace Ginger
 {
@@ -59,14 +60,14 @@ namespace Ginger
             Trace.Listeners.Clear();
 
             //getting switchs values from config file
-            _traceActivateSwitch =  ReadBoolValueFromConfig(System.Configuration.ConfigurationManager.AppSettings["TraceActivateSwitch"].ToString());
-            _traceLevelSwitch_Error = ReadBoolValueFromConfig(System.Configuration.ConfigurationManager.AppSettings["TraceLevelSwitch_Error"].ToString());
-            _traceLevelSwitch_Info = ReadBoolValueFromConfig(System.Configuration.ConfigurationManager.AppSettings["TraceLevelSwitch_Info"].ToString());
+            _traceActivateSwitch = WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug ? true : false; //ReadBoolValueFromConfig(System.Configuration.ConfigurationManager.AppSettings["TraceActivateSwitch"].ToString());
+            _traceLevelSwitch_Error = WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug ? true : false; //ReadBoolValueFromConfig(System.Configuration.ConfigurationManager.AppSettings["TraceLevelSwitch_Error"].ToString());
+            _traceLevelSwitch_Info = WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug ? true : false; //ReadBoolValueFromConfig(System.Configuration.ConfigurationManager.AppSettings["TraceLevelSwitch_Info"].ToString());
 
             //getting log files definitions from config file
             _maxFileLength = (Int64.Parse(System.Configuration.ConfigurationManager.AppSettings["TRACE_MAX_LOG_FILE_SIZE_(MB)"].ToString()) * 1000000);
             _maxFileCount = int.Parse(System.Configuration.ConfigurationManager.AppSettings["TRACE_MAX_NUMBER_OF_LOG_FILES_BACKUPS"].ToString());
-            _logFilesPath = System.Configuration.ConfigurationManager.AppSettings["TRACE_LOG_FILES_PATH"].ToString();
+            _logFilesPath = WorkSpace.Instance.DefualtUserLocalWorkingFolder;
 
             //creating the default file stream
             _customFileStreamsList = new ArrayList();
