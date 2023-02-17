@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using amdocs.ginger.GingerCoreNET;
@@ -451,7 +452,7 @@ namespace Ginger.Repository
             int copyCountIndex = 1;
             while (true)
             {
-                newItemName += $"_copy{copyCountIndex}";
+                newItemName += new StringBuilder($"_copy{copyCountIndex}").ToString();
 
                 if (!existingRepoItems.Contains(newItemName))
                 {
