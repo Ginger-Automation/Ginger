@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -793,6 +793,8 @@ namespace GingerCore.Actions
                 AIV = new ActInputValue();
                 AIV.Param = Param;
                 InputValues.Add(AIV);
+                AIV.StartDirtyTracking();
+                AIV.OnDirtyStatusChanged += this.RaiseDirtyChanged;
             }
             else
             {
@@ -826,6 +828,8 @@ namespace GingerCore.Actions
             {
                 AIV = new ActInputValue() { Param = Param, Value = DefaultValue };
                 InputValues.Add(AIV);
+                AIV.StartDirtyTracking();
+                AIV.OnDirtyStatusChanged += this.RaiseDirtyChanged;
             }
             return AIV;
         }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -1070,7 +1070,7 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        internal void RaiseDirtyChanged(object sender, EventArgs e)
+        public void RaiseDirtyChanged(object sender, EventArgs e)
         {
             if (DirtyTracking != eDirtyTracking.Paused)
             {
