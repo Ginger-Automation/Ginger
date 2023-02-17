@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -793,6 +793,8 @@ namespace GingerCore.Actions
                 AIV = new ActInputValue();
                 AIV.Param = Param;
                 InputValues.Add(AIV);
+                AIV.StartDirtyTracking();
+                AIV.OnDirtyStatusChanged += this.RaiseDirtyChanged;
             }
             else
             {
@@ -826,6 +828,8 @@ namespace GingerCore.Actions
             {
                 AIV = new ActInputValue() { Param = Param, Value = DefaultValue };
                 InputValues.Add(AIV);
+                AIV.StartDirtyTracking();
+                AIV.OnDirtyStatusChanged += this.RaiseDirtyChanged;
             }
             return AIV;
         }
@@ -1973,6 +1977,21 @@ namespace GingerCore.Actions
         public override void PrepareItemToBeCopied()
         {
             this.IsSharedRepositoryInstance = TargetFrameworkHelper.Helper.IsSharedRepositoryItem(this);
+        }
+
+        protected override RepositoryItemBase CopyRIObject(RepositoryItemBase repoItemToCopy, List<GuidMapper> guidMappingList, bool setNewGUID)
+        {
+            RepositoryItemBase copiedRepositoryItem = base.CopyRIObject(repoItemToCopy, guidMappingList, setNewGUID);
+            if (copiedRepositoryItem is Act)
+            {
+                Act copiedAct = (Act)copiedRepositoryItem;
+                foreach (ActInputValue inputValue in copiedAct.InputValues)
+                {
+                    inputValue.StartDirtyTracking();
+                    inputValue.OnDirtyStatusChanged += copiedAct.RaiseDirtyChanged;
+                }
+            }
+            return copiedRepositoryItem;
         }
 
         public override string GetItemType()

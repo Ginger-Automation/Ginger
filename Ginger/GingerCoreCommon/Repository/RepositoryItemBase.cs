@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -701,7 +701,7 @@ namespace Amdocs.Ginger.Repository
             return dt2;
         }
 
-        private RepositoryItemBase CopyRIObject(RepositoryItemBase repoItemToCopy, List<GuidMapper> guidMappingList, bool setNewGUID)
+        protected virtual RepositoryItemBase CopyRIObject(RepositoryItemBase repoItemToCopy, List<GuidMapper> guidMappingList, bool setNewGUID)
         {
             Type objType = repoItemToCopy.GetType();
             var targetObj = Activator.CreateInstance(objType) as RepositoryItemBase;
@@ -774,7 +774,7 @@ namespace Amdocs.Ginger.Repository
                 if (item is RepositoryItemBase)
                 {
 
-                    RepositoryItemBase RI = CopyRIObject(item as RepositoryItemBase, guidMappingList, setNewGUID);
+                    RepositoryItemBase RI = ((RepositoryItemBase)item).CopyRIObject(item as RepositoryItemBase, guidMappingList, setNewGUID);
                     if (setNewGUID)
                     {
                         GuidMapper mapping = new GuidMapper();
