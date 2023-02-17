@@ -135,7 +135,6 @@ namespace Ginger.SourceControl
                 }
                 WorkSpace.Instance.UserProfile.SourceControlPass = WorkSpace.Instance.Solution.SourceControl.SourceControlPass;
                 WorkSpace.Instance.UserProfile.SourceControlUser = WorkSpace.Instance.Solution.SourceControl.SourceControlUser;
-                WorkSpace.Instance.UserProfile.UserName = WorkSpace.Instance.Solution.SourceControl.SourceControlUser;
                 WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
                 WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
                 Close();

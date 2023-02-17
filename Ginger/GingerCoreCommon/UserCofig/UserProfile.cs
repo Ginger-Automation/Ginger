@@ -500,12 +500,10 @@ namespace Ginger
             }
         }
 
-        private string mUserName;
 
         public string UserName
         {
-            get { return string.IsNullOrEmpty(mUserName) ? Environment.UserName : mUserName; }
-            set { mUserName = value; }
+            get { return Environment.UserName; }
         }
 
         string mUserFirstName;
