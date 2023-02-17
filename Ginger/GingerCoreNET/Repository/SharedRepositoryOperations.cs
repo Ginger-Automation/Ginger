@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using amdocs.ginger.GingerCoreNET;
@@ -448,16 +447,15 @@ namespace Ginger.Repository
                 existingRepoItems = variables.Select(x => x.ItemName).ToList();
             }
 
-            string newItemName = duplicateItem.ItemName;
+            string newItemName = duplicateItem.ItemName+"_copy";
             int copyCountIndex = 1;
             while (true)
             {
-                newItemName += new StringBuilder($"_copy{copyCountIndex}").ToString();
-
-                if (!existingRepoItems.Contains(newItemName))
+                if (!existingRepoItems.Contains(newItemName+copyCountIndex))
                 {
-                    return newItemName;
+                    return newItemName+copyCountIndex;
                 }
+                copyCountIndex++;
             }
             //TODO - find better way to get unique name
         }
