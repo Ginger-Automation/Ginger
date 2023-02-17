@@ -774,7 +774,7 @@ namespace Amdocs.Ginger.Repository
                 if (item is RepositoryItemBase)
                 {
 
-                    RepositoryItemBase RI = ((RepositoryItemBase)item).CopyRIObject(item as RepositoryItemBase, guidMappingList, setNewGUID);
+                    RepositoryItemBase RI = CopyRIObject(item as RepositoryItemBase, guidMappingList, setNewGUID);
                     if (setNewGUID)
                     {
                         GuidMapper mapping = new GuidMapper();
