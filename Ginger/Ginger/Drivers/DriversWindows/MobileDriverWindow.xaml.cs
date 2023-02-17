@@ -398,6 +398,7 @@ namespace Ginger.Drivers.DriversWindows
             bool isPhysicalDevice = false;
             Dictionary<string, object> mDeviceGeneralInfo = null;
             Dictionary<string, string> mDeviceBatteryInfo = null;
+            Dictionary<string, string> mActivityAndPackageInfo = null;
 
             await Task.Run(() =>
             {
@@ -417,6 +418,7 @@ namespace Ginger.Drivers.DriversWindows
                 }
 
                 mDeviceBatteryInfo = mDriver.GetDeviceBatteryInfo();
+                mActivityAndPackageInfo = mDriver.GetDeviceActivityAndPackage();
             });
 
             mDeviceDetails = new ObservableList<DeviceInfo>(mDeviceDetails.Where(x => x.Category == DeviceInfo.eDeviceInfoCategory.Metric).ToList());
@@ -521,6 +523,22 @@ namespace Ginger.Drivers.DriversWindows
                 }
             }
 
+            
+            if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
+            {
+                mDeviceDetails.Add(new DeviceInfo("Package", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+                mDeviceDetails.Add(new DeviceInfo("Activity", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                string activity, package; 
+                mActivityAndPackageInfo.TryGetValue("Activity", out activity);
+                mActivityAndPackageInfo.TryGetValue("Package", out package);
+                mDeviceDetails.Add(new DeviceInfo("Package", package, DeviceInfo.eDeviceInfoCategory.Detail));
+                mDeviceDetails.Add(new DeviceInfo("Activity", activity, DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+
             if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS && mDeviceGeneralInfo.TryGetValue("currentLocale", out value))
             {
                 mDeviceDetails.Add(new DeviceInfo("Language:", ((string)value).Replace("_", "/"), DeviceInfo.eDeviceInfoCategory.Detail));
@@ -538,7 +556,7 @@ namespace Ginger.Drivers.DriversWindows
                 }
             }
 
-            
+
 
             if (mDeviceGeneralInfo.TryGetValue("timeZone", out value) && !string.IsNullOrEmpty((string)value))
             {

@@ -74,6 +74,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
         Dictionary<string, string> GetDeviceBatteryInfo();
 
         Dictionary<string, object> GetDeviceGeneralInfo();
+        Dictionary<string, string> GetDeviceActivityAndPackage();
 
         Task<bool> IsRealDeviceAsync();
         string GetDeviceUDID();
