@@ -536,21 +536,25 @@ namespace GingerCore.ALM.RQM
                     int ActivityGroupCounter = 0;
                     int activityStepCounter = 0;
                     int activityStepOrderID = 1;
-                    foreach (ACL_Data_Contract.Activity act in plan.Activities)
+                    foreach (ACL_Data_Contract.TestSuite testSuite in plan.TestSuites)
                     {
-                        string ActivityGroupID = "RQMID=" + act.ExportedID.ToString() + "|RQMScriptID=" + act.ExportedTestScriptId.ToString() + "|RQMRecordID=" + act.ExportedTcExecutionRecId.ToString() + "|AtsID=" + act.EntityId.ToString();
-                        businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalID = ActivityGroupID;
-
-                        foreach (ACL_Data_Contract.ActivityStep activityStep in act.ActivityData.ActivityStepsColl)
+                        foreach (ACL_Data_Contract.Activity act in testSuite.Activities)
                         {
-                            //string activityStepID = "RQMID=" + activityStepOrderID.ToString() + "|AtsID=" + act.EntityId.ToString();
-                            string activityStepID = "RQMID=" + act.ExportedTestScriptId.ToString() + "_" + activityStepOrderID + "|AtsID=" + act.EntityId.ToString();
-                            businessFlow.Activities[activityStepCounter].ExternalID = activityStepID;
-                            activityStepCounter++;
-                            activityStepOrderID++;
+                            string ActivityGroupID = "RQMID=" + act.ExportedID.ToString() + "|RQMScriptID=" + act.ExportedTestScriptId.ToString() + "|RQMRecordID=" + act.ExportedTcExecutionRecId.ToString() + "|AtsID=" + act.EntityId.ToString();
+                            businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalID = ActivityGroupID;
+                            businessFlow.ActivitiesGroups[ActivityGroupCounter].TestSuiteId = testSuite.TestSuiteId;
+                            businessFlow.ActivitiesGroups[ActivityGroupCounter].TestSuiteTitle = testSuite.TestSuiteName;
+                            foreach (ACL_Data_Contract.ActivityStep activityStep in act.ActivityData.ActivityStepsColl)
+                            {
+                                //string activityStepID = "RQMID=" + activityStepOrderID.ToString() + "|AtsID=" + act.EntityId.ToString();
+                                string activityStepID = "RQMID=" + act.ExportedTestScriptId.ToString() + "_" + activityStepOrderID + "|AtsID=" + act.EntityId.ToString();
+                                businessFlow.Activities[activityStepCounter].ExternalID = activityStepID;
+                                activityStepCounter++;
+                                activityStepOrderID++;
+                            }
+                            activityStepOrderID = 0;
+                            ActivityGroupCounter++;
                         }
-                        activityStepOrderID = 0;
-                        ActivityGroupCounter++;
                     }
                 }
                 return true;
