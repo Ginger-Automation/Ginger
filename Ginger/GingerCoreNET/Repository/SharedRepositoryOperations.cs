@@ -109,7 +109,6 @@ namespace Ginger.Repository
                     RepositoryFolderBase repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(itemToUpload.ExistingItem.ContainingFolderFullPath);
                     if(repositoryFolder !=null)
                     {
-                        itemCopy.ItemName = itemToUpload.ExistingItem.ItemName;
                        repositoryFolder.AddRepositoryItem(itemCopy);
                     }                    
                 }
@@ -359,11 +358,6 @@ namespace Ginger.Repository
 
         public static void Validate(UploadItemSelection selectedItem)
         {
-            if(selectedItem.ExistingItem != null)
-            {
-                return;
-            }
-
             bool isDuplicateFound = CheckForItemWithDuplicateName(selectedItem);
             if (isDuplicateFound)
             {
@@ -448,10 +442,10 @@ namespace Ginger.Repository
             }
 
             string newItemName = duplicateItem.ItemName;
-            int copyCountIndex = 1;
+
             while (true)
             {
-                newItemName += $"_copy{copyCountIndex}";
+                newItemName += "_copy";
 
                 if (!existingRepoItems.Contains(newItemName))
                 {
