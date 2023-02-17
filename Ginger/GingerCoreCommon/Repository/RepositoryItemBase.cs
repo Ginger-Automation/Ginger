@@ -701,7 +701,7 @@ namespace Amdocs.Ginger.Repository
             return dt2;
         }
 
-        protected virtual RepositoryItemBase CopyRIObject(RepositoryItemBase repoItemToCopy, List<GuidMapper> guidMappingList, bool setNewGUID)
+        private RepositoryItemBase CopyRIObject(RepositoryItemBase repoItemToCopy, List<GuidMapper> guidMappingList, bool setNewGUID)
         {
             Type objType = repoItemToCopy.GetType();
             var targetObj = Activator.CreateInstance(objType) as RepositoryItemBase;
@@ -1070,7 +1070,7 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        internal void RaiseDirtyChanged(object sender, EventArgs e)
+        public void RaiseDirtyChanged(object sender, EventArgs e)
         {
             if (DirtyTracking != eDirtyTracking.Paused)
             {

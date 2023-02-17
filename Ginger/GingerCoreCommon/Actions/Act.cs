@@ -1979,21 +1979,6 @@ namespace GingerCore.Actions
             this.IsSharedRepositoryInstance = TargetFrameworkHelper.Helper.IsSharedRepositoryItem(this);
         }
 
-        protected override RepositoryItemBase CopyRIObject(RepositoryItemBase repoItemToCopy, List<GuidMapper> guidMappingList, bool setNewGUID)
-        {
-            RepositoryItemBase copiedRepositoryItem = base.CopyRIObject(repoItemToCopy, guidMappingList, setNewGUID);
-            if (copiedRepositoryItem is Act)
-            {
-                Act copiedAct = (Act)copiedRepositoryItem;
-                foreach (ActInputValue inputValue in copiedAct.InputValues)
-                {
-                    inputValue.StartDirtyTracking();
-                    inputValue.OnDirtyStatusChanged += copiedAct.RaiseDirtyChanged;
-                }
-            }
-            return copiedRepositoryItem;
-        }
-
         public override string GetItemType()
         {
             return "Action";
