@@ -32,6 +32,7 @@ using System.Windows.Controls;
 using System.Linq;
 using amdocs.ginger.GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCore;
 
 namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 {
@@ -90,28 +91,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-
-            ObservableList<RepositoryFolder<ApplicationAPIModel>> subFolders = mAPIModelFolder.GetSubFolders();
-            foreach (RepositoryFolder<ApplicationAPIModel> apiFolder in subFolders)
-            {
-                AppApiModelsFolderTreeItem apiFTVI = new AppApiModelsFolderTreeItem(apiFolder, mShowEditInMenu);
-                Childrens.Add(apiFTVI);
-            }
-            subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // untrack sub folders
-            subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
-
-            //Add direct children's        
-            mChildAPIs = mAPIModelFolder.GetFolderItems();
-            mChildAPIs.CollectionChanged -= TreeFolderItems_CollectionChanged;
-            mChildAPIs.CollectionChanged += TreeFolderItems_CollectionChanged;//adding event handler to add/remove tree items automatically based on folder items collection changes
-            foreach (ApplicationAPIModel api in mChildAPIs.OrderBy(nameof(ApplicationAPIModel.Name)))
-            {
-                AppApiModelTreeItem apiTI = new AppApiModelTreeItem(api, mShowEditInMenu);
-                Childrens.Add(apiTI);
-            }
-
-            return Childrens;
+            return GetChildrentGeneric<ApplicationAPIModel>(mAPIModelFolder);
         }
 
         bool ITreeViewItem.IsExpandable()
