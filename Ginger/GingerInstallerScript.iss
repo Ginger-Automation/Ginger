@@ -50,6 +50,7 @@ Source: "D:\BuildConfigs\ReleaseOutput\BuildOutput\*"; DestDir: "{app}"; Flags: 
 Source: "D:\BuildConfigs\DotnetDependencies\netcorecheck_x64.exe"; Flags: dontcopy deleteafterinstall noencryption
 Source: "D:\BuildConfigs\DotnetDependencies\windowsdesktop-runtime-6.0.6-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
 Source: "D:\BuildConfigs\DotnetDependencies\aspnetcore-runtime-6.0.6-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
+Source: "D:\BuildConfigs\DotnetDependencies\AccessDatabaseEngine_X64.exe"; DestDir: "{tmp}"; Flags: dontcopy deleteafterinstall noencryption
 ;NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 
@@ -90,6 +91,14 @@ begin
   Result := ShellExec('', ExpandConstant('{tmp}{\}') + 'netcorecheck_x64.exe', Version, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) and (ResultCode = 0);
 end;
 
+function IsAccessEngineInstalled: Boolean;
+var
+  productCode: string;
+begin
+  productCode := '{90140000-2005-0000-0000-0000000FF1CE}';
+  Result := (RegValueExists(HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\' + productCode + '_X64', 'DisplayName') or
+             RegValueExists(HKLM, 'SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\' + productCode + '_X64', 'DisplayName'));
+end;
 
 procedure DetectAndInstallPrerequisites;
 var
@@ -124,6 +133,17 @@ begin
           { you can interact with the user that the installation failed }
           MsgBox('.NET ASP Net Core 6.0.6 installation failed with code: ' + IntToStr(ResultCode) + '. Please install it manually.',
             mbError, MB_OK);
+      end;
+    end;
+    if not IsAccessEngineInstalled then 
+    begin
+      WizardForm.StatusLabel.Caption := 'Installing Microsoft Access database engine 2010 (64-bit)...';  
+      if not FileExists(ExpandConstant('{tmp}\AccessDatabaseEngine_X64.exe')) then begin 
+        ExtractTemporaryFile('AccessDatabaseEngine_X64.exe');
+      end;
+      if not Exec(ExpandConstant('{tmp}\AccessDatabaseEngine_X64.exe'), '/q /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then 
+        begin
+        MsgBox('Error installing Microsoft Access database engine 2010 (64-bit).', mbError, MB_OK);        
       end;
     end;
 
