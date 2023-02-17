@@ -4071,7 +4071,7 @@ namespace GingerCore.Drivers
                         try
                         {
                             Thread.Sleep(100);
-                            count = Driver.WindowHandles.ToList().Count;
+                            count = Driver.CurrentWindowHandle.Count();
                         }
                         catch (System.InvalidCastException ex)
                         {
