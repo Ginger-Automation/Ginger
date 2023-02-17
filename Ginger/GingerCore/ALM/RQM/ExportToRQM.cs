@@ -80,7 +80,7 @@ namespace GingerCore.ALM.RQM
             // 
             // get data about execution records per current test plan - start
             RQMTestPlan testPlan = new RQMTestPlan();
-            string importConfigTemplate = ""; //System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Import", "RQM_ImportConfigs_Template.xml");
+            string importConfigTemplate = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Import", "RQM_ImportConfigs_Template.xml");
             if (File.Exists(importConfigTemplate))
             {
                 XmlSerializer serializer = new
@@ -508,9 +508,11 @@ namespace GingerCore.ALM.RQM
             {
                 //Create (RQM)TestCase for each Ginger ActivityGroup and add it to RQM TestCase List
                 testPlan.Activities = new List<IActivityModel>();//3
+                
                 foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
                 {
                     testPlan.Activities.Add(GetTestCaseFromActivityGroup(ag));
+                    
                 }
 
                 RQMConnect.Instance.RQMRep.GetConection();
@@ -588,6 +590,22 @@ namespace GingerCore.ALM.RQM
             testPlan.EntityName = businessFlow.Name;
             testPlan.EntityDesc = businessFlow.Description == null ? "" : businessFlow.Description;
 
+            List<TestSuite> testSuites = new List<TestSuite>();
+            foreach (ActivitiesGroup activitiesGroup in businessFlow.ActivitiesGroups)
+            {
+                TestSuite testSuite = new TestSuite();
+                testSuite.TestSuiteName = activitiesGroup.Name;
+                testSuite.TestSuiteDescription = String.IsNullOrEmpty(activitiesGroup.Description) ? String.Empty : activitiesGroup.Description;
+                testSuite.Activities = new List<IActivityModel>();//3
+
+                foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
+                {
+                    testSuite.Activities.Add(GetTestCaseFromActivityGroup(ag));
+
+                }
+                testSuites.Add(testSuite);
+            }
+            testPlan.TestSuites = testSuites;
             //Add custom properties
             Dictionary<string, string> ActivityLevelproperties = GetCustomProperties("TestPlan");
             testPlan.CustomProperties = ActivityLevelproperties;
@@ -603,6 +621,7 @@ namespace GingerCore.ALM.RQM
             }
 
             ACL_Data_Contract.Activity testCase = new ACL_Data_Contract.Activity();
+            
             //Check if updating or creating new instance in RQM
             if (!string.IsNullOrEmpty(activityGroup.ExternalID))
             {

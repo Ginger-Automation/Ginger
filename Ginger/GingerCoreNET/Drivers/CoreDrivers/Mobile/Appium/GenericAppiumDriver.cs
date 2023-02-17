@@ -3138,6 +3138,20 @@ namespace Amdocs.Ginger.CoreNET
             return GetDeviceMetricsDict("batteryinfo").Result;
         }
 
+        public Dictionary<string, string> GetDeviceActivityAndPackage()
+        {
+            if (DevicePlatformType == eDevicePlatformType.Android)
+            {
+                Dictionary<string, string> dict = new Dictionary<string, string>
+                {
+                    { "Activity",string.Concat(((AndroidDriver)Driver).CurrentPackage, ((AndroidDriver)Driver).CurrentActivity) },
+                    { "Package", ((AndroidDriver)Driver).CurrentPackage }
+                };
+                return dict;
+            }
+            return null;
+        }
+
         public Dictionary<string, object> GetDeviceGeneralInfo()
         {
             try
