@@ -16,6 +16,17 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
       - uses: actions/checkout@v3
 
+# ------------------------------------------------------------------------------------------------------
+# Update Ginger Version 
+# ------------------------------------------------------------------------------------------------------
+      - name: 'Update Assembly'
+        run: |
+          $save=((Get-Content .\Ginger\GingerCoreCommon/GingerCoreCommon.csproj) -replace '<AssemblyVersion>*.*.*.*</AssemblyVersion>','<AssemblyVersion>${{github.event.inputs.Version}}</AssemblyVersion>')  -replace '<FileVersion>*.*.*.*</FileVersion>','<FileVersion>${{github.event.inputs.Version}}</FileVersion>'
+          echo $save > .\Ginger\GingerCoreCommon/GingerCoreCommon.csproj
+          $save=(Get-Content .\Ginger\GingerInstallerScript.iss) -replace '#define MyAppVersion "*.*.*.*"','#define MyAppVersion "${{github.event.inputs.Version}}"'
+          echo $save > .\Ginger\GingerInstallerScript.iss
+          $save=(Get-Content .\Ginger\GingerCore\Drivers\JavaDriverLib\GingerJavaAgent\agent\com\amdocs\ginger\GingerAgent.java) -replace 'public static final String GINGER_JAVA_AGENT_VERSION="*.*.*.*";','public static final String GINGER_JAVA_AGENT_VERSION="${{github.event.inputs.Version}}";'
+          echo $save > .\Ginger\GingerCore\Drivers\JavaDriverLib\GingerJavaAgent\agent\com\amdocs\ginger\GingerAgent.java
       
 # ------------------------------------------------------------------------------------------------------
 # Install .Net core SDK 6.0.301
