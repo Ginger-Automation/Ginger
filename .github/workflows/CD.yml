@@ -2,6 +2,10 @@ name: CD
 
 on:
     workflow_dispatch: 
+        inputs:
+          Version:
+            type: string 
+            required: true
 
 jobs:
                
