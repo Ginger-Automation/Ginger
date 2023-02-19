@@ -99,7 +99,7 @@
             <UserControls:ucButton x:Name="xPinBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="17" ButtonImageType="Pin" Click="xPinBtn_Click" ToolTip="Dock Window" Margin="0,0,5,0" />
             <UserControls:ucButton x:Name="xSwipeBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="14" ButtonImageType="Pointer" Click="xSwipeBtn_Click" ToolTip="Perform Swipe" Margin="35,0,0,2" Visibility="Collapsed" />
             <UserControls:ucButton x:Name="xPortraiteBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="24" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Portrait" Margin="10,0,0,0" Visibility="Collapsed"/>
-            <UserControls:ucButton x:Name="xLandscapeBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="24" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Landscape" Margin="10,0,0,0" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed">
+            <UserControls:ucButton x:Name="xLandscapeBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="22" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Landscape" Margin="10,0,0,0" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed">
                 <UserControls:ucButton.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>

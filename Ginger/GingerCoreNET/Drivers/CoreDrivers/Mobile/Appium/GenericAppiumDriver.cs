@@ -107,7 +107,7 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfiguredEnumType(typeof(eDeviceSource))]
         [UserConfiguredDefault("LocalAppium")]
         [UserConfiguredDescription("Device Source is Local Appium or UFTM Mobile Lab")]
-        public eDevicePlatformType DeviceSource { get; set; }
+        public eDeviceSource DeviceSource { get; set; }
 
         [UserConfigured]
         [UserConfiguredEnumType(typeof(eAppType))]
@@ -2780,8 +2780,16 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     else
                     {
-                        ratio_X = SrcWidth / ActWidth;
-                        ratio_Y = SrcHeight / ActHeight;
+                        if (DeviceSource == eDeviceSource.MicroFoucsUFTMLab)
+                        {
+                            ratio_X = SrcWidth / ActWidth;
+                            ratio_Y = SrcHeight / ActHeight;
+                        }
+                        else
+                        {
+                            ratio_X = (SrcWidth / 2) / ActWidth;
+                            ratio_Y = (SrcHeight / 2) / ActHeight;
+                        }
                     }
 
                     break;
@@ -2850,11 +2858,16 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     else
                     {
-                        if (AutoCorrectRectPropRequired)
-                            AutoCorrectRectProp = 2;
-
-                        ratio_X = (SrcWidth / AutoCorrectRectProp) / ActWidth;
-                        ratio_Y = (SrcHeight / AutoCorrectRectProp) / ActHeight;
+                        if (DeviceSource == eDeviceSource.MicroFoucsUFTMLab)
+                        {
+                            ratio_X = SrcWidth / ActWidth;
+                            ratio_Y = SrcHeight / ActHeight;
+                        }
+                        else
+                        {
+                            ratio_X = (SrcWidth / 2) / ActWidth;
+                            ratio_Y = (SrcHeight / 2) / ActHeight;
+                        }
 
                         string x = GetAttrValue(rectangleXmlNode, "x");
                         string y = GetAttrValue(rectangleXmlNode, "y");
@@ -2864,8 +2877,11 @@ namespace Amdocs.Ginger.CoreNET
                         ElementStartPoints.X = (int)(Convert.ToInt32(x) / ratio_X);
                         ElementStartPoints.Y = (int)(Convert.ToInt32(y) / ratio_Y);
 
-                        ElementMaxPoints.X = ElementStartPoints.X + (Convert.ToInt32(wdth) * AutoCorrectRectProp);
-                        ElementMaxPoints.Y = ElementStartPoints.Y + (Convert.ToInt32(hgt) * AutoCorrectRectProp);
+                        if (AutoCorrectRectPropRequired)
+                            AutoCorrectRectProp = 2;
+
+                        ElementMaxPoints.X = ElementStartPoints.X + Convert.ToInt32(Convert.ToInt32(wdth) / ratio_X);
+                        ElementMaxPoints.Y = ElementStartPoints.Y + Convert.ToInt32(Convert.ToInt32(hgt) / ratio_Y);
                     }
 
                     break;
