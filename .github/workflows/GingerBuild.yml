@@ -20,6 +20,7 @@ jobs:
 # Update Ginger Version 
 # ------------------------------------------------------------------------------------------------------
       - name: 'Update Assembly'
+        if: ${{github.workflow == 'CD'}} 
         run: |
           $save=((Get-Content .\Ginger\GingerCoreCommon/GingerCoreCommon.csproj) -replace '<AssemblyVersion>*.*.*.*</AssemblyVersion>','<AssemblyVersion>${{github.event.inputs.Version}}</AssemblyVersion>')  -replace '<FileVersion>*.*.*.*</FileVersion>','<FileVersion>${{github.event.inputs.Version}}</FileVersion>'
           echo $save > .\Ginger\GingerCoreCommon/GingerCoreCommon.csproj
