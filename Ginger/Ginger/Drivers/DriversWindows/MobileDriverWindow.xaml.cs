@@ -183,7 +183,7 @@ namespace Ginger.Drivers.DriversWindows
         private void DrawRectangle(System.Drawing.Point ElementStartPoint, System.Drawing.Point ElementMaxPoint, Amdocs.Ginger.Common.UIElement.ElementInfo elementInfo)
         {
             ((DriverBase)mDriver).SetRectangleProperties(ref ElementStartPoint, ref ElementMaxPoint, xDeviceScreenshotImage.Source.Width, xDeviceScreenshotImage.Source.Height,
-                xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight, elementInfo, false);
+                xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight, elementInfo);
 
             xHighlighterBorder.SetValue(Canvas.LeftProperty, ElementStartPoint.X + ((xDeviceScreenshotCanvas.ActualWidth - xDeviceScreenshotImage.ActualWidth) / 2));
             xHighlighterBorder.SetValue(Canvas.TopProperty, ElementStartPoint.Y + ((xDeviceScreenshotCanvas.ActualHeight - xDeviceScreenshotImage.ActualHeight) / 2));
@@ -1419,24 +1419,8 @@ namespace Ginger.Drivers.DriversWindows
                 double ratio_X = 1;
                 double ratio_Y = 1;
 
-                if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS) // && mDriver.GetAppType() == eAppType.NativeHybride)
-                {
-                    if (((GenericAppiumDriver)mDriver).DeviceSource == eDeviceSource.MicroFoucsUFTMLab)
-                    {
-                        ratio_X = (xDeviceScreenshotImage.Source.Width) / xDeviceScreenshotImage.ActualWidth;
-                        ratio_Y = (xDeviceScreenshotImage.Source.Height) / xDeviceScreenshotImage.ActualHeight;
-                    }
-                    else
-                    {
-                        ratio_X = (xDeviceScreenshotImage.Source.Width / 2) / xDeviceScreenshotImage.ActualWidth;
-                        ratio_Y = (xDeviceScreenshotImage.Source.Height / 2) / xDeviceScreenshotImage.ActualHeight;
-                    } 
-                }
-                else
-                {
-                    ratio_X = xDeviceScreenshotImage.Source.Width / xDeviceScreenshotImage.ActualWidth;
-                    ratio_Y = xDeviceScreenshotImage.Source.Height / xDeviceScreenshotImage.ActualHeight;
-                }
+                ratio_X = (xDeviceScreenshotImage.Source.Width / ((GenericAppiumDriver)mDriver).SourceMobileImageWidthConvertFactor) / xDeviceScreenshotImage.ActualWidth;
+                ratio_Y = (xDeviceScreenshotImage.Source.Height / ((GenericAppiumDriver)mDriver).SourceMobileImageHeightConvertFactor) / xDeviceScreenshotImage.ActualHeight;
 
                 if (mDriver.GetAppType() == eAppType.Web && mDriver.GetDevicePlatformType() == eDevicePlatformType.Android)
                 {

@@ -152,6 +152,9 @@ namespace Amdocs.Ginger.CoreNET
         bool mIsDeviceConnected = false;
         string mDefaultURL = null;
 
+        public double SourceMobileImageWidthConvertFactor = 1;
+        public double SourceMobileImageHeightConvertFactor = 1;
+
         public bool IsDeviceConnected
         {
             get => mIsDeviceConnected;
@@ -2755,8 +2758,7 @@ namespace Amdocs.Ginger.CoreNET
             return foundNode != null ? await GetElementInfoforXmlNode(foundNode) : null;
         }
 
-        double SourceMobileImageWidthConvertFactor = 1;
-        double SourceMobileImageHeightConvertFactor = 1;
+
         private void CalculateSourceMobileImageConvertFactors()
         {
             SourceMobileImageWidthConvertFactor = 1;
@@ -2791,11 +2793,9 @@ namespace Amdocs.Ginger.CoreNET
             return pointOnAppScreen;
         }
 
-        public override bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, ElementInfo clickedElementInfo, bool AutoCorrectRectPropRequired)
+        public override bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, ElementInfo clickedElementInfo)
         {
             double ratio_X, ratio_Y;
-            int AutoCorrectRectProp = 1;
-
             XmlNode rectangleXmlNode = clickedElementInfo.ElementObject as XmlNode;
 
             ratio_X = (SrcWidth / SourceMobileImageWidthConvertFactor) / ActWidth;
@@ -2832,7 +2832,6 @@ namespace Amdocs.Ginger.CoreNET
                             ElementMaxPoints.Y = (int)(Convert.ToInt64(boundsXY[3]) / ratio_Y);
                         }
                     }
-
                     break;
 
                 case eDevicePlatformType.iOS:
@@ -2853,16 +2852,12 @@ namespace Amdocs.Ginger.CoreNET
                         ElementStartPoints.X = (int)(Convert.ToInt32(x) / ratio_X);
                         ElementStartPoints.Y = (int)(Convert.ToInt32(y) / ratio_Y);
 
-                        if (AutoCorrectRectPropRequired)
-                            AutoCorrectRectProp = 2;
-
                         ElementMaxPoints.X = ElementStartPoints.X + Convert.ToInt32(Convert.ToInt32(wdth) / ratio_X);
                         ElementMaxPoints.Y = ElementStartPoints.Y + Convert.ToInt32(Convert.ToInt32(hgt) / ratio_Y);
                     }
 
                     break;
             }
-
             return true;
         }
 
