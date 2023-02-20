@@ -202,6 +202,7 @@ namespace Amdocs.Ginger.CoreNET
         public override void StartDriver()
         {
             mIsDeviceConnected = ConnectToAppium();
+            CalculateSourceMobileImageConvertFactors();
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
 
@@ -356,6 +357,10 @@ namespace Amdocs.Ginger.CoreNET
                     else if (UserCapability.Parameter == "deviceName")
                     {
                         driverOptions.DeviceName = UserCapability.Value;
+                    }
+                    else if (UserCapability.Parameter == "browserName")
+                    {
+                        driverOptions.BrowserName = UserCapability.Value;
                     }
                     else
                     {
@@ -2750,50 +2755,35 @@ namespace Amdocs.Ginger.CoreNET
             return foundNode != null ? await GetElementInfoforXmlNode(foundNode) : null;
         }
 
+        double SourceMobileImageWidthConvertFactor = 1;
+        double SourceMobileImageHeightConvertFactor = 1;
+        private void CalculateSourceMobileImageConvertFactors()
+        {
+            SourceMobileImageWidthConvertFactor = 1;
+            SourceMobileImageHeightConvertFactor = 1;
+
+            if (AppType == eAppType.Web)
+            {
+                SourceMobileImageWidthConvertFactor = 3;
+                SourceMobileImageHeightConvertFactor = 3;
+            }
+            else
+            {
+                if (DeviceSource != eDeviceSource.MicroFoucsUFTMLab)
+                {
+                    SourceMobileImageWidthConvertFactor = 2;
+                    SourceMobileImageHeightConvertFactor = 2;
+                }
+            }
+
+        }
+
         public override Point GetPointOnAppWindow(Point clickedPoint, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight)
         {
             Point pointOnAppScreen = new Point();
             double ratio_X = 1, ratio_Y = 1;
-
-            switch (DevicePlatformType)
-            {
-                case eDevicePlatformType.Android:
-
-                    if (AppType == eAppType.Web)
-                    {
-                        ratio_X = (SrcWidth / 3) / ActWidth;
-                        ratio_Y = (SrcHeight / 3) / ActHeight;
-                    }
-                    else
-                    {
-                        ratio_X = SrcWidth / ActWidth;
-                        ratio_Y = SrcHeight / ActHeight;
-                    }
-
-                    break;
-                case eDevicePlatformType.iOS:
-
-                    if (AppType == eAppType.Web)
-                    {
-                        ratio_X = (SrcWidth / 3) / ActWidth;
-                        ratio_Y = (SrcHeight / 3) / ActHeight;
-                    }
-                    else
-                    {
-                        if (DeviceSource == eDeviceSource.MicroFoucsUFTMLab)
-                        {
-                            ratio_X = SrcWidth / ActWidth;
-                            ratio_Y = SrcHeight / ActHeight;
-                        }
-                        else
-                        {
-                            ratio_X = (SrcWidth / 2) / ActWidth;
-                            ratio_Y = (SrcHeight / 2) / ActHeight;
-                        }
-                    }
-
-                    break;
-            }
+            ratio_X = (SrcWidth / SourceMobileImageWidthConvertFactor) / ActWidth;
+            ratio_Y = (SrcHeight / SourceMobileImageHeightConvertFactor) / ActHeight;
 
             pointOnAppScreen.X = (int)(clickedPoint.X * ratio_X);
             pointOnAppScreen.Y = (int)(clickedPoint.Y * ratio_Y);
@@ -2807,6 +2797,10 @@ namespace Amdocs.Ginger.CoreNET
             int AutoCorrectRectProp = 1;
 
             XmlNode rectangleXmlNode = clickedElementInfo.ElementObject as XmlNode;
+
+            ratio_X = (SrcWidth / SourceMobileImageWidthConvertFactor) / ActWidth;
+            ratio_Y = (SrcHeight / SourceMobileImageHeightConvertFactor) / ActHeight;
+
             switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
@@ -2824,8 +2818,6 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     else
                     {
-                        ratio_X = SrcWidth / ActWidth;
-                        ratio_Y = SrcHeight / ActHeight;
 
                         string bounds = rectangleXmlNode != null ? (rectangleXmlNode.Attributes["bounds"] != null ? rectangleXmlNode.Attributes["bounds"].Value : "") : "";
                         bounds = bounds.Replace("[", ",");
@@ -2846,11 +2838,6 @@ namespace Amdocs.Ginger.CoreNET
                 case eDevicePlatformType.iOS:
                     if (AppType == eAppType.Web)
                     {
-                        //ratio_X = SrcWidth / ActWidth;
-                        //ratio_Y = SrcHeight / ActHeight;
-                        ratio_X = (SrcWidth / 2) / ActWidth;
-                        ratio_Y = (SrcHeight / 3) / ActHeight;
-
                         ElementStartPoints.X = (int)(ElementStartPoints.X / ratio_X);
                         ElementStartPoints.Y = (int)(ElementStartPoints.Y / ratio_Y);
                         ElementMaxPoints.X = (int)(ElementMaxPoints.X / ratio_X);
@@ -2858,17 +2845,6 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     else
                     {
-                        if (DeviceSource == eDeviceSource.MicroFoucsUFTMLab)
-                        {
-                            ratio_X = SrcWidth / ActWidth;
-                            ratio_Y = SrcHeight / ActHeight;
-                        }
-                        else
-                        {
-                            ratio_X = (SrcWidth / 2) / ActWidth;
-                            ratio_Y = (SrcHeight / 2) / ActHeight;
-                        }
-
                         string x = GetAttrValue(rectangleXmlNode, "x");
                         string y = GetAttrValue(rectangleXmlNode, "y");
                         string hgt = GetAttrValue(rectangleXmlNode, "height");
