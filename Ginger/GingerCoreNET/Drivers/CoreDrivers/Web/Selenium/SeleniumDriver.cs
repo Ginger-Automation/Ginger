@@ -619,7 +619,6 @@ namespace GingerCore.Drivers
                             InternetExplorerDriverService IExplorerService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
                             IExplorerService.HideCommandPromptWindow = HideConsoleWindow;
                             Driver = new InternetExplorerDriver(IExplorerService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-                            this.mDriverProcessId = IExplorerService.ProcessId;
                         }
                         else
 
