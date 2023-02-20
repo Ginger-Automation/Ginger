@@ -4066,8 +4066,8 @@ namespace GingerCore.Drivers
         private bool IsBrowserAlive()
         {
             Thread.Sleep(100);
-
-            var processHandle = Process.Start(new ProcessStartInfo() { FileName = handleExePath, Arguments = $" -accepteula -a -p {this.mDriverProcessId} \"{this.BrowserExeName}\"", UseShellExecute = false, RedirectStandardOutput = true });
+            string browserExeName = this.BrowserExeName;
+            var processHandle = Process.Start(new ProcessStartInfo() { FileName = handleExePath, Arguments = $" -accepteula -a -p {this.mDriverProcessId} \"{browserExeName}\"", UseShellExecute = false, RedirectStandardOutput = true });
 
             string cliOut = processHandle.StandardOutput.ReadToEnd();
             processHandle.WaitForExit();
@@ -4075,7 +4075,8 @@ namespace GingerCore.Drivers
 
             if (!cliOut.Contains($"{this.BrowserExeName}"))
             {
-                Reporter.ToLog(eLogLevel.DEBUG, $"{this.BrowserExeName} Browser not found for PID {this.mDriverProcessId}");
+                CloseDriver();
+                Reporter.ToLog(eLogLevel.DEBUG, $"{browserExeName} Browser not found for PID {this.mDriverProcessId}");
                 return false;
             }
             return true;
