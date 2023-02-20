@@ -448,12 +448,18 @@ namespace Ginger.Repository
             }
 
             string newItemName = duplicateItem.ItemName+"_copy";
-            int copyCountIndex = 1;
+            int copyCountIndex = 0;
             while (true)
             {
-                if (!existingRepoItems.Contains(newItemName+copyCountIndex))
+                string itemNameToCheck;
+                if (copyCountIndex > 0)
+                    itemNameToCheck = newItemName + copyCountIndex;
+                else
+                    itemNameToCheck = newItemName;
+
+                if (!existingRepoItems.Contains(itemNameToCheck))
                 {
-                    return newItemName+copyCountIndex;
+                    return itemNameToCheck;
                 }
                 copyCountIndex++;
             }
