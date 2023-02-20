@@ -84,6 +84,8 @@ namespace GingerCore.Drivers
         INetwork interceptor;
         public bool isNetworkLogMonitoringStarted = false;
         ActBrowserElement mAct;
+        private int mDriverProcessId = 0;
+
         public enum eBrowserType
         {
             IE,
@@ -431,7 +433,7 @@ namespace GingerCore.Drivers
                             ieoptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
                         InternetExplorerDriverService IEService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
                         IEService.HideCommandPromptWindow = HideConsoleWindow;
-                        Driver = new InternetExplorerDriver(IEService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        Driver = new InternetExplorerDriver(IEService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));                        
                         break;
                     #endregion
 
@@ -471,6 +473,7 @@ namespace GingerCore.Drivers
                         FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService(GetDriversPathPerOS());
                         FFService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new FirefoxDriver(FFService, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        this.mDriverProcessId = FFService.ProcessId;
                         break;
                     #endregion
 
@@ -536,7 +539,7 @@ namespace GingerCore.Drivers
                         try
                         {
                             Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-
+                            this.mDriverProcessId = ChService.ProcessId;
                         }
                         catch (Exception ex)
                         {
@@ -616,6 +619,7 @@ namespace GingerCore.Drivers
                             InternetExplorerDriverService IExplorerService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
                             IExplorerService.HideCommandPromptWindow = HideConsoleWindow;
                             Driver = new InternetExplorerDriver(IExplorerService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            this.mDriverProcessId = IExplorerService.ProcessId;
                         }
                         else
 
@@ -630,6 +634,7 @@ namespace GingerCore.Drivers
                             EdgeDriverService EDService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
                             EDService.HideCommandPromptWindow = HideConsoleWindow;
                             Driver = new EdgeDriver(EDService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            this.mDriverProcessId = EDService.ProcessId;
                         }
 
                         break;
@@ -848,6 +853,7 @@ namespace GingerCore.Drivers
             {
                 if (Driver != null)
                 {
+                    Driver.Close();
                     Driver.Quit();
                     Driver = null;
                 }
@@ -4048,6 +4054,12 @@ namespace GingerCore.Drivers
         private int exceptioncount = 0;
 
 
+        private static string handleExePath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "StaticDrivers", "handle.exe");
+
+        public string BrowserExeName
+        {
+            get { return ((OpenQA.Selenium.WebDriver)Driver).Capabilities.GetCapability(OpenQA.Selenium.CapabilityType.BrowserName).ToString()+ ".exe"; }
+        }
 
         public override bool IsRunning()
         {
@@ -4063,6 +4075,31 @@ namespace GingerCore.Drivers
 
                 try
                 {
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && this.mDriverProcessId != 0)
+                    {
+                        try
+                        {
+                            Thread.Sleep(100);
+                            var processHandle = Process.Start(new ProcessStartInfo() { FileName = handleExePath, Arguments = $" -accepteula -a -p {this.mDriverProcessId} \"{this.BrowserExeName}\"", UseShellExecute = false, RedirectStandardOutput = true });
+
+                            string cliOut = processHandle.StandardOutput.ReadToEnd();
+                            processHandle.WaitForExit();
+                            processHandle.Close();
+
+                            if (!cliOut.Contains($"{this.BrowserExeName}"))
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, $"{this.BrowserExeName} Browser not found for PID {this.mDriverProcessId}");
+                                return false;
+                            }
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occured in IsRunning Method using Hnadle.exe ", ex);
+                            return false;
+                        }
+                    }
+
                     int count = 0;
                     ///IAsyncResult result;
                     //Action action = () =>
@@ -4071,7 +4108,7 @@ namespace GingerCore.Drivers
                         try
                         {
                             Thread.Sleep(100);
-                            count = Driver.WindowHandles.ToList().Count;
+                            count = Driver.WindowHandles.ToList().Count;                      
                         }
                         catch (System.InvalidCastException ex)
                         {
