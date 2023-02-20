@@ -557,7 +557,7 @@ namespace GingerCore.ALM.JIRA.Bll
             JiraIssueExport jiraIssue = new JiraIssueExport();
             jiraIssue.issueType = "Test Execution";
             jiraIssue.resourceType = ResourceType.TEST_CASE_EXECUTION_RECORDS;
-            jiraIssue.ExportFields.Add("project", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.DefaultAlmConfig.ALMProjectName } });
+            jiraIssue.ExportFields.Add("project", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.DefaultAlmConfig.ALMProjectKey } });
             jiraIssue.ExportFields.Add("summary", new List<IJiraExportData>() { new JiraExportData() { value = businessFlow.Name + " Test Execution" + DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") } });
             jiraIssue.ExportFields.Add("description", new List<IJiraExportData>() { new JiraExportData() { value = businessFlow.Description + " Test Execution" } });
             jiraIssue.ExportFields.Add("issuetype", new List<IJiraExportData>() { new JiraExportData() { value = "Test Execution" } });
@@ -717,7 +717,7 @@ namespace GingerCore.ALM.JIRA.Bll
         private void CreateTestSetFields(BusinessFlow businessFlow, IEnumerable<ExternalItemFieldBase> testSetFields, JiraIssueExport jiraIssue, List<IJiraExportData> tcIds)
         {
             jiraIssue.resourceType = ResourceType.TEST_SET;
-            jiraIssue.ExportFields.Add("project", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.DefaultAlmConfig.ALMProjectName } });
+            jiraIssue.ExportFields.Add("project", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.DefaultAlmConfig.ALMProjectKey } });
             jiraIssue.ExportFields.Add("summary", new List<IJiraExportData>() { new JiraExportData() { value = businessFlow.Name } });
             jiraIssue.ExportFields.Add("description", new List<IJiraExportData>() { new JiraExportData() { value = businessFlow.Description } });
             jiraIssue.ExportFields.Add("issuetype", new List<IJiraExportData>() { new JiraExportData() { value = "Test Set" } });

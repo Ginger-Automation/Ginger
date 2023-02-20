@@ -80,7 +80,7 @@ namespace GingerCore.ALM.RQM
             // 
             // get data about execution records per current test plan - start
             RQMTestPlan testPlan = new RQMTestPlan();
-            string importConfigTemplate = ""; //System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Import", "RQM_ImportConfigs_Template.xml");
+            string importConfigTemplate = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Import", "RQM_ImportConfigs_Template.xml");
             if (File.Exists(importConfigTemplate))
             {
                 XmlSerializer serializer = new
@@ -508,9 +508,11 @@ namespace GingerCore.ALM.RQM
             {
                 //Create (RQM)TestCase for each Ginger ActivityGroup and add it to RQM TestCase List
                 testPlan.Activities = new List<IActivityModel>();//3
+                
                 foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
                 {
                     testPlan.Activities.Add(GetTestCaseFromActivityGroup(ag));
+                    
                 }
 
                 RQMConnect.Instance.RQMRep.GetConection();
@@ -534,21 +536,25 @@ namespace GingerCore.ALM.RQM
                     int ActivityGroupCounter = 0;
                     int activityStepCounter = 0;
                     int activityStepOrderID = 1;
-                    foreach (ACL_Data_Contract.Activity act in plan.Activities)
+                    foreach (ACL_Data_Contract.TestSuite testSuite in plan.TestSuites)
                     {
-                        string ActivityGroupID = "RQMID=" + act.ExportedID.ToString() + "|RQMScriptID=" + act.ExportedTestScriptId.ToString() + "|RQMRecordID=" + act.ExportedTcExecutionRecId.ToString() + "|AtsID=" + act.EntityId.ToString();
-                        businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalID = ActivityGroupID;
-
-                        foreach (ACL_Data_Contract.ActivityStep activityStep in act.ActivityData.ActivityStepsColl)
+                        foreach (ACL_Data_Contract.Activity act in testSuite.Activities)
                         {
-                            //string activityStepID = "RQMID=" + activityStepOrderID.ToString() + "|AtsID=" + act.EntityId.ToString();
-                            string activityStepID = "RQMID=" + act.ExportedTestScriptId.ToString() + "_" + activityStepOrderID + "|AtsID=" + act.EntityId.ToString();
-                            businessFlow.Activities[activityStepCounter].ExternalID = activityStepID;
-                            activityStepCounter++;
-                            activityStepOrderID++;
+                            string ActivityGroupID = "RQMID=" + act.ExportedID.ToString() + "|RQMScriptID=" + act.ExportedTestScriptId.ToString() + "|RQMRecordID=" + act.ExportedTcExecutionRecId.ToString() + "|AtsID=" + act.EntityId.ToString();
+                            businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalID = ActivityGroupID;
+                            businessFlow.ActivitiesGroups[ActivityGroupCounter].TestSuiteId = testSuite.TestSuiteId;
+                            businessFlow.ActivitiesGroups[ActivityGroupCounter].TestSuiteTitle = testSuite.TestSuiteName;
+                            foreach (ACL_Data_Contract.ActivityStep activityStep in act.ActivityData.ActivityStepsColl)
+                            {
+                                //string activityStepID = "RQMID=" + activityStepOrderID.ToString() + "|AtsID=" + act.EntityId.ToString();
+                                string activityStepID = "RQMID=" + act.ExportedTestScriptId.ToString() + "_" + activityStepOrderID + "|AtsID=" + act.EntityId.ToString();
+                                businessFlow.Activities[activityStepCounter].ExternalID = activityStepID;
+                                activityStepCounter++;
+                                activityStepOrderID++;
+                            }
+                            activityStepOrderID = 0;
+                            ActivityGroupCounter++;
                         }
-                        activityStepOrderID = 0;
-                        ActivityGroupCounter++;
                     }
                 }
                 return true;
@@ -588,6 +594,22 @@ namespace GingerCore.ALM.RQM
             testPlan.EntityName = businessFlow.Name;
             testPlan.EntityDesc = businessFlow.Description == null ? "" : businessFlow.Description;
 
+            List<TestSuite> testSuites = new List<TestSuite>();
+            foreach (ActivitiesGroup activitiesGroup in businessFlow.ActivitiesGroups)
+            {
+                TestSuite testSuite = new TestSuite();
+                testSuite.TestSuiteName = activitiesGroup.Name;
+                testSuite.TestSuiteDescription = String.IsNullOrEmpty(activitiesGroup.Description) ? String.Empty : activitiesGroup.Description;
+                testSuite.Activities = new List<IActivityModel>();//3
+
+                foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
+                {
+                    testSuite.Activities.Add(GetTestCaseFromActivityGroup(ag));
+
+                }
+                testSuites.Add(testSuite);
+            }
+            testPlan.TestSuites = testSuites;
             //Add custom properties
             Dictionary<string, string> ActivityLevelproperties = GetCustomProperties("TestPlan");
             testPlan.CustomProperties = ActivityLevelproperties;
@@ -603,6 +625,7 @@ namespace GingerCore.ALM.RQM
             }
 
             ACL_Data_Contract.Activity testCase = new ACL_Data_Contract.Activity();
+            
             //Check if updating or creating new instance in RQM
             if (!string.IsNullOrEmpty(activityGroup.ExternalID))
             {

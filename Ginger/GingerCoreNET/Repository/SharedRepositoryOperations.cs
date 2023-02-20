@@ -92,6 +92,14 @@ namespace Ginger.Repository
                 if (itemCopy is Activity)
                 {
                     ((Activity)itemCopy).Type = eSharedItemType.Regular;
+                    foreach(Act act in ((Activity)itemCopy).Acts)
+                    {
+                        foreach(ActInputValue inputValue in act.InputValues)
+                        {
+                            inputValue.StartDirtyTracking();
+                            inputValue.OnDirtyStatusChanged += act.RaiseDirtyChanged;
+                        }
+                    }
                 }
 
                 if (isOverwrite)

@@ -9322,42 +9322,51 @@ namespace GingerCore.Drivers
 
         public async Task StopMonitoringNetworkLog(IWebDriver webDriver, ActBrowserElement act)
         {
-            if (isNetworkLogMonitoringStarted)
+            try
             {
-                await interceptor.StopMonitoring();
-
-                interceptor.NetworkRequestSent -= OnNetworkRequestSent;
-                interceptor.NetworkResponseReceived -= OnNetworkResponseReceived;
-                interceptor.ClearRequestHandlers();
-                interceptor.ClearResponseHandlers();
-                act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
-                act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
-                foreach (var val in networkRequestLogList.ToList())
+                if (isNetworkLogMonitoringStarted)
                 {
-                    act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                    await interceptor.StopMonitoring();
+
+                    interceptor.NetworkRequestSent -= OnNetworkRequestSent;
+                    interceptor.NetworkResponseReceived -= OnNetworkResponseReceived;
+                    interceptor.ClearRequestHandlers();
+                    interceptor.ClearResponseHandlers();
+                    act.AddOrUpdateReturnParamActual("Raw Request", Newtonsoft.Json.JsonConvert.SerializeObject(networkRequestLogList.Select(x => x.Item2).ToList()));
+                    act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkResponseLogList.Select(x => x.Item2).ToList()));
+                    foreach (var val in networkRequestLogList.ToList())
+                    {
+                        act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                    }
+                    foreach (var val in networkRequestLogList.ToList())
+                    {
+                        act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                    }
+
+                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V101.Network.DisableCommandSettings());
+                    devToolsSession.Dispose();
+                    devTools.CloseDevToolsSession();
+
+                    string requestPath = CreateNetworkLogFile("NetworklogRequest");
+                    act.ExInfo = "RequestFile : " + requestPath + "\n";
+                    string responsePath = CreateNetworkLogFile("NetworklogResponse");
+                    act.ExInfo = act.ExInfo + "ResponseFile : " + responsePath + "\n";
+
+                    act.AddOrUpdateReturnParamActual("RequestFile", requestPath);
+                    act.AddOrUpdateReturnParamActual("ResponseFile", responsePath);
+
                 }
-                foreach (var val in networkRequestLogList.ToList())
+                else
                 {
-                    act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
+                    act.ExInfo = "Action is skipped," + ActBrowserElement.eControlAction.StartMonitoringNetworkLog.ToString() + " Action is not started";
+                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+
                 }
-
-                await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V101.Network.DisableCommandSettings());
-                devToolsSession.Dispose();
-                devTools.CloseDevToolsSession();
-
-                string requestPath = CreateNetworkLogFile("NetworklogRequest");
-                act.ExInfo = "RequestFile : " + requestPath + "\n";
-                string responsePath = CreateNetworkLogFile("NetworklogResponse");
-                act.ExInfo = act.ExInfo + "ResponseFile : " + responsePath + "\n";
-
             }
-            else
+            catch (Exception ex)
             {
-                act.ExInfo = "Action is skipped," + ActBrowserElement.eControlAction.StartMonitoringNetworkLog.ToString() + " Action is not started";
-                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-
+                throw ex;
             }
-
         }
 
         private string CreateNetworkLogFile(string Filename)
