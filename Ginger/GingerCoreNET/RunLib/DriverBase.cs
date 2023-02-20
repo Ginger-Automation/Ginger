@@ -287,7 +287,7 @@ namespace GingerCore.Drivers
             return pointOnAppScreen;
         }
 
-        public virtual bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, Amdocs.Ginger.Common.UIElement.ElementInfo clickedElementInfo, bool AutoCorrectRectPropRequired)
+        public virtual bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, Amdocs.Ginger.Common.UIElement.ElementInfo clickedElementInfo)
         {
             return false;
         }
