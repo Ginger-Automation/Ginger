@@ -883,7 +883,7 @@ namespace GingerCore.ALM.RQM
             {
                 //TODO: Populate list fields with CategoryTypes
                 populatedValue = "Starting fields retrieve process... ";
-                bw.ReportProgress(totalValues, populatedValue);
+                bw.ReportProgress(totalValues, populatedValue);              
                 RqmResponseData categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + rqmDomain + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + rqmProjectGuid + "/categoryType"));
                 XmlDocument categoryTypeList = new XmlDocument();
 
@@ -1102,7 +1102,7 @@ namespace GingerCore.ALM.RQM
                     populatedValue = "Starting values retrieve process... ";
                     bw.ReportProgress(totalValues, populatedValue);
 
-                    RqmResponseData category = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + rqmDomain + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + rqmProject + "/category"));
+                    RqmResponseData category = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + rqmDomain + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + rqmProjectGuid + "/category"));
                     XmlDocument CategoryList = new XmlDocument();
                     CategoryList.LoadXml(category.responseText);
                     totalValues = 0;
@@ -1150,7 +1150,7 @@ namespace GingerCore.ALM.RQM
 
                         //Get all Pages of values:
                         populatedValue = "Retrieving value pages... ";
-                        List<RqmResponseData> XmlPageList = new List<RqmResponseData>(); //RQMConnect.Instance.RQMRep.GetRqmDataParallel(loginData, uriList);
+                        List<RqmResponseData> XmlPageList = RQMConnect.Instance.RQMRep.GetRqmDataParallel(loginData, uriList);
 
                         //For each category page
                         foreach (RqmResponseData category_ in XmlPageList)
@@ -1177,7 +1177,7 @@ namespace GingerCore.ALM.RQM
                                 }
 
                                 //Retrieves Category XML Pages in parallel per Page
-                                List<RqmResponseData> CategoryIDLink = new List<RqmResponseData>(); //RQMConnect.Instance.RQMRep.GetRqmDataParallel(loginData, idLinkList);
+                                List<RqmResponseData> CategoryIDLink = RQMConnect.Instance.RQMRep.GetRqmDataParallel(loginData, idLinkList);
 
                                 ExternalItemFieldBase valuesItemfield = new ExternalItemFieldBase();
 
