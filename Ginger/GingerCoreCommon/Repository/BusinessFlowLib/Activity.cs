@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -498,6 +498,21 @@ namespace GingerCore
                 {
                     mEnableActionsVariablesDependenciesControl = value;
                     OnPropertyChanged(nameof(EnableActionsVariablesDependenciesControl));
+                }
+            }
+        }
+
+        private Guid mPOMMetaDataId;
+        [IsSerializedForLocalRepository]
+        public Guid POMMetaDataId
+        {
+            get { return mPOMMetaDataId; }
+            set
+            {
+                if(mPOMMetaDataId != value)
+                {
+                    mPOMMetaDataId = value;
+                    OnPropertyChanged(nameof(POMMetaDataId));
                 }
             }
         }

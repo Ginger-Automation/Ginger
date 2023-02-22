@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -143,16 +143,16 @@ namespace Ginger.ALM
 
             ALMIntegration.Instance.RefreshALMItemFields(mItemsFields, true, fieldsWorker);
 
-            //fieldsWorker.ReportProgress(GingerCore.ALM.RQM.ImportFromRQM.totalValues);
-            //e.Result = GingerCore.ALM.RQM.ImportFromRQM.totalValues;
-            //System.Diagnostics.Debug.WriteLine("values = " + e.Result);
+            fieldsWorker.ReportProgress(GingerCore.ALM.RQM.ImportFromRQM.totalValues);
+            e.Result = GingerCore.ALM.RQM.ImportFromRQM.totalValues;
+            System.Diagnostics.Debug.WriteLine("values = " + e.Result);
         }
 
         private void FieldsWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             LoadFieldsStatusLbl.Dispatcher.Invoke(() =>
             {
-                //LoadFieldsStatusLbl.Content = GingerCore.ALM.RQM.ImportFromRQM.populatedValue;
+                LoadFieldsStatusLbl.Content = GingerCore.ALM.RQM.ImportFromRQM.populatedValue;
 
             });
 

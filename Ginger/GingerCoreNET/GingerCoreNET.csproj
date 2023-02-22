@@ -311,8 +311,8 @@
     <Reference Include="AlmRepositoryStd">
       <HintPath>DLLS\AlmRepositoryStd.dll</HintPath>
     </Reference>
-    <Reference Include="ALM_Common">
-      <HintPath>..\GingerCore\DLLs\ALM_Common.dll</HintPath>
+    <Reference Include="ALM_CommonStd">
+      <HintPath>DLLS\ALM_CommonStd.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>

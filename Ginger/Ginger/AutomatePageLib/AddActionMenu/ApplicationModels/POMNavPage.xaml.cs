@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -104,6 +104,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xPomElementsListView.ListSelectionMode = SelectionMode.Extended;
             mPOMListHelper.ListView = xPomElementsListView;
 
+            ConfigurePOMPage();
+            mContext.PropertyChanged += MContext_PropertyChanged;
+        }
+
+        private void ConfigurePOMPage()
+        {
             ApplicationPOMsTreeItem mPOMsRoot = new ApplicationPOMsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>());
             mItemTypeRootNode = mPOMsRoot;
             mPOMPage = new SingleItemTreeViewSelectionPage("Page Object Models", eImageType.ApplicationPOMModel, mItemTypeRootNode, SingleItemTreeViewSelectionPage.eItemSelectionType.Multi, true,
@@ -111,9 +117,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                                             UCTreeView.eFilteroperationType.Equals, showAlerts: false);
             mItemTypeRootNode.SetTools(mPOMPage.xTreeView);
             mPOMPage.xTreeView.SetTopToolBarTools(mPOMsRoot.SaveAllTreeFolderItemsHandler, mPOMsRoot.AddPOM, RefreshTreeItems);
-            mContext.PropertyChanged += MContext_PropertyChanged;
             mPOMPage.OnSelect += MainTreeView_ItemSelected;
-            //SetElementsGridView();
             mPOMPage.HorizontalAlignment = HorizontalAlignment.Stretch;
             mPOMPage.xTreeView.HorizontalAlignment = HorizontalAlignment.Stretch;
             mPOMPage.xTreeView.SetAddButtonToArrow();
@@ -141,10 +145,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (mContext.Activity != null)
             {
-                mPOMPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication);
-                mPOMPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
-                mPOMPage.xTreeView.Tree.SelectItem(mItemTypeRootNode);
-                mPOMPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
+                ConfigurePOMPage();
             }
         }
 
@@ -165,22 +166,18 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     xPomElementsListView.Visibility = Visibility.Visible;
                     xPOMSplitter.IsEnabled = true;
 
-                    if (WorkSpace.Instance.BetaFeatures.AutoGenerateActivities)
+                    if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey) == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
                     {
-                        //POM Activities to show
-                        ObservableList<Activity> pomActivities = AutoGenerateFlows.CreatePOMActivitiesFromMetadata(mPOM);
-                        //Shared Activities which uses current POM
-                        ObservableList<Activity> sharedActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                        IEnumerable<Activity> pomSharedActivities = sharedActivities.Where(x => x.Acts.Any(a => a is ActUIElement && ((ActUIElement)a).ElementLocateValue != null && ((ActUIElement)a).ElementLocateValue.Contains(mPOM.Guid.ToString())));
-                        pomSharedActivities.ToList().ForEach(item => pomActivities.Add(item));
+                        //Suggested Activities to show
+                        ObservableList<Activity> suggestedActivities = AutoGenerateFlows.CreatePOMActivitiesFromMetadata(mPOM);
 
-                        mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(pomActivities, mContext, true);
+                        mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(suggestedActivities, mContext, true);
                         xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
-                        xPomActivitiesTabItem.Visibility = Visibility.Visible;
+                        xSuggestedActivitiesTabItem.Visibility = Visibility.Visible;
                     }
                     else
                     {
-                        xPomActivitiesTabItem.Visibility = Visibility.Collapsed;
+                        xSuggestedActivitiesTabItem.Visibility = Visibility.Collapsed;
                     }
                 }
             }
