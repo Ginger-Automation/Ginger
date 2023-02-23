@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 
 
@@ -291,7 +292,7 @@ namespace GingerCore.Activities
                             existingActivities.Remove(updatedAct);
                         }
                         // Activity doesn't exist in the group and the shared group is recently updated by addition of this activity, thus add this activity to the group instance in the Business Flow
-                        else if (extraDetails != null)
+                        else if (extraDetails != null) //not used anywhere, is needed?
                         {
                             updatedAct = (extraDetails as ObservableList<Activity>).Where(a => a.ActivityName == actID.ActivityName && a.Guid == actID.ActivityGuid).FirstOrDefault();
                             if (updatedAct == null)
@@ -309,6 +310,14 @@ namespace GingerCore.Activities
                                 currentBF.AddActivity(updatedAct, activitiesGroupInstance, insertIndex);
                                 insertIndex++;
                             }
+                        }
+                        // Activity doesn't exist in the group and the shared group is recently updated by addition of this activity, thus add this activity to the group instance in the Business Flow
+                        else
+                        {
+                            updatedAct = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(actID.ActivityGuid);
+                            updatedAct = updatedAct.CreateInstance(true) as Activity;
+                            currentBF.AddActivity(updatedAct, activitiesGroupInstance, insertIndex);
+                            insertIndex++;
                         }
 
                     }
@@ -335,6 +344,16 @@ namespace GingerCore.Activities
                     {
                         updatedGroup.ActivitiesIdentifiers = ((ActivitiesGroup)existingRepoItem).ActivitiesIdentifiers;
                     }
+                    else
+                    {
+                        foreach(ActivityIdentifiers actIdentify in updatedGroup.ActivitiesIdentifiers)
+                        {
+                            if(actIdentify.ActivityParentGuid != Guid.Empty)
+                            {
+                                actIdentify.ActivityGuid = actIdentify.ActivityParentGuid;
+                            }
+                        }    
+                    }
 
                     break;
                 case eItemParts.Activities:
@@ -354,7 +373,7 @@ namespace GingerCore.Activities
         }
 
         double? mElapsed;
-        [IsSerializedForLocalRepository]    // !!!!!!!!!!!!!!!!!!!!! Why serialized?
+        //[IsSerializedForLocalRepository]    // !!!!!!!!!!!!!!!!!!!!! Why serialized?
         public double? Elapsed
         {
             get { return mElapsed; }

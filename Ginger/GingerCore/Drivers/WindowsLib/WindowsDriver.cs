@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ using System.Reflection;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using OpenQA.Selenium;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 
 namespace GingerCore.Drivers.WindowsLib
 {
@@ -1079,7 +1080,7 @@ namespace GingerCore.Drivers.WindowsLib
             return GetControlFromMousePosition();
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting = null)
         {
             if (ElementInfo.IsElementTypeSupportingOptionalValues(EI.ElementTypeEnum))
             {
@@ -1101,7 +1102,7 @@ namespace GingerCore.Drivers.WindowsLib
             return EI;
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             return await Task.Run(async () =>
             {
@@ -1118,12 +1119,12 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
                     }
 
-                    ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo);
+                    ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo,pomSetting);
 
                     bool learnElement = true;
-                    if (filteredElementType != null)
+                    if (pomSetting.filteredElementType != null)
                     {
-                        if (!filteredElementType.Contains(foundElemntInfo.ElementTypeEnum))
+                        if (!pomSetting.filteredElementType.Contains(foundElemntInfo.ElementTypeEnum))
                         {
                             learnElement = false;
                         }
@@ -1194,6 +1195,7 @@ namespace GingerCore.Drivers.WindowsLib
             {
                 list.Add(new ControlProperty() { Name = ElementProperty.Value, Value = ElementInfo.Value });
             }
+            
             list.Add(new ControlProperty() { Name = ElementProperty.Height, Value = ElementInfo.Height.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.Width, Value = ElementInfo.Width.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.X, Value = ElementInfo.X.ToString() });
@@ -1208,7 +1210,7 @@ namespace GingerCore.Drivers.WindowsLib
             return list;       
         }
 
-        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
+        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
             ObservableList<ElementLocator> Locators = GetElementLocators(ElementInfo);
             foreach (var elementLocator in Locators)
@@ -1518,7 +1520,7 @@ namespace GingerCore.Drivers.WindowsLib
         {
         }
 
-        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
         {
             try
             {
@@ -1834,6 +1836,17 @@ namespace GingerCore.Drivers.WindowsLib
             size.Height = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Height;
             size.Width = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Width;
             return size.ToString();
+        }
+
+        public ObservableList<ElementLocator> GetElement
+            (ElementInfo ElementInfo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
+        {
+            throw new NotImplementedException();
         }
     }
 }

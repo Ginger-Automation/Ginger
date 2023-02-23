@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void SourceControlLock(object sender, RoutedEventArgs e)
         {
             string lockComment = string.Empty;
-            if (GingerCore.General.GetInputWithValidation("Lock", "Lock Comment:", ref lockComment))
+            if (GingerCore.General.GetInputWithValidation("Lock", "Lock Comment:", ref lockComment, null, false, null))
             {
                 SourceControlIntegration.Lock( WorkSpace.Instance.Solution.SourceControl, this.NodePath(), lockComment);
                 mTreeView.Tree.RefreshHeader((ITreeViewItem)this);

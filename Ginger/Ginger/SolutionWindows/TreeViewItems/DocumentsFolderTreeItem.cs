@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -240,7 +240,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 headerToShow = string.Format("New {0} File", FileExtension.ToUpper().TrimStart(new char[] { '.' }));
                 lblToShow = "File Name:";
             }
-            if (GingerCore.General.GetInputWithValidation(headerToShow, lblToShow, ref NewFileName, System.IO.Path.GetInvalidFileNameChars()))
+            if (GingerCore.General.GetInputWithValidation(headerToShow, lblToShow, ref NewFileName, System.IO.Path.GetInvalidFileNameChars(), false, null))
             {
                 FullFilePath = System.IO.Path.Combine(Path, NewFileName + FileExtension);
                 if (string.IsNullOrEmpty(System.IO.Path.GetExtension(FullFilePath)))
@@ -302,7 +302,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void CreateGherkinFeatureFile(object sender, RoutedEventArgs e)
         { 
             string FileName = string.Empty;
-            if (GingerCore.General.GetInputWithValidation("New Feature File", "File Name:", ref FileName, System.IO.Path.GetInvalidFileNameChars()))
+            if (GingerCore.General.GetInputWithValidation("New Feature File", "File Name:", ref FileName, System.IO.Path.GetInvalidFileNameChars(), false, null))
             {                
                 string FullFilePath = System.IO.Path.Combine(this.Path + @"\" , FileName + ".feature");
                 if (!System.IO.File.Exists(FullFilePath))

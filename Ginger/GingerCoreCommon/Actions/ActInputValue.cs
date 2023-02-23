@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -82,8 +82,11 @@ namespace Amdocs.Ginger.Repository
 
             set
             {
-                mValue = value.ToString();
-                OnPropertyChanged(nameof(Value));
+                if (mValue != value.ToString())
+                {
+                    mValue = value.ToString();
+                    OnPropertyChanged(nameof(Value));
+                }
             }
         }
 
@@ -98,8 +101,11 @@ namespace Amdocs.Ginger.Repository
 
             set
             {
-                mValue = value.ToString();
-                OnPropertyChanged(Value);
+                if (mValue != value.ToString())
+                {
+                    mValue = value.ToString();
+                    OnPropertyChanged(nameof(Value));
+                }
             }
         }
 
@@ -165,7 +171,7 @@ namespace Amdocs.Ginger.Repository
 
         private string mValueForDriver;
 
-        public string ValueForDriver { get { return mValueForDriver; } set { mValueForDriver = value; OnPropertyChanged(ValueForDriver); } }
+        public string ValueForDriver { get { return mValueForDriver; } set { if (mValueForDriver != value) { mValueForDriver = value; OnPropertyChanged(ValueForDriver); } } }
 
 
         public override string ItemName

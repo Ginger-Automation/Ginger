@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -59,6 +59,26 @@ namespace GingerCore.Platforms
                                 ((Agent)agent).AgentOperations = new AgentOperations((Agent)agent);
                             }
                             possibleAgents.Add(agent);
+                        }
+                    }
+
+                    //adding special case for Web on which also Mobile Web Agents are allowed
+                    if(appPlatform == ePlatformType.Web)
+                    {
+                        List<Agent> mobileAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.Platform == ePlatformType.Mobile).ToList();
+                        if (mobileAgents != null)
+                        {
+                            foreach (IAgent mobileAgent in mobileAgents)
+                            {
+                                if (((Agent)mobileAgent).DriverConfiguration.Where(x => x.ItemName == "AppType" && x.Value == "Web").FirstOrDefault() != null)
+                                {
+                                    if (((Agent)mobileAgent).AgentOperations == null)
+                                    {
+                                        ((Agent)mobileAgent).AgentOperations = new AgentOperations((Agent)mobileAgent);
+                                    }
+                                    possibleAgents.Add(mobileAgent);
+                                }
+                            }
                         }
                     }
                 }

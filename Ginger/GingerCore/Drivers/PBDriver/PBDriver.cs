@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ using Amdocs.Ginger.CoreNET.RunLib;
 using System.Threading.Tasks;
 using GingerCore.Actions.VisualTesting;
 using OpenQA.Selenium;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 
 namespace GingerCore.Drivers.PBDriver
 {
@@ -234,7 +235,10 @@ namespace GingerCore.Drivers.PBDriver
                                 foreach (AppWindow aw in list)
                                 {
                                     Bitmap bmp = mUIAutomationHelper.GetAppWindowAsBitmap(aw);
-                                    act.AddScreenShot(bmp);
+                                    if (bmp != null)
+                                    {
+                                        act.AddScreenShot(bmp);
+                                    }
                                     bList = mUIAutomationHelper.GetAppDialogAsBitmap(aw);
                                     foreach (Bitmap tempbmp in bList)
                                     {
@@ -1010,7 +1014,7 @@ namespace GingerCore.Drivers.PBDriver
             return mUIAutomationHelper.GetListOfDriverAppWindows();
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             return await mUIAutomationHelper.GetVisibleControls();
         }
@@ -1039,7 +1043,7 @@ namespace GingerCore.Drivers.PBDriver
             return GetControlFromMousePosition();           
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting=null)
         {
             return EI;
         }
@@ -1049,7 +1053,7 @@ namespace GingerCore.Drivers.PBDriver
             return GetElementProperties(ElementInfo);         
         }
 
-        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
+        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
             return GetElementLocators(ElementInfo);   
         }
@@ -1115,7 +1119,7 @@ namespace GingerCore.Drivers.PBDriver
         {
         }
 
-        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
         {
             throw new NotImplementedException();
         }
@@ -1305,6 +1309,11 @@ namespace GingerCore.Drivers.PBDriver
             size.Height = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Height;
             size.Width = (int)((UIAuto.AutomationElement)mUIAutomationHelper.GetCurrentWindow()).Current.BoundingRectangle.Width;
             return size.ToString();
+        }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
+        {
+            throw new NotImplementedException();
         }
     }
 }

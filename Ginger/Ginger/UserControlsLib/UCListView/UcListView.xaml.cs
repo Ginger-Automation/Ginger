@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -66,6 +66,9 @@ namespace Ginger.UserControlsLib.UCListView
 
         NotifyCollectionChangedEventHandler CollectionChangedHandler;
 
+        public delegate void ItemMouseDoubleClickEventHandler(object? sender, MouseButtonEventArgs e);
+        public event ItemMouseDoubleClickEventHandler ItemMouseDoubleClick;
+
         // DragDrop event handler
         public event EventHandler ItemDropped;
         public delegate void ItemDroppedEventHandler(DragInfo DragInfo);
@@ -121,6 +124,11 @@ namespace Ginger.UserControlsLib.UCListView
             xTagsFilter.TagsStackPanlChanged += TagsFilter_TagsStackPanlChanged;
         }
 
+        private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            ItemMouseDoubleClick?.Invoke(sender, e);
+        }
+
         private void TagsFilter_TagsStackPanlChanged(object sender, EventArgs e)
         {
             this.Dispatcher.Invoke(() =>
@@ -169,7 +177,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                     mObjList = value;
 
-                    filteredView = CollectionViewSource.GetDefaultView(mObjList);
+                    filteredView = new CollectionViewSource() { Source = mObjList }.View;
 
                     if (filteredView != null)
                     {
@@ -178,7 +186,7 @@ namespace Ginger.UserControlsLib.UCListView
                         filteredView.Filter = LVItemFilter;
                     }
 
-                    xListView.ItemsSource = mObjList;
+                    xListView.ItemsSource = filteredView;
 
                     this.Dispatcher.BeginInvoke((Action)(() =>
                     {

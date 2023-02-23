@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,13 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using SkiaSharp.Views.Desktop;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger;
+using Ginger.Reports;
 using GingerCore.ALM;
 using GingerCore.DataSource;
+using GingerCore.Environments;
 using GingerCore.GeneralFunctions;
 using GingerCore.GeneralLib;
+using SkiaSharp;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -334,7 +339,7 @@ namespace GingerCore
             return false;
         }
 
-        public static bool GetInputWithValidation(string header, string label, ref string resultValue, char[] CharsNotAllowed = null, bool isMultiline = false)
+        public static bool GetInputWithValidation(string header, string label, ref string resultValue, char[] CharsNotAllowed = null, bool isMultiline = false, RepositoryItemBase repositoryItem = null)
         {
             bool returnWindow = GingerCore.GeneralLib.InputBoxWindow.OpenDialog(header, label, ref resultValue, isMultiline);
 
@@ -346,6 +351,10 @@ namespace GingerCore
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot be empty.");
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
+                if (IsNameAlreadyexists(repositoryItem, resultValue.Trim()))
+                {
+                    return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline, repositoryItem);
+                }
                 if (CharsNotAllowed != null && !(resultValue.IndexOfAny(CharsNotAllowed) < 0))
                 {
                     System.Text.StringBuilder builder = new System.Text.StringBuilder();
@@ -355,10 +364,69 @@ namespace GingerCore
                         builder.Append(" ");
                     }
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot contain characters like:" + "\n" + builder.ToString());
-                    return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
+                    return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline, repositoryItem);
                 }
             }
             return returnWindow;
+        }
+        public static bool IsNameAlreadyexists(RepositoryItemBase repositoryItem ,string resultValue)
+        {           
+                switch (repositoryItem.GetItemType())
+                {     
+                    case "BusinessFlow":
+                    ObservableList<BusinessFlow> BFList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();                        
+                        if(BFList.Any(x =>x.Name == resultValue))
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Business flow with same name: " + "'" + resultValue + "'" + " already exists.");
+                            return true;
+                        }                                                   
+                        break;
+                    case "Agent":
+                        ObservableList<Agent> Agentist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+                        if (Agentist.Any(x => x.Name == resultValue))
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Agent with same name: " + "'" + resultValue + "'" + " already exists.");
+                            return true;
+                        }                       
+                        break;
+                    case "ReportTemplate":
+                        if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ReportTemplate>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Template with same name: " + "'" + resultValue + "'" + " already exists.");
+                            return true;
+                        }
+                        
+                        break;
+                    case "ApplicationPOMModel":
+                        if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "POM Model with same name: " + "'" + resultValue + "'" + " already exists.");
+                            return true;
+                        }
+                      
+                        break;
+                    case "EnvApplication":
+                        if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<EnvApplication>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Application with same name: " + "'" + resultValue + "'" + " already exists.");
+                            return true;
+                        }
+                    
+                        break;
+                    case "HTMLReportTemplate":
+                        if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                        {
+                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Report Template with same name: " + "'" + resultValue + "'" + " already exists.");
+                            return true;
+                        }
+                       
+                        break;
+                default:
+                    return false;
+                }
+            
+            return false;
+          
         }
 
         public static bool SelectInputWithValidation(string header, string label, ref string resultValue, List<string> mValues)
@@ -805,6 +873,58 @@ namespace GingerCore
             return imagePaths;
         }
 
+        public static Bitmap GetBrowserHeaderScreenshot(System.Drawing.Point windowPosition, System.Drawing.Size windowSize, System.Drawing.Size viewportSize, double devicePixelRatio)
+        {
+            Bitmap browserHeaderScreenshot = new((int)(windowSize.Width * devicePixelRatio), (int)((windowSize.Height - viewportSize.Height) * devicePixelRatio));
+            using (Graphics graphics = Graphics.FromImage(browserHeaderScreenshot))
+            {
+                System.Drawing.Point upperLeftSource = new((int)(windowPosition.X * devicePixelRatio), (int)(windowPosition.Y * devicePixelRatio));
+                System.Drawing.Point upperLeftDestination = new(x: 0, y: 0);
+                graphics.CopyFromScreen(upperLeftSource, upperLeftDestination, browserHeaderScreenshot.Size);
+            }
+            return browserHeaderScreenshot;
+        }
+
+        public static Bitmap GetTaskbarScreenshot()
+        {
+            System.Windows.Forms.Screen primaryScreen = System.Windows.Forms.Screen.PrimaryScreen;
+            Bitmap taskbarScreenshot = new(primaryScreen.Bounds.Width, primaryScreen.Bounds.Height - primaryScreen.WorkingArea.Height);
+            using(Graphics graphics = Graphics.FromImage(taskbarScreenshot))
+            {
+                System.Drawing.Point upperLeftSource = new(x: 0, y: primaryScreen.WorkingArea.Height);
+                System.Drawing.Point uppderLeftDestination = new(x: 0, y: 0);
+                graphics.CopyFromScreen(upperLeftSource, uppderLeftDestination, taskbarScreenshot.Size);
+            }
+            return taskbarScreenshot;
+        }
+
+        public static string MergeVerticallyAndSaveBitmaps(params Bitmap[] bitmaps)
+        {
+            IEnumerable<SKBitmap> skBitmaps = bitmaps.Select(bitmap => bitmap.ToSKBitmap());
+            return MergeVerticallyAndSaveBitmaps(skBitmaps);
+        }
+
+        private static string MergeVerticallyAndSaveBitmaps(IEnumerable<SKBitmap> bitmaps)
+        {
+            int maxWidth = bitmaps.Max(skBitmap => skBitmap.Width);
+            int mergedHeight = bitmaps.Aggregate(0, (totalHeight, skBitmap) => totalHeight + skBitmap.Height);
+
+            SKBitmap mergedBitmap = new(maxWidth, mergedHeight);
+            using SKCanvas canvas = new(mergedBitmap);
+            int currentDrawnHeight = 0;
+            foreach (SKBitmap bitmap in bitmaps)
+            {
+                float drawingXCoordinate = (float)(maxWidth - bitmap.Width) / 2;
+                float drawingYCoordinate = currentDrawnHeight;
+
+                canvas.DrawBitmap(bitmap, drawingXCoordinate, drawingYCoordinate);
+
+                currentDrawnHeight += bitmap.Height;
+            }
+
+            string filePath = BitmapImageToFile(mergedBitmap.ToBitmap());
+            return filePath;
+        }
 
         /// <summary>
         /// Replaces invalid XML characters in a string with their valid XML equivalent.
@@ -1080,6 +1200,11 @@ namespace GingerCore
                 Reporter.ToLog(eLogLevel.WARN, "Configuration package not exist in solution, Settings not exist at: " + Path.Combine(PackagePath, settingsFolder));
             }
             return false;
+        }
+
+        public static string GetClipboardText()
+        {
+            return Clipboard.GetText();
         }
 
     }

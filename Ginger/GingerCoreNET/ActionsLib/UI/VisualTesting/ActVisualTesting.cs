@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -312,7 +312,8 @@ namespace GingerCore.Actions
         public void Execute(IVisualTestingDriver driver)
         {
             mDriver = driver;
-            CheckSetVisualAnalyzer();
+            mVisualAnalyzer = ((DriverBase)mDriver).GetVisualAnalyzer(VisualTestingAnalyzer);
+
             if (mDriver is SeleniumDriver)
             {
                 if(!CheckSetAppWindowSize())
@@ -501,8 +502,6 @@ namespace GingerCore.Actions
 
             AddScreenShot((Bitmap)baseImage.Clone(), "Baseline Image");
             AddScreenShot((Bitmap)targetImage.Clone(), "Target Image");
-            
-            CheckSetVisualAnalyzer();
 
             // Here we call the actual analyzer after everything is prepared
             mVisualAnalyzer.SetAction(mDriver, this);
@@ -511,32 +510,6 @@ namespace GingerCore.Actions
             //Add other info to output params
             AddImageInfo("Baseline image", baseImage);
             AddImageInfo("Target image", targetImage);
-        }
-
-        private void CheckSetVisualAnalyzer()
-        {
-            //Check what kind of comparison we have - Applitools, simple Bitmap or Elements comparison
-            switch (VisualTestingAnalyzer)
-            {
-                case eVisualTestingAnalyzer.BitmapPixelsComparison:
-                    if (mVisualAnalyzer is MagickAnalyzer) return;
-                    mVisualAnalyzer = new MagickAnalyzer();
-                    break;
-
-                case eVisualTestingAnalyzer.Applitools:
-                    if (mVisualAnalyzer is ApplitoolsAnalyzer) return;
-                    mVisualAnalyzer = new ApplitoolsAnalyzer();
-                    break;
-
-                case eVisualTestingAnalyzer.UIElementsComparison:
-                    if (mVisualAnalyzer is UIElementsAnalyzer) return;
-                    mVisualAnalyzer = new UIElementsAnalyzer();
-                    break;
-                case eVisualTestingAnalyzer.VRT:
-                    if (mVisualAnalyzer is VRTAnalyzer) return;
-                    mVisualAnalyzer = new VRTAnalyzer();
-                    break;
-            }
         }
 
         private void AddImageInfo(string txt, Bitmap image)
@@ -553,9 +526,9 @@ namespace GingerCore.Actions
 
             CheckSetAppWindowSize();
             TakeScreenShotforBaseline(driver);
-            
+
             // Call the actual analyzer to take/create the baseline needed
-            CheckSetVisualAnalyzer();
+            mVisualAnalyzer = ((DriverBase)mDriver).GetVisualAnalyzer(VisualTestingAnalyzer);
             mVisualAnalyzer.SetAction(driver, this);
             mVisualAnalyzer.CreateBaseline();
         }

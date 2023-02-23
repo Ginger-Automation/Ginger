@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ using Ginger.Reports;
 using Ginger.Repository;
 using Ginger.Run;
 using Ginger.TimeLineLib;
+using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.TextEditor;
 using GingerCore;
 using GingerCore.Actions;
@@ -72,7 +73,7 @@ namespace GingerWPF.BusinessFlowsLib
     /// <summary>
     /// Page used to design the Business Flow automation flow
     /// </summary>
-    public partial class NewAutomatePage : Page, INotifyPropertyChanged
+    public partial class NewAutomatePage : GingerUIPage, INotifyPropertyChanged
     {
         GingerExecutionEngine mExecutionEngine;
         ProjEnvironment mEnvironment = null;
@@ -188,7 +189,7 @@ namespace GingerWPF.BusinessFlowsLib
         #endregion LiteDB
 
         private void SetUIControls()
-        {            
+        {
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xALMMenuItem, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
 
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Activities));
@@ -198,8 +199,8 @@ namespace GingerWPF.BusinessFlowsLib
 
             BindingHandler.ObjFieldBinding(xAutoAnalyzeConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoRunAutomatePageAnalyzer), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
             BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoGenerateAutomatePageReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
-
             mApplicationAgentsMapPage = new ApplicationAgentsMapPage(mExecutionEngine, mContext);
+            mApplicationAgentsMapPage.MappingList.Height = 60;
             xAppsAgentsMappingFrame.SetContent(mApplicationAgentsMapPage);
             SetEnvsCombo();
         }
@@ -406,6 +407,7 @@ namespace GingerWPF.BusinessFlowsLib
                 ResetPageUI();
 
                 mBusinessFlow = businessFlowToLoad;
+                CurrentItemToSave = mBusinessFlow;
                 if (mBusinessFlow != null)
                 {
                     try
@@ -581,7 +583,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     if (mActivityPage == null)
                     {
-                        var pageViewMode= mContext.Activity.Type==Amdocs.Ginger.Repository.eSharedItemType.Regular ? Ginger.General.eRIPageViewMode.Automation:  Ginger.General.eRIPageViewMode.ViewAndExecute;
+                        var pageViewMode = mContext.Activity.Type == Amdocs.Ginger.Repository.eSharedItemType.Regular ? Ginger.General.eRIPageViewMode.Automation : Ginger.General.eRIPageViewMode.ViewAndExecute;
                         mActivityPage = new ActivityPage(mContext.Activity, mContext, pageViewMode);
                     }
                     else
@@ -1209,10 +1211,10 @@ namespace GingerWPF.BusinessFlowsLib
             var dirtyLinkedActivities = mBusinessFlow.Activities.Where(x => x.IsLinkedItem && x.EnableEdit);
             if (dirtyLinkedActivities.Count() > 0)
             {
-                foreach(Activity dirtyLinkedActivity in dirtyLinkedActivities)
+                foreach (Activity dirtyLinkedActivity in dirtyLinkedActivities)
                 {
                     Reporter.ToStatus(eStatusMsgKey.SaveItem, null, dirtyLinkedActivity.ActivityName,
-                                    "Linked "+GingerDicser.GetTermResValue(eTermResKey.Activity));
+                                    "Linked " + GingerDicser.GetTermResValue(eTermResKey.Activity));
                     SwapLoadingPrefixText("Saving", false);
 
                     await SharedRepositoryOperations.SaveLinkedActivity(dirtyLinkedActivity, mBusinessFlow.Guid.ToString());
@@ -1301,7 +1303,7 @@ namespace GingerWPF.BusinessFlowsLib
         FindAndReplacePage mfindAndReplacePageAutomate = null;
         private void xSearchBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (mfindAndReplacePageAutomate == null)
+            if (mfindAndReplacePageAutomate == null || mfindAndReplacePageAutomate.ItemToSearchOn != mBusinessFlow)
             {
                 mfindAndReplacePageAutomate = new FindAndReplacePage(FindAndReplacePage.eContext.AutomatePage, mBusinessFlow);
             }
@@ -1429,8 +1431,10 @@ namespace GingerWPF.BusinessFlowsLib
 
             ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
             bfs.Add(mBusinessFlow);
-            ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(mEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
-            ExportResultsToALMConfigPage.Instance.ShowAsWindow();
+            if (ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(mEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false)))
+            {
+                ExportResultsToALMConfigPage.Instance.ShowAsWindow();
+            }
         }
 
         private void xReportMenuItem_Click(object sender, RoutedEventArgs e)

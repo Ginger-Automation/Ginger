@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
+using Ginger.Run;
 using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
@@ -151,8 +152,19 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public ListItemUniqueIdentifier GetItemUniqueIdentifier(object item)
         {
             SetItem(item);
-
-            if(mActivity.Type==eSharedItemType.Link)
+            //needed only on pom page
+            if (PageViewMode == General.eRIPageViewMode.AddFromModel)
+            {
+                if (mActivity.IsSharedRepositoryInstance)
+                {
+                    return new ListItemUniqueIdentifier() { Color = "DarkOrange", Tooltip = "This is a Shared Activity" };
+                }
+                if (mActivity.IsAutoLearned)
+                {
+                    return new ListItemUniqueIdentifier() { Color = "Purple", Tooltip = "This is a Auto Learned Activity" };
+                }
+            }
+            if (mActivity.Type==eSharedItemType.Link)
             {
                 return new ListItemUniqueIdentifier() { Color = "Orange", Tooltip = "Linked Shared Activity" };
             }
@@ -172,12 +184,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemIconField()
         {
-            return nameof(RepositoryItemBase.ItemImageType);
+            return nameof(Activity.TargetApplicationPlatformImage);
         }
 
         public string GetItemIconTooltipField()
         {
-            return nameof(Activity.ActivityType);
+            return nameof(Activity.TargetApplicationPlatformName);
         }
 
         public List<ListItemOperation> GetListOperations()
@@ -193,14 +205,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             operationsList.Add(addNew);
 
             ListItemOperation addToFlow = new ListItemOperation();
-            addToFlow.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
+            addToFlow.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository, General.eRIPageViewMode.AddFromModel };
             addToFlow.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MoveLeft;
             addToFlow.ToolTip = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, "Add to");
             addToFlow.OperationHandler = AddFromRepository;
             operationsList.Add(addToFlow);
 
             ListItemOperation editItem = new ListItemOperation();
-            editItem.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository };
+            editItem.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromShardRepository, General.eRIPageViewMode.AddFromModel };
             editItem.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Edit;
             editItem.ToolTip = "Edit Item";
             editItem.OperationHandler = EditActivity;
@@ -294,15 +306,18 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(item);
             List<ListItemNotification> notificationsList = new List<ListItemNotification>();
 
-            ListItemNotification activitiesVarsDepInd = new ListItemNotification();
-            activitiesVarsDepInd.AutomationID = "activitiesVarsDepInd";
-            activitiesVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
-            activitiesVarsDepInd.ToolTip = string.Format("{0} {1}-{2} dependency is enabled", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
-            activitiesVarsDepInd.ImageSize = 14;
-            activitiesVarsDepInd.BindingObject = mContext.BusinessFlow;
-            activitiesVarsDepInd.BindingFieldName = nameof(BusinessFlow.EnableActivitiesVariablesDependenciesControl);
-            activitiesVarsDepInd.BindingConverter = new BoolVisibilityConverter();
-            notificationsList.Add(activitiesVarsDepInd);
+            if (PageViewMode != General.eRIPageViewMode.AddFromShardRepository)
+            {
+                ListItemNotification activitiesVarsDepInd = new ListItemNotification();
+                activitiesVarsDepInd.AutomationID = "activitiesVarsDepInd";
+                activitiesVarsDepInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.MapSigns;
+                activitiesVarsDepInd.ToolTip = string.Format("{0} {1}-{2} dependency is enabled", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables));
+                activitiesVarsDepInd.ImageSize = 14;
+                activitiesVarsDepInd.BindingObject = mContext.BusinessFlow;
+                activitiesVarsDepInd.BindingFieldName = nameof(BusinessFlow.EnableActivitiesVariablesDependenciesControl);
+                activitiesVarsDepInd.BindingConverter = new BoolVisibilityConverter();
+                notificationsList.Add(activitiesVarsDepInd);
+            }
 
             ListItemNotification mandatoryInd = new ListItemNotification();
             mandatoryInd.AutomationID = "mandatoryInd";
@@ -324,7 +339,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             publishInd.BindingConverter = new BoolVisibilityConverter();
             notificationsList.Add(publishInd);
 
-            if (PageViewMode != General.eRIPageViewMode.AddFromShardRepository)
+            if (PageViewMode != General.eRIPageViewMode.AddFromShardRepository && PageViewMode != General.eRIPageViewMode.AddFromModel)
             {
                 ListItemNotification sharedRepoInd = new ListItemNotification();
                 sharedRepoInd.AutomationID = "sharedRepoInd";
@@ -739,11 +754,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                     return;
                 }
                 List<Activity> list = new List<Activity>();
+                bool isPomActivity = false;
                 foreach (Activity selectedItem in mListView.List.SelectedItems)
                 {
                     list.Add(selectedItem);
+                    isPomActivity = selectedItem.IsAutoLearned;
                 }
-                ActionsFactory.AddActivitiesFromSRHandler(list, mContext.BusinessFlow);
+                ActionsFactory.AddActivitiesFromSRHandler(list, mContext.BusinessFlow, null, -1, isPomActivity);
             }
             else
             {
@@ -756,7 +773,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (mListView.List.SelectedItems != null && mListView.List.SelectedItems.Count > 0)
             {
                 Activity a = (Activity)mListView.CurrentItem;
-                GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(a, new Context() { Activity = a }, General.eRIPageViewMode.SharedReposiotry);
+                Context context = new Context()
+                {
+                    Activity = a,
+                    Runner = new GingerExecutionEngine(new GingerRunner())
+                };
+                GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(a, context, General.eRIPageViewMode.SharedReposiotry);
                 w.ShowAsWindow();
             }
             else

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,13 +27,14 @@ using amdocs.ginger.GingerCoreNET;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
 using Ginger.ValidationRules;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Configurations
 {
     /// <summary>
     /// Interaction logic for VRTExternalConfigurationsPage.xaml
     /// </summary>
-    public partial class VRTExternalConfigurationsPage : Page
+    public partial class VRTExternalConfigurationsPage : GingerUIPage
     {
         VRTConfiguration _VRTConfiguration = null;
 
@@ -46,8 +47,9 @@ namespace Ginger.Configurations
         private void Init()
         {
             _VRTConfiguration = WorkSpace.Instance.Solution.VRTConfiguration;
-            _VRTConfiguration.StartDirtyTracking();
+            CurrentItemToSave = WorkSpace.Instance.Solution;
             SetControls();
+            _VRTConfiguration.StartDirtyTracking();
         }
 
         private void SetControls()
@@ -93,6 +95,5 @@ namespace Ginger.Configurations
         {
             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
         }
-
     }
 }

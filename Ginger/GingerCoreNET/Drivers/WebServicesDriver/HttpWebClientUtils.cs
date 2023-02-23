@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,7 +36,11 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using Ginger.Run.RunSetActions;
+using GingerCore.GeneralLib;
+using Org.BouncyCastle.Asn1.X509;
 using System.Xml;
+using Ginger.Run;
 
 namespace GingerCore.Actions.WebAPI
 {
@@ -103,7 +107,7 @@ namespace GingerCore.Actions.WebAPI
         {
             if (mAct.HttpHeaders.Count() > 0)
             {
-                var encodType = mAct.HttpHeaders.FirstOrDefault(x => x.Param.ToUpper() == "ACCEPT-ENCODING" && x.ValueForDriver.ToUpper() == "GZIP,DEFLATE");
+                var encodType = mAct.HttpHeaders.FirstOrDefault(x => (x!=null && x.Param != null && x.Param.ToUpper() == "ACCEPT-ENCODING" && x.ValueForDriver.ToUpper() == "GZIP,DEFLATE"));
                 if (encodType != null)
                 {
                     Handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
@@ -122,23 +126,25 @@ namespace GingerCore.Actions.WebAPI
                     var specialCharactersReg = new Regex("^[a-zA-Z0-9 ]*$");
                     string param = mAct.HttpHeaders[i].Param;
                     string value = mAct.HttpHeaders[i].ValueForDriver;
+                    if (!string.IsNullOrEmpty(param))
+                    {
+                        if (param == "Content-Type")
+                        {
+                            ContentType = value;
+                        }
+                        else if (param.ToUpper() == "DATE")
+                        {
 
-                    if (param == "Content-Type")
-                    {
-                        ContentType = value;
-                    }
-                    else if (param.ToUpper() == "DATE")
-                    {
-
-                        Client.DefaultRequestHeaders.Date = System.DateTime.Parse(value);
-                    }
-                    else if (!specialCharactersReg.IsMatch(value))
-                    {
-                        Client.DefaultRequestHeaders.TryAddWithoutValidation(param, value);
-                    }
-                    else
-                    {
-                        Client.DefaultRequestHeaders.Add(param, value);
+                            Client.DefaultRequestHeaders.Date = System.DateTime.Parse(value);
+                        }
+                        else if (!specialCharactersReg.IsMatch(value))
+                        {
+                            Client.DefaultRequestHeaders.TryAddWithoutValidation(param, value);
+                        }
+                        else
+                        {
+                            Client.DefaultRequestHeaders.Add(param, value);
+                        }
                     }
                 }    
             }
@@ -248,18 +254,42 @@ namespace GingerCore.Actions.WebAPI
                 if (!string.IsNullOrEmpty(path))
                 {
                     string CertificateKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
-                    if (!string.IsNullOrEmpty(CertificateKey))
-                    {
-                        X509Certificate2 customCertificate = new X509Certificate2(path, CertificateKey);
-                        Handler.ClientCertificates.Add(customCertificate);
-                        ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
-                    }
-                    else
-                    { 
-                        //Case Certifacte key/password is not required
-                        X509Certificate2 customCertificate = new X509Certificate2(path);
-                        Handler.ClientCertificates.Add(customCertificate);
-                    }
+                    string CertificateName = Path.GetFileName(ActWebAPIBase.Fields.CertificatePath);                                                                                      
+                        string targetPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\EmailCertificates");
+                        string Certificatepath = Path.Combine(targetPath, CertificateName);
+                        if (!string.IsNullOrEmpty(Certificatepath))
+                        {
+                            GingerRunner.eActionExecutorType ActionExecutorType = GingerRunner.eActionExecutorType.RunWithoutDriver;
+                            
+                            ServicePointManager.ServerCertificateValidationCallback = delegate (object s, System.Security.Cryptography.X509Certificates.X509Certificate certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+                            {
+                                X509Certificate2 actualCertificate;
+                                if (!string.IsNullOrEmpty(CertificateKey))
+                                {
+                                    actualCertificate = new X509Certificate2(Certificatepath, CertificateKey);
+                                }
+                                else
+                                {
+                                    actualCertificate = new X509Certificate2(Certificatepath);
+                                }
+                                if (certificate.Equals(actualCertificate))
+                                {
+                                    Handler.ClientCertificates.Add(actualCertificate);
+                                    mAct.ExInfo = "Uploaded certificate is vaslidated";
+                                    return true;
+                                }
+                                else
+                                {
+                                    mAct.Error = "Uploaded certificate is not validated as it is not matching with (base certificate)";
+                                    return false;
+                                }
+                            };
+                        }
+                        else
+                        {
+                        mAct.Error = "Request setup Failed because of missing/wrong input";
+                        return false;
+                        }                                      
                 }
                 else
                 {
@@ -367,27 +397,30 @@ namespace GingerCore.Actions.WebAPI
             }
             else
             {
-                rawMsg = $"HTTP/{Response.Version} {Response.ReasonPhrase}{Environment.NewLine}";
-                rawMsg += $"{Response.Headers}";
-                rawMsg += $"{Response.Content.Headers}{Environment.NewLine}";
-                if (ResponseMessage.Contains("xml"))
+                if (Response != null)
                 {
-                    rawMsg += XMLDocExtended.PrettyXml(ResponseMessage);
-                }
-                else if (ResponseMessage.Contains("html"))
-                {
-                    rawMsg += ResponseMessage;
-                }
-                else
-                {
-                    try
+                    rawMsg = $"HTTP/{Response.Version} {Response.ReasonPhrase}{Environment.NewLine}";
+                    rawMsg += $"{Response.Headers}";
+                    rawMsg += $"{Response.Content.Headers}{Environment.NewLine}";
+                    if (ResponseMessage.Contains("xml"))
                     {
-                        rawMsg += JsonConvert.DeserializeObject(ResponseMessage);
+                        rawMsg += XMLDocExtended.PrettyXml(ResponseMessage);
                     }
-                    catch (Exception ex)
+                    else if (ResponseMessage.Contains("html"))
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Response is not valid json",ex);
                         rawMsg += ResponseMessage;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            rawMsg += JsonConvert.DeserializeObject(ResponseMessage);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, "Response is not valid json", ex);
+                            rawMsg += ResponseMessage;
+                        }
                     }
                 }
             }
@@ -547,11 +580,16 @@ namespace GingerCore.Actions.WebAPI
 
         private void AddRawResponseAndRequestToOutputParams()
         {
-            mAct.RawResponseValues = ">>>>>>>>>>>>>>>>>>>>>>>>>>> REQUEST:" + Environment.NewLine + Environment.NewLine + RequestFileContent;
-            mAct.RawResponseValues += Environment.NewLine + Environment.NewLine;
-            mAct.RawResponseValues += ">>>>>>>>>>>>>>>>>>>>>>>>>>> RESPONSE:" + Environment.NewLine + Environment.NewLine + ResponseFileContent;
-            mAct.AddOrUpdateReturnParamActual("Raw Request: ", RequestFileContent);
-            mAct.AddOrUpdateReturnParamActual("Raw Response: ", ResponseFileContent);
+            //If response is broken, do not show the message.
+            if (Response.ReasonPhrase == "OK")
+            {
+                mAct.RawResponseValues = ">>>>>>>>>>>>>>>>>>>>>>>>>>> REQUEST:" + Environment.NewLine + Environment.NewLine + RequestFileContent;
+                mAct.RawResponseValues += Environment.NewLine + Environment.NewLine;
+                mAct.RawResponseValues += ">>>>>>>>>>>>>>>>>>>>>>>>>>> RESPONSE:" + Environment.NewLine + Environment.NewLine + ResponseFileContent;
+                mAct.AddOrUpdateReturnParamActual("Raw Request: ", RequestFileContent);
+                mAct.AddOrUpdateReturnParamActual("Raw Response: ", ResponseFileContent);
+            }
+
         }
 
         public bool ParseRespondToOutputParams()
@@ -891,7 +929,7 @@ namespace GingerCore.Actions.WebAPI
                 {
                     act.Error = "Request setup Failed because of missing/wrong input";
                     act.ExInfo = "Request Body is missing";
-                    return false;
+                    //return false;
                 }
             }
             else if (RequestBodyType == ApplicationAPIUtils.eRequestBodyType.TemplateFile.ToString())

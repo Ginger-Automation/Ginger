@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -152,7 +152,6 @@ namespace GingerCore
         }
 
         double? mElapsed;
-        [IsSerializedForLocalRepository]     // TODO: Needed?
         public double? Elapsed
         {
             get { return mElapsed; }
@@ -344,6 +343,23 @@ namespace GingerCore
         [IsSerializedForLocalRepository]
         public ObservableList<TargetBase> TargetApplications = new ObservableList<TargetBase>();
 
+        public ObservableList<ApplicationPlatform> TargetApplicationPlatforms
+        {
+            get
+            {
+                ObservableList<ApplicationPlatform> appsPlatform = new ObservableList<ApplicationPlatform>();
+                foreach (TargetBase target in TargetApplications)
+                {
+                    ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == target.Name).FirstOrDefault();
+                    if (appPlat != null)
+                    {
+                        appsPlatform.Add(appPlat);
+                    }
+                }
+                return appsPlatform;
+            }
+        }
+
         private Activity mCurrentActivity { get; set; }
 
         public bool disableChangeonClick = true;
@@ -356,7 +372,7 @@ namespace GingerCore
                 if (mCurrentActivity != value)
                 {
                     mCurrentActivity = value;
-                    OnPropertyChanged("CurrentActivity");
+                    OnPropertyChanged(nameof(CurrentActivity));
                 }
             }
         }
@@ -694,8 +710,11 @@ namespace GingerCore
             }
             set
             {
-                mEnableActivitiesVariablesDependenciesControl = value;
-                OnPropertyChanged(nameof(EnableActivitiesVariablesDependenciesControl));
+                if (mEnableActivitiesVariablesDependenciesControl != value)
+                {
+                    mEnableActivitiesVariablesDependenciesControl = value;
+                    OnPropertyChanged(nameof(EnableActivitiesVariablesDependenciesControl));
+                }
             }
         }
 
@@ -1273,7 +1292,7 @@ namespace GingerCore
             {
                 if (userSelection == eUserMsgSelection.None)
                 {
-                    userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Target Application is not mapped to selected BF. Ginger will map the Activies Target application to BF.");
+                    userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Target Application is not mapped to selected BF. Ginger will map the Activity's Target application to BF.");
                 }
 
                 if (userSelection == eUserMsgSelection.OK)
@@ -1351,7 +1370,10 @@ namespace GingerCore
             set
             {
                 if (mPublishStatus != value)
-                { mPublishStatus = value; OnPropertyChanged(nameof(PublishStatus)); }
+                {
+                    mPublishStatus = value;
+                    OnPropertyChanged(nameof(PublishStatus));
+                }
             }
         }
 

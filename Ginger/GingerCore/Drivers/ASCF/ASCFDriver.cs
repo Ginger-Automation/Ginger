@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.CoreNET.GeneralLib;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 
 namespace GingerCore.Drivers.ASCF
 {
@@ -986,7 +987,7 @@ namespace GingerCore.Drivers.ASCF
             return null;
         }
 
-        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
+        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo,PomSetting pomSetting=null)
         {
             return null;
         }
@@ -1414,7 +1415,7 @@ namespace GingerCore.Drivers.ASCF
 
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             //DOTO add grid view contol lists
             return new List<ElementInfo>();
@@ -1431,7 +1432,7 @@ namespace GingerCore.Drivers.ASCF
         }
 
 
-        bool IWindowExplorer.TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        bool IWindowExplorer.TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
         {
             throw new NotImplementedException();
         }
@@ -1451,7 +1452,7 @@ namespace GingerCore.Drivers.ASCF
             throw new NotImplementedException();
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting=null)
         {
             return EI;
         }
@@ -1509,6 +1510,11 @@ namespace GingerCore.Drivers.ASCF
         public string GetCurrentPageSourceString()
         {
             return null;
+        }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting pomSetting=null)
+        {
+            throw new NotImplementedException();
         }
     }
 }

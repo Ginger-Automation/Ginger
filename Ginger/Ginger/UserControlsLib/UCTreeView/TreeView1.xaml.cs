@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -160,9 +160,9 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
         }
 
-        public void SetTopToolBarTools(RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, RoutedEventHandler refreshHandler = null, RoutedEventHandler addActionHandler = null)
+        public void SetTopToolBarTools(RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, RoutedEventHandler refreshHandler = null, RoutedEventHandler addActionHandler = null, bool isSaveButtonHidden = false)
         {
-            if (saveAllHandler != null)
+            if (saveAllHandler != null && !isSaveButtonHidden)
             {
                 xSaveAllButton.Visibility = Visibility.Visible;
                 xSaveAllButton.Click += saveAllHandler;

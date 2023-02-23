@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -40,50 +40,58 @@ namespace GingerCore.Variables
         
         private int mMin;
         [IsSerializedForLocalRepository]
-        public int Min { set { mMin = value; OnPropertyChanged(nameof(this.Min)); OnPropertyChanged("Formula"); } get { return mMin; } }
+        public int Min { set { if (mMin != value) { mMin = value; OnPropertyChanged(nameof(this.Min)); OnPropertyChanged("Formula"); } } get { return mMin; } }
 
         private int mMax;
         [IsSerializedForLocalRepository]
-        public int Max { set { mMax = value; OnPropertyChanged(nameof(this.Max));  OnPropertyChanged("Formula"); } get { return mMax; } }
+        public int Max { set { if (mMax != value) { mMax = value; OnPropertyChanged(nameof(this.Max)); OnPropertyChanged("Formula"); } } get { return mMax; } }
 
         private bool mIsDigit;
         [IsSerializedForLocalRepository]
-        public bool IsDigit { set { mIsDigit = value; OnPropertyChanged(nameof(this.IsDigit));  OnPropertyChanged("Formula"); } get { return mIsDigit; } }
-        
+        public bool IsDigit { set { if (mIsDigit != value) { mIsDigit = value; OnPropertyChanged(nameof(this.IsDigit)); OnPropertyChanged("Formula"); } } get { return mIsDigit; } }
+
         // TODO: convert to enum: Any, LowerCase only, Upper Case only, to avoid the switch of other attr
 
         private bool mIsLowerCase;
         [IsSerializedForLocalRepository]
-        public bool IsLowerCase {
+        public bool IsLowerCase
+        {
             set
             {
-                mIsLowerCase = value;
+                if (mIsLowerCase != value)
+                {
+                    mIsLowerCase = value;
+                    OnPropertyChanged(nameof(this.IsLowerCase));
+                    OnPropertyChanged("Formula");
+                }
                 if (value)
                 {
                     mIsUpperCase = false;
                     mIsUpperCaseAndDigits = false;
                     mIsLowerCaseAndDigits = false;
                 }
-                OnPropertyChanged(nameof(this.IsLowerCase));
-                OnPropertyChanged("Formula");
             }
             get { return mIsLowerCase; }
         }
 
         private bool mIsUpperCase;
         [IsSerializedForLocalRepository]
-        public bool IsUpperCase {
+        public bool IsUpperCase
+        {
             set
             {
-                mIsUpperCase = value;
+                if (mIsUpperCase != value)
+                {
+                    mIsUpperCase = value;
+                    OnPropertyChanged(nameof(this.IsUpperCase));
+                    OnPropertyChanged("Formula");
+                }
                 if (value)
                 {
                     mIsLowerCase = false;
                     mIsUpperCaseAndDigits = false;
                     mIsLowerCaseAndDigits = false;
                 }
-                OnPropertyChanged(nameof(this.IsUpperCase));
-                OnPropertyChanged("Formula");
             }
             get { return mIsUpperCase; }
         }
@@ -94,15 +102,18 @@ namespace GingerCore.Variables
         {
             set
             {
-                mIsLowerCaseAndDigits = value;
+                if (mIsLowerCaseAndDigits != value)
+                {
+                    mIsLowerCaseAndDigits = value;
+                    OnPropertyChanged(nameof(this.IsLowerCaseAndDigits));
+                    OnPropertyChanged("Formula");
+                }
                 if (value)
                 {
                     mIsLowerCase = false;
                     mIsUpperCase = false;
                     mIsUpperCaseAndDigits = false;
                 }
-                OnPropertyChanged(nameof(this.IsLowerCaseAndDigits));
-                OnPropertyChanged("Formula");
             }
             get { return mIsLowerCaseAndDigits; }
         }
@@ -113,15 +124,18 @@ namespace GingerCore.Variables
         {
             set
             {
-                mIsUpperCaseAndDigits = value;
+                if (mIsUpperCaseAndDigits != value)
+                {
+                    mIsUpperCaseAndDigits = value;
+                    OnPropertyChanged(nameof(this.IsUpperCaseAndDigits));
+                    OnPropertyChanged("Formula");
+                }
                 if (value)
                 {
                     mIsUpperCase = false;
                     mIsLowerCase = false;
                     mIsLowerCaseAndDigits = false;
                 }
-                OnPropertyChanged(nameof(this.IsUpperCaseAndDigits));
-                OnPropertyChanged("Formula");
             }
             get { return mIsUpperCaseAndDigits; }
         }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -42,6 +42,8 @@ namespace Ginger.Run
             mPageViewMode = pageViewMode;
             mContext = context;
 
+            mRunner.GingerRunner.PauseDirtyTracking();
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mRunner.GingerRunner, nameof(GingerRunner.Name));
             xNameTextBox.AddValidationRule(new RunnerNameValidationRule());
             xShowIDUC.Init(mRunner.GingerRunner);
@@ -81,6 +83,7 @@ namespace Ginger.Run
                 xRunOptionPnl.Visibility = Visibility.Collapsed;
                 xUseSpecificEnvChkbox.IsEnabled = false;
             }
+            mRunner.GingerRunner.ResumeDirtyTracking();
         }
 
         public void ShowAsWindow()

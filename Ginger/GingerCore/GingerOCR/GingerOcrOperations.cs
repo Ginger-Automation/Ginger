@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -43,7 +43,9 @@ namespace GingerCore.GingerOCR
                 {
                     if (instance == null)
                     {
-                        instance = new TesseractEngine(@"./tessdata", "eng", EngineMode.Default);
+                        string exeFilePath = Path.GetDirectoryName(typeof(GingerOcrOperations).Assembly.Location);
+                        string tessDataFilePath = Path.Combine(exeFilePath, "tessdata");
+                        instance = new TesseractEngine(tessDataFilePath, "eng", EngineMode.Default);
                     }
                     return instance;
                 }

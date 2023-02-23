@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -183,7 +183,7 @@ namespace Ginger.Drivers.DriversWindows
         private void DrawRectangle(System.Drawing.Point ElementStartPoint, System.Drawing.Point ElementMaxPoint, Amdocs.Ginger.Common.UIElement.ElementInfo elementInfo)
         {
             ((DriverBase)mDriver).SetRectangleProperties(ref ElementStartPoint, ref ElementMaxPoint, xDeviceScreenshotImage.Source.Width, xDeviceScreenshotImage.Source.Height,
-                xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight, elementInfo, false);
+                xDeviceScreenshotImage.ActualWidth, xDeviceScreenshotImage.ActualHeight, elementInfo);
 
             xHighlighterBorder.SetValue(Canvas.LeftProperty, ElementStartPoint.X + ((xDeviceScreenshotCanvas.ActualWidth - xDeviceScreenshotImage.ActualWidth) / 2));
             xHighlighterBorder.SetValue(Canvas.TopProperty, ElementStartPoint.Y + ((xDeviceScreenshotCanvas.ActualHeight - xDeviceScreenshotImage.ActualHeight) / 2));
@@ -393,6 +393,7 @@ namespace Ginger.Drivers.DriversWindows
             bool isPhysicalDevice = false;
             Dictionary<string, object> mDeviceGeneralInfo = null;
             Dictionary<string, string> mDeviceBatteryInfo = null;
+            Dictionary<string, string> mActivityAndPackageInfo = null;
 
             await Task.Run(() =>
             {
@@ -412,6 +413,7 @@ namespace Ginger.Drivers.DriversWindows
                 }
 
                 mDeviceBatteryInfo = mDriver.GetDeviceBatteryInfo();
+                mActivityAndPackageInfo = mDriver.GetDeviceActivityAndPackage();
             });
 
             mDeviceDetails = new ObservableList<DeviceInfo>(mDeviceDetails.Where(x => x.Category == DeviceInfo.eDeviceInfoCategory.Metric).ToList());
@@ -516,6 +518,22 @@ namespace Ginger.Drivers.DriversWindows
                 }
             }
 
+            
+            if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
+            {
+                mDeviceDetails.Add(new DeviceInfo("Package", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+                mDeviceDetails.Add(new DeviceInfo("Activity", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+            else
+            {
+                string activity, package; 
+                mActivityAndPackageInfo.TryGetValue("Activity", out activity);
+                mActivityAndPackageInfo.TryGetValue("Package", out package);
+                mDeviceDetails.Add(new DeviceInfo("Package", package, DeviceInfo.eDeviceInfoCategory.Detail));
+                mDeviceDetails.Add(new DeviceInfo("Activity", activity, DeviceInfo.eDeviceInfoCategory.Detail));
+            }
+
+
             if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS && mDeviceGeneralInfo.TryGetValue("currentLocale", out value))
             {
                 mDeviceDetails.Add(new DeviceInfo("Language:", ((string)value).Replace("_", "/"), DeviceInfo.eDeviceInfoCategory.Detail));
@@ -533,7 +551,7 @@ namespace Ginger.Drivers.DriversWindows
                 }
             }
 
-            
+
 
             if (mDeviceGeneralInfo.TryGetValue("timeZone", out value) && !string.IsNullOrEmpty((string)value))
             {
@@ -1107,6 +1125,11 @@ namespace Ginger.Drivers.DriversWindows
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Operation failed, Error: " + ex.Message);
             }
         }
+
+        private void xClearHighlightsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            UnHighlightElementEvent();
+        }
         #endregion Events
 
 
@@ -1259,6 +1282,7 @@ namespace Ginger.Drivers.DriversWindows
             });
         }
 
+        bool clearedHighlights = false;
         private async Task<bool> RefreshDeviceScreenshotAsync(int waitingTimeInMiliSeconds = 0)
         {
             try
@@ -1266,6 +1290,16 @@ namespace Ginger.Drivers.DriversWindows
                 if (!xDeviceScreenshotImage.IsVisible)
                 {
                     return false;
+                }
+
+                if (!clearedHighlights) //bool is for clearing only once in 2 refresh for allowing user to see the highlighted area
+                {
+                    UnHighlightElementEvent();
+                    clearedHighlights = true;
+                }
+                else
+                {
+                    clearedHighlights = false;
                 }
 
                 int waitingRatio = 1;
@@ -1385,16 +1419,8 @@ namespace Ginger.Drivers.DriversWindows
                 double ratio_X = 1;
                 double ratio_Y = 1;
 
-                if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS) // && mDriver.GetAppType() == eAppType.NativeHybride)
-                {
-                    ratio_X = (xDeviceScreenshotImage.Source.Width / 2) / xDeviceScreenshotImage.ActualWidth;
-                    ratio_Y = (xDeviceScreenshotImage.Source.Height / 2) / xDeviceScreenshotImage.ActualHeight;
-                }
-                else
-                {
-                    ratio_X = xDeviceScreenshotImage.Source.Width / xDeviceScreenshotImage.ActualWidth;
-                    ratio_Y = xDeviceScreenshotImage.Source.Height / xDeviceScreenshotImage.ActualHeight;
-                }
+                ratio_X = (xDeviceScreenshotImage.Source.Width / ((GenericAppiumDriver)mDriver).SourceMobileImageWidthConvertFactor) / xDeviceScreenshotImage.ActualWidth;
+                ratio_Y = (xDeviceScreenshotImage.Source.Height / ((GenericAppiumDriver)mDriver).SourceMobileImageHeightConvertFactor) / xDeviceScreenshotImage.ActualHeight;
 
                 if (mDriver.GetAppType() == eAppType.Web && mDriver.GetDevicePlatformType() == eDevicePlatformType.Android)
                 {
@@ -1445,6 +1471,7 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     RefreshDeviceScreenshotAsync(100);
                 }
+                UnHighlightElementEvent();
             }
             catch (Exception ex)
             {

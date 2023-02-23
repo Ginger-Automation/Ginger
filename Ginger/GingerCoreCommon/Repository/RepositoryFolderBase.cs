@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                if(mIsFolderExpanded != value)
+                if (mIsFolderExpanded != value)
                 {
                     mIsFolderExpanded = value;
                     OnPropertyChanged(nameof(FolderImageType));
@@ -66,11 +66,11 @@ namespace Amdocs.Ginger.Repository
             get
             {
                 if (IsFolderExpanded)
-                { 
+                {
                     return eImageType.OpenFolder;
                 }
                 else
-                { 
+                {
                     return eImageType.Folder;
                 }
             }
@@ -155,6 +155,11 @@ namespace Amdocs.Ginger.Repository
         }
 
         public virtual void ResumeFileWatcher()
+        {
+            // handled in Repository Folder
+        }
+
+        public virtual void StartFileWatcherRecursive(string newFolderName, string oldFolderName)
         {
             // handled in Repository Folder
         }

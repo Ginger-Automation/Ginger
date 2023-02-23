@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ limitations under the License.
 
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ limitations under the License.
 #endregion
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
@@ -61,6 +62,7 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -102,6 +104,12 @@ namespace Amdocs.Ginger.CoreNET
         public eDevicePlatformType DevicePlatformType { get; set; }
 
         [UserConfigured]
+        [UserConfiguredEnumType(typeof(eDeviceSource))]
+        [UserConfiguredDefault("LocalAppium")]
+        [UserConfiguredDescription("Device Source is Local Appium or UFTM Mobile Lab")]
+        public eDeviceSource DeviceSource { get; set; }
+
+        [UserConfigured]
         [UserConfiguredEnumType(typeof(eAppType))]
         [UserConfiguredDefault("NativeHybride")]
         [UserConfiguredDescription("The tested application type 'NativeHybride' or 'Web'")]
@@ -124,6 +132,16 @@ namespace Amdocs.Ginger.CoreNET
         public bool AutoSetCapabilities { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Set UFTM Server capabilities autumatically")]
+        public bool UFTMServerCapabilities { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Set UFTM simulations automatically")]
+        public bool UFTMSupportSimulationsCapabiliy { get; set; }
+
+        [UserConfigured]
         [UserConfiguredMultiValues]
         [UserConfiguredDescription("Appium capabilities")]
         public ObservableList<DriverConfigParam> AppiumCapabilities { get; set; }
@@ -133,6 +151,9 @@ namespace Amdocs.Ginger.CoreNET
 
         bool mIsDeviceConnected = false;
         string mDefaultURL = null;
+
+        public double SourceMobileImageWidthConvertFactor = 1;
+        public double SourceMobileImageHeightConvertFactor = 1;
 
         public bool IsDeviceConnected
         {
@@ -184,6 +205,7 @@ namespace Amdocs.Ginger.CoreNET
         public override void StartDriver()
         {
             mIsDeviceConnected = ConnectToAppium();
+            CalculateSourceMobileImageConvertFactors();
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
 
@@ -338,6 +360,10 @@ namespace Amdocs.Ginger.CoreNET
                     else if (UserCapability.Parameter == "deviceName")
                     {
                         driverOptions.DeviceName = UserCapability.Value;
+                    }
+                    else if (UserCapability.Parameter == "browserName")
+                    {
+                        driverOptions.BrowserName = UserCapability.Value;
                     }
                     else
                     {
@@ -980,6 +1006,26 @@ namespace Amdocs.Ginger.CoreNET
                             act.AddOrUpdateReturnParamActual(entry.Key, entry.Value.ToString());
                         }
                         break;
+                    case ActMobileDevice.eMobileDeviceAction.SimulatePhoto:
+                        string photoString = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).ValueForDriver);
+                        Bitmap picture = null;
+                        if (isValidPhotoExtention(photoString))
+                        {
+                            picture = new Bitmap(photoString);
+                            string photoSimulation = CameraSimulation(picture, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
+                            if (photoSimulation != "success")
+                            {
+                                act.Error = "An Error occured during camera simulation. Error: " + photoSimulation;
+                            }
+                        }
+                        else
+                        {
+                            act.Error = "File is not supported. Upload a supported file to use Camera simulation";
+                        }
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.StopSimulatePhotoOrVideo:
+                        CameraSimulation(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
+                        break;
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
                 }
@@ -988,6 +1034,44 @@ namespace Amdocs.Ginger.CoreNET
             {
                 act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
             }
+        }
+
+        public bool isValidPhotoExtention(string photo)
+        {
+            if (string.IsNullOrEmpty(photo))
+            {
+                return false;
+            }
+            string extention = photo.Substring(photo.LastIndexOf('.') + 1);
+            if (extention == "jpg" || extention == "jpeg" || extention == "png")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public string CameraSimulation(Bitmap picture, ImageFormat format, string contentType, string fileName, string action)
+        {
+            MemoryStream ms = new MemoryStream();
+            string encodeString = "0";
+            if (picture != null)
+            {
+                picture.Save(ms, format);
+                Byte[] bytes = ms.ToArray();
+                encodeString = Convert.ToBase64String(bytes);
+            }
+            Dictionary<string, string> sensorSimulationMap = new Dictionary<string, string>
+            {
+                { "uploadMedia", encodeString },
+                { "contentType", contentType },
+                { "fileName", fileName },
+                { "action", action }
+            };
+
+            string simulationResult = JsonConvert.SerializeObject(Driver.ExecuteScript("mc:sensorSimulation", sensorSimulationMap));
+            return JToken.Parse(simulationResult)["message"].ToString();
         }
 
         private string DictionaryToString(Dictionary<string, string> dict)
@@ -1520,13 +1604,13 @@ namespace Amdocs.Ginger.CoreNET
                 return null;
         }
 
-        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null, List<string> relativeXpathTemplateList = null, bool LearnScreenshotsOfElements = true)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             if (AppType == eAppType.Web)
             {
-                mSeleniumDriver.ExtraLocatorsRequired = !(relativeXpathTemplateList == null || relativeXpathTemplateList.Count == 0);
+                mSeleniumDriver.ExtraLocatorsRequired = !(pomSetting.relativeXpathTemplateList == null || pomSetting.relativeXpathTemplateList.Count == 0);
 
-                return await Task.Run(() => ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(filteredElementType, foundElementsList, isPOMLearn, specificFramePath, relativeXpathTemplateList, LearnScreenshotsOfElements));
+                return await Task.Run(() => ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(pomSetting, foundElementsList));
             }
 
             try
@@ -1565,9 +1649,9 @@ namespace Amdocs.Ginger.CoreNET
                     ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
                     EI.IsAutoLearned = true;
 
-                    if (relativeXpathTemplateList != null && relativeXpathTemplateList.Count > 0)
+                    if (pomSetting.relativeXpathTemplateList != null && pomSetting.relativeXpathTemplateList.Count > 0)
                     {
-                        foreach (var template in relativeXpathTemplateList)
+                        foreach (var template in pomSetting.relativeXpathTemplateList)
                         {
                             eLocateBy CustomLocLocateBy = eLocateBy.ByRelXPath;
 
@@ -1582,8 +1666,8 @@ namespace Amdocs.Ginger.CoreNET
                         }
                     }
 
-                    if (filteredElementType == null ||
-                        (filteredElementType != null && filteredElementType.Contains(EI.ElementTypeEnum)))
+                    if (pomSetting.filteredElementType == null ||
+                        (pomSetting.filteredElementType != null && pomSetting.filteredElementType.Contains(EI.ElementTypeEnum)))
                         foundElementsList.Add(EI);
                 }
 
@@ -1870,12 +1954,11 @@ namespace Amdocs.Ginger.CoreNET
             return xmlNode.Attributes[attr].Value;
         }
 
-
-        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo)
+        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
             if (AppType == eAppType.Web)
             {
-                return ((IWindowExplorer)mSeleniumDriver).GetElementLocators(ElementInfo);
+                return ((IWindowExplorer)mSeleniumDriver).GetElementLocators(ElementInfo, pomSetting);
             }
 
             ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
@@ -2128,7 +2211,7 @@ namespace Amdocs.Ginger.CoreNET
             OnDriverMessage(eDriverMessageType.UnHighlightElement);
         }
 
-        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
+        public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null)
         {
             if (AppType == eAppType.Web)
             {
@@ -2353,11 +2436,11 @@ namespace Amdocs.Ginger.CoreNET
             IsSpying = true;
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting = null)
         {
             if (AppType == eAppType.Web)
             {
-                return ((IWindowExplorer)mSeleniumDriver).LearnElementInfoDetails(EI);
+                return ((IWindowExplorer)mSeleniumDriver).LearnElementInfoDetails(EI, pomSetting);
             }
 
             EI = GetElementInfoforXmlNode(EI.ElementObject as XmlNode).Result;
@@ -2675,42 +2758,34 @@ namespace Amdocs.Ginger.CoreNET
             return foundNode != null ? await GetElementInfoforXmlNode(foundNode) : null;
         }
 
+
+        private void CalculateSourceMobileImageConvertFactors()
+        {
+            SourceMobileImageWidthConvertFactor = 1;
+            SourceMobileImageHeightConvertFactor = 1;
+
+            if (AppType == eAppType.Web)
+            {
+                SourceMobileImageWidthConvertFactor = 3;
+                SourceMobileImageHeightConvertFactor = 3;
+            }
+            else
+            {
+                if (DeviceSource != eDeviceSource.MicroFoucsUFTMLab)
+                {
+                    SourceMobileImageWidthConvertFactor = 2;
+                    SourceMobileImageHeightConvertFactor = 2;
+                }
+            }
+
+        }
+
         public override Point GetPointOnAppWindow(Point clickedPoint, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight)
         {
             Point pointOnAppScreen = new Point();
             double ratio_X = 1, ratio_Y = 1;
-
-            switch (DevicePlatformType)
-            {
-                case eDevicePlatformType.Android:
-
-                    if (AppType == eAppType.Web)
-                    {
-                        ratio_X = (SrcWidth / 3) / ActWidth;
-                        ratio_Y = (SrcHeight / 3) / ActHeight;
-                    }
-                    else
-                    {
-                        ratio_X = SrcWidth / ActWidth;
-                        ratio_Y = SrcHeight / ActHeight;
-                    }
-
-                    break;
-                case eDevicePlatformType.iOS:
-
-                    if (AppType == eAppType.Web)
-                    {
-                        ratio_X = (SrcWidth / 3) / ActWidth;
-                        ratio_Y = (SrcHeight / 3) / ActHeight;
-                    }
-                    else
-                    {
-                        ratio_X = (SrcWidth / 2) / ActWidth;
-                        ratio_Y = (SrcHeight / 2) / ActHeight;
-                    }
-
-                    break;
-            }
+            ratio_X = (SrcWidth / SourceMobileImageWidthConvertFactor) / ActWidth;
+            ratio_Y = (SrcHeight / SourceMobileImageHeightConvertFactor) / ActHeight;
 
             pointOnAppScreen.X = (int)(clickedPoint.X * ratio_X);
             pointOnAppScreen.Y = (int)(clickedPoint.Y * ratio_Y);
@@ -2718,12 +2793,14 @@ namespace Amdocs.Ginger.CoreNET
             return pointOnAppScreen;
         }
 
-        public override bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, ElementInfo clickedElementInfo, bool AutoCorrectRectPropRequired)
+        public override bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, ElementInfo clickedElementInfo)
         {
             double ratio_X, ratio_Y;
-            int AutoCorrectRectProp = 1;
-
             XmlNode rectangleXmlNode = clickedElementInfo.ElementObject as XmlNode;
+
+            ratio_X = (SrcWidth / SourceMobileImageWidthConvertFactor) / ActWidth;
+            ratio_Y = (SrcHeight / SourceMobileImageHeightConvertFactor) / ActHeight;
+
             switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
@@ -2741,10 +2818,8 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     else
                     {
-                        ratio_X = SrcWidth / ActWidth;
-                        ratio_Y = SrcHeight / ActHeight;
 
-                        string bounds = rectangleXmlNode != null ? rectangleXmlNode.Attributes["bounds"].Value : "";
+                        string bounds = rectangleXmlNode != null ? (rectangleXmlNode.Attributes["bounds"] != null ? rectangleXmlNode.Attributes["bounds"].Value : "") : "";
                         bounds = bounds.Replace("[", ",");
                         bounds = bounds.Replace("]", ",");
                         string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -2757,17 +2832,11 @@ namespace Amdocs.Ginger.CoreNET
                             ElementMaxPoints.Y = (int)(Convert.ToInt64(boundsXY[3]) / ratio_Y);
                         }
                     }
-
                     break;
 
                 case eDevicePlatformType.iOS:
                     if (AppType == eAppType.Web)
                     {
-                        //ratio_X = SrcWidth / ActWidth;
-                        //ratio_Y = SrcHeight / ActHeight;
-                        ratio_X = (SrcWidth / 2) / ActWidth;
-                        ratio_Y = (SrcHeight / 3) / ActHeight;
-
                         ElementStartPoints.X = (int)(ElementStartPoints.X / ratio_X);
                         ElementStartPoints.Y = (int)(ElementStartPoints.Y / ratio_Y);
                         ElementMaxPoints.X = (int)(ElementMaxPoints.X / ratio_X);
@@ -2775,9 +2844,6 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     else
                     {
-                        ratio_X = (SrcWidth / 2) / ActWidth;
-                        ratio_Y = (SrcHeight / 2) / ActHeight;
-
                         string x = GetAttrValue(rectangleXmlNode, "x");
                         string y = GetAttrValue(rectangleXmlNode, "y");
                         string hgt = GetAttrValue(rectangleXmlNode, "height");
@@ -2786,16 +2852,12 @@ namespace Amdocs.Ginger.CoreNET
                         ElementStartPoints.X = (int)(Convert.ToInt32(x) / ratio_X);
                         ElementStartPoints.Y = (int)(Convert.ToInt32(y) / ratio_Y);
 
-                        if (AutoCorrectRectPropRequired)
-                            AutoCorrectRectProp = 2;
-
-                        ElementMaxPoints.X = ElementStartPoints.X + (Convert.ToInt32(wdth) * AutoCorrectRectProp);
-                        ElementMaxPoints.Y = ElementStartPoints.Y + (Convert.ToInt32(hgt) * AutoCorrectRectProp);
+                        ElementMaxPoints.X = ElementStartPoints.X + Convert.ToInt32(Convert.ToInt32(wdth) / ratio_X);
+                        ElementMaxPoints.Y = ElementStartPoints.Y + Convert.ToInt32(Convert.ToInt32(hgt) / ratio_Y);
                     }
 
                     break;
             }
-
             return true;
         }
 
@@ -3063,6 +3125,20 @@ namespace Amdocs.Ginger.CoreNET
             return GetDeviceMetricsDict("batteryinfo").Result;
         }
 
+        public Dictionary<string, string> GetDeviceActivityAndPackage()
+        {
+            if (DevicePlatformType == eDevicePlatformType.Android)
+            {
+                Dictionary<string, string> dict = new Dictionary<string, string>
+                {
+                    { "Activity",string.Concat(((AndroidDriver)Driver).CurrentPackage, ((AndroidDriver)Driver).CurrentActivity) },
+                    { "Package", ((AndroidDriver)Driver).CurrentPackage }
+                };
+                return dict;
+            }
+            return null;
+        }
+
         public Dictionary<string, object> GetDeviceGeneralInfo()
         {
             try
@@ -3123,6 +3199,11 @@ namespace Amdocs.Ginger.CoreNET
         public string GetViewport()
         {
             return Driver.Manage().Window.Size.ToString();
+        }
+
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
+        {
+            throw new NotImplementedException();
         }
     }
 

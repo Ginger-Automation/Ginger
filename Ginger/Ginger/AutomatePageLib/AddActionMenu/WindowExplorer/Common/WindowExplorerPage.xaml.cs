@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -66,6 +66,7 @@ using GingerCore.Actions.VisualTesting;
 using HtmlAgilityPack;
 using Ginger.ApplicationModelsLib.POMModels;
 using GingerCoreNET.Application_Models;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 
 namespace Ginger.WindowExplorer
 {
@@ -885,7 +886,9 @@ namespace Ginger.WindowExplorer
                 try
                 {
                     //StatusTextBlock.Text = "Loading";
-                    List<ElementInfo> list = await mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList());
+                    PomSetting pomSetting = new PomSetting();
+                    pomSetting.filteredElementType = CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList();
+                    List<ElementInfo> list = await mWindowExplorerDriver.GetVisibleControls(pomSetting);
 
                     // Convert to obserable for the grid
                     VisibleElementsInfoList.Clear();
@@ -1276,7 +1279,7 @@ namespace Ginger.WindowExplorer
                 double rectangleHeight = clickedElementInfo.Height;
 
                 if(((DriverBase)mWindowExplorerDriver).SetRectangleProperties(ref ElementStartPoint, ref ElementMaxPoint, mScreenShotViewPage.xMainImage.Source.Width, mScreenShotViewPage.xMainImage.Source.Height,
-                    mScreenShotViewPage.xMainImage.ActualWidth, mScreenShotViewPage.xMainImage.ActualHeight, clickedElementInfo, true))
+                    mScreenShotViewPage.xMainImage.ActualWidth, mScreenShotViewPage.xMainImage.ActualHeight, clickedElementInfo))
                 {
                     /// Driver/Platform specific calculations
                     rectangleWidth = ElementMaxPoint.X - ElementStartPoint.X;

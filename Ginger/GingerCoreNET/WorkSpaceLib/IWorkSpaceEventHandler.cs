@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,5 +39,7 @@ namespace amdocs.ginger.GingerCoreNET
         void ShowUpgradeSolutionItems(SolutionUpgradePageViewMode upgradeSolution, string solutionFolder, string solutionName, List<string> list);
         void SetSolutionSourceControl(Solution solution, ref string RepositoryRootFolder);
         bool OpenEncryptionKeyHandler(Solution solution);
+
+        string GetClipboardText();
     }
 }

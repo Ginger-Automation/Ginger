@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ namespace Ginger.ALM
                     break;
 
                 case eALMType.RQM:
-                    //AlmCore = new RQMCore();
+                    AlmCore = new RQMCore();
                     AlmRepo = new RQMRepository();
                     break;
 
@@ -278,10 +278,9 @@ namespace Ginger.ALM
             {
                 Reporter.ToStatus(eStatusMsgKey.ALMTestSetMap);
                 bool isConnected = false;
-                await Task.Run(() =>
-                {
-                    isConnected = AutoALMProjectConnect(eALMConnectType.Auto);
-                });
+                
+                isConnected = AutoALMProjectConnect(eALMConnectType.Auto);
+                
                 if (isConnected)
                     {
                         if (GetALMType().Equals(eALMType.ZephyrEnterprise))

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore;
@@ -43,6 +44,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         public ObservableList<ElementLocator> ElementLocatorsSettingsList = new ObservableList<ElementLocator>();
         List<eLocateBy> mElementLocatorsList = new List<eLocateBy>();
         public ObservableList<ElementInfo> mElementsList = new ObservableList<ElementInfo>();
+        public PomSetting pomSetting;
 
         bool mLearnOnlyMappedElements = true;
         public bool LearnOnlyMappedElements
@@ -159,12 +161,20 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         public void PrepareLearningConfigurations()
         {
+            pomSetting = new PomSetting();
             var uIElementList = new List<UIElementFilter>();
             uIElementList.AddRange(AutoMapBasicElementTypesList.ToList());
             uIElementList.AddRange(AutoMapAdvanceElementTypesList.ToList());
 
             SelectedElementTypesList = uIElementList.Where(x => x.Selected).Select(x => x.ElementType).ToList();
-            mElementLocatorsList = ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();           
+            mElementLocatorsList = ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();
+
+            pomSetting.filteredElementType = SelectedElementTypesList;
+            pomSetting.ElementLocatorsSettingsList = ElementLocatorsSettingsList;
+            pomSetting.isPOMLearn = true;
+            pomSetting.relativeXpathTemplateList = GetRelativeXpathTemplateList();
+            pomSetting.SpecificFramePath = SpecificFramePath;
+            pomSetting.LearnScreenshotsOfElements = LearnScreenshotsOfElements;
         }
 
         public void LearnScreenShot()
@@ -199,13 +209,15 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 if (SelectedElementTypesList.Count > 0)
                 {
-                    await IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList,true, SpecificFramePath,GetRelativeXpathTemplateList(), LearnScreenshotsOfElements);
+                    await IWindowExplorerDriver.GetVisibleControls(pomSetting,mElementsList, POM.ApplicationPOMMetaData);
                 }
             }
             else
             {
-               await IWindowExplorerDriver.GetVisibleControls(null, mElementsList,true, SpecificFramePath,GetRelativeXpathTemplateList(), LearnScreenshotsOfElements);
+                pomSetting.filteredElementType = null;
+               await IWindowExplorerDriver.GetVisibleControls(pomSetting, mElementsList, POM.ApplicationPOMMetaData);
             }
+
         }
 
         private List<string> GetRelativeXpathTemplateList()
@@ -253,7 +265,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             List<ElementLocator> orderedLocatorsList = element.Locators.OrderBy(m => mElementLocatorsList.IndexOf(m.LocateBy)).ToList();
             foreach (ElementLocator elemLoc in orderedLocatorsList)
             {
-                elemLoc.Active = ElementLocatorsSettingsList.Where(m => m.LocateBy == elemLoc.LocateBy).FirstOrDefault().Active;
+                elemLoc.Active = ElementLocatorsSettingsList.Any(m => m.LocateBy == elemLoc.LocateBy) && ElementLocatorsSettingsList.Where(m => m.LocateBy == elemLoc.LocateBy).FirstOrDefault().Active;
             }
             element.Locators = new ObservableList<ElementLocator>(orderedLocatorsList);
 

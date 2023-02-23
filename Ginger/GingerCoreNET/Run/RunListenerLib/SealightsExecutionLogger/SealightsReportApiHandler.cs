@@ -196,7 +196,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
 
                 restRequest.AddJsonBody(new { labId = labId, testStage = testStage, bsId = bsId, sessionTimeout = sessionTimeout }); // Anonymous type object is converted to Json body
 
-                RestResponse response = restClient.Execute(restRequest);
+                RestResponse response = restClient.ExecuteAsync(restRequest).Result;
 
                 dynamic objResponse = JsonConvert.DeserializeObject(response.Content);
                 TestSessionId = objResponse.data.testSessionId.ToString();
@@ -328,7 +328,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 restRequest.AddHeader("Content-Type", "application/json");
                 restRequest.AddHeader("Authorization", "Bearer " + Token);
 
-                RestResponse response = restClient.Execute(restRequest);
+                RestResponse response = restClient.ExecuteAsync(restRequest).Result;
 
                 dynamic objResponse = JsonConvert.DeserializeObject(response.Content);
                 testsToExclude = objResponse.data.ToObject<string[]>();

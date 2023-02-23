@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -111,7 +112,10 @@ namespace Ginger
                         BindingOperations.EnableCollectionSynchronization(mObjList, mObjList);//added to allow collection changes from other threads
                     }
 
-                    mCollectionView = CollectionViewSource.GetDefaultView(mObjList);
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        mCollectionView = new CollectionViewSource() { Source = mObjList }.View;
+                    });
 
                     if (mCollectionView != null)
                     {
@@ -130,7 +134,7 @@ namespace Ginger
                     }
                     this.Dispatcher.Invoke(() =>
                     {
-                        grdMain.ItemsSource = mObjList;
+                        grdMain.ItemsSource = mCollectionView;
 
                         // Make the first row selected
                         if (value != null && value.Count > 0)
@@ -441,7 +445,7 @@ namespace Ginger
             xSimpleHeaderTitle.Style = (Style)TryFindResource("$ucGridTitleLightStyle");
         }
 
-        public void SetGridEnhancedHeader(eImageType itemTypeIcon, string itemTypeName = "", RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null)
+        public void SetGridEnhancedHeader(eImageType itemTypeIcon, string itemTypeName = "", RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, bool isSaveButtonHidden = false)
         {
             GingerHelpProvider.SetHelpString(this, itemTypeName.TrimEnd(new char[] { 's' }));
 
@@ -459,7 +463,7 @@ namespace Ginger
                 xEnhancedHeaderTitle.Content = itemTypeName;
             }
 
-            if (saveAllHandler != null)
+            if (saveAllHandler != null && !isSaveButtonHidden)
             {
                 xEnhancedHeaderSaveAllButton.Click += saveAllHandler;
                 xEnhancedHeaderSaveAllButton.Visibility = Visibility.Visible;
@@ -881,7 +885,7 @@ namespace Ginger
             OnSelectedItemChangedEvent(grdMain.SelectedItem);
         }
 
-        private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
+        private async void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             //Cancel editing incase of user started search without going out of cell edit.
             this.grdMain.CommitEdit(DataGridEditingUnit.Row, true);
@@ -915,7 +919,15 @@ namespace Ginger
             {
                 mObjList.CurrentItem = null;
 
-                if (mCollectionView != null)
+                // this inner method checks if user is still typing
+                async Task<bool> UserKeepsTyping()
+                {
+                    string txt = txtSearch.Text;
+                    await Task.Delay(1000);
+                    return txt != txtSearch.Text;
+                }
+
+                if (mCollectionView != null && !(await UserKeepsTyping()) && txtSearch.Text != mFilterSearchText)
                 {
                     this.Dispatcher.Invoke(() =>
                     {

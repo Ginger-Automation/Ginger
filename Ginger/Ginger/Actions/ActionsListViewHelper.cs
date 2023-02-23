@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -117,11 +117,17 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
             else if(item is ucButton)
             {
-                mAction = (Act)(((ucButton)item).Tag);
+                if(((ucButton)item).Tag is Act)
+                {
+                    mAction = (Act)(((ucButton)item).Tag);
+                }                
             }
             else if (item is MenuItem)
             {
-                mAction = (Act)(((MenuItem)item).Tag);
+                if (((MenuItem)item).Tag is Act)
+                {
+                    mAction = ((Act)((MenuItem)item).Tag);
+                }
             }
             else if(item is ApplicationPOMModel)
             {

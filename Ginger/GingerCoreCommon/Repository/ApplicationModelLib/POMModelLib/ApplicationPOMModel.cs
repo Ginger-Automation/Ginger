@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -54,8 +55,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mPageLoadFlow = value;
-                OnPropertyChanged(nameof(this.PageLoadFlow));
+                if (mPageLoadFlow != value)
+                {
+                    mPageLoadFlow = value;
+                    OnPropertyChanged(nameof(this.PageLoadFlow));
+                }
             }
         }
 
@@ -68,8 +72,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mPageURL = value;
-                OnPropertyChanged(nameof(this.PageURL));
+                if (mPageURL != value)
+                {
+                    mPageURL = value;
+                    OnPropertyChanged(nameof(this.PageURL));
+                }
             }
         }
 
@@ -83,8 +90,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mMappedBusinessFlow = value;
-                OnPropertyChanged(nameof(this.MappedBusinessFlow));
+                if (mMappedBusinessFlow != value)
+                {
+                    mMappedBusinessFlow = value;
+                    OnPropertyChanged(nameof(this.MappedBusinessFlow));
+                }
             }
         }
 
@@ -253,6 +263,37 @@ namespace Amdocs.Ginger.Repository
             {
                 mIsCollapseDetailsExapander = value;
                 OnPropertyChanged(nameof(this.IsCollapseDetailsExapander));
+            }
+        }
+
+        private ObservableList<POMPageMetaData> mApplicationPOMMetaData;
+        /// <summary>
+        /// Been used to identify if POMMetaData were lazy loaded already or not
+        /// </summary>
+        public bool ApplicationPOMMetaDataLazyLoad { get { return (mApplicationPOMMetaData != null) ? mApplicationPOMMetaData.LazyLoad : false; } }
+        [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.NodePath)]
+        [IsSerializedForLocalRepository]
+        public ObservableList<POMPageMetaData> ApplicationPOMMetaData
+        {
+            get
+            {
+                if (mApplicationPOMMetaData == null)
+                {
+                    mApplicationPOMMetaData = new ObservableList<POMPageMetaData>();
+                }
+                if (mApplicationPOMMetaData.LazyLoad)
+                {
+                    mApplicationPOMMetaData.LoadLazyInfo();
+                    if (this.DirtyStatus != eDirtyStatus.NoTracked)
+                    {
+                        this.TrackObservableList(mApplicationPOMMetaData);
+                    }
+                }
+                return mApplicationPOMMetaData;
+            }
+            set
+            {
+                mApplicationPOMMetaData = value;
             }
         }
     }

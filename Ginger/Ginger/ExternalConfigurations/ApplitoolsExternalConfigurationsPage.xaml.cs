@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,13 +27,14 @@ using amdocs.ginger.GingerCoreNET;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
 using Ginger.ValidationRules;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Configurations
 {
     /// <summary>
     /// Interaction logic for ApplitoolsExternalConfigurationsPage.xaml
     /// </summary>
-    public partial class ApplitoolsExternalConfigurationsPage : Page
+    public partial class ApplitoolsExternalConfigurationsPage : GingerUIPage
     {
         ApplitoolsConfiguration _ApplitoolsConfiguration = new ApplitoolsConfiguration();
 
@@ -46,8 +47,9 @@ namespace Ginger.Configurations
         private void Init()
         {
             _ApplitoolsConfiguration = WorkSpace.Instance.Solution.ApplitoolsConfiguration;
-            _ApplitoolsConfiguration.StartDirtyTracking();
+            CurrentItemToSave = WorkSpace.Instance.Solution;
             SetControls();
+            _ApplitoolsConfiguration.StartDirtyTracking();
         }
 
         private void SetControls()
@@ -64,10 +66,10 @@ namespace Ginger.Configurations
             xAPIURLTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("URL cannot be empty"));
             xAPIKeyTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Key cannot be empty"));
 
-            CallSealightsConfigPropertyChange();
+            CallApplitoolsConfigPropertyChange();
         }
 
-        private void CallSealightsConfigPropertyChange()
+        private void CallApplitoolsConfigPropertyChange()
         {
             // need in order to trigger the validation's rules on init binding (load/init form)
             _ApplitoolsConfiguration.OnPropertyChanged(nameof(ApplitoolsConfiguration.ApiUrl));
@@ -78,6 +80,5 @@ namespace Ginger.Configurations
         {
             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.LoggerConfiguration);
         }
-
     }
 }

@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -372,6 +372,17 @@ namespace Amdocs.Ginger.Repository
                 {
                     RF.StopFileWatcherRecursive();
                 }
+            }
+        }
+
+        public override void StartFileWatcherRecursive(string newFolderName, string oldFolderName)
+        {
+            FolderRelativePath = FolderRelativePath.Replace(oldFolderName, newFolderName);
+
+            StartFileWatcher();
+            foreach (RepositoryFolderBase RF in GetSubFolders())
+            {
+                RF.StartFileWatcherRecursive(newFolderName, oldFolderName);
             }
         }
 
@@ -828,7 +839,10 @@ namespace Amdocs.Ginger.Repository
             }
             else
             {
+                StopFileWatcherRecursive();
                 Directory.Move(PathHelper.GetLongPath(FolderFullPath), PathHelper.GetLongPath(newFullPath));
+
+                StartFileWatcherRecursive(newFolderName, FolderName);
             }
             //Enable file watcher to catch the change first, so it will be visible in UI
             Thread.Sleep(100);

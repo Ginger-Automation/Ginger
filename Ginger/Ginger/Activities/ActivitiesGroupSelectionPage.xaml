@@ -22,13 +22,13 @@
                 <ComboBox x:Name="xGroupComboBox" AutomationProperties.AutomationId="Group AID" Width="200" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,7,0,0" />
                 <usercontrols:ucButton x:Name="xAddGroupBtn" ButtonType="RoundTextAndImageButton" ButtonImageType="Add" ButtonFontImageSize="16" ButtonText="New Activities Group" Click="XAddGroupBtn_Click" VerticalAlignment="Center" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,10,0,0" >
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0" x:Name="xRadioPanel">
                 <Label Style="{StaticResource $LabelStyle}" Margin="0,5,0,0" >
                     <Label.Content>
                         Add Activity As :
                     </Label.Content>
                 </Label>
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" >
                     <RadioButton x:Name="xLinkedInstance" IsChecked="True" HorizontalAlignment="Left" Checked="xLinkedInstance_Checked" Margin="10,10,0,0" >
                         <GingerCore:ucTextDicResource Text="Link Instance" ToolTip="Any updation to instance of this type, will update all the flows having this instance."/>
                     </RadioButton>

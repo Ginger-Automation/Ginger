@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -34,7 +35,7 @@ namespace Ginger.Agents
     /// <summary>
     /// Interaction logic for AgentEditPage.xaml
     /// </summary>
-    public partial class AgentEditPage : Page
+    public partial class AgentEditPage : GingerUIPage
     {        
         Agent mAgent;
         ePlatformType mOriginalPlatformType;
@@ -52,7 +53,7 @@ namespace Ginger.Agents
             if (agent != null)
             {               
                 mAgent = agent;
-
+                CurrentItemToSave = mAgent;
                 xShowIDUC.Init(mAgent);
                 BindingHandler.ObjFieldBinding(xAgentNameTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Name));
                 xAgentNameTextBox.AddValidationRule(new AgentNameValidationRule());
@@ -173,7 +174,7 @@ namespace Ginger.Agents
                 }                
             }
         }
-                
+
         private async void xTestBtn_Click(object sender, RoutedEventArgs e)
         {
             xTestBtn.IsEnabled = false;

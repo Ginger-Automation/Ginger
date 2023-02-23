@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -111,6 +111,14 @@ namespace GingerCore.Drivers.Common
             //string xPath = ((IXPath)WindowExplorer).GetXPathHelper(this).GetElementXpathAbsulote(this); // Doing Temporary workaround because GetXPathHelper is not working properly for SeleniumDriver
             string xPath = ((IXPath)WindowExplorer).GetElementXpath(this);
             return xPath;
-        }        
+        }
+
+        public HtmlNode LeftofHTMLElementObject { get; set; }
+        public HtmlNode RightofHTMLElementObject { get; set; }
+        public HtmlNode AboveHTMLElementObject { get; set; }
+        public HtmlNode BelowHTMLElementObject { get; set; }
+
+        public HtmlNode NearHTMLElementObject { get; set; }
+
     }
 }

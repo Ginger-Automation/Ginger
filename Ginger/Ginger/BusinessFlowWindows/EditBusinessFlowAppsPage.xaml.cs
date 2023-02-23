@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -50,37 +50,38 @@ namespace Ginger.BusinessFlowWindows
              SetGridView();
          }
 
-         private void SetGridView()
-         {
-             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-             view.GridColsView = new ObservableList<GridColView>();
+        private void SetGridView()
+        {
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
 
-             view.GridColsView.Add(new GridColView() { Field = "Selected", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox });
-             view.GridColsView.Add(new GridColView() { Field = "AppName", Header = "Application Name", WidthWeight = 50, ReadOnly=true, BindingMode=BindingMode.OneWay});
-             view.GridColsView.Add(new GridColView() { Field = "Platform", Header = "Platform", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = "Selected", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
+            view.GridColsView.Add(new GridColView() { Field = "AppName", Header = "Application Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = "Platform", Header = "Platform", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay });
 
-             AppsGrid.SetAllColumnsDefaultView(view);
-             AppsGrid.InitViewItems();
+            AppsGrid.SetAllColumnsDefaultView(view);
+            AppsGrid.InitViewItems();
 
-             foreach (ApplicationPlatform AP in  WorkSpace.Instance.Solution.ApplicationPlatforms)
-             {
-                 ApplicationPlatform AP1 = new ApplicationPlatform();
-                 AP1.AppName = AP.AppName;
-                 AP1.Platform = AP.Platform;
+            foreach (ApplicationPlatform AP in WorkSpace.Instance.Solution.ApplicationPlatforms)
+            {
+                ApplicationPlatform AP1 = new ApplicationPlatform();
+                AP1.AppName = AP.AppName;
+                AP1.Platform = AP.Platform;
 
-                 // If this App was selected before then mark it 
-                 TargetApplication APS = (TargetApplication)(from x in mBusinessFlow.TargetApplications where x.Name == AP.AppName select x).FirstOrDefault();
+                // If this App was selected before then mark it 
+                TargetApplication APS = (TargetApplication)(from x in mBusinessFlow.TargetApplications where x.Name == AP.AppName select x).FirstOrDefault();
 
-                 if (APS != null)
-                 {
-                     AP1.Selected = true;
-                 }
+                if (APS != null)
+                {
+                    AP1.Selected = true;
+                }
 
-                 mApplicationsPlatforms.Add(AP1);
-             }
+                mApplicationsPlatforms.Add(AP1);
+            }
 
-             AppsGrid.DataSourceList = mApplicationsPlatforms;
-         }
+            AppsGrid.DataSourceList = mApplicationsPlatforms;
+        }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
        {

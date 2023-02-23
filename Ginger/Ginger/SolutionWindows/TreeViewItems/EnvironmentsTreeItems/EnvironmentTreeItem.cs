@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -109,9 +109,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void AddApplication(object sender, RoutedEventArgs e)
         {
             string appName = string.Empty;
-            if (GingerCore.General.GetInputWithValidation("Add Application", "Application Name:", ref appName))
+            EnvApplication app = new EnvApplication();
+            if (GingerCore.General.GetInputWithValidation("Add Application", "Application Name:", ref appName, null, false, app))
             {
-                EnvApplication app= new EnvApplication();
                 app.Name= appName;
                 ProjEnvironment.Applications.Add(app);
             }

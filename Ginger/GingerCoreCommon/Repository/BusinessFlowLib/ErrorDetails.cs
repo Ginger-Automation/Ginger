@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,8 +31,11 @@ namespace GingerCore
             }
             set
             {
-                mIsSelected = value;
-                OnPropertyChanged(nameof(IsSelected));
+                if (mIsSelected != value)
+                {
+                    mIsSelected = value;
+                    OnPropertyChanged(nameof(IsSelected));
+                }
             }
         }
         private string mErrorString;
@@ -45,8 +48,11 @@ namespace GingerCore
             }
             set
             {
-                mErrorString = value;
-                OnPropertyChanged(nameof(ErrorString));
+                if (mErrorString != value)
+                {
+                    mErrorString = value;
+                    OnPropertyChanged(nameof(ErrorString));
+                }
             }
         }
 
@@ -60,8 +66,11 @@ namespace GingerCore
             }
             set
             {
-                mErrorDescription = value;
-                OnPropertyChanged(nameof(ErrorDescription));
+                if (mErrorDescription != value)
+                {
+                    mErrorDescription = value;
+                    OnPropertyChanged(nameof(ErrorDescription));
+                }
             }
         }
         public override string ItemName { get => ErrorString; set { } }

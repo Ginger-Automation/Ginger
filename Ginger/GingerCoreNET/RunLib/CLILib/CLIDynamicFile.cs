@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -320,7 +320,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                             {
                                 //clear previous default
                                 ALMConfig currentDefAlm = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm == true).FirstOrDefault();
-                                currentDefAlm.DefaultAlm = false;
+                                if(currentDefAlm != null)
+                                {
+                                    currentDefAlm.DefaultAlm = false;
+                                }
+                                else
+                                {
+                                    Reporter.ToLog(eLogLevel.WARN, (string.Format("Failed to load the ALM type: '{0}' details", almDetails.ALMType)));
+                                }
+                                
                             }
                             solutionAlmConfig.DefaultAlm = (bool)almDetails.IsDefault;
                         }

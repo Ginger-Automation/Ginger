@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private List<Element> ElementsList = new List<Element>();
         private List<ComplexType> ComplexTypesList = new List<ComplexType>();
         private ObservableList<ApplicationAPIModel> mAAMList = new ObservableList<ApplicationAPIModel>();
-        private List<Tuple<string,string>> AllURLs = new List<Tuple<string, string>>();
+        private List<Tuple<string, string>> AllURLs = new List<Tuple<string, string>>();
         private List<ServiceDescriptionExtended> mServiceDescriptionsExtendedList = new List<ServiceDescriptionExtended>();
         private BindingCollection bindColl;
         private ServiceCollection Services;
@@ -688,7 +688,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                                 {
                                     AppendComplexTypeElements(RequestBody, null, ChildElement, NextComplexType, NameSpaceName, CurrentTab + tab1, NameSpacesToInclude, PathToPass, AMPList);
                                 }
-                                
+
                             }
                             else
                             {
@@ -1918,31 +1918,31 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void PopulateAllURLsList()
         {
 
-            List<Tuple<string,string>> InnerImportsURLs = new List<Tuple<string, string>>();
+            List<Tuple<string, string>> InnerImportsURLs = new List<Tuple<string, string>>();
 
             foreach (XmlSchemasExtended XMLSExtended in mSchemasList)
                 foreach (XmlSchema schema in XMLSExtended.mXmlSchemas)
                 {
-                XmlSchemaObjectCollection Items = schema.Includes;
+                    XmlSchemaObjectCollection Items = schema.Includes;
 
-                foreach (var item in Items)
-                {
-                    if (item is XmlSchemaImport)
+                    foreach (var item in Items)
                     {
-                        XmlSchemaImport XmlSchemaImportItem = item as XmlSchemaImport;
-                        string URL = GetURLFromSchemaLocationBymURLType(XmlSchemaImportItem.SchemaLocation);
-                        AllURLs.Add(new Tuple<string,string>(URL, XMLSExtended.ContainingFolder));
-                        InnerImportsURLs.Add(new Tuple<string, string>(URL, XMLSExtended.ContainingFolder));
-                    }
-                    else if (item is XmlSchemaInclude)
-                    {
-                        XmlSchemaInclude XmlSchemaIncludeItem = item as XmlSchemaInclude;
-                        string URL = GetURLFromSchemaLocationBymURLType(XmlSchemaIncludeItem.SchemaLocation);
-                        AllURLs.Add(new Tuple<string, string>(URL, XMLSExtended.ContainingFolder));
-                        InnerImportsURLs.Add(new Tuple<string, string>(URL, XMLSExtended.ContainingFolder));
+                        if (item is XmlSchemaImport)
+                        {
+                            XmlSchemaImport XmlSchemaImportItem = item as XmlSchemaImport;
+                            string URL = GetURLFromSchemaLocationBymURLType(XmlSchemaImportItem.SchemaLocation);
+                            AllURLs.Add(new Tuple<string, string>(URL, XMLSExtended.ContainingFolder));
+                            InnerImportsURLs.Add(new Tuple<string, string>(URL, XMLSExtended.ContainingFolder));
+                        }
+                        else if (item is XmlSchemaInclude)
+                        {
+                            XmlSchemaInclude XmlSchemaIncludeItem = item as XmlSchemaInclude;
+                            string URL = GetURLFromSchemaLocationBymURLType(XmlSchemaIncludeItem.SchemaLocation);
+                            AllURLs.Add(new Tuple<string, string>(URL, XMLSExtended.ContainingFolder));
+                            InnerImportsURLs.Add(new Tuple<string, string>(URL, XMLSExtended.ContainingFolder));
+                        }
                     }
                 }
-            }
             foreach (Tuple<string, string> URLTuple in InnerImportsURLs)
             {
                 if (!string.IsNullOrEmpty(URLTuple.Item1))
@@ -1983,7 +1983,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         }
 
-        private void GetAllURLsFFromSchemaItems(XmlSchemaObjectCollection items, string relativeDirectories,string containigFolder)
+        private void GetAllURLsFFromSchemaItems(XmlSchemaObjectCollection items, string relativeDirectories, string containigFolder)
         {
             foreach (var item in items)
             {
@@ -2013,7 +2013,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             }
         }
 
-        public void ReadSchemaURLs(string CompleteURL,string containigFolder)
+        public void ReadSchemaURLs(string CompleteURL, string containigFolder)
         {
             XmlTextReader reader = new XmlTextReader(CompleteURL);
             XmlSchema schema = XmlSchema.Read(reader, null);
@@ -2142,7 +2142,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             }
             catch (Exception ex)
             {
-                error += "There is a problem in this WSDL file format, please verify the WSDL format and re-try";
+                if (ex.InnerException is System.Net.Http.HttpRequestException)
+                {
+                    error += ex.InnerException?.Message;
+                }
+                else
+                {
+                    error += "There is a problem in this WSDL file format, please verify the WSDL format and re-try";
+                }
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }

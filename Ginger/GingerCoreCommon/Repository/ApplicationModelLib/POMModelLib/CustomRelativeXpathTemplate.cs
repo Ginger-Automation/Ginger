@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,8 +36,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mValue = value;
-                OnPropertyChanged(nameof(Value));
+                if (mValue != value)
+                {
+                    mValue = value;
+                    OnPropertyChanged(nameof(Value));
+                }
             }
         }
 
@@ -50,8 +53,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mStatus = value;
-                OnPropertyChanged(nameof(Status));
+                if (mStatus != value)
+                {
+                    mStatus = value;
+                    OnPropertyChanged(nameof(Status));
+                }
             }
         }
         public override string ItemName

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,6 +22,11 @@ using System.Windows.Controls;
 using GingerCore;
 using Amdocs.Ginger.Common;
 using amdocs.ginger.GingerCoreNET;
+using CheckBox = System.Windows.Controls.CheckBox;
+using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.Repository;
+using GingerCore.Actions.WebServices;
+using System.IO;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -42,6 +47,62 @@ namespace Ginger.Run.RunSetActions
             BindingHandler.ObjFieldBinding(xEmailMethodComboBox, ComboBox.SelectedValueProperty, email, nameof(Email.EmailMethod));
             BindingHandler.ObjFieldBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, email, nameof(Email.EnableSSL));
             BindingHandler.ObjFieldBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, email, nameof(Email.ConfigureCredential));
+            BindingHandler.ObjFieldBinding(xcbIsValidationRequired, CheckBox.IsCheckedProperty, email, nameof(Email.IsValidationRequired));
+            BindingHandler.ObjFieldBinding(xcbCertificatePathTextBox, TextBox.TextProperty, email, nameof(Email.CertificatePath));
+            BindingHandler.ObjFieldBinding(CertificatePasswordUCValueExpression, TextBox.TextProperty, email, nameof(Email.CertificatePasswordUCValueExpression));
+        }
+        private void CertificateSelection_Changed(object sender, RoutedEventArgs e)
+        {
+            CertificateStackPanel.Visibility = System.Windows.Visibility.Visible;
+        }
+        private void CertificateSelection_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CertificateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+        }
+        private void BrowseButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
+
+            dlg.DefaultExt = "*.crt";
+            dlg.Filter = "CRT Files (*.crt)|*.crt";
+            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+
+                string FileName = dlg.FileName.ToUpper();
+                if (FileName.Contains(SolutionFolder))
+                {
+                    FileName = FileName.Replace(SolutionFolder, @"~\");
+                }
+                FileName = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(FileName);
+                xcbCertificatePathTextBox.Text = FileName;
+                string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\EmailCertificates");
+                if (!System.IO.Directory.Exists(targetPath))
+                {
+                    System.IO.Directory.CreateDirectory(targetPath);
+                }
+
+                string destFile = System.IO.Path.Combine(targetPath, System.IO.Path.GetFileName(FileName));
+
+                int fileNum = 1;
+                string copySufix = "_Copy";
+                while (System.IO.File.Exists(destFile))
+                {
+                    fileNum++;
+                    string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
+                    if (newFileName.IndexOf(copySufix) != -1)
+                    {
+                        newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
+                    }
+                    newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
+                    destFile = System.IO.Path.Combine(targetPath, newFileName);
+                }
+
+                System.IO.File.Copy(FileName, destFile, true);
+                xcbCertificatePathTextBox.Text = @"~\Documents\EmailCertificates\" + System.IO.Path.GetFileName(destFile);
+                xcbCertificatePathTextBox.AcceptsReturn = true;
+                xcbCertificatePathTextBox.Visibility = Visibility.Visible;
+            }
         }
         private void xEmailMethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

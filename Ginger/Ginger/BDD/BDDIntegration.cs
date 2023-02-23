@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ namespace Ginger.BDD
         public void CreateFeatureFile()
         {
             string FileName = string.Empty;
-            if (GingerCore.General.GetInputWithValidation("New Feature File", "File Name:", ref FileName, System.IO.Path.GetInvalidFileNameChars()))
+            if (GingerCore.General.GetInputWithValidation("New Feature File", "File Name:", ref FileName, System.IO.Path.GetInvalidFileNameChars(), false, null))
             {
                 string FullDirectoryPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, "Documents", "Features");
                 if (!System.IO.Directory.Exists(FullDirectoryPath))

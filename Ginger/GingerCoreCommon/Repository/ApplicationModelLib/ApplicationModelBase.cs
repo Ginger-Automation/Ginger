@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -42,8 +42,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mName = value;
-                OnPropertyChanged(nameof(this.Name));
+                if (mName != value)
+                {
+                    mName = value;
+                    OnPropertyChanged(nameof(this.Name));
+                }
             }
         }
 
@@ -62,8 +65,11 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mDescription = value;
-                OnPropertyChanged(nameof(this.Description));
+                if (mDescription != value)
+                {
+                    mDescription = value;
+                    OnPropertyChanged(nameof(this.Description));
+                }
             }
         }
 
@@ -132,8 +138,11 @@ namespace Amdocs.Ginger.Repository
             { return mSupportSimulation; }
             set
             {
-                mSupportSimulation = value;
-                OnPropertyChanged(nameof(SupportSimulation));
+                if (mSupportSimulation != value)
+                {
+                    mSupportSimulation = value;
+                    OnPropertyChanged(nameof(SupportSimulation));
+                }
             }
         }
         #endregion

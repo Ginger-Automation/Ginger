@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -29,6 +29,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Common.Repository;
+using Ginger.UserControls;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -59,9 +62,26 @@ namespace GingerWPF.BusinessFlowsLib
         {
             this.Dispatcher.Invoke(() =>
             {
-                xTargetsListBox.ItemsSource = mBusinessFlow.TargetApplications.ToList();
+                xAppsGrid.DataSourceList = mBusinessFlow.TargetApplicationPlatforms;
             });
         }
+
+        private void SetGridView()
+        {
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16, Style = FindResource("@DataGridColumn_Image") as Style });
+            view.GridColsView.Add(new GridColView() { Field = "AppName", Header = "Application Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = "Platform", Header = "Platform", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay });
+
+            xAppsGrid.SetAllColumnsDefaultView(view);
+            xAppsGrid.InitViewItems();
+
+            xAppsGrid.DataSourceList = mBusinessFlow.TargetApplicationPlatforms;
+        }
+
+       
 
         private void TrackBusinessFlowAutomationPrecentage()
         {
@@ -119,7 +139,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xStatusComboBox.IsEnabled = false;
                 xCreatedByTextBox.IsEnabled = false;
                 xAutoPrecentageTextBox.IsEnabled = false;
-                xTargetsListBox.IsEnabled = false;
+                xAppsGrid.IsEnabled = false;
                 xAddTargetBtn.IsEnabled = false;
                 xPublishcheckbox.IsEnabled = false;
             }
@@ -132,7 +152,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xStatusComboBox.IsEnabled = true;
                 xCreatedByTextBox.IsEnabled = true;
                 xAutoPrecentageTextBox.IsEnabled = true;
-                xTargetsListBox.IsEnabled = true;
+                xAppsGrid.IsEnabled = true;
                 xAddTargetBtn.IsEnabled = true;
                 xPublishcheckbox.IsEnabled = true;
             }
@@ -156,8 +176,7 @@ namespace GingerWPF.BusinessFlowsLib
             //    SourceFrame.Content = SGP;
             //}
 
-            xTargetsListBox.ItemsSource = mBusinessFlow.TargetApplications.ToList();
-            xTargetsListBox.DisplayMemberPath = nameof(TargetApplication.AppName);
+            SetGridView();
         }
 
         private void ClearBindings()
@@ -168,7 +187,7 @@ namespace GingerWPF.BusinessFlowsLib
             BindingOperations.ClearAllBindings(xStatusComboBox);
             BindingOperations.ClearAllBindings(xCreatedByTextBox);
             BindingOperations.ClearAllBindings(xAutoPrecentageTextBox);
-            BindingOperations.ClearAllBindings(xTargetsListBox);
+            BindingOperations.ClearAllBindings(xAppsGrid);
             BindingOperations.ClearAllBindings(xPublishcheckbox);
         }
 

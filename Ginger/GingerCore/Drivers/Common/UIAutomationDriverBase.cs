@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ using mshtml;
 using GingerCore.Drivers.PBDriver;
 
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 
 namespace GingerCore.Drivers.Common
 {
@@ -70,9 +71,9 @@ namespace GingerCore.Drivers.Common
             return ((IXPath)mUIAutomationHelper).GetXPathHelper();
         }
 
-        ElementInfo IXPath.GetElementParent(ElementInfo ElementInfo)
+        ElementInfo IXPath.GetElementParent(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
-            return ((IXPath)mUIAutomationHelper).GetElementParent(ElementInfo);
+            return ((IXPath)mUIAutomationHelper).GetElementParent(ElementInfo,pomSetting);
         }
 
         string IXPath.GetElementProperty(ElementInfo ElementInfo, string PropertyName)

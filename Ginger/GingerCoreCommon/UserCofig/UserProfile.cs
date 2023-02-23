@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -109,8 +109,11 @@ namespace Ginger
             }
             set
             {
-                mAutoLoadLastSolution = value;
-                OnPropertyChanged(nameof(AutoLoadLastSolution));
+                if (mAutoLoadLastSolution != value)
+                {
+                    mAutoLoadLastSolution = value;
+                    OnPropertyChanged(nameof(AutoLoadLastSolution));
+                }
             }
         }
 
@@ -194,8 +197,11 @@ namespace Ginger
             }
             set
             {
-                mAutoRunAutomatePageAnalyzer = value;
-                OnPropertyChanged(nameof(AutoRunAutomatePageAnalyzer));
+                if (mAutoRunAutomatePageAnalyzer || value)
+                {
+                    mAutoRunAutomatePageAnalyzer = value;
+                    OnPropertyChanged(nameof(AutoRunAutomatePageAnalyzer));
+                }
             }
         }
 
@@ -209,8 +215,11 @@ namespace Ginger
             }
             set
             {
-                mAutoGenerateAutomatePageReport = value;
-                OnPropertyChanged(nameof(AutoGenerateAutomatePageReport));
+                if (mAutoGenerateAutomatePageReport != value)
+                {
+                    mAutoGenerateAutomatePageReport = value;
+                    OnPropertyChanged(nameof(AutoGenerateAutomatePageReport));
+                }
             }
         }
 
@@ -232,7 +241,7 @@ namespace Ginger
         public GingerCore.eTerminologyType TerminologyDictionaryType
         {
             get { return mTerminologyType; }
-            set { mTerminologyType = value; OnPropertyChanged(nameof(TerminologyDictionaryType)); }
+            set { if (mTerminologyType != value) { mTerminologyType = value; OnPropertyChanged(nameof(TerminologyDictionaryType)); } }
         }
 
         eAppReporterLoggingLevel mAppLogLevel;
@@ -240,7 +249,7 @@ namespace Ginger
         public eAppReporterLoggingLevel AppLogLevel
         {
             get { return mAppLogLevel; }
-            set { mAppLogLevel = value; Reporter.AppLoggingLevel = mAppLogLevel; OnPropertyChanged(nameof(AppLogLevel)); }
+            set { if (mAppLogLevel != value) { mAppLogLevel = value; Reporter.AppLoggingLevel = mAppLogLevel; OnPropertyChanged(nameof(AppLogLevel)); } }
         }
 
         eUserType mUserType;
@@ -253,8 +262,11 @@ namespace Ginger
             }
             set
             {
-                mUserType = value;
-                OnPropertyChanged(nameof(UserType));
+                if (mUserType != value)
+                {
+                    mUserType = value;
+                    OnPropertyChanged(nameof(UserType));
+                }
             }
         }
 
@@ -401,8 +413,11 @@ namespace Ginger
             }
             set
             {
-                mDoNotAskToUpgradeSolutions = value;
-                OnPropertyChanged(nameof(DoNotAskToUpgradeSolutions));
+                if (mDoNotAskToUpgradeSolutions != value)
+                {
+                    mDoNotAskToUpgradeSolutions = value;
+                    OnPropertyChanged(nameof(DoNotAskToUpgradeSolutions));
+                }
             }
         }
 
@@ -420,8 +435,11 @@ namespace Ginger
             }
             set
             {
-                mAskToSaveBusinessFlow = value;
-                OnPropertyChanged(nameof(AskToSaveBusinessFlow));
+                if (mAskToSaveBusinessFlow != value)
+                {
+                    mAskToSaveBusinessFlow = value;
+                    OnPropertyChanged(nameof(AskToSaveBusinessFlow));
+                }
             }
         }
 
@@ -438,8 +456,11 @@ namespace Ginger
             }
             set
             {
-                mAutoLoadLastRunSet = value;
-                OnPropertyChanged(nameof(AutoLoadLastRunSet));
+                if (mAutoLoadLastRunSet != value)
+                {
+                    mAutoLoadLastRunSet = value;
+                    OnPropertyChanged(nameof(AutoLoadLastRunSet));
+                }
             }
         }
 
@@ -453,8 +474,11 @@ namespace Ginger
             }
             set
             {
-                mShowEnterpriseFeatures = value;
-                OnPropertyChanged(nameof(ShowEnterpriseFeatures));
+                if (mShowEnterpriseFeatures != value)
+                {
+                    mShowEnterpriseFeatures = value;
+                    OnPropertyChanged(nameof(ShowEnterpriseFeatures));
+                }
             }
         }
 
@@ -476,6 +500,7 @@ namespace Ginger
             }
         }
 
+
         public string UserName
         {
             get { return Environment.UserName; }
@@ -491,8 +516,11 @@ namespace Ginger
             }
             set
             {
-                mUserFirstName = value;
-                OnPropertyChanged(nameof(UserFirstName));
+                if (mUserFirstName != value)
+                {
+                    mUserFirstName = value;
+                    OnPropertyChanged(nameof(UserFirstName));
+                }
             }
         }
 
@@ -506,8 +534,11 @@ namespace Ginger
             }
             set
             {
-                mUserMiddleName = value;
-                OnPropertyChanged(nameof(UserMiddleName));
+                if (mUserMiddleName != value)
+                {
+                    mUserMiddleName = value;
+                    OnPropertyChanged(nameof(UserMiddleName));
+                }
             }
         }
 
@@ -521,8 +552,11 @@ namespace Ginger
             }
             set
             {
-                mUserLastName = value;
-                OnPropertyChanged(nameof(UserLastName));
+                if (mUserLastName != value)
+                {
+                    mUserLastName = value;
+                    OnPropertyChanged(nameof(UserLastName));
+                }
             }
         }
 
@@ -536,8 +570,11 @@ namespace Ginger
             }
             set
             {
-                mUserEmail = value;
-                OnPropertyChanged(nameof(UserEmail));
+                if (mUserEmail != value)
+                {
+                    mUserEmail = value;
+                    OnPropertyChanged(nameof(UserEmail));
+                }
             }
         }
 
@@ -551,8 +588,11 @@ namespace Ginger
             }
             set
             {
-                mUserPhone = value;
-                OnPropertyChanged(nameof(UserPhone));
+                if (mUserPhone != value)
+                {
+                    mUserPhone = value;
+                    OnPropertyChanged(nameof(UserPhone));
+                }
             }
         }
 
@@ -566,8 +606,11 @@ namespace Ginger
             }
             set
             {
-                mUserRole = value;
-                OnPropertyChanged(nameof(UserRole));
+                if (mUserRole != value)
+                {
+                    mUserRole = value;
+                    OnPropertyChanged(nameof(UserRole));
+                }
             }
         }
 
@@ -581,8 +624,11 @@ namespace Ginger
             }
             set
             {
-                mUserDepartment = value;
-                OnPropertyChanged(nameof(UserDepartment));
+                if (mUserDepartment != value)
+                {
+                    mUserDepartment = value;
+                    OnPropertyChanged(nameof(UserDepartment));
+                }
             }
         }
         public bool SourceControlUseShellClient { get; internal set; }

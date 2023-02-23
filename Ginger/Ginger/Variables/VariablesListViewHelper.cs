@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -194,14 +194,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             deleteSelected.ToolTip = "Delete Selected " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " (Del)";
             deleteSelected.OperationHandler = DeleteSelectedHandler;
             operationsList.Add(deleteSelected);
-
-            ListItemOperation save = new ListItemOperation();
-            save.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Standalone };
-            save.AutomationID = "save";
-            save.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Save;
-            save.ToolTip = "Save All Changes";
-            save.OperationHandler = SaveAllHandler;
-            operationsList.Add(save);
 
             return operationsList;
         }

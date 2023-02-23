@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -171,7 +171,7 @@ namespace GingerCore.SourceControl
 
                     SourceControlFileInfo SCFI = new SourceControlFileInfo();
                     SCFI.Path = arg.FullPath;
-                    SCFI.SolutionPath = arg.FullPath.Replace(SolutionFolder, @"~\");                  
+                    SCFI.SolutionPath = arg.FullPath.Replace(SolutionFolder, @"~\");
 
                     SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.Unknown;
                     SCFI.Selected = true;
@@ -840,6 +840,11 @@ namespace GingerCore.SourceControl
         public override bool InitializeRepository(string remoteURL)
         {
             throw new NotImplementedException();
+        }
+
+        public override bool IsRepositoryPublic()
+        {
+            return false;
         }
     }
 }

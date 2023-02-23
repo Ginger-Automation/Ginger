@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,17 +18,26 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models;
+using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.Agents;
 using Ginger.BusinessFlowWindows;
+using Ginger.Repository;
+using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.Drivers.Common;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using OpenQA.Selenium.DevTools.V100.DOM;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -44,10 +53,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
     /// <summary>
     /// Interaction logic for POMEditPage.xaml
     /// </summary>
-    public partial class POMEditPage : Page
+    public partial class POMEditPage : GingerUIPage
     {
         ApplicationPOMModel mPOM;
         ScreenShotViewPage mScreenShotViewPage;
+        ActivitiesRepositoryPage mActivitiesRepositoryViewPage;
         GenericWindow mWin;
         public bool IsPageSaved = false;
         public eRIPageViewMode mEditMode { get; set; }
@@ -98,6 +108,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             InitializeComponent();
             mPOM = POM;
+            CurrentItemToSave = mPOM;
             mEditMode = editMode;
 
             mBusinessFlowControl = new ucBusinessFlowMap(mPOM, nameof(mPOM.MappedBusinessFlow));
@@ -125,12 +136,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
             xUIElementsFrame.Content = mPomAllElementsPage;
-
             mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
             UIElementTabTextBlockUpdate();
 
             mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
             ObservableList<Agent> optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
+            foreach (Agent agent in optionalAgentsList)
+            {
+                if (agent.AgentOperations == null)
+                {
+                    AgentOperations agentOperations = new AgentOperations(agent);
+                    agent.AgentOperations = agentOperations;
+                }
+            }
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
             xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);
 

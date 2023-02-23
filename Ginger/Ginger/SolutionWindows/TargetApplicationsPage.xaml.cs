@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using Ginger.UserControls;
+using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -29,15 +30,15 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
-
 namespace Ginger.SolutionWindows
 {
     /// <summary>
     /// Interaction logic for TargetApplicationsPage.xaml
     /// </summary>
-    public partial class TargetApplicationsPage : Page
+    public partial class TargetApplicationsPage : GingerUIPage
     {
         Solution mSolution;
+        string AppName;
 
         public TargetApplicationsPage()
         {
@@ -45,6 +46,7 @@ namespace Ginger.SolutionWindows
 
             mSolution =  WorkSpace.Instance.Solution;
              WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+            CurrentItemToSave = mSolution;
 
             LoadGridData();
             SetAppsGrid();
@@ -61,14 +63,13 @@ namespace Ginger.SolutionWindows
 
         private void SetAppsGrid()
         {
-            xTargetApplicationsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Application, "Target Applications", saveAllHandler: SaveHandler, addHandler: AddApplication);
+            xTargetApplicationsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Application, "Target Applications", saveAllHandler: SaveHandler, addHandler: AddApplication, true);
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            //List<string> platformesTypesList = GingerCore.General.GetEnumValues(typeof(ePlatformType));
-            //view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 15, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = platformesTypesList });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 15, ReadOnly=true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16, Style = FindResource("@DataGridColumn_Image") as Style });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.AppName), Header = "Name", WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Description), Header = "Description", WidthWeight = 40 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 15, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.CoreVersion), Header = "Version", WidthWeight = 15 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Guid), Header = "ID", WidthWeight = 15, ReadOnly = true });
 
@@ -83,7 +84,19 @@ namespace Ginger.SolutionWindows
             xTargetApplicationsGrid.SetbtnDeleteHandler(btnDelete_Click);
             xTargetApplicationsGrid.SetbtnClearAllHandler(btnClearAll_Click);
         }
-
+        public bool NameAlreadyExists(string value)
+        {
+            if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(obj => obj.AppName == value).FirstOrDefault() == null)
+            {
+                return false; //no name like it in the group 
+            }
+            List<ApplicationPlatform> sameNameObjList = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(obj => obj.AppName == value).ToList<ApplicationPlatform>();
+            if (sameNameObjList.Count == 1 && sameNameObjList[0].AppName == value)
+            {
+                return false; //Same internal object 
+            }
+            return true;
+        }
         private void LoadGridData()
         {
             if (mSolution != null)
@@ -124,27 +137,39 @@ namespace Ginger.SolutionWindows
             AAP.ShowAsWindow();
         }
 
-        private void ApplicationGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
+        private void ApplicationGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e) 
         {
-            if (e.Column.DisplayIndex == 0)//App Name Column
-            {
-                ApplicationPlatform currentApp = (ApplicationPlatform)xTargetApplicationsGrid.CurrentItem;
-                currentApp.NameBeforeEdit = currentApp.AppName;
+            if (e.Column.DisplayIndex == 1)//App Name Column 
+            { 
+                ApplicationPlatform currentApp = (ApplicationPlatform)xTargetApplicationsGrid.CurrentItem; 
+                currentApp.NameBeforeEdit = currentApp.AppName; 
+                AppName = currentApp.NameBeforeEdit;
             }
         }
-
+        private ObservableList<ApplicationPlatform> Applications;
         private void ApplicationGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            //Validate the name of the App is unique
-            if (e.Column.DisplayIndex == 0)//App Name Column
+            //Validate the name of the App is unique 
+            if (e.Column.DisplayIndex == 1)//App Name Column 
             {
                 ApplicationPlatform currentApp = (ApplicationPlatform)xTargetApplicationsGrid.CurrentItem;
+                currentApp.NameBeforeEdit = AppName;
                 mSolution.SetUniqueApplicationName(currentApp);
 
                 if (currentApp.AppName != currentApp.NameBeforeEdit)
                 {
+                    if (string.IsNullOrEmpty(currentApp.AppName.ToString()) || string.IsNullOrWhiteSpace(currentApp.AppName.ToString()))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Name Cannot be empty");
+                        return;
+                    }
+                    if (NameAlreadyExists(currentApp.AppName))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Target Application with same name already exists");
+                        return ;
+                    }
                     UpdateApplicationNameChangeInSolution(currentApp);
-                }                    
+                }
             }
         }
 
@@ -158,24 +183,28 @@ namespace Ginger.SolutionWindows
 
             foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
             {
-                //update the BF target applications
-                foreach (TargetApplication bfApp in bf.TargetApplications)
+                //update the BF target applications 
+                foreach (var bfApp in bf.TargetApplications)
                 {
-                    if (bfApp.AppName == app.NameBeforeEdit)
-                    {                        
-                        bfApp.AppName = app.AppName;
-
-                        //update the bf activities
-                        foreach (Activity activity in bf.Activities)
+                    //donot check for TargetPlugins, only for TargetApplications 
+                    if (bfApp.GetType() == typeof(TargetApplication))
+                    {
+                        if (((TargetApplication)bfApp).AppName == app.NameBeforeEdit)
                         {
-                            if (activity.TargetApplication == app.NameBeforeEdit)
-                            {
-                                activity.TargetApplication = app.AppName;
-                            }
-                        }
+                            ((TargetApplication)bfApp).AppName = app.AppName;
 
-                        numOfAfectedBFs++;
-                        break;
+                            //update the bf activities 
+                            foreach (Activity activity in bf.Activities)
+                            {
+                                if (activity.TargetApplication == app.NameBeforeEdit)
+                                {
+                                    activity.TargetApplication = app.AppName;
+                                }
+                            }
+
+                            numOfAfectedBFs++;
+                            break;
+                        }
                     }
                 }
             }
@@ -214,6 +243,5 @@ namespace Ginger.SolutionWindows
             }
             
         }
-
     }
 }

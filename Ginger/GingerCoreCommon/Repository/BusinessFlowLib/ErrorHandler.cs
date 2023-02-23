@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -41,6 +41,17 @@ namespace GingerCore
         [EnumValueDescription("Rerun Business Flow")]
         ReRunBusinessFlow,
 
+        [EnumValueDescription("Continue From Next Action")]
+        ContinueFromNextAction,
+
+        [EnumValueDescription("Continue From Next Activity")]
+        ContinueFromNextActivity,
+
+        [EnumValueDescription("Continue From Next Business Flow")]
+        ContinueFromNextBusinessFlow,
+
+        [EnumValueDescription("Stop Run")]
+        StopRun
     }
 
     public enum eTriggerType

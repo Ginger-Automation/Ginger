@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -47,6 +47,8 @@ namespace GingerCoreNET.Application_Models
         public bool IsAutoLearned { get { return ElementInfo.IsAutoLearned; } }
 
         public ObservableList<DeltaElementLocator> Locators = new ObservableList<DeltaElementLocator>();
+
+        public ObservableList<DeltaElementLocator> FriendlyLocators = new ObservableList<DeltaElementLocator>();
 
         public ObservableList<DeltaControlProperty> Properties = new ObservableList<DeltaControlProperty>();
 

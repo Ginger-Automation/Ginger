@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -133,7 +133,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     }
                     else
                     {
-                        SetPOMPathToShow();
+                        SetPOMPathToShow(onlyPOMRequest);
                         if (!mOnlyPOMRequest)
                         {
                             xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
@@ -265,12 +265,17 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }
 
-        private void SetPOMPathToShow()
+        private void SetPOMPathToShow(bool onlyPOMRequest = false)
         {
             //string pathToShow;
             //pathToShow = mSelectedPOM.FilePath.Substring(0, mSelectedPOM.FilePath.LastIndexOf("\\")).Substring(mPOMModelFolder.FolderFullPath.Length) + @"\" + mSelectedPOM.ItemName;
             xPomPathTextBox.Text = SelectedPOM.NameWithRelativePath; 
             xViewPOMBtn.Visibility = Visibility.Visible;
+            if (onlyPOMRequest)
+            {
+                xViewPOMElementBtn.Visibility = Visibility.Visible;
+            }
+            
         }
 
         private void POMElementComboBox_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
@@ -383,6 +388,18 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             //refresh Elements list
             if(SelectedPOM.DirtyStatus == eDirtyStatus.Modified || mPOMEditPage.IsPageSaved)
+            {
+                UpdatePomSelection();
+            }
+        }
+
+        private void XViewPOMElementBtn_Click(object sender, RoutedEventArgs e)
+        {
+            POMEditPage mPOMEditPage = new POMEditPage(SelectedPOM, General.eRIPageViewMode.Standalone);
+            mPOMEditPage.ShowAsWindow(eWindowShowStyle.Dialog);
+
+            //refresh Elements list
+            if (SelectedPOM.DirtyStatus == eDirtyStatus.Modified || mPOMEditPage.IsPageSaved)
             {
                 UpdatePomSelection();
             }

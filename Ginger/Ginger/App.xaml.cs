@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -47,6 +47,8 @@ namespace Ginger
         public new static MainWindow MainWindow { get; set; }
 
         private Dictionary<string, Int32> mExceptionsDic = new Dictionary<string, int>();
+
+
 
         public static void LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType SkinDicType = Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType TerminologyType = GingerCore.eTerminologyType.Default)
         {
@@ -183,7 +185,7 @@ namespace Ginger
 
             if (mExceptionsDic[ex.Message] <= 3)
             {
-                if (!WorkSpace.Instance.RunningInExecutionMode)
+                if (WorkSpace.Instance!= null && !WorkSpace.Instance.RunningInExecutionMode)
                 {
                     Ginger.GeneralLib.ExceptionDetailsPage.ShowError(ex);
                 }
@@ -191,7 +193,7 @@ namespace Ginger
 
             Environment.ExitCode = -1;
 
-            if (!WorkSpace.Instance.RunningInExecutionMode)
+            if (WorkSpace.Instance != null && !WorkSpace.Instance.RunningInExecutionMode)
             {
                 // Clear the err so it will not crash
                 e.Handled = true;
@@ -242,6 +244,8 @@ namespace Ginger
         {            
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.InitLog4Net();
 
+            
+
             bool startGrid = e.Args.Length == 0; // no need to start grid if we have args
             WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
             if (e.Args.Length != 0)
@@ -258,6 +262,23 @@ namespace Ginger
 
             if (!WorkSpace.Instance.RunningInExecutionMode)
             {
+                if(WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug)
+                {
+                    try
+                    {
+                        if (!System.Diagnostics.Trace.Listeners.Contains(CustomTraceListener.Instance))
+                        {
+                            System.Diagnostics.Trace.Listeners.Add(CustomTraceListener.Instance);
+
+                            System.Diagnostics.Trace.WriteLine("Ginger Start up", "Info");
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Custom Trace listerner ", ex.InnerException);
+                    }
+                    
+                }
                 HideConsoleWindow();                
                 StartGingerUI();// start regular Ginger UI
             }

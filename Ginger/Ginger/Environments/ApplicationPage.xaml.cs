@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ using System.Windows.Media;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Core;
 using Amdocs.Ginger.UserControls;
+using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Environments;
 
@@ -31,7 +32,7 @@ namespace Ginger.Environments
     /// <summary>
     /// Interaction logic for ApplicationPage.xaml
     /// </summary>
-    public partial class ApplicationPage : Page
+    public partial class ApplicationPage : GingerUIPage
     {
         EnvApplication mEnvApplication;
 
@@ -42,6 +43,7 @@ namespace Ginger.Environments
             InitializeComponent();
             mEnvApplication = app;
             mContext = context;
+            CurrentItemToSave = mContext.Environment;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ApplicationNameTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DescriptionTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Description));
 

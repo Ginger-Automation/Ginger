@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ namespace Amdocs.Ginger.Common
         ExitMode,
         NoDirtyItem,
         StartAgent,
+        StopAgent,
         StartAgents,
         GetLatestSolution,
         CreatingReport,
@@ -102,6 +103,7 @@ namespace Amdocs.Ginger.Common
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.CreateAgentTip, new StatusMsg(eStatusMsgType.INFO, "Tip!", "Create a new 'Agent' which match to your " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " platform to allow platform connection"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.MainframeIncorrectConfiguration, new StatusMsg(eStatusMsgType.INFO, "Mainframe Server not Available", "Mainframe server is not available on configured address and port . Please Check configuration"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.StartAgentFailed, new StatusMsg(eStatusMsgType.INFO, "Start Agent Failed", "'{0}'"));
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.StopAgent, new StatusMsg(eStatusMsgType.PROCESS, "Stoping Agent", "Stoping the agent '{0}' for '{1}'"));
             #endregion Agents Messages
 
             #region BusinessFlows Messages

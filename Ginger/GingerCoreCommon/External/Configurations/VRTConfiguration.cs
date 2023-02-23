@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,8 +35,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mApiUrl = value;
-                OnPropertyChanged(nameof(ApiUrl));
+                if (mApiUrl != value)
+                {
+                    mApiUrl = value;
+                    OnPropertyChanged(nameof(ApiUrl));
+                }
             }
         }
 
@@ -51,8 +54,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mApiKey = value;
-                OnPropertyChanged(nameof(ApiKey));
+                if (mApiKey != value)
+                {
+                    mApiKey = value;
+                    OnPropertyChanged(nameof(ApiKey));
+                }
             }
         }
 
@@ -66,8 +72,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mProject = value;
-                OnPropertyChanged(nameof(Project));
+                if (mProject != value)
+                {
+                    mProject = value;
+                    OnPropertyChanged(nameof(Project));
+                }
             }
         }
 
@@ -81,8 +90,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mBranchName = value;
-                OnPropertyChanged(nameof(BranchName));
+                if (mBranchName != value)
+                {
+                    mBranchName = value;
+                    OnPropertyChanged(nameof(BranchName));
+                }
             }
         }
 
@@ -96,8 +108,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mDifferenceTolerance = value;
-                OnPropertyChanged(nameof(DifferenceTolerance));
+                if (mDifferenceTolerance != value)
+                {
+                    mDifferenceTolerance = value;
+                    OnPropertyChanged(nameof(DifferenceTolerance));
+                }
             }
         }
 
@@ -117,7 +132,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mFailActionOnCheckpointMismatch = value;
+                if (mFailActionOnCheckpointMismatch != value)
+                {
+                    mFailActionOnCheckpointMismatch = value;
+                    OnPropertyChanged(nameof(FailActionOnCheckpointMismatch));
+                }
             }
         }
         public override string ItemName { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
@@ -136,8 +155,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mOS = value;
-                OnPropertyChanged(nameof(OS));
+                if (mOS != value)
+                {
+                    mOS = value;
+                    OnPropertyChanged(nameof(OS));
+                }
             }
         }
         private bool? mAgent;
@@ -154,8 +176,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mAgent = value;
-                OnPropertyChanged(nameof(Agent));
+                if (mAgent != value)
+                {
+                    mAgent = value;
+                    OnPropertyChanged(nameof(Agent));
+                }
             }
         }
         private bool? mEnvironment;
@@ -172,8 +197,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mEnvironment = value;
-                OnPropertyChanged(nameof(Environment));
+                if (mEnvironment != value)
+                {
+                    mEnvironment = value;
+                    OnPropertyChanged(nameof(Environment));
+                }
             }
         }
         private bool? mViewport;
@@ -190,8 +218,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mViewport = value;
-                OnPropertyChanged(nameof(Viewport));
+                if (mViewport != value)
+                {
+                    mViewport = value;
+                    OnPropertyChanged(nameof(Viewport));
+                }
             }
         }
         private bool? mActivityTags;
@@ -208,8 +239,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mActivityTags = value;
-                OnPropertyChanged(nameof(ActivityTags));
+                if (mActivityTags != value)
+                {
+                    mActivityTags = value;
+                    OnPropertyChanged(nameof(ActivityTags));
+                }
             }
         }
         #region General

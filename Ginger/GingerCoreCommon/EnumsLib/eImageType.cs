@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -118,6 +118,10 @@ namespace Amdocs.Ginger.Common.Enums
         RunSingle,
         Continue,
         Save,
+        SaveLightGrey,
+        SaveGradient,
+        SaveAll,
+        SaveAllGradient,
         Open,
         New,
         GoBack,
@@ -239,6 +243,7 @@ namespace Amdocs.Ginger.Common.Enums
         Beta,
         Error,
         Coffee,
+        HotMag,
         MapSigns,
         Elements,
         LocationPointer,
@@ -257,6 +262,10 @@ namespace Amdocs.Ginger.Common.Enums
         BatteryThreeQuarter,
         Mobile,
         Codepen,
+        Code,
+        Runing,
+        Dos,
+        Server,
         MousePointer,
         AudioFileOutline,
         ChartLine,
@@ -339,7 +348,8 @@ namespace Amdocs.Ginger.Common.Enums
         Table,
         Image,
         Element,
-        Toggle,
+        ToggleOn,
+        ToggleOff,
         Menu,
         Label,
         DropList,

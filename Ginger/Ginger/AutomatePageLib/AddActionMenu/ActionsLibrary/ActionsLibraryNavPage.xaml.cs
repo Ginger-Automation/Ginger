@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -196,7 +196,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             ucListView.ListSelectionMode = SelectionMode.Extended;
             mActionsListHelper.ListView = ucListView;
 
-            ucListView.MouseDoubleClick += ActionsListView_MouseDoubleClick;
+            ucListView.ItemMouseDoubleClick += ActionsListViewItem_MouseDoubleClick;
         }
 
         private void SetActionsListViewData(UcListView ucListView, ObservableList<Act> dataSource)
@@ -336,7 +336,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             }
         }
 
-        private void ActionsListView_MouseDoubleClick(object sender, EventArgs e)
+        private void ActionsListViewItem_MouseDoubleClick(object sender, EventArgs e)
         {
             AddActionListView();
         }

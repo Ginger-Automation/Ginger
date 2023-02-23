@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         internal List<eElementType> mElementsTypeList = null;
         internal List<ElementTypeData> mPlatformElementTypeOperations = null;
         internal List<eLocateBy> mElementLocatorsTypeList = null;
+        internal List<ePosition> mElementPositionList = null;
 
         public abstract ePlatformType PlatformType();
         public abstract List<eLocateBy> GetPlatformUIElementLocatorsList();
@@ -279,5 +280,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             return null;
         }
+
+        public abstract List<ePosition> GetElementPositionList();
     }
 }

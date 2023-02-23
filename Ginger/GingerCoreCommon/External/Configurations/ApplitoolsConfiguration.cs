@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,8 +35,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mApiUrl = value;
-                OnPropertyChanged(nameof(ApiUrl));
+                if (mApiUrl != value)
+                {
+                    mApiUrl = value;
+                    OnPropertyChanged(nameof(ApiUrl));
+                }
             }
         }
 
@@ -51,8 +54,11 @@ namespace Ginger.Configurations
             }
             set
             {
-                mApiKey = value;
-                OnPropertyChanged(nameof(ApiKey));
+                if (mApiKey != value)
+                {
+                    mApiKey = value;
+                    OnPropertyChanged(nameof(ApiKey));
+                }
             }
         }
 

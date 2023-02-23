@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -434,6 +434,21 @@ namespace Ginger
             return GingerCore.General.TakeDesktopScreenShot(true);
         }
 
+        public Bitmap GetBrowserHeaderScreenshot(Point windowPosition, Size windowSize, Size viewportSize, double devicePixelRatio)
+        {
+            return GingerCore.General.GetBrowserHeaderScreenshot(windowPosition, windowSize, viewportSize, devicePixelRatio);
+        }
+
+        public Bitmap GetTaskbarScreenshot()
+        {
+            return GingerCore.General.GetTaskbarScreenshot();
+        }
+
+        public string MergeVerticallyAndSaveBitmaps(params Bitmap[] bitmaps)
+        {
+            return GingerCore.General.MergeVerticallyAndSaveBitmaps(bitmaps);
+        }
+
         public void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
         {
             ALM.ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, eALMConnectType.Silence);
@@ -514,7 +529,7 @@ namespace Ginger
 
                 //Make it Generic or Const string for names used for File
                 string NewReportName = string.Empty;
-                if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars()))
+                if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars(), false , NewReportTemplate))
                 {
                     NewReportTemplate.Name = NewReportName;
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using System.Collections.Generic;
 
@@ -44,7 +45,7 @@ namespace GingerCore.Drivers.Common
 
         ElementInfo UseRootElement();
         
-        ElementInfo GetElementParent(ElementInfo ElementInfo);
+        ElementInfo GetElementParent(ElementInfo ElementInfo, PomSetting pomSetting = null);
 
         string GetElementProperty(ElementInfo ElementInfo, string PropertyName);        
 

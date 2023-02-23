@@ -26,7 +26,7 @@
                 <ColumnDefinition Width="50*"/>
                 <ColumnDefinition Width="150*"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Source Control Type:" Margin="5,5,5,5" Style="{StaticResource @InputFieldLabelStyle}"  Grid.Row="0" Grid.Column="0"/>
+            <Label Content="Source Control Type:" Margin="5,5,5,4" Height="40" Style="{StaticResource @InputFieldLabelStyle}"  Grid.Row="0" Grid.Column="0"/>
             <TextBox x:Name="SourceControlClassTextBox" Margin="5,5,5,5" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" Grid.Row="0" Grid.Column="1"/>
             <Label Content="Source Control URL:" Margin="5,5,5,5" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="0" />
             <TextBox x:Name="SourceControlURLTextBox" Margin="5,5,5,5" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" TextChanged="SourceControlUserDetails_TextChanged" Grid.Row="1" Grid.Column="1"/>

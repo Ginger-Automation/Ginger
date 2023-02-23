@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ using System.IO;
 using GingerCore.Common;
 using GingerCore.GeneralLib;
 using System.Windows.Automation;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 
 // a lot of samples from Microsoft on UIA at: https://uiautomationverify.svn.codeplex.com/svn/UIAVerify/
 // DO NOT add any specific driver here, this is generic windows app driver helper 
@@ -2875,7 +2876,7 @@ namespace GingerCore.Drivers
             UIAuto.AutomationElement childAE = null, initialTab = null;
             int id = element.Current.ProcessId;
             //int y1 = (int)(element.Current.BoundingRectangle.BottomLeft.Y - 10);
-            int y1 = (int)(element.Current.BoundingRectangle.Left - 10);
+            int y1 = (int)(element.Current.BoundingRectangle.Bottom - 10);
             int startPoint = (int)element.Current.BoundingRectangle.X + 5;
             int endPoint = (int)(element.Current.BoundingRectangle.X + element.Current.BoundingRectangle.Width);
             UIAuto.PropertyCondition tabSelectCondition = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.LocalizedControlTypeProperty, "pane");
@@ -4629,9 +4630,16 @@ namespace GingerCore.Drivers
         
         public override Bitmap GetAppWindowAsBitmap(AppWindow aw)  //******************        
         {
-            UIAuto.AutomationElement tempWindow = (UIAuto.AutomationElement)((UIAElementInfo)aw.RefObject).ElementObject;
-            Bitmap bmp = WindowToBitmap(tempWindow);
-            return bmp;
+            try
+            {
+                UIAuto.AutomationElement tempWindow = (UIAuto.AutomationElement)((UIAElementInfo)aw.RefObject).ElementObject;
+                Bitmap bmp = WindowToBitmap(tempWindow);
+                return bmp;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
 
         public override List<Bitmap> GetAppDialogAsBitmap(AppWindow aw)  ///********
@@ -6136,7 +6144,7 @@ namespace GingerCore.Drivers
             return mXPathHelper;
         }
 
-        ElementInfo IXPath.GetElementParent(ElementInfo ElementInfo)
+        ElementInfo IXPath.GetElementParent(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
             try
             {
@@ -6477,7 +6485,7 @@ namespace GingerCore.Drivers
             {
                 ControlProperty CP = new ControlProperty();
                 CP.Name = AP.ProgrammaticName;
-                CP.Name = CP.Name.Replace("UIAuto.AutomationElementIdentifiers.", "");
+                CP.Name = CP.Name.Replace("AutomationElementIdentifiers.", "");
                 CP.Name = CP.Name.Replace("Property", "");
                 object propValue;
                 try

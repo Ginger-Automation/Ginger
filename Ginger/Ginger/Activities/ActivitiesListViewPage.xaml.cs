@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -183,7 +183,8 @@ namespace Ginger.BusinessFlowPages
 
                     List<Activity> list = new List<Activity>();
                     list.Add((Activity)droppedItem);
-                    ActionsFactory.AddActivitiesFromSRHandler(list, mContext.BusinessFlow, activityGroupID, activityIndex);
+                    bool isPomActivity = ((Activity)droppedItem).IsAutoLearned;
+                    ActionsFactory.AddActivitiesFromSRHandler(list, mContext.BusinessFlow, activityGroupID, activityIndex, isPomActivity);
                     if (activityIndex != -1)
                     {
                         ListView.xListView.SelectedIndex = activityIndex;

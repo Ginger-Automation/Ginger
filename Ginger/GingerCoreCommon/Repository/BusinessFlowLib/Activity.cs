@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Variables;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -300,7 +302,7 @@ namespace GingerCore
         /// </summary>
         //[IsSerializedForLocalRepository]    
         //TODO: check if status is different
-        public Amdocs.Ginger.CoreNET.Execution.eRunStatus? Status { get { return mStatus; } set { mStatus = value; OnPropertyChanged(nameof(Status)); } }
+        public Amdocs.Ginger.CoreNET.Execution.eRunStatus? Status { get { return mStatus; } set { if (mStatus != value) { mStatus = value; OnPropertyChanged(nameof(Status)); } } }
         //TODO: add change history log in class and save it
 
 
@@ -344,6 +346,40 @@ namespace GingerCore
                 {
                     mTargetApplication = value;
                     OnPropertyChanged(nameof(TargetApplication));
+                    OnPropertyChanged(nameof(TargetApplicationPlatformImage));
+                    OnPropertyChanged(nameof(TargetApplicationPlatformName));
+                }
+            }
+        }
+
+        public eImageType TargetApplicationPlatformImage
+        {
+            get
+            {
+                ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == TargetApplication).FirstOrDefault();
+                if (appPlat != null)
+                {
+                    return appPlat.PlatformImage;
+                }
+                else
+                {
+                    return eImageType.Null;
+                }
+            }
+        }
+
+        public string TargetApplicationPlatformName
+        {
+            get
+            {
+                ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == TargetApplication).FirstOrDefault();
+                if (appPlat != null)
+                {
+                    return appPlat.Platform.ToString();
+                }
+                else
+                {
+                    return ePlatformType.NA.ToString();
                 }
             }
         }
@@ -357,8 +393,11 @@ namespace GingerCore
             get { return mType; }
             set
             {
-                mType = value;
-                OnPropertyChanged(nameof(Type));
+                if (mType != value)
+                {
+                    mType = value;
+                    OnPropertyChanged(nameof(Type));
+                }
             }
         }
 
@@ -455,8 +494,26 @@ namespace GingerCore
             }
             set
             {
-                mEnableActionsVariablesDependenciesControl = value;
-                OnPropertyChanged(nameof(EnableActionsVariablesDependenciesControl));
+                if (mEnableActionsVariablesDependenciesControl != value)
+                {
+                    mEnableActionsVariablesDependenciesControl = value;
+                    OnPropertyChanged(nameof(EnableActionsVariablesDependenciesControl));
+                }
+            }
+        }
+
+        private Guid mPOMMetaDataId;
+        [IsSerializedForLocalRepository]
+        public Guid POMMetaDataId
+        {
+            get { return mPOMMetaDataId; }
+            set
+            {
+                if(mPOMMetaDataId != value)
+                {
+                    mPOMMetaDataId = value;
+                    OnPropertyChanged(nameof(POMMetaDataId));
+                }
             }
         }
 
@@ -1023,5 +1080,17 @@ namespace GingerCore
         {
             return nameof(Activity);
         }
+
+        public override void PostSaveHandler()
+        {
+            // saving from Shared repository tab
+            GingerCoreCommonWorkSpace.Instance.SharedRepositoryOperations.UpdateSharedRepositoryLinkedInstances(this);
+        }
+        public override bool PreSaveHandler()
+        {
+            return Reporter.ToUser(eUserMsgKey.WarnOnEditLinkSharedActivities) == Amdocs.Ginger.Common.eUserMsgSelection.No;
+        }
+
+        public bool IsAutoLearned { get; set; }
     }
 }

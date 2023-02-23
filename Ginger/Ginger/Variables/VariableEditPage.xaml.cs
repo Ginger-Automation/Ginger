@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,13 +35,14 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Ginger.Reports.ValidationRules;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Variables
 {
     /// <summary>
     /// Interaction logic for VariableEditPage.xaml
     /// </summary>
-    public partial class VariableEditPage : Page
+    public partial class VariableEditPage : GingerUIPage
     {
         private VariableBase mVariable;
         private RepositoryItemBase mParent;
@@ -499,6 +500,15 @@ namespace Ginger.Variables
             {
                 xMandatoryInputCheckBox.IsChecked = false;
                 xMandatoryInputCheckBox.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (editMode == eEditMode.SharedRepository && mVariable != null && mParent == null)
+            {
+                CurrentItemToSave = mVariable;
+                base.IsVisibleChangedHandler(sender, e);
             }
         }
     }

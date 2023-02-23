@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -57,13 +57,14 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Run
 {
     /// <summary>
     /// Interaction logic for RunPage.xaml
     /// </summary>
-    public partial class NewRunSetPage : Page
+    public partial class NewRunSetPage : GingerUIPage
     {
         public RunnerPage mCurrentSelectedRunner;
 
@@ -555,6 +556,7 @@ namespace Ginger.Run
             else if (e.Action == NotifyCollectionChangedAction.Move)
             {
                 mCurrentSelectedRunner.BusinessflowRunnerItems.Move(e.OldStartingIndex, e.NewStartingIndex);
+                mCurrentSelectedRunner.ExecutorEngine.GingerRunner.DirtyStatus = eDirtyStatus.Modified;
             }
             this.Dispatcher.Invoke(() =>
             {
@@ -630,11 +632,6 @@ namespace Ginger.Run
             xSealightsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
             xSealightsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsLabId), "Lab ID or Build Session ID must be provided"));
             xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
-
-            mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsLabId));
-            mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsTestStage));
-            mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsBuildSessionID));
-            mRunSetConfig.OnPropertyChanged(nameof(SealightsConfiguration.SealightsTestRecommendations));
 
             xDefaultTestStageRadioBtn.Checked += XDefaultTestStageRadioBtn_Checked;
             xDefaultLabIdRadioBtn.Checked += XDefaultLabIdRadioBtn_Checked;
@@ -1216,7 +1213,9 @@ namespace Ginger.Run
             RunnerPage rp = (RunnerPage)((FlowElement)sender).GetCustomeShape().Content;
             GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(rp.ExecutorEngine, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext);
             PACW.ShowAsWindow();
+            rp.ExecutorEngine.GingerRunner.PauseDirtyTracking();
             rp.UpdateRunnerInfo();
+            rp.ExecutorEngine.GingerRunner.ResumeDirtyTracking();
         }
 
         private void GRP_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -1418,7 +1417,7 @@ namespace Ginger.Run
         {
             try
             {
-                bool isSolutionSame = mRunSetConfig!= null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
+                bool isSolutionSame = mRunSetConfig != null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;
                 if (bIsRunsetDirty && !IsCalledFromxUndoBtn)
                 {
@@ -1429,6 +1428,7 @@ namespace Ginger.Run
                     xRunSetLoadingPnl.Visibility = Visibility.Visible;
                     xRunsetPageGrid.Visibility = Visibility.Collapsed;
                     mRunSetConfig = runSetConfig;
+                    CurrentItemToSave = mRunSetConfig;
                     mRunSetConfig.SaveBackup();
 
                     mRunSetConfig.StartDirtyTracking();
@@ -1463,7 +1463,6 @@ namespace Ginger.Run
 
                     WorkSpace.Instance.UserProfile.RecentRunset = mRunSetConfig.Guid;//to be loaded automatically next time
                 });
-
             }
             finally
             {
@@ -1595,7 +1594,7 @@ namespace Ginger.Run
                 newRunner.PropertyChanged += Runner_PropertyChanged;
                 newRunner.ApplicationAgents.CollectionChanged -= RunnerApplicationAgents_CollectionChanged;
                 newRunner.ApplicationAgents.CollectionChanged += RunnerApplicationAgents_CollectionChanged;
-                WorkSpace.Instance.RunsetExecutor.InitRunner(newRunner,(GingerExecutionEngine)newRunner.Executor);
+                WorkSpace.Instance.RunsetExecutor.InitRunner(newRunner, (GingerExecutionEngine)newRunner.Executor);
                 if (Count != index && index > 0) //TODO : Check if need to add in between runner.
                 {
                     mRunSetConfig.GingerRunners.Insert(index, newRunner);
@@ -2558,7 +2557,7 @@ namespace Ginger.Run
         private void duplicateRunner(GingerExecutionEngine runner)
         {
             if (CheckIfExecutionIsInProgress()) { return; }
-             
+
             if (runner != null)
             {
                 GingerRunner GR = runner.GingerRunner;
@@ -2792,8 +2791,10 @@ namespace Ginger.Run
             }
             if (!ExportResultsToALMConfigPage.Instance.IsProcessing)
             {
-                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
-                ExportResultsToALMConfigPage.Instance.ShowAsWindow();
+                if (ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false)))
+                {
+                    ExportResultsToALMConfigPage.Instance.ShowAsWindow();
+                }
             }
             else
             {

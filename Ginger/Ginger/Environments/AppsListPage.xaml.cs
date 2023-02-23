@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -26,13 +26,14 @@ using GingerCore;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using GingerCore.GeneralLib;
+using Ginger.UserControlsLib;
 
 namespace Ginger.Environments
 {
     /// <summary>
     /// Interaction logic for AppsListPage.xaml
     /// </summary>
-    public partial class AppsListPage : Page
+    public partial class AppsListPage : GingerUIPage
     {
         public ProjEnvironment AppEnvironmnet { get; set; }
         public AppsListPage(ProjEnvironment env)
@@ -40,6 +41,7 @@ namespace Ginger.Environments
             InitializeComponent();
 
             AppEnvironmnet = env;
+            CurrentItemToSave = AppEnvironmnet;
             //Set grid look and data
             SetGridView();
             SetGridData();

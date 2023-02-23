@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,10 +24,14 @@ using GingerCore;
 using GingerCore.Actions;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace Ginger.Actions
 {
@@ -121,19 +125,62 @@ namespace Ginger.Actions
             {
                 ContextProcessInputValueForDriver();
 
-                DataTable dt = GetExcelSheetData(true);
-                if (dt == null)
+                DataTable excelSheetData = GetExcelSheetData(true);
+                if (excelSheetData == null)
                 {
                     Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
                     return;
                 }
-                ExcelDataGrid.ItemsSource = dt.AsDataView();
+
+                SetExcelDataGridItemsSource(excelSheetData);
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
             }
         }
+
+        private void SetExcelDataGridItemsSource(DataTable excelSheetData)
+        {
+            CreateExcelDataGridColumns(excelSheetData);
+
+            ObservableCollection<object?[]> excelDataGridRows = new ObservableCollection<object?[]>();
+            BindingOperations.EnableCollectionSynchronization(excelDataGridRows, excelDataGridRows);
+            ExcelDataGrid.ItemsSource = excelDataGridRows;
+
+            CopyExcelSheetRowsToExcelDataGridRows(excelSheetData.Rows, excelDataGridRows);
+        }
+
+        private void CreateExcelDataGridColumns(DataTable excelSheetData)
+        {
+            ExcelDataGrid.Columns.Clear();
+            for (int columnIndex = 0; columnIndex < excelSheetData.Columns.Count; columnIndex++)
+            {
+                DataColumn excelSheetColumn = excelSheetData.Columns[columnIndex];
+                ExcelDataGrid.Columns.Add(
+                    new DataGridTextColumn()
+                    {
+                        Header = excelSheetColumn.ColumnName,
+                        Binding = new Binding($"[{columnIndex}]")
+                    });
+            }
+        }
+
+        private Task CopyExcelSheetRowsToExcelDataGridRows(DataRowCollection excelSheetRows, ObservableCollection<object?[]> excelDataGridRows)
+        {
+            return Task.Run(() =>
+            {
+                foreach (DataRow excelSheetRow in excelSheetRows)
+                {
+                    lock (excelDataGridRows)
+                    {
+                        excelDataGridRows.Add(excelSheetRow.ItemArray);
+                    }
+                    Thread.Sleep(10);
+                }
+            });
+        }
+
         private void ViewWhereButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -145,13 +192,14 @@ namespace Ginger.Actions
                     return;
                 }
                 ContextProcessInputValueForDriver();
-                DataTable dt = GetExcelSheetData(false);
-                if (dt == null)
+                DataTable excelSheetData = GetExcelSheetData(false);
+                if (excelSheetData == null)
                 {
                     Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
                     return;
                 }
-                ExcelDataGrid.ItemsSource = dt.AsDataView();
+
+                SetExcelDataGridItemsSource(excelSheetData);
             }
             catch (Exception ex)
             {

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using System;
 using System.Drawing;
 using System.IO;
@@ -51,6 +52,14 @@ namespace Ginger.Actions.UserControls
             set
             {
                 xMainImage.Cursor = value;
+            }
+        }
+
+        public BitmapImage BitmapImage
+        {
+            get
+            {
+                return mBitmapImage;
             }
         }
 
@@ -161,12 +170,21 @@ namespace Ginger.Actions.UserControls
 
         private BitmapImage GetBimapImageFromFile(String filePath)
         {
-            BitmapImage image = new BitmapImage();
-            image.BeginInit();
-            image.CacheOption = BitmapCacheOption.OnLoad;
-            image.UriSource = new Uri(filePath);
-            image.EndInit();
-            return image;
+            try
+            {
+                BitmapImage image = new BitmapImage();
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.UriSource = new Uri(filePath);
+                image.EndInit();
+                return image;
+            }
+            catch(Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "File extention is not supported.");
+                return null;
+            }
+
         }
 
         private void ShowBitmap()

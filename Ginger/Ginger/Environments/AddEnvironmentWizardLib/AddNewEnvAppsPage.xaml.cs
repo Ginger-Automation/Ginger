@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -69,11 +69,11 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
         private void xAddAppBtn_Click(object sender, RoutedEventArgs e)
         {
             string newAppName = "NewApp";
-            if (GingerCore.General.GetInputWithValidation("Add Environment Application", "Application Name:", ref newAppName))
+            EnvApplication envApp = new EnvApplication() { Name = newAppName };
+            if (GingerCore.General.GetInputWithValidation("Add Environment Application", "Application Name:", ref newAppName, null, false, envApp))
             {
                 if (mWizard.apps.Where(x => x.Name == newAppName).FirstOrDefault() == null)
-                {
-                    EnvApplication envApp = new EnvApplication() { Name = newAppName };
+                {                    
                     envApp.Active = true;
                     mWizard.apps.Add(envApp);
                 }

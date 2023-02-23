@@ -1,10 +1,11 @@
-    <Page x:Class="GingerWPF.BusinessFlowsLib.ActivityPage"
+<UserControlsLib:GingerUIPage x:Class="GingerWPF.BusinessFlowsLib.ActivityPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib" 
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
       xmlns:h="clr-namespace:Ginger.Help"
@@ -26,11 +27,7 @@
                 <ColumnDefinition Width="580"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <usercontrols:ImageMakerControl x:Name="xIconImage" Grid.Column="0" ImageType="Activity" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}">
-                <usercontrols:ImageMakerControl.ToolTip>
-                    <GingerCore:ucTextDicResource Text="[Activity]"/>
-                </usercontrols:ImageMakerControl.ToolTip>
-            </usercontrols:ImageMakerControl>
+            <usercontrols:ImageMakerControl x:Name="xIconImage" Grid.Column="0" DataContext="{Binding RelativeSource={RelativeSource Self}}" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"/>
             <TextBlock x:Name="xNameTextBlock" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,0" Text="Activity Name" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $TextBlockStyle}" FontSize="18" FontWeight="Bold" />
             <DockPanel x:Name="xOperationsPnl" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
                 <StackPanel x:Name="xGeneralOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
@@ -103,7 +100,7 @@
             <TextBlock x:Name="xDescriptionTextBlock"  Grid.Column="0" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Activity Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontSize="16" Style="{StaticResource $TextBlockStyle}"/>
             <Ginger:ucSharedRepoInstance x:Name="xSharedRepoInstanceUC" Grid.Column="1" HorizontalAlignment="Right"/>
         </Grid>-->
-        <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1"  Grid.Column="0" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Activity Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontSize="16" Style="{StaticResource $TextBlockStyle}"/>
+        <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1"  Grid.Column="0" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Activity Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontSize="13" Style="{StaticResource $TextBlockStyle}"/>
 
         <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="XItemsTabs_SelectionChanged">
             <TabItem x:Name="xActionsTab"  Style="{StaticResource $CoolTab}" TabIndex="1">
@@ -143,4 +140,4 @@
             </TabItem>
         </TabControl>
     </Grid>
-</Page>
+</UserControlsLib:GingerUIPage>

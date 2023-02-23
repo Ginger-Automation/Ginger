@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -196,6 +196,11 @@ namespace GingerCore.Platforms.PlatformsInfo
         }
 
         public override Dictionary<string, ObservableList<UIElementFilter>> GetUIElementFilterList()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override List<ePosition> GetElementPositionList()
         {
             throw new System.NotImplementedException();
         }

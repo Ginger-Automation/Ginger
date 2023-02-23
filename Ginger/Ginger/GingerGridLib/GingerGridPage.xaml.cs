@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,8 +20,10 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Run;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
+using Amdocs.Ginger.Repository;
 using Ginger.Drivers.CommunicationProtocol;
 using Ginger.UserControls;
+using Ginger.UserControlsLib;
 using GingerCoreNET.RunLib;
 using System;
 using System.Collections.Generic;
@@ -34,7 +36,7 @@ namespace Ginger.GingerGridLib
     /// <summary>
     /// Interaction logic for GingerGridPage.xaml
     /// </summary>
-    public partial class GingerGridPage : Page
+    public partial class GingerGridPage : GingerUIPage
     {
         GingerGrid mGingerGrid;
 
@@ -238,10 +240,14 @@ namespace Ginger.GingerGridLib
         private void InitRemoteServiceGrid()
         {
             mRemoteServiceGrids = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
+            foreach (RemoteServiceGrid remoteServiceGrid in mRemoteServiceGrids)
+            {
+                StartTrackingRemoteServiceGrid(remoteServiceGrid);
+            }
             xRemoteServiceGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
             xRemoteServiceGrid.ShowRefresh = Visibility.Collapsed;
             xRemoteServiceGrid.btnSaveAllChanges.Click += BtnSaveAllChanges_Click;
-            xRemoteServiceGrid.ShowSaveAllChanges = Visibility.Visible;
+            xRemoteServiceGrid.ShowSaveAllChanges = Visibility.Collapsed;
             xRemoteServiceGrid.btnAdd.Click += BtnAdd_Click;
             xRemoteServiceGrid.SetbtnClearAllHandler(BtnClearAll_Click);
             xRemoteServiceGrid.SetbtnDeleteHandler(btnDeleteSelected_Click);
@@ -259,6 +265,10 @@ namespace Ginger.GingerGridLib
             foreach (RemoteServiceGrid selectedItem in SelectedItemsList)
             {
                 WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(selectedItem);
+            }
+            if (xRemoteServiceGrid.Grid.SelectedItems.Count == 0)
+            {
+                WorkSpace.Instance.CurrentSelectedItem = null;
             }
         }
 
@@ -278,6 +288,7 @@ namespace Ginger.GingerGridLib
                     //because list changes every time delete is called
                     WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>()[0]);
                 } while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>().Count != 0);
+                WorkSpace.Instance.CurrentSelectedItem = null;
             }
         }
 
@@ -302,8 +313,11 @@ namespace Ginger.GingerGridLib
         void AddRemoteGrid()
         {
             // TODO: createWizard
-            RemoteServiceGrid remoteServiceGrid = new RemoteServiceGrid() { Name = "Remote Grid 1", Host = SocketHelper.GetLocalHostIP(), HostPort = 15555, Active = true };
+            int remoteGridCount = mRemoteServiceGrids.Count + 1;
+            RemoteServiceGrid remoteServiceGrid = new RemoteServiceGrid() { Name = "Remote Grid " + remoteGridCount, Host = SocketHelper.GetLocalHostIP(), HostPort = 15555, Active = true };
+            StartTrackingRemoteServiceGrid(remoteServiceGrid);
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(remoteServiceGrid);
+            xRemoteServiceGrid.Grid.SelectedIndex = xRemoteServiceGrid.Grid.Items.Count-1;
         }
 
         private void SetRemoteGridView()
@@ -321,6 +335,30 @@ namespace Ginger.GingerGridLib
             xRemoteServiceGrid.InitViewItems();
         }
 
+        protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (xRemoteServiceGrid.Grid.Items.Count != 0 && xRemoteServiceGrid.Grid.SelectedItems.Count != 0 && xRemoteServiceGrid.Grid.SelectedItems[0] != null)
+            {
+                CurrentItemToSave = (RepositoryItemBase)xRemoteServiceGrid.Grid.SelectedItems[0];
+                base.IsVisibleChangedHandler(sender, e);
+            }
+            else
+            {
+                WorkSpace.Instance.CurrentSelectedItem = null;
+            }
+        }
+
+        private void xRemoteServiceGrid_SelectedItemChanged(object selectedItem)
+        {
+            if (selectedItem != null && selectedItem != WorkSpace.Instance.CurrentSelectedItem)
+            {
+                WorkSpace.Instance.CurrentSelectedItem = (Amdocs.Ginger.Repository.RepositoryItemBase)selectedItem;
+            }
+        }
+        private void StartTrackingRemoteServiceGrid(RemoteServiceGrid RSG)
+        {
+            RSG.StartDirtyTracking();
+        }
     }
 }
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -158,8 +158,7 @@ namespace Amdocs.Ginger.UserControls
                 #region General Images
                 //############################## General Images:
                 case eImageType.Empty:
-                    // Do nothing and leave it empty
-                    // SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Ban);                    
+                    // Do nothing and leave it empty             
                     break;
                 case eImageType.Ginger:
                     SetAsStaticImage("Ginger.png");
@@ -190,6 +189,18 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.Sealights:
                     SetAsStaticImage("SealightsLogo.png");
+                    break;
+                case eImageType.SaveAll:
+                    SetAsStaticImage("save-all-regular-light-grey.png");
+                    break;
+                case eImageType.SaveAllGradient:
+                    SetAsStaticImage("save-all-regular-gradient-amdocs.png");
+                    break;
+                case eImageType.SaveLightGrey:
+                    SetAsStaticImage("save-regular-light-grey.svg");
+                    break;
+                case eImageType.SaveGradient:
+                    SetAsStaticImage("save-regular-amdocs-gradient.svg");
                     break;
                 #endregion
 
@@ -739,7 +750,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_TimesCircle);
                     break;
                 case eImageType.Coffee:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Coffee, Brushes.Red);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MugHot, Brushes.Red);
                     break;
                 case eImageType.MapSigns:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MapSigns);
@@ -789,7 +800,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Chrome);
                     break;
                 case eImageType.Java:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Coffee);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Java);
                     break;
                 case eImageType.KeyboardLayout:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Keyboard);
@@ -804,11 +815,27 @@ namespace Amdocs.Ginger.UserControls
                     break;
 
                 case eImageType.Mobile:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Mobile);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MobileAlt);
                     break;
 
                 case eImageType.Codepen:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Codepen);
+                    break;
+
+                case eImageType.Code:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Code);
+                    break;
+
+                case eImageType.Runing:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Running);
+                    break;
+
+                case eImageType.Dos:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SquareFull);
+                    break;
+
+                case eImageType.Server:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Server);
                     break;
 
                 case eImageType.MousePointer:
@@ -948,8 +975,11 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Window:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_WindowMaximize);
                     break;
-                case eImageType.Toggle:
+                case eImageType.ToggleOn:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ToggleOn);
+                    break;
+                case eImageType.ToggleOff:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_ToggleOff);
                     break;
                 case eImageType.Table:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Table);
@@ -1028,13 +1058,9 @@ namespace Amdocs.Ginger.UserControls
             // Reset All do defaults
             xFAImage.Visibility = Visibility.Collapsed;
             xFAImage.Spin = false;
-            //xFAImage.StopSpin();
             xFAImage.Rotation = 0;
-            //xFAImage.SpinDuration = 0;
             xFAFont.Visibility = Visibility.Collapsed;
             xFAFont.Spin = false;
-            //xFAFont.StopSpin();
-           // xFAFont.SpinDuration = 0;
             xFAFont.Rotation = 0;
             xStaticImage.Visibility = Visibility.Collapsed;
             xViewBox.Visibility = Visibility.Collapsed;
@@ -1062,10 +1088,14 @@ namespace Amdocs.Ginger.UserControls
                 foreground = (SolidColorBrush)this.ImageForeground;
             }
             else if (foreground == null)
+            {
                 foreground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
+            }
             xFAImage.Foreground = foreground;
             if (this.ImageForeground != null)
+            {
                 xFAFont.Foreground = foreground;
+            }
 
             if (spinDuration != 0)
             {
@@ -1108,7 +1138,6 @@ namespace Amdocs.Ginger.UserControls
 
         private BitmapImage GetImageBitMap(string imageName)
         {
-            //return new BitmapImage(new Uri(@"/UserControlsLib/ImageMakerLib/Images/" + imageName, UriKind.RelativeOrAbsolute));
             return new BitmapImage(new Uri("pack://application:,,,/Ginger;component/UserControlsLib/ImageMakerLib/Images/" + imageName, UriKind.RelativeOrAbsolute));
         }
 
@@ -1138,9 +1167,13 @@ namespace Amdocs.Ginger.UserControls
         {
             xStaticImage.Visibility = Visibility.Visible;
             if (imageBitMap != null)
+            {
                 xStaticImage.Source = imageBitMap;
+            }
             else
+            {
                 xStaticImage.Source = GetImageBitMap(imageName);
+            }
         }
 
         Shape GetKidsDrawingShape()

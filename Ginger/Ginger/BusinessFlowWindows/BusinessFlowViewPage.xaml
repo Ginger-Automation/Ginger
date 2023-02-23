@@ -1,9 +1,10 @@
-<Page   x:Class="GingerWPF.BusinessFlowsLib.BusinessFlowViewPage"
+<UserControlsLib:GingerUIPage   x:Class="GingerWPF.BusinessFlowsLib.BusinessFlowViewPage"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
+        xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
         xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
         mc:Ignorable="d" 
         xmlns:h="clr-namespace:Ginger.Help"
@@ -84,7 +85,7 @@
             </StackPanel>
         </DockPanel>
 
-        <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1" Grid.ColumnSpan="3" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Business Flow Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}"/>
+        <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1" Grid.ColumnSpan="3" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Business Flow Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="13" Foreground="{StaticResource $BackgroundColor_DarkBlue}"/>
 
         <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="XItemsTabs_SelectionChanged">
             <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTab}" TabIndex="1">
@@ -145,4 +146,4 @@
             </TabItem>
         </TabControl>
     </Grid>
-</Page>
+</UserControlsLib:GingerUIPage>

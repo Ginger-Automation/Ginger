@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         /// </summary>
         /// <param name="WizardEventArgs"></param>
         public void WizardEvent(WizardEventArgs WizardEventArgs)
-        {            
+        {
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
@@ -56,8 +56,6 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                     xPathTextBox.BindControl(mWizard, nameof(ImportDataSourceFromExcelWizard.Path));
                     //xPathTextBox.TextChanged += XPathTextBox_TextChanged;
                     xPathTextBox.AddValidationRule(new EmptyValidationRule());
-                    break;
-                case EventType.Active:
                     break;
                 default:
                     break;
@@ -68,11 +66,11 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         /// Constructor for ImportDataSourceBrowseFile class
         /// </summary>
         public ImportDataSourceBrowseFile()
-        {           
+        {
             InitializeComponent();
             impParams = new ImportOptionalValuesForParameters();
             ShowRelevantPanel();
-            
+
             xPathTextBox.Focus();
         }
 
@@ -97,7 +95,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-        
+
         /// <summary>
         /// This event handles browsing of Script File from user desktop
         /// </summary>

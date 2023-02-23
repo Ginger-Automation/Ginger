@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -77,7 +77,20 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
             if (selectedPOMElementInfo == null)
             {
-                mAct.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", selectedPOMElementInfo.ToString());
+                mAct.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", currentPOMElementInfoGUID.ToString());
+                return null;
+            }
+
+            return selectedPOMElementInfo;
+        }
+
+        public ElementInfo GetFriendlyElementInfo(Guid elementGuid)
+        {
+            ElementInfo selectedPOMElementInfo = GetCurrentPOM().MappedUIElements.Where(z => z.Guid == elementGuid).FirstOrDefault();
+
+            if (selectedPOMElementInfo == null)
+            {
+                mAct.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", elementGuid.ToString());
                 return null;
             }
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. 
@@ -101,7 +101,13 @@ namespace Ginger.Run.RunSetActions
                     {
                         reportsResultFolder = Path.Combine(reportsResultFolder, $"{RunsetName}_{DateTimeStamp}");
                     }
-                                      
+                    
+                    //Check if report directory already exists, if yes, change the timestamp to latest plus the retry number in report path, retry for 5 times, rare scenario where it will take 5 retries 
+                    int numberOfRetry = 0;
+                    while (Directory.Exists(reportsResultFolder) && numberOfRetry <= 5)
+                    {
+                        reportsResultFolder = reportsResultFolder.Replace(DateTimeStamp, DateTime.UtcNow.ToString("yyyymmddhhmmssfff") + "_" + ++numberOfRetry);
+                    }
                     WebReportGenerator webReporterRunner = new WebReportGenerator();
                     liteDbRunSet = webReporterRunner.RunNewHtmlReport(reportsResultFolder, null, null, false);
                 }
@@ -388,10 +394,6 @@ namespace Ginger.Run.RunSetActions
                 RunSetActionHTMLReportSendEmail.Email.MailCC = mValueExpression.ValueCalculated;
                 mValueExpression.Value = RunSetActionHTMLReportSendEmail.Subject;
                 RunSetActionHTMLReportSendEmail.Email.Subject = mValueExpression.ValueCalculated;
-                mValueExpression.Value = RunSetActionHTMLReportSendEmail.MailHost;
-                RunSetActionHTMLReportSendEmail.Email.SMTPMailHost = mValueExpression.ValueCalculated;
-                mValueExpression.Value = RunSetActionHTMLReportSendEmail.MailUser;
-                RunSetActionHTMLReportSendEmail.Email.SMTPUser = mValueExpression.ValueCalculated;
                 RunSetActionHTMLReportSendEmail.Email.Body = emailReadyHtml;
                 emailReadyHtml = string.Empty;
 

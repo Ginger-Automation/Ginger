@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -116,8 +116,11 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             }
             set
             {
-                mSelected = value;
-                OnPropertyChanged(nameof(Selected));
+                if (mSelected != value)
+                {
+                    mSelected = value;
+                    OnPropertyChanged(nameof(Selected));
+                }
             }
         }
 
@@ -132,8 +135,11 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             }
             set
             {
-                mSelectedItemPart = value;
-                OnPropertyChanged(nameof(SelectedItemPart));
+                if (mSelectedItemPart != value)
+                {
+                    mSelectedItemPart = value;
+                    OnPropertyChanged(nameof(SelectedItemPart));
+                }
             }
         }
 
@@ -210,8 +216,11 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             }
             set
             {
-                mReplaceType = value;
-                OnPropertyChanged(nameof(ReplaceType));
+                if (mReplaceType != value)
+                {
+                    mReplaceType = value;
+                    OnPropertyChanged(nameof(ReplaceType));
+                }
             }
         }
     }

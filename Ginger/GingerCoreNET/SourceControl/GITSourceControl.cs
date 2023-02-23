@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ using System.IO;
 using GingerCoreNET.SourceControl;
 using amdocs.ginger.GingerCoreNET;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace GingerCore.SourceControl
 {
@@ -585,7 +586,7 @@ namespace GingerCore.SourceControl
             Console.WriteLine("GITHub - TestConnection");
             try
             {
-                if (IsPublicRepo)
+                if (IsRepositoryPublic())
                 {
                     IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL);
                 }
@@ -802,15 +803,27 @@ namespace GingerCore.SourceControl
 
         private MergeResult Pull()
         {
+            MergeResult mergeResult = null;
             //Pull = Fetch + Merge
-            using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
-            {
-                PullOptions PullOptions = new PullOptions();
-                PullOptions.FetchOptions = new FetchOptions();
-                PullOptions.FetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
-                MergeResult mergeResult = Commands.Pull(repo, new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), PullOptions);
-                return mergeResult;
-            }
+            Task.Run(() =>
+             {
+                 using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                 {
+
+                     PullOptions PullOptions = new PullOptions();
+                     PullOptions.FetchOptions = new FetchOptions();
+                     PullOptions.FetchOptions.CredentialsProvider = GetSourceCredentialsHandler();
+                     if (!IsRepositoryPublic())
+                     {
+                         mergeResult = Commands.Pull(repo, new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), PullOptions);
+                     }
+                     else
+                     {
+                         mergeResult = Commands.Pull(repo, new Signature("dummy", "dummy", new DateTimeOffset(DateTime.Now)), PullOptions);
+                     }
+                 }
+             }).Wait();
+            return mergeResult;
         }
 
         private Commit Commit(string Comments)
@@ -868,7 +881,7 @@ namespace GingerCore.SourceControl
                             filePath = filePath.Replace(@"/", @"\");
                         }
                         string fullPath = Path.Combine(RepositoryRootFolder, filePath);
-                            ConflictPaths.Add(fullPath);
+                        ConflictPaths.Add(fullPath);
                     }
                 }
             }
@@ -969,12 +982,45 @@ namespace GingerCore.SourceControl
             }
         }
 
+        public override bool IsRepositoryPublic()
+        {
+            try
+            {
+                var branchesList = Repository.ListRemoteReferences(SourceControlURL, GetEmptySourceCredentialsHandler())
+                    .Where(elem => elem.CanonicalName.Contains("refs/heads/"))
+                    .Select(elem => elem.CanonicalName.Replace("refs/heads/", ""))
+                    .ToList();
+                if (branchesList == null || branchesList.Count == 0)
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public override string GetCurrentBranchForSolution()
         {
             using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
             {
                 return repo.Head.FriendlyName;
             }
+        }
+
+        private CredentialsHandler GetEmptySourceCredentialsHandler()
+        {
+            var credentials = new UsernamePasswordCredentials()
+            {
+                Username = String.Empty,
+                Password = String.Empty,
+
+            };
+            CredentialsHandler credentialHandler = (_url, _user, _cred) => credentials;
+
+            return credentialHandler;
         }
 
         private CredentialsHandler GetSourceCredentialsHandler()

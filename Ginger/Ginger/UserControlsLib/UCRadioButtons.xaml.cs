@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -106,7 +106,6 @@ namespace Ginger.UserControlsLib
                         
                     panel.Children.Add(button);
 
-                    ObjFieldBinding(button, RadioButton.IsCheckedProperty, obj, property);
 
                 });
 
@@ -132,33 +131,7 @@ namespace Ginger.UserControlsLib
 
 
 
-        public static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay)
-        {          
-            try
-            {
-                Binding b = new Binding();
-                b.Source = obj;
-                b.Path = new PropertyPath(property);
-                b.Mode = BindingMode;
-                b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                b.NotifyOnValidationError = true;
-                control.SetBinding(dependencyProperty, b);
-            }
-            catch (Exception ex)
-            {
-                //it is possible we load an old enum or something else which will cause the binding to fail
-                // Can happen also if the bind field name is incorrect
-                // mark the control in red, instead of not openning the Page
-                // Set a tool tip with the error
 
-                control.Style = null; // remove style so red will show
-                control.Background = System.Windows.Media.Brushes.LightPink;
-                control.BorderThickness = new Thickness(2);
-                control.BorderBrush = System.Windows.Media.Brushes.Red;
-
-                control.ToolTip = "Error binding control to property: " + Environment.NewLine + property + " Please open a defect with all information,  " + Environment.NewLine + ex.Message;
-            }
-        }
 
 
 

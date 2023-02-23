@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using System;
 
@@ -129,5 +130,49 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
                 this.AppName = value;
             }
         }
+
+        public eImageType PlatformImage
+        {
+            get
+            {
+                return GetPlatformImage( mPlatform);
+            }
+        }
+
+        public static eImageType GetPlatformImage(ePlatformType platformType = ePlatformType.NA)
+        {
+            switch (platformType)
+            {
+                case ePlatformType.NA:
+                    return eImageType.Empty;
+                case ePlatformType.Web:
+                    return eImageType.Globe;
+                case ePlatformType.WebServices:
+                    return eImageType.Exchange;
+                case ePlatformType.Java:
+                    return eImageType.Java;
+                case ePlatformType.Mobile:
+                    return eImageType.Mobile;
+                case ePlatformType.Windows:
+                    return eImageType.WindowsIcon;
+                case ePlatformType.PowerBuilder:
+                    return eImageType.Runing;
+                case ePlatformType.DOS:
+                    return eImageType.Dos;
+                case ePlatformType.VBScript:
+                    return eImageType.CodeFile;
+                case ePlatformType.Unix:
+                    return eImageType.Linux;
+                case ePlatformType.MainFrame:
+                    return eImageType.Server;
+                case ePlatformType.ASCF:
+                    return eImageType.Screen;
+                case ePlatformType.Service:
+                    return eImageType.Retweet;
+            }
+
+            return eImageType.Empty;
+        }
+
     }
 }

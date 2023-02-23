@@ -524,7 +524,7 @@ public class BasicSwingApp extends javax.swing.JFrame {
         
         jMenuDocument.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent e) {
-				JOptionPane.showConfirmDialog(jMenu2, "Docunebt Menu Clicked !","Menu Click Info",JOptionPane.YES_NO_CANCEL_OPTION);				
+				JOptionPane.showConfirmDialog(jMenu2, "Document Menu Clicked !","Menu Click Info",JOptionPane.YES_NO_CANCEL_OPTION);				
 			}
 		});
         

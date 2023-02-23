@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ namespace Ginger.Actions
         RegularView
     }
 
-    public partial class ActionEditPage : Page
+    public partial class ActionEditPage : GingerUIPage
     {
         //static int ActionEditNum = 0;
         //static int LiveActionEditCounter = 0;
@@ -119,6 +119,7 @@ namespace Ginger.Actions
             EditMode = editMode;
 
             mAction = act;
+            mAction.PauseDirtyTracking();
             if (editMode != General.eRIPageViewMode.View && editMode != General.eRIPageViewMode.ViewAndExecute && editMode != General.eRIPageViewMode.Explorer)
             {
                 mAction.SaveBackup();
@@ -162,6 +163,7 @@ namespace Ginger.Actions
             GingerHelpProvider.SetHelpString(this, act.ActionDescription);
 
             InitView();
+            mAction.ResumeDirtyTracking();
         }
 
         private void InitView()
@@ -395,8 +397,8 @@ namespace Ginger.Actions
                     //remove full page for other platforms excepts web
                     if (mAction.Platform != GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
                     {
-                        var comboEnumItem = xWindowsToCaptureCombo.Items.Cast<ComboEnumItem>().Where(x => x.Value.ToString() == Act.eWindowsToCapture.FullPage.ToString()).FirstOrDefault();
-                        xWindowsToCaptureCombo.Items.Remove(comboEnumItem);
+                        RemoveCaptureTypeFromComboItems(Act.eWindowsToCapture.FullPage);
+                        RemoveCaptureTypeFromComboItems(Act.eWindowsToCapture.FullPageWithUrlAndTimestamp);
                     }
                     SetScreenshotsPnlView();
                     UpdateScreenShots();
@@ -406,6 +408,12 @@ namespace Ginger.Actions
             {
                 xExecutionDetailsExpander.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void RemoveCaptureTypeFromComboItems(Act.eWindowsToCapture captureType)
+        {
+            var comboEnumItem = xWindowsToCaptureCombo.Items.Cast<ComboEnumItem>().Where(x => x.Value.ToString() == captureType.ToString()).FirstOrDefault();
+            xWindowsToCaptureCombo.Items.Remove(comboEnumItem);
         }
 
         private void InitHelpTabView()
@@ -1843,6 +1851,15 @@ namespace Ginger.Actions
                 }
             }
             Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw response view, see log for details.");
+        }
+
+        protected override void IsVisibleChangedHandler(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (EditMode == General.eRIPageViewMode.SharedReposiotry && mAction != null && !String.IsNullOrEmpty(mAction.ContainingFolder))
+            {
+                CurrentItemToSave = mAction;
+                base.IsVisibleChangedHandler(sender, e);
+            }
         }
     }
 }

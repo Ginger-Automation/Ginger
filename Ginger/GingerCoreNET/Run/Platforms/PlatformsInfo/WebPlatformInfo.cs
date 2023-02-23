@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -174,7 +174,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             if (elementInfo != null)
             {
                 ElementTypeData elementTypeOperations = GetPlatformElementTypesData().Where(x => x.ElementType == elementInfo.ElementTypeEnum).FirstOrDefault();
-                if(actConfig != null)
+                if (actConfig != null)
                 {
                     if (string.IsNullOrWhiteSpace(actConfig.Operation))
                         actConfig.Operation = GetDefaultElementOperation(elementInfo.ElementTypeEnum);
@@ -208,7 +208,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
                         pomExcutionUtil.SetPOMProperties(elementAction, elementInfo, actConfig);
                     }
-                } 
+                }
             }
             else
             {
@@ -320,7 +320,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                                                                 ActUIElement.eElementAction.ClickAndValidate,
                                                                 ActUIElement.eElementAction.MultiClicks,
                                                                 ActUIElement.eElementAction.Submit,
-                                                                ActUIElement.eElementAction.GetValue,                                                                
+                                                                ActUIElement.eElementAction.GetValue,
                                                                 },
 
                 });
@@ -348,7 +348,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.SetValue,
                                                                 ActUIElement.eElementAction.SetText,
-                                                                ActUIElement.eElementAction.SendKeys,                                                                
+                                                                ActUIElement.eElementAction.SendKeys,
                                                                 ActUIElement.eElementAction.MultiSetValue,
                                                                 ActUIElement.eElementAction.ClearValue,
                                                                 ActUIElement.eElementAction.IsValuePopulated,
@@ -365,14 +365,14 @@ namespace GingerCore.Platforms.PlatformsInfo
                     IsCommonElementType = true,
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.Select,
-                                                                ActUIElement.eElementAction.SelectByIndex,                                                               
+                                                                ActUIElement.eElementAction.SelectByIndex,
                                                                 ActUIElement.eElementAction.SelectByText,
                                                                 ActUIElement.eElementAction.SetValue,
-                                                                ActUIElement.eElementAction.ClearValue,                                                                                                                                
+                                                                ActUIElement.eElementAction.ClearValue,
                                                                 ActUIElement.eElementAction.GetValidValues,
                                                                 ActUIElement.eElementAction.GetSelectedValue,
                                                                 ActUIElement.eElementAction.IsValuePopulated,
-                                                                ActUIElement.eElementAction.GetText,                                                                                                                               
+                                                                ActUIElement.eElementAction.GetText,
                                                                 }
                 });
 
@@ -381,9 +381,9 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ElementType = eElementType.ScrollBar,
                     ActionType = typeof(ActUIElement),
                     ElementOperationsList = new List<Enum>() {  //ActUIElement.eElementAction.ScrollUp, //not yet supported by SelenuimDriver
-                                                                //ActUIElement.eElementAction.ScrollDown,
-                                                                //ActUIElement.eElementAction.ScrollLeft,
-                                                                //ActUIElement.eElementAction.ScrollRight
+                       //ActUIElement.eElementAction.ScrollDown,
+                       //ActUIElement.eElementAction.ScrollLeft,
+                       //ActUIElement.eElementAction.ScrollRight
                     }
                 });
 
@@ -441,7 +441,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 {
                     ElementType = eElementType.TableItem,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>() {  
+                    ElementOperationsList = new List<Enum>() {
                                                                 ActUIElement.eElementAction.GetValue,
                                                                 ActUIElement.eElementAction.SetValue,
                                                                 ActUIElement.eElementAction.Click,
@@ -519,18 +519,18 @@ namespace GingerCore.Platforms.PlatformsInfo
                 });
 
                 // adding generic/common actions per each ElementType
-                List<Enum> ElementCommonActionsList = new List<Enum>() {                                                                            
+                List<Enum> ElementCommonActionsList = new List<Enum>() {
                                                                             ActUIElement.eElementAction.IsVisible,
                                                                             ActUIElement.eElementAction.IsDisabled,
                                                                             ActUIElement.eElementAction.IsEnabled,
-                                                                            ActUIElement.eElementAction.Hover,                                                                            
+                                                                            ActUIElement.eElementAction.Hover,
                                                                             ActUIElement.eElementAction.GetHeight,
                                                                             ActUIElement.eElementAction.GetStyle,
-                                                                            ActUIElement.eElementAction.GetWidth,                                                                           
+                                                                            ActUIElement.eElementAction.GetWidth,
                                                                             ActUIElement.eElementAction.SetFocus,
                                                                             ActUIElement.eElementAction.RunJavaScript,
                                                                             ActUIElement.eElementAction.GetSize,
-                                                                            ActUIElement.eElementAction.GetAttrValue,                                                                           
+                                                                            ActUIElement.eElementAction.GetAttrValue,
                                                                             ActUIElement.eElementAction.GetItemCount,
                                                                             ActUIElement.eElementAction.DragDrop,
                                                                             ActUIElement.eElementAction.MouseRightClick,
@@ -586,7 +586,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementLocatorsTypeList.Add(eLocateBy.ByCSS);
                 mElementLocatorsTypeList.Add(eLocateBy.ByClassName);
                 mElementLocatorsTypeList.Add(eLocateBy.ByXY);
-                mElementLocatorsTypeList.Add(eLocateBy.ByMulitpleProperties);                                
+                mElementLocatorsTypeList.Add(eLocateBy.ByMulitpleProperties);
                 mElementLocatorsTypeList.Add(eLocateBy.ByRelXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByContainerName);
                 mElementLocatorsTypeList.Add(eLocateBy.ByHref);
@@ -613,6 +613,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementLocatorsTypeList.Add(eLocateBy.ByModelName);//???
                 mElementLocatorsTypeList.Add(eLocateBy.NA);
                 mElementLocatorsTypeList.Add(eLocateBy.Unknown);
+                mElementLocatorsTypeList.Add(eLocateBy.ByTagName);
             }
             return mElementLocatorsTypeList;
         }
@@ -629,8 +630,8 @@ namespace GingerCore.Platforms.PlatformsInfo
             list.Add("id");
             list.Add("name");
             list.Add("TagName");
-            list.Add("class");        
-    
+            list.Add("class");
+
             // Per element add the attr 
             switch (ElementType)
             {
@@ -658,13 +659,27 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override ObservableList<ElementLocator> GetLearningLocators()
         {
             ObservableList<ElementLocator> learningLocatorsList = new ObservableList<ElementLocator>();
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Very Recommended (usually unique)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Very Recommended (usually unique)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Very Recommended (usually unique)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Recommended (sensitive to page design changes)" });
-
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Highly Recommended (usually unique)", EnableFriendlyLocator = false });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Less Recommended (sensitive to page design changes)", EnableFriendlyLocator = false });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByTagName, Help = "Less Recommended", EnableFriendlyLocator = true });
             return learningLocatorsList;
         }
 
+        public override List<ePosition> GetElementPositionList()
+        {
+            if (mElementPositionList == null)
+            {
+                //Arrange Position on priority basis
+                mElementPositionList = new List<ePosition>();
+                mElementPositionList.Add(ePosition.left);
+                mElementPositionList.Add(ePosition.right);
+                mElementPositionList.Add(ePosition.above);
+                mElementPositionList.Add(ePosition.below);
+                mElementPositionList.Add(ePosition.near);
+            }
+            return mElementPositionList;
+        }
     }
 }

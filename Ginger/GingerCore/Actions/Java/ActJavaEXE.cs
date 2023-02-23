@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -58,7 +58,8 @@ namespace GingerCore.Actions.Java
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return true; } }
         public override bool IsSelectableAction { get { return true; } }
-        public override eImageType Image { get { return eImageType.Coffee; } }
+
+        public override eImageType Image { get { return eImageType.Java; } }
         public override String ActionType
         {
             get

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,13 +24,14 @@ using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using System;
+using Ginger.UserControlsLib;
 
 namespace Ginger.TagsLib
 {
     /// <summary>
     /// Interaction logic for TagsEditorPage.xaml
     /// </summary>
-    public partial class TagsPage : Page
+    public partial class TagsPage : GingerUIPage
     {
         public enum eViewMode { Solution, SpecificList }
 
@@ -44,7 +45,7 @@ namespace Ginger.TagsLib
 
             mViewMode = viewMode;
             mTags = tags;
-
+            CurrentItemToSave = WorkSpace.Instance.Solution;
             if (mViewMode == eViewMode.Solution)
             {
                  WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
@@ -94,7 +95,7 @@ namespace Ginger.TagsLib
         {
             if (mViewMode == eViewMode.Solution)
             {
-                xTagsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Tag, "Tags", saveAllHandler: saveBtn_Click, addHandler: AddButton);
+                xTagsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Tag, "Tags", saveAllHandler: saveBtn_Click, addHandler: AddButton, true);
                 xTagsGrid.ShowUpDown = Visibility.Visible;
                 xTagsGrid.ShowAdd = Visibility.Collapsed;
             }

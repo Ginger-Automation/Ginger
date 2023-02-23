@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Ginger.Actions.ActionConversion;
 using Ginger.ALM;
 using Ginger.BusinessFlowWindows;
@@ -288,10 +289,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             //TODO: change to wizard
             string BizFlowName = string.Empty;
-            if (GingerCore.General.GetInputWithValidation("Add " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name:", ref BizFlowName))
+            BusinessFlow BizFlow = WorkSpace.Instance.GetNewBusinessFlow(BizFlowName);            
+            if (GingerCore.General.GetInputWithValidation("Add " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name:", ref BizFlowName, null, false , BizFlow))
             {
-                BusinessFlow BizFlow = WorkSpace.Instance.GetNewBusinessFlow(BizFlowName);
-
+                BizFlow = WorkSpace.Instance.GetNewBusinessFlow(BizFlowName);
                 if (WorkSpace.Instance.Solution.ApplicationPlatforms.Count != 1)
                 {
                     EditBusinessFlowAppsPage EBFP = new EditBusinessFlowAppsPage(BizFlow,true);

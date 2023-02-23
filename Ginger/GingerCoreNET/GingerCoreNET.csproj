@@ -222,6 +222,8 @@
   
     <PackageReference Include="Appium.WebDriver" Version="5.0.0-beta01" />
   
+    <PackageReference Include="Azure.Identity" Version="1.8.1" />
+  
     <PackageReference Include="CassandraCSharpDriver" Version="3.10.0" />
   
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
@@ -266,6 +268,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.7.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.7.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Graph" Version="4.51.0" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.8.1" />
     <PackageReference Include="MySql.Data" Version="8.0.16" />
@@ -282,7 +285,7 @@
     <PackageReference Include="SSH.NET" Version="2020.0.1" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="System.Data.OleDb" Version="6.0.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Reflection.DispatchProxy" Version="4.7.1" />
@@ -308,8 +311,8 @@
     <Reference Include="AlmRepositoryStd">
       <HintPath>DLLS\AlmRepositoryStd.dll</HintPath>
     </Reference>
-    <Reference Include="ALM_Common">
-      <HintPath>..\GingerCore\DLLs\ALM_Common.dll</HintPath>
+    <Reference Include="ALM_CommonStd">
+      <HintPath>DLLS\ALM_CommonStd.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>

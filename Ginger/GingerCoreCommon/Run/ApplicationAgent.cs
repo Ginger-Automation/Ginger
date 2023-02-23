@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
@@ -77,6 +78,50 @@ namespace GingerCore.Platforms
             }
         }
 
+        ApplicationPlatform mAppPlatform = null;
+        public ApplicationPlatform AppPlatform
+        {
+            get
+            {
+                if (mAppPlatform == null)
+                {
+                    mAppPlatform = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == AppName).FirstOrDefault();
+                }
+                return mAppPlatform;
+            }
+        }
+
+        public eImageType AppPlatformImage
+        {
+            get
+            {
+                if (AppPlatform != null)
+                {
+                    return AppPlatform.PlatformImage;
+                }
+                else
+                {
+                    return eImageType.Null;
+                }
+            }
+        }
+
+        public string AppPlatformName
+        {
+            get
+            {
+                if (AppPlatform != null)
+                {
+                    return AppPlatform.Platform.ToString();
+                }
+                else
+                {
+                    return ePlatformType.NA.ToString();
+                }
+            }
+        }
+
+
         // No need to serialized as it used only in runtime        
         public Agent Agent
         {
@@ -84,17 +129,25 @@ namespace GingerCore.Platforms
             set
             {
                 if (mAgent != null)
+                {
                     mAgent.PropertyChanged -= Agent_OnPropertyChange;
+                }
 
                 mAgent = value;
                 if (mAgent != null)
                 {
-                    AgentName = mAgent.Name;
+                    // check if the AgentName & Id is diff before setting the value to avoid dirty status to become modified when unnecessary
+                    if (AgentName != mAgent.Name)
+                    {
+                        AgentName = mAgent.Name;
+                    }
+                    if (AgentID != mAgent.Guid)
+                    {
+                        AgentID = mAgent.Guid;
+                    }
                     mAgent.PropertyChanged += Agent_OnPropertyChange;
                 }
                 OnPropertyChanged(nameof(Agent));
-                OnPropertyChanged(nameof(AgentName));
-                OnPropertyChanged(nameof(AgentID));
                 OnPropertyChanged(nameof(AppAndAgent));
             }
         }
@@ -107,8 +160,7 @@ namespace GingerCore.Platforms
             {
                 if (Agent != null)
                 {
-                    if (mAgentName != Agent.Name)
-                        mAgentName = Agent.Name;
+                    mAgentName = Agent.Name;
                 }
                 else if (string.IsNullOrEmpty(mAgentName))
                 {
@@ -134,15 +186,17 @@ namespace GingerCore.Platforms
             {
                 if (Agent != null)
                 {
-                    if (mAgentID != Agent.Guid)
-                        mAgentID = Agent.Guid;
+                    mAgentID = Agent.Guid;
                 }
                 return mAgentID;
             }
             set
             {
-                mAgentID = value;
-                OnPropertyChanged(nameof(AgentID));
+                if (mAgentID != value)
+                {
+                    mAgentID = value;
+                    OnPropertyChanged(nameof(AgentID));
+                }
             }
         }
 

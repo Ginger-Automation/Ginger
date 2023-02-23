@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,6 +35,8 @@ namespace GingerCore.Activities
         public string ActivityDescription { get; set; }
         [IsSerializedForLocalRepository]
         public Guid ActivityGuid { get; set; }
+        [IsSerializedForLocalRepository]
+        public Guid ActivityParentGuid { get; set; }
         [IsSerializedForLocalRepository]
         public string ActivityExternalID { get; set; }
         [IsSerializedForLocalRepository]
@@ -84,6 +86,11 @@ namespace GingerCore.Activities
                 {
                     ActivityGuid = mIdentifiedActivity.Guid;
                     OnPropertyChanged(nameof(ActivityGuid));
+                }
+                if (ActivityParentGuid != mIdentifiedActivity.ParentGuid)
+                {
+                    ActivityParentGuid = mIdentifiedActivity.ParentGuid;
+                    OnPropertyChanged(nameof(ActivityParentGuid));
                 }
                 if (ActivityExternalID != mIdentifiedActivity.ExternalID)
                 {

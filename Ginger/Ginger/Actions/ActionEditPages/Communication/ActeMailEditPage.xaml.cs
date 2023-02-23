@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,11 +19,20 @@ limitations under the License.
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using GingerCore;
 using GingerCore.Actions.Communication;
 using GingerCore.GeneralLib;
+using CheckBox = System.Windows.Controls.CheckBox;
+using System.Linq;
+using System.ComponentModel;
+using NUglify.Helpers;
+using System.Diagnostics.CodeAnalysis;
+using NPOI.HPSF;
+using System.Dynamic;
+using System.Collections.Generic;
+using System.Xml.Schema;
+using System.Linq.Dynamic.Core;
+using Ginger.UserControlsLib.UCEmailConfigView;
 
 namespace Ginger.Actions.Communication
 {
@@ -32,130 +41,236 @@ namespace Ginger.Actions.Communication
     /// </summary>
     public partial class ActeMailEditPage : Page
     {
-        ActeMail mAct;
+        private ActeMail mAct;
+        private ObservableList<Attachment> mAttachments;
 
         public ActeMailEditPage(ActeMail act)
         {
             InitializeComponent();
             mAct = act;
-            Bind();
+            CreateAttachmentList();
+            InitializeXSendEMailConfigView();
         }
 
-        private void Bind()
+        [MemberNotNull(nameof(mAttachments))]
+        private void CreateAttachmentList()
         {
-            MailFromTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFrom));
-            xMailFromDisplayNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFromDisplayName));
-            MailToTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Mailto));
-            MailCCTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Mailcc));
-            SubjectTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Subject));
-            
-            BodyTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Body));
-            BodyTextBox.AdjustHight(100);
-
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.Port));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.Pass));       
-            xSMTPMailHostTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Host));
-            xSMTPUserTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.User));                                           
-            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.EnableSSL, "true"));
-            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.ConfigureCredential,"false"));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AttachmentFilename, TextBox.TextProperty, mAct, nameof(ActeMail.AttachmentFileName));
-
-            if (mAct.MailOption != null && mAct.MailOption == Email.eEmailMethod.OUTLOOK.ToString())
+            string attachmentFilenames = mAct.AttachmentFileName;
+            if (attachmentFilenames == null)
             {
-                RadioOutlookMailOption.IsChecked = true;
+                attachmentFilenames = "";
             }
-            else
+
+            mAttachments = new(attachmentFilenames.Split(";", StringSplitOptions.RemoveEmptyEntries).Select(filename => new Attachment(filename)));
+            mAttachments.ForEach(attachment => attachment.PropertyChanged += Attachment_PropertyChanged);
+            mAttachments.CollectionChanged += mAttachments_CollectionChanged;
+        }
+
+        private void Attachment_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            RefreshAttachmentFileName();
+        }
+
+        private void mAttachments_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RefreshAttachmentFileName();
+        }
+
+        private void RefreshAttachmentFileName()
+        {
+            if (mAttachments.Count == 0)
             {
-                RadioSMTPMailOption.IsChecked = true;
-                if(string.IsNullOrEmpty(mAct.MailFromDisplayName))
+                mAct.AttachmentFileName = "";
+                return;
+            }
+
+            mAct.AttachmentFileName = mAttachments.Select(attachment => attachment.Name).Aggregate((aggr, filename) => $"{aggr};{filename}");
+        }
+
+        private void InitializeXSendEMailConfigView()
+        {
+            if (!Enum.TryParse(mAct.MailOption, out Email.eEmailMethod defaultEmailMethod))
+            {
+                mAct.MailOption = defaultEmailMethod.ToString();
+            }
+
+            UCEmailConfigView.Options options = new()
+            {
+                Context = Context.GetAsContext(mAct.Context),
+                AttachmentsEnabled = true,
+                SupportedAttachmentTypes = new eAttachmentType[] { eAttachmentType.File },
+                AllowAttachmentExtraInformation = false,
+                AllowZippedAttachment = false,
+                AttachmentGridBindingMap = new()
                 {
-                    mAct.MailFromDisplayName = "_Amdocs Ginger Automation";
+                    Type = nameof(Attachment.Type),
+                    Name = nameof(Attachment.Name)
+                },
+                CCEnabled = true,
+                DefaultEmailMethod = defaultEmailMethod,
+                FromDisplayNameEnabled = true,
+                SupportedBodyContentTypes = new eBodyContentType[] { eBodyContentType.FreeText }
+            };
+            xEmailConfigView.Initialize(options);
+
+            if (string.IsNullOrEmpty(mAct.MailFromDisplayName))
+            {
+                mAct.MailFromDisplayName = "_Amdocs Ginger Automation";
+            }
+
+            if(string.IsNullOrEmpty(mAct.AttachmentDownloadPath))
+            {
+                mAct.AttachmentDownloadPath = @"~\\Documents\EmailAttachments";
+            }
+
+            BindSendEMailConfigView();
+        }
+
+        private void BindSendEMailConfigView()
+        {
+            xEmailConfigView.xActionTypeSendRadioButton.IsChecked = mAct.eMailActionType == ActeMail.eEmailActionType.SendEmail;
+            xEmailConfigView.xActionTypeReadRadioButton.IsChecked = mAct.eMailActionType == ActeMail.eEmailActionType.ReadEmail;
+            xEmailConfigView.xFromVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFrom));
+            xEmailConfigView.xFromDisplayNameVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFromDisplayName));
+            xEmailConfigView.xToVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Mailto));
+            xEmailConfigView.xCCVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Mailcc));
+            xEmailConfigView.xSubjectVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Subject));
+            xEmailConfigView.xBodyFreeTextVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Body));
+            xEmailConfigView.xSMTPHostVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Host));
+            xEmailConfigView.xSMTPPortVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Port));
+            BindingHandler.ActInputValueBinding(xEmailConfigView.xEnableSSLOrTLS, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.EnableSSL, "true"));
+            BindingHandler.ObjFieldBinding(xEmailConfigView.xAddCustomCertificate, CheckBox.IsCheckedProperty, mAct, nameof(ActeMail.IsValidationRequired));
+            BindingHandler.ObjFieldBinding(xEmailConfigView.xCertificatePathTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.CertificatePath));
+            BindingHandler.ObjFieldBinding(xEmailConfigView.xCertificatePasswordTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.CertificatePasswordUCValueExpression));
+            BindingHandler.ActInputValueBinding(xEmailConfigView.xConfigureCredentials, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.ConfigureCredential, "false"));
+            xEmailConfigView.xSMTPUserVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.User));
+            BindingHandler.ObjFieldBinding(xEmailConfigView.xSMTPPasswordTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.Pass));
+
+            xEmailConfigView.xUserEmailVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.ReadUserEmail));
+            BindingHandler.ObjFieldBinding(xEmailConfigView.xUserPasswordTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.ReadUserPassword));
+            xEmailConfigView.xClientIdVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MSGraphClientId));
+            xEmailConfigView.xTenantIdVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MSGraphTenantId));
+            xEmailConfigView.xFilterFolderAllRadioButton.IsChecked = mAct.FilterFolder == EmailReadFilters.eFolderFilter.All;
+            xEmailConfigView.xFilterFolderSpecificRadioButton.IsChecked = mAct.FilterFolder == EmailReadFilters.eFolderFilter.Specific;
+            xEmailConfigView.xFilterFolderAllRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
+            xEmailConfigView.xFilterFolderSpecificRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
+            xEmailConfigView.xFilterFolderNameVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterFolderNames));
+            xEmailConfigView.xFilterFromVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterFrom));
+            xEmailConfigView.xFilterToVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterTo));
+            xEmailConfigView.xFilterSubjectVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterSubject));
+            xEmailConfigView.xFilterBodyVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterBody));
+            xEmailConfigView.xHasAttachmentsComboBox.SelectedItem = FindComboBoxItem(
+                xEmailConfigView.xHasAttachmentsComboBox, 
+                item => (EmailReadFilters.eHasAttachmentsFilter)item.Value == mAct.FilterHasAttachments);
+            xEmailConfigView.xFilterAttachmentContentTypeVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterAttachmentContentType));
+            xEmailConfigView.xDownloadAttachmentYesRadioButton.IsChecked = mAct.DownloadAttachments;
+            xEmailConfigView.xDownloadAttachmentNoRadioButton.IsChecked = !mAct.DownloadAttachments;
+            xEmailConfigView.xDownloadAttachmentYesRadioButton.Checked += (_, _) => mAct.DownloadAttachments = true;
+            xEmailConfigView.xDownloadAttachmentNoRadioButton.Checked += (_, _) => mAct.DownloadAttachments = false;
+            xEmailConfigView.xAttachmentDownloadPathVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.AttachmentDownloadPath));
+            BindingHandler.ObjFieldBinding(xEmailConfigView.xFilterReceivedStartDateTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.FilterReceivedStartDate));
+            BindingHandler.ObjFieldBinding(xEmailConfigView.xFilterReceivedEndDateTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.FilterReceivedEndDate));
+
+            xEmailConfigView.xAttachmentsGrid.DataSourceList = mAttachments;
+
+            xEmailConfigView.AddFileAttachment += xSendEMailConfigView_FileAdded;
+            xEmailConfigView.EmailMethodChanged += xSendEMailConfigView_EmailMethodChanged;
+            xEmailConfigView.AttachmentNameVEButtonClick += xSendEMailConfigView_NameValueExpressionButtonClick;
+            xEmailConfigView.ActionTypeChanged += xSendEMailConfigView_ActionTypeChanged;
+            xEmailConfigView.HasAttachmentsSelectionChanged += xSendEMailConfigView_HasAttachmentsSelectionChanged;
+        }
+
+        private static ComboEnumItem FindComboBoxItem(ComboBox comboBox, Predicate<ComboEnumItem> predicate)
+        {
+            foreach(ComboEnumItem item in comboBox.Items)
+            {
+                if (predicate(item))
+                {
+                    return item;
                 }
             }
-            ShowDisplayNameOption();
+
+            return null!;
         }
 
-        private void ShowDisplayNameOption()
+        private void xFilterFolderRadioButton_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            if (mAct.MailOption != null && mAct.MailOption == Email.eEmailMethod.SMTP.ToString())
+            if (xEmailConfigView.xFilterFolderAllRadioButton.IsChecked ?? false)
             {
-                xLabelMailFromDisplayName.Visibility = Visibility.Visible;
-                xMailFromDisplayNameTextBox.Visibility = Visibility.Visible;
+                mAct.FilterFolder = EmailReadFilters.eFolderFilter.All;
             }
-            else
+            else if (xEmailConfigView.xFilterFolderSpecificRadioButton.IsChecked ?? false)
             {
-                xLabelMailFromDisplayName.Visibility = Visibility.Collapsed;
-                xMailFromDisplayNameTextBox.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void BrowseButton_Click(object sender, RoutedEventArgs e)
-        {
-            var dlg = new System.Windows.Forms.OpenFileDialog();          
-            System.Windows.Forms.DialogResult result = dlg.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK)
-            {
-                mAct.AttachmentFileName = dlg.FileName;
-            }
-        }
-        //update screen on select of Outlook Radio Button
-        private void RadioOutlookMailOption_Checked(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                mAct.MailOption = Email.eEmailMethod.OUTLOOK.ToString();
-
-                xSMTPConfig.Visibility = Visibility.Collapsed;
-
-                xLabelMailFromDisplayName.Visibility = Visibility.Visible;
-                xMailFromDisplayNameTextBox.Visibility = Visibility.Visible;
-            }
-            catch(Exception ex)
-            {
-                String err = ex.Message;
-            }
-
-        }
-
-        //Update screen on select of SMTP Radio Button
-        private void RadioSMTPMailOption_Checked(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                mAct.MailOption = Email.eEmailMethod.SMTP.ToString();
-
-                xSMTPConfig.Visibility = Visibility.Visible;
-                
-                xLabelMailFromDisplayName.Visibility = Visibility.Visible;
-                xMailFromDisplayNameTextBox.Visibility = Visibility.Visible;
-            }
-            catch (Exception ex)
-            {
-                String err = ex.Message;
-            }
-        }
-        private void xcbConfigureCredential_Checked(object sender, RoutedEventArgs e)
-        {
-            xUserDetails.Visibility = Visibility.Visible;           
-        }
-
-        private void xcbConfigureCredential_Unchecked(object sender, RoutedEventArgs e)
-        {
-            xUserDetails.Visibility = Visibility.Collapsed;            
-        }
-
-        private void xSMTPPassTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            bool res = false;
-            if (!EncryptionHandler.IsStringEncrypted(xSMTPPassTextBox.Text))
-            {
-                xSMTPPassTextBox.Text = EncryptionHandler.EncryptwithKey(xSMTPPassTextBox.Text);                
+                mAct.FilterFolder = EmailReadFilters.eFolderFilter.Specific;
             }
         }
 
-        private void Label_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void xSendEMailConfigView_ActionTypeChanged(ActeMail.eEmailActionType selectedActionType)
         {
-            ShowDisplayNameOption();
+            mAct.eMailActionType = selectedActionType;
+        }
+
+        private void xSendEMailConfigView_NameValueExpressionButtonClick(object sender, RoutedEventArgs e)
+        {
+            Attachment currentItem = (Attachment)xEmailConfigView.xAttachmentsGrid.CurrentItem;
+            int index = mAttachments.IndexOf(currentItem);
+            ValueExpressionEditorPage veEditorPage = new(currentItem, nameof(Attachment.Name), Context.GetAsContext(mAct.Context));
+            veEditorPage.ShowAsWindow();
+            mAttachments.RemoveAt(index);
+            mAttachments.Insert(index, currentItem);
+        }
+
+        private void xSendEMailConfigView_FileAdded(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog openFileDialog = new()
+            {
+                DefaultExt = ".*",
+                Filter = "All Files (*.*)|*.*"
+            };
+            string filename = General.SetupBrowseFile(openFileDialog);
+
+            if (string.IsNullOrEmpty(filename))
+            {
+                return;
+            }
+
+            mAttachments.Add(new Attachment(filename));
+        }
+
+        private void xSendEMailConfigView_EmailMethodChanged(Email.eEmailMethod selectedEmailMethod)
+        {
+            mAct.MailOption = selectedEmailMethod.ToString();
+        }
+
+        private void xSendEMailConfigView_HasAttachmentsSelectionChanged(EmailReadFilters.eHasAttachmentsFilter selectedValue)
+        {
+            mAct.FilterHasAttachments = selectedValue;
+        }
+
+        public sealed class Attachment : INotifyPropertyChanged
+        {
+            public eAttachmentType Type { get => eAttachmentType.File; }
+            private string filename;
+            public string Name
+            {
+                get => filename;
+                set
+                {
+                    if (value == filename)
+                    {
+                        return;
+                    }
+                    filename = value;
+                    PropertyChangedEventHandler? handler = PropertyChanged;
+                    handler?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+                }
+            }
+            public Attachment(string filename)
+            {
+                this.filename = filename;
+            }
+
+            public event PropertyChangedEventHandler? PropertyChanged;
         }
     }
 }
