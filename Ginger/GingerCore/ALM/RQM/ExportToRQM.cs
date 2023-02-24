@@ -250,6 +250,8 @@ namespace GingerCore.ALM.RQM
                 string txExportID = GetExportedIDString(activGroup.ExternalID, "RQMID");
                 string tsExportID = GetExportedIDString(activGroup.ExternalID, "RQMScriptID");
                 string erExportID = GetExportedIDString(activGroup.ExternalID, "RQMRecordID");
+                string tsuExportID = string.Empty;
+                string tsuerExportID = string.Empty;
                 if ((activGroup.TestSuiteId != null) && (activGroup.TestSuiteId != string.Empty))
                 {
                     // check if test suite execution record is exists per current Test Suite ID
@@ -275,6 +277,8 @@ namespace GingerCore.ALM.RQM
                                         testSuite.TestSuiteExecutionRecord = new RQMTestSuiteExecutionRecord();
                                     testSuite.TestSuiteExecutionRecord.RQMID = testSuite.ACL_TestSuite_Copy.TestSuiteExecutionRecordExportID;
                                     testSuite.TestSuiteExecutionRecord.URLPathVersioned = testSuite.ACL_TestSuite_Copy.TestSuiteExecutionRecordExportUri;
+                                    tsuExportID = testSuite.RQMID;
+                                    tsuerExportID = testSuite.TestSuiteExecutionRecord.RQMID;
                                 }
                             }
                             else
@@ -363,8 +367,9 @@ namespace GingerCore.ALM.RQM
                 }
                 exeResult.TestCaseExportID = txExportID;
                 exeResult.TestScriptExportID = tsExportID;
-                exeResult.ExecutionRecordExportID = erExportID;                
-                
+                exeResult.ExecutionRecordExportID = erExportID;
+                exeResult.TestSuiteExecutionRecordExportID = tsuerExportID;
+                exeResult.TestSuiteExportId = tsuExportID;
                 int i = 1;
                 foreach (Activity act in relevantActivities)
                 {
@@ -538,6 +543,9 @@ namespace GingerCore.ALM.RQM
                     int activityStepOrderID = 1;
                     foreach (ACL_Data_Contract.TestSuite testSuite in plan.TestSuites)
                     {
+                        ActivityGroupCounter = 0;
+                        activityStepCounter = 0;
+                        activityStepOrderID = 1;
                         foreach (ACL_Data_Contract.Activity act in testSuite.Activities)
                         {
                             string ActivityGroupID = "RQMID=" + act.ExportedID.ToString() + "|RQMScriptID=" + act.ExportedTestScriptId.ToString() + "|RQMRecordID=" + act.ExportedTcExecutionRecId.ToString() + "|AtsID=" + act.EntityId.ToString();
@@ -601,7 +609,13 @@ namespace GingerCore.ALM.RQM
                 testSuite.TestSuiteName = activitiesGroup.Name;
                 testSuite.TestSuiteDescription = String.IsNullOrEmpty(activitiesGroup.Description) ? String.Empty : activitiesGroup.Description;
                 testSuite.Activities = new List<IActivityModel>();//3
-
+                foreach(ActivityIdentifiers activityIdentifiers in  activitiesGroup.ActivitiesIdentifiers)
+                {
+                    if(activityIdentifiers.IdentifiedActivity == null)
+                    {
+                        //activityIdentifiers.IdentifiedActivity = businessFlow.Activities.Where(x=>x.Acts.FirstOrDefault(y=> y.Guid == activityIdentifiers.Guid) == )
+                    }
+                }
                 foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
                 {
                     testSuite.Activities.Add(GetTestCaseFromActivityGroup(ag));
@@ -654,7 +668,7 @@ namespace GingerCore.ALM.RQM
             //Add custom properties
             Dictionary<string, string> properties = GetCustomProperties("TestCase");
             testCase.CustomProperties = properties;
-
+            
             testCase.ActivityData = GetTestScriptStep(activityGroup.ActivitiesIdentifiers);//4
 
             return testCase;
