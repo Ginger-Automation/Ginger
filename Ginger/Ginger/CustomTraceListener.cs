@@ -21,6 +21,7 @@ namespace Ginger
 {
    public class CustomTraceListener : TextWriterTraceListener
     {
+        //test Commeont
         //The traceActivateSwitch determine if to Trace or not
         public Boolean _traceActivateSwitch = false;
 
