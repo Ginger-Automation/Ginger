@@ -42,5 +42,16 @@
             <Frame x:Name="SimulatedPhotoFrame" Background="White" Margin="-5,5,0,0" Width="670" Height="470"></Frame>
         </StackPanel>
 
+        <StackPanel x:Name="xAuthSimulationPnl" HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed">
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" DockPanel.Dock="Top">
+                <Label Style="{StaticResource $LabelStyle}" Content="Authentication Result:"/>
+                <UserControlsLib1:UCComboBox x:Name="xAuthResultComboBox" VerticalAlignment="Top" Width="200"/>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" DockPanel.Dock="Top">
+                <Label x:Name="xAuthResultDetailsLbl" Style="{StaticResource $LabelStyle}" Content="Authentication Result Details:"/>
+                <UserControlsLib1:UCComboBox x:Name="xAuthResultDetailsComboBox" VerticalAlignment="Top" Width="200"/>
+            </StackPanel>
+        </StackPanel>
+
     </DockPanel>
 </Page>
