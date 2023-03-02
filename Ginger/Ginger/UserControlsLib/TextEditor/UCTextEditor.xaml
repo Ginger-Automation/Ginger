@@ -18,7 +18,7 @@
             <ColumnDefinition Width="100*"/>
         </Grid.ColumnDefinitions>
 
-        <Border x:Name="xTitleBorder" Grid.Row="0" BorderThickness="1" BorderBrush="{StaticResource $Color_DarkBlue}" Grid.ColumnSpan="1" >
+        <Border x:Name="xTitleBorder" Grid.Row="0" BorderThickness="1" BorderBrush="{StaticResource $Color_Primary}" Grid.ColumnSpan="1" >
             <DockPanel>
                 <Label x:Name="lblTitle" Style="{DynamicResource @ucGridTitleLightStyle}" >Document Title</Label>
                 <Label x:Name="ContentEditorTitleLabel" Style="{DynamicResource @ucGridTitleLightStyle}" Visibility="Collapsed" >Document Editor</Label>

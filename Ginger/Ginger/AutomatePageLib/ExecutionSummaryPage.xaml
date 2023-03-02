@@ -34,7 +34,7 @@
 
         <StackPanel Grid.Row="1" VerticalAlignment="Center">
             <Label x:Name="StatusLabel" Content="Status"  FontSize="30" FontWeight="ExtraBold" />
-            <Label x:Name="lblElapsed" Content="Elapsed" FontSize="15" Foreground="{StaticResource $Color_DarkBlue}"/>
+            <Label x:Name="lblElapsed" Content="Elapsed" FontSize="15" Foreground="{StaticResource $Color_Primary}"/>
         </StackPanel>
         <StackPanel Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="150,0,0,0" >
             <Label x:Name="Activities" Content="Activities" Background="{StaticResource $BackgroundColor_LightGray}" Foreground="{StaticResource $BackgroundColor_DarkGray}" HorizontalAlignment="Left" FontFamily="MS Arial"  FontSize="20" Margin="310,0,0,0"/>

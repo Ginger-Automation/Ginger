@@ -40,7 +40,7 @@
 
                         <StackPanel x:Name="xDetailsLoadingPnl" Margin="0,150,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
                             <UserControls:ImageMakerControl x:Name="xDetailsProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
-                            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_DarkBlue}">
+                            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Primary}">
                                 <Label.Content>
                                     <GingerCore:ucTextDicResource x:Name="xLoadWindowText" Text="Loading..."/>
                                 </Label.Content>
@@ -66,7 +66,7 @@
 
                         <StackPanel x:Name="xMetricsLoadingPnl" Margin="0,150,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
                             <UserControls:ImageMakerControl x:Name="xMetricsProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
-                            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_DarkBlue}">
+                            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Primary}">
                                 <Label.Content>
                                     <GingerCore:ucTextDicResource x:Name="xMetricsLoadWindowText" Text="Loading..."/>
                                 </Label.Content>

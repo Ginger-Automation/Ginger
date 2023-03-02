@@ -54,7 +54,7 @@
         </Grid.ColumnDefinitions>
         <!--<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Row="0" Margin="0,5,0,5">
             <UserControls:ImageMakerControl ImageType="Tag"  SetAsFontImageWithSize="18"  Width="18" Height="18" Margin="5,5,0,0" VerticalAlignment="Center" />
-            <TextBlock x:Name="xSelectedElementTextBlock" Text="Selected Element" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" FontSize="15" />
+            <TextBlock x:Name="xSelectedElementTextBlock" Text="Selected Element" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" FontSize="15" />
         </StackPanel>-->
 
         <Frame x:Name="xElementScreenShotFrameTop" Visibility="Collapsed" Grid.Column="0" Grid.Row="1" Margin="5,0,0,0" MaxHeight="100" VerticalAlignment="Top"></Frame>
@@ -79,7 +79,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl ImageType="ListGroup"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                        <TextBlock x:Name="xPropertiesTextBlock" Text="Properties" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock x:Name="xPropertiesTextBlock" Text="Properties" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="xPropertiesGrid" Title="Control Properties"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" ShowRefresh="Collapsed" />
@@ -88,7 +88,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl ImageType="LocationPointer"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                        <TextBlock x:Name="xLocatorsTextBlock" Text="Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock x:Name="xLocatorsTextBlock" Text="Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed" RowChangedEvent="xLocatorsGrid_RowChangedEvent"/>
@@ -97,7 +97,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl ImageType="LocationPointer"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                        <TextBlock x:Name="xFriendlyLocatorsTextBlock" Text="Friendly Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock x:Name="xFriendlyLocatorsTextBlock" Text="Friendly Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="xFriendlyLocatorsGrid" Title="Friendly Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed" RowChangedEvent="xFriendlyLocatorsGrid_RowChangedEvent"/>
@@ -106,7 +106,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl ImageType="Action"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                        <TextBlock x:Name="xActionsTextBlock" Text="Action" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock x:Name="xActionsTextBlock" Text="Action" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <!--<Grid Background="{StaticResource $BackgroundColor_LightGray}">

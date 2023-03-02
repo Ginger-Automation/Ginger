@@ -18,9 +18,9 @@
             <StackPanel>
                 <StackPanel x:Name="xProcessingIcon" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible">
                     <usercontrols:ImageMakerControl ImageType="Processing" HorizontalAlignment="Center" Height="50" Width="50" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="xPageSrcLoadingText" Text="Loading Log Details . . ." Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <TextBlock x:Name="xPageSrcLoadingText" Text="Loading Log Details . . ." Foreground="{StaticResource $BackgroundColor_Primary}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </StackPanel>
-                <Border x:Name="xLogDetailsBorder" BorderThickness="1" BorderBrush="{StaticResource $Color_DarkBlue}" Visibility="Collapsed">
+                <Border x:Name="xLogDetailsBorder" BorderThickness="1" BorderBrush="{StaticResource $Color_Primary}" Visibility="Collapsed">
                     <TextBlock x:Name="xLogDetailsTextBlock"  Height="Auto" Style="{StaticResource $DetailsTextBlockStyle}" Text="Log Details" Margin="0,5,0,0" TextWrapping="NoWrap"></TextBlock>
                 </Border>
             </StackPanel>

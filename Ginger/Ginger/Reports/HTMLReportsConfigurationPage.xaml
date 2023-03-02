@@ -57,7 +57,7 @@
 
                 <StackPanel Orientation="Horizontal" Grid.Row="0">
                     <Label  Content="Centralized Report Data Settings" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
-                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
+                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Primary}" />
                 </StackPanel>
 
                 <DockPanel Grid.Row="1" Margin="5 0 5 5">

@@ -75,7 +75,7 @@
                     </MenuItem>
                 </Menu>
             </StackPanel>
-            <GridSplitter x:Name="xAutomateSplitter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4"/>
+            <GridSplitter x:Name="xAutomateSplitter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Primary}" Margin="4,4,4,4"/>
             <StackPanel x:Name="xExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
                 <UserControls:ucButton x:Name="xAutomateBtn" ButtonType="RoundTextAndImageButton" ButtonText="Automate"  ButtonImageType="Automate"  ButtonFontImageSize="12" ButtonImageWidth="16" ButtonImageHeight="12" Click="xAutomate_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Highlighted}" Loaded="xAutomateBtn_Loaded">
                     <UserControls:ucButton.ToolTip>
@@ -85,7 +85,7 @@
             </StackPanel>
         </DockPanel>
 
-        <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1" Grid.ColumnSpan="3" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Business Flow Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="13" Foreground="{StaticResource $BackgroundColor_DarkBlue}"/>
+        <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1" Grid.ColumnSpan="3" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Business Flow Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="13" Foreground="{StaticResource $BackgroundColor_Primary}"/>
 
         <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="XItemsTabs_SelectionChanged">
             <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTab}" TabIndex="1">

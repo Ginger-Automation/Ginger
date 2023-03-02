@@ -42,7 +42,7 @@
                     </UserControls:ucButton.ToolTip>
                 </UserControls:ucButton>
                 <StackPanel  x:Name="xEditAndValueChangeOperationsPnl" Orientation="Horizontal">
-                    <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4" Height="18"/>
+                    <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Primary}" Margin="4,4,4,4" Height="18"/>
                     <UserControls:ucButton x:Name="xUndoBtn" ButtonType="ImageButton" Click="XUndoBtn_Click" ToolTip="Undo Last Changes"  ButtonFontImageSize="17" ButtonImageType="Undo" />
                     <UserControls:ucButton x:Name="xDeleteBtn" ButtonType="ImageButton" Click="xDeleteBtn_Click" ButtonFontImageSize="16" ButtonImageType="Delete">
                         <UserControls:ucButton.ToolTip>
@@ -64,7 +64,7 @@
                             </MenuItem>
                         </MenuItem>
                     </Menu>-->
-                    <GridSplitter x:Name="xValueChangeSpliter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4" Height="18"/>
+                    <GridSplitter x:Name="xValueChangeSpliter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Primary}" Margin="4,4,4,4" Height="18"/>
                     <UserControls:ucButton x:Name="xResetValueBtn" ButtonType="ImageButton" Click="xResetValueBtn_Click" ButtonFontImageSize="16" ButtonImageType="Reset">
                         <UserControls:ucButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Reset [Variable] Value"/>

@@ -72,7 +72,7 @@
                 </Expander.Content>
             </Expander>
 
-            <Border Margin="0,10,0,0" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3" HorizontalAlignment="Stretch">
+            <Border Margin="0,10,0,0" BorderBrush="{StaticResource $BackgroundColor_Primary}" BorderThickness="1" CornerRadius="3" HorizontalAlignment="Stretch">
                 <DockPanel DockPanel.Dock="Top" Margin="5,5,5,5">
                     <Label HorizontalAlignment="Stretch" DockPanel.Dock="Top" Style="{StaticResource $HeaderStyle}">
                         <Label.Content>

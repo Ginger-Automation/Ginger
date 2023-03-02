@@ -405,7 +405,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                         if (operation.ImageForeground == null)
                         {
-                            //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
+                            //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_Primary");
                         }
                         else
                         {
@@ -465,7 +465,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                         if (operation.ImageForeground == null)
                         {
-                            //iconImage.ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
+                            //iconImage.ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Primary");
                         }
                         else
                         {
@@ -560,7 +560,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                         if (operation.ImageForeground == null)
                         {
-                            //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
+                            //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_Primary");
                         }
                         else
                         {
@@ -758,7 +758,7 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     string fullDesc = string.Empty;
                     bool errorWasSet = false;
-                    xItemDescriptionTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                    xItemDescriptionTxtBlock.Foreground = FindResource("$BackgroundColor_Primary") as Brush;
                     if (!string.IsNullOrEmpty(mItemErrorField))
                     {
                         Object error = Item.GetType().GetProperty(mItemErrorField).GetValue(Item);

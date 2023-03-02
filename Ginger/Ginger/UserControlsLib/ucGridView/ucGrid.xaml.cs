@@ -2234,7 +2234,7 @@ namespace Ginger
             if (validationRes == true)
                 Grid.BorderBrush = System.Windows.Media.Brushes.Red;
             else
-                Grid.BorderBrush = FindResource("$Color_DarkBlue") as Brush;
+                Grid.BorderBrush = FindResource("$Color_Primary") as Brush;
 
             return validationRes;
         }

@@ -39,7 +39,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource @PlatformAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
-                        <TextBlock Text="Platform Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock Text="Platform Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
 
@@ -50,7 +50,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource @GeneralAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
-                        <TextBlock Text="General Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock Text="General Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 
@@ -61,7 +61,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource @PluginAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
-                        <TextBlock Text="PlugIns Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock Text="PlugIns Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 
@@ -85,7 +85,7 @@
                 </TabItem.Resources>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="Legacy Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="SemiBold" />
+                        <TextBlock Text="Legacy Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="SemiBold" />
                     </StackPanel>
                 </TabItem.Header>
                
@@ -94,7 +94,7 @@
             </TabItem>
         </TabControl>
 
-        <GridSplitter ResizeDirection="Rows" Grid.Row="1" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" />
+        <GridSplitter ResizeDirection="Rows" Grid.Row="1" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="{StaticResource $Color_Primary}" IsEnabled="True" />
 
         <Frame x:Name="ActDescriptionFrm" Content="Action Description" Grid.Row="2" Margin="0,0,0,0"
                NavigationUIVisibility="Hidden"                                  

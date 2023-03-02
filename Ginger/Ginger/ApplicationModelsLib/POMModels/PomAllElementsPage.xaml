@@ -49,7 +49,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl ImageType="Elements"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                        <TextBlock x:Name="xMappedElementsTextBlock" Text="Mapped Elements" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock x:Name="xMappedElementsTextBlock" Text="Mapped Elements" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Frame x:Name="xMappedElementsFrame" HorizontalAlignment="Stretch" />
@@ -59,7 +59,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl ImageType="Elements"  SetAsFontImageWithSize="18"  Width="18" Height="18" Foreground="Gray" />
-                        <TextBlock x:Name="xUnMappedElementsTextBlock" Text="Unmapped Elements" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock x:Name="xUnMappedElementsTextBlock" Text="Unmapped Elements" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Frame x:Name="xUnMappedElementsFrame" HorizontalAlignment="Stretch"/>

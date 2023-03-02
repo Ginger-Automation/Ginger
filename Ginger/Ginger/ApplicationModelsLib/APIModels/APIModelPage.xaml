@@ -59,7 +59,7 @@
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Image Source="{StaticResource  @Config_20x20.png }" Height="20" Width="20" />
-                            <TextBlock Text="Configurations" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                            <TextBlock Text="Configurations" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
                         </StackPanel>
                     </TabItem.Header>
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -267,7 +267,7 @@
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                             <Image Source="{StaticResource  @Grid_24x24.png }" Height="20" Width="20"/>
-                            <TextBlock x:Name="xDynamicParamsTab" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                            <TextBlock x:Name="xDynamicParamsTab" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
                         </StackPanel>
                     </TabItem.Header>
                     <Frame x:Name="xDynamicParamsFrame" HorizontalAlignment="Stretch"/>
@@ -276,7 +276,7 @@
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                             <Image Source="{StaticResource  @Outputs_32x32.png }" Height="20" Width="20"/>
-                            <TextBlock x:Name="xOutputTemplateTab" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                            <TextBlock x:Name="xOutputTemplateTab" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
                         </StackPanel>
                     </TabItem.Header>
                     <Frame x:Name="xOutputTemplateFrame" HorizontalAlignment="Stretch"/>

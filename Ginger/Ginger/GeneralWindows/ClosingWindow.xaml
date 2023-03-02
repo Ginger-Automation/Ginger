@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
         Title="Closing" Height="240" Width="320" BorderThickness="10" BorderBrush="{StaticResource $BackgroundColor_LightGray}" WindowStyle="None"  Topmost="True" WindowStartupLocation="CenterScreen">
-    <Grid Background="{StaticResource $Color_DarkBlue}">
+    <Grid Background="{StaticResource $Color_Primary}">
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
             <RowDefinition Height="30"/>

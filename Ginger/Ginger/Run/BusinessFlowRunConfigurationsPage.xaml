@@ -51,7 +51,7 @@
                             <Image Source="{StaticResource  @Outputs_32x32.png }" Height="20" Width="20" />
                             <Image Tag="OffSignImage" Source="{StaticResource  @OffSign_24x24.png }" Height="20" Width="20" Margin="-4,0,0,0"  />
                             <Image Tag="OnSignImage" Source="{StaticResource  @OnSign_24x24.png }" Height="20" Width="20" Margin="-4,0,0,0" Visibility="Collapsed"/>
-                            <TextBlock x:Name="OutputTabTextBlock" VerticalAlignment="Center" Margin="-1,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold">
+                            <TextBlock x:Name="OutputTabTextBlock" VerticalAlignment="Center" Margin="-1,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold">
                             <Run>Edit Variables</Run>
                             <Run x:Name="EditVariablesCountLabel">(0)</Run>
                             </TextBlock>
@@ -70,7 +70,7 @@
                             <Image Source="{StaticResource  @Flow_24x24.png }" Height="20" Width="20" />
                             <Image Tag="OffSignImage" Source="{StaticResource  @OffSign_24x24.png }" Height="20" Width="20" Margin="-7,0,0,0"  />
                             <Image Tag="OnSignImage" Source="{StaticResource  @OnSign_24x24.png }" Height="20" Width="20" Margin="-7,0,0,0" Visibility="Collapsed"/>
-                            <TextBlock x:Name="FlowControlTabTextBlock" VerticalAlignment="Center" Margin="0,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold">
+                            <TextBlock x:Name="FlowControlTabTextBlock" VerticalAlignment="Center" Margin="0,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold">
                             <Run>Flow Control</Run>
                             <Run x:Name="FlowControlCountLabel">(0)</Run>
                             </TextBlock>

@@ -513,7 +513,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                     if (operation.ImageForeground == null)
                     {
-                        //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
+                        //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_Primary");
                     }
                     else
                     {
@@ -566,7 +566,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                     if (operation.ImageForeground == null)
                     {
-                        //iconImage.ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
+                        //iconImage.ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Primary");
                     }
                     else
                     {

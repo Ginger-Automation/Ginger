@@ -65,7 +65,7 @@
                 <Expander.Header>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Centralized Execution Logger Settings" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
+                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Primary}" />
                     </StackPanel>
                 </Expander.Header>
                 <Expander.Content >

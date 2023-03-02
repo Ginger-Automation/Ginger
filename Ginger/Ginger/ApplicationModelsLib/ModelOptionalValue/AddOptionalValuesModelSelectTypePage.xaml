@@ -103,7 +103,7 @@
                         <usercontrols:ucButton x:Name="xExcelViewWhereButton" ToolTip="View Filtered Data" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageType="Filter" Click="xExcelViewWhereButton_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,25,0,0" />
                     </DockPanel>
 
-                    <GridSplitter x:Name="xExcelGridSplitter" Grid.ColumnSpan="3" Grid.Row="4" Height="1"  HorizontalAlignment="Stretch"  Background="{StaticResource $Color_DarkBlue}" IsEnabled="False" Margin="0,5,0,5" />
+                    <GridSplitter x:Name="xExcelGridSplitter" Grid.ColumnSpan="3" Grid.Row="4" Height="1"  HorizontalAlignment="Stretch"  Background="{StaticResource $Color_Primary}" IsEnabled="False" Margin="0,5,0,5" />
 
                     <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,5">
                         <DockPanel x:Name="xExcelDataGridDockPanel" Margin="0,5,5,5">

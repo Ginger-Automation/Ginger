@@ -11,7 +11,7 @@
         Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $amdocsLogoRadialGradientBrush}"
         KeyUp="Window_KeyUp">
 
-    <Border BorderBrush="DarkGray" BorderThickness="1">
+    <Border BorderBrush="DarkGray" BorderThickness="1" >
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>

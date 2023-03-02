@@ -8,7 +8,7 @@
     <Grid Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <StackPanel x:Name="xRunSetLoadingPnl" HorizontalAlignment="Center" VerticalAlignment="Center" >
             <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="118" Visibility="Visible" Height="62" />
-            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_DarkBlue}">
+            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Primary}">
                 <Label.Content>
                     <GingerCore:ucTextDicResource Text="Loading [RunSet]..."/>
                 </Label.Content>

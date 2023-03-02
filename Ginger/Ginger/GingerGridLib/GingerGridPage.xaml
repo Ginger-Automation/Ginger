@@ -16,7 +16,7 @@
             <RowDefinition Height="49*"/>
             <RowDefinition Height="49*"/>
         </Grid.RowDefinitions>
-        <Label Content="Services Grid" FontSize="25" Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0" />
+        <Label Content="Services Grid" FontSize="25" Foreground="{StaticResource $BackgroundColor_Primary}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0" />
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,0,0">
             <!--<Button x:Name="ListButton" Click="ListButton_Click">List</Button>-->
             <UserControls:ucButton x:Name="xTableButton" ToolTip="Table View"  ButtonType="CircleImageButton"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Table" Click="xTableButton_Click"/>

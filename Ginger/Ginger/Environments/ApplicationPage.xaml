@@ -44,7 +44,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl x:Name="xParamsTabHeaderImage" ImageType="Parameter" Height="20" Width="20"/>
-                        <TextBlock x:Name="xParamsTabHeaderText" Text="Parameters" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock x:Name="xParamsTabHeaderText" Text="Parameters" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Frame x:Name="ParamsFrame"/>
@@ -54,7 +54,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl x:Name="xDBsTabTabHeaderImage" ImageType="DataSource" Height="20" Width="20"/>
-                        <TextBlock x:Name="xDBsTabHeaderText" Text="DataBases" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock x:Name="xDBsTabHeaderText" Text="DataBases" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Frame x:Name="DBsFrame"/>
@@ -64,7 +64,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl x:Name="xUsersTabTabHeaderImage" ImageType="Agent" Height="20" Width="20"/>
-                        <TextBlock x:Name="xUserTabHeaderText" Text="Login Users" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock x:Name="xUserTabHeaderText" Text="Login Users" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Frame x:Name="UsersFrame"/>

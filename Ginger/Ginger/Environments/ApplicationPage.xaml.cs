@@ -134,7 +134,7 @@ namespace Ginger.Environments
                                 if (AppTab.SelectedItem == tab)
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                                 else
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_Primary");
 
                                 ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
