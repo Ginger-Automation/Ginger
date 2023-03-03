@@ -7589,7 +7589,10 @@ namespace GingerCore.Drivers
                             e.Clear();
                             try
                             {
-                                e.SendKeys(GetKeyName(act.GetInputParamCalculatedValue("Value")));
+                                foreach (char i in act.GetInputParamCalculatedValue("Value"))
+                                {
+                                    e.SendKeys(GetKeyName(Char.ToString(i)));
+                                }
                             }
                             catch (InvalidOperationException ex)
                             {
