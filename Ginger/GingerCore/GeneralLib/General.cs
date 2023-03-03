@@ -339,10 +339,10 @@ namespace GingerCore
             return false;
         }
 
-        public static bool GetInputWithValidation(string header, string label, ref string resultValue, char[] CharsNotAllowed = null, bool isMultiline = false, RepositoryItemBase repositoryItem = null)
+        public static bool GetInputWithValidation(string header, string label, ref string resultValue, char[] CharsNotAllowed = null, bool isMultiline = false, RepositoryItemBase repositoryItem = null )
         {
             bool returnWindow = GingerCore.GeneralLib.InputBoxWindow.OpenDialog(header, label, ref resultValue, isMultiline);
-
+                   
             if (returnWindow)
             {
                 resultValue = resultValue.Trim();
@@ -350,8 +350,8 @@ namespace GingerCore
                 {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot be empty.");
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
-                }
-                if (IsNameAlreadyexists(repositoryItem, resultValue.Trim()))
+                }               
+                if (repositoryItem != null && IsNameAlreadyexists(repositoryItem, resultValue.Trim()))
                 {
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline, repositoryItem);
                 }
@@ -370,16 +370,19 @@ namespace GingerCore
             return returnWindow;
         }
         public static bool IsNameAlreadyexists(RepositoryItemBase repositoryItem ,string resultValue)
-        {           
+        {
+           
+
+
                 switch (repositoryItem.GetItemType())
-                {     
+                {
                     case "BusinessFlow":
-                    ObservableList<BusinessFlow> BFList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();                        
-                        if(BFList.Any(x =>x.Name == resultValue))
+                        ObservableList<BusinessFlow> BFList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                        if (BFList.Any(x => x.Name == resultValue))
                         {
                             Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Business flow with same name: " + "'" + resultValue + "'" + " already exists.");
                             return true;
-                        }                                                   
+                        }
                         break;
                     case "Agent":
                         ObservableList<Agent> Agentist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
@@ -387,7 +390,7 @@ namespace GingerCore
                         {
                             Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Agent with same name: " + "'" + resultValue + "'" + " already exists.");
                             return true;
-                        }                       
+                        }
                         break;
                     case "ReportTemplate":
                         if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ReportTemplate>() where x.Name == resultValue select x).SingleOrDefault() != null)
@@ -395,7 +398,7 @@ namespace GingerCore
                             Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Template with same name: " + "'" + resultValue + "'" + " already exists.");
                             return true;
                         }
-                        
+
                         break;
                     case "ApplicationPOMModel":
                         if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == resultValue select x).SingleOrDefault() != null)
@@ -403,7 +406,7 @@ namespace GingerCore
                             Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "POM Model with same name: " + "'" + resultValue + "'" + " already exists.");
                             return true;
                         }
-                      
+
                         break;
                     case "EnvApplication":
                         if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<EnvApplication>() where x.Name == resultValue select x).SingleOrDefault() != null)
@@ -411,7 +414,7 @@ namespace GingerCore
                             Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Application with same name: " + "'" + resultValue + "'" + " already exists.");
                             return true;
                         }
-                    
+
                         break;
                     case "HTMLReportTemplate":
                         if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>() where x.Name == resultValue select x).SingleOrDefault() != null)
@@ -419,10 +422,10 @@ namespace GingerCore
                             Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Report Template with same name: " + "'" + resultValue + "'" + " already exists.");
                             return true;
                         }
-                       
+
                         break;
-                default:
-                    return false;
+                    default:
+                        return false;
                 }
             
             return false;
