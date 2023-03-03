@@ -1387,7 +1387,20 @@ namespace GingerCore.Drivers
             Size viewportSize = new();
             viewportSize.Width = (int)(long)javaScriptExecutor.ExecuteScript("return window.innerWidth");
             viewportSize.Height = (int)(long)javaScriptExecutor.ExecuteScript("return window.innerHeight");
-            double devicePixelRatio = (double)javaScriptExecutor.ExecuteScript("return window.devicePixelRatio");
+            object devicePixelRatioAsObject = javaScriptExecutor.ExecuteScript("return window.devicePixelRatio");
+            double devicePixelRatio;
+            if (double.TryParse(devicePixelRatioAsObject.ToString(), out double devicePixelRatioAsDouble))
+            {
+                devicePixelRatio = devicePixelRatioAsDouble;
+            }
+            else if (long.TryParse(devicePixelRatioAsObject.ToString(), out long devicePixelRatioAsLong))
+            {
+                devicePixelRatio = (double)devicePixelRatioAsLong;
+            }
+            else
+            {
+                throw new NotImplementedException($"Cannot cast device pixel ratio value {devicePixelRatioAsObject.ToString()}. Value is of type {devicePixelRatioAsObject.GetType().FullName}.");
+            }
 
             return TargetFrameworkHelper.Helper.GetBrowserHeaderScreenshot(browserWindowPosition, browserWindowSize, viewportSize, devicePixelRatio);
         }
