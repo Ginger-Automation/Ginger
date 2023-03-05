@@ -1,0 +1,47 @@
+name: dockerdemo
+
+on:
+  workflow_dispatch: 
+    inputs:
+      Version:
+        type: string 
+        required: true
+  workflow_call:
+  
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: Deploy
+    permissions:
+      contents: read
+      packages: write
+    
+    env:
+      BUILD_CONFIGURATION: Release
+      
+    steps: 
+      - name: Download Airtifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: ginger-artifact
+    
+      - name: Building new docker image
+        run: |
+          cd Ginger/GingerRuntime
+          docker build -t ginger .
+        
+      - name: Change image tag to be pushed for GHCR
+        run: |
+          docker tag ginger ghcr.io/${{ github.actor }}/ginger:${{github.event.inputs.Version}}
+                    
+      - name: Log in to the Container registry - GHCR
+        run: | 
+          docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} 
+          
+      - name: Pushing Ginger Image
+        run: | 
+          docker push ghcr.io/${{ github.actor }}/ginger:${{github.event.inputs.Version}}

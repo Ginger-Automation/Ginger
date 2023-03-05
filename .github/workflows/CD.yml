@@ -6,7 +6,7 @@ on:
           Version:
             type: string 
             required: true
-
+            default: '23.8.1.5'
 jobs:
                
     CI:
@@ -24,3 +24,9 @@ jobs:
         name: Deploy
         needs: Release
         uses: Ginger-Automation/Ginger/.github/workflows/Deploy.yml@master
+
+    Docker:
+        name: Docker
+        needs: CI
+        uses: Ginger-Automation/Ginger/.github/workflows/dockerdemo.yml@master
+        secrets: inherit
