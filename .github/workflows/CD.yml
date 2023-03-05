@@ -28,5 +28,5 @@ jobs:
     Docker:
         name: Docker
         needs: CI
-        uses: Ginger-Automation/Ginger/.github/workflows/dockerdemo.yml@master
+        uses: Ginger-Automation/Ginger/.github/workflows/Docker.yml@master
         secrets: inherit

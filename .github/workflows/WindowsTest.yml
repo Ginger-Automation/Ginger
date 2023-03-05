@@ -109,11 +109,11 @@ jobs:
 # Install msbild && Build Ginger Solution
 # ------------------------------------------------------------------------------------------------------
       - name: Add msbuild to PATH
-        if: ${{github.event_name == 'workflow_dispatch'}} 
+        if: ${{github.workflow == 'Ginger Windows Test'}} 
         uses: microsoft/setup-msbuild@v1.0.2       
 
       - name: Build Ginger Solution
-        if: ${{github.event_name == 'workflow_dispatch'}} 
+        if: ${{github.workflow == 'Ginger Windows Test'}} 
         run: msbuild ./Ginger/Ginger.sln /p:DebugSymbols=true /p:DebugType=full /p:Configuration=$env:BUILD_CONFIGURATION
           
 # ------------------------------------------------------------------------------------------------------

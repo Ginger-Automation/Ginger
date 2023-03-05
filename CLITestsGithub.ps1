@@ -2,7 +2,7 @@ echo "-------------------------------------------------------------"
 echo "-                         Run CLI Tests                     -"
 echo "-------------------------------------------------------------"
 
-cd /home/runner/work/Ginger/Ginger/Ginger/GingerRuntime/bin/Release/net6.0/publish/
+cd /home/runner/work/Ginger/Ginger/Ginger/GingerRuntime/bin/Release/net6.0/linux-x64/
 pwd
 ls -alt
 

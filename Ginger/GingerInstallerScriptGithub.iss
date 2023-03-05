@@ -21,10 +21,10 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\Amdocs\{#MyAppName}
-LicenseFile=D:\a\Ginger\Ginger\Installet\extention\License.rtf
+LicenseFile=D:\a\Ginger\Ginger\Extensions\License.rtf
 OutputDir=D:\a\Installers
 OutputBaseFilename="Ginger"
-SetupIconFile=D:\a\Ginger\Ginger\Installet\extention\GingerIconNew.ico
+SetupIconFile=D:\a\Ginger\Ginger\Extensions\GingerIconNew.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 UninstallDisplayName= {#MyAppName} 
 Compression=lzma
@@ -46,9 +46,9 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Files]
 Source: "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net6.0-windows\Ginger.exe"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall:DetectAndInstallPrerequisites;
 Source: "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net6.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;
-Source: "D:\a\Ginger\Ginger\Installet\extention\DotnetDependencies\netcorecheck_x64.exe"; Flags: dontcopy deleteafterinstall noencryption
-Source: "D:\a\Ginger\Ginger\Installet\extention\DotnetDependencies\windowsdesktop-runtime-6.0.6-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
-Source: "D:\a\Ginger\Ginger\Installet\extention\DotnetDependencies\aspnetcore-runtime-6.0.6-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
+Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\netcorecheck_x64.exe"; Flags: dontcopy deleteafterinstall noencryption
+Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\windowsdesktop-runtime-6.0.6-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
+Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\aspnetcore-runtime-6.0.6-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
 ;NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 
