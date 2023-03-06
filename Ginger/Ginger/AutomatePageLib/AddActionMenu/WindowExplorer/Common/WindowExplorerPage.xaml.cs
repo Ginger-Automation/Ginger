@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1279,7 +1279,7 @@ namespace Ginger.WindowExplorer
                 double rectangleHeight = clickedElementInfo.Height;
 
                 if(((DriverBase)mWindowExplorerDriver).SetRectangleProperties(ref ElementStartPoint, ref ElementMaxPoint, mScreenShotViewPage.xMainImage.Source.Width, mScreenShotViewPage.xMainImage.Source.Height,
-                    mScreenShotViewPage.xMainImage.ActualWidth, mScreenShotViewPage.xMainImage.ActualHeight, clickedElementInfo, false))
+                    mScreenShotViewPage.xMainImage.ActualWidth, mScreenShotViewPage.xMainImage.ActualHeight, clickedElementInfo))
                 {
                     /// Driver/Platform specific calculations
                     rectangleWidth = ElementMaxPoint.X - ElementStartPoint.X;

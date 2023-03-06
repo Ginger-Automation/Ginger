@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -277,9 +277,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
         }
 
+        private AutoResetEvent? mSetTreeNodeItemChildsEvent = null;
+
         private void SetTreeNodeItemChilds(TreeViewItem TVI)
         {
             // TODO: remove temp code after cleanup 
+            
             if (TVI.Tag is ITreeViewItem)
             {
                 ITreeViewItem ITVI = (ITreeViewItem)TVI.Tag;
@@ -290,25 +293,31 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 TVI.Items.Clear();
                 if (Childs != null)
                 {
-                    foreach (ITreeViewItem item in Childs)
+                    Task.Run(() =>
                     {
-                        if (TreeChildFolderOnly == true && item.IsExpandable() == false)
+                        mSetTreeNodeItemChildsEvent = new AutoResetEvent(false);
+                        foreach (ITreeViewItem item in Childs)
                         {
-                            continue;
-                        }
-                        if (TreeNodesFilterByField != null)
-                        {
-                            if (IsTreeItemFitsFilter(item))
-                            {
-                                AddItem(item, TVI);
-                            }
-                        }
-                        else
-                        {
-                            AddItem(item, TVI);
-                        }
 
-                    }
+                            if (TreeChildFolderOnly == true && item.IsExpandable() == false)
+                            {
+                                continue;
+                            }
+                            if (TreeNodesFilterByField != null)
+                            {
+                                if (IsTreeItemFitsFilter(item))
+                                {
+                                    Dispatcher.Invoke(() => AddItem(item, TVI));
+                                }
+                            }
+                            else
+                            {
+                                Dispatcher.Invoke(() => AddItem(item, TVI));
+                            }
+                            Thread.Sleep(5);
+                        }
+                        mSetTreeNodeItemChildsEvent.Set();
+                    });
                 }
             }
         }
@@ -762,20 +771,28 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             TVI.Focus();
         }
 
-        public ITreeViewItem GetChildItembyNameandSelect(string nodeName, ITreeViewItem Parent = null)
+        public void GetChildItembyNameandSelect(string nodeName, ITreeViewItem Parent = null)
         {
-            TreeViewItem TVI = (TreeViewItem)Tree.Items[0];
-            if (Parent != null)
+            Task.Run(() => 
             {
-                TVI = SearchTVIRecursive((TreeViewItem)Tree.Items[0], Parent);
-                TVI.IsExpanded = true;
-                GingerCore.General.DoEvents();
-            }
+                if(mSetTreeNodeItemChildsEvent != null)
+                {
+                    mSetTreeNodeItemChildsEvent.WaitOne();
+                }
+                Dispatcher.Invoke(() =>
+                {
+                    TreeViewItem TVI = (TreeViewItem)Tree.Items[0];
+                    if (Parent != null)
+                    {
+                        TVI = SearchTVIRecursive((TreeViewItem)Tree.Items[0], Parent);
+                        TVI.IsExpanded = true;
+                        GingerCore.General.DoEvents();
+                    }
 
-            TreeViewItem TVIChild = ExpandNodeByNameTVIRecursive(TVI, nodeName, true, false);
-            TVIChild.Focus();
-
-            return (ITreeViewItem)TVIChild.Tag;
+                    TreeViewItem TVIChild = ExpandNodeByNameTVIRecursive(TVI, nodeName, true, false);
+                    TVIChild.Focus();
+                });
+            });
         }
 
         public void SelectFirstVisibleChildItem(ItemCollection treeItems, List<Type> childTypes)

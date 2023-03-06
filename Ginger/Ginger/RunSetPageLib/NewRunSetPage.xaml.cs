@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1417,7 +1417,7 @@ namespace Ginger.Run
         {
             try
             {
-                bool isSolutionSame = mRunSetConfig!= null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
+                bool isSolutionSame = mRunSetConfig != null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;
                 if (bIsRunsetDirty && !IsCalledFromxUndoBtn)
                 {
@@ -1594,7 +1594,7 @@ namespace Ginger.Run
                 newRunner.PropertyChanged += Runner_PropertyChanged;
                 newRunner.ApplicationAgents.CollectionChanged -= RunnerApplicationAgents_CollectionChanged;
                 newRunner.ApplicationAgents.CollectionChanged += RunnerApplicationAgents_CollectionChanged;
-                WorkSpace.Instance.RunsetExecutor.InitRunner(newRunner,(GingerExecutionEngine)newRunner.Executor);
+                WorkSpace.Instance.RunsetExecutor.InitRunner(newRunner, (GingerExecutionEngine)newRunner.Executor);
                 if (Count != index && index > 0) //TODO : Check if need to add in between runner.
                 {
                     mRunSetConfig.GingerRunners.Insert(index, newRunner);
@@ -2557,7 +2557,7 @@ namespace Ginger.Run
         private void duplicateRunner(GingerExecutionEngine runner)
         {
             if (CheckIfExecutionIsInProgress()) { return; }
-             
+
             if (runner != null)
             {
                 GingerRunner GR = runner.GingerRunner;
@@ -2791,8 +2791,10 @@ namespace Ginger.Run
             }
             if (!ExportResultsToALMConfigPage.Instance.IsProcessing)
             {
-                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
-                ExportResultsToALMConfigPage.Instance.ShowAsWindow();
+                if (ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false)))
+                {
+                    ExportResultsToALMConfigPage.Instance.ShowAsWindow();
+                }
             }
             else
             {

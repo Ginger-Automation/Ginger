@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -74,9 +74,6 @@ namespace Amdocs.Ginger.Common
         // CDL
         public bool ShowCDL { get { return GetFeature(nameof(ShowCDL)).Selected; } set { UpdateFeature(nameof(ShowCDL), value); } }
 
-        // AutoGenerateActivities
-        public bool AutoGenerateActivities { get { return GetFeature(nameof(AutoGenerateActivities)).Selected; } set { UpdateFeature(nameof(AutoGenerateActivities), value); } }
-
         public BetaFeatures()
         {
             // Env
@@ -106,9 +103,6 @@ namespace Amdocs.Ginger.Common
 
             //CDL            
             mFeatures.Add(new BetaFeature() { Group = "CDL", Description = "Show CDL - Change Definition Language", ID = nameof(ShowCDL) });
-
-            //AutoGenerateActivities            
-            mFeatures.Add(new BetaFeature() { Group = "Auto Generate Flows", Description = "Auto Generate Activities Based on POM Metadata", ID = nameof(AutoGenerateActivities) });
 
             //hook prop change
             foreach (BetaFeature f in mFeatures)

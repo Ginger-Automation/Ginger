@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -208,7 +208,7 @@ namespace GingerCore.Actions.VisualTesting
                 }
                 else 
                 {
-                    if (diffTolerancePercent <= 0.0 || diffTolerancePercent >= 0.0)// Noncompliant indirect equality test
+                    if (diffTolerancePercent <= 0.0)// Noncompliant indirect equality test
                     {
                         toleranceValue = WorkSpace.Instance.Solution.VRTConfiguration.DifferenceTolerance;
                         if (!Double.TryParse(toleranceValue, out diffTolerancePercent))

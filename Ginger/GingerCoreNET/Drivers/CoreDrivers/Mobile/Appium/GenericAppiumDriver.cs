@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ limitations under the License.
 
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfiguredEnumType(typeof(eDeviceSource))]
         [UserConfiguredDefault("LocalAppium")]
         [UserConfiguredDescription("Device Source is Local Appium or UFTM Mobile Lab")]
-        public eDevicePlatformType DeviceSource { get; set; }
+        public eDeviceSource DeviceSource { get; set; }
 
         [UserConfigured]
         [UserConfiguredEnumType(typeof(eAppType))]
@@ -152,6 +152,9 @@ namespace Amdocs.Ginger.CoreNET
 
         bool mIsDeviceConnected = false;
         string mDefaultURL = null;
+
+        public double SourceMobileImageWidthConvertFactor = 1;
+        public double SourceMobileImageHeightConvertFactor = 1;
 
         public bool IsDeviceConnected
         {
@@ -203,6 +206,7 @@ namespace Amdocs.Ginger.CoreNET
         public override void StartDriver()
         {
             mIsDeviceConnected = ConnectToAppium();
+            CalculateSourceMobileImageConvertFactors();
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
 
@@ -357,6 +361,10 @@ namespace Amdocs.Ginger.CoreNET
                     else if (UserCapability.Parameter == "deviceName")
                     {
                         driverOptions.DeviceName = UserCapability.Value;
+                    }
+                    else if (UserCapability.Parameter == "browserName")
+                    {
+                        driverOptions.BrowserName = UserCapability.Value;
                     }
                     else
                     {
@@ -2813,42 +2821,34 @@ namespace Amdocs.Ginger.CoreNET
             return foundNode != null ? await GetElementInfoforXmlNode(foundNode) : null;
         }
 
+
+        private void CalculateSourceMobileImageConvertFactors()
+        {
+            SourceMobileImageWidthConvertFactor = 1;
+            SourceMobileImageHeightConvertFactor = 1;
+
+            if (AppType == eAppType.Web)
+            {
+                SourceMobileImageWidthConvertFactor = 3;
+                SourceMobileImageHeightConvertFactor = 3;
+            }
+            else
+            {
+                if (DeviceSource != eDeviceSource.MicroFoucsUFTMLab)
+                {
+                    SourceMobileImageWidthConvertFactor = 2;
+                    SourceMobileImageHeightConvertFactor = 2;
+                }
+            }
+
+        }
+
         public override Point GetPointOnAppWindow(Point clickedPoint, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight)
         {
             Point pointOnAppScreen = new Point();
             double ratio_X = 1, ratio_Y = 1;
-
-            switch (DevicePlatformType)
-            {
-                case eDevicePlatformType.Android:
-
-                    if (AppType == eAppType.Web)
-                    {
-                        ratio_X = (SrcWidth / 3) / ActWidth;
-                        ratio_Y = (SrcHeight / 3) / ActHeight;
-                    }
-                    else
-                    {
-                        ratio_X = SrcWidth / ActWidth;
-                        ratio_Y = SrcHeight / ActHeight;
-                    }
-
-                    break;
-                case eDevicePlatformType.iOS:
-
-                    if (AppType == eAppType.Web)
-                    {
-                        ratio_X = (SrcWidth / 3) / ActWidth;
-                        ratio_Y = (SrcHeight / 3) / ActHeight;
-                    }
-                    else
-                    {
-                        ratio_X = SrcWidth / ActWidth;
-                        ratio_Y = SrcHeight / ActHeight;
-                    }
-
-                    break;
-            }
+            ratio_X = (SrcWidth / SourceMobileImageWidthConvertFactor) / ActWidth;
+            ratio_Y = (SrcHeight / SourceMobileImageHeightConvertFactor) / ActHeight;
 
             pointOnAppScreen.X = (int)(clickedPoint.X * ratio_X);
             pointOnAppScreen.Y = (int)(clickedPoint.Y * ratio_Y);
@@ -2856,12 +2856,14 @@ namespace Amdocs.Ginger.CoreNET
             return pointOnAppScreen;
         }
 
-        public override bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, ElementInfo clickedElementInfo, bool AutoCorrectRectPropRequired)
+        public override bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, ElementInfo clickedElementInfo)
         {
             double ratio_X, ratio_Y;
-            int AutoCorrectRectProp = 1;
-
             XmlNode rectangleXmlNode = clickedElementInfo.ElementObject as XmlNode;
+
+            ratio_X = (SrcWidth / SourceMobileImageWidthConvertFactor) / ActWidth;
+            ratio_Y = (SrcHeight / SourceMobileImageHeightConvertFactor) / ActHeight;
+
             switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
@@ -2879,8 +2881,6 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     else
                     {
-                        ratio_X = SrcWidth / ActWidth;
-                        ratio_Y = SrcHeight / ActHeight;
 
                         string bounds = rectangleXmlNode != null ? (rectangleXmlNode.Attributes["bounds"] != null ? rectangleXmlNode.Attributes["bounds"].Value : "") : "";
                         bounds = bounds.Replace("[", ",");
@@ -2895,17 +2895,11 @@ namespace Amdocs.Ginger.CoreNET
                             ElementMaxPoints.Y = (int)(Convert.ToInt64(boundsXY[3]) / ratio_Y);
                         }
                     }
-
                     break;
 
                 case eDevicePlatformType.iOS:
                     if (AppType == eAppType.Web)
                     {
-                        //ratio_X = SrcWidth / ActWidth;
-                        //ratio_Y = SrcHeight / ActHeight;
-                        ratio_X = (SrcWidth / 2) / ActWidth;
-                        ratio_Y = (SrcHeight / 3) / ActHeight;
-
                         ElementStartPoints.X = (int)(ElementStartPoints.X / ratio_X);
                         ElementStartPoints.Y = (int)(ElementStartPoints.Y / ratio_Y);
                         ElementMaxPoints.X = (int)(ElementMaxPoints.X / ratio_X);
@@ -2913,12 +2907,6 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     else
                     {
-                        if (AutoCorrectRectPropRequired)
-                            AutoCorrectRectProp = 2;
-
-                        ratio_X = (SrcWidth / AutoCorrectRectProp) / ActWidth;
-                        ratio_Y = (SrcHeight / AutoCorrectRectProp) / ActHeight;
-
                         string x = GetAttrValue(rectangleXmlNode, "x");
                         string y = GetAttrValue(rectangleXmlNode, "y");
                         string hgt = GetAttrValue(rectangleXmlNode, "height");
@@ -2927,13 +2915,12 @@ namespace Amdocs.Ginger.CoreNET
                         ElementStartPoints.X = (int)(Convert.ToInt32(x) / ratio_X);
                         ElementStartPoints.Y = (int)(Convert.ToInt32(y) / ratio_Y);
 
-                        ElementMaxPoints.X = ElementStartPoints.X + (Convert.ToInt32(wdth) * AutoCorrectRectProp);
-                        ElementMaxPoints.Y = ElementStartPoints.Y + (Convert.ToInt32(hgt) * AutoCorrectRectProp);
+                        ElementMaxPoints.X = ElementStartPoints.X + Convert.ToInt32(Convert.ToInt32(wdth) / ratio_X);
+                        ElementMaxPoints.Y = ElementStartPoints.Y + Convert.ToInt32(Convert.ToInt32(hgt) / ratio_Y);
                     }
 
                     break;
             }
-
             return true;
         }
 
@@ -3199,6 +3186,20 @@ namespace Amdocs.Ginger.CoreNET
         public Dictionary<string, string> GetDeviceBatteryInfo()
         {
             return GetDeviceMetricsDict("batteryinfo").Result;
+        }
+
+        public Dictionary<string, string> GetDeviceActivityAndPackage()
+        {
+            if (DevicePlatformType == eDevicePlatformType.Android)
+            {
+                Dictionary<string, string> dict = new Dictionary<string, string>
+                {
+                    { "Activity",string.Concat(((AndroidDriver)Driver).CurrentPackage, ((AndroidDriver)Driver).CurrentActivity) },
+                    { "Package", ((AndroidDriver)Driver).CurrentPackage }
+                };
+                return dict;
+            }
+            return null;
         }
 
         public Dictionary<string, object> GetDeviceGeneralInfo()

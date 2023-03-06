@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -154,7 +154,7 @@ namespace Ginger.Actions.Communication
             xEmailConfigView.xFilterFolderSpecificRadioButton.IsChecked = mAct.FilterFolder == EmailReadFilters.eFolderFilter.Specific;
             xEmailConfigView.xFilterFolderAllRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
             xEmailConfigView.xFilterFolderSpecificRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
-            xEmailConfigView.xFilterFolderNameVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterFolderName));
+            xEmailConfigView.xFilterFolderNameVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterFolderNames));
             xEmailConfigView.xFilterFromVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterFrom));
             xEmailConfigView.xFilterToVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterTo));
             xEmailConfigView.xFilterSubjectVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterSubject));
@@ -165,8 +165,8 @@ namespace Ginger.Actions.Communication
             xEmailConfigView.xFilterAttachmentContentTypeVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterAttachmentContentType));
             xEmailConfigView.xDownloadAttachmentYesRadioButton.IsChecked = mAct.DownloadAttachments;
             xEmailConfigView.xDownloadAttachmentNoRadioButton.IsChecked = !mAct.DownloadAttachments;
-            xEmailConfigView.xDownloadAttachmentYesRadioButton.Checked += (_, _) => 
-                mAct.DownloadAttachments = xEmailConfigView.xDownloadAttachmentYesRadioButton.IsChecked ?? false;
+            xEmailConfigView.xDownloadAttachmentYesRadioButton.Checked += (_, _) => mAct.DownloadAttachments = true;
+            xEmailConfigView.xDownloadAttachmentNoRadioButton.Checked += (_, _) => mAct.DownloadAttachments = false;
             xEmailConfigView.xAttachmentDownloadPathVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.AttachmentDownloadPath));
             BindingHandler.ObjFieldBinding(xEmailConfigView.xFilterReceivedStartDateTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.FilterReceivedStartDate));
             BindingHandler.ObjFieldBinding(xEmailConfigView.xFilterReceivedEndDateTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.FilterReceivedEndDate));

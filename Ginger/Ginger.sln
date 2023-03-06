@@ -65,7 +65,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualRegressionTracker", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerTest", "GingerTest\GingerTest.csproj", "{0DDA6DC8-0F6A-4955-8425-2077C658EB7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerATS", "GingerATS\GingerATS.csproj", "{2FE010E3-F1BD-4F8D-91BA-E3C452FD62BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerATS", "GingerATS\GingerATS.csproj", "{2FE010E3-F1BD-4F8D-91BA-E3C452FD62BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

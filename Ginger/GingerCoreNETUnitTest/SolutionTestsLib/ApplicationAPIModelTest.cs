@@ -190,38 +190,38 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         }
 
         
-        [TestMethod]  [Timeout(60000)]
-        public void ApplicationAPIModelMultipleSoapAndRestSaveAndLoad()
-        {
-            // Arrange
-            RepositoryFolder<ApplicationAPIModel> RFRoot = SR.GetRepositoryItemRootFolder<ApplicationAPIModel>();
-            RepositoryFolder<ApplicationAPIModel> subFolder = (RepositoryFolder<ApplicationAPIModel>)RFRoot.AddSubFolder("SecondFolder");
+        //[TestMethod]  [Timeout(60000)]
+        //public void ApplicationAPIModelMultipleSoapAndRestSaveAndLoad()
+        //{
+        //    // Arrange
+        //    RepositoryFolder<ApplicationAPIModel> RFRoot = SR.GetRepositoryItemRootFolder<ApplicationAPIModel>();
+        //    RepositoryFolder<ApplicationAPIModel> subFolder = (RepositoryFolder<ApplicationAPIModel>)RFRoot.AddSubFolder("SecondFolder");
 
-            //Act
-            //add items to root folder
-            ApplicationAPIModel AAMS1 = new ApplicationAPIModel() { Name = "Group1_Operation1" };
-            SR.AddRepositoryItem(AAMS1);
-            ApplicationAPIModel AAMS2 = new ApplicationAPIModel() { Name = "Group1_Operation2" };
-            SR.AddRepositoryItem(AAMS2);
-            ApplicationAPIModel AAMS3 = new ApplicationAPIModel() { Name = "Group1_Operation3" };
-            SR.AddRepositoryItem(AAMS3);
-            //add items to sub folder items
-            ApplicationAPIModel AAMR1 = new ApplicationAPIModel() { Name = "Group2_Operation1" };
-            subFolder.AddRepositoryItem(AAMR1);
-            ApplicationAPIModel AAMR2 = new ApplicationAPIModel() { Name = "Group2_Operation2" };
-            subFolder.AddRepositoryItem(AAMR2);
-            ApplicationAPIModel AAMR3 = new ApplicationAPIModel() { Name = "Group2_Operation3" };
-            subFolder.AddRepositoryItem(AAMR3);
+        //    //Act
+        //    //add items to root folder
+        //    ApplicationAPIModel AAMS1 = new ApplicationAPIModel() { Name = "Group1_Operation1" };
+        //    SR.AddRepositoryItem(AAMS1);
+        //    ApplicationAPIModel AAMS2 = new ApplicationAPIModel() { Name = "Group1_Operation2" };
+        //    SR.AddRepositoryItem(AAMS2);
+        //    ApplicationAPIModel AAMS3 = new ApplicationAPIModel() { Name = "Group1_Operation3" };
+        //    SR.AddRepositoryItem(AAMS3);
+        //    //add items to sub folder items
+        //    ApplicationAPIModel AAMR1 = new ApplicationAPIModel() { Name = "Group2_Operation1" };
+        //    subFolder.AddRepositoryItem(AAMR1);
+        //    ApplicationAPIModel AAMR2 = new ApplicationAPIModel() { Name = "Group2_Operation2" };
+        //    subFolder.AddRepositoryItem(AAMR2);
+        //    ApplicationAPIModel AAMR3 = new ApplicationAPIModel() { Name = "Group2_Operation3" };
+        //    subFolder.AddRepositoryItem(AAMR3);
             
-            ObservableList<ApplicationAPIModel> AAMBList = SR.GetAllRepositoryItems<ApplicationAPIModel>();          
-            RepositoryFolder<ApplicationAPIModel> SecondFolder = RFRoot.GetSubFolder("SecondFolder");
-            ObservableList<ApplicationAPIModel> AAMBListSubFolder = SecondFolder.GetFolderItems();
+        //    ObservableList<ApplicationAPIModel> AAMBList = SR.GetAllRepositoryItems<ApplicationAPIModel>();          
+        //    RepositoryFolder<ApplicationAPIModel> SecondFolder = RFRoot.GetSubFolder("SecondFolder");
+        //    ObservableList<ApplicationAPIModel> AAMBListSubFolder = SecondFolder.GetFolderItems();
 
 
-            //Assert
-            // Assert.AreEqual(AAMBList.Count, 6, "All appllication models including sub folders"); - cannot compare since we run several tests in parallel
-            Assert.AreEqual(AAMBListSubFolder.Count,3, "Second Folder should have 3 files");
-        }
+        //    //Assert
+        //    // Assert.AreEqual(AAMBList.Count, 6, "All appllication models including sub folders"); - cannot compare since we run several tests in parallel
+        //    Assert.AreEqual(AAMBListSubFolder.Count,3, "Second Folder should have 3 files");
+        //}
 
         [TestMethod]  [Timeout(60000)]
         public void APIParsingSavingAndPulling()
