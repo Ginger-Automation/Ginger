@@ -906,7 +906,6 @@ namespace Amdocs.Ginger.CoreNET
                     case ActMobileDevice.eMobileDeviceAction.SwipeUp:
                         SwipeScreen(eSwipeSide.Up, 0.25);
                         break;
-
                     case ActMobileDevice.eMobileDeviceAction.SwipeLeft:
                         SwipeScreen(eSwipeSide.Left);
                         break;
@@ -965,25 +964,10 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.LockDevice:
-                        if (DevicePlatformType == eDevicePlatformType.Android)
-                        {
                             PerformLockButtonPress(eLockOperation.Lock);
-                        }
-                        else
-                        {
-                            act.Error = "Operation not supported for this mobile OS or application type.";
-                        }
                         break;
-
                     case ActMobileDevice.eMobileDeviceAction.UnlockDevice:
-                        if (DevicePlatformType == eDevicePlatformType.Android)
-                        {
                             PerformLockButtonPress(eLockOperation.UnLock);
-                        }
-                        else
-                        {
-                            act.Error = "Operation not supported for this mobile OS or application type.";
-                        }
                         break;
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceBattery:
                         AddReturnParamFromDict(GetDeviceBatteryInfo(), act);
@@ -1342,10 +1326,21 @@ namespace Amdocs.Ginger.CoreNET
                             break;
                         case eLockOperation.UnLock:
                             ((AndroidDriver)Driver).Unlock();
+                            System.Threading.Thread.Sleep(200);
+                            SwipeScreen(eSwipeSide.Up);
                             break;
                     }
                     break;
                 case eDevicePlatformType.iOS:
+                    switch (LockOperation)
+                    {
+                        case eLockOperation.Lock:
+                            ((IOSDriver)Driver).Lock();
+                            break;
+                        case eLockOperation.UnLock:
+                            ((IOSDriver)Driver).Unlock();
+                            break;
+                    }
                     break;
             }
 
