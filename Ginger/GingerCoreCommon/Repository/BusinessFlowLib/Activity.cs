@@ -126,7 +126,7 @@ namespace GingerCore
             //set fields default values
             mAutomationStatus = eActivityAutomationStatus.Development;
             mActionRunOption = eActionRunOption.StopActionsRunOnFailure;
-            Tags.CollectionChanged += (sender, e) => OnPropertyChanged(nameof(Tags));
+            Tags.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Tags));
         }
 
         public override string ToString()
