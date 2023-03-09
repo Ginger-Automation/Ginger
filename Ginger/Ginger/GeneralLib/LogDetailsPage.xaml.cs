@@ -19,10 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
-using OpenQA.Selenium.DevTools.V101.SystemInfo;
 using System;
-using System.Diagnostics;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;

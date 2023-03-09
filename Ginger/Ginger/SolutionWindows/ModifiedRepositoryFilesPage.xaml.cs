@@ -175,7 +175,6 @@ namespace Ginger.SolutionWindows
                            }
                        });
                    });
-                    Init();
                 }
             }
             catch (Exception ex)
@@ -189,6 +188,7 @@ namespace Ginger.SolutionWindows
                     loaderElement.Visibility = Visibility.Collapsed;
                     Reporter.HideStatusMessage();
                 });
+                genWin.Close();
             }
         }
         private void SelectAll(object sender, RoutedEventArgs e)

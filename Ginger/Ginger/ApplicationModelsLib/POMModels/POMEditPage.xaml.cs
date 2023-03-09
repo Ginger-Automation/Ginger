@@ -18,10 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET.Application_Models;
-using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.Agents;
@@ -30,14 +27,10 @@ using Ginger.Repository;
 using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
-using GingerCore.Drivers.Common;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using OpenQA.Selenium.DevTools.V100.DOM;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;

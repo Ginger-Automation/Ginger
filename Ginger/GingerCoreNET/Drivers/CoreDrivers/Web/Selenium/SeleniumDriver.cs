@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.GeneralLib;
@@ -31,13 +32,15 @@ using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.CommunicationProtocol;
 using GingerCore.Drivers.Selenium.SeleniumBMP;
+using GingerCoreNET.Drivers.CommonLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using SikuliStandard.sikuli_REST;
-using SikuliStandard.sikuli_UTIL;
 using HtmlAgilityPack;
 using InputSimulatorStandard;
+using Newtonsoft.Json;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.DevTools;
+using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Remote;
@@ -50,6 +53,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -57,19 +61,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Text;
-using OpenQA.Selenium.Edge;
-using OpenQA.Selenium.DevTools;
-using Newtonsoft.Json;
-using DevToolsSessionDomains = OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains;
-using OpenQA.Selenium.DevTools.V101.Network;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
-using GingerCoreNET.Drivers.CommonLib;
-using System.CodeDom.Compiler;
-using Microsoft.CSharp;
-using System.Globalization;
-using OpenQA.Selenium.Internal;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V110.DevToolsSessionDomains;
 
 namespace GingerCore.Drivers
 {
@@ -508,7 +500,7 @@ namespace GingerCore.Drivers
 
                         if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                         {
-                            options.AddArgument("--headless");
+                            options.AddArgument("--headless=new");
                         }
 
                         if (SeleniumUserArgs != null)
@@ -8275,7 +8267,7 @@ namespace GingerCore.Drivers
                     string elemId;
                     try
                     {
-                        elemId = ele.GetProperty("id");
+                        elemId = ele.GetDomProperty("id");
                         if (SSPageDoc == null)
                         {
                             SSPageDoc = new HtmlDocument();
@@ -9337,8 +9329,8 @@ namespace GingerCore.Drivers
 
             //DevTool Session 
             devToolsSession = devTools.GetDevToolsSession(101);
-            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V101.DevToolsSessionDomains>();
-            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V101.Network.EnableCommandSettings());
+            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V110.DevToolsSessionDomains>();
+            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V110.Network.EnableCommandSettings());
 
 
         }
@@ -9403,7 +9395,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                     }
 
-                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V101.Network.DisableCommandSettings());
+                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V110.Network.DisableCommandSettings());
                     devToolsSession.Dispose();
                     devTools.CloseDevToolsSession();
 
