@@ -16,37 +16,21 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using GingerCore.GeneralLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions.WebServices;
-using System.Net.Http;
-using System.Net.Security;
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using System.IO;
-using Org.BouncyCastle.X509;
 using Ginger.Run;
-using System.Reflection;
-using OpenQA.Selenium.DevTools.V99.DOM;
-using static System.Net.WebRequestMethods;
-using File = System.IO.File;
-using DocumentFormat.OpenXml.EMMA;
-using Microsoft.Graph;
-using Azure.Identity;
-using System.Text;
-using System.Threading.Tasks;
+using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using MongoDB.Driver;
-using Microsoft.Graph.Extensions;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Diagnostics;
-using GingerCore.DataSource;
-using GingerCore.Environments;
+using System.Net;
+using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
+using File = System.IO.File;
 
 namespace GingerCore.Actions.Communication
 {

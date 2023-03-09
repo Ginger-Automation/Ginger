@@ -56,11 +56,11 @@ namespace GingerCore.Drivers
             }
             metrics["mobile"] = driver.ExecuteScript("return typeof window.orientation !== 'undefined'");
             //Execute the emulation Chrome Command to change browser to a custom device that is the size of the entire page
-            driver.ExecuteChromeCommand("Emulation.setDeviceMetricsOverride", metrics);
+            driver.ExecuteCdpCommand("Emulation.setDeviceMetricsOverride", metrics);
             //You can then just screenshot it as it thinks everything is visible
             Screenshot screenshot = driver.GetScreenshot();
             //This command will return your browser back to a normal, usable form if you need to do anything else with it.
-            driver.ExecuteChromeCommand("Emulation.clearDeviceMetricsOverride", new Dictionary<string, Object>());
+            driver.ExecuteCdpCommand("Emulation.clearDeviceMetricsOverride", new Dictionary<string, Object>());
 
             return screenshot;
         }
