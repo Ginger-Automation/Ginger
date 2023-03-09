@@ -1103,6 +1103,11 @@ namespace Ginger.Drivers.DriversWindows
             PerformScreenSwipe(eSwipeSide.Up, 0.25);
         }
 
+        private void xSwipeUp_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            PerformScreenSwipe(eSwipeSide.Up, 0.5);
+        }
+
         private void xSwipeDown_Click(object sender, RoutedEventArgs e)
         {
             PerformScreenSwipe(eSwipeSide.Down, 0.25);
