@@ -24,7 +24,7 @@ namespace Ginger.Plugin.Platform.Web
     /// <summary>
     /// Exposes Browser Action
     /// </summary>
-    public interface IBrowserActions: IAlerts
+    public interface IBrowserActions : IAlerts
     {
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Ginger.Plugin.Platform.Web
         /// </summary>
         /// <param name="url"></param>
         /// <param name="OpenIn"></param>
-        void Navigate(string url,string OpenIn);
+        void Navigate(string url, string OpenIn);
         /// <summary>
         /// Gets  URL of Page currently Selected.
         /// </summary>

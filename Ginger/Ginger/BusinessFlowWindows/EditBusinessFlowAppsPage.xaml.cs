@@ -34,21 +34,21 @@ namespace Ginger.BusinessFlowWindows
     /// </summary>
     public partial class EditBusinessFlowAppsPage : Page
     {
-         BusinessFlow mBusinessFlow;
-         ObservableList<ApplicationPlatform> mApplicationsPlatforms = new ObservableList<ApplicationPlatform>();
-         GenericWindow _pageGenericWin = null;
-         private bool IsNewBusinessflow = false;
+        BusinessFlow mBusinessFlow;
+        ObservableList<ApplicationPlatform> mApplicationsPlatforms = new ObservableList<ApplicationPlatform>();
+        GenericWindow _pageGenericWin = null;
+        private bool IsNewBusinessflow = false;
         public EditBusinessFlowAppsPage(BusinessFlow BizFlow, bool IsNewBF = false)
-         {
-            
-             InitializeComponent();
+        {
 
-             this.Title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Target Application(s)";
+            InitializeComponent();
 
-             mBusinessFlow = BizFlow;
+            this.Title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Target Application(s)";
+
+            mBusinessFlow = BizFlow;
             IsNewBusinessflow = IsNewBF;
-             SetGridView();
-         }
+            SetGridView();
+        }
 
         private void SetGridView()
         {
@@ -84,7 +84,7 @@ namespace Ginger.BusinessFlowWindows
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
-       {
+        {
             if (IsNewBusinessflow == true)
             {
                 SetTargetApplications();
@@ -94,7 +94,7 @@ namespace Ginger.BusinessFlowWindows
                 }
             }
             else
-            {               
+            {
                 SetTargetApplications();
                 if (mBusinessFlow.TargetApplications.Count == 1)
                 {
@@ -104,7 +104,7 @@ namespace Ginger.BusinessFlowWindows
                     }
                 }
             }
-            if (mBusinessFlow.TargetApplications.Count > 0|| mApplicationsPlatforms.Count==0)
+            if (mBusinessFlow.TargetApplications.Count > 0 || mApplicationsPlatforms.Count == 0)
             {
                 _pageGenericWin.Close();
             }
@@ -114,7 +114,7 @@ namespace Ginger.BusinessFlowWindows
             }
         }
 
-        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog,bool ShowCancelButton=true)
+        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool ShowCancelButton = true)
         {
             Button okBtn = new Button();
             okBtn.Content = "Ok";
@@ -129,7 +129,7 @@ namespace Ginger.BusinessFlowWindows
         {
             foreach (var item in mApplicationsPlatforms)
             {
-                item.Selected=false;
+                item.Selected = false;
             }
         }
 
@@ -137,9 +137,9 @@ namespace Ginger.BusinessFlowWindows
         {
             //mBusinessFlow.TargetApplications.Clear();
             //remove deleted
-            for(int indx=0;indx< mBusinessFlow.TargetApplications.Count;indx++)
+            for (int indx = 0; indx < mBusinessFlow.TargetApplications.Count; indx++)
             {
-                if (mApplicationsPlatforms.Where(x=>x.Selected && x.AppName == mBusinessFlow.TargetApplications[indx].Name).FirstOrDefault() == null)
+                if (mApplicationsPlatforms.Where(x => x.Selected && x.AppName == mBusinessFlow.TargetApplications[indx].Name).FirstOrDefault() == null)
                 {
                     mBusinessFlow.TargetApplications.RemoveAt(indx);
                     indx--;
@@ -147,9 +147,9 @@ namespace Ginger.BusinessFlowWindows
             }
 
             //add new
-            foreach (ApplicationPlatform TA in mApplicationsPlatforms.Where(x=>x.Selected).ToList())
-            {                
-                if (mBusinessFlow.TargetApplications.Where(x=>x.Name == TA.AppName).FirstOrDefault() == null)
+            foreach (ApplicationPlatform TA in mApplicationsPlatforms.Where(x => x.Selected).ToList())
+            {
+                if (mBusinessFlow.TargetApplications.Where(x => x.Name == TA.AppName).FirstOrDefault() == null)
                 {
                     TargetApplication tt = new TargetApplication();
                     tt.AppName = TA.AppName;

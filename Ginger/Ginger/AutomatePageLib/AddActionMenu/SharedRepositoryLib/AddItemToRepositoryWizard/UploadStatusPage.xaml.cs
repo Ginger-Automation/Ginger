@@ -16,15 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using Amdocs.Ginger.Common;
 using Ginger.Repository.ItemToRepositoryWizard;
 using Ginger.UserControls;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Activities;
-using GingerCore.Variables;
 using GingerWPF.WizardLib;
+using System.Windows.Controls;
 
 namespace Ginger.Repository.AddItemToRepositoryWizard
 {
@@ -37,22 +33,22 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
         {
             InitializeComponent();
             SetSelectedItemsGridView();
-            itemStatusGrid.DataSourceList = UploadItemSelection.mSelectedItems;            
+            itemStatusGrid.DataSourceList = UploadItemSelection.mSelectedItems;
         }
 
         private void SetSelectedItemsGridView()
         {
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.Selected), StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10, ReadOnly=true});
+            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.Selected), StyleType = GridColView.eGridColStyleType.CheckBox, WidthWeight = 10, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ItemName), Header = "Item Name", WidthWeight = 25, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ItemUploadType), Header = "Item Upload Type", WidthWeight = 20, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.SelectedItemPart), Header="Part To Upload", WidthWeight=10 ,ReadOnly=true});
+            defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.SelectedItemPart), Header = "Part To Upload", WidthWeight = 10, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.ItemUploadStatus), Header = "Status", WidthWeight = 10, ReadOnly = true });
-           
+
             defView.GridColsView.Add(new GridColView() { Field = nameof(UploadItemSelection.Comment), StyleType = GridColView.eGridColStyleType.Text, Header = "Comment", WidthWeight = 20, ReadOnly = true });
             itemStatusGrid.SetAllColumnsDefaultView(defView);
-            itemStatusGrid.InitViewItems();     
+            itemStatusGrid.InitViewItems();
         }
 
         public UploadItemToRepositoryWizard UploadItemToRepositoryWizard;
@@ -66,15 +62,17 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             {
                 foreach (UploadItemSelection selectedItem in UploadItemSelection.mSelectedItems)
                 {
-                    if (selectedItem.Selected )
+                    if (selectedItem.Selected)
                     {
                         if (selectedItem.ItemUploadStatus != UploadItemSelection.eItemUploadStatus.Uploaded)
                         {
-                          (new SharedRepositoryOperations()).UploadItemToRepository(UploadItemToRepositoryWizard.Context, selectedItem);
+                            (new SharedRepositoryOperations()).UploadItemToRepository(UploadItemToRepositoryWizard.Context, selectedItem);
                         }
                     }
-                    else 
+                    else
+                    {
                         selectedItem.ItemUploadStatus = UploadItemSelection.eItemUploadStatus.Skipped;
+                    }
                 }
 
                 // UploadItemToRepositoryWizard.PrevVisible = false;

@@ -49,6 +49,6 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
         //                PlugInRootPath = PlugInSourcePath;
         //                PlugInType = ePluginType.System;
         //            }
-               
+
     }
 }

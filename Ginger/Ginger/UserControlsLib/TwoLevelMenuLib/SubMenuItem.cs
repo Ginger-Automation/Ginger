@@ -22,14 +22,14 @@ using System.Windows.Controls;
 
 namespace Ginger.TwoLevelMenuLib
 {
-    public class SubMenuItem: MenuItemBase
-    {       
+    public class SubMenuItem : MenuItemBase
+    {
         Page mItemPage = null;
         public Page ItemPage
         {
             get
             {
-                if (mItemPage==null)
+                if (mItemPage == null)
                 {
                     mItemPage = GetMenuItemPage();
                 }
@@ -57,7 +57,7 @@ namespace Ginger.TwoLevelMenuLib
             mItemPage = null;
         }
 
-        public Func<Page> GetMenuItemPage { get; }               
+        public Func<Page> GetMenuItemPage { get; }
 
         public SubMenuItem(eImageType iconType, string name, Func<Page> action, ConsoleKey key, string toolTip, string automationID)
         {
@@ -68,6 +68,6 @@ namespace Ginger.TwoLevelMenuLib
             ToolTip = toolTip;
             AutomationID = automationID;
             Active = true;
-        }       
+        }
     }
 }

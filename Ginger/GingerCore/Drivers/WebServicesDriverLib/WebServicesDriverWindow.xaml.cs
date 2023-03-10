@@ -39,7 +39,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public void ShowDriverWindow()
         {
             Show();
-  
+
             GingerDispatcher = new DriverWindowDispatcher(Dispatcher);
         }
 
@@ -58,7 +58,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
         public void updateResponseXMLText(string Response)
         {
-          RespXML.Text = Response;
+            RespXML.Text = Response;
         }
 
         public void UpdateStatusLabel(string status)

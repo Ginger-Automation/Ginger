@@ -17,17 +17,11 @@ limitations under the License.
 #endregion
 
 using GingerWPFUnitTest.POMs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace GingerTest.POMs.Common
-{    
+{
     public class TreeViewItemPOM : GingerPOMBase
     {
         TreeViewItem mTreeViewItem;
@@ -43,10 +37,11 @@ namespace GingerTest.POMs.Common
             get
             {
                 ContextMenuPOM CM = null;
-                Execute(() => {
+                Execute(() =>
+                {
                     // Trigger event so menu will be created for the MI
                     MouseButtonEventArgs e = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Right)
-                                                                        { RoutedEvent = Mouse.PreviewMouseDownEvent };
+                    { RoutedEvent = Mouse.PreviewMouseDownEvent };
                     mTreeViewItem.RaiseEvent(e);
 
                     ContextMenu contextMenu = mTreeViewItem.ContextMenu;

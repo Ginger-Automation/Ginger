@@ -16,11 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using System.ComponentModel;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.Run.RunSetActions;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace GingerCore.ALM
@@ -43,7 +41,7 @@ namespace GingerCore.ALM
         }
         public bool IsVariableInTCRunUsed { get; set; }
 
-        private string mVariableForTCRunName;        
+        private string mVariableForTCRunName;
         public string VariableForTCRunName
         {
             get
@@ -69,20 +67,20 @@ namespace GingerCore.ALM
                 handler(this, new PropertyChangedEventArgs(name));
             }
         }
-      
-        public string VariableForTCRunNameCalculated { get; set; }   
-                       
+
+        public string VariableForTCRunNameCalculated { get; set; }
+
         public bool ToAttachActivitiesGroupReport { get; set; }
-             
+
         public FilterByStatus FilterStatus { get; set; }
         public eALMType PublishALMType { get; set; }
-        public eALMTestSetLevel ALMTestSetLevel { get; set; } 
+        public eALMTestSetLevel ALMTestSetLevel { get; set; }
         public eExportType ExportType { get; set; }
         public ObservableList<ExternalItemFieldBase> AlmFields { get; set; }
         public string TestSetFolderDestination { get; set; }
         public string TestCaseFolderDestination { get; set; }
         public void CalculateTCRunName(IValueExpression ve)
-        {          
+        {
             if (IsVariableInTCRunUsed && (VariableForTCRunName != null) && (VariableForTCRunName != string.Empty))
             {
                 ve.Value = VariableForTCRunName;

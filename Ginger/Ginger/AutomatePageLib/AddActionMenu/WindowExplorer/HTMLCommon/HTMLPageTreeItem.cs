@@ -17,10 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.HTMLCommon
 {
@@ -36,8 +36,8 @@ namespace Ginger.WindowExplorer.HTMLCommon
             ObservableList<Act> list = new ObservableList<Act>();
 
             list.Add(new ActSwitchWindow()
-            {                
-                Description = "Switch to Window " + this.ElementInfo.ElementTitle, 
+            {
+                Description = "Switch to Window " + this.ElementInfo.ElementTitle,
             });
             return list;
         }

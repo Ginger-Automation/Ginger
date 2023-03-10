@@ -65,13 +65,13 @@ namespace Ginger.Reports
 
         public void ShowAsWindow()
         {
-                Button OKButton = new Button();
-                OKButton.Content = "Ok";
-                OKButton.Click += new RoutedEventHandler(OKButton_Click);
-                ObservableList<Button> winButtons = new ObservableList<Button>();
-                winButtons.Add(OKButton);
-                this.Title = "Select HTMl Report Template";
-                GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, eWindowShowStyle.Dialog , "Select HTMl Report Template", this, winButtons);            
+            Button OKButton = new Button();
+            OKButton.Content = "Ok";
+            OKButton.Click += new RoutedEventHandler(OKButton_Click);
+            ObservableList<Button> winButtons = new ObservableList<Button>();
+            winButtons.Add(OKButton);
+            this.Title = "Select HTMl Report Template";
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, eWindowShowStyle.Dialog, "Select HTMl Report Template", this, winButtons);
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)

@@ -27,7 +27,7 @@ namespace Ginger.Reports
         private ActReturnValue mActReturnValue;
 
         public ReturnValueReport(ActReturnValue ARV)
-        {            
+        {
             this.mActReturnValue = ARV;
         }
 
@@ -49,6 +49,6 @@ namespace Ginger.Reports
         public string Expected { get { return mActReturnValue.ExpectedCalculated; } }
 
         [JsonProperty]
-        public string Status { get { return mActReturnValue.Status.ToString() ; } }        
+        public string Status { get { return mActReturnValue.Status.ToString(); } }
     }
 }

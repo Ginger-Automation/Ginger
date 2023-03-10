@@ -16,20 +16,20 @@ limitations under the License.
 */
 #endregion
 
+using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using System.Collections.Generic;
 
 namespace GingerCore
 {
     public class DriverConfigParam : RepositoryItemBase
-    {        
+    {
 
         public static partial class Fields
         {
             public static string Parameter = "Parameter";
             public static string Value = "Value";
-            public static string Description = "Description";         
+            public static string Description = "Description";
         }
 
         string mParameter;

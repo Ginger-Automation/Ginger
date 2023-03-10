@@ -22,13 +22,9 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
-using Ginger.Actions;
 using Ginger.Actions._Common.ActUIElementLib;
 using Ginger.Actions.UserControls;
-using Ginger.ApplicationModelsLib.POMModels;
-using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowsLibNew.AddActionMenu;
-using Ginger.Reports;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
@@ -37,7 +33,6 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.GeneralLib;
-using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -46,17 +41,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger
 {
@@ -214,16 +201,19 @@ namespace Ginger
                     foreach (TabItem tab in xElementDetailsTabs.Items)
                     {
                         foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
-
+                        {
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (xElementDetailsTabs.SelectedItem == tab)
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                }
                                 else
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
-
-                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                                } ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
+                        }
                     }
 
                     if (xElementDetailsTabs.SelectedItem == xAddActionTab)
@@ -583,13 +573,19 @@ namespace Ginger
             if (SelectedElement != null)
             {
                 if (SelectedElement.Properties == null || SelectedElement.Properties.Count == 0)
+                {
                     SelectedElement.Properties = SelectedElement.GetElementProperties();
+                }
 
                 if (SelectedElement.Properties == null || SelectedElement.Properties.Count == 0)
+                {
                     SelectedElement.Properties = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties();
+                }
 
                 if (SelectedElement.Locators == null || SelectedElement.Locators.Count == 0)
+                {
                     SelectedElement.Locators = SelectedElement.GetElementLocators();
+                }
 
                 xPropertiesGrid.DataSourceList = GingerCore.General.ConvertListToObservableList(SelectedElement.Properties.Where(p => p.ShowOnUI).ToList());
                 xPropertiesGrid.DataSourceList = SelectedElement.Properties;
@@ -807,7 +803,9 @@ namespace Ginger
         void UpdateElementActionTab()
         {
             if (SelectedElement == null)
+            {
                 return;
+            }
 
             if (LocatorChanged)
             {

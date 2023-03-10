@@ -16,10 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Text;
 
 namespace Ginger.Plugin.Platform.WebService
 {

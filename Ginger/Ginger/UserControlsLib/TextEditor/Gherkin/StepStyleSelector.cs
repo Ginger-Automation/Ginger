@@ -22,7 +22,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
 namespace Ginger.GherkinLib
-{    
+{
     public class StepStyleSelector : StyleSelector
     {
         Style[] mStyles = null;
@@ -38,19 +38,19 @@ namespace Ginger.GherkinLib
                 SolidColorBrush backgroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString(variableColumnBackgroundColor[colorIndx % 8]);
                 rowStyle.Setters.Add(new Setter(DataGridColumnHeader.BackgroundProperty, backgroundColor));
                 mStyles[colorIndx] = rowStyle;
-            }                          
+            }
         }
 
         public override Style SelectStyle(object item, DependencyObject container)
         {
             if (mStyles == null)
-            {                
+            {
                 CreateStyles();
             }
             if (item is GherkinStep)
             {
                 GherkinStep step = (GherkinStep)item;
-                return mStyles[step.ColorIndex];                
+                return mStyles[step.ColorIndex];
             }
             return null;
         }

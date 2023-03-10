@@ -22,7 +22,6 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger;
-using Ginger.Repository;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
@@ -48,7 +47,7 @@ namespace UnitTests.NonUITests
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {            
+        {
             TargetFrameworkHelper.Helper = new DotNetFrameworkHelper();
 
             mBF = new BusinessFlow();
@@ -66,13 +65,13 @@ namespace UnitTests.NonUITests
             mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
             mGR.Executor.CurrentBusinessFlow = mBF;
             mGR.Executor.BusinessFlows.Add(mBF);
-            
-            
+
+
             Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-            
+
             if (((Solution)mGR.Executor.CurrentSolution).SolutionOperations == null)
             {
                 ((Solution)mGR.Executor.CurrentSolution).SolutionOperations = new SolutionOperations((Solution)mGR.Executor.CurrentSolution);
@@ -90,7 +89,7 @@ namespace UnitTests.NonUITests
         [ClassCleanup]
         public static void ClassCleanUp()
         {
-            
+
         }
 
         public static void AddApplicationAgent()
@@ -196,7 +195,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(action.Error, null, "Act.Error");
         }
 
-        
+
 
         [TestMethod]
         public void CloseAgentNullTest()
@@ -282,7 +281,7 @@ namespace UnitTests.NonUITests
             ActInputValue AIV = new ActInputValue();
             AIV.FilePath = "/catalog/book[2]";
             AIV.Value = "publisher";
-            AIV.Param= "/catalog/book[2]";
+            AIV.Param = "/catalog/book[2]";
             action.DynamicElements.Add(AIV);
             action.Active = true;
             action.AddNewReturnParams = true;

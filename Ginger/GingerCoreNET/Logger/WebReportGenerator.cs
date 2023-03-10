@@ -17,21 +17,19 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
-using LiteDB;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
+using Amdocs.Ginger.CoreNET.Utility;
+using Ginger.Reports;
+using Ginger.Reports.GingerExecutionReport;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Linq;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
-using Ginger.Reports;
-using Ginger.Reports.GingerExecutionReport;
-using Amdocs.Ginger.CoreNET.Utility;
-using System.Runtime.InteropServices;
 using System.Reflection;
+using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Logger
 {
@@ -58,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
             {
                 reportsResultFolder = reportResultsFolderPath;
             }
-            else 
+            else
             {
                 HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
                 reportsResultFolder = Path.Combine(ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder), "Reports", "Ginger-Web-Client");
@@ -68,7 +66,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
             {
                 string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", "Ginger-Web-Client");
                 Reporter.ToLog(eLogLevel.INFO, "Copying web report folder from: " + clientAppFolderPath);
-                
+
                 Reporter.ToLog(eLogLevel.INFO, "Copying web report folder to: " + ReportrootPath);
                 if (Directory.Exists(clientAppFolderPath))
                 {
@@ -84,7 +82,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Check WebReportFolder Error: " + ex.Message, ex);
             }
-            
+
             //get exeution data and replace
             LiteDbRunSet lightDbRunSet = new LiteDbRunSet();
             bool response = false;
@@ -96,7 +94,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 }
                 IoHandler.Instance.DeleteFoldersData(Path.Combine(ReportrootPath, "assets", "Execution_Data"));
                 IoHandler.Instance.DeleteFoldersData(Path.Combine(ReportrootPath, "assets", "screenshots"));
-                LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));              
+                LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
                 lightDbRunSet = dbManager.GetLatestExecutionRunsetData(runSetGuid);
                 PopulateMissingFields(lightDbRunSet, ReportrootPath);
                 RemoveSkippedItems(lightDbRunSet);
@@ -105,7 +103,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "RunNewHtmlReport,error :"+ex.ToString());
+                Reporter.ToLog(eLogLevel.ERROR, "RunNewHtmlReport,error :" + ex.ToString());
             }
             return lightDbRunSet;
         }
@@ -126,7 +124,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
             foreach (LiteDbRunner runner in liteDbRunSet.RunnersColl)
             {
                 runner.BusinessFlowsColl = runner.BusinessFlowsColl.Where(IsBusinessFlowNotSkipped).ToList();
-                foreach(LiteDbBusinessFlow businessFlow in runner.BusinessFlowsColl)
+                foreach (LiteDbBusinessFlow businessFlow in runner.BusinessFlowsColl)
                 {
                     businessFlow.ActivitiesColl = businessFlow.ActivitiesColl.Where(IsActivityNotSkipped).ToList();
                     foreach (LiteDbActivity activity in businessFlow.ActivitiesColl)
@@ -152,7 +150,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 strViewReport = strViewReport.Replace("<!--FULLREPORTPATH-->", Path.GetFileName(clientAppFolderPath));
                 System.IO.File.WriteAllText(Path.Combine(backDir, "viewreport.html"), strViewReport);
                 json = $"window.runsetData={json};";
-                
+
 #warning Report Fix MEN not stable approach 
                 StringBuilder pageDataSb = new StringBuilder();
                 pageDataSb.Append("file:///");
@@ -169,7 +167,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
 
                 if (shouldDisplayReport && !Assembly.GetEntryAssembly().FullName.ToUpper().Contains("CONSOLE"))
                 {
-                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = @browserPath,Arguments= taskCommand, UseShellExecute = true });
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = @browserPath, Arguments = taskCommand, UseShellExecute = true });
                     System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = backDir, UseShellExecute = true });
                 }
                 response = true;
@@ -182,7 +180,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
             return response;
         }
 
-        
+
         //TODO move it to utils class
         // Create test class
 
@@ -214,7 +212,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 {
                     runSetEnv.Add(liteDbRunner.Environment);
                 }
-                
+
                 liteDbRunner.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunner.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
 
                 liteDbRunner.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunner.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunner.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
@@ -226,7 +224,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 else { liteDbRunner.Elapsed = 0; }
                 foreach (LiteDbBusinessFlow liteDbBusinessFlow in liteDbRunner.BusinessFlowsColl)
                 {
-                   
+
                     liteDbBusinessFlow.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbBusinessFlow.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
 
                     liteDbBusinessFlow.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbBusinessFlow.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbBusinessFlow.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
@@ -238,12 +236,12 @@ namespace Amdocs.Ginger.CoreNET.Logger
                     else { liteDbBusinessFlow.Elapsed = 0; }
                     foreach (LiteDbActivity liteDbActivity in liteDbBusinessFlow.ActivitiesColl)
                     {
-                        
+
                         liteDbActivity.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbActivity.ChildExecutedItemsCount, liteDbActivity.ChildExecutableItemsCount));
 
                         liteDbActivity.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbActivity.ChildPassedItemsCount, liteDbActivity.ChildExecutableItemsCount));
 
-                        
+
                         if (liteDbActivity.Elapsed.HasValue)
                         {
                             liteDbActivity.Elapsed = Math.Round(liteDbActivity.Elapsed.Value / 1000, 4);
@@ -258,7 +256,10 @@ namespace Amdocs.Ginger.CoreNET.Logger
                             }
                             else { liteDbAction.Elapsed = 0; }
                             if ((!string.IsNullOrEmpty(liteDbAction.ExInfo)) && liteDbAction.ExInfo[liteDbAction.ExInfo.Length - 1] == '-')
+                            {
                                 liteDbAction.ExInfo = liteDbAction.ExInfo.Remove(liteDbAction.ExInfo.Length - 1);
+                            }
+
                             foreach (string screenshot in liteDbAction.ScreenShots)
                             {
                                 string fileName = Path.GetFileName(screenshot);

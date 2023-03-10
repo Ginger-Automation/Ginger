@@ -17,21 +17,19 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET;
+using Ginger.SolutionGeneral;
+using Ginger.UserControls;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
-using Ginger.UserControls;
-
-using GingerCore.Actions;
-using GingerCore.Actions.Common;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Windows.Input;
-using Ginger.SolutionGeneral;
-using Amdocs.Ginger.CoreNET;
 
 namespace Ginger.Actions.ActionConversion
 {
@@ -82,7 +80,11 @@ namespace Ginger.Actions.ActionConversion
         }
         private void MarkUnMarkAllActivities(bool ActiveStatus)
         {
-            if (grdGroups.DataSourceList.Count <= 0) return;
+            if (grdGroups.DataSourceList.Count <= 0)
+            {
+                return;
+            }
+
             if (grdGroups.DataSourceList.Count > 0)
             {
                 ObservableList<Activity> lstMarkUnMarkActivities = (ObservableList<Activity>)grdGroups.DataSourceList;
@@ -95,7 +97,11 @@ namespace Ginger.Actions.ActionConversion
         }
         private void MarkUnMarkAllActions(bool ActiveStatus)
         {
-            if (gridConvertibleActions.DataSourceList.Count <= 0) return;
+            if (gridConvertibleActions.DataSourceList.Count <= 0)
+            {
+                return;
+            }
+
             if (gridConvertibleActions.DataSourceList.Count > 0)
             {
                 ObservableList<ConvertableActionDetails> lstMarkUnMarkActions = (ObservableList<ConvertableActionDetails>)gridConvertibleActions.DataSourceList;
@@ -126,7 +132,9 @@ namespace Ginger.Actions.ActionConversion
         private void SetGridView()
         {
             if (isGridSet)
+            {
                 return;
+            }
             //Set the Data Grid columns
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
@@ -146,14 +154,18 @@ namespace Ginger.Actions.ActionConversion
             {
                 mBusinessFlow.CurrentActivity = (Activity)grdGroups.CurrentItem;
                 if (mBusinessFlow.CurrentActivity != null)
-                   ((Activity) mBusinessFlow.CurrentActivity).PropertyChanged += CurrentActivity_PropertyChanged;
+                {
+                    ((Activity)mBusinessFlow.CurrentActivity).PropertyChanged += CurrentActivity_PropertyChanged;
+                }
             }
         }
 
         private void CurrentActivity_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "HandlerType")
+            {
                 grdGroups.setDefaultView();
+            }
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
@@ -161,7 +173,7 @@ namespace Ginger.Actions.ActionConversion
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Actions Conversion", this);
         }
 
-        private bool DoExistingPlatformCheck(ObservableList<ConvertableActionDetails> lstActionToBeConverted) 
+        private bool DoExistingPlatformCheck(ObservableList<ConvertableActionDetails> lstActionToBeConverted)
         {
             // fetch list of existing platforms in the business flow
             List<ePlatformType> lstExistingPlatform = mSolution.ApplicationPlatforms.Where(x => mBusinessFlow.TargetApplications
@@ -170,7 +182,7 @@ namespace Ginger.Actions.ActionConversion
             // create list of missing platforms
             foreach (ConvertableActionDetails ACH in lstActionToBeConverted)
             {
-                if (ACH.Selected && !lstExistingPlatform.Contains(ACH.TargetPlatform) 
+                if (ACH.Selected && !lstExistingPlatform.Contains(ACH.TargetPlatform)
                     && !lstMissingPlatform.ContainsKey(ACH.TargetPlatform))
                 {
                     lstMissingPlatform.Add(ACH.TargetPlatform, ACH.TargetActionTypeName);
@@ -184,7 +196,9 @@ namespace Ginger.Actions.ActionConversion
                 {
                     // ask the user if he wants to continue with the conversion, if there are missing target platforms
                     if (Reporter.ToUser(eUserMsgKey.MissingTargetPlatformForConversion, item.Value, item.Key) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                    {
                         return false;
+                    }
                 }
             }
             return true;
@@ -247,7 +261,9 @@ namespace Ginger.Actions.ActionConversion
                                     newActivity.Active = false;
                                 }
                                 else
+                                {
                                     newActivity.Active = true;
+                                }
 
                                 // by default, set the old activity as inactive
                                 oldActivity.Active = false;
@@ -258,7 +274,9 @@ namespace Ginger.Actions.ActionConversion
                                     newActivity.TargetApplication = cmbTargetApp.SelectedValue.ToString();
                                 }
                                 else
+                                {
                                     newActivity.TargetApplication = string.Empty;
+                                }
                             }
                         }
                     }
@@ -295,14 +313,16 @@ namespace Ginger.Actions.ActionConversion
                                     activity.TargetApplication = cmbTargetApp.SelectedValue.ToString();
                                 }
                                 else
+                                {
                                     activity.TargetApplication = string.Empty;
+                                }
                             }
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - " , ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - ", ex);
                     Reporter.ToUser(eUserMsgKey.ActivitiesConversionFailed);
                 }
                 finally
@@ -345,7 +365,10 @@ namespace Ginger.Actions.ActionConversion
                                 newConvertibleActionType.SourceActionType = act.GetType();
                                 newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
                                 if (newConvertibleActionType.TargetActionType == null)
+                                {
                                     continue;
+                                }
+
                                 newConvertibleActionType.TargetActionTypeName = ((IObsoleteAction)act).TargetActionTypeName();
                                 newConvertibleActionType.ActionCount = 1;
                                 newConvertibleActionType.Actions.Add(act);
@@ -386,11 +409,14 @@ namespace Ginger.Actions.ActionConversion
                 }
             }
             else
+            {
                 gridConvertibleActions.Visibility = Visibility.Collapsed;
-                btnConvert.Visibility = Visibility.Collapsed;
-                conversionConfigLblPanel.Visibility = Visibility.Collapsed;
-                conversionConfigRadBtnPanel.Visibility = Visibility.Collapsed;
-                Reporter.ToUser(eUserMsgKey.NoActivitySelectedForConversion);
+            }
+
+            btnConvert.Visibility = Visibility.Collapsed;
+            conversionConfigLblPanel.Visibility = Visibility.Collapsed;
+            conversionConfigRadBtnPanel.Visibility = Visibility.Collapsed;
+            Reporter.ToUser(eUserMsgKey.NoActivitySelectedForConversion);
 
 
         }

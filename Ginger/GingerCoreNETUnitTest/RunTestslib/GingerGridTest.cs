@@ -47,7 +47,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
             // Add 2 Ginger Nodes with Dummy Driver
             DummyDriver DummyDriver1 = new DummyDriver();
 
-            Task.Factory.StartNew(() => {
+            Task.Factory.StartNew(() =>
+            {
                 GingerNodeStarter gingerNodeStarter = new GingerNodeStarter();
                 gingerNodeStarter.StartNode("N1", new DummyDriver(), SocketHelper.GetLocalHostIP(), HubPort);
                 gingerNodeStarter.StartNode("N2", new DummyDriver(), SocketHelper.GetLocalHostIP(), HubPort);
@@ -58,7 +59,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             while (GG.NodeList.Count < 2 && stopwatch.ElapsedMilliseconds < 5000)  // max 5 seconds
             {
                 Thread.Sleep(50);
-            }            
+            }
         }
 
         [ClassCleanup]
@@ -81,8 +82,9 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
 
 
-        
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void ListGingerNodes()
         {
             //Arrange  
@@ -123,7 +125,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         //}
 
 
-       
+
 
     }
 

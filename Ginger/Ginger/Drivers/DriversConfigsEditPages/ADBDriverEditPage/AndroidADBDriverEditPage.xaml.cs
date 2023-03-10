@@ -16,21 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.Drivers.AndroidDeviceADBLib;
+using Ginger.Drivers.Common;
+using GingerCore;
+using GingerCore.Drivers.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.Drivers.AndroidDeviceADBLib;
-using Ginger.Drivers.Common;
-using GingerCore;
-using GingerCore.Drivers.AndroidADB;
-using GingerCore.Drivers.Common;
-using SharpAdbClient;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Drivers.DriversConfigsEditPages
 {
@@ -44,16 +41,19 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         public AndroidADBDriverEditPage(GingerCore.Agent mAgent)
         {
             InitializeComponent();
-            
+
             this.mAgent = mAgent;
 
 
-            if (mAgent.DriverConfiguration == null) mAgent.DriverConfiguration = new ObservableList<DriverConfigParam>();
+            if (mAgent.DriverConfiguration == null)
+            {
+                mAgent.DriverConfiguration = new ObservableList<DriverConfigParam>();
+            }
 
-            DriverConfigParam ModelDCP = mAgent.GetOrCreateParam("Model" , "");
+            DriverConfigParam ModelDCP = mAgent.GetOrCreateParam("Model", "");
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceModelTextBox, TextBox.TextProperty, ModelDCP, "Value");
 
-            DriverConfigParam SerialDCP = mAgent.GetOrCreateParam("Serial" , "");
+            DriverConfigParam SerialDCP = mAgent.GetOrCreateParam("Serial", "");
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DeviceSerialTextBox, TextBox.TextProperty, SerialDCP, "Value");
 
             DriverConfigParam LaunchEmulatorCommand = mAgent.GetOrCreateParam("LaunchEmulatorCommand", "");
@@ -84,7 +84,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             string args = "-avd " + EmulatorsComboBox.SelectedValue.ToString() + " " + LaunchEmulatorCommandTextBox.Text;
             string EmulatorEXE = GetAndroidHome() + @"\tools\emulator.exe";
             Process prcsCMD = new Process();
-            prcsCMD.StartInfo.FileName = EmulatorEXE;   
+            prcsCMD.StartInfo.FileName = EmulatorEXE;
             prcsCMD.StartInfo.UseShellExecute = true;
             prcsCMD.StartInfo.Arguments = args;
             prcsCMD.StartInfo.RedirectStandardOutput = false;
@@ -98,35 +98,35 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         public string ExecuteCommandSync(string command)
         {
-                // create the ProcessStartInfo using "cmd" as the program to be run,
-                // and "/c " as the parameters.
-                // Incidentally, /c tells cmd that we want it to execute the command that follows,
-                // and then exit.
-                System.Diagnostics.ProcessStartInfo procStartInfo =
-                new System.Diagnostics.ProcessStartInfo("cmd", "/c \"" + command +"\"");
+            // create the ProcessStartInfo using "cmd" as the program to be run,
+            // and "/c " as the parameters.
+            // Incidentally, /c tells cmd that we want it to execute the command that follows,
+            // and then exit.
+            System.Diagnostics.ProcessStartInfo procStartInfo =
+            new System.Diagnostics.ProcessStartInfo("cmd", "/c \"" + command + "\"");
 
-                // The following commands are needed to redirect the standard output.
-                // This means that it will be redirected to the Process.StandardOutput StreamReader.
-                procStartInfo.RedirectStandardOutput = true;
-                procStartInfo.UseShellExecute = false;
-                // Do not create the black window.
-                procStartInfo.CreateNoWindow = true;
-                // Now we create a process, assign its ProcessStartInfo and start it
-                System.Diagnostics.Process proc = new System.Diagnostics.Process();
-                proc.StartInfo = procStartInfo;
-                proc.Start();
-                // Get the output into a string
-                string result = proc.StandardOutput.ReadToEnd();
+            // The following commands are needed to redirect the standard output.
+            // This means that it will be redirected to the Process.StandardOutput StreamReader.
+            procStartInfo.RedirectStandardOutput = true;
+            procStartInfo.UseShellExecute = false;
+            // Do not create the black window.
+            procStartInfo.CreateNoWindow = true;
+            // Now we create a process, assign its ProcessStartInfo and start it
+            System.Diagnostics.Process proc = new System.Diagnostics.Process();
+            proc.StartInfo = procStartInfo;
+            proc.Start();
+            // Get the output into a string
+            string result = proc.StandardOutput.ReadToEnd();
 
-                string ExInfo = result;
-                return ExInfo;
+            string ExInfo = result;
+            return ExInfo;
         }
 
         private void AVDManagerButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO: run the command without wait for out put just shell
 
-            string cmd = GetAndroidHome() +  @"\AVD Manager.exe";
+            string cmd = GetAndroidHome() + @"\AVD Manager.exe";
             Process prcsCMD = new Process();
             prcsCMD.StartInfo.FileName = cmd;
             prcsCMD.StartInfo.UseShellExecute = true;
@@ -137,8 +137,11 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         private void EmulatorsComboBox_DropDownOpened(object sender, EventArgs e)
         {
             //do it only once
-            if (EmulatorsComboBox.ItemsSource != null) return;
-            
+            if (EmulatorsComboBox.ItemsSource != null)
+            {
+                return;
+            }
+
             string cmd = GetAndroidHome() + @"\tools\emulator.exe -list-avds";
             List<string> list = new List<string>();
 
@@ -165,20 +168,20 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void DeviceConfigFileCombo_DropDownOpened(object sender, EventArgs e)
         {
-            string DevicesFolder = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\Devices\");
+            string DevicesFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\Devices\");
 
-            DeviceConfigFolderComboBox.Items.Clear();            
+            DeviceConfigFolderComboBox.Items.Clear();
 
 
             //TODO: get only Android Devices
-            string[] devices =  Directory.GetDirectories(DevicesFolder);
+            string[] devices = Directory.GetDirectories(DevicesFolder);
             foreach (string s in devices)
             {
                 string FolderName = System.IO.Path.GetFileName(s);
                 DeviceConfigFolderComboBox.Items.Add(FolderName);
             }
         }
-        
+
         private void DeviceConfigFileComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             DeviceConfigFolderTextBox.Text = DeviceConfigFolderComboBox.SelectedValue + "";
@@ -190,7 +193,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             string DeviceFolder = DeviceConfigFolderTextBox.Text;
             if (!string.IsNullOrEmpty(DeviceFolder))
             {
-                DeviceViewPage DVP = new DeviceViewPage(System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\Devices", DeviceFolder + @"\"));
+                DeviceViewPage DVP = new DeviceViewPage(System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\Devices", DeviceFolder + @"\"));
                 DeviceFrame.Content = DVP;
             }
             else

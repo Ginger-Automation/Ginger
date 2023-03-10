@@ -16,10 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.SolutionGeneral;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Windows;
@@ -53,7 +51,10 @@ namespace GingerWPF.SolutionLib
             dlg.Description = "Select Solution folder";
             dlg.RootFolder = Environment.SpecialFolder.MyComputer;
             if (mSolution.Folder != string.Empty)
+            {
                 dlg.SelectedPath = mSolution.Folder;
+            }
+
             dlg.ShowNewFolderButton = true;
             System.Windows.Forms.DialogResult result = dlg.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)

@@ -16,9 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.CoreNET.RunLib;
 using GingerCore.Actions;
-using System.Collections.Generic;
 
 namespace GingerCore
 {

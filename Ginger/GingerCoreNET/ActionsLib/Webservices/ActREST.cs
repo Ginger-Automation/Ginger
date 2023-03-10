@@ -13,9 +13,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
-using GingerCore.Helpers;
+using GingerCore.Actions.WebServices;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json;
 using System;
@@ -27,11 +31,6 @@ using System.Net.Security;
 using System.Text;
 using System.Web;
 using System.Xml;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET;
-using GingerCore.Actions.WebServices;
-using Amdocs.Ginger.Common.GeneralLib;
-using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Actions.REST
 {

@@ -37,15 +37,15 @@ namespace Ginger.Variables
         {
             float result = 0.0f;
             bool canConvert = float.TryParse(value as string, out result);
-            if(!canConvert)
+            if (!canConvert)
             {
                 return new ValidationResult(canConvert, "Not a valid Number");
             }
-            if(variableNumber != null)
+            if (variableNumber != null)
             {
                 try
                 {
-                    if(!variableNumber.CheckNumberInRange(result) )
+                    if (!variableNumber.CheckNumberInRange(result))
                     {
                         return new ValidationResult(false, $"Please enter number in the range: MinValue[{variableNumber.MinValue}], MaxValue[{variableNumber.MaxValue}].");
                     }

@@ -61,7 +61,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
 
         public StatusItem()
         {
-            InitializeComponent();          
+            InitializeComponent();
         }
 
         private void SetStatus()
@@ -74,21 +74,21 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
             else
             {
                 xStatusTri.Visibility = Visibility.Visible;
-                xStatusIcon.Visibility = Visibility.Collapsed;               
+                xStatusIcon.Visibility = Visibility.Collapsed;
             }
             switch (Status)
             {
 
                 case eRunStatus.Passed:
-                    if(SetStatusIcon)
+                    if (SetStatusIcon)
                     {
-                      xStatusIcon.Foreground = FindResource("$PassedStatusColor") as Brush;
-                      xStatusIcon.ImageType = eImageType.Passed;
+                        xStatusIcon.Foreground = FindResource("$PassedStatusColor") as Brush;
+                        xStatusIcon.ImageType = eImageType.Passed;
                     }
                     else
-                    {                        
+                    {
                         xStatusTri.Fill = xStatusTri.Stroke = FindResource("$PassedStatusColor") as Brush;
-                    }                    
+                    }
                     break;
                 case eRunStatus.Failed:
                     if (SetStatusIcon)

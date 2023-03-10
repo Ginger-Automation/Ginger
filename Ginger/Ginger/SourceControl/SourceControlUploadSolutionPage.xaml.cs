@@ -16,26 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.UserControls;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
+using System;
+using System.ComponentModel;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Ginger.SourceControl
 {
@@ -128,7 +120,7 @@ namespace Ginger.SourceControl
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlBranchTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlBranch));
 
-            SourceControlPassTextBox.PasswordChanged += SourceControlPassTextBox_PasswordChanged;    
+            SourceControlPassTextBox.PasswordChanged += SourceControlPassTextBox_PasswordChanged;
         }
 
         private void SourceControlPassTextBox_PasswordChanged(object sender, RoutedEventArgs e)
@@ -218,7 +210,7 @@ namespace Ginger.SourceControl
 
         private void UploadSolutionToSourceControl(object sender, RoutedEventArgs e)
         {
-            if(!ValidateBranchNameIsNotEmpty())
+            if (!ValidateBranchNameIsNotEmpty())
             {
                 Reporter.ToUser(eUserMsgKey.SourceControlBranchNameEmpty);
                 return;
@@ -250,7 +242,7 @@ namespace Ginger.SourceControl
 
         private void UpdateSourceControlSolutionFolder()
         {
-            if(String.IsNullOrEmpty(mSourceControl.SolutionFolder))
+            if (String.IsNullOrEmpty(mSourceControl.SolutionFolder))
             {
                 mSourceControl.SolutionFolder = WorkSpace.Instance.Solution.Folder;
             }
@@ -293,7 +285,7 @@ namespace Ginger.SourceControl
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {
-            if(SourceControlIntegration.BusyInProcessWhileDownloading)
+            if (SourceControlIntegration.BusyInProcessWhileDownloading)
             {
                 PopProcessIsBusyMsg();
                 return;
@@ -332,7 +324,7 @@ namespace Ginger.SourceControl
 
         private bool ValidateBranchNameIsNotEmpty()
         {
-            if(String.IsNullOrEmpty(mSourceControl.SourceControlBranch))
+            if (String.IsNullOrEmpty(mSourceControl.SourceControlBranch))
             {
                 return false;
             }
@@ -346,12 +338,12 @@ namespace Ginger.SourceControl
         private void BranchesControl_SelectionChanged(object sender, RoutedEventArgs e)
         {
             if ((bool)FetchBranchRadioBtn.IsChecked)
-            { 
+            {
                 SP_CreateNewBranch.Visibility = Visibility.Collapsed;
                 SP_FetchBranches.Visibility = Visibility.Visible;
                 mSourceControl.SourceControlBranch = "";
             }
-            if((bool)CreateBranchRadioBtn.IsChecked)
+            if ((bool)CreateBranchRadioBtn.IsChecked)
             {
                 SP_FetchBranches.Visibility = Visibility.Collapsed;
                 SP_CreateNewBranch.Visibility = Visibility.Visible;

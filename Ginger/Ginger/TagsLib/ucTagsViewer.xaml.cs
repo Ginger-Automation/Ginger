@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace Ginger
 {
@@ -62,7 +61,9 @@ namespace Ginger
         private void BaseInit(ObservableList<RepositoryItemTag> fullTagsList = null)
         {
             if (WorkSpace.Instance.Solution == null)
+            {
                 return;
+            }
 
             if (fullTagsList == null)
             {
@@ -75,17 +76,22 @@ namespace Ginger
                 }
             }
             else
+            {
                 mFullTagsList = fullTagsList;
+            }
 
             mFullTagsList.CollectionChanged += mFullTagsList_CollectionChanged;
 
             LoadItemTagsToView();//show current saved tags
 
             if (mItemTagsType == eItemTagsType.Guid)
+            {
                 mItemTagsGUID.CollectionChanged += MItemTags_CollectionChanged;
+            }
             else
+            {
                 mItemTagsKey.CollectionChanged += MItemTags_CollectionChanged;
-
+            }
 
             SetComboTagsSource();
             if (mAddTags == false)
@@ -127,11 +133,17 @@ namespace Ginger
             {
                 case eItemTagsType.Guid:
                     foreach (Guid guid in mItemTagsGUID)
+                    {
                         tagsGuid.Add(guid);
+                    }
+
                     break;
                 case eItemTagsType.RepositoryItemKey:
                     foreach (RepositoryItemKey itemKey in mItemTagsKey)
+                    {
                         tagsGuid.Add(itemKey.Guid);
+                    }
+
                     break;
             }
 
@@ -140,14 +152,14 @@ namespace Ginger
 
         public void ClearSelectedTags()
         {
-            if(mItemTagsGUID != null)
+            if (mItemTagsGUID != null)
             {
                 mItemTagsGUID.Clear();
             }
 
             if (mItemTagsKey != null)
             {
-                mItemTagsKey.Clear(); 
+                mItemTagsKey.Clear();
             }
         }
 
@@ -182,9 +194,13 @@ namespace Ginger
         private int GetItemTagsCount()
         {
             if (mItemTagsType == eItemTagsType.Guid)
+            {
                 return mItemTagsGUID.Count;
+            }
             else
+            {
                 return mItemTagsKey.Count;
+            }
         }
 
         //Load saved tags on BF
@@ -198,9 +214,13 @@ namespace Ginger
                 // Get the Name for solution tags.
                 RepositoryItemTag t = null;
                 if (mItemTagsType == eItemTagsType.Guid)
+                {
                     t = (from x in ttg where x.Guid == (Guid)mItemTagsGUID[i] select x).FirstOrDefault();
+                }
                 else
+                {
                     t = (from x in ttg where x.Guid == ((RepositoryItemKey)mItemTagsKey[i]).Guid select x).FirstOrDefault();
+                }
 
                 if (t != null)
                 {
@@ -213,9 +233,14 @@ namespace Ginger
                 {
                     //removing tag which not exist on solution anymore from the item tags list
                     if (mItemTagsType == eItemTagsType.Guid)
+                    {
                         mItemTagsGUID.RemoveAt(i);
+                    }
                     else
+                    {
                         mItemTagsKey.RemoveAt(i);
+                    }
+
                     i--;
                 }
             }
@@ -224,9 +249,13 @@ namespace Ginger
         private void XDeleteTagBtn_Click(object sender, RoutedEventArgs e)
         {
             if (mItemTagsType == eItemTagsType.Guid)
+            {
                 mItemTagsGUID.Remove(((RepositoryItemTag)((Button)sender).Tag).Guid);
+            }
             else
+            {
                 mItemTagsKey.Remove(mItemTagsKey.Where(x => x.Guid == ((RepositoryItemTag)((Button)sender).Tag).Guid).FirstOrDefault());
+            }
         }
 
         private void TagsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -266,9 +295,13 @@ namespace Ginger
             if (itag != null)
             {
                 if (mItemTagsType == eItemTagsType.Guid)
+                {
                     mItemTagsGUID.Add(itag.Guid);
+                }
                 else
+                {
                     mItemTagsKey.Add(itag.Key);
+                }
             }
         }
 
@@ -312,7 +345,9 @@ namespace Ginger
 
             //add dummy edit tag
             if (mFullListEditTag != null)
+            {
                 ComboTagsList.Add(mFullListEditTag);
+            }
 
             //refresh combo
             xTagsComboBox.Items.Refresh();

@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using LiteDB;
 using System;
 using System.Data;
-using LiteDB;
 
 namespace GingerCoreNET.DataSource
 {

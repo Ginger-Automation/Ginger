@@ -32,7 +32,7 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
         private const string Host = "localhost";
 
         public Server(string path) : this(path, 8080)
-        {}
+        { }
 
         public Server(string path, int port)
         {
@@ -48,7 +48,7 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
             {
                 _serverProcess.StartInfo.Arguments = String.Format("--port={0}", _port);
             }
-            
+
             try
             {
                 _serverProcess.Start();
@@ -68,27 +68,28 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
                 _serverProcess.Dispose();
                 _serverProcess = null;
                 throw;
-            }            
+            }
         }
 
         /// <summary>
         /// 
         /// </summary>
         public void Stop()
-        {            
+        {
             if (_serverProcess != null && !_serverProcess.HasExited)
             {
                 _serverProcess.CloseMainWindow();
                 _serverProcess.Dispose();
                 _serverProcess = null;
-            }            
+            }
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public Client CreateProxy(){
+        public Client CreateProxy()
+        {
             return new Client(Url);
         }
 
@@ -115,7 +116,7 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
             catch (Exception)
             {
                 return false;
-            }            
+            }
         }
     }
 }

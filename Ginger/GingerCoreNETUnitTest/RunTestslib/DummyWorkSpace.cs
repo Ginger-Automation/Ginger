@@ -25,7 +25,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 {
     public class DummyWorkSpace : IWorkSpaceEventHandler
     {
-        
+
         public void OpenAddAPIModelWizard()
         {
             throw new NotImplementedException();

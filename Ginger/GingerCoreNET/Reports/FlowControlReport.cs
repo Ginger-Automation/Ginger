@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 
-using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore.FlowControlLib;
 using Newtonsoft.Json;
 
@@ -44,7 +43,7 @@ namespace Ginger.Reports
 
         [JsonProperty]
         public string ConditionCalculated { get { return mFlowControl.ConditionCalculated; } }
-        
+
         //TODO: add the rest of the properties
     }
 }

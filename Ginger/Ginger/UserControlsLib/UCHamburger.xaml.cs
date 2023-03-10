@@ -49,7 +49,7 @@ namespace Ginger.UserControlsLib
             {
                 CurrentColumnLength = mColumnDefinition.Width;
                 // We shrink, keep the original values
-                mColumnDefinition.Width = new GridLength(0);                
+                mColumnDefinition.Width = new GridLength(0);
                 this.SetValue(Grid.ColumnProperty, OriginalColumn + 1);  // TODO: if left add one else -1 - auto check if col 0 or cols count
                 this.HorizontalAlignment = HorizontalAlignment.Left;
             }

@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.CoreNET.RunLib;
-using GingerCoreNET.Drivers.CommunicationProtocol;
 
 namespace Amdocs.Ginger.Plugin.Core.ActionsLib
 {

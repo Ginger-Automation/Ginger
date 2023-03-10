@@ -18,11 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ginger.TwoLevelMenuLib
 {
@@ -31,7 +26,7 @@ namespace Ginger.TwoLevelMenuLib
         public ObservableList<TopMenuItem> MenuList = new ObservableList<TopMenuItem>();
 
         internal void Add(TopMenuItem topMenuItem)
-        {            
+        {
             MenuList.Add(topMenuItem);
         }
 

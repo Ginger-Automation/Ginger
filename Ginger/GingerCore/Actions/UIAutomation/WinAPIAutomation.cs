@@ -17,16 +17,16 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
+using Amdocs.Ginger.Common;
+using mshtml;
 using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Forms;
-using mshtml;
 using System.Threading;
-using Amdocs.Ginger.Common;
+using System.Windows.Forms;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace GingerCore.Drivers
 {

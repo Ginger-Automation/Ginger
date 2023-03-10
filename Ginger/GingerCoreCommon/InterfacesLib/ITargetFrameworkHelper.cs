@@ -26,7 +26,6 @@ using Ginger.SolutionAutoSaveAndRecover;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;
-using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 

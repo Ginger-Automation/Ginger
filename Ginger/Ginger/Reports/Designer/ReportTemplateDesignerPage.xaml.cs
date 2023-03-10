@@ -16,7 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.Run;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Environments;
+using GingerCore.Variables;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,13 +33,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
-using Ginger.Run;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Environments;
-using GingerCore.Variables;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Reports.Designer
 {
@@ -43,7 +43,7 @@ namespace Ginger.Reports.Designer
     {
         ReportTemplate mReportTemplate;
         ReportPage mReportPage;
-        
+
         public ReportTemplateDesignerPage(ReportTemplate ReportTemplate)
         {
             InitializeComponent();
@@ -109,7 +109,7 @@ namespace Ginger.Reports.Designer
 
             ActSubmit acta24 = new ActSubmit() { Description = "Click Create Button", Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending };
             a2.Acts.Add(acta24);
-            
+
             //Add Variables
             BF1.Variables = new ObservableList<VariableBase>();
 
@@ -118,13 +118,13 @@ namespace Ginger.Reports.Designer
 
             VariableRandomNumber v2 = new VariableRandomNumber() { Name = "Random 1", Min = 1, Max = 100, Value = "55" };
             BF1.Variables.Add(v2);
-            
+
             //Add a few simple BFs            
-            BusinessFlow BF2 = new BusinessFlow() { Name = "BF2 - Customer Order Product", Description = "", Active = true };            
+            BusinessFlow BF2 = new BusinessFlow() { Name = "BF2 - Customer Order Product", Description = "", Active = true };
             BF2.Activities = new ObservableList<Activity>();
             BF2.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             BF2.Elapsed = 1249;
-            
+
             ProjEnvironment env = new ProjEnvironment() { Name = "Env1" };
             //TODO: add more env info
 
@@ -133,7 +133,7 @@ namespace Ginger.Reports.Designer
             GingerExecutionEngine GR = new GingerExecutionEngine(new GingerRunner());
             GR.BusinessFlows.Add(BF1);
             GR.BusinessFlows.Add(BF2);
-            GR.CurrentSolution =  WorkSpace.Instance.Solution;
+            GR.CurrentSolution = WorkSpace.Instance.Solution;
             GMR.Runners.Add(GR.GingerRunner);
             ReportInfo RI = new ReportInfo(env, GMR);
             ReportPage RP = new ReportPage(RI, Xaml);
@@ -144,7 +144,7 @@ namespace Ginger.Reports.Designer
         {
             LoadReportTemplatePage();
         }
-        
+
         private void LoadReportInfoTreeView()
         {
             TreeViewItem tvi0 = new TreeViewItem() { Header = "Report Data" };
@@ -210,15 +210,15 @@ namespace Ginger.Reports.Designer
                         {
                             TreeViewItem tviObj = new TreeViewItem() { Header = pi.Name, DataContext = pi.Name };
                             TVI.Items.Add(tviObj);
-                            
+
                             // Get the first item from the list for sample
                             IEnumerable listObject = (IEnumerable)CurrObj;
                             object obj1 = null;
                             foreach (object o in listObject)
                             {
-                                    obj1 = o;
-                                    break;
-                                
+                                obj1 = o;
+                                break;
+
                             }
                             if (obj1 == null)
                             {
@@ -238,24 +238,24 @@ namespace Ginger.Reports.Designer
         private void ReportObjectsTreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             // Loop all the way to the root.
-            TreeViewItem tvi=(TreeViewItem)sender;
+            TreeViewItem tvi = (TreeViewItem)sender;
 
             string path = (string)(tvi).DataContext;
 
-            while (tvi.Parent is TreeViewItem) 
-            {               
-                tvi = (TreeViewItem)tvi.Parent;                                
+            while (tvi.Parent is TreeViewItem)
+            {
+                tvi = (TreeViewItem)tvi.Parent;
                 // path = "." + path;
-                
+
                 if ((string)(tvi).DataContext != null)
                 {
                     path = "[i]." + path;
                 }
 
-                string s = (string)(tvi).DataContext;                
-                path = s + path;                
+                string s = (string)(tvi).DataContext;
+                path = s + path;
             }
-            
+
             if (path != null)
             {
                 ReportXamlTextBox.Focus();
@@ -283,6 +283,6 @@ namespace Ginger.Reports.Designer
                     yield return position.Parent;
                 }
             }
-        }  
+        }
     }
 }

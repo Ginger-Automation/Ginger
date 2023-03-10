@@ -21,67 +21,79 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml.XPath;
 
-namespace GingerCore.XPathParser {
-    public class XPathStringBuilder : IXPathBuilder<string> {
+namespace GingerCore.XPathParser
+{
+    public class XPathStringBuilder : IXPathBuilder<string>
+    {
         #region IXPathBuilder<string> Members
 
         public void StartBuild() { }
 
-        public string EndBuild(string result) {
+        public string EndBuild(string result)
+        {
             return result;
         }
 
-        public string String(string value) {
+        public string String(string value)
+        {
             return "'" + value + "'";
         }
 
-        public string Number(string value) {
+        public string Number(string value)
+        {
             return value;
         }
 
-        public string Operator(XPathOperator op, string left, string right) {
+        public string Operator(XPathOperator op, string left, string right)
+        {
             Debug.Assert(op != XPathOperator.Union);
-            if (op == XPathOperator.UnaryMinus) {
+            if (op == XPathOperator.UnaryMinus)
+            {
                 return "-" + left;
             }
             return left + opStrings[(int)op] + right;
         }
 
-        public string Axis(XPathAxis xpathAxis, XPathNodeType nodeType, string prefix, string name) {
+        public string Axis(XPathAxis xpathAxis, XPathNodeType nodeType, string prefix, string name)
+        {
             string nodeTest;
-            switch (nodeType) {
-            case XPathNodeType.ProcessingInstruction:
-                Debug.Assert(prefix == "");
-                nodeTest = "processing-instruction(" + name + ")";
-                break;
-            case XPathNodeType.Text:
-                Debug.Assert(prefix == null && name == null);
-                nodeTest = "text()";
-                break;
-            case XPathNodeType.Comment:
-                Debug.Assert(prefix == null && name == null);
-                nodeTest = "comment()";
-                break;
-            case XPathNodeType.All:
-                nodeTest = "node()";
-                break;
-            case XPathNodeType.Attribute:
-            case XPathNodeType.Element:
-            case XPathNodeType.Namespace:
-                nodeTest = QNameOrWildcard(prefix, name);
-                break;
-            default:
-                throw new ArgumentException("unexpected XPathNodeType", "XPathNodeType");
+            switch (nodeType)
+            {
+                case XPathNodeType.ProcessingInstruction:
+                    Debug.Assert(prefix == "");
+                    nodeTest = "processing-instruction(" + name + ")";
+                    break;
+                case XPathNodeType.Text:
+                    Debug.Assert(prefix == null && name == null);
+                    nodeTest = "text()";
+                    break;
+                case XPathNodeType.Comment:
+                    Debug.Assert(prefix == null && name == null);
+                    nodeTest = "comment()";
+                    break;
+                case XPathNodeType.All:
+                    nodeTest = "node()";
+                    break;
+                case XPathNodeType.Attribute:
+                case XPathNodeType.Element:
+                case XPathNodeType.Namespace:
+                    nodeTest = QNameOrWildcard(prefix, name);
+                    break;
+                default:
+                    throw new ArgumentException("unexpected XPathNodeType", "XPathNodeType");
             }
             return axisStrings[(int)xpathAxis] + nodeTest;
         }
 
-        public string JoinStep(string left, string right) {
+        public string JoinStep(string left, string right)
+        {
             return left + '/' + right;
         }
 
-        public string Predicate(string node, string condition, bool reverseStep) {
-            if (!reverseStep) {
+        public string Predicate(string node, string condition, bool reverseStep)
+        {
+            if (!reverseStep)
+            {
                 // In this method we don't know how axis was represented in original XPath and the only 
                 // difference between ancestor::*[2] and (ancestor::*)[2] is the reverseStep parameter.
                 // to not store the axis from previous builder events we simply wrap node in the () here.
@@ -90,14 +102,18 @@ namespace GingerCore.XPathParser {
             return node + '[' + condition + ']';
         }
 
-        public string Variable(string prefix, string name) {
+        public string Variable(string prefix, string name)
+        {
             return '$' + QName(prefix, name);
         }
 
-        public string Function(string prefix, string name, IList<string> args) {
+        public string Function(string prefix, string name, IList<string> args)
+        {
             string result = QName(prefix, name) + '(';
-            for (int i = 0; i < args.Count; i++) {
-                if (i != 0) {
+            for (int i = 0; i < args.Count; i++)
+            {
+                if (i != 0)
+                {
                     result += ',';
                 }
                 result += args[i];
@@ -106,22 +122,28 @@ namespace GingerCore.XPathParser {
             return result;
         }
 
-        private static string QName(string prefix, string localName) {
-            if (prefix == null) {
+        private static string QName(string prefix, string localName)
+        {
+            if (prefix == null)
+            {
                 throw new ArgumentNullException("prefix");
             }
-            if (localName == null) {
+            if (localName == null)
+            {
                 throw new ArgumentNullException("localName");
             }
             return prefix == "" ? localName : prefix + ':' + localName;
         }
 
-        private static string QNameOrWildcard(string prefix, string localName) {
-            if (prefix == null) {
+        private static string QNameOrWildcard(string prefix, string localName)
+        {
+            if (prefix == null)
+            {
                 Debug.Assert(localName == null);
                 return "*";
             }
-            if (localName == null) {
+            if (localName == null)
+            {
                 Debug.Assert(prefix != "");
                 return prefix + ":*";
             }
@@ -146,7 +168,7 @@ namespace GingerCore.XPathParser {
             /* Divide     */ " div ",
             /* Modulo     */ " mod ",
             /* UnaryMinus */ "-"    ,
-            /* Union      */ "|"  
+            /* Union      */ "|"
         };
 
         string[] axisStrings = {

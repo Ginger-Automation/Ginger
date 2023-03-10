@@ -1,10 +1,7 @@
-﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
-using Amdocs.Ginger.Run;
+﻿using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
@@ -14,7 +11,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
     [Level2]
     [TestClass]
     public class ExecutionDumperListenerTest
-    {        
+    {
 
         static GingerRunner mGingerRunner;
         static ExecutionDumperListener mExecutionDumperListener;
@@ -22,19 +19,19 @@ namespace GingerCoreNETUnitTest.RunTestslib
         static RunSetConfig runSetConfig = new RunSetConfig();
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
-        {            
+        {
             mGingerRunner = new GingerRunner();
             mGingerRunner.Executor = new GingerExecutionEngine(mGingerRunner);
 
             ((GingerExecutionEngine)mGingerRunner.Executor).RunListeners.Clear(); // temp as long as GR auto start with some listener, remove when fixed
             mExecutionDumperListener = new ExecutionDumperListener(mDumpFolder);
             ((GingerExecutionEngine)mGingerRunner.Executor).RunListeners.Add(mExecutionDumperListener);
- }
+        }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+
         }
 
 
@@ -45,31 +42,31 @@ namespace GingerCoreNETUnitTest.RunTestslib
             {
                 mGingerRunner.Executor.BusinessFlows.Clear();
                 mGingerRunner.Executor.BusinessFlows.Add(businessFlow);
-                mGingerRunner.Executor.CurrentBusinessFlow = businessFlow;                
+                mGingerRunner.Executor.CurrentBusinessFlow = businessFlow;
                 mGingerRunner.Executor.RunRunner();
             }
         }
 
-        
+
 
         [TestInitialize]
         public void TestInitialize()
-        {            
+        {
 
         }
 
         [TestCleanup]
         public void TestCleanUp()
         {
-            
+
         }
-        
+
         [TestMethod]
         public void DumperListener()
-        {                        
+        {
             //Arrange
-            BusinessFlow businessFlow = new BusinessFlow() { Name = "BF TEST Execution Dumper Listener", Active = true };            
-            
+            BusinessFlow businessFlow = new BusinessFlow() { Name = "BF TEST Execution Dumper Listener", Active = true };
+
             Activity activitiy1 = new Activity() { ActivityName = "a1", Active = true };
             activitiy1.Acts.Add(new ActDummy() { Description = "Dummy action 1", Active = true });
             activitiy1.Acts.Add(new ActDummy() { Description = "Dummy action 2", Active = true });
@@ -95,14 +92,14 @@ namespace GingerCoreNETUnitTest.RunTestslib
             //TODO: all the rest             
         }
 
-        
+
 
         [TestMethod]
         public void DumperListenerBigFlow()
         {
             // TODO: add more data and check speed, like variables and more          
             //Arrange
-            BusinessFlow businessFlow = new BusinessFlow() { Name = "Big Flow", Active = true };            
+            BusinessFlow businessFlow = new BusinessFlow() { Name = "Big Flow", Active = true };
 
             for (int i = 0; i < 10; i++)
             {
@@ -113,10 +110,10 @@ namespace GingerCoreNETUnitTest.RunTestslib
                 }
                 businessFlow.Activities.Add(activitiy);
             }
-            
+
 
             //Act
-            RunFlow(businessFlow);                
+            RunFlow(businessFlow);
 
             //check folder structure and files contents
 
@@ -126,25 +123,25 @@ namespace GingerCoreNETUnitTest.RunTestslib
             //Assert
             Assert.IsTrue(Directory.Exists(BFDir), "BF directory exist");
             //TODO: all the rest 
-            
+
         }
 
         [Ignore] // it fails !!!!!! needs code fix to check BF is null
         [TestMethod]
         public void DumperListenerEmptyFlow()
-        {            
+        {
             lock (mGingerRunner)
             {
                 //Arrange
-                BusinessFlow businessFlow = new BusinessFlow() { Name = "Empty Flow", Active = true };                
-                
+                BusinessFlow businessFlow = new BusinessFlow() { Name = "Empty Flow", Active = true };
+
                 //Act
                 RunFlow(businessFlow);
 
                 string BFDir = Path.Combine(mDumpFolder, "1 " + businessFlow.Name);
 
                 //Assert
-                Assert.IsTrue(Directory.Exists(BFDir), "BF directory exist");                
+                Assert.IsTrue(Directory.Exists(BFDir), "BF directory exist");
             }
         }
 
@@ -171,7 +168,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             //}
         }
 
-        
+
 
     }
 

@@ -16,9 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.Common.Actions
 {
@@ -38,7 +36,7 @@ namespace Amdocs.Ginger.Common.Actions
             get
             {
                 return mList;
-            }            
+            }
         }
     }
 }

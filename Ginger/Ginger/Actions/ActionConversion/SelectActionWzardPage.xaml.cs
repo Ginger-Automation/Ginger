@@ -33,7 +33,7 @@ namespace Ginger.Actions.ActionConversion
     public partial class SelectActionWzardPage : Page, IWizardPage
     {
         ActionsConversionWizard mWizard;
-        
+
         public SelectActionWzardPage()
         {
             InitializeComponent();
@@ -78,7 +78,7 @@ namespace Ginger.Actions.ActionConversion
                             }
                         }
                     }
-                } 
+                }
             }
         }
 
@@ -95,7 +95,7 @@ namespace Ginger.Actions.ActionConversion
                 else
                 {
                     mWizard.LstSelectedActivities = mWizard.ListOfBusinessFlow.Where(x => x.IsSelected).SelectMany(y => y.BusinessFlow.Activities).Where(z => z.Active).ToList();
-                } 
+                }
             }
 
             if (mWizard.LstSelectedActivities.Count != 0)
@@ -108,7 +108,7 @@ namespace Ginger.Actions.ActionConversion
                 if (mWizard.ActionToBeConverted == null || mWizard.ActionToBeConverted.Count <= 0)
                 {
                     ActionConversionUtils utils = new ActionConversionUtils();
-                    mWizard.ActionToBeConverted = utils.GetConvertableActivityActions(mWizard.LstSelectedActivities); 
+                    mWizard.ActionToBeConverted = utils.GetConvertableActivityActions(mWizard.LstSelectedActivities);
                 }
                 if (mWizard.ActionToBeConverted.Count != 0)
                 {
@@ -117,7 +117,7 @@ namespace Ginger.Actions.ActionConversion
                     return;
                 }
                 else
-                {                    
+                {
                     Reporter.ToLog(eLogLevel.DEBUG, "No Convertible Actions Found");
                     return;
                 }
@@ -142,7 +142,7 @@ namespace Ginger.Actions.ActionConversion
                 if (det == null)
                 {
                     list.Add(act);
-                } 
+                }
             }
             return list;
         }
@@ -157,7 +157,7 @@ namespace Ginger.Actions.ActionConversion
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.SourceActionTypeName), WidthWeight = 15, Header = "Source Action Type" });
             if (mWizard.ConversionType == ActionsConversionWizard.eActionConversionType.SingleBusinessFlow)
             {
-                view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Activities), WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) }); 
+                view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.Activities), WidthWeight = 15, Header = "Source " + GingerDicser.GetTermResValue(eTermResKey.Activities) });
             }
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.TargetActionTypeName), WidthWeight = 15, Header = "Target Action Type" });
             if (mWizard.ConversionType == ActionsConversionWizard.eActionConversionType.MultipleBusinessFlow)

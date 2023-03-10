@@ -51,7 +51,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
                 mGingerSocketServer = new GingerSocketServer2();
                 mGingerSocketServer.MessageHandler = MessageHandler;
                 ServerPort = SocketHelper.GetOpenPort();
-                mGingerSocketServer.StartServer(ServerPort);   
+                mGingerSocketServer.StartServer(ServerPort);
             }
 
             public void ShutDown()
@@ -130,7 +130,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
                 mGingerSocketClient2.MessageHandler = MessageHandler;
 
                 IPAddress ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
-                mGingerSocketClient2.Connect(SocketHelper.GetLocalHostIP(), mMyGingerServer.ServerPort);                 
+                mGingerSocketClient2.Connect(SocketHelper.GetLocalHostIP(), mMyGingerServer.ServerPort);
             }
 
             public void Disconnect()
@@ -192,7 +192,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             {
                 throw new Exception("Error: mMyGingerServer.IsReady false");
             }
-            
+
 
             Task task2 = new Task(() =>
             {
@@ -227,7 +227,8 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void Echo()
         {
             // Arrange
@@ -253,7 +254,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             Thread.Sleep(100);  // let the system or other process relax...
 
             //Act
-            Stopwatch st = Stopwatch.StartNew();            
+            Stopwatch st = Stopwatch.StartNew();
 
             for (int i = 0; i < 1000; i++)
             {
@@ -263,15 +264,16 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
                 //Assert
                 Assert.IsTrue(PLRC.IsOK(), " PLRC.IsOK()");
             }
-            st.Stop();            
+            st.Stop();
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void EchoBig10KMessage()
         {
             // Arrange            
-            string bigMessage =new string('*', 10000);
-            
+            string bigMessage = new string('*', 10000);
+
 
             NewPayLoad PL = new NewPayLoad("Echo", bigMessage);
 
@@ -285,7 +287,8 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void EchoRandomMessageSize()
         {
             // Arrange
@@ -306,7 +309,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             list.Add(sb.ToString().Substring(0, 1));
             list.Add(sb.ToString().Substring(0, 20000));
             list.Add(sb.ToString().Substring(0, 100));
-            list.Add(sb.ToString().Substring(0, 1000000));      
+            list.Add(sb.ToString().Substring(0, 1000000));
             list.Add(sb.ToString().Substring(0, 400));
             list.Add(sb.ToString().Substring(0, 10000));
             list.Add(sb.ToString().Substring(0, 1024));
@@ -337,8 +340,9 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
         }
 
-        
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void SlowResponse1000()
         {
             // Arrange            
@@ -352,7 +356,8 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void LongAction()
         {
             // Arrange            
@@ -365,7 +370,8 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             Assert.AreEqual(PLRC.Name, "LongActionDone", "PLRC.Name = LongActionDone");
         }
         [Ignore]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ServerSendMessagetoClient()
         {
             //FIXME  get stuck!!!
@@ -385,7 +391,8 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ClientSendCalcSum()
         {
             // Arrange            
@@ -404,7 +411,8 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ClientConnectSendClose()
         {
             // Arrange
@@ -423,8 +431,9 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             Assert.AreEqual(txt, txt2, "txt = txt2");
         }
 
-        
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void Run10ClientsParallel()
         {
             // Arrange
@@ -472,21 +481,22 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void VerifyClientGetUniqueGUID()
         {
             // Arrange
             Guid EmptyGuid = new Guid();
             MyGingerClient client1 = new MyGingerClient();
             Guid guid;
-            
+
             //Act
             client1.Connect();
             guid = client1.SessionID;
             client1.Disconnect();
 
             //Assert
-            Assert.AreNotEqual(EmptyGuid.ToString(), guid.ToString(), "GUID of client session is not empty GUID");            
+            Assert.AreNotEqual(EmptyGuid.ToString(), guid.ToString(), "GUID of client session is not empty GUID");
         }
 
 

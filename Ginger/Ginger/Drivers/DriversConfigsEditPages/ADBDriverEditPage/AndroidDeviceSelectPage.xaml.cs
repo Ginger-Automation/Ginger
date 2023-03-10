@@ -16,16 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using System.Drawing;
-using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
 using GingerCore;
-using GingerCore.Drivers.AndroidADB;
 using GingerCore.Drivers.Common;
 using SharpAdbClient;
-using amdocs.ginger.GingerCoreNET;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Drivers.AndroidDeviceADBLib
 {
@@ -47,7 +44,7 @@ namespace Ginger.Drivers.AndroidDeviceADBLib
 
         private void InitDeviceView()
         {
-            string DeviceConfigFolder = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\Devices\nexus_4\");
+            string DeviceConfigFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\Devices\nexus_4\");
             mDeviceViewPage = new DeviceViewPage(DeviceConfigFolder);
             DeviceViewFrame.Content = mDeviceViewPage;
             RefreshConnectedDevices();

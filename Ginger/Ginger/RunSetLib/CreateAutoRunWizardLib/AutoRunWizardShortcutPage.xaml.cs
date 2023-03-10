@@ -42,7 +42,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            
+
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
@@ -96,7 +96,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         private void ShowHideCommandPnl()
         {
-            if (mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote )
+            if (mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote)
             {
                 xCLICommandPnl.Visibility = Visibility.Collapsed;
                 xShortCutCreationConfigsPnl.Visibility = Visibility.Collapsed;

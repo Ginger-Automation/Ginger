@@ -31,7 +31,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     class HTMLReportTemplatesTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private HTMLReportTemplatesPage mReportTemplatesPage;
-        RepositoryFolder<HTMLReportTemplate> mReportFolder;        
+        RepositoryFolder<HTMLReportTemplate> mReportFolder;
         ITreeView mTV;
 
         public HTMLReportTemplatesTreeItem(RepositoryFolder<HTMLReportTemplate> reportFolder)
@@ -45,13 +45,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {            
-             return TreeViewUtils.NewRepositoryItemTreeHeader(mReportFolder, nameof(RepositoryFolder<HTMLReportTemplate>.DisplayName), eImageType.HtmlReport, GetSourceControlImage(mReportFolder), false);
+        {
+            return TreeViewUtils.NewRepositoryItemTreeHeader(mReportFolder, nameof(RepositoryFolder<HTMLReportTemplate>.DisplayName), eImageType.HtmlReport, GetSourceControlImage(mReportFolder), false);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            return GetChildrentGeneric<HTMLReportTemplate>(mReportFolder);           
+            return GetChildrentGeneric<HTMLReportTemplate>(mReportFolder);
         }
 
         bool ITreeViewItem.IsExpandable()
@@ -70,7 +70,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         ContextMenu ITreeViewItem.Menu()
         {
-            ContextMenu CM = new ContextMenu();            
+            ContextMenu CM = new ContextMenu();
             TreeViewUtils.AddMenuItem(CM, "Save All", SaveAll, null, eImageType.Save);
             AddViewFolderFilesMenuItem(CM, mReportFolder.FolderFullPath);
             return CM;
@@ -78,13 +78,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         void ITreeViewItem.SetTools(ITreeView TV)
         {
-            mTV = TV;            
+            mTV = TV;
             TV.AddToolbarTool("@SaveAll_16x16.png", "Save All", SaveAll);
             TV.AddToolbarTool("@Add_16x16.png", "Add New", AddNewReport);
             TV.AddToolbarTool("@Glass_16x16.png", "Open Folder in File Explorer", ViewFolderFilesFromTool, System.Windows.Visibility.Visible, mReportFolder.FolderFullPath);
         }
 
-        
+
         private void SaveAll(object sender, System.Windows.RoutedEventArgs e)
         {
             throw new NotImplementedException();
@@ -94,11 +94,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             HTMLReportTemplateTreeItem r = new HTMLReportTemplateTreeItem();
             r.HTMLReportTemplate = CreateNewHTMLReportTemplate();
-                                        
-            mTV.Tree.AddChildItemAndSelect(this, r);            
+
+            mTV.Tree.AddChildItemAndSelect(this, r);
         }
-        
-      
+
+
 
         internal HTMLReportTemplate CreateNewHTMLReportTemplate(string path = "")
         {
@@ -117,7 +117,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 if (GingerCore.General.GetInputWithValidation("Add New Report", "Report Name:", ref NewReportName, null, false, NewReportTemplate))
                 {
                     NewReportTemplate.Name = NewReportName;
-                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);                                        
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);
                 }
                 return NewReportTemplate;
             }

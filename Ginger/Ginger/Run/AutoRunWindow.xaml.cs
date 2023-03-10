@@ -16,14 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using GingerCore;
+using amdocs.ginger.GingerCoreNET;
 using System;
 using System.Windows;
-using System.Linq;
-using System.Reflection;
-using GingerCore.Environments;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 
 namespace Ginger.Run
 {
@@ -57,7 +52,7 @@ namespace Ginger.Run
         //        Reporter.ToLog(eLogLevel.ERROR, string.Format("The configured Environment with the name '{0}' was not found in the Solution", environmentName));
         //        return false;
         //    }
-            
+
         //    try
         //    {
         //        WorkSpace.Instance.RunsetExecutor.RunSetConfig = runSetConfig;
@@ -80,7 +75,7 @@ namespace Ginger.Run
         {
             WorkSpace.Instance.RunsetExecutor.StopRun();
 
-            base.OnClosed(e);                        
+            base.OnClosed(e);
             Environment.Exit(0); //?????
         }
     }

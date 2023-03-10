@@ -39,10 +39,10 @@ namespace Ginger.UserControlsLib.TextEditor
         private string WorkingSection;
         private int FoldingOffset;
         private int GapBetweenFoldingOffsetAndTableLocaionIndication;
-        public TableEditorPage(SelectedContentArgs SelectedContentArgs,string startKeyWord,string endKeyWord, string KeyWordForTableLocationIndication = null)
+        public TableEditorPage(SelectedContentArgs SelectedContentArgs, string startKeyWord, string endKeyWord, string KeyWordForTableLocationIndication = null)
         {
             InitializeComponent();
-            
+
             GapBetweenFoldingOffsetAndTableLocaionIndication = 0;
             this.textEditor = SelectedContentArgs.TextEditor;
             this.foldingSection = SelectedContentArgs.GetFoldingsAtCaretPosition()[0];
@@ -51,17 +51,21 @@ namespace Ginger.UserControlsLib.TextEditor
             if (KeyWordForTableLocationIndication != null)
             {
                 int indexOfKeyWordForIndication = foldingSection.TextContent.IndexOf(KeyWordForTableLocationIndication);
-                if (KeyWordForTableLocationIndication != null && indexOfKeyWordForIndication != -1 &&  CaretLocation - FoldingOffset > indexOfKeyWordForIndication)
+                if (KeyWordForTableLocationIndication != null && indexOfKeyWordForIndication != -1 && CaretLocation - FoldingOffset > indexOfKeyWordForIndication)
                 {
                     WorkingSection = foldingSection.TextContent.Substring(indexOfKeyWordForIndication);
                     GapBetweenFoldingOffsetAndTableLocaionIndication = foldingSection.TextContent.Length - WorkingSection.Length;
                 }
-                    
+
                 else
+                {
                     WorkingSection = foldingSection.TextContent;
+                }
             }
             else
+            {
                 WorkingSection = foldingSection.TextContent;
+            }
 
             StartKeyWord = startKeyWord;
             EndKeyWord = endKeyWord;
@@ -73,7 +77,7 @@ namespace Ginger.UserControlsLib.TextEditor
             string[] lines = WorkingSection.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
             System.Data.DataTable DT = new System.Data.DataTable();
             int iStart = 0;
-            int iEnd = 0 ;
+            int iEnd = 0;
             bool StartFound = false;
             for (int i = 0; i < lines.Length; i++)
             {
@@ -93,14 +97,20 @@ namespace Ginger.UserControlsLib.TextEditor
             // First row is columns headers
 
             if (lines.Length > iStart)
+            {
                 Cols = lines[iStart].Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+            }
             else
+            {
                 return;
+            }
 
             foreach (string col in Cols)
             {
                 if (!string.IsNullOrWhiteSpace(col))
+                {
                     DT.Columns.Add(col.Trim());
+                }
             }
 
             for (int i = iStart + 1; i < iEnd; i++)
@@ -108,7 +118,9 @@ namespace Ginger.UserControlsLib.TextEditor
                 System.Data.DataRow DR;
                 object[] o = GetColsData(lines[i]);
                 if (DT.Columns.Count == o.Length)
+                {
                     DR = DT.Rows.Add(o);
+                }
             }
             TableDataGrid.ItemsSource = DT.AsDataView();
         }
@@ -120,7 +132,9 @@ namespace Ginger.UserControlsLib.TextEditor
             for (int i = 0; i < b.Length; i++)
             {
                 if (!string.IsNullOrWhiteSpace(b[i]))
+                {
                     leanth++;
+                }
             }
             string[] a = new string[leanth];
             int counter = 0;
@@ -155,9 +169,13 @@ namespace Ginger.UserControlsLib.TextEditor
                 foreach (object o in DRV.Row.ItemArray)
                 {
                     if (o.ToString().StartsWith("\"") && o.ToString().EndsWith("\""))
+                    {
                         s.Append("|").Append(o.ToString() + "");
+                    }
                     else
+                    {
                         s.Append("|").Append("\"" + o.ToString() + "\"");
+                    }
                 }
                 s.Append("|").Append(Environment.NewLine);
             }
@@ -242,7 +260,7 @@ namespace Ginger.UserControlsLib.TextEditor
             {
                 if (!bFound)
                 {
-                    if (lines[i].Trim().StartsWith("|") && lines[i-1].Trim().StartsWith(StartKeyWord))
+                    if (lines[i].Trim().StartsWith("|") && lines[i - 1].Trim().StartsWith(StartKeyWord))
                     {
                         bFound = true;
                     }
@@ -252,11 +270,13 @@ namespace Ginger.UserControlsLib.TextEditor
                 {
                     tmp += lines[i] + Environment.NewLine;
                     if (lines[i + 1].Trim().StartsWith(EndKeyWord))
+                    {
                         break;
+                    }
                 }
             }
-             textEditor.Select(FoldingOffset + GapBetweenFoldingOffsetAndTableLocaionIndication + WorkingSection.IndexOf(StartKeyWord) + StartKeyWord.Length + Environment.NewLine.Length, tmp.Length);
-             textEditor.SelectedText = txt;
+            textEditor.Select(FoldingOffset + GapBetweenFoldingOffsetAndTableLocaionIndication + WorkingSection.IndexOf(StartKeyWord) + StartKeyWord.Length + Environment.NewLine.Length, tmp.Length);
+            textEditor.SelectedText = txt;
         }
     }
 }

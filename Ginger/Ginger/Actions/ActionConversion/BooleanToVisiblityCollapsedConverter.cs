@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.UIElement;
 using System;
 using System.Windows;
 using System.Windows.Data;

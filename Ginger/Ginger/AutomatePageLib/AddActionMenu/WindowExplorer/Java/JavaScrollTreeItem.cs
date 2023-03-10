@@ -17,10 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
 using GingerCore.Actions;
 using GingerCore.Actions.Java;
 using GingerWPF.UserControlsLib.UCTreeView;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.Java
 {
@@ -59,7 +59,7 @@ namespace Ginger.WindowExplorer.Java
                 Description = "Scroll Right " + Name,
                 ControlAction = ActJavaElement.eControlAction.ScrollRight
             });
-         
+
             return list;
         }
     }

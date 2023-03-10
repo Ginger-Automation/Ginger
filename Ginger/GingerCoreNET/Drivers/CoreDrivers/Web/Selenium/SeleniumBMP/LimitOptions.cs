@@ -25,13 +25,13 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
         public int? UpstreamKbps { get; set; }
         public int? DownstreamKbps { get; set; }
         public int? Latency { get; set; }
-        
+
         public string ToFormData()
         {
             var builder = new StringBuilder(50);
             string delimiter = "";
-            
-            if (UpstreamKbps.HasValue)            
+
+            if (UpstreamKbps.HasValue)
             {
                 builder.AppendFormat("upstream_kbps={0}", UpstreamKbps.Value);
                 delimiter = "&";
@@ -44,7 +44,9 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
             }
 
             if (Latency.HasValue)
-                builder.AppendFormat("{0}latency={1}", delimiter, Latency.Value);            
+            {
+                builder.AppendFormat("{0}latency={1}", delimiter, Latency.Value);
+            }
 
             return builder.ToString();
         }

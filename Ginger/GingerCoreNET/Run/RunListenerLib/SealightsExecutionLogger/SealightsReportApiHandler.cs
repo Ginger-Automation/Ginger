@@ -16,18 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.LiteDBFolder;
-using AutoMapper;
 using Ginger.Run;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
@@ -58,13 +52,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
             mVE.Value = EndPointUrl;  // Calculate the value Expression
             EndPointUrl = mVE.ValueCalculated;
 
-            if(!String.IsNullOrEmpty(EndPointUrl))
+            if (!String.IsNullOrEmpty(EndPointUrl))
             {
                 restClient = new RestClient(EndPointUrl);
                 restClient.Options.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
-            }       
+            }
         }
-           
+
         public void SendCreationTestSessionToSealightsAsync()
         {
             if (restClient != null)

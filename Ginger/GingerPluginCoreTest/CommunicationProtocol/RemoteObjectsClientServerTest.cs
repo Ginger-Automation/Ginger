@@ -32,16 +32,18 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
     {
         public interface IDisplay
         {
-            int Add(int a, int b);            
+            int Add(int a, int b);
         }
 
 
         [Ignore]  // fail fix me
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RemoteObjectProxyTest1()
         {
             bool IsReady = false;
-            Task t = new Task(() => {
+            Task t = new Task(() =>
+            {
                 RemoteObjectsServer s = new RemoteObjectsServer();
                 s.Start(15111);  // TODO: get free port
                 s.GetObjectHandler = GetObjectHandler;
@@ -50,19 +52,19 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             t.Start();
 
             Stopwatch st = Stopwatch.StartNew();
-            while (!IsReady && st.ElapsedMilliseconds <10000)
+            while (!IsReady && st.ElapsedMilliseconds < 10000)
             {
                 Thread.Sleep(50);
             }
-            
+
 
             RemoteObjectsClient c = new RemoteObjectsClient();
             //TODO: temp get local host
             c.Connect(SocketHelper.GetDisplayHost(), SocketHelper.GetDisplayPort());
-            
+
 
             IDisplay calc1 = c.GetObject<IDisplay>("aa1");
-            
+
             int total = calc1.Add(2, 5);
 
             Assert.AreEqual(7, total);
@@ -79,7 +81,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             public int Add(int a, int b)
             {
                 return a + b;
-            }            
+            }
         }
 
 

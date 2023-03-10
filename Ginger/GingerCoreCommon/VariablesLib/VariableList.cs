@@ -24,7 +24,7 @@ using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Variables
 {
-    public class VariableList:VariableBase
+    public class VariableList : VariableBase
     {
         public VariableList()
         {

@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.SourceControl;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -73,7 +72,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         {
             mTreeView = TV;
             mContextMenu = new ContextMenu();
-            AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Applications", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false, allowAddSubFolder: false, allowRenameFolder: false, allowDeleteFolder:false, allowDeleteAllItems: true);
+            AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Applications", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false, allowAddSubFolder: false, allowRenameFolder: false, allowDeleteFolder: false, allowDeleteAllItems: true);
             AddSourceControlOptions(mContextMenu, false, false);
         }
     }

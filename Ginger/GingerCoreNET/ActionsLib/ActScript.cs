@@ -179,9 +179,13 @@ namespace GingerCore.Actions
             if (string.IsNullOrEmpty(SolutionFolder))
             {
                 if (string.IsNullOrEmpty(ScriptPath))
+                {
                     p.StartInfo.WorkingDirectory = Path.GetDirectoryName(ScriptName);
+                }
                 else
+                {
                     p.StartInfo.WorkingDirectory = ScriptPath;
+                }
             }
             else
             {
@@ -357,8 +361,13 @@ namespace GingerCore.Actions
                 case ActScript.eScriptAct.Script:
                     {
                         foreach (var p in act.InputValues)
+                        {
                             if (!string.IsNullOrEmpty(p.ValueForDriver))
+                            {
                                 cmd += " " + p.ValueForDriver;
+                            }
+                        }
+
                         return cmd;
                     }
                 default:

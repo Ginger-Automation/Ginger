@@ -23,10 +23,10 @@ using Amdocs.Ginger.Repository;
 namespace Amdocs.Ginger.Common.Repository.SolutionCategories
 {
     public class SolutionCategoryDefinition : RepositoryItemBase
-    {        
+    {
         public static object Solution
         {
-            get;set;
+            get; set;
         }
 
         public SolutionCategoryDefinition()
@@ -57,7 +57,7 @@ namespace Amdocs.Ginger.Common.Repository.SolutionCategories
                 this.Category = (eSolutionCategories)Enum.Parse(typeof(eSolutionCategories), value.ToString());
             }
         }
-        
+
         public string CategoryName { get; set; }
         public string Description { get; set; }
         public ObservableList<SolutionCategoryValue> CategoryOptionalValues { get; set; }

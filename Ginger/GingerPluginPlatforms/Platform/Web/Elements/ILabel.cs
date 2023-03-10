@@ -16,15 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Ginger.Plugin.Platform.Web.Elements
 {    /// <summary>
      /// Exposes operation for Labels.
      /// </summary>
-    public interface ILabel: IGingerWebElement
+    public interface ILabel : IGingerWebElement
     {
         /// <summary>
         /// Gives the Font of Label.

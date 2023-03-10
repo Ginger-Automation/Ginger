@@ -21,7 +21,7 @@ using System.Collections.Generic;
 namespace Ginger.UserControlsLib.UCListView
 {
     public interface IListViewHelper
-    {        
+    {
         UcListView ListView { get; set; }
 
         General.eRIPageViewMode PageViewMode { get; set; }
@@ -77,5 +77,5 @@ namespace Ginger.UserControlsLib.UCListView
         void Paste();
 
         void DeleteSelected();
-      }
+    }
 }

@@ -16,17 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 //using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using System;
+using System.Threading.Tasks;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
-using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Environments;
 using LiteDB;
-using System;
-using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {

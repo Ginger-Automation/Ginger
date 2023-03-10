@@ -17,54 +17,53 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
+using GingerCore.Actions;
+using GingerCore.Actions.Tuxedo;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using GingerCore.Actions;
-using GingerCore.Actions.Tuxedo;
-using Ginger.UserControls;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Actions.Tuxedo
 {
     /// <summary>
     /// Interaction logic for XLSReadDataToVariablesPage.xaml
     /// </summary>
-    public partial class ActTuxedoEditPage:Page
+    public partial class ActTuxedoEditPage : Page
     {
-         ActTuxedo mAct{get;set;}
+        ActTuxedo mAct { get; set; }
 
-         public ActTuxedoEditPage(Act act)
+        public ActTuxedoEditPage(Act act)
         {
             InitializeComponent();
 
-            this.mAct = (ActTuxedo)act;            
+            this.mAct = (ActTuxedo)act;
 
             // Bind Controls
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PCPath, TextBox.TextProperty, mAct.PCPath, nameof(ActInputValue.Value));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PreComamndTextBox, TextBox.TextProperty, mAct.PreCommand, nameof(ActInputValue.Value));            
-             
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PreComamndTextBox, TextBox.TextProperty, mAct.PreCommand, nameof(ActInputValue.Value));
+
             UnixPath.Init(Context.GetAsContext(mAct.Context), mAct.UnixPath);
             HostUCVE.Init(Context.GetAsContext(mAct.Context), mAct.Host);
-            Port.Init(Context.GetAsContext(mAct.Context), mAct.Port);            
+            Port.Init(Context.GetAsContext(mAct.Context), mAct.Port);
             UserName.Init(Context.GetAsContext(mAct.Context), mAct.UserName);
-            Password.Init(Context.GetAsContext(mAct.Context), mAct.Password);                        
+            Password.Init(Context.GetAsContext(mAct.Context), mAct.Password);
 
             PrivateKey.Init(Context.GetAsContext(mAct.Context), mAct.PrivateKey);
             KeyPassPhrase.Init(Context.GetAsContext(mAct.Context), mAct.PrivateKeyPassPhrase);
 
-            SetGridView();                 
+            SetGridView();
         }
 
-         private void SetGridView()
-         {
+        private void SetGridView()
+        {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header="Parameter" ,WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header="Value" ,WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.Resources["InputValueExpressionButton"] });            
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Parameter", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Value", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.Resources["InputValueExpressionButton"] });
             view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
 
             UDParamsGrid.SetAllColumnsDefaultView(view);
@@ -73,12 +72,12 @@ namespace Ginger.Actions.Tuxedo
             UDParamsGrid.DataSourceList = mAct.DynamicUDElements;
         }
 
-         private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
-         {
-             ActInputValue AIV = (ActInputValue)UDParamsGrid.CurrentItem;
-             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), Context.GetAsContext(mAct.Context));
-             VEEW.ShowAsWindow();
-         }
+        private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
+        {
+            ActInputValue AIV = (ActInputValue)UDParamsGrid.CurrentItem;
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), Context.GetAsContext(mAct.Context));
+            VEEW.ShowAsWindow();
+        }
 
         private void BrowsePCPathButton_Click(object sender, RoutedEventArgs e)
         {
@@ -88,7 +87,7 @@ namespace Ginger.Actions.Tuxedo
                 Filter = "UD Input Data Files (*.UD)|*.UD"
             }) is string fileName)
             {
-                PCPath.Text = fileName;                
+                PCPath.Text = fileName;
                 ProcessUDFile();
             }
         }
@@ -104,9 +103,9 @@ namespace Ginger.Actions.Tuxedo
 
             mAct.DynamicUDElements.Clear();
             string[] lines = System.IO.File.ReadAllLines(FileName);
-            foreach(string s in lines)
+            foreach (string s in lines)
             {
-                int firstSpace=s.IndexOf("\t");
+                int firstSpace = s.IndexOf("\t");
                 string Param;
                 string Value;
                 if (firstSpace > 0)

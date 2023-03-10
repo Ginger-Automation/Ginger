@@ -16,15 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
-using System.Linq;
 
 namespace Amdocs.Ginger.Repository
 {
     public class AppModelParameter : RepositoryItemBase, IParentOptionalValuesObject
     {
-        
+
         public virtual string ParamLevel { get { return "Local"; } set { } }
 
         string mPlaceHolder = string.Empty;
@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                if(mDescription != value)
+                if (mDescription != value)
                 {
                     mDescription = value;
                     OnPropertyChanged(nameof(Description));
@@ -154,13 +154,14 @@ namespace Amdocs.Ginger.Repository
 
 
 
-        public string OptionalValuesString {
+        public string OptionalValuesString
+        {
             get
             {
                 string OptionalValuesString = string.Empty;
                 foreach (OptionalValue optionalValue in OptionalValuesList)
                 {
-                    if(optionalValue.IsDefault)
+                    if (optionalValue.IsDefault)
                         OptionalValuesString += optionalValue.Value + "*,";
                     else
                         OptionalValuesString += optionalValue.Value + ",";
@@ -175,7 +176,7 @@ namespace Amdocs.Ginger.Repository
         {
         }
 
-        public AppModelParameter(string PlaceHolder, string Description, string TagName,string NodeXpath, ObservableList<OptionalValue> OptionalValuesList)
+        public AppModelParameter(string PlaceHolder, string Description, string TagName, string NodeXpath, ObservableList<OptionalValue> OptionalValuesList)
         {
             this.PlaceHolder = PlaceHolder;
             this.Description = Description;
@@ -218,5 +219,5 @@ namespace Amdocs.Ginger.Repository
         {
             OnPropertyChanged(nameof(AppModelParameter.OptionalValuesString));
         }
-    }   
+    }
 }

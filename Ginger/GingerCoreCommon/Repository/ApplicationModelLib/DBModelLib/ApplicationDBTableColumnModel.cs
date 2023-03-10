@@ -32,7 +32,7 @@ namespace Amdocs.Ginger.Repository
         public int Length { get; set; }
 
         // ...
-       
+
 
         public override string ItemName { get { return Name; } set { Name = value; } }
     }

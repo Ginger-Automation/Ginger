@@ -16,14 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Common.Enums;
 
 namespace Amdocs.Ginger.Common.Repository
-{    
+{
     public interface ISourceControl
     {
         Task<eImageType> GetFileStatusForRepositoryItemPath(string FullPath);

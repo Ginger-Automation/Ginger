@@ -16,18 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger.Environments;
 using Ginger.SolutionGeneral;
-using GingerCore;
-using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using amdocs.ginger.GingerCoreNET;
-using System.Threading.Tasks;
 
 namespace Ginger.SourceControl
 {

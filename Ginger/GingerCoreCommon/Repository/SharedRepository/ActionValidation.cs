@@ -16,19 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Ginger.Repository.ItemToRepositoryWizard;
-using GingerCore;
-using GingerCore.Actions;
 
 namespace Ginger.Repository.AddItemToRepositoryWizard
 {
     public class ActionValidation : ItemValidationBase
-    {       
+    {
         public new static void Validate(UploadItemSelection selectedItem)
-        { 
-            
+        {
+
         }
-        
+
     }
 }

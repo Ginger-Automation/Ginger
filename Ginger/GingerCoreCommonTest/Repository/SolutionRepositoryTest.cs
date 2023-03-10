@@ -40,7 +40,7 @@ namespace GingerCoreCommonTest.Repository
     // Test Multi thread getting the same data - repository folder
     // Test Big solution
 
-    [TestClass]    
+    [TestClass]
     [Level1]
     public class SolutionRepositoryTest
     {
@@ -51,9 +51,9 @@ namespace GingerCoreCommonTest.Repository
         static NewRepositorySerializer mRepositorySerializer;
         static string TempRepositoryFolder;
 
-        
 
-        
+
+
 
 
         [ClassInitialize]
@@ -71,16 +71,16 @@ namespace GingerCoreCommonTest.Repository
             mRepositorySerializer = new NewRepositorySerializer();
             // Init SR
             mSolutionRepository = new SolutionRepository();
-            mSolutionRepository.AddItemInfo<MyRepositoryItem>( pattern: "*.Ginger.MyRepositoryItem.xml",   // Need to use for file name 
-                                                               rootFolder: SolutionRepository.cSolutionRootFolderSign + "MyRepositoryItems", 
-                                                               containRepositoryItems: true, 
-                                                               displayName: "My Repository Item", 
+            mSolutionRepository.AddItemInfo<MyRepositoryItem>(pattern: "*.Ginger.MyRepositoryItem.xml",   // Need to use for file name 
+                                                               rootFolder: SolutionRepository.cSolutionRootFolderSign + "MyRepositoryItems",
+                                                               containRepositoryItems: true,
+                                                               displayName: "My Repository Item",
                                                                PropertyNameForFileName: nameof(MyRepositoryItem.Name)
                                                                );
 
-            NewRepositorySerializer RS = new NewRepositorySerializer();                        
-            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommonTest);            
-            mSolutionRepository.Open(TempRepositoryFolder);            
+            NewRepositorySerializer RS = new NewRepositorySerializer();
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommonTest);
+            mSolutionRepository.Open(TempRepositoryFolder);
         }
 
         [ClassCleanup]
@@ -92,7 +92,7 @@ namespace GingerCoreCommonTest.Repository
         private static void CreateTestSolution()
         {
             // First we create a basic solution with some sample items
-            SolutionRepository SR = new SolutionRepository();                        
+            SolutionRepository SR = new SolutionRepository();
             if (Directory.Exists(TempRepositoryFolder))
             {
                 Directory.Delete(TempRepositoryFolder, true);
@@ -109,7 +109,7 @@ namespace GingerCoreCommonTest.Repository
 
 
             SR.CreateRepository(TempRepositoryFolder);
-            SR.Open(TempRepositoryFolder);            
+            SR.Open(TempRepositoryFolder);
 
             MyRepositoryItem A1 = new MyRepositoryItem("A1");
             SR.AddRepositoryItem(A1);
@@ -531,7 +531,7 @@ namespace GingerCoreCommonTest.Repository
             Assert.AreEqual(mri.RepositoryItemHeader.Version, 2);
         }
 
-       
+
 
         [TestMethod]
         public void ValidateInvlidCharsinFilename()

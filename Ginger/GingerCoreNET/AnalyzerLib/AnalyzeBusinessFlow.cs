@@ -16,10 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -29,6 +25,10 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Platforms;
 using GingerCore.Variables;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Ginger.AnalyzerLib
 {
@@ -36,7 +36,7 @@ namespace Ginger.AnalyzerLib
     {
         static string MissingTargetApp = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " is missing target Application(s)";
         static string MissingActivities = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " is missing " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-        public  static readonly string LegacyOutPutValidationDescription = "Output validation contains legacy operators which are very slow and does not work on Linux";
+        public static readonly string LegacyOutPutValidationDescription = "Output validation contains legacy operators which are very slow and does not work on Linux";
         private static Regex rxVarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
         public BusinessFlow mBusinessFlow { get; set; }
         private Solution mSolution { get; set; }
@@ -50,7 +50,7 @@ namespace Ginger.AnalyzerLib
             // Check BF have Target Apps            
             if (BusinessFlow.TargetApplications == null || BusinessFlow.TargetApplications.Count() == 0)
             {
-                AnalyzeBusinessFlow ABF = new AnalyzeBusinessFlow();                    
+                AnalyzeBusinessFlow ABF = new AnalyzeBusinessFlow();
                 ABF.Description = MissingTargetApp;
                 ABF.UTDescription = "MissingTargetApp";
                 ABF.Details = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " doesn't have Target Application(s) defined";
@@ -152,7 +152,7 @@ namespace Ginger.AnalyzerLib
             int FixedIssueCount = 0;
             foreach (ActReturnValue ARV in ABF.ReturnValues)
             {
-                if (!string.IsNullOrEmpty(ARV.Expected)&&!ARV.Expected.Contains("{"))
+                if (!string.IsNullOrEmpty(ARV.Expected) && !ARV.Expected.Contains("{"))
                 {
                     ARV.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
                 }
@@ -171,16 +171,16 @@ namespace Ginger.AnalyzerLib
                             }
                         }
 
-                       
+
                     }
                 }
             }
 
-            if(FixedIssueCount==0)
+            if (FixedIssueCount == 0)
             {
                 ABF.Status = eStatus.CannotFix;
             }
-            else if (FixedIssueCount< issueCount)
+            else if (FixedIssueCount < issueCount)
             {
                 ABF.Status = eStatus.PartiallyFixed;
             }
@@ -196,9 +196,9 @@ namespace Ginger.AnalyzerLib
 
             IEnumerable<ObservableList<IAct>> ActionList = businessFlow.Activities.Select(x => x.Acts);
 
-            foreach(ObservableList<IAct> ActList in ActionList)
+            foreach (ObservableList<IAct> ActList in ActionList)
             {
-                foreach(Act action in ActList)
+                foreach (Act action in ActList)
                 {
                     ABF.ReturnValues.AddRange(action.ActReturnValues.Where(x => x.Operator == Amdocs.Ginger.Common.Expressions.eOperator.Legacy));
                 }
@@ -214,7 +214,7 @@ namespace Ginger.AnalyzerLib
             if (ABF.mBusinessFlow.TargetApplications.Count() == 0)
             {
                 if (ABF.mSolution.ApplicationPlatforms.Count == 0)
-                {                    
+                {
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The default Application Platform Info is missing, please go to Solution level to add at least one Target Application.");
                     return;
                 }
@@ -222,6 +222,6 @@ namespace Ginger.AnalyzerLib
                 ABF.mBusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = SAN });
                 ABF.Status = eStatus.Fixed;
             }
-        }        
+        }
     }
 }

@@ -16,55 +16,66 @@ limitations under the License.
 */
 #endregion
 
-using System.Text;
 using System;
+using System.Text;
 
-namespace GingerCore.XPathParser {
-    public class XPathParserException : System.Exception {
+namespace GingerCore.XPathParser
+{
+    public class XPathParserException : System.Exception
+    {
         public string queryString;
-        public int    startChar;
-        public int    endChar;
+        public int startChar;
+        public int endChar;
 
-        public XPathParserException(string queryString, int startChar, int endChar, string message) : base(message) {
+        public XPathParserException(string queryString, int startChar, int endChar, string message) : base(message)
+        {
             this.queryString = queryString;
             this.startChar = startChar;
             this.endChar = endChar;
         }
 
-        private enum TrimType {
+        private enum TrimType
+        {
             Left,
             Right,
             Middle,
         }
 
         // This function is used to prevent long quotations in error messages
-        private static void AppendTrimmed(StringBuilder sb, string value, int startIndex, int count, TrimType trimType) {
-            const int    TrimSize   = 32;
+        private static void AppendTrimmed(StringBuilder sb, string value, int startIndex, int count, TrimType trimType)
+        {
+            const int TrimSize = 32;
             const string TrimMarker = "...";
 
-            if (count <= TrimSize) {
+            if (count <= TrimSize)
+            {
                 sb.Append(value, startIndex, count);
-            } else {
-                switch (trimType) {
-                case TrimType.Left:
-                    sb.Append(TrimMarker);
-                    sb.Append(value, startIndex + count - TrimSize, TrimSize);
-                    break;
-                case TrimType.Right:
-                    sb.Append(value, startIndex, TrimSize);
-                    sb.Append(TrimMarker);
-                    break;
-                case TrimType.Middle:
-                    sb.Append(value, startIndex, TrimSize / 2);
-                    sb.Append(TrimMarker);
-                    sb.Append(value, startIndex + count - TrimSize / 2, TrimSize / 2);
-                    break;
+            }
+            else
+            {
+                switch (trimType)
+                {
+                    case TrimType.Left:
+                        sb.Append(TrimMarker);
+                        sb.Append(value, startIndex + count - TrimSize, TrimSize);
+                        break;
+                    case TrimType.Right:
+                        sb.Append(value, startIndex, TrimSize);
+                        sb.Append(TrimMarker);
+                        break;
+                    case TrimType.Middle:
+                        sb.Append(value, startIndex, TrimSize / 2);
+                        sb.Append(TrimMarker);
+                        sb.Append(value, startIndex + count - TrimSize / 2, TrimSize / 2);
+                        break;
                 }
             }
         }
 
-        internal string MarkOutError() {
-            if (queryString == null || queryString.Trim(' ').Length == 0) {
+        internal string MarkOutError()
+        {
+            if (queryString == null || queryString.Trim(' ').Length == 0)
+            {
                 return null;
             }
 
@@ -72,7 +83,8 @@ namespace GingerCore.XPathParser {
             StringBuilder sb = new StringBuilder();
 
             AppendTrimmed(sb, queryString, 0, startChar, TrimType.Left);
-            if (len > 0) {
+            if (len > 0)
+            {
                 sb.Append(" -->");
                 AppendTrimmed(sb, queryString, startChar, len, TrimType.Middle);
             }
@@ -83,12 +95,15 @@ namespace GingerCore.XPathParser {
             return sb.ToString();
         }
 
-        private string FormatDetailedMessage() {
+        private string FormatDetailedMessage()
+        {
             string message = Message;
             string error = MarkOutError();
 
-            if (error != null && error.Length > 0) {
-                if (message.Length > 0) {
+            if (error != null && error.Length > 0)
+            {
+                if (message.Length > 0)
+                {
                     message += Environment.NewLine;
                 }
                 message += error;
@@ -96,13 +111,16 @@ namespace GingerCore.XPathParser {
             return message;
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             string result = this.GetType().FullName;
             string info = FormatDetailedMessage();
-            if (info != null && info.Length > 0) {
+            if (info != null && info.Length > 0)
+            {
                 result += ": " + info;
             }
-            if (StackTrace != null) {
+            if (StackTrace != null)
+            {
                 result += Environment.NewLine + StackTrace;
             }
             return result;

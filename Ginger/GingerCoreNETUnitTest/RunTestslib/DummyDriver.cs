@@ -18,11 +18,10 @@ limitations under the License.
 
 using Amdocs.Ginger.Plugin.Core;
 using System;
-using System.Collections.Generic;
 
 namespace GingerCoreNETUnitTests.RunTestslib
 {
-    [GingerService(Id : "DummyService", Description: "Dummy Service")]
+    [GingerService(Id: "DummyService", Description: "Dummy Service")]
     public class DummyDriver : IServiceSession
     {
         public void StartSession()
@@ -51,7 +50,7 @@ namespace GingerCoreNETUnitTests.RunTestslib
             act.AddExInfo("A2 Result");
         }
 
-        
+
 
         [GingerAction("Echo", "Echo string as output")]
         public void Echo(GingerAction act, string text)

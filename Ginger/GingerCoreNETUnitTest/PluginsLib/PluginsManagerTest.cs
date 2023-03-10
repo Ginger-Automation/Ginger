@@ -31,12 +31,12 @@ namespace GingerCoreNETUnitTest.PluginsLib
     public class PluginsManagerTest
     {
 
-        
+
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            
+
         }
 
 
@@ -54,16 +54,17 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         //[TestMethod]  [Timeout(60000)]
         //public void AddPluginPackage()
-        
+
         [Ignore] // fail on Mac with Git Forbidden - need to move plugin packages to other place or at least the Plugin info xml
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void InstalledPluginPackageFromOnline()
         {
             //Arrange   
 
             // TODO: create a simple plugin for unit test which will download faster.
 
-            string PluginId = "PACT";            
+            string PluginId = "PACT";
             string path = TestResources.GetTestTempFolder(@"Solutions" + Path.DirectorySeparatorChar + "PluginsManagerSR1");
             if (Directory.Exists(path))
             {
@@ -72,11 +73,11 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
             SolutionRepository solutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
             solutionRepository.CreateRepository(path);
-            solutionRepository.Open(path);            
-            
+            solutionRepository.Open(path);
+
             PluginsManager pluginsManager = new PluginsManager();
-            pluginsManager.Init(solutionRepository);            
-            ObservableList<PluginPackage> pluginPackages =  solutionRepository.GetAllRepositoryItems<PluginPackage>();
+            pluginsManager.Init(solutionRepository);
+            ObservableList<PluginPackage> pluginPackages = solutionRepository.GetAllRepositoryItems<PluginPackage>();
 
             // Act            
             var p = pluginsManager.GetOnlinePluginsIndex();
@@ -85,13 +86,14 @@ namespace GingerCoreNETUnitTest.PluginsLib
             pluginsManager.InstallPluginPackage(onlinePluginPackage, onlinePluginPackage.Releases[0]);
             //string folder = Path.Combine(Common.GetTestResourcesFolder(), @"PluginPackages\SeleniumPluginPackage.1.0.0");
 
-            
+
             //Assert
             Assert.AreEqual(1, pluginPackages.Count);
-            Assert.AreEqual("PACT", pluginPackages[0].PluginId);            
+            Assert.AreEqual("PACT", pluginPackages[0].PluginId);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GenstalledPluginPackages()
         {
             //Arrange       

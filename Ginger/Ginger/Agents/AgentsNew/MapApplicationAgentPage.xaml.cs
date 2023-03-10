@@ -16,21 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Repository;
 using Ginger;
-using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
 using GingerCore.Platforms;
-using GingerWPF.TreeViewItemsLib;
-using GingerWPF.UserControlsLib.UCTreeView;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -80,7 +70,7 @@ namespace GingerWPF.AgentsLib
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
             ApplicationAgent a = (ApplicationAgent)mApps.CurrentItem;
-           ((Agent) a.Agent).AgentOperations.StartDriver();
+            ((Agent)a.Agent).AgentOperations.StartDriver();
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)

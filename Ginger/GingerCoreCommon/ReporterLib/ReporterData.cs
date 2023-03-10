@@ -16,10 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 
 namespace Amdocs.Ginger.Common
 {
@@ -43,7 +40,7 @@ namespace Amdocs.Ginger.Common
                     {
                         PropertyChanged(this, new PropertyChangedEventArgs(nameof(ErrorCounter)));
                     }
-                }                
+                }
             }
         }
 

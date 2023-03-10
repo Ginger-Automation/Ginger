@@ -19,11 +19,9 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using System.Xml.XPath;
 
 namespace GingerCoreNETUnitTest.GeneralLib.XML
 {
@@ -44,14 +42,16 @@ namespace GingerCoreNETUnitTest.GeneralLib.XML
         }
 
         [Level2]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void XMLDocGetAllNodesTest()
 
         {
             Assert.AreEqual(191, XDE.GetAllNodes().Count);
         }
         [Level2]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void XMLDocGetTerminalNodesTest()
 
         {

@@ -29,12 +29,12 @@ limitations under the License.
 //    {
 //        [IsSerializedForLocalRepository]
 //        public RepositoryItemKey ApplicationLink { get; set; }
-        
+
 //        [IsSerializedForLocalRepository]
 //        public RepositoryItemKey AgentLink { get; set; }
 
 //        public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        
+
 //        public UserProfileApplicationAgentMap(ApplicationPlatform applicationPlatform, NewAgent agent)
 //        {
 //            ApplicationLink.ItemName = applicationPlatform.AppName;

@@ -17,8 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.OS;
-using GingerPluginCore;
-using GingerUtils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,9 +34,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         {
             if (LocalHostIP == null)
             {
-                SetLocalHostIP();                
+                SetLocalHostIP();
             }
-            
+
             return LocalHostIP;
         }
 
@@ -47,7 +45,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             LocalHostIP = OperatingSystemBase.CurrentOperatingSystem.GetFirstLocalHostIPAddress();
         }
 
-        
+
         //TODO: think if we want to have multiple display - enable set for this value
         public static string GetDisplayHost()
         {
@@ -80,7 +78,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 Random rand = new Random();
                 int toSkip = rand.Next(1, 100);
                 int portStartIndex = LastPort + toSkip;
-                
+
                 IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
                 IPEndPoint[] tcpEndPoints = properties.GetActiveTcpListeners();
                 List<int> usedPorts = tcpEndPoints.Select(p => p.Port).ToList<int>();

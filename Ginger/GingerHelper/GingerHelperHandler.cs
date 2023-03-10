@@ -31,7 +31,7 @@ namespace GingerHelper
                 //delete current
                 if (deleteExitingContentBeforeStart == true && Directory.Exists(targetPath))
                 {
-                    Directory.Delete(targetPath, true);                    
+                    Directory.Delete(targetPath, true);
                 }
                 Directory.CreateDirectory(targetPath);
 
@@ -57,21 +57,28 @@ namespace GingerHelper
 
         private static void CopyFiles(string sourcePath, string destinationPath, List<string> IgnorExtentions)
         {
-            foreach(string file in Directory.GetFiles(sourcePath))
+            foreach (string file in Directory.GetFiles(sourcePath))
             {
                 bool unWantedFile = false;
 
-                if (file.Contains("~$")) continue;
+                if (file.Contains("~$"))
+                {
+                    continue;
+                }
 
                 foreach (string extenationToIgnore in IgnorExtentions)
+                {
                     if (extenationToIgnore.ToUpper().Trim() == Path.GetExtension(file).ToUpper() || extenationToIgnore.ToUpper().Trim() == Path.GetExtension(file).ToUpper().TrimStart(new char[] { '.' }))
                     {
                         unWantedFile = true;
                         break;
                     }
+                }
 
                 if (unWantedFile == false)
+                {
                     File.Copy(file, Path.Combine(destinationPath, Path.GetFileName(file)), true);
+                }
             }
         }
     }

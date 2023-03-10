@@ -16,20 +16,13 @@ limitations under the License.
 */
 #endregion
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Chromium;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace GingerCore.Drivers
 {
-    public static class ChromeDriverEx 
+    public static class ChromeDriverEx
     {
         public static Screenshot GetFullPageScreenshot(this ChromiumDriver driver)
         {

@@ -17,12 +17,12 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Ginger.Actions;
-using GingerCore.Actions;
-using System.Windows.Controls;
-using GingerWPF.UserControlsLib.UCTreeView;
-using Ginger.Drivers.PowerBuilder;
 using Amdocs.Ginger.Common.UIElement;
+using Ginger.Actions;
+using Ginger.Drivers.PowerBuilder;
+using GingerCore.Actions;
+using GingerWPF.UserControlsLib.UCTreeView;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.PowerBuilder
 {
@@ -38,7 +38,7 @@ namespace Ginger.WindowExplorer.PowerBuilder
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
-            if(mAvailableActions.Count == 0)
+            if (mAvailableActions.Count == 0)
             {
                 mAvailableActions.Clear();
                 mAvailableActions.Add(new ActTableElement()
@@ -51,7 +51,7 @@ namespace Ginger.WindowExplorer.PowerBuilder
                     LocateRowValue = "0",
                     LocateRowType = "Row Number"
                 });
-            }            
+            }
             return mAvailableActions;
         }
 
@@ -63,7 +63,10 @@ namespace Ginger.WindowExplorer.PowerBuilder
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mActTableEditPage == null)
-                mActTableEditPage = new ActTableEditPage(base.UIAElementInfo, mAvailableActions);            
+            {
+                mActTableEditPage = new ActTableEditPage(base.UIAElementInfo, mAvailableActions);
+            }
+
             return mActTableEditPage;
         }
     }

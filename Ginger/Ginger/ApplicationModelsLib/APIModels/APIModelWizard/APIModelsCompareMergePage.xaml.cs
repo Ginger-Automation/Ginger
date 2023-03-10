@@ -16,12 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Application_Models;
-using Amdocs.Ginger.Repository;
 using GingerCoreNET.Application_Models;
 using GingerWPF.ApplicationModelsLib.APIModels;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 

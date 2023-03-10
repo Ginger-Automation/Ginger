@@ -16,11 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Text;
 using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Actions;
+using System;
+using System.Text;
 
 namespace Ginger.Export
 {
@@ -41,17 +41,17 @@ namespace Ginger.Export
         {
             try
             {
-                csvFileName = csvFileName + "\\" + BF.Name+".csv";
+                csvFileName = csvFileName + "\\" + BF.Name + ".csv";
                 System.IO.File.WriteAllText(csvFileName, GenerateCSVfromBusinessFlow(BF), Encoding.UTF8);
             }
-            catch(Exception e) 
+            catch (Exception e)
             {
                 Reporter.ToUser(eUserMsgKey.FailedToExportBF, e.Message);
             }
         }
 
         private static string GenerateCSVfromBusinessFlow(BusinessFlow BF)
-        {            
+        {
             StringBuilder Output = new StringBuilder();
 
             Output.AppendLine(BF.Name.Replace(",", " ") + ",,,,,");
@@ -61,13 +61,13 @@ namespace Ginger.Export
                 Output.AppendLine("," + a.Active.ToString() + "," + a.ActivityName.Replace(",", " ") + ",,,");
                 foreach (Act act in a.Acts)
                 {
-                    string inputParam=act.GetInputParamValue("Value") == null ? "" : act.GetInputParamValue("Value").Replace(",", " ").Replace(Environment.NewLine, " ");
+                    string inputParam = act.GetInputParamValue("Value") == null ? "" : act.GetInputParamValue("Value").Replace(",", " ").Replace(Environment.NewLine, " ");
                     Output.AppendLine(",,," + act.Active.ToString() + "," + act.Description.Replace(",", " ") + "," + inputParam);
-                    
+
                 }
             }
             Output.AppendLine("EOBF,,,,,");
             return Output.ToString();
-         }
+        }
     }
 }

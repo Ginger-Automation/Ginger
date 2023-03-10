@@ -19,12 +19,10 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Repository;
-using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.UserControls;
 using GingerCore;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -56,7 +54,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             //else if (WizardEventArgs.EventType == EventType.Finish)
             //{
             //    //AddAPIModelWizard.FinishEnabled = false;
-                
+
             //}
             else if (WizardEventArgs.EventType == EventType.Active)
             {
@@ -70,7 +68,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             }
         }
 
-        
+
 
         private void SetApplicationModelsGrid()
         {
@@ -145,6 +143,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     CurrentSelectedAPIModel.OptionalValuesTemplates.Add(new TemplateFile() { FilePath = file });
                 }
             }
-        }      
+        }
     }
 }

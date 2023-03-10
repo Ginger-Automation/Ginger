@@ -140,13 +140,13 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         }
 
         private void AddQuery(object sender, RoutedEventArgs e)
-        {            
+        {
             WizardWindow.ShowWizard(new AddDBQueryWizard(Path));
         }
 
         private void AddDBModel(object sender, RoutedEventArgs e)
         {
-            WizardWindow.ShowWizard(new AddDBModelWizard(this.Path));            
+            WizardWindow.ShowWizard(new AddDBModelWizard(this.Path));
         }
     }
 }

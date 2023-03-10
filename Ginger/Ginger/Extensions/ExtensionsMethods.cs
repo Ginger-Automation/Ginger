@@ -49,7 +49,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Refresh uiElement failed - " + uiElement.GetType().Name, ex); 
+                Reporter.ToLog(eLogLevel.ERROR, "Refresh uiElement failed - " + uiElement.GetType().Name, ex);
             }
 
         }
@@ -78,7 +78,7 @@ namespace Ginger
         }
 
         // Bind Combo for enum type, but provide the subset list of enums/valid values to show
-        public static void BindControl(this ComboBox ComboBox, Object obj, string Field, dynamic enumslist,bool isSorted=true)
+        public static void BindControl(this ComboBox ComboBox, Object obj, string Field, dynamic enumslist, bool isSorted = true)
         {
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
             List<object> l = new List<object>();
@@ -316,7 +316,7 @@ namespace Ginger
                 while (entry != null)
                 {
                     entry = Frame.RemoveBackEntry();
-                }                
+                }
             }
 
             // Set the frame content
@@ -426,12 +426,12 @@ namespace Ginger
         public static ValidationRule GetValidationRule(this FrameworkElement frameworkElement, DependencyProperty dependencyProperty, Type type)
         {
             BindingExpression bd = frameworkElement.GetBindingExpression(dependencyProperty);
-            foreach(ValidationRule vr in bd.ParentBinding.ValidationRules)
+            foreach (ValidationRule vr in bd.ParentBinding.ValidationRules)
             {
-                if(vr.GetType() == type)
+                if (vr.GetType() == type)
                 {
                     return vr;
-                }                
+                }
             }
             return null;
         }

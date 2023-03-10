@@ -21,11 +21,11 @@ using System.Windows;
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
-   public interface ITreeView
+    public interface ITreeView
     {
-        UCTreeView Tree { get;}
+        UCTreeView Tree { get; }
 
         void AddToolbarTool(string toolImage, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, object CommandParameter = null);
-        void AddToolbarTool(eImageType imageType, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, object CommandParameter = null);        
+        void AddToolbarTool(eImageType imageType, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, object CommandParameter = null);
     }
 }

@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -188,17 +187,26 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 foreach (OperationBinding operation in binding.Operations)
                 {
                     if (mStopParsing)
+                    {
                         return;
+                    }
+
                     ApplicationAPIModel AAM = new ApplicationAPIModel();
 
                     if (operation.Extensions.Count != 0)
                     {
                         if (operation.Extensions[0] is SoapOperationBinding)
+                        {
                             AAM.SOAPAction = ((SoapOperationBinding)operation.Extensions[0]).SoapAction;
+                        }
                         else if (operation.Extensions[0] is SoapOperationBinding)
+                        {
                             AAM.SOAPAction = ((HttpOperationBinding)operation.Extensions[0]).Location;
+                        }
                         else
+                        {
                             break;
+                        }
                     }
 
                     AAM.APIType = ApplicationAPIUtils.eWebApiType.SOAP;
@@ -208,9 +216,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
 
                     if (binding.Name.EndsWith("12"))
+                    {
                         AAM.ReqHttpVersion = ApplicationAPIUtils.eHttpVersion.HTTPV10;
+                    }
                     else
+                    {
                         AAM.ReqHttpVersion = ApplicationAPIUtils.eHttpVersion.HTTPV11;
+                    }
 
                     string SoapEnvelopeURL = "http://schemas.xmlsoap.org/soap/envelope/";
 
@@ -239,12 +251,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                             AMPList.Add(new AppModelParameter(UniqPlaceHolder, string.Empty, XDN.LocalName, XDN.XPath, new ObservableList<OptionalValue>()));
 
                             if (XDN.Attributes != null && XDN.Attributes.Count > 0)
+                            {
                                 foreach (XmlAttribute XmlAttribute in XDN.Attributes)
                                 {
                                     string UniqAttributePlaceHolder = "{" + GetPlaceHolderName(XmlAttribute.LocalName.ToUpper()) + "}";
                                     XmlAttribute.Value = UniqAttributePlaceHolder;
                                     AMPList.Add(new AppModelParameter(UniqAttributePlaceHolder, string.Empty, XmlAttribute.LocalName, XDN.XPath, new ObservableList<OptionalValue>()));
                                 }
+                            }
                         }
                         AAM.RequestBody = XDE.XMLString;
                         AAM.AppModelParameters = AMPList;
@@ -350,7 +364,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         AddNameSpaceToInclude(NameSpacesToInclude, HeadComplexType.TargetNameSpace);
                         string NameSpaceName = NameSpacesToInclude[HeadComplexType.TargetNameSpace];
                         if (string.IsNullOrEmpty(NameSpaceName))
+                        {
                             NameSpaceName = NameSpacesToInclude[part.ElementNameSpace];
+                        }
+
                         AppendComplexTypeElements(RequestBody, null, null, HeadComplexType, NameSpaceName, tab3, NameSpacesToInclude, PathToPass, AMPList);
                         RequestBody.Append(tab2 + "</" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.ElementName + ">" + Environment.NewLine);
                         RequestBody.Append(tab1 + "</soapenv:Header>" + Environment.NewLine);
@@ -408,7 +425,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 return string.Empty;
             }
             else
+            {
                 return RequestBody.ToString();
+            }
         }
 
         private string GetEndingPartTypeToAppend(Part part, Dictionary<string, string> NameSpacesToInclude)
@@ -436,7 +455,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             else
             {
                 if (!NameSpacesToInclude.ContainsKey("http://www.w3.org/2001/XMLSchema-instance"))
+                {
                     NameSpacesToInclude.Add("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+                }
+
                 startingPartTypeToAppend = tab2 + "<" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.PartName + " xsi:type=\"" + NameSpacesToInclude[part.ElementNameSpace] + ":" + part.ElementName + "\" " + "xmlns:" + NameSpacesToInclude[part.ElementNameSpace] + "=\"" + part.ElementNameSpace + "\">" + Environment.NewLine;
             }
 
@@ -450,7 +472,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             foreach (KeyValuePair<string, string> KVP in NameSpacesToInclude)
             {
                 if (!string.IsNullOrEmpty(KVP.Value) && !string.IsNullOrEmpty(KVP.Key))
+                {
                     envelope = envelope + "xmlns:" + KVP.Value + "=\"" + KVP.Key + "\" ";
+                }
             }
 
             envelope = envelope + ">" + Environment.NewLine;
@@ -482,7 +506,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 }
                 AppendComplexTypeElementWithExtension(RequestBody, RefElement, NextComplexType, NameSpaceName, CurrentTab, NameSpacesToInclude, PathToPass, AMPList);
                 if (ComplexType.Extension.ComplexTypeElementsList.Count > 0)
+                {
                     AppendComplexTypeElementList(RequestBody, ComplexType.Extension.ComplexTypeElementsList, RefElement, SourceElement, ComplexType, NameSpaceName, CurrentTab, NameSpacesToInclude, Path, AMPList);
+                }
             }
             if (ComplexType.Restriction != null)
             {
@@ -542,7 +568,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void AddXSDNameSpace(Dictionary<string, string> NameSpacesToInclude)
         {
             if (!NameSpacesToInclude.ContainsKey("http://www.w3.org/2001/XMLSchema"))
+            {
                 NameSpacesToInclude.Add("http://www.w3.org/2001/XMLSchema", "xsd");
+            }
         }
 
 
@@ -780,7 +808,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void AddNameSpaceToInclude(Dictionary<string, string> NameSpacesToInclude, string TargetNameSpace)
         {
             if (!NameSpacesToInclude.ContainsKey(TargetNameSpace))
+            {
                 NameSpacesToInclude.Add(TargetNameSpace, GetNameWithoutDots(TargetNameSpace, NameSpacesToInclude.Values.ToList()));
+            }
         }
 
         private void AppendEmptyElement(StringBuilder RequestBody, ComplexTypeChild ComplexTypeChild, string NameSpaceName, string CurrentTab, Dictionary<string, string> NameSpacesToInclude)
@@ -813,9 +843,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     ComplexType NextComplexType = GetComplexTypeByNameAndNameSpace(ComplexType.Extension.BaseName, ComplexType.Extension.BaseNameSpace);
                     string PathToPass = string.Empty;
                     if (NextComplexType != null)
+                    {
                         PathToPass = Path + NextComplexType.Source + ":" + NextComplexType.Name + "/";
+                    }
                     else
+                    {
                         PathToPass = Path;
+                    }
+
                     AppendComplexTypeElementWithExtension(RequestBody, ComplexTypeChildToAppend, NextComplexType, NameSapceName, CurrentTab, NameSpacesToInclude, PathToPass, AMPList);
                     if (ComplexType.Extension.ComplexTypeElementsList.Count > 0)
                     {
@@ -837,9 +872,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     ComplexType NextComplexType = GetComplexTypeByNameAndNameSpace(ComplexType.Restriction.BaseName, ComplexType.Restriction.BaseNameSpace);
                     string PathToPass = string.Empty;
                     if (NextComplexType != null)
+                    {
                         PathToPass = Path + NextComplexType.Source + ":" + NextComplexType.Name + "/";
+                    }
                     else
+                    {
                         PathToPass = Path;
+                    }
+
                     AppendComplexTypeElementWithExtension(RequestBody, ComplexTypeChildToAppend, NextComplexType, NameSapceName, CurrentTab, NameSpacesToInclude, PathToPass, AMPList);
 
 
@@ -854,7 +894,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     if (RegularTypesList.Contains(ChildElement.Type))
                     {
                         if (ComplexTypeChildToAppend == null)
+                        {
                             ComplexTypeChildToAppend = ChildElement;
+                        }
+
                         ApendElement(RequestBody, ComplexTypeChildToAppend, NameSapceName, null, CurrentTab + tab1, NameSpacesToInclude, AMPList);
                         ComplexTypeChildToAppend = null;
                     }
@@ -872,9 +915,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         {
                             string PathToPass = string.Empty;
                             if (NextComplexType != null)
+                            {
                                 PathToPass = Path + NextComplexType.Source + ":" + NextComplexType.Name + "/";
+                            }
                             else
+                            {
                                 PathToPass = Path;
+                            }
+
                             AppendComplexTypeElementWithExtension(RequestBody, ComplexTypeChildToAppend, NextComplexType, NameSapceName, CurrentTab, NameSpacesToInclude, PathToPass, AMPList);
 
                         }
@@ -898,9 +946,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             if (ComplexTypeChild != null)
             {
                 if (string.IsNullOrEmpty(NameSapceName))
+                {
                     FullTagName = ComplexTypeChild.Name;
+                }
                 else
+                {
                     FullTagName = NameSapceName + ":" + ComplexTypeChild.Name;
+                }
+
                 if (Attributes != null && Attributes.Count != 0)
                 {
                     AttributesString = GetAttributeStringByAttributesList(Attributes);
@@ -992,11 +1045,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             ComplexType ComplexType = null;
             if (ComplexElementSource.Count != 0)
+            {
                 ComplexType = ComplexTypesList.Where(x => x.Name == ComplexTypeName && ComplexElementSource.Contains(x.Source.Replace("%20", " "))).FirstOrDefault();
+            }
             else
+            {
                 ComplexType = ComplexTypesList.Where(x => x.Name == ComplexTypeName && x.TargetNameSpace == ComplexTypeNameSpace).FirstOrDefault();
+            }
+
             if (ComplexType == null)
+            {
                 ComplexType = ComplexTypesList.Where(x => x.Name == ComplexTypeName).FirstOrDefault();
+            }
+
             return ComplexType;
         }
 
@@ -1004,12 +1065,20 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         {
             List<string> ElementSource = new List<string>();
             if (AllNameSpaces.ContainsKey(ElementNameSpace))
+            {
                 ElementSource = AllNameSpaces[ElementNameSpace];
+            }
+
             Element Element = null;
             if (ElementSource.Count != 0)
+            {
                 Element = ElementsList.Where(x => x.Name == ElementName && ElementSource.Contains(x.Source.Replace("%20", " "))).FirstOrDefault();
+            }
             else
+            {
                 Element = ElementsList.Where(x => x.Name == ElementName).FirstOrDefault();
+            }
+
             if (Element == null)
             {
                 Element = ElementsList.Where(x => x.Name == ElementName && string.IsNullOrEmpty(x.Source)).FirstOrDefault();
@@ -1066,13 +1135,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         {
             //TODO:Get A List to make it unique
             if (string.IsNullOrEmpty(headNameSpace))
+            {
                 return string.Empty;
+            }
+
             string s = string.Empty;
             string WorkURL = string.Empty;
             if (headNameSpace.StartsWith("http"))
             {
                 if (headNameSpace[headNameSpace.Length - 1] == '/')
+                {
                     headNameSpace = headNameSpace.Substring(0, headNameSpace.Length - 1);
+                }
+
                 int StartIndex = headNameSpace.LastIndexOf("/");
                 if (StartIndex != -1)
                 {
@@ -1110,6 +1185,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             int j = 1;
             if (AllNameSpacesShortCuts != null)
+            {
                 while (true)
                 {
                     if (AllNameSpacesShortCuts.Contains(s) || s == "xml")
@@ -1125,9 +1201,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         j = j + 1;
                     }
                     else
+                    {
                         break;
+                    }
                 }
-
+            }
 
             return s;
         }
@@ -1139,7 +1217,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             foreach (Tuple<string, string> URLTuple in AllURLs)
             {
                 if (mStopParsing)
+                {
                     return;
+                }
+
                 if (!string.IsNullOrEmpty(URLTuple.Item1))
                 {
                     string CompleteURL = GetCompleteURL(URLTuple.Item1, URLTuple.Item2);
@@ -1179,8 +1260,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 }
             }
             else
+            {
                 return string.Empty;
-
+            }
         }
 
         private void GetAllElementsAndComplexTypesFromImportedSchema(XmlSchema XmlSchema)
@@ -1188,7 +1270,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             foreach (object item in XmlSchema.Items)
             {
                 if (mStopParsing)
+                {
                     return;
+                }
+
                 if (item is XmlSchemaElement)
                 {
                     XmlSchemaElement XmlSchemaElement = item as XmlSchemaElement;
@@ -1247,7 +1332,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         XmlSchemaChoice XmlSchemaChoice = XmlSchemaParticle as XmlSchemaChoice;
                         List<ComplexTypeChild> ComplexTypeElementsChoisesList = GetElementListFromSchemaChoice(XmlSchemaChoice);
                         foreach (ComplexTypeChild CTC in ComplexTypeElementsChoisesList)
+                        {
                             ComplexTypeElementsList.Add(CTC);
+                        }
                     }
                     else if (XmlSchemaComplexType.ContentModel is XmlSchemaSimpleContent)
                     {
@@ -1308,9 +1395,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                                 foreach (XmlSchemaAttribute Attribute in XmlSchemaComplexContentRestriction.Attributes)
                                 {
                                     if (!string.IsNullOrEmpty(Attribute.Name))
+                                    {
                                         Restriction.Attributes.Add(Attribute.Name);
+                                    }
                                     else
+                                    {
                                         Restriction.Attributes.Add(Attribute.UnhandledAttributes[i].LocalName);
+                                    }
+
                                     i++;
                                 }
                             }
@@ -1434,9 +1526,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 {
                     XmlSchemaElement XmlSchemaElement = ChildElementObj as XmlSchemaElement;
                     if (string.IsNullOrEmpty(XmlSchemaElement.RefName.Name))
+                    {
                         ComplexTypeChild = CreateElement(XmlSchemaElement);
+                    }
                     else
+                    {
                         ComplexTypeChild = CreateRefElement(XmlSchemaElement);
+                    }
+
                     if (ComplexTypeChild is Element && string.IsNullOrEmpty(((Element)ComplexTypeChild).Type) && string.IsNullOrEmpty(((Element)ComplexTypeChild).TypeNameSpace))
                     {
                         string CompleteSourceUri = GetPathWithoutFileConvention(XmlSchemaElement.SourceUri);
@@ -1447,7 +1544,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         }
 
                         else
+                        {
                             ((Element)ComplexTypeChild).TypeNameSpace = string.Empty;
+                        }
+
                         if (XmlSchemaElement.SchemaType is XmlSchemaComplexType)
                         {
                             XmlSchemaComplexType XmlSchemaComplexType = XmlSchemaElement.SchemaType as XmlSchemaComplexType;
@@ -1476,7 +1576,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     List<ComplexTypeChild> ComplexTypeElementsChoisesList = GetElementListFromSchemaChoice(XmlSchemaChoice);
 
                     foreach (ComplexTypeChild CTC in ComplexTypeElementsChoisesList)
+                    {
                         ComplexTypeElementsList.Add(CTC);
+                    }
                 }
                 else if (ChildElementObj is XmlSchemaSequence)
                 {
@@ -1484,7 +1586,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
                     List<ComplexTypeChild> ComplexTypeElementsSequenceList = GetComplexTypeChildListFromXmlSchemaObjectCollection(InnerXmlSchemaSequence.Items);
                     foreach (ComplexTypeChild CTC in ComplexTypeElementsSequenceList)
+                    {
                         ComplexTypeElementsList.Add(CTC);
+                    }
                 }
             }
 
@@ -1511,9 +1615,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 {
                     XmlSchemaElement XmlSchemaElement = ChoiseElementObj as XmlSchemaElement;
                     if (string.IsNullOrEmpty(XmlSchemaElement.RefName.Name))
+                    {
                         ComplexTypeChild = CreateElement(XmlSchemaElement);
+                    }
                     else
+                    {
                         ComplexTypeChild = CreateRefElement(XmlSchemaElement);
+                    }
+
                     ComplexTypeChild.ChoiceGroup = GroupID;
 
                     ComplexTypeElementsList.Add(ComplexTypeChild);
@@ -1556,8 +1665,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void GetAllElementsAndComplexTypesFromMainSchema()
         {
             foreach (XmlSchemasExtended XMLSExtended in mSchemasList)
+            {
                 foreach (XmlSchema XmlSchema in XMLSExtended.mXmlSchemas)
+                {
                     GetAllElementsAndComplexTypesFromImportedSchema(XmlSchema);
+                }
+            }
         }
 
         private ComplexType CreateComplexType(XmlSchemaElement XmlSchemaElement, XmlSchemaComplexType XmlSchemaComplexType)
@@ -1569,9 +1682,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             }
             if (XmlSchemaElement.SourceUri != null)
+            {
                 NewComplexType.Source = GetSourceByReferanceType(XmlSchemaElement.SourceUri);
+            }
             else
+            {
                 NewComplexType.Source = string.Empty;
+            }
+
             NewComplexType.TargetNameSpace = XmlSchemaElement.QualifiedName.Namespace;
             if (XmlSchemaComplexType.Particle is XmlSchemaSequence)
             {
@@ -1609,11 +1727,17 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 {
 
                     if (Facet is XmlSchemaEnumerationFacet)
+                    {
                         Enumerations.Add(((XmlSchemaEnumerationFacet)Facet).Value);
+                    }
                     else if (Facet is XmlSchemaMinLengthFacet)
+                    {
                         Enumerations.Add(((XmlSchemaMinLengthFacet)Facet).Value);
+                    }
                     else if (Facet is XmlSchemaMaxLengthFacet)
+                    {
                         Enumerations.Add(((XmlSchemaMaxLengthFacet)Facet).Value);
+                    }
                 }
                 Restriction.Enumerations = Enumerations;
                 ComplexType NewComplexType = new ComplexType();
@@ -1621,9 +1745,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 NewComplexType.Restriction = Restriction;
 
                 if (XmlSchemaSimpleType.SourceUri != null)
+                {
                     NewComplexType.Source = GetSourceByReferanceType(XmlSchemaSimpleType.SourceUri);
+                }
                 else
+                {
                     NewComplexType.Source = string.Empty;
+                }
                 //if (string.IsNullOrEmpty(NewComplexType.Source))
                 NewComplexType.TargetNameSpace = XmlSchemaSimpleType.QualifiedName.Namespace;
 
@@ -1643,9 +1771,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             Element.Name = xmlSchemaElement.Name;
             if (xmlSchemaElement.SourceUri != null)
+            {
                 Element.Source = GetSourceByReferanceType(xmlSchemaElement.SourceUri);
+            }
             else
+            {
                 Element.Source = mURL;
+            }
             //if (string.IsNullOrEmpty(Element.Source))
             Element.TargetNameSpace = xmlSchemaElement.QualifiedName.Namespace;
 
@@ -1678,9 +1810,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             RefElement.RefNameSpace = xmlSchemaElement.RefName.Namespace;
 
             if (xmlSchemaElement.SourceUri != null)
+            {
                 RefElement.Source = GetSourceByReferanceType(xmlSchemaElement.SourceUri);
+            }
             else
+            {
                 RefElement.Source = mURL;
+            }
 
             RefElement.MinOccurs = xmlSchemaElement.MinOccurs;
             RefElement.MaxOccurs = xmlSchemaElement.MaxOccurs;
@@ -1889,11 +2025,17 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private string ReturnEndPointURL(Port port)
         {
             if (port.Extensions[0] is SoapAddressBinding)
+            {
                 return ((SoapAddressBinding)port.Extensions[0]).Location;
+            }
             else if (port.Extensions[0] is HttpAddressBinding)
+            {
                 return ((HttpAddressBinding)port.Extensions[0]).Location;
+            }
             else
+            {
                 return string.Empty;
+            }
         }
 
         private string GetDescription(PortTypeCollection portTypColl, string BindingName, string OperationName)
@@ -1905,7 +2047,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     foreach (Operation op in portType.Operations)
                     {
                         if (OperationName == op.Name)
+                        {
                             return op.Documentation;
+                        }
                     }
                 }
             }
@@ -1921,6 +2065,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             List<Tuple<string, string>> InnerImportsURLs = new List<Tuple<string, string>>();
 
             foreach (XmlSchemasExtended XMLSExtended in mSchemasList)
+            {
                 foreach (XmlSchema schema in XMLSExtended.mXmlSchemas)
                 {
                     XmlSchemaObjectCollection Items = schema.Includes;
@@ -1943,15 +2088,22 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         }
                     }
                 }
+            }
+
             foreach (Tuple<string, string> URLTuple in InnerImportsURLs)
             {
                 if (!string.IsNullOrEmpty(URLTuple.Item1))
                 {
                     string CompleteURL = string.Empty;
                     if (!URLTuple.Item1.Contains(URLTuple.Item2))
+                    {
                         CompleteURL = Path.Combine(URLTuple.Item2, URLTuple.Item1);
+                    }
                     else
+                    {
                         CompleteURL = URLTuple.Item1;
+                    }
+
                     XmlTextReader reader = new XmlTextReader(CompleteURL);
                     XmlSchema schema = XmlSchema.Read(reader, null);
                     XmlSchemaObjectCollection Items = schema.Includes;
@@ -1962,7 +2114,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     {
                         int ContainingFolderLeanth = URLTuple.Item2.Length;
                         if (ContainingFolderLeanth < directory.Length)
+                        {
                             relativeDirectories = directory.Substring(ContainingFolderLeanth).TrimStart('\\');
+                        }
                     }
                     GetAllURLsFFromSchemaItems(Items, relativeDirectories, URLTuple.Item2);
                 }
@@ -1972,13 +2126,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private string GetURLFromSchemaLocationBymURLType(string schemaLocation)
         {
             if (mURL.StartsWith("http"))
+            {
                 return schemaLocation;
+            }
             else
             {
                 if (schemaLocation != null)
+                {
                     return schemaLocation.Replace("/", "\\");
+                }
                 else
+                {
                     return string.Empty;
+                }
             }
 
         }
@@ -2024,7 +2184,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             {
                 int ContainingFolderLeanth = containigFolder.Length;
                 if (ContainingFolderLeanth < directory.Length && !directory.StartsWith("http"))
+                {
                     relativeDirectories = directory.Substring(ContainingFolderLeanth).TrimStart('\\');
+                }
             }
             GetAllURLsFFromSchemaItems(Items, relativeDirectories, containigFolder);
         }
@@ -2044,7 +2206,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 }
             }
             else
+            {
                 completeURL = URL;
+            }
+
             return completeURL;
         }
 
@@ -2082,13 +2247,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         {
             string[] Nodes = Path.Split('/');
             if (Nodes.Length < 6)
+            {
                 return false;
+            }
+
             for (int i = 1; i < Nodes.Count(); i++)
             {
                 for (int j = i + 2; j < Nodes.Count(); j++)
                 {
                     if ((j - i) * 2 > Nodes.Count())
+                    {
                         break;
+                    }
+
                     string substring = GetSubstringByIndex(Nodes, i, j);
                     int SubStringIndex = Path.IndexOf(substring);
                     string StringToCheck = Path.Substring(SubStringIndex + substring.Length);
@@ -2159,7 +2330,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         public void ValidateWSDLInputs(string URL, bool? URLRadioButton, ref string WizardEventArgsErrorString)
         {
             if (string.IsNullOrEmpty(URL))
+            {
                 WizardEventArgsErrorString = "URL/File field cannot be empty";
+            }
             else
             {
                 string error = string.Empty;

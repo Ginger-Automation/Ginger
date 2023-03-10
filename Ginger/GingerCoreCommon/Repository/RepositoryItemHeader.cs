@@ -17,13 +17,11 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.Repository
 {
-    
-    public class RepositoryItemHeader  
+
+    public class RepositoryItemHeader
     {
         // Keep it first attr since it will help find object based on Guid without reading other attr, write it first!
         public Guid ItemGuid { get; set; }
@@ -54,7 +52,7 @@ namespace Amdocs.Ginger.Repository
         // Last time this file was save when update was done
         public DateTime LastUpdate { get; set; }
 
-        
+
 
         //TODO: External ID - for example to QC - need to be only in class itself not here, BF only?
         // public string ExternalID { get; set; }

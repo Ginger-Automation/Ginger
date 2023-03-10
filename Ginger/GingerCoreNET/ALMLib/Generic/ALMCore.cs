@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using AlmDataContractsStd.Enums;
 //using ALM_Common.DataContracts;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
@@ -262,7 +261,7 @@ namespace GingerCore.ALM
             {
                 DisconnectALMServer();
             }
-            
+
         }
         public static GingerCoreNET.ALMLib.ALMConfig GetCurrentAlmConfig(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType almType)
         {

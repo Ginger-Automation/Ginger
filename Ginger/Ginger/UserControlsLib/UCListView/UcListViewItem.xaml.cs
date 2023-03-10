@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
@@ -28,10 +27,10 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using System.Windows.Automation;
 
 namespace Ginger.UserControlsLib.UCListView
 {
@@ -104,7 +103,7 @@ namespace Ginger.UserControlsLib.UCListView
             }
             set
             {
-                SetValue(ListHelperProperty, value);               
+                SetValue(ListHelperProperty, value);
                 SetInitViewWithHelper();
                 SetItemMainView();
             }
@@ -147,16 +146,16 @@ namespace Ginger.UserControlsLib.UCListView
             CollapseItem();
         }
 
-        private void SetInitViewWithHelper()            
+        private void SetInitViewWithHelper()
         {
             if (ListHelper != null)
             {
                 if (ListHelper.AllowExpandItems == false)
                 {
                     CollapseItem();
-                    xExpandCollapseBtn.Visibility = Visibility.Collapsed;                    
+                    xExpandCollapseBtn.Visibility = Visibility.Collapsed;
                 }
-                else if(ListHelper.ExpandItemOnLoad)
+                else if (ListHelper.ExpandItemOnLoad)
                 {
                     ExpandItem();
                 }
@@ -224,12 +223,12 @@ namespace Ginger.UserControlsLib.UCListView
 
             mMainViewWasSet = true;
         }
-            
+
 
         private void SetItemSubView()
         {
             if (!mSubViewWasSet)
-            {                
+            {
                 mItemDescriptionField = ListHelper.GetItemDescriptionField();
                 mItemTagsField = ListHelper.GetItemTagsField();
                 mItemErrorField = ListHelper.GetItemErrorField();
@@ -392,7 +391,7 @@ namespace Ginger.UserControlsLib.UCListView
                 if (operations != null && operations.Count > 0)
                 {
                     xItemOperationsPnl.Visibility = Visibility.Visible;
-                    foreach (ListItemOperation operation in operations.Where(x=>x.SupportedViews.Contains(ListHelper.PageViewMode)).ToList())
+                    foreach (ListItemOperation operation in operations.Where(x => x.SupportedViews.Contains(ListHelper.PageViewMode)).ToList())
                     {
                         ucButton operationBtn = new ucButton();
                         operationBtn.SetValue(AutomationProperties.AutomationIdProperty, operation.AutomationID);
@@ -430,7 +429,7 @@ namespace Ginger.UserControlsLib.UCListView
                         xItemOperationsPnl.Children.Add(operationBtn);
                     }
                 }
-                
+
                 if (xItemOperationsPnl.Children.Count == 0)
                 {
                     xItemOperationsPnl.Visibility = Visibility.Collapsed;
@@ -496,7 +495,7 @@ namespace Ginger.UserControlsLib.UCListView
                         {
                             //need to add to Group
                             bool addedToGroup = false;
-                            foreach(MenuItem item in ((MenuItem)(xItemExtraOperationsMenu.Items[0])).Items)
+                            foreach (MenuItem item in ((MenuItem)(xItemExtraOperationsMenu.Items[0])).Items)
                             {
                                 if (item.Header.ToString() == operation.Group)
                                 {
@@ -506,7 +505,7 @@ namespace Ginger.UserControlsLib.UCListView
                                     break;
                                 }
                             }
-                            if(!addedToGroup)
+                            if (!addedToGroup)
                             {
                                 //creating the group and adding
                                 MenuItem groupMenuitem = new MenuItem();
@@ -609,7 +608,7 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 SetItemDescription();
             }
-            SetItemUniqueIdentifier();         
+            SetItemUniqueIdentifier();
         }
 
         private void xExpandCollapseBtn_Click(object sender, RoutedEventArgs e)
@@ -628,7 +627,10 @@ namespace Ginger.UserControlsLib.UCListView
 
         public void ExpandItem()
         {
-            if (ListHelper.AllowExpandItems == false) return;
+            if (ListHelper.AllowExpandItems == false)
+            {
+                return;
+            }
 
             this.Dispatcher.Invoke(() =>
                 {
@@ -738,7 +740,7 @@ namespace Ginger.UserControlsLib.UCListView
                             fullname += string.Format(" [{0}]", extension.ToString());
                         }
                     }
-                  
+
                     xItemNameTxtBlock.ToolTip = fullname;
                 }
                 catch (Exception ex)
@@ -753,7 +755,7 @@ namespace Ginger.UserControlsLib.UCListView
         {
             this.Dispatcher.Invoke(() =>
             {
-                
+
                 try
                 {
                     string fullDesc = string.Empty;

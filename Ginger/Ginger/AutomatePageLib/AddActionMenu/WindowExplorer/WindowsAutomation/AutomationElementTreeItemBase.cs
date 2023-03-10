@@ -23,13 +23,13 @@ namespace Ginger.Drivers.WindowsAutomation
     public abstract class AutomationElementTreeItemBase
     {
         public UIAElementInfo UIAElementInfo = new UIAElementInfo();
-        
+
         //Quick way to get the AEControl
         public bool IsExpandable
         {
             get
             {
-                UIAutomationDriverBase driver = (UIAutomationDriverBase) UIAElementInfo.WindowExplorer;
+                UIAutomationDriverBase driver = (UIAutomationDriverBase)UIAElementInfo.WindowExplorer;
                 return driver.mUIAutomationHelper.HasAtleastOneChild(UIAElementInfo.ElementObject);
             }
         }

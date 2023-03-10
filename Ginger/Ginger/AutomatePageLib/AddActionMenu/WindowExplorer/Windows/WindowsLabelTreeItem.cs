@@ -17,12 +17,12 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using GingerCore.Actions;
-using System.Windows.Controls;
-using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore.Actions.Windows;
-using Ginger.Drivers.Windows;
 using Amdocs.Ginger.Common.UIElement;
+using Ginger.Drivers.Windows;
+using GingerCore.Actions;
+using GingerCore.Actions.Windows;
+using GingerWPF.UserControlsLib.UCTreeView;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.Windows
 {
@@ -36,12 +36,12 @@ namespace Ginger.WindowExplorer.Windows
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
             ObservableList<Act> list = new ObservableList<Act>();
-         
-                list.Add(new ActWindowsControl()
-                {
-                    Description = "Get Text " + UIAElementInfo.ElementTitle,
-                    ControlAction = ActWindowsControl.eControlAction.GetValue
-                });
+
+            list.Add(new ActWindowsControl()
+            {
+                Description = "Get Text " + UIAElementInfo.ElementTitle,
+                ControlAction = ActWindowsControl.eControlAction.GetValue
+            });
             return list;
         }
     }

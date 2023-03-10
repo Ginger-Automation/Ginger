@@ -19,7 +19,6 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core
 {
@@ -38,12 +37,12 @@ namespace Amdocs.Ginger.Plugin.Core
 
         public ValidValueAttribute(int validValue)
         {
-            
+
             ValidValue.Add(validValue);
         }
 
         public ValidValueAttribute(int[] validValues)
-        { 
+        {
             ValidValue.AddRange(validValues.Cast<object>());
         }
 
@@ -54,6 +53,6 @@ namespace Amdocs.Ginger.Plugin.Core
         public ValidValueAttribute(bool[] validValues)
         {
             ValidValue.AddRange(validValues.Cast<object>());
-        }        
+        }
     }
 }

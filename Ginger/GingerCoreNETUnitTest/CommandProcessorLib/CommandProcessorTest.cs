@@ -39,7 +39,7 @@ namespace GingerCoreNETUnitTests.CommandProcessorLib
         [ClassCleanup]
         public static void ClassCleanup()
         {
-           
+
         }
 
 
@@ -128,7 +128,7 @@ namespace GingerCoreNETUnitTests.CommandProcessorLib
         //}
 
 
-        
+
         [TestMethod]
         public void Eval21Equel1()
         {
@@ -141,10 +141,10 @@ namespace GingerCoreNETUnitTests.CommandProcessorLib
             //assert
             Assert.AreEqual(result.GetType(), typeof(bool));
             Assert.AreEqual(true, result);
-            
+
         }
 
-        
+
         [TestMethod]
         public void RunCode()
         {

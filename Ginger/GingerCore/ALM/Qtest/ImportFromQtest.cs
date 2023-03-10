@@ -17,12 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using QCRestClientStd;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,8 +43,8 @@ namespace GingerCore.ALM.Qtest
         public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
         public static ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
-        
-        
+
+
         public static QtestTestSuite ImportTestSuiteData(QtestTestSuite TS, long projectId)
         {
             QTestAPIStd.TestsuiteApi testsuiteApi = new QTestAPIStd.TestsuiteApi(connObj.Configuration);
@@ -90,7 +88,8 @@ namespace GingerCore.ALM.Qtest
                     newtsRun.Tester = (run["RN_TESTER_NAME"]).ToString();
                     newTSTest.Runs.Add(newtsRun);
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to pull QC test case RUN info", ex);
                 newTSTest.Runs = new List<QtestTestRun>();
@@ -143,7 +142,7 @@ namespace GingerCore.ALM.Qtest
 
                         tcActivsGroup = (ActivitiesGroup)(repoActivsGroup).CreateInstance(true);
 
-                        var ActivitySIdentifiersToRemove = tcActivsGroup.ActivitiesIdentifiers.Where(x => repoNotExistsStepActivity.Select(z => z.ExternalID).ToList().Contains(x.ActivityExternalID)); 
+                        var ActivitySIdentifiersToRemove = tcActivsGroup.ActivitiesIdentifiers.Where(x => repoNotExistsStepActivity.Select(z => z.ExternalID).ToList().Contains(x.ActivityExternalID));
                         for (int indx = 0; indx < tcActivsGroup.ActivitiesIdentifiers.Count; indx++)
                         {
                             if ((indx < tcActivsGroup.ActivitiesIdentifiers.Count) && (ActivitySIdentifiersToRemove.Contains(tcActivsGroup.ActivitiesIdentifiers[indx])))
@@ -155,7 +154,7 @@ namespace GingerCore.ALM.Qtest
 
                         tcActivsGroup.ExternalID2 = tc.TestID;
                         busFlow.AddActivitiesGroup(tcActivsGroup);
-                        busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup,GingerActivitiesRepo, ApplicationPlatforms, true);
+                        busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, ApplicationPlatforms, true);
                         busFlow.AttachActivitiesGroupsAndActivities();
                     }
                     else //TC not exist in Ginger repository so create new one
@@ -191,7 +190,7 @@ namespace GingerCore.ALM.Qtest
                             if (groupStepActivityIdent != null)
                             {
                                 //already in Activities Group so get link to it
-                                stepActivity =(Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                                stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
                                 // in any case update description/expected/name - even if "step" was taken from repository
                                 stepActivity.Description = StripHTML(step.Description);
                                 stepActivity.Expected = StripHTML(step.Expected);
@@ -218,7 +217,7 @@ namespace GingerCore.ALM.Qtest
                         if (toAddStepActivity)
                         {
                             //not in group- need to add it
-                            busFlow.AddActivity(stepActivity, tcActivsGroup);                            
+                            busFlow.AddActivity(stepActivity, tcActivsGroup);
                         }
 
                         //pull TC-Step parameters and add them to the Activity level
@@ -236,7 +235,7 @@ namespace GingerCore.ALM.Qtest
                             (stepActivityVar).OptionalValuesList = optionalValuesList;
                             (stepActivityVar).SetValue(step.Params.Value);
                             stepActivity.AddVariable(stepActivityVar);
-                        }                                
+                        }
                     }
 
                     //order the Activities Group activities according to the order of the matching steps in the TC
@@ -403,7 +402,7 @@ namespace GingerCore.ALM.Qtest
                     if (toAddStepActivity)
                     {
                         //not in group- need to add it
-                        busFlow.AddActivity(stepActivity, tcActivsGroup, startGroupActsIndxInBf++);                        
+                        busFlow.AddActivity(stepActivity, tcActivsGroup, startGroupActsIndxInBf++);
                     }
 
                     //pull TC-Step parameters and add them to the Activity level
@@ -642,7 +641,7 @@ namespace GingerCore.ALM.Qtest
                     bool toAddStepActivity = false;
 
                     //check if mapped activity exist in repository
-                    Activity repoStepActivity =(Activity) GingerActivitiesRepo.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
+                    Activity repoStepActivity = (Activity)GingerActivitiesRepo.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
                     if (repoStepActivity != null)
                     {
                         //check if it is part of the Activities Group
@@ -650,7 +649,7 @@ namespace GingerCore.ALM.Qtest
                         if (groupStepActivityIdent != null)
                         {
                             //already in Activities Group so get link to it
-                            stepActivity =(Activity) busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                            stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
                         }
                         else//not in ActivitiesGroup so get instance from repo
                         {
@@ -673,7 +672,7 @@ namespace GingerCore.ALM.Qtest
                     if (toAddStepActivity)
                     {
                         //not in group- need to add it
-                        busFlow.AddActivity(stepActivity, tcActivsGroup, startGroupActsIndxInBf++);                        
+                        busFlow.AddActivity(stepActivity, tcActivsGroup, startGroupActsIndxInBf++);
                     }
 
                     //pull TC-Step parameters and add them to the Activity level
@@ -702,7 +701,7 @@ namespace GingerCore.ALM.Qtest
                         string linkedVariable = null;
                         if (paramSelectedValue.StartsWith("#$#"))
                         {
-                            string[] valueParts = paramSelectedValue.Split(new [] { "#$#" }, StringSplitOptions.None);
+                            string[] valueParts = paramSelectedValue.Split(new[] { "#$#" }, StringSplitOptions.None);
                             if (valueParts.Count() == 3)
                             {
                                 linkedVariable = valueParts[1];
@@ -887,12 +886,12 @@ namespace GingerCore.ALM.Qtest
                 {
                     stripped = HttpUtility.HtmlDecode(stripped);
                 }
-                stripped = stripped.TrimStart(new [] { '\r', '\n' });
-                stripped = stripped.TrimEnd(new [] { '\r', '\n' });
+                stripped = stripped.TrimStart(new[] { '\r', '\n' });
+                stripped = stripped.TrimEnd(new[] { '\r', '\n' });
 
                 return stripped;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while stripping the HTML from QC TC Step Description/Expected", ex);
                 return HTMLText;
@@ -907,8 +906,8 @@ namespace GingerCore.ALM.Qtest
 
                 foreach (var param in stepParams)
                 {
-                    string strParam = param.ToString().TrimStart(new [] {'<'});
-                    strParam = strParam.TrimEnd(new [] { '>' });
+                    string strParam = param.ToString().TrimStart(new[] { '<' });
+                    strParam = strParam.TrimEnd(new[] { '>' });
                     stepParamsList.Add(strParam);
                 }
             }
@@ -920,7 +919,7 @@ namespace GingerCore.ALM.Qtest
 
         public static QtestTest GetQtestTest(string testID)
         {
-           
+
             return new QtestTest();
         }
 
@@ -991,7 +990,7 @@ namespace GingerCore.ALM.Qtest
                     {
                         itemfield.SelectedValue = field.DefaultValue;
                     }
-                   
+
                     fields.Add(itemfield);
                 }
             }

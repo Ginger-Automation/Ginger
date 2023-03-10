@@ -36,12 +36,12 @@ namespace GingerCore.Actions
             CS,
             VBS
         }
-        
+
         public eCalcEngineType CalcEngineType
         {
             get
             {
-                return (eCalcEngineType)GetOrCreateInputParam<eCalcEngineType>(nameof(CalcEngineType),eCalcEngineType.VBS);
+                return (eCalcEngineType)GetOrCreateInputParam<eCalcEngineType>(nameof(CalcEngineType), eCalcEngineType.VBS);
             }
             set
             {
@@ -127,11 +127,11 @@ namespace GingerCore.Actions
                 this.ExInfo = ConditionCalculated;
             }
             else
-            { 
+            {
                 ConditionCalculated += " is False";
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 this.Error = ConditionCalculated;
-                if(!string.IsNullOrEmpty(csharpError))
+                if (!string.IsNullOrEmpty(csharpError))
                 {
                     this.ExInfo = csharpError;
                 }

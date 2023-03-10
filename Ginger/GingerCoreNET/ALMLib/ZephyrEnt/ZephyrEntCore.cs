@@ -153,7 +153,7 @@ namespace GingerCore.ALM
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
             bool IsExecute = zephyrEntExportManager.ExportExceutionDetailsToALM(bizFlow, ref result, null, exectutedFromAutomateTab, publishToALMConfig);
-            if(!IsExecute)
+            if (!IsExecute)
             {
                 CreateActivitiesGroupsExecution(bizFlow);
             }
@@ -180,7 +180,7 @@ namespace GingerCore.ALM
                     ExecuteTestCases(assignsList, testerId, bizFlow.ActivitiesGroups);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, $"Failed Create mapped activities Groups Zephyr Ent. Execution Ids. Error: {ex.Message}");
             }

@@ -16,9 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Amdocs.Ginger.Repository;
 
 namespace Amdocs.Ginger.Common.Run
@@ -39,7 +36,7 @@ namespace Amdocs.Ginger.Common.Run
 
         private bool mActive;
         [IsSerializedForLocalRepository]
-        public bool Active { get { return mActive; }  set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
+        public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
 
         public override string ItemName

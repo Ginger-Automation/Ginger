@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
 
 namespace GingerWPF.WizardLib
 {
@@ -33,7 +32,7 @@ namespace GingerWPF.WizardLib
         LeavingForNextPage,
         Cancel// The page became active can be from next/prev or click on the list of pages        
     }
-   
+
     public class WizardEventArgs : EventArgs
     {
         private WizardBase mWizard;

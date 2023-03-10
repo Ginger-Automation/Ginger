@@ -17,16 +17,13 @@ limitations under the License.
 #endregion
 
 
-using System;
-using System.Collections.Generic;
-
-namespace  Amdocs.Ginger.Plugin.Core
-{    
+namespace Amdocs.Ginger.Plugin.Core
+{
     /// <summary>
     /// Service which require a session 
     /// </summary>
     public interface IServiceSession
-    {        
+    {
 
         void StartSession();
         void StopSession();
