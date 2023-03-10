@@ -19,9 +19,6 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Amdocs.Ginger.ValidationRules
@@ -33,7 +30,7 @@ namespace Amdocs.Ginger.ValidationRules
         {
             get
             {
-                if(string.IsNullOrEmpty(mMessage))
+                if (string.IsNullOrEmpty(mMessage))
                 {
                     return "Invalid Value";
                 }
@@ -41,7 +38,7 @@ namespace Amdocs.Ginger.ValidationRules
                 {
                     return mMessage;
                 }
-            }            
+            }
             set
             {
                 mMessage = value;
@@ -68,8 +65,8 @@ namespace Amdocs.Ginger.ValidationRules
 
         public InvalidValueValidationRule(List<int> invalidValue, string message = "")
         {
-            InvalidValue.AddRange(invalidValue);            
-            Message = message;            
+            InvalidValue.AddRange(invalidValue);
+            Message = message;
         }
 
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
@@ -84,11 +81,11 @@ namespace Amdocs.Ginger.ValidationRules
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return new ValidationResult(false, Message);
-            }                      
-            return new ValidationResult(true, null);            
+            }
+            return new ValidationResult(true, null);
 
         }
     }

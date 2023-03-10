@@ -22,7 +22,7 @@ using Amdocs.Ginger.Repository;
 namespace GingerCore.Actions
 {
     public class WebAPIKeyBodyValues : ActInputValue
-    {        
+    {
 
         public enum eValueType
         {
@@ -58,6 +58,6 @@ namespace GingerCore.Actions
         }
 
 
-        
+
     }
 }

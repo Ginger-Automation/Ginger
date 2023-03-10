@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
@@ -34,7 +33,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private ReportTemplatesPage mReportTemplatesPage;
 
         RepositoryFolder<ReportTemplate> mReportFolder;
-        
+
         ITreeView mTV;
 
         public ReportTemplatesTreeItem(RepositoryFolder<ReportTemplate> reportFolder)
@@ -48,13 +47,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {            
+        {
             return TreeViewUtils.NewRepositoryItemTreeHeader("Document Report Templates", nameof(RepositoryFolder<ReportTemplate>.DisplayName), eImageType.Report, GetSourceControlImage(mReportFolder), false);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            return GetChildrentGeneric<ReportTemplate>(mReportFolder);         
+            return GetChildrentGeneric<ReportTemplate>(mReportFolder);
         }
 
         bool ITreeViewItem.IsExpandable()
@@ -76,7 +75,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             ContextMenu CM = new ContextMenu();
             TreeViewUtils.AddMenuItem(CM, "Refresh", RefreshItems, null, eImageType.Refresh);
             TreeViewUtils.AddMenuItem(CM, "Save All", SaveAll, null, eImageType.Save);
-            
+
             TreeViewUtils.AddMenuItem(CM, "Set Default Report Template", SetDefaultTemplate, null, eImageType.Check);
             AddViewFolderFilesMenuItem(CM, mReportFolder.FolderFullPath);
             return CM;
@@ -95,7 +94,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             RefreshChildrens();
         }
-        
+
         private void SaveAll(object sender, System.Windows.RoutedEventArgs e)
         {
         }
@@ -103,9 +102,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void AddNewReport(object sender, System.Windows.RoutedEventArgs e)
         {
             ReportTemplateTreeItem r = new ReportTemplateTreeItem();
-            r.ReportTemplate = (Ginger.Reports.ReportTemplate) WorkSpace.Instance.Solution.CreateNewReportTemplate();
-            if (r.ReportTemplate!= null)                       
-                mTV.Tree.AddChildItemAndSelect(this, r);            
+            r.ReportTemplate = (Ginger.Reports.ReportTemplate)WorkSpace.Instance.Solution.CreateNewReportTemplate();
+            if (r.ReportTemplate != null)
+            {
+                mTV.Tree.AddChildItemAndSelect(this, r);
+            }
         }
 
         private void SetDefaultTemplate(object sender, System.Windows.RoutedEventArgs e)
@@ -114,7 +115,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             RTS.ShowAsWindow();
             if (RTS.SelectedReportTemplate != null)
             {
-                 WorkSpace.Instance.UserProfile.ReportTemplateName = RTS.SelectedReportTemplate.Name;
+                WorkSpace.Instance.UserProfile.ReportTemplateName = RTS.SelectedReportTemplate.Name;
             }
         }
 

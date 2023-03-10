@@ -17,16 +17,11 @@ limitations under the License.
 #endregion
 
 using GingerWPFUnitTest.POMs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace GingerTest.POMs.Common
 {
-    public class WindowPOM  : GingerPOMBase
+    public class WindowPOM : GingerPOMBase
     {
         Window mWindow;
 
@@ -40,10 +35,12 @@ namespace GingerTest.POMs.Common
             get
             {
                 double w = 0;
-                Execute(() => { 
+                Execute(() =>
+                {
                     w = mWindow.Width;
                 });
                 return w;
-            } }
+            }
+        }
     }
 }

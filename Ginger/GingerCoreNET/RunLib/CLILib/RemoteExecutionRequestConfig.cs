@@ -54,7 +54,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
                 var response = client.PostAsync(executionServiceUrl + "api/v1/executions", content);
                 response.Wait(20000);
-                
+
                 var responseString = response.Result.ToString();
                 if (response.Result.StatusCode != System.Net.HttpStatusCode.Created)
                 {
@@ -63,7 +63,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
                 Reporter.ToLog(eLogLevel.DEBUG, responseString);
 
-                Reporter.ToLog(eLogLevel.INFO,"Remote execution request created with "+ response.Result.Headers.Location.ToString().Split('?')[1]);
+                Reporter.ToLog(eLogLevel.INFO, "Remote execution request created with " + response.Result.Headers.Location.ToString().Split('?')[1]);
 
                 return response.Result.StatusCode.ToString();
             }

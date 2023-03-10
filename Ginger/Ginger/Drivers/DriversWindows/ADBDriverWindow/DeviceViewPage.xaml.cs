@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using Ginger;
+using GingerCore.Drivers.Common.Devices;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -26,9 +28,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using GingerCore.Drivers.AndroidADB;
-using GingerCore.Drivers.Common.Devices;
-using Ginger;
 
 
 namespace GingerCore.Drivers.Common
@@ -52,12 +51,12 @@ namespace GingerCore.Drivers.Common
         public event ButtonEventHandler ButtonClick;
 
 
-       List<Shape>  mButtons = new List<Shape>();
-        
-       System.Windows.Shapes.Rectangle rect;
+        List<Shape> mButtons = new List<Shape>();
 
-       System.Windows.Point MouseStartPoint = new System.Windows.Point();
-       System.Windows.Point MouseLastPoint = new System.Windows.Point();
+        System.Windows.Shapes.Rectangle rect;
+
+        System.Windows.Point MouseStartPoint = new System.Windows.Point();
+        System.Windows.Point MouseLastPoint = new System.Windows.Point();
 
 
         public DeviceViewPage(string DeviceConfigFolder)
@@ -65,13 +64,13 @@ namespace GingerCore.Drivers.Common
             mDeviceConfigFolder = DeviceConfigFolder;
             mAndroidDeviceConfig = DeviceConfig.LoadFromDeviceFolder(mDeviceConfigFolder);
 
-            Init();            
+            Init();
         }
 
         public DeviceViewPage(DeviceConfig DC)
         {
             mAndroidDeviceConfig = DC;
-            Init();            
+            Init();
         }
 
         private void Init()
@@ -84,7 +83,7 @@ namespace GingerCore.Drivers.Common
         }
 
         private void InitDeviceView()
-        {            
+        {
             string ImageFile = mDeviceConfigFolder + mAndroidDeviceConfig.DeviceImage;
             if (!string.IsNullOrEmpty(mDeviceConfigFolder))
             {
@@ -127,7 +126,7 @@ namespace GingerCore.Drivers.Common
         }
 
         private void InitHighLighter()
-        {            
+        {
             rect = new System.Windows.Shapes.Rectangle();
             rect.Stroke = new SolidColorBrush(Colors.Red);
             rect.StrokeThickness = 2;
@@ -148,13 +147,16 @@ namespace GingerCore.Drivers.Common
 
         private void InitDeviceButtons()
         {
-            if (mAndroidDeviceConfig.DeviceButtons == null) mAndroidDeviceConfig.DeviceButtons = new List<DeviceButton>();
+            if (mAndroidDeviceConfig.DeviceButtons == null)
+            {
+                mAndroidDeviceConfig.DeviceButtons = new List<DeviceButton>();
+            }
 
             List<DeviceButton> list = mAndroidDeviceConfig.DeviceButtons;  // mDeviceConfigFolder GetControllerActions();
 
             DeviceButtonsGrid.ItemsSource = list;
 
-            foreach(DeviceButton DB in list)
+            foreach (DeviceButton DB in list)
             {
                 if (DB.ButtonShape == DeviceButton.eButtonShape.Rectangle)
                 {
@@ -162,11 +164,11 @@ namespace GingerCore.Drivers.Common
                     rect = new System.Windows.Shapes.Rectangle();
                     rect.Stroke = new SolidColorBrush(Colors.Gray);
                     rect.StrokeThickness = 2;
-                    rect.Fill = new SolidColorBrush(System.Windows.Media.Color.FromArgb((byte)50, (byte)100, (byte)0, 0));                                        
+                    rect.Fill = new SolidColorBrush(System.Windows.Media.Color.FromArgb((byte)50, (byte)100, (byte)0, 0));
                     rect.Opacity = 50;
                     rect.Tag = DB;
                     rect.ToolTip = DB.ToolTip;
-                    rect.MouseLeftButtonUp +=rect_MouseLeftButtonUp;
+                    rect.MouseLeftButtonUp += rect_MouseLeftButtonUp;
                     rect.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
                     rect.VerticalAlignment = System.Windows.VerticalAlignment.Top;
                     DeviceScreenShotGrid.Children.Add(rect);
@@ -200,7 +202,7 @@ namespace GingerCore.Drivers.Common
         private void rect_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             System.Windows.Shapes.Shape button = (System.Windows.Shapes.Shape)sender;
-            DeviceButton DB = (DeviceButton)button.Tag;            
+            DeviceButton DB = (DeviceButton)button.Tag;
             OnButtonClick(DB);
         }
 
@@ -232,18 +234,25 @@ namespace GingerCore.Drivers.Common
             double mBottom = mAndroidDeviceConfig.DeviceImageScreenBottom;
 
 
-            if (mRight == 0) mRight = 400;
-            if (mBottom == 0) mBottom = 600;
+            if (mRight == 0)
+            {
+                mRight = 400;
+            }
+
+            if (mBottom == 0)
+            {
+                mBottom = 600;
+            }
 
             double LeftOffset = leftMargin + mLeft / scaleFactor;
             double TopOffset = TopMargin + mTop / scaleFactor;
 
-            double RightOffset =((double)image.Width - mRight) / scaleFactor;
+            double RightOffset = ((double)image.Width - mRight) / scaleFactor;
             double BottomOffset = TopMargin + ((double)image.Height - mBottom) / scaleFactor;
 
             DeviceImage.Width = (mRight - mLeft) / scaleFactor;
             DeviceImage.Height = (mBottom - mTop) / scaleFactor;
-            
+
             // Create new margin where we want to device bitmap to be            
             DeviceImage.Margin = new Thickness(LeftOffset, TopOffset, RightOffset, BottomOffset);
 
@@ -253,22 +262,26 @@ namespace GingerCore.Drivers.Common
             DeviceScreenCanvas.Margin = DeviceImage.Margin;
 
             ResizeDeviceButtons();
-            
+
             ScaleLabel.Content = "Scale: " + scaleFactor.ToString("0.##");
         }
 
         private void ResizeDeviceButtons()
         {
-            if (DeviceScreenShotImageBK.ActualWidth == 0) return;
+            if (DeviceScreenShotImageBK.ActualWidth == 0)
+            {
+                return;
+            }
+
             foreach (Shape s in mButtons)
             {
                 DeviceButton DB = (DeviceButton)s.Tag;
-                
+
                 s.Width = DB.Width / scaleFactor;
                 s.Height = DB.Height / scaleFactor;
 
                 double left = (DeviceScreenShotGrid.ActualWidth - DeviceScreenShotImageBK.ActualWidth) / 2 + DB.Left / scaleFactor;
-                double top =  (DeviceScreenShotGrid.ActualHeight - DeviceScreenShotImageBK.ActualHeight) / 2 + DB.Top / scaleFactor;
+                double top = (DeviceScreenShotGrid.ActualHeight - DeviceScreenShotImageBK.ActualHeight) / 2 + DB.Top / scaleFactor;
 
                 s.Margin = new Thickness(left, top, 0, 0);
             }
@@ -283,27 +296,27 @@ namespace GingerCore.Drivers.Common
         }
 
         public void UpdateDeviceScreenShot(BitmapImage BI)
-        {            
+        {
             DeviceImage.Dispatcher.Invoke(() =>
             {
                 // works but give pther thread own
-                DeviceImage.Source = (ImageSource)BI;           
+                DeviceImage.Source = (ImageSource)BI;
             });
         }
-        
+
         public class TouchXYEventArgs : EventArgs
         {
             double mLeft = -1;
-            double mTop = -1;            
+            double mTop = -1;
 
             public TouchXYEventArgs(double Left, double Top)
             {
                 mLeft = Left;
-                mTop = Top;                
+                mTop = Top;
             }
 
-            public double Left { get { return mLeft; } }            
-            public double Top { get{ return mTop;} }            
+            public double Left { get { return mLeft; } }
+            public double Top { get { return mTop; } }
         }
 
         public class SwipeEventArgs : EventArgs
@@ -350,7 +363,7 @@ namespace GingerCore.Drivers.Common
         }
 
         //--------------- Button Event
-        
+
         public class ButtonEventArgs : EventArgs
         {
             DeviceButton mDB;
@@ -382,7 +395,7 @@ namespace GingerCore.Drivers.Common
         private System.Windows.Point GetDevicePoint(System.Windows.Point point)
         {
             System.Windows.Point p = new System.Windows.Point();
-            
+
             p.X = Convert.ToInt16(DeviceImage.Source.Width * point.X / DeviceImage.ActualWidth);
             p.Y = Convert.ToInt16(DeviceImage.Source.Height * point.Y / DeviceImage.ActualHeight);
 
@@ -393,8 +406,8 @@ namespace GingerCore.Drivers.Common
         {
             System.Windows.Point p = new System.Windows.Point();
 
-            p.X = point.X / scaleFactor; 
-            p.Y = point.Y / scaleFactor; 
+            p.X = point.X / scaleFactor;
+            p.Y = point.Y / scaleFactor;
 
             return p;
         }
@@ -411,7 +424,7 @@ namespace GingerCore.Drivers.Common
             // We set the highlighter in the DeviceScreenShotImageBK - on the screen shot
 
             System.Windows.Point p = GetPointFromDeviceCoordinates(new System.Windows.Point(X, Y));
-            
+
             var image = DeviceImage.Source;
 
             // since we want to maintain the aspect ratio calculate the ScaleFactor which will be used
@@ -425,17 +438,17 @@ namespace GingerCore.Drivers.Common
             double leftMargin = (DeviceScreenShotGrid.ActualWidth - DeviceImage.ActualWidth) / 2;
             double TopMargin = (DeviceScreenShotGrid.ActualHeight - DeviceImage.ActualHeight) / 2;
 
-            double left = (leftMargin + X / scaleFactor); 
+            double left = (leftMargin + X / scaleFactor);
             double top = (TopMargin + Y / scaleFactor);
-            
-            rect.Margin = new Thickness(left, top, 0, 0);      
+
+            rect.Margin = new Thickness(left, top, 0, 0);
         }
 
         public System.Windows.Point GetMousePosition()
         {
             System.Windows.Point p = new System.Windows.Point();
             this.Dispatcher.Invoke(() =>
-            {                
+            {
                 p = Mouse.GetPosition(DeviceImage);
                 p.X = p.X * scaleFactor;
                 p.Y = p.Y * scaleFactor;
@@ -444,7 +457,7 @@ namespace GingerCore.Drivers.Common
         }
 
         private void DeviceImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        { 
+        {
         }
 
         private void DeviceImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -464,7 +477,10 @@ namespace GingerCore.Drivers.Common
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Hand;
             if (e.ButtonState == MouseButtonState.Pressed)
+            {
                 MouseLastPoint = e.GetPosition(DeviceScreenCanvas);
+            }
+
             MouseStartPoint = MouseLastPoint;
         }
 
@@ -476,7 +492,7 @@ namespace GingerCore.Drivers.Common
                 Line line = new Line();
 
                 line.Stroke = System.Windows.SystemColors.WindowFrameBrush;
-                
+
                 line.StrokeThickness = 3;
 
                 line.X1 = MouseLastPoint.X;
@@ -502,7 +518,7 @@ namespace GingerCore.Drivers.Common
             // check if the mouse down was close then do touch, otherwise we do swipe
             if (Math.Abs(MouseStartPoint.X - MouseLastPoint.X) < 10 && Math.Abs(MouseStartPoint.Y - MouseLastPoint.Y) < 10)
             {
-                System.Windows.Point p = GetDevicePoint(MouseLastPoint);                
+                System.Windows.Point p = GetDevicePoint(MouseLastPoint);
                 OnTouchXY(p.X, p.Y);
                 DeviceScreenCanvas.Children.Clear();
             }
@@ -510,7 +526,7 @@ namespace GingerCore.Drivers.Common
             {
                 int steps = 30;  // each step takes 5ms - so for 100 it will take half a second
                 System.Windows.Point p1 = GetDevicePoint(MouseStartPoint);
-                System.Windows.Point p2 = GetDevicePoint(MouseLastPoint);                
+                System.Windows.Point p2 = GetDevicePoint(MouseLastPoint);
                 OnSwipe(p1.X, p1.Y, p2.X, p2.Y, steps);
                 DeviceScreenCanvas.Children.Clear();
             }

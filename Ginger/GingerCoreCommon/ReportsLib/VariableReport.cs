@@ -34,6 +34,6 @@ namespace Ginger.Reports
         // must not change as it will break existing reports, no compile check on XAML
         public int Seq { get; set; }
         public string Name { get { return mVariable.Name; } }
-        public string Value { get { return mVariable.Value; } }        
+        public string Value { get { return mVariable.Value; } }
     }
 }

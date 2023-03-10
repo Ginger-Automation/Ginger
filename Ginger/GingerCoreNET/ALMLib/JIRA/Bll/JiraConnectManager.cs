@@ -96,11 +96,11 @@ namespace GingerCore.ALM.JIRA
             if (jiraDomainsProjectsDataList.Count > 0)
             {
                 currentDomainProject = jiraDomainsProjectsDataList.Where(dom => dom.DomainName.Equals(ALMCore.DefaultAlmConfig.ALMDomain)).Select(prj => prj.Projects).FirstOrDefault();
-                jiraProjects = currentDomainProject.ToDictionary(x => x.ProjectId.ToString(), x => x.ProjectName);          
+                jiraProjects = currentDomainProject.ToDictionary(x => x.ProjectId.ToString(), x => x.ProjectName);
             }
             return jiraProjects;
         }
-        
+
         internal List<string> GetJiraDomains()
         {
             LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };

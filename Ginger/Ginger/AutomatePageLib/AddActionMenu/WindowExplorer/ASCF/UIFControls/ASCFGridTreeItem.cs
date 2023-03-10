@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using Ginger.WindowExplorer;
 using GingerCore.Drivers.ASCF;
 using GingerWPF.UserControlsLib.UCTreeView;
+using System.Windows.Controls;
 
 namespace Ginger.Actions.Locators.ASCF
 {
@@ -42,7 +42,7 @@ namespace Ginger.Actions.Locators.ASCF
         {
             return null;
         }
-        
+
         ContextMenu ITreeViewItem.Menu()
         {
             return null;

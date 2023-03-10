@@ -44,7 +44,7 @@ namespace GingerCore.GeneralLib
             else
             {
                 return false;
-            }                
+            }
         }
 
         public static bool OpenDialog(string title, string message, List<string> mValues, Object obj, string Property)
@@ -71,10 +71,10 @@ namespace GingerCore.GeneralLib
         public string value = null;
         public bool OK = false;
 
-        public void Init(string title, string message, List<string> mValues,ref string Value)
+        public void Init(string title, string message, List<string> mValues, ref string Value)
         {
             GingerCore.General.FillComboFromList(ValueComboBox, mValues);
-            
+
             winTitle.Content = title;
             MessageLabel.Text = message;
             ValueComboBox.Text = Value;
@@ -82,7 +82,7 @@ namespace GingerCore.GeneralLib
         }
 
         void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property)
-        {            
+        {
             Binding b = new Binding();
             b.Source = obj;
             b.Path = new PropertyPath(property);
@@ -94,10 +94,10 @@ namespace GingerCore.GeneralLib
         public void Init(string title, string message, List<string> mValues, Object obj, string Property)
         {
             GingerCore.General.FillComboFromList(ValueComboBox, mValues);
-            
+
             winTitle.Content = title;
             MessageLabel.Text = message;
-            
+
             ObjFieldBinding(ValueComboBox, ComboBox.SelectedValueProperty, obj, Property);
 
             mOriginalValue = ValueComboBox.Text;
@@ -118,7 +118,7 @@ namespace GingerCore.GeneralLib
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {                        
+        {
             this.Close();
         }
     }

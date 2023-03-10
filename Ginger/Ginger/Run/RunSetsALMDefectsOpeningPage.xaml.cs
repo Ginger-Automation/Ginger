@@ -108,7 +108,10 @@ namespace Ginger.Run
             else
             {
                 if (mFailedActionsScreenshotsPage == null)
+                {
                     mFailedActionsScreenshotsPage = new FailedActionsScreenshotsPage(((DefectSuggestion)grdDefectSuggestions.CurrentItem).ScreenshotFileNames);
+                }
+
                 mFailedActionsScreenshotsPage.ShowAsWindow();
             }
         }
@@ -136,8 +139,8 @@ namespace Ginger.Run
                         try
                         {
                             currentALMDefectFieldsValues = ((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).ALMDefectProfileFields.Where(z => (z.SelectedValue != null && z.SelectedValue != string.Empty) ||
-                                                                                                                                                                               z.ExternalID== "description" || z.ExternalID == "Summary" || z.ExternalID == "name").ToDictionary(x => x.ExternalID, x => x.SelectedValue != null ? x.SelectedValue.Replace("&", "&amp;") : x.SelectedValue = string.Empty)
-                                                                                                                                         .ToDictionary(w => w.Key, w => w.Key== "description" ? defectSuggestion.ErrorDetails : w.Value)
+                                                                                                                                                                               z.ExternalID == "description" || z.ExternalID == "Summary" || z.ExternalID == "name").ToDictionary(x => x.ExternalID, x => x.SelectedValue != null ? x.SelectedValue.Replace("&", "&amp;") : x.SelectedValue = string.Empty)
+                                                                                                                                         .ToDictionary(w => w.Key, w => w.Key == "description" ? defectSuggestion.ErrorDetails : w.Value)
                                                                                                                                          .ToDictionary(w => w.Key, w => w.Key == "Summary" ? defectSuggestion.Summary : w.Value)
                                                                                                                                          .ToDictionary(w => w.Key, w => w.Key == "name" ? defectSuggestion.Summary : w.Value);
                         }

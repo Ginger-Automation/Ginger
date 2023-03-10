@@ -48,7 +48,8 @@ namespace Ginger.Utils
                 if (string.IsNullOrEmpty(commandArguments))
                 {
                     process.StartInfo = new ProcessStartInfo(commandExecutable);
-                } else
+                }
+                else
                 {
                     process.StartInfo = new ProcessStartInfo(commandExecutable, commandArguments);
                 }
@@ -57,28 +58,45 @@ namespace Ginger.Utils
                 process.StartInfo.UseShellExecute = false;
 
                 // If we want to return the output then redirect standard output
-                if (standardOutput) process.StartInfo.RedirectStandardOutput = true;
+                if (standardOutput)
+                {
+                    process.StartInfo.RedirectStandardOutput = true;
+                }
 
                 // If we std error or to throw on error then redirect error
-                if (standardError || throwOnError) process.StartInfo.RedirectStandardError = true;
+                if (standardError || throwOnError)
+                {
+                    process.StartInfo.RedirectStandardError = true;
+                }
 
                 // Run the process
                 process.Start();
 
                 // Get the standard error
-                if (standardError || throwOnError) standardErrorString = process.StandardError.ReadToEnd();
+                if (standardError || throwOnError)
+                {
+                    standardErrorString = process.StandardError.ReadToEnd();
+                }
 
                 // If we want to throw on error and there is an error
                 if (throwOnError && !string.IsNullOrEmpty(standardErrorString))
-                throw new Exception(
+                {
+                    throw new Exception(
                     string.Format("Error in ConsoleCommand while executing {0} with arguments {1}.",
                     commandExecutable, commandArguments, Environment.NewLine, standardErrorString));
+                }
 
                 // If we want to return the output then get it
-                if (standardOutput) standardOutputString = process.StandardOutput.ReadToEnd();
+                if (standardOutput)
+                {
+                    standardOutputString = process.StandardOutput.ReadToEnd();
+                }
 
                 // If we want standard error then append it to our output string
-                if (standardError) standardOutputString += standardErrorString;
+                if (standardError)
+                {
+                    standardOutputString += standardErrorString;
+                }
 
                 // Wait for the process to finish
                 process.WaitForExit();
@@ -116,22 +134,31 @@ namespace Ginger.Utils
                 // Setup our process with the executable and it's arguments
                 process = new Process();
 
-                process.StartInfo.FileName= "cmd.exe";
+                process.StartInfo.FileName = "cmd.exe";
 
                 // To get IO streams set use shell to false
                 process.StartInfo.UseShellExecute = false;
 
                 // To set the standard input
-                if (standardInput) process.StartInfo.RedirectStandardInput = true;
+                if (standardInput)
+                {
+                    process.StartInfo.RedirectStandardInput = true;
+                }
 
                 // If we want to return the output then redirect standard output
-                if (standardOutput) process.StartInfo.RedirectStandardOutput = true;
+                if (standardOutput)
+                {
+                    process.StartInfo.RedirectStandardOutput = true;
+                }
 
                 // No Window
                 process.StartInfo.CreateNoWindow = true;
 
                 // If we std error or to throw on error then redirect error
-                if (standardError) process.StartInfo.RedirectStandardError = true;
+                if (standardError)
+                {
+                    process.StartInfo.RedirectStandardError = true;
+                }
 
                 // Run the process
                 process.Start();
@@ -151,10 +178,16 @@ namespace Ginger.Utils
                 process.StandardInput.Close();
 
                 // If we want to return the output then get it
-                if (standardOutput) standardOutputString = process.StandardOutput.ReadToEnd();
+                if (standardOutput)
+                {
+                    standardOutputString = process.StandardOutput.ReadToEnd();
+                }
 
                 // If we want standard error then append it to our output string
-                if (standardError) standardOutputString += process.StandardError.ReadToEnd();
+                if (standardError)
+                {
+                    standardOutputString += process.StandardError.ReadToEnd();
+                }
 
                 // Wait for the process to finish
                 process.WaitForExit();

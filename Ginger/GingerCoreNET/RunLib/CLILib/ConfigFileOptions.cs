@@ -17,12 +17,9 @@ limitations under the License.
 #endregion
 
 using CommandLine;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
-{   
+{
     [Verb("configfile", HelpText = "Use config file")]
     public class ConfigFileOptions : OptionsBase
     {

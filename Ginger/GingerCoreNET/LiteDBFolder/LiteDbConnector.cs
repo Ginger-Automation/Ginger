@@ -16,14 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Linq;
-using System.Linq.Expressions;
-using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 {
@@ -49,7 +47,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                     collection = db.GetCollection<T>(collectionName);
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
 
             }
@@ -66,7 +64,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                     result = baseColl.Delete(query) > 0;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("DeleteCollectionItems Error - " + ex.Message);
             }
@@ -129,7 +127,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                     baseColl.Upsert(updateData);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("SetCollection Error - " + ex.Message);
             }
@@ -144,7 +142,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                     db.FileStorage.Upload(imageName, imagePath);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("SaveImage - " + ex.Message);
             }
@@ -162,7 +160,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("GetImage - " + ex.Message);
             }

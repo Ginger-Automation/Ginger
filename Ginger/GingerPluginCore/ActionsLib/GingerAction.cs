@@ -18,7 +18,6 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Amdocs.Ginger.Plugin.Core
 {
@@ -44,9 +43,9 @@ namespace Amdocs.Ginger.Plugin.Core
         }
 
         // Keep it private so code must use AddError, and errors are added formatted
-        private string mErrors { get; set; }        
+        private string mErrors { get; set; }
         public void AddError(string err)
-        {            
+        {
             if (!string.IsNullOrEmpty(mErrors))
             {
                 mErrors += Environment.NewLine;
@@ -79,10 +78,10 @@ namespace Amdocs.Ginger.Plugin.Core
             }
         }
 
-        public string Id { get =>throw new NotImplementedException(); set =>throw new NotImplementedException(); }
+        public string Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public void AddOutput(string param, object value, string path = null)
-        {            
+        {
             GingerActionOutputValue gingerActionOutputValue = new GingerActionOutputValue();
             gingerActionOutputValue.Param = param;
             gingerActionOutputValue.Value = value;
@@ -104,12 +103,12 @@ namespace Amdocs.Ginger.Plugin.Core
                     Console.ForegroundColor = ConsoleColor.Red;
                     break;
             }
-            
+
             Console.WriteLine(DateTime.Now + ": " + logLevel + " " + text);
 
             //Back to white
             Console.ForegroundColor = ConsoleColor.White;
         }
-        
+
     }
 }

@@ -44,7 +44,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
             BorderStatus HB = (BorderStatus)d;
             HB.SetStatus();
         }
-      
+
         private void SetStatus()
         {
             switch (Status)

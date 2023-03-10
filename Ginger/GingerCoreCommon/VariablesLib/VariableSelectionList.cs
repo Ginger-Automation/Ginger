@@ -180,7 +180,7 @@ namespace GingerCore.Variables
             }
         }
 
-        public override List<string> GetExtraParamsList() 
+        public override List<string> GetExtraParamsList()
         {
             List<string> extraParamsDescription = new List<string>();
             extraParamsDescription.Add("Index=1");
@@ -211,7 +211,7 @@ namespace GingerCore.Variables
                             }
                             else
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, "Error!! variable " + Name +": index is out of bounds");
+                                Reporter.ToLog(eLogLevel.ERROR, "Error!! variable " + Name + ": index is out of bounds");
                                 return "Error!! variable index is out of bounds";
                             }
                         }

@@ -21,7 +21,7 @@ using Amdocs.Ginger.Common;
 namespace Amdocs.Ginger.Repository
 {
     public class APIModelBodyKeyValue : RepositoryItemBase
-    {        
+    {
         [IsSerializedForLocalRepository]
         public string Param { get; set; }
         [IsSerializedForLocalRepository]

@@ -80,7 +80,7 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
                     {
                         ZephyrEntPhaseTreeItem zeTS = new ZephyrEntPhaseTreeItem(phase[0]);
                         zeTS.Path = ((TestPlanningFolderTreeItem)cc).Path;
-                        if(!String.IsNullOrEmpty(((TestPlanningFolderTreeItem)cc).CycleId.ToString()))
+                        if (!String.IsNullOrEmpty(((TestPlanningFolderTreeItem)cc).CycleId.ToString()))
                         {
                             zeTS.TestSetID = ((TestPlanningFolderTreeItem)cc).CycleId.ToString();
                         }
@@ -96,7 +96,7 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
             else
             {
                 CurrentChildrens = new List<ITreeViewItem>();
-                List <BaseResponseItem> module = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetTreeByCretiria(entityType.ToString(), Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), 180, Convert.ToInt32(Id));   
+                List<BaseResponseItem> module = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetTreeByCretiria(entityType.ToString(), Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), 180, Convert.ToInt32(Id));
                 module.ForEach(p =>
                 {
 

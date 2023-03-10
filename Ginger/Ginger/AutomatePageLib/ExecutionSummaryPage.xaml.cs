@@ -22,15 +22,14 @@ using Ginger.Run;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCoreNET.GeneralLib;
+using LiveCharts;
+using LiveCharts.Defaults;
+using LiveCharts.Wpf;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using FontAwesome5;
-using LiveCharts;
-using LiveCharts.Wpf;
-using LiveCharts.Defaults;
 using System.Windows.Media;
 
 namespace Ginger.BusinessFlowWindows
@@ -134,7 +133,10 @@ namespace Ginger.BusinessFlowWindows
         public void SwitchLegend(string status)
         {
             if (string.IsNullOrEmpty(status))
+            {
                 status = "Pending";
+            }
+
             switch (status)
             {
                 case "Passed":

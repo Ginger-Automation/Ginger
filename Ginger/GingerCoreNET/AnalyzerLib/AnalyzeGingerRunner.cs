@@ -17,13 +17,13 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Ginger.Run;
+using GingerCore;
+using GingerCore.Platforms;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ginger.Run;
-using GingerCore.Platforms;
-using GingerCore;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace Ginger.AnalyzerLib
 {
@@ -41,8 +41,8 @@ namespace Ginger.AnalyzerLib
                 AnalyzeGingerRunner AGR = CreateNewIssue(IssuesList, GR);
                 AGR.Description = "Runner is missing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
                 AGR.Details = "Nothing to run";
-                AGR.HowToFix = "Add " +GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + "to the Runner or delete the Runner";
-                AGR.CanAutoFix = AnalyzerItemBase.eCanFix.No;                   
+                AGR.HowToFix = "Add " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + "to the Runner or delete the Runner";
+                AGR.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                 AGR.IssueType = eType.Warning;
                 AGR.Impact = "Waste of resources";
                 AGR.Severity = eSeverity.Medium;
@@ -55,7 +55,9 @@ namespace Ginger.AnalyzerLib
                 if (string.IsNullOrEmpty(AA.AgentName))
                 {
                     if (GR.Executor.SolutionApplications.Where(x => (x.AppName == AA.AppName && x.Platform == ePlatformType.NA)).FirstOrDefault() != null)
+                    {
                         continue;
+                    }
                     //create error
                     AnalyzeGingerRunner AGR = CreateNewIssue(IssuesList, GR);
                     AGR.ItemParent = GR.Name;

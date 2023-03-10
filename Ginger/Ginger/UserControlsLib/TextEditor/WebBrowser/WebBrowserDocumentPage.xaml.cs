@@ -20,17 +20,17 @@ using System;
 
 namespace Ginger.UserControlsLib.TextEditor.WebBrowser
 {
-    public partial class WebBrowserDocumentPage : System.Windows.Controls.Page, ITextEditorPage 
+    public partial class WebBrowserDocumentPage : System.Windows.Controls.Page, ITextEditorPage
     {
         public WebBrowserDocumentPage()
         {
             InitializeComponent();
         }
-        
+
         public bool Load(string FileName)
         {
             FileNameLabel.Content = FileName;
-            
+
             string s = "file://" + FileName;
 
             webbrowser.Navigate(new Uri(s));

@@ -16,14 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using Amdocs.Ginger.Common.Helpers;
 
 namespace Amdocs.Ginger.Common.OS
 {
@@ -44,9 +40,9 @@ namespace Amdocs.Ginger.Common.OS
                 LocalHostIP = IPList[0].ToString();
             }
             else if (IPList.Count() > 1)
-            {                
+            {
                 foreach (IPAddress ip in IPList)
-                {                    
+                {
                     if (ip.AddressFamily == AddressFamily.InterNetwork)
                     {
                         LocalHostIP = ip.ToString();
@@ -57,6 +53,6 @@ namespace Amdocs.Ginger.Common.OS
             return LocalHostIP;
         }
 
- 
+
     }
 }

@@ -16,18 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Amdocs.Ginger.ValidationRules
 {
     public class MaxLengthValidationRule : ValidationRule
-    {       
+    {
         string mMessage;
         string Message
         {
@@ -49,11 +44,11 @@ namespace Amdocs.Ginger.ValidationRules
         }
 
         int mMaxLength;
-       
+
         public MaxLengthValidationRule(int maxLength, string message = "")
         {
-            mMaxLength = maxLength;            
-            Message = message;            
+            mMaxLength = maxLength;
+            Message = message;
         }
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {

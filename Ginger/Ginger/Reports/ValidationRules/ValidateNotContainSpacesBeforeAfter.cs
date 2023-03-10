@@ -16,17 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Globalization;
+using System.Windows.Controls;
 
 namespace Ginger.Reports.ValidationRules
 {
-    public class ValidateNotContainSpacesBeforeAfter: ValidationRule
+    public class ValidateNotContainSpacesBeforeAfter : ValidationRule
     {
         private string _Message = string.Empty;
 

@@ -19,18 +19,18 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.SolutionGeneral;
 using Ginger.Reports;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Text.RegularExpressions;
 
 namespace Ginger.SolutionWindows
 {
@@ -257,7 +257,10 @@ namespace Ginger.SolutionWindows
             dlg.Description = "Select Solution folder";
             dlg.RootFolder = Environment.SpecialFolder.MyComputer;
             if (mSolution.Folder != string.Empty)
+            {
                 dlg.SelectedPath = mSolution.Folder;
+            }
+
             dlg.ShowNewFolderButton = true;
             System.Windows.Forms.DialogResult result = dlg.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)

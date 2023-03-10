@@ -19,8 +19,6 @@ limitations under the License.
 using GingerCore;
 using GingerWPF.UserControlsLib;
 using GingerWPFUnitTest.POMs;
-using System;
-using System.Windows.Controls;
 
 namespace GingerTest.POMs
 {

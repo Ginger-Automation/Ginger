@@ -17,10 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Repository;
-using GingerCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GingerCoreNET.ALMLib
 {

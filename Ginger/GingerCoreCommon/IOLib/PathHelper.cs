@@ -17,9 +17,7 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Amdocs.Ginger.IO
 {
@@ -37,11 +35,11 @@ namespace Amdocs.Ginger.IO
             }
             else
             {
-                Console.WriteLine("Found long path - " + path.Length + " "  + path);
+                Console.WriteLine("Found long path - " + path.Length + " " + path);
                 return LongPath(longPath);
             }
 
-            
+
         }
 
         //public static string DirectoryName(string path)

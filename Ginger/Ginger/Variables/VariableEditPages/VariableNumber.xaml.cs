@@ -105,5 +105,5 @@ namespace Ginger.Variables
 
 
     }
-       
+
 }

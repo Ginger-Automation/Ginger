@@ -44,7 +44,7 @@ namespace Ginger.ReporterLib
                 UserMsg mess;
                 MessageInfo messageInfo = new MessageInfo();
                 messageInfo.MessageKey = o;
-                bool b = Reporter.UserMsgsPool.TryGetValue(o, out mess);               
+                bool b = Reporter.UserMsgsPool.TryGetValue(o, out mess);
                 if (!b)
                 {
                     messageInfo.status = "Message not found in pool";
@@ -53,12 +53,12 @@ namespace Ginger.ReporterLib
                 {
 
                     messageInfo.caption = mess.Caption;
-                    messageInfo.message = mess.Message;                    
+                    messageInfo.message = mess.Message;
                     messageInfo.status = "OK";
                 }
-                
-                
-                
+
+
+
                 messages.Add(messageInfo);
             }
             xDataGrid.ItemsSource = messages;
@@ -76,7 +76,7 @@ namespace Ginger.ReporterLib
             MessageBox.Show("You selected: " + messageBoxResult);
         }
 
-       
+
 
         private void XDataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {

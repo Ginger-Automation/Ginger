@@ -36,7 +36,6 @@ limitations under the License.
 
 using ALM_CommonStd.Abstractions;
 using ALM_CommonStd.DataContracts;
-using AlmDataContractsStd.Enums;
 using Amdocs.Ginger.Common;
 using RQM_RepositoryStd;
 using RQM_RepositoryStd.Data_Contracts;
@@ -87,7 +86,10 @@ namespace GingerCore.ALM.RQM
             get
             {
                 if (mRQMRep == null)
+                {
                     return new RqmRepository(RQMCore.ConfigPackageFolderPath);
+                }
+
                 return mRQMRep;
             }
             set { mRQMRep = value; }
@@ -110,7 +112,7 @@ namespace GingerCore.ALM.RQM
 
         private bool RQMConnectionTest()
         {
-            bool isUserAuthen= false;
+            bool isUserAuthen = false;
             try
             {
                 LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
@@ -151,10 +153,10 @@ namespace GingerCore.ALM.RQM
             {
                 LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
                 IProjectData rqmProjectsData = RQMRep.GetVisibleProjects(loginData);
-              
-            
+
+
                 rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
-                if(rqmProjectsDataList.Count > 0)
+                if (rqmProjectsDataList.Count > 0)
                 {
                     foreach (var proj in rqmProjectsDataList)
                     {
@@ -165,7 +167,7 @@ namespace GingerCore.ALM.RQM
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Project not found");
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -258,12 +260,12 @@ namespace GingerCore.ALM.RQM
                     Reporter.ToLog(eLogLevel.ERROR, "Error while trying to import RQM test plans, RQM_ImportConfigs_Template.xml wasn't found at: " + importConfigTemplate);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Project Test Plan list not found " + ex.Message);
             }
 
-            
+
 
             return RQMTestPlanList;
         }
@@ -434,7 +436,7 @@ namespace GingerCore.ALM.RQM
                                                                                                          responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.RQMID, nsmgrTS).InnerText.ToString());
 
                                 RQMTestSuite currentTestSuite = testPlan.TestSuites.Where(z => z.RQMID == responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.RQMID, nsmgrTS).InnerText.ToString()).FirstOrDefault();
-                                if(currentTestSuite != null)
+                                if (currentTestSuite != null)
                                 {
                                     currentTestSuite.Name = responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.Name, nsmgrTS).InnerText.ToString();
                                     currentTestSuite.CreatedBy = responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.RQMID, nsmgrTS).InnerText.ToString();
@@ -657,7 +659,9 @@ namespace GingerCore.ALM.RQM
         public ObservableList<RQMExecutionRecord> GetTestSuiteCurrentResult(LoginDTO loginData, XmlReader reader, RQMProject currentRQMProjectMapping, string currentProjPrefix, string currentProjGuid, string currentTestSuiteResultUri)
         {
             if ((currentTestSuiteResultUri == null) || (currentTestSuiteResultUri == string.Empty))
+            {
                 return null;
+            }
 
             ObservableList<RQMExecutionRecord> RQMExecutionRecords = new ObservableList<RQMExecutionRecord>();
             try

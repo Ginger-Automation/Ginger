@@ -154,7 +154,7 @@ namespace GingerCore.Variables
 
         public override void PostDeserialization()
         {
-                ResetValue();
+            ResetValue();
         }
 
         private string mFormula;
@@ -195,7 +195,7 @@ namespace GingerCore.Variables
         public abstract string VariableEditPage { get; }
         public virtual bool IsObsolete { get { return false; } }
 
-        public virtual string GetValueWithParam(Dictionary<string,string> extraParamDict) {return Value;}
+        public virtual string GetValueWithParam(Dictionary<string, string> extraParamDict) { return Value; }
 
         public virtual List<string> GetExtraParamsList() { return null; }
 
@@ -600,7 +600,7 @@ namespace GingerCore.Variables
 
         private eOutputType mMappedOutputType;
         [IsSerializedForLocalRepository]
-        public eOutputType MappedOutputType { get { return mMappedOutputType; }  set { if (mMappedOutputType != value) { mMappedOutputType = value; OnPropertyChanged(nameof(MappedOutputType)); } } }
+        public eOutputType MappedOutputType { get { return mMappedOutputType; } set { if (mMappedOutputType != value) { mMappedOutputType = value; OnPropertyChanged(nameof(MappedOutputType)); } } }
 
         private string mMappedOutputValue;
         [IsSerializedForLocalRepository]
@@ -682,8 +682,8 @@ namespace GingerCore.Variables
 
         public static ObservableList<VariableBase> SortByMandatoryInput(ObservableList<VariableBase> variables)
         {
-            int movedNum = 0;               
-            for (int indx=0; indx<variables.Count; indx++)
+            int movedNum = 0;
+            for (int indx = 0; indx < variables.Count; indx++)
             {
                 if (variables[indx].MandatoryInput)
                 {

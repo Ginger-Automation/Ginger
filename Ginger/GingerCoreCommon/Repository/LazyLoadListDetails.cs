@@ -45,7 +45,7 @@ namespace Amdocs.Ginger.Common.Repository
         }
 
         public bool DataWasLoaded = false;
-        
+
 
         private void LoadXMLDataIntoString()
         {

@@ -49,7 +49,7 @@ namespace Ginger.Functionalties
         string RecoverFolderContianerWithTS = null;
 
         string mSolutionFolderPath;
-        
+
         public void SolutionInit(string solutionFolderPath)
         {
             mSolutionFolderPath = solutionFolderPath;
@@ -67,7 +67,7 @@ namespace Ginger.Functionalties
             RecoverFolderContianerWithTS = "AutoSave" + DateTime.Now.ToString("_dd-MMM-yy_HH-mm");
             RecoverFolderContianerWithTS = Path.Combine(mRecoverFolderPath, RecoverFolderContianerWithTS);
             System.IO.Directory.CreateDirectory(RecoverFolderContianerWithTS);
-           
+
             //Move files
             if (Directory.Exists(AutoSavePath))
             {
@@ -76,17 +76,17 @@ namespace Ginger.Functionalties
                     string itemtoSaveToRecover = file.FullName.Replace(AutoSavePath, RecoverFolderContianerWithTS);
                     file.MoveTo(Path.Combine(itemtoSaveToRecover));
                 }
-            }            
+            }
         }
 
-        public void SolutionRecoverStart(bool showRecoverPageAnyway=false)
+        public void SolutionRecoverStart(bool showRecoverPageAnyway = false)
         {
             ObservableList<RecoveredItem> recovredItems = new ObservableList<RecoveredItem>();
 
             if (Directory.Exists(mRecoverFolderPath))
-            {                                
+            {
                 NewRepositorySerializer serializer = new NewRepositorySerializer();
-               
+
                 foreach (var directory in new DirectoryInfo(mRecoverFolderPath).GetDirectories())
                 {
                     string timestamp = directory.Name.ToString().Replace("AutoSave_", string.Empty);
@@ -109,16 +109,16 @@ namespace Ginger.Functionalties
                         {
                             Reporter.ToLog(eLogLevel.ERROR, "Failed to fetch recover item : " + file.FullName, ex);
                         }
-                    }                    
+                    }
                 }
-              
-                if(recovredItems.Count == 0)
-                {                                    
+
+                if (recovredItems.Count == 0)
+                {
                     CleanUp(); //have empty folders
                 }
             }
 
-            if (recovredItems.Count > 0 || showRecoverPageAnyway)                
+            if (recovredItems.Count > 0 || showRecoverPageAnyway)
             {
                 TargetFrameworkHelper.Helper.ShowRecoveryItemPage(recovredItems);
             }
@@ -145,9 +145,9 @@ namespace Ginger.Functionalties
             }
         }
 
-        
+
         public void DoSolutionAutoSaveAndRecover()
-        {            
+        {
             //Init
             WorkSpace.Instance.AppSolutionAutoSave.SolutionInit(WorkSpace.Instance.Solution.Folder);
             SolutionInit(WorkSpace.Instance.Solution.Folder);

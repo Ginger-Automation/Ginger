@@ -318,8 +318,8 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             Assert.AreEqual(loc.ToString(), Loc2);
         }
 
-       
-        
+
+
 
         [TestMethod]
         [Timeout(60000)]
@@ -451,7 +451,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
             // Extract            
             string v123 = pl2.GetValueString();
-            NewPayLoad plin2 = pl2.ReadPayload();            
+            NewPayLoad plin2 = pl2.ReadPayload();
 
             string aaa = plin2.GetValueString();
             string bbb = plin2.GetValueString();
@@ -459,7 +459,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
             //Assert
             Assert.AreEqual("plin", plin2.Name);
-            Assert.AreEqual("AAA", aaa);            
+            Assert.AreEqual("AAA", aaa);
         }
 
 

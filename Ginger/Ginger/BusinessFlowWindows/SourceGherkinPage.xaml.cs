@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using GingerCore;
+using System.Windows.Controls;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -26,7 +26,7 @@ namespace Ginger.BusinessFlowWindows
     /// </summary>
     public partial class SourceGherkinPage : Page
     {
-        BusinessFlow mBusinessFlow;        
+        BusinessFlow mBusinessFlow;
 
         public SourceGherkinPage(BusinessFlow BizFlow)
         {
@@ -34,7 +34,7 @@ namespace Ginger.BusinessFlowWindows
 
             mBusinessFlow = BizFlow;
             SourceTextBox.BindControl(mBusinessFlow, nameof(BusinessFlow.Source), System.Windows.Data.BindingMode.OneWay);
-            ExternalIDTextBox.BindControl(mBusinessFlow, nameof(BusinessFlow.ExternalID), System.Windows.Data.BindingMode.OneWay);            
+            ExternalIDTextBox.BindControl(mBusinessFlow, nameof(BusinessFlow.ExternalID), System.Windows.Data.BindingMode.OneWay);
         }
     }
 }

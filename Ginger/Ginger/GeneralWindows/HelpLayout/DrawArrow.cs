@@ -23,7 +23,7 @@ using System.Windows.Shapes;
 
 namespace Ginger.GeneralWindows.HelpLayout
 {
-    public sealed class DrawArrow 
+    public sealed class DrawArrow
     {
         /// <summary>
         /// Draw arrow between 2 points
@@ -34,7 +34,7 @@ namespace Ginger.GeneralWindows.HelpLayout
         public static Shape DrawLinkArrow(Point p1, Point p2)
         {
             GeometryGroup lineGroup = new GeometryGroup();
-            
+
             PathGeometry pathGeometry = new PathGeometry();
             PathFigure pathFigure = new PathFigure();
             Point p = new Point(p2.X, p2.Y);

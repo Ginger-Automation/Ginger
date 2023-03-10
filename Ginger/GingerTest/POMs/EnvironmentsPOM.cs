@@ -41,7 +41,7 @@ namespace GingerWPFUnitTest.POMs
             WizardPOM wizard = WizardPOM.CurrentWizard;
             //skip intro page
             wizard.NextButton.Click();
-            
+
             // set env name
             wizard.CurrentPage["Name AID"].SetText(name);
 
@@ -59,7 +59,7 @@ namespace GingerWPFUnitTest.POMs
 
         internal IEnumerable<TreeViewItem> GetRootItems()
         {
-            return mTreeView.GetRootItems();            
+            return mTreeView.GetRootItems();
         }
 
     }

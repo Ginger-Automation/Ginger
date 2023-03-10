@@ -17,9 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.PlugInsLib
 {
@@ -42,9 +39,9 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
                 return v;
             }
         }
-        public string name { get; set; }        
-        public string prerelease { get; set; } 
-        public string published_at { get; set; } 
-        public ObservableList<OnlinePluginPackageReleaseAsset> assets { get; set; }                
+        public string name { get; set; }
+        public string prerelease { get; set; }
+        public string published_at { get; set; }
+        public ObservableList<OnlinePluginPackageReleaseAsset> assets { get; set; }
     }
 }

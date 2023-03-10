@@ -16,11 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows;
-using System.Windows.Controls;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Actions.VisualTesting
 {
@@ -36,7 +36,7 @@ namespace Ginger.Actions.VisualTesting
             InitializeComponent();
             InitLayout();
 
-            BaselineInfoFileUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.BaselineInfoFile ), true, true, UCValueExpression.eBrowserType.File, "*", BaselineInfoFileUCVE_FileSelected);
+            BaselineInfoFileUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.BaselineInfoFile), true, true, UCValueExpression.eBrowserType.File, "*", BaselineInfoFileUCVE_FileSelected);
         }
 
         public void InitLayout()

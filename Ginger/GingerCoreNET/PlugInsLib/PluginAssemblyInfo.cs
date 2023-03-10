@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -19,7 +17,7 @@ namespace Amdocs.Ginger.Repository
             {
                 // Load assembly on demand and cache
                 if (mAssembly == null)
-                {                    
+                {
                     AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
                     mAssembly = Assembly.LoadFrom(FilePath);
                 }

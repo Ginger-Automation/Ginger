@@ -17,8 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.UIElement;
-using GingerCore.Drivers.Appium;
-using GingerCore.Drivers.Common;
 using GingerWPF.UserControlsLib.UCTreeView;
 
 namespace Ginger.WindowExplorer.Appium

@@ -18,9 +18,6 @@ limitations under the License.
 
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace GingerCoreNETUnitTests.GeneralTestsLib
 {

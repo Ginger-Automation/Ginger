@@ -53,7 +53,7 @@ namespace Amdocs.Ginger.CoreNET
             return runSetReports;
         }
 
-        public List<RunSetReport> GetRunsetExecutionInfo(Guid soluionGuid,Guid runsetGuid)
+        public List<RunSetReport> GetRunsetExecutionInfo(Guid soluionGuid, Guid runsetGuid)
         {
             var runSetReports = new List<RunSetReport>();
             var baseURI = GetReportDataServiceUrl();
@@ -101,7 +101,7 @@ namespace Amdocs.Ginger.CoreNET
                     StartTimeStamp = Convert.ToDateTime(runsetHLInfo.StartTime).ToUniversalTime(),
                     EndTimeStamp = Convert.ToDateTime(runsetHLInfo.EndTime).ToUniversalTime(),
                     Elapsed = runsetHLInfo.Duration,
-                    ExecutionDurationHHMMSS = GingerCoreNET.GeneralLib.General.TimeConvert((runsetHLInfo.Duration/1000).ToString()),
+                    ExecutionDurationHHMMSS = GingerCoreNET.GeneralLib.General.TimeConvert((runsetHLInfo.Duration / 1000).ToString()),
                     RunSetExecutionStatus = runStatus,
                     DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.Remote
                 });

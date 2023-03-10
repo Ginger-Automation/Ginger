@@ -29,7 +29,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             try
             {
                 var obj = JToken.Parse(Convert.ToString(value));
-                return  ValidationResult.ValidResult;
+                return ValidationResult.ValidResult;
             }
             catch
             {

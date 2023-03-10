@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 using GingerCoreNET.RosLynLib;
 using GingerCoreNETUnitTest.WorkSpaceLib;
@@ -27,7 +26,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 {
     [TestClass]
     public class ValueExpressionRefrenceTest
-    {        
+    {
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
@@ -38,13 +37,13 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
-            
+
         }
 
         [TestCleanup]
@@ -57,7 +56,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 
         [TestMethod]
         public void LoadandTestFile()
-        {                        
+        {
             foreach (ValueExpressionReference ver in WorkSpace.Instance.VERefrences.Refrences)
             {
                 if (ver.Expression.StartsWith("{CS") && ver.ExpressionResult != null)
@@ -68,7 +67,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             }
         }
 
-      
+
 
     }
 }

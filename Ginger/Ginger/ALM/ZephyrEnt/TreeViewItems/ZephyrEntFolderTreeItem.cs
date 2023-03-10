@@ -16,14 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore.ALM;
+using GingerCore.ALM.ZephyrEnt.Bll;
 using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using Newtonsoft.Json.Linq;
-using GingerCore.ALM;
-using GingerCore.ALM.ZephyrEnt.Bll;
 using ZephyrEntStdSDK.Models.Base;
 
 namespace Ginger.ALM.ZephyrEnt.TreeViewItems
@@ -67,7 +66,7 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
             {
                 CurrentChildrens = new List<ITreeViewItem>();
                 List<BaseResponseItem> module = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetTreeByCretiria(entityType.ToString(), Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), 180, Convert.ToInt32(Id));
-                 
+
                 module.ForEach(p =>
                 {
                     if (((JArray)p.TryGetItem("categories")).Count > 0)

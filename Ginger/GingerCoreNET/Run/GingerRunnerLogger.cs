@@ -22,7 +22,6 @@ using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -30,7 +29,7 @@ namespace Ginger.Run
 {
     public class GingerRunnerLogger
     {
-        string fileName; 
+        string fileName;
         public GingerRunnerLogger(string loggerFile)
         {
             this.fileName = loggerFile;
@@ -38,7 +37,10 @@ namespace Ginger.Run
 
         public void LogAction(IAct logAction)
         {
-            if (!logAction.EnableActionLogConfig) return;
+            if (!logAction.EnableActionLogConfig)
+            {
+                return;
+            }
 
             StringBuilder strBuilder = new StringBuilder();
             ActionLogConfig actionLogConfig = logAction.ActionLogConfig;

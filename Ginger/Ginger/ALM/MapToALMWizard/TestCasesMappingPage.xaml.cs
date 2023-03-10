@@ -57,7 +57,7 @@ namespace Ginger.ALM.MapToALMWizard
                     BindTestcasesData();
                     break;
                 case EventType.LeavingForNextPage:
-                    if(mWizard.testCasesMappingList.All(tc => tc.aLMTSTest == null))
+                    if (mWizard.testCasesMappingList.All(tc => tc.aLMTSTest == null))
                     {
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please Map At least one Test Case.");
                         WizardEventArgs.CancelEvent = true;
@@ -75,7 +75,7 @@ namespace Ginger.ALM.MapToALMWizard
             xMapActivityGroupToTestCaseGrid.DataSourceList = mWizard.testCasesMappingList;
             xUnMapTestCaseGrid.DataSourceList = mWizard.testCasesUnMappedList;
             xMapActivityGroupToTestCaseGrid.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, $"Ginger ‘{mWizard.mapBusinessFlow.Name}’ ", "– ALM Test Cases Mapping");
-            if(mWizard.AlmTestSetData.TestSetName is not null)
+            if (mWizard.AlmTestSetData.TestSetName is not null)
             {
                 xUnMapTestCaseGrid.Title = $"ALM '{mWizard.AlmTestSetData.TestSetName}' Test Cases";
             }

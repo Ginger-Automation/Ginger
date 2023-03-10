@@ -16,27 +16,24 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using GingerCore.Actions;
 using Amdocs.Ginger.Common;
 using Couchbase;
-using Couchbase.Configuration.Client;
 using Couchbase.Authentication;
+using Couchbase.Configuration.Client;
 using Couchbase.N1QL;
-using Couchbase.Configuration.Server.Serialization;
-using amdocs.ginger.GingerCoreNET;
+using GingerCore.Actions;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace GingerCore.NoSqlBase
 {
     public class GingerCouchbase : NoSqlBase
-    {        
-        Cluster clusterCB = null;     
+    {
+        Cluster clusterCB = null;
         ActDBValidation Act = null;
-        
-     
+
+
 
         public override bool Connect()
         {
@@ -45,7 +42,7 @@ namespace GingerCore.NoSqlBase
                 clusterCB = new Couchbase.Cluster(new ClientConfiguration
                 {
                     ViewRequestTimeout = 45000,
-                    Servers = new List<Uri> { new Uri(Db.DatabaseOperations.TNSCalculated.ToString()) },                    
+                    Servers = new List<Uri> { new Uri(Db.DatabaseOperations.TNSCalculated.ToString()) },
                 });
                 //TODO: need to decrypt the password in the Database->PassCalculated
                 String deCryptValue = EncryptionHandler.DecryptwithKey(Db.DatabaseOperations.PassCalculated.ToString());
@@ -144,7 +141,7 @@ namespace GingerCore.NoSqlBase
                 //TODO: need to check and true and flase on basis of connection
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
@@ -155,7 +152,7 @@ namespace GingerCore.NoSqlBase
         private string GetBucketName(string inputSQL)
         {
             string bucketName = string.Empty;
-            if (Action== ActDBValidation.eDBValidationType.RecordCount)
+            if (Action == ActDBValidation.eDBValidationType.RecordCount)
             {
                 bucketName = inputSQL.Replace("`", "");
                 bucketName = bucketName.Replace("'", "");
@@ -171,7 +168,7 @@ namespace GingerCore.NoSqlBase
                 }
                 else
                 {
-                    bucketName = bucketName.Substring(0, bucketName.Length-1).Replace("`", "");
+                    bucketName = bucketName.Substring(0, bucketName.Length - 1).Replace("`", "");
                 }
             }
             return bucketName;
@@ -186,9 +183,9 @@ namespace GingerCore.NoSqlBase
             string SQLCalculated = VE.ValueCalculated;
             string bucketName = GetBucketName(SQLCalculated);
 
-            if(!ConnectToBucket(bucketName))
+            if (!ConnectToBucket(bucketName))
             {
-                Act.Error = "failed to connect bucket "+bucketName;
+                Act.Error = "failed to connect bucket " + bucketName;
                 return;
             }
             else

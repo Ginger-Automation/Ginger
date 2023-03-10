@@ -16,15 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Plugin.Core;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
-    
+
     public class NodeActionOutput // TODO: impl interface : IGingerActionOutput
     {
         public List<NodeActionOutputValue> OutputValues = new List<NodeActionOutputValue>();

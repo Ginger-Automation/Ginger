@@ -16,15 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Ginger.UserControlsLib.TextEditor.Common;
+using ICSharpCode.AvalonEdit.Folding;
 using System;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.Folding;
-using System.Data;
-using Ginger.UserControlsLib.TextEditor.Common;
 
 namespace Ginger.UserControlsLib.TextEditor.Gherkin
 {
@@ -35,7 +34,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
     {
         private ICSharpCode.AvalonEdit.TextEditor textEditor;
         private FoldingSection foldingSection;
-        
+
         public GherkinTableEditorPage(SelectedContentArgs SelectedContentArgs)
         {
             InitializeComponent();
@@ -67,14 +66,20 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             // First row is columns headers
 
             if (lines.Length > iStart)
+            {
                 Cols = lines[iStart].Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+            }
             else
+            {
                 return;
+            }
 
             foreach (string col in Cols)
             {
                 if (!string.IsNullOrWhiteSpace(col))
+                {
                     DT.Columns.Add(col.Trim());
+                }
             }
 
             for (int i = iStart + 1; i < iEnd; i++)
@@ -82,7 +87,9 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                 System.Data.DataRow DR;
                 object[] o = GetColsData(lines[i]);
                 if (DT.Columns.Count == o.Length)
+                {
                     DR = DT.Rows.Add(o);
+                }
             }
 
             TableDataGrid.ItemsSource = DT.AsDataView();
@@ -95,7 +102,9 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             for (int i = 0; i < b.Length; i++)
             {
                 if (!string.IsNullOrWhiteSpace(b[i]))
+                {
                     leanth++;
+                }
             }
             string[] a = new string[leanth];
             int counter = 0;
@@ -134,7 +143,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                 s.Append("|").Append(Environment.NewLine);
             }
             string st = formatTable(s.ToString());
-            
+
             return st;
         }
 
@@ -149,7 +158,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             string[] cols = rows[0].Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
             do
             {
-                bFound = false;                
+                bFound = false;
                 ft = new StringBuilder("");
                 rows = txt.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -166,17 +175,17 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                 {
                     string s1 = "|";
                     string[] data = r.Split(new string[] { "|" }, StringSplitOptions.None);
-                                        
+
                     for (int k = 1; k < data.Length - 1; k++)
                     {
-                        if (data[k].Length > ColsWidth[k-1])  // We found data in column longer than the header mark for redo
+                        if (data[k].Length > ColsWidth[k - 1])  // We found data in column longer than the header mark for redo
                         {
-                            ColsWidth[k-1] = data[k].Length;
-                            cols[k-1] = Pad(cols[k-1], data[k].Length);
+                            ColsWidth[k - 1] = data[k].Length;
+                            cols[k - 1] = Pad(cols[k - 1], data[k].Length);
                             bFound = true;
                         }
 
-                        s1 += Pad(data[k], ColsWidth[k-1]) + "|";                        
+                        s1 += Pad(data[k], ColsWidth[k - 1]) + "|";
                     }
                     s1 += Environment.NewLine;
                     ft.Append(s1);
@@ -191,7 +200,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         private string Pad(string data, int Len)
         {
             string s = data;
-            while (s.Length<Len)
+            while (s.Length < Len)
             {
                 s += " ";
             }
@@ -218,10 +227,10 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                 if (bFound && lines[i].Contains("|"))
                 {
                     tmp += lines[i] + Environment.NewLine;
-                }                                
+                }
             }
 
-            textEditor.Text = textEditor.Text.Replace(tmp.Substring(0,tmp.LastIndexOf("|")+1), txt);
+            textEditor.Text = textEditor.Text.Replace(tmp.Substring(0, tmp.LastIndexOf("|") + 1), txt);
         }
     }
 }

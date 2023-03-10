@@ -17,27 +17,22 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System;
-using System.Collections.Generic;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using Ginger.Drivers.UIA;
 using Ginger.Drivers.WindowsAutomation;
 using Ginger.WindowExplorer;
+using Ginger.WindowExplorer.HTMLCommon;
 using Ginger.WindowExplorer.PowerBuilder;
-using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Drivers;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.Common;
-using GingerCore.Actions.Java;
-using Ginger.WindowExplorer.Java;
-using Ginger.WindowExplorer.HTMLCommon;
 using GingerCore.Drivers.PBDriver;
-using GingerCore.Drivers.WindowsLib;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Repository;
+using GingerWPF.UserControlsLib.UCTreeView;
+using System;
+using System.Collections.Generic;
+using System.Windows.Controls;
 
 namespace Ginger.Drivers.PowerBuilder
 {
@@ -66,13 +61,13 @@ namespace Ginger.Drivers.PowerBuilder
 
             foreach (ElementInfo EI in Childrens)
             {
-                ITreeViewItem TVI=null;
+                ITreeViewItem TVI = null;
                 if (EI.GetType() == typeof(UIAElementInfo))
                 {
                     EI.WindowExplorer = UIAElementInfo.WindowExplorer;
                     PBControlTreeItemBase treeItem = GetMatchingPBTreeItem(EI);
                     treeItem.UIAElementInfo.WindowExplorer = UIAElementInfo.WindowExplorer;
-                   
+
                     double XOffset =
                         double.Parse(((UIAutomationDriverBase)UIAElementInfo.WindowExplorer).mUIAutomationHelper
                             .GetControlPropertyValue(EI.ElementObject, "XOffset"));
@@ -95,12 +90,12 @@ namespace Ginger.Drivers.PowerBuilder
 
         bool ITreeViewItem.IsExpandable()
         {
-            return base.IsExpandable;           
+            return base.IsExpandable;
         }
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
-            return new UIAElementPage(base.UIAElementInfo);            
+            return new UIAElementPage(base.UIAElementInfo);
         }
 
         ContextMenu ITreeViewItem.Menu()
@@ -127,35 +122,38 @@ namespace Ginger.Drivers.PowerBuilder
 
         public static PBControlTreeItemBase GetMatchingPBTreeItem(ElementInfo elementInfo)
         {
-            if (elementInfo==null || elementInfo.ElementObject == null) return null;
+            if (elementInfo == null || elementInfo.ElementObject == null)
+            {
+                return null;
+            }
 
             string elementControlType = ((PBDriver)elementInfo.WindowExplorer).mUIAutomationHelper.GetElementControlType(elementInfo.ElementObject);
             string elmentClass =
-                ((PBDriver) elementInfo.WindowExplorer).mUIAutomationHelper.GetControlPropertyValue(
+                ((PBDriver)elementInfo.WindowExplorer).mUIAutomationHelper.GetControlPropertyValue(
                     elementInfo.ElementObject, "ClassName");
 
             PBControlTreeItemBase treeItem;
-            if (General.CompareStringsIgnoreCase(elementControlType,"button"))
+            if (General.CompareStringsIgnoreCase(elementControlType, "button"))
             {
-                treeItem = new PBButtonTreeItem();             
+                treeItem = new PBButtonTreeItem();
             }
             else if (General.CompareStringsIgnoreCase(elementControlType, "edit"))
             {
                 treeItem = new PBTextBoxTreeItem();
-                
+
             }
             else if (General.CompareStringsIgnoreCase(elementControlType, "title bar"))
             {
                 treeItem = new PBTitleBarTreeItem();
-                
+
             }
             else if (General.CompareStringsIgnoreCase(elementControlType, "pane") && General.CompareStringsIgnoreCase(elmentClass, "SysDateTimePick32"))
             {
                 treeItem = new PBDatePickerTreeItem();
-                
+
             }
 
-             //TODO:For grids need to implement generic way, independent of class name.This is breaking other pane controls which are not actually Grids. 
+            //TODO:For grids need to implement generic way, independent of class name.This is breaking other pane controls which are not actually Grids. 
             //else if (elementNode.Current.LocalizedControlType == "pane" && elementNode.Current.ClassName == "pbdw126")
             //{
             //    PBDataGridTreeItem DGTI = new PBDataGridTreeItem();
@@ -168,14 +166,14 @@ namespace Ginger.Drivers.PowerBuilder
                 treeItem = new PBTabTreeItem();
             }
             //TODO: Find a Better way to distinguish a grid control
-            else if (General.CompareStringsIgnoreCase(elementControlType,"pane") && (elmentClass.StartsWith("pbd")))// && (elementNode.Current.Name=="") 
+            else if (General.CompareStringsIgnoreCase(elementControlType, "pane") && (elmentClass.StartsWith("pbd")))// && (elementNode.Current.Name=="") 
             {
                 treeItem = new PBDataGridTreeItem();
             }
-            else if(elmentClass.Equals("Internet Explorer_Server"))
-            {               
+            else if (elmentClass.Equals("Internet Explorer_Server"))
+            {
                 treeItem = new PBBrowserTreeItem();
-            }                
+            }
             else if (General.CompareStringsIgnoreCase(elementControlType, "text"))
             {
                 treeItem = new PBTextTreeItem();
@@ -231,7 +229,7 @@ namespace Ginger.Drivers.PowerBuilder
             }
 
             // we need to put all the minimal attr so calc when needed
-            UIAElementInfo EI = new UIAElementInfo();          
+            UIAElementInfo EI = new UIAElementInfo();
             EI.ElementObject = elementInfo.ElementObject;  // The most important, the rest will be lazy loading
             treeItem.UIAElementInfo = EI;
 

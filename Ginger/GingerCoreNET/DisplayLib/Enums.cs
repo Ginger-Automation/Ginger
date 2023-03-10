@@ -31,12 +31,12 @@ namespace Amdocs.Ginger.Core
         Gherkin
     }
 
-  
+
 
     public enum eButtonType
     {
         ImageButton,
-        RoundTextAndImageButton,        
+        RoundTextAndImageButton,
         CircleImageButton,
         CircleImageLightButton,
         PanelButton,

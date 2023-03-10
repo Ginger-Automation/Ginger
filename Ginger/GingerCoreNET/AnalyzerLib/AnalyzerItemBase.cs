@@ -30,8 +30,8 @@ namespace Ginger.AnalyzerLib
             NeedFix = 2,
             Fixed = 3,
             CannotFix = 4,
-            MissingFixHandler =5,
-            FixedSaved =6,
+            MissingFixHandler = 5,
+            FixedSaved = 6,
             PartiallyFixed = 7,
 
         }
@@ -40,15 +40,15 @@ namespace Ginger.AnalyzerLib
         {
             Critical = 1,
             High = 2,
-            Medium = 3,            
-            Low = 4            
+            Medium = 3,
+            Low = 4
         }
 
         public enum eCanFix
         {
             Yes = 1,
             No = 2,
-            Maybe = 3            
+            Maybe = 3
         }
 
         public enum eType
@@ -62,7 +62,7 @@ namespace Ginger.AnalyzerLib
         public enum eIssueCategory
         {
             MissingVariable = 1,
-            VaribleUnused = 2            
+            VaribleUnused = 2
         }
 
         public enum eCheckType
@@ -101,9 +101,13 @@ namespace Ginger.AnalyzerLib
             get
             {
                 if (CanAutoFix == eCanFix.Yes || CanAutoFix == eCanFix.Maybe)
+                {
                     return true;
+                }
                 else
+                {
                     return false;
+                }
             }
         }
         public eSeverity Severity { get; set; }
@@ -114,7 +118,7 @@ namespace Ginger.AnalyzerLib
         public object ErrorInfoObject = null;
 
         private eStatus mStatus { get; set; }
-        
+
         public eStatus Status
         {
             get { return mStatus; }
@@ -129,10 +133,10 @@ namespace Ginger.AnalyzerLib
         }
 
         public eImageType SeverityIcon
-        {            
+        {
             get
             {
-               switch(Severity)
+                switch (Severity)
                 {
                     case eSeverity.Critical:
                     case eSeverity.High:
@@ -144,7 +148,7 @@ namespace Ginger.AnalyzerLib
                     default:
                         return eImageType.LowWarn;
                 }
-                           
+
             }
         }
         public event PropertyChangedEventHandler PropertyChanged;

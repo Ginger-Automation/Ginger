@@ -17,8 +17,8 @@ limitations under the License.
 #endregion
 
 using Ginger.SolutionWindows.TreeViewItems;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
@@ -37,7 +37,11 @@ namespace Ginger.ALM.QC.TreeViewItems
         StackPanel ITreeViewItem.Header()
         {
             StackPanel mHeader = null;
-            if(mHeader != null) mHeader.Children.Add(new Label() { Content = "root QC" });
+            if (mHeader != null)
+            {
+                mHeader.Children.Add(new Label() { Content = "root QC" });
+            }
+
             return mHeader;
         }
 

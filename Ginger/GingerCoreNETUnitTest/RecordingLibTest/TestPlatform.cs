@@ -22,7 +22,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
                     ElementLocateValue = actConfig.LocateValue,
                     ElementType = Convert.ToString(actConfig.Type),
                     Value = actConfig.ElementValue
-                }; 
+                };
             }
             else
             {

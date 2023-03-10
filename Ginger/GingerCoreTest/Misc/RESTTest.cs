@@ -18,7 +18,6 @@ limitations under the License.
 
 
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
 using GingerCore.Actions.REST;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -26,8 +25,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTest
 {
     [Level3]
-    [TestClass]    
-    public class RESTTest 
+    [TestClass]
+    public class RESTTest
     {
 
         static TestHelper mTestHelper = new TestHelper();
@@ -60,7 +59,8 @@ namespace UnitTest
 
         // Need to have our own REST server, so will not be dependent on David server
         //[Ignore]
-        [TestMethod]    [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void Rest1()
         {
 
@@ -81,7 +81,9 @@ namespace UnitTest
                 foreach (ActReturnValue val in a2.ReturnValues)
                 {
                     if (val.Actual.ToString() == "OK")
+                    {
                         Assert.AreEqual(val.Actual, "OK");
+                    }
                 }
             }
 

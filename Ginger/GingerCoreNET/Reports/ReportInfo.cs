@@ -16,17 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Utility;
+using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
+using System;
+using System.Collections.Generic;
 using System.IO;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.CoreNET.Utility;
-using Amdocs.Ginger.Common.InterfacesLib;
+using System.Linq;
 
 
 namespace Ginger.Reports
@@ -126,17 +126,27 @@ namespace Ginger.Reports
             BFES.BusinessFlow = BF;
             BFES.Selected = true;
             if (GR != null)
+            {
                 BFES.BusinessFlowExecLoggerFolder = Path.Combine(GR.ExecutionLoggerManager.ExecutionLogfolder, BF.ExecutionLogFolder);
+            }
 
-            if (mBFESs != null) mBFESs.Clear();
+            if (mBFESs != null)
+            {
+                mBFESs.Clear();
+            }
+
             mBFESs.Add(BFES);
 
             mGingersMultiRun = null;
             // Set all General info       
             if (BF.Elapsed != null)
+            {
                 TotalExecutionTime = TimeSpan.FromSeconds((long)BF.ElapsedSecs);
+            }
             else
+            {
                 TotalExecutionTime = new TimeSpan(0);
+            }
 
             ExecutionElapsedTime = TotalExecutionTime;
             DateCreated = DateTime.Now.ToString();

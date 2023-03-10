@@ -62,7 +62,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
 
         private async Task ParseArgs(string[] args)
-        {            
+        {
             // FIXME: failing with exc of obj state
             // Do not show default version
             // Parser.Default.Settings.AutoVersion = false;
@@ -80,7 +80,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     async (VersionOptions opts) => await HandleVersionOptions(opts),
                     async (ExampleOptions opts) => await HandleExampleOptions(opts),
                     async (DoOptions opts) => await HandleDoOptions(opts),
-                        
+
 
                     async errs => await HandleCLIParseError(errs)
             );
@@ -89,7 +89,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error(s) occurred process exit code (" + result + ")");
                 Environment.ExitCode = 1; // error
-            }            
+            }
         }
 
         private async Task<int> HandleDoOptions(DoOptions opts)
@@ -336,7 +336,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                  Console.WriteLine("---------------------------------------------------");
 
                  if (!Console.IsInputRedirected && !WorkSpace.Instance.RunningFromUnitTest)  // for example unit test redirect input, or we can run without input like from Jenkins
-                {
+                 {
                      ConsoleKey consoleKey = ConsoleKey.A;
                      while (consoleKey != ConsoleKey.Q)
                      {
@@ -349,7 +349,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
              });
 
         }
-               
+
 
         private async Task<int> HandleRunOptions(RunOptions runOptions)
         {
@@ -375,7 +375,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.SourceControlURL = runOptions.URL;
             mCLIHelper.SourcecontrolUser = runOptions.User;
             mCLIHelper.sourceControlType = runOptions.SCMType;
-            
+
             mCLIHelper.SetSourceControlBranch(runOptions.Branch);
 
             mCLIHelper.sourceControlPass = runOptions.Pass;
@@ -467,14 +467,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib
              {
                  if (errs.Count() == 1 && errs.First() is HelpVerbRequestedError)
                  {
-                    // User requested help 
-                    PrintGingerCLIHelp();
+                     // User requested help 
+                     PrintGingerCLIHelp();
                      return 0;
                  }
                  else if (errs.Count() == 1 && errs.First() is VersionRequestedError)
                  {
-                    // User requested version
-                    PrintGingerVersionInfo();
+                     // User requested version
+                     PrintGingerVersionInfo();
                      return 0;
                  }
                  else
@@ -548,7 +548,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.CloseSolution();
         }
 
-        private bool CLILoadAndPrepare(string runsetConfigs="")
+        private bool CLILoadAndPrepare(string runsetConfigs = "")
         {
             try
             {
@@ -576,7 +576,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 if (!mCLIHelper.SetSealights())
                 {
                     return false;
-                }    
+                }
 
 
                 mCLIHelper.SetTestArtifactsFolder();

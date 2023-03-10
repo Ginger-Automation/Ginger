@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Ginger.SolutionGeneral;
 using System.Collections.Generic;
 using System.Linq;
-using Ginger.SolutionGeneral;
 
 namespace Ginger.AnalyzerLib
 {

@@ -16,17 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using Ginger.ScottLogic.PieChart;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Windows.Media.Animation;
-using Ginger.ScottLogic.PieChart;
 
 
 namespace Ginger.UserControlsLib.PieChart
@@ -72,9 +72,9 @@ namespace Ginger.UserControlsLib.PieChart
 
         public static readonly DependencyProperty HoleSizeProperty =
                        DependencyProperty.Register("HoleSize", typeof(double), typeof(NewPiePlotter), new UIPropertyMetadata(0.0));
-        
+
         #endregion
-        
+
         /// <summary>
         /// A list which contains the current piece pieces, where the piece index
         /// is the same as the index of the item within the collection view which 
@@ -142,11 +142,15 @@ namespace Ginger.UserControlsLib.PieChart
         {
             CollectionView collectionView = (CollectionView)CollectionViewSource.GetDefaultView(this.DataContext);
             if (collectionView == null)
+            {
                 return;
+            }
 
             PiePiece piece = sender as PiePiece;
             if (piece == null)
+            {
                 return;
+            }
 
             // select the item which this pie piece represents
             int index = (int)piece.Tag;
@@ -209,7 +213,7 @@ namespace Ginger.UserControlsLib.PieChart
         {
             CollectionView myCollectionView = (CollectionView)CollectionViewSource.GetDefaultView(this.DataContext);
 
-            foreach(object item in myCollectionView)
+            foreach (object item in myCollectionView)
             {
                 if (item is INotifyPropertyChanged)
                 {
@@ -218,7 +222,7 @@ namespace Ginger.UserControlsLib.PieChart
                 }
             }
         }
-        
+
         /// <summary>
         /// Handles events which occur when the properties of bound items change.
         /// </summary>
@@ -252,10 +256,12 @@ namespace Ginger.UserControlsLib.PieChart
         {
             CollectionView myCollectionView = (CollectionView)CollectionViewSource.GetDefaultView(this.DataContext);
             if (myCollectionView == null)
+            {
                 return;
+            }
 
             double halfWidth = this.Width / 2;
-            double innerRadius = halfWidth * HoleSize;            
+            double innerRadius = halfWidth * HoleSize;
 
             // compute the total for the property which is being plotted
             double total = 0;
@@ -263,30 +269,30 @@ namespace Ginger.UserControlsLib.PieChart
             {
                 total += GetPlottedPropertyValue(item);
             }
-            
+
             // add the pie pieces
             canvas.Children.Clear();
             piePieces.Clear();
-                        
-            double accumulativeAngle=0;
+
+            double accumulativeAngle = 0;
             foreach (Object item in myCollectionView)
             {
                 double wedgeAngle = GetPlottedPropertyValue(item) * 360 / total;
 
                 PiePiece piece = new PiePiece()
-                    {
-                        Radius = halfWidth,
-                        InnerRadius = innerRadius,
-                        CentreX = halfWidth,
-                        CentreY = halfWidth,
-                        WedgeAngle = wedgeAngle,
-                        PieceValue = GetPlottedPropertyValue(item),
-                        RotationAngle = accumulativeAngle,
-                        Fill = ColorSelector != null ? ColorSelector.SelectBrush(item, myCollectionView.IndexOf(item)) : Brushes.Black,
-                        // record the index of the item which this pie slice represents
-                        Tag = myCollectionView.IndexOf(item),
-                        ToolTip = new ToolTip()
-                    };
+                {
+                    Radius = halfWidth,
+                    InnerRadius = innerRadius,
+                    CentreX = halfWidth,
+                    CentreY = halfWidth,
+                    WedgeAngle = wedgeAngle,
+                    PieceValue = GetPlottedPropertyValue(item),
+                    RotationAngle = accumulativeAngle,
+                    Fill = ColorSelector != null ? ColorSelector.SelectBrush(item, myCollectionView.IndexOf(item)) : Brushes.Black,
+                    // record the index of the item which this pie slice represents
+                    Tag = myCollectionView.IndexOf(item),
+                    ToolTip = new ToolTip()
+                };
 
                 piePieces.Add(piece);
                 canvas.Children.Insert(0, piece);

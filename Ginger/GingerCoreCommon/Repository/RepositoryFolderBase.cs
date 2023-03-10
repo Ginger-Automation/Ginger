@@ -18,7 +18,6 @@ limitations under the License.
 
 using System;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;

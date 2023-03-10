@@ -217,9 +217,14 @@ namespace Ginger.ALM
                 {
                     List<ALMDefectProfile> selectedItemsToDelete = new List<ALMDefectProfile>();
                     foreach (ALMDefectProfile selectedProfile in grdDefectsProfiles.Grid.SelectedItems)
+                    {
                         selectedItemsToDelete.Add(selectedProfile);
+                    }
+
                     foreach (ALMDefectProfile profileToDelete in selectedItemsToDelete)
+                    {
                         WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(profileToDelete);
+                    }
                 }
             }
         }
@@ -284,8 +289,8 @@ namespace Ginger.ALM
 
                 // Wrong list selection validation
                 ExternalItemFieldBase wrongSelectedField = _ALMDefectProfile.ALMDefectProfileFields.Where(x => ((string.Equals(x.Type, "LookupList", StringComparison.OrdinalIgnoreCase) || string.Equals(x.Type, "UserList", StringComparison.OrdinalIgnoreCase))) &&
-                                                                                                                 x.SelectedValue != null && x.SelectedValue != string.Empty && 
-                                                                                                                 x.PossibleValues.Count > 0 && (!x.PossibleValues.Contains(x.SelectedValue))).FirstOrDefault();    
+                                                                                                                 x.SelectedValue != null && x.SelectedValue != string.Empty &&
+                                                                                                                 x.PossibleValues.Count > 0 && (!x.PossibleValues.Contains(x.SelectedValue))).FirstOrDefault();
                 if (wrongSelectedField != null)
                 {
                     Reporter.ToUser(eUserMsgKey.WrongValueSelectedFromTheList, wrongSelectedField.Name, _ALMDefectProfile.Name);
@@ -295,7 +300,7 @@ namespace Ginger.ALM
                 // Numeric selection validation
                 int numeric = 0;
                 ExternalItemFieldBase wrongNonNumberValueField = _ALMDefectProfile.ALMDefectProfileFields.Where(x => (string.Equals(x.Type, "Number", StringComparison.OrdinalIgnoreCase)) &&
-                                                                                                                      x.SelectedValue != null && x.SelectedValue != string.Empty && 
+                                                                                                                      x.SelectedValue != null && x.SelectedValue != string.Empty &&
                                                                                                                       !(int.TryParse(x.SelectedValue, out numeric))).FirstOrDefault();
                 if (wrongNonNumberValueField != null)
                 {
@@ -320,7 +325,7 @@ namespace Ginger.ALM
                 Reporter.ToStatus(eStatusMsgKey.SaveItem, null, _ALMDefectProfile.GetNameForFileName(), "item");
                 if ((_ALMDefectProfile.ContainingFolder == null) || (_ALMDefectProfile.ContainingFolder == string.Empty))
                 {
-                    _ALMDefectProfile.ContainingFolder = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, _ALMDefectProfile.ObjFolderName);
+                    _ALMDefectProfile.ContainingFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, _ALMDefectProfile.ObjFolderName);
                     _ALMDefectProfile.FilePath = _ALMDefectProfile.ContainingFolder + @"\" + _ALMDefectProfile.FilePath;
                 }
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(_ALMDefectProfile);

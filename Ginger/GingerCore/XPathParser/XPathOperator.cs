@@ -17,21 +17,23 @@ limitations under the License.
 #endregion
 
 
-namespace GingerCore.XPathParser {
-    public enum XPathOperator {
+namespace GingerCore.XPathParser
+{
+    public enum XPathOperator
+    {
         Unknown = 0,
-        Or, 
+        Or,
         And,
-        Eq, 
+        Eq,
         Ne,
-        Lt, 
-        Le, 
-        Gt, 
+        Lt,
+        Le,
+        Gt,
         Ge,
-        Plus, 
-        Minus, 
-        Multiply, 
-        Divide, 
+        Plus,
+        Minus,
+        Multiply,
+        Divide,
         Modulo,
         UnaryMinus,
         Union

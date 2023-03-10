@@ -53,7 +53,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
                         }
                         mCommonApplicationDataFolderPath = folderPath;
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.WARN, "Failed to get/create the Common users Ginger workspace folder path", ex);
                         mCommonApplicationDataFolderPath = string.Empty;
@@ -113,7 +113,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
 
-        
+
 
 
 
@@ -154,7 +154,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
             {
                 return new Tuple<int, int>(boxWidth, (int)((double)boxWidth / dbl));
             }
-        }        
+        }
 
         public static Tuple<int, int> GetImageHeightWidth(string path)
         {
@@ -172,7 +172,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
         public static Tuple<int, int> RecalculatingSizeWithKeptRatio(Image Img, int boxWidth, int boxHight)
         {
-           
+
 
             //calculate the ratio
             double dbl = (double)Img.Width / (double)Img.Height;
@@ -217,9 +217,9 @@ namespace Amdocs.Ginger.Common.GeneralLib
         {
             double mseconds = Convert.ToDouble(s) * 1000;
             TimeSpan ts = TimeSpan.FromMilliseconds(mseconds);
-            return string.Concat(ts.Hours.ToString("00"), ":", ts.Minutes.ToString("00"), ":", ts.Seconds.ToString("00"), ".", ts.Milliseconds.ToString("00"));            
+            return string.Concat(ts.Hours.ToString("00"), ":", ts.Minutes.ToString("00"), ":", ts.Seconds.ToString("00"), ".", ts.Milliseconds.ToString("00"));
         }
-      
+
         public static Image Base64StringToImage(string v)
         {
             byte[] imageBytes = Convert.FromBase64String(v);
@@ -411,7 +411,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
         {
             try
             {
-                EnumValueDescriptionAttribute[] attributes = EnumType.GetField(EnumValue.ToString()) != null ? 
+                EnumValueDescriptionAttribute[] attributes = EnumType.GetField(EnumValue.ToString()) != null ?
                     (EnumValueDescriptionAttribute[])EnumType.GetField(EnumValue.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false) : null;
                 string s;
                 if (attributes != null && attributes.Length > 0)

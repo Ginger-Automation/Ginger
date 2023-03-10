@@ -16,24 +16,20 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.DataSource;
+using Ginger.Actions;
+using Ginger.UserControls;
+using GingerCore.Actions;
+using GingerCore.DataSource;
+using GingerCore.GeneralLib;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
-using Ginger.Actions;
-using System.Collections.ObjectModel;
-using System;
-using GingerCore.DataSource;
-using System.Data;
-using GingerCore.GeneralLib;
-using Ginger.UserControls;
-using System.Collections.Generic;
-using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
-using Amdocs.Ginger.CoreNET.DataSource;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.Helpers;
-using System.Linq;
 
 namespace Ginger.DataSource
 {
@@ -67,7 +63,7 @@ namespace Ginger.DataSource
             mDataSourceTable = dataSourceTable;
 
             InitPageData();
-            
+
             mDataTable = dataSourceTable.DataTable;
             InitColumnListGrid(mDataTable.Columns);
             xExportSheetName.ValueTextBox.Text = mDataTable.TableName;
@@ -76,7 +72,7 @@ namespace Ginger.DataSource
         private void InitPageData()
         {
             ExcelFilePath.Init(null, null, false, true, UCValueExpression.eBrowserType.File, "xlsx");
-            xExcelExportQuery.Init(null, mExcelConfig,nameof(ExportToExcelConfig.ExportQueryValue), true);
+            xExcelExportQuery.Init(null, mExcelConfig, nameof(ExportToExcelConfig.ExportQueryValue), true);
 
             xExportSheetName.Init(null, mExcelConfig, nameof(ExportToExcelConfig.ExcelSheetName), true);
 
@@ -88,14 +84,14 @@ namespace Ginger.DataSource
             {
                 mWhereConditionList = new ObservableList<ActDSConditon>();
             }
-             
+
             xGrdExportCondition.DataSourceList = mWhereConditionList;
 
             ExcelFilePath.ValueTextBox.TextChanged += ExcelFilePathTextBox_TextChanged;
             xExportSheetName.ValueTextBox.TextChanged += ExcelSheetNameTextBox_TextChanged;
             xExcelExportQuery.ValueTextBox.TextChanged += ExcelExportQuery_ValueTextBox_TextChanged;
 
-           
+
             SetConditionGridView();
         }
 
@@ -113,15 +109,15 @@ namespace Ginger.DataSource
             SetSheetName();
             ExcelFilePath.Init(Context.GetAsContext(mActDSTableElement.Context), mActDSTableElement.ExcelConfig, nameof(ExportToExcelConfig.ExcelPath), true, true, UCValueExpression.eBrowserType.File, "xlsx");
 
-            xExcelExportQuery.Init(Context.GetAsContext(mActDSTableElement.Context), mActDSTableElement.ExcelConfig, nameof(ExportToExcelConfig.ExportQueryValue),true);
-            xExportSheetName.Init(Context.GetAsContext(mActDSTableElement.Context), mActDSTableElement.ExcelConfig, nameof(ExportToExcelConfig.ExcelSheetName),true);
+            xExcelExportQuery.Init(Context.GetAsContext(mActDSTableElement.Context), mActDSTableElement.ExcelConfig, nameof(ExportToExcelConfig.ExportQueryValue), true);
+            xExportSheetName.Init(Context.GetAsContext(mActDSTableElement.Context), mActDSTableElement.ExcelConfig, nameof(ExportToExcelConfig.ExcelSheetName), true);
 
             BindingHandler.ObjFieldBinding(xRdoByCustomExport, RadioButton.IsCheckedProperty, mActDSTableElement.ExcelConfig, nameof(ExportToExcelConfig.IsCustomExport));
-           
+
             BindingHandler.ObjFieldBinding(xRdoByQueryExport, RadioButton.IsCheckedProperty, mActDSTableElement.ExcelConfig, nameof(ExportToExcelConfig.IsExportByQuery));
-        
+
             BindingHandler.ObjFieldBinding(xExportWhereChkBox, CheckBox.IsCheckedProperty, mActDSTableElement.ExcelConfig, nameof(ExportToExcelConfig.ExportByWhere));
-          
+
             ExcelFilePath.ValueTextBox.TextChanged += ExcelFilePathTextBox_TextChanged;
             xExportSheetName.ValueTextBox.TextChanged += ExcelSheetNameTextBox_TextChanged;
             xExcelExportQuery.ValueTextBox.TextChanged += ExcelExportQuery_ValueTextBox_TextChanged;
@@ -167,7 +163,7 @@ namespace Ginger.DataSource
             {
                 mExcelConfig.ExcelSheetName = xExportSheetName.ValueTextBox.Text;
             }
-            
+
         }
 
         private void ExcelFilePathTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -180,7 +176,7 @@ namespace Ginger.DataSource
             {
                 mExcelConfig.ExcelPath = ExcelFilePath.ValueTextBox.Text;
             }
-            
+
         }
 
         private void SetDataTable()
@@ -205,7 +201,7 @@ namespace Ginger.DataSource
                     dataSource = ds;
                 }
             }
-     
+
             mDataTable = dataSource.GetTable(tableName);
 
             foreach (DataSourceTable dst in dataSource.GetTablesList())
@@ -279,24 +275,24 @@ namespace Ginger.DataSource
             {
                 mExcelConfig.ColumnList = mColumnList;
             }
-            
+
         }
 
         private void SetTableColumnListGridView()
         {
             //tool bar
             xColumnListGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All Columns", new RoutedEventHandler(CheckUnCheckTableColumn));
-            
+
             //Set the Data Grid columns            
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ColumnCheckListItem.IsSelected), Header = "Select", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox,BindingMode=System.Windows.Data.BindingMode.TwoWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ColumnCheckListItem.IsSelected), Header = "Select", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox, BindingMode = System.Windows.Data.BindingMode.TwoWay });
             view.GridColsView.Add(new GridColView() { Field = nameof(ColumnCheckListItem.ColumnText), Header = "Table Column", WidthWeight = 100, ReadOnly = true });
 
             xColumnListGrid.SetAllColumnsDefaultView(view);
             xColumnListGrid.InitViewItems();
-            
+
         }
 
         private void CheckUnCheckTableColumn(object sender, RoutedEventArgs e)
@@ -318,21 +314,21 @@ namespace Ginger.DataSource
         {
             //validate details
             if (ExcelFilePath.ValueTextBox.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKey.MissingExcelDetails); return; }
-            if (!ExcelFilePath.ValueTextBox.Text.ToLower().EndsWith(".xlsx")) { Reporter.ToUser(eUserMsgKey.InvalidExcelDetails); return; }            
+            if (!ExcelFilePath.ValueTextBox.Text.ToLower().EndsWith(".xlsx")) { Reporter.ToUser(eUserMsgKey.InvalidExcelDetails); return; }
 
             okClicked = true;
 
             mExcelConfig.ExcelPath = ExcelFilePath.ValueTextBox.Text;
             mExcelConfig.ExcelSheetName = xExportSheetName.ValueTextBox.Text;
 
-            if (xRdoByCustomExport.IsChecked==true)
+            if (xRdoByCustomExport.IsChecked == true)
             {
                 CreateQueryBasedWhereCondition();
                 if (mActDSTableElement != null)
                 {
-                    mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(mActDSTableElement.ExcelConfig.ColumnList.ToList().FindAll(x => x.IsSelected), mExcelConfig.WhereConditionStringList, mDataTable.TableName, mDataSourceTable.DSC.DSType); 
+                    mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(mActDSTableElement.ExcelConfig.ColumnList.ToList().FindAll(x => x.IsSelected), mExcelConfig.WhereConditionStringList, mDataTable.TableName, mDataSourceTable.DSC.DSType);
                 }
-                else if(mDataSourceTable != null)
+                else if (mDataSourceTable != null)
                 {
                     mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(mColumnList.ToList().FindAll(x => x.IsSelected), mExcelConfig.WhereConditionStringList, mDataTable.TableName, mDataSourceTable.DSC.DSType);
                 }
@@ -341,7 +337,7 @@ namespace Ginger.DataSource
             {
                 mExcelConfig.ExportQueryValue = xExcelExportQuery.ValueTextBox.Text;
             }
-            
+
 
             _pageGenericWin.Close();
         }
@@ -357,7 +353,7 @@ namespace Ginger.DataSource
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, true, "Cancel");
         }
 
-       
+
 
 
         private void SetConditionGridView()
@@ -386,8 +382,8 @@ namespace Ginger.DataSource
                 {
                     mActDSTableElement.ExcelConfig.WhereConditionStringList = mActDSTableElement.ExcelConfig.CreateConditionStringList(mWhereConditionList);
                 }
-                
-                mWhereConditionList = mActDSTableElement.ExcelConfig.GetConditons(mActDSTableElement.ExcelConfig.WhereConditionStringList,mDataTable);
+
+                mWhereConditionList = mActDSTableElement.ExcelConfig.GetConditons(mActDSTableElement.ExcelConfig.WhereConditionStringList, mDataTable);
 
             }
 
@@ -411,7 +407,7 @@ namespace Ginger.DataSource
         {
             xExcelExportCustomPanel.Visibility = Visibility.Collapsed;
             xByQueryPanel.Visibility = Visibility.Visible;
-            
+
             if (mActDSTableElement != null)
             {
                 mActDSTableElement.ExcelConfig.IsCustomExport = Convert.ToBoolean(xRdoByCustomExport.IsChecked);
@@ -427,7 +423,7 @@ namespace Ginger.DataSource
         {
             xByQueryPanel.Visibility = Visibility.Collapsed;
             xExcelExportCustomPanel.Visibility = Visibility.Visible;
-            if (mActDSTableElement !=null)
+            if (mActDSTableElement != null)
             {
                 mActDSTableElement.ExcelConfig.IsCustomExport = Convert.ToBoolean(xRdoByCustomExport.IsChecked);
             }
@@ -436,7 +432,7 @@ namespace Ginger.DataSource
 
         private void xExportWhereChkBox_Click(object sender, RoutedEventArgs e)
         {
-            if(xExportWhereChkBox.IsChecked.Equals(true))
+            if (xExportWhereChkBox.IsChecked.Equals(true))
             {
                 xGrdExportCondition.Visibility = Visibility.Visible;
                 if (mActDSTableElement != null)
@@ -448,7 +444,7 @@ namespace Ginger.DataSource
             {
                 xGrdExportCondition.Visibility = Visibility.Collapsed;
                 mWhereConditionList.Clear();
-                
+
                 if (mActDSTableElement != null)
                 {
                     mActDSTableElement.ExcelConfig.ExportByWhere = false;
@@ -496,11 +492,11 @@ namespace Ginger.DataSource
         {
             if (mActDSTableElement != null)
             {
-               mActDSTableElement.ExcelConfig.WhereConditionStringList = mActDSTableElement.ExcelConfig.CreateConditionStringList(mWhereConditionList);
+                mActDSTableElement.ExcelConfig.WhereConditionStringList = mActDSTableElement.ExcelConfig.CreateConditionStringList(mWhereConditionList);
             }
             else
             {
-               mExcelConfig.WhereConditionStringList = mExcelConfig.CreateConditionStringList(mWhereConditionList);
+                mExcelConfig.WhereConditionStringList = mExcelConfig.CreateConditionStringList(mWhereConditionList);
             }
         }
 

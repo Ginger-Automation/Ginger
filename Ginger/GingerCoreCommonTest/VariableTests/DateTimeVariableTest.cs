@@ -111,7 +111,7 @@ namespace GingerCoreCommonTest.VariableTests
             string formulaStr = variableDateTime.GetFormula();
 
             //Assert
-            Assert.AreEqual(@"Initial DateTime : "+ variableDateTime.InitialDateTime, formulaStr, "Mismatch with Default Formula String");
+            Assert.AreEqual(@"Initial DateTime : " + variableDateTime.InitialDateTime, formulaStr, "Mismatch with Default Formula String");
             Assert.AreEqual(variableDateTime.InitialDateTime, variableDateTime.Value);
         }
 

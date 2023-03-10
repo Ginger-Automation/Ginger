@@ -40,7 +40,7 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddText("To perform a Submit action, Select Locate By type, e.g- ByID,ByCSS,ByXPath etc.Then enter the value of property " +
             "that you set in Locate By type.Then select Action Type and then enter the page url in value textbox and run the action.");
-        }        
+        }
 
         public override string ActionEditPage { get { return null; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
@@ -98,7 +98,7 @@ namespace GingerCore.Actions
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.Web ||  platform == ePlatformType.NA || platform == ePlatformType.Mobile)
+            if (platform == ePlatformType.Web || platform == ePlatformType.NA || platform == ePlatformType.Mobile)
             {
                 return true;
             }
@@ -129,9 +129,15 @@ namespace GingerCore.Actions
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
             if (!string.IsNullOrEmpty(this.LocateValue))
+            {
                 newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            }
+
             if (!uIElementTypeAssigned)
+            {
                 newAct.ElementType = eElementType.Button;
+            }
+
             newAct.Active = true;
 
             return newAct;

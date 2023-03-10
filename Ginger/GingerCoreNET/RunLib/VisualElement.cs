@@ -41,7 +41,7 @@ namespace GingerCore.Actions.VisualTesting
 
         [JsonProperty]
         public int Height { get; set; }
-        
+
         // Fields use to find match during compare, no need to save
         public VisualElement MatchingElement { get; set; }
     }

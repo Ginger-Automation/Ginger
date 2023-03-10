@@ -26,29 +26,29 @@ namespace Ginger.Agents.AddAgentWizardLib
     public class AddAgentWizard : WizardBase
     {
         public RepositoryFolder<Agent> AgentsFolder;
-        public Agent Agent = new Agent() { Active = true};
+        public Agent Agent = new Agent() { Active = true };
 
         public override string Title { get { return "Add New Agent Wizard"; } }
-        
+
 
         public AddAgentWizard(RepositoryFolder<Agent> AgentsFolder)
         {
             AgentOperations agentOperations = new AgentOperations(Agent);
             Agent.AgentOperations = agentOperations;
 
-            this.AgentsFolder = AgentsFolder;            
+            this.AgentsFolder = AgentsFolder;
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Agents Introduction", Page: new WizardIntroPage("/Agents/AddAgentWizardLib/AddAgentIntro.md"));
 
             AddPage(Name: "General Details", Title: "Agent Details", SubTitle: "Set New Agent General Details", Page: new AddAgentDetailsPage());
 
-            AddPage(Name: "Driver Configurations", Title: "Driver Configurations", SubTitle: "Set New Agent Driver Configurations", Page: new AddAgentDriverConfigPage());            
+            AddPage(Name: "Driver Configurations", Title: "Driver Configurations", SubTitle: "Set New Agent Driver Configurations", Page: new AddAgentDriverConfigPage());
         }
 
         public override void Finish()
         {
             // TODO: do it in the page where user select the type
-            if(((AgentOperations)Agent.AgentOperations).DriverInfo.isDriverPlugin)
+            if (((AgentOperations)Agent.AgentOperations).DriverInfo.isDriverPlugin)
             {
                 Agent.AgentType = Agent.eAgentType.Service;
             }

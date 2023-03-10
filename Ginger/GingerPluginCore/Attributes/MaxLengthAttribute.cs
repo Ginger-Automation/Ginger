@@ -17,12 +17,10 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core
 {
-    [System.AttributeUsage(System.AttributeTargets.Parameter , AllowMultiple = false)]
+    [System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = false)]
     public class MaxLengthAttribute : Attribute, IParamProperty
     {
         // when saved to services json the attr property name will be:

@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System.Linq;
 
 namespace Ginger.GherkinLib
 {
@@ -34,9 +33,13 @@ namespace Ginger.GherkinLib
                 i++;
                 string num = General.GetStringBetween(s, "\"", "\"");
                 if (num.StartsWith("<"))
+                {
                     s = s.Replace('"' + num + '"', num);
+                }
                 else
+                {
                     s = s.Replace('"' + num + '"', "%p" + i);
+                }
             }
             return s;
         }

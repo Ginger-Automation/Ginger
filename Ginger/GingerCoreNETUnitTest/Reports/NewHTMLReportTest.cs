@@ -8,17 +8,14 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace GingerCoreNETUnitTest.Reports
 {
     public class NewHTMLReportTest
     {
         static GingerRunner mGingerRunner;
-        
+
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
@@ -88,7 +85,7 @@ namespace GingerCoreNETUnitTest.Reports
 
             //Act
             ReportInfo reportInfo = new ReportInfo(folder);
-            NewHTMLReport rep = new NewHTMLReport();            
+            NewHTMLReport rep = new NewHTMLReport();
             string s = rep.CreateReport(reportInfo);
 
 

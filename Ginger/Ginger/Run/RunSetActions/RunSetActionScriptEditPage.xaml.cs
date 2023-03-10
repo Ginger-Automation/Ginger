@@ -18,7 +18,6 @@ limitations under the License.
 
 using System.Windows;
 using System.Windows.Controls;
-using amdocs.ginger.GingerCoreNET;
 namespace Ginger.Run.RunSetActions
 {
     /// <summary>

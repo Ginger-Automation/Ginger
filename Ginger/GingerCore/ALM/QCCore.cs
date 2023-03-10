@@ -16,18 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using AlmDataContractsStd.Enums;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.QC;
+using GingerCoreNET.ALMLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using TDAPIOLELib;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNET.ALMLib;
-using AlmDataContractsStd.Enums;
 
 namespace GingerCore.ALM
 {
@@ -60,7 +59,7 @@ namespace GingerCore.ALM
         {
             return QCConnect.GetQCDomains();
         }
-        public override Dictionary<string,string> GetALMDomainProjects(string ALMDomain)
+        public override Dictionary<string, string> GetALMDomainProjects(string ALMDomain)
         {
             ALMCore.DefaultAlmConfig.ALMDomain = ALMDomain;
             return QCConnect.GetQCDomainProjects(ALMCore.DefaultAlmConfig.ALMDomain);
@@ -97,7 +96,7 @@ namespace GingerCore.ALM
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST)
         {
-            return new Dictionary<Guid, string>();     
+            return new Dictionary<Guid, string>();
         }
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)

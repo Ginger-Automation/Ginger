@@ -19,29 +19,26 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.APIModels;
-using Ginger;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
+using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControls;
-using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
 using GingerWPF.ApplicationModelsLib.ModelParams_Pages;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
-using System;
-using Ginger.SolutionWindows.TreeViewItems;
-using Amdocs.Ginger.Common.Repository;
 
 namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 {
@@ -278,13 +275,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         {
             try
             {
-                Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem dataSourcesRoot = new Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>(),DataSourceFolderTreeItem.eDataTableView.Customized);
+                Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem dataSourcesRoot = new Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>(), DataSourceFolderTreeItem.eDataTableView.Customized);
                 SingleItemTreeViewSelectionPage mDataSourceSelectionPage = new SingleItemTreeViewSelectionPage("DataSource - Customized Table", eImageType.DataSource, dataSourcesRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
                 List<object> selectedRunSet = mDataSourceSelectionPage.ShowAsWindow();
                 if (selectedRunSet != null && selectedRunSet.Count > 0)
                 {
                     ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
-                    DataSourceBase dataSource= (((DataSourceTable)selectedRunSet[0]).DSC);
+                    DataSourceBase dataSource = (((DataSourceTable)selectedRunSet[0]).DSC);
 
                     string tableName = ((DataSourceTable)selectedRunSet[0]).FileName;
                     List<AppParameters> parameters = GetParameterList();
@@ -325,10 +322,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             ModelsGlobalParamsPage MGPP = new ModelsGlobalParamsPage(true);
             List<GlobalAppModelParameter> globalParamsToAdd = MGPP.ShowAsWindow();
             if (globalParamsToAdd != null)
+            {
                 foreach (GlobalAppModelParameter GAMP in globalParamsToAdd)
                 {
                     AddGlobalParametertoAPIGlobalParameterList(APIGlobalParamList, GAMP);
                 }
+            }
         }
 
         private void DeleteParams_Clicked(object sender, RoutedEventArgs e)
@@ -352,9 +351,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             if (messageResult == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 if (ClearAllParams)
+                {
                     SyncParamsPendingDeleteWithBodyNodes(new List<AppModelParameter>(ParamsList));
+                }
                 else
+                {
                     SyncParamsPendingDeleteWithBodyNodes(new List<AppModelParameter>(ModelParametersGrid.Grid.SelectedItems.Cast<AppModelParameter>().ToList()));
+                }
             }
             else if (messageResult == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
@@ -374,7 +377,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                     ModelParametersGrid.DataSourceList.SaveUndoData();
                     List<object> SelectedItemsList = ModelParametersGrid.Grid.SelectedItems.Cast<object>().ToList();
                     foreach (object o in SelectedItemsList)
+                    {
                         ModelParametersGrid.DataSourceList.Remove(o);
+                    }
                 }
             }
         }
@@ -412,7 +417,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         private void MergeSelectedParams(object sender, RoutedEventArgs e)
         {
             if (ModelParametersGrid.Grid.SelectedItems.Count < 1)
+            {
                 return;
+            }
 
             string newParamName = ((AppModelParameter)ModelParametersGrid.Grid.SelectedItems[0]).PlaceHolder;
 
@@ -432,14 +439,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 //Save Placeholders and remove old params for merge, and add the new merged one
 
                 List<AppModelParameter> tobeRemoved = new List<AppModelParameter>();
-                for (int i = 0; i< ModelParametersGrid.Grid.SelectedItems.Count; i++)
+                for (int i = 0; i < ModelParametersGrid.Grid.SelectedItems.Count; i++)
                 {
                     AppModelParameter paramToRemove = (AppModelParameter)ModelParametersGrid.Grid.SelectedItems[i];
                     placeHoldersToReplace.Add(paramToRemove.PlaceHolder);
                     tobeRemoved.Add(paramToRemove);
                 }
 
-                foreach(AppModelParameter Removeit in tobeRemoved)
+                foreach (AppModelParameter Removeit in tobeRemoved)
                 {
                     mApplicationModel.AppModelParameters.Remove(Removeit);
                 }
@@ -449,7 +456,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 ModelParametersGrid.DataSourceList.Move(ModelParametersGrid.DataSourceList.Count - 1, selctedIndex);
 
                 //Update all places with new placeholder merged param name                            
-                if(Reporter.ToUser(eUserMsgKey.ParameterMerge) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                if (Reporter.ToUser(eUserMsgKey.ParameterMerge) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                 {
                     mApplicationModel.UpdateParamsPlaceholder(mApplicationModel, placeHoldersToReplace, newParamName);
                 }
@@ -572,15 +579,23 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         {
             newAppModelParam.PlaceHolder = "{NewPlaceHolder}";
 
-            if (ParamsList.Where(x => x.PlaceHolder == newAppModelParam.PlaceHolder).FirstOrDefault() == null) return;
+            if (ParamsList.Where(x => x.PlaceHolder == newAppModelParam.PlaceHolder).FirstOrDefault() == null)
+            {
+                return;
+            }
 
             List<AppModelParameter> samePlaceHolderList = ParamsList.Where(x => x.PlaceHolder == newAppModelParam.PlaceHolder).ToList<AppModelParameter>();
-            if (samePlaceHolderList.Count == 1 && samePlaceHolderList[0] == newAppModelParam) return; //Same internal object
+            if (samePlaceHolderList.Count == 1 && samePlaceHolderList[0] == newAppModelParam)
+            {
+                return; //Same internal object
+            }
 
             //Set unique name
             int counter = 2;
             while ((ParamsList.Where(x => x.PlaceHolder == "{NewPlaceHolder_" + counter.ToString() + "}").FirstOrDefault()) != null)
+            {
                 counter++;
+            }
 
             newAppModelParam.PlaceHolder = "{NewPlaceHolder_" + counter.ToString() + "}";
         }

@@ -16,10 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -35,9 +32,9 @@ namespace Amdocs.Ginger.Repository
         public string StartupDLL { get; set; }
         public string UIDLL { get; set; }
 
-        public List<string> Implementations{get;set;}
+        public List<string> Implementations { get; set; }
 
-        
+
 
     }
 }

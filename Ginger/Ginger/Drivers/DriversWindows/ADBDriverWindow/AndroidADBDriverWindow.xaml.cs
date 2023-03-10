@@ -16,25 +16,20 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions;
+using GingerCore.Actions.Android;
+using GingerCore.Actions.Common;
+using GingerCore.Drivers.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using System.Threading;
-using GingerCore.Actions;
 using System.Xml;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using System.Reflection;
-using Amdocs.Ginger.Common;
-using GingerCore.Drivers.Common;
-using GingerCore.Drivers.Common.Devices;
-using GingerCore.Actions.Android;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Drivers.AndroidADB
 {
@@ -46,7 +41,7 @@ namespace GingerCore.Drivers.AndroidADB
         public AndroidADBDriver mAndroidADBDriver;
 
         bool mSendKeyboardKeys = false;
-        public BusinessFlow mBusinessFlow;        
+        public BusinessFlow mBusinessFlow;
         XmlNode rectangleXmlNode;
         string pageSourceString = string.Empty;
         DeviceViewPage mDeviceViewPage;
@@ -55,7 +50,7 @@ namespace GingerCore.Drivers.AndroidADB
         public AndroidADBDriverWindow(AndroidADBDriver driver, string DeviceConfigFolder)
         {
             InitializeComponent();
-            mAndroidADBDriver = driver;        
+            mAndroidADBDriver = driver;
             mDeviceViewPage = new DeviceViewPage(DeviceConfigFolder);
             DeviceViewFrame.Content = mDeviceViewPage;
             mDeviceViewPage.TouchXY += DeviceViewPage_TouchXY;
@@ -91,7 +86,7 @@ namespace GingerCore.Drivers.AndroidADB
             list.Add(new ActGenElement() { Description = "Send Text" });
             list.Add(new ActGenElement() { Description = "Install APK" });
             list.Add(new ActShell() { Description = "Get device API version", Value = "getprop ro.build.version.sdk" });
-            
+
             DeviceActionsGrid.ItemsSource = list;
         }
 
@@ -109,7 +104,7 @@ namespace GingerCore.Drivers.AndroidADB
             //    mAndroidADBDriver.BusinessFlow.AddAct(act);
             //}
 
-            
+
             //if (DB.SendCommand.StartsWith("Press "))
             //{
             //    string key = DB.SendCommand.Replace("Press ", "");
@@ -128,12 +123,12 @@ namespace GingerCore.Drivers.AndroidADB
             //    // we assume it is shell command
             //    string result = mAndroidADBDriver.ExecuteShellCommand(DB.SendCommand);
             //}
-            
+
             //Mouse.OverrideCursor = null;
         }
 
         private void DeviceViewPage_TouchXY(object sender, GingerCore.Drivers.Common.DeviceViewPage.TouchXYEventArgs e)
-        {            
+        {
             //Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
             //if (IsRecording)
@@ -141,13 +136,13 @@ namespace GingerCore.Drivers.AndroidADB
             //    ActUIElement act = mAndroidADBDriver.GetActionForClickedElement(e.Left, e.Top);
             //    mAndroidADBDriver.BusinessFlow.AddAct(act);
             //}
-          
+
             //mAndroidADBDriver.ClickXY((int)e.Left, (int)e.Top);
             //Mouse.OverrideCursor = null;
         }
-        
+
         #region Events
-        
+
         private void DeviceImage_MouseEnter(object sender, MouseEventArgs e)
         {
             // temp remove since we use the text box to send to focused Edit box
@@ -155,7 +150,7 @@ namespace GingerCore.Drivers.AndroidADB
             // Put it back with check box flag if user wants it...
             // mSendKeyboardKeys = true;
 
-         
+
             // TODO: find if we are in Spy mode if yes change the cursor
 
             //if (InspectorPointBtn.IsChecked == true)
@@ -177,7 +172,7 @@ namespace GingerCore.Drivers.AndroidADB
             //    mDeviceViewPage.UpdateDeviceScreenShot(BI);
             //}
         }
-     
+
         private void InspectBtn_Click(object sender, RoutedEventArgs e)
         {
             //if (InspectBtn.IsChecked == true)
@@ -218,24 +213,26 @@ namespace GingerCore.Drivers.AndroidADB
 
             if (inspectorElementTabsControl.SelectedItem == PageSourceTab)
             {
-                 DesignSourceTabContent();
+                DesignSourceTabContent();
             }
         }
 
         private void InspectorPointBtn_Click(object sender, RoutedEventArgs e)
         {
             if (InspectorPointBtn.IsChecked == false)
+            {
                 Mouse.OverrideCursor = null;
+            }
         }
 
         private void sourceXMLRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
-           // DesignSourceTabContent();
+            // DesignSourceTabContent();
         }
 
         private void sourceXMLRadioBtn_Unchecked(object sender, RoutedEventArgs e)
         {
-           // DesignSourceTabContent();
+            // DesignSourceTabContent();
         }
 
         #endregion Events
@@ -310,7 +307,7 @@ namespace GingerCore.Drivers.AndroidADB
             //}
         }
 
-        
+
         public void StartLiveRefresh()
         {
             //// if (LiveRefreshCheckBox.IsChecked == true) return;
@@ -345,7 +342,7 @@ namespace GingerCore.Drivers.AndroidADB
             //            }
 
             //            BitmapImage BI = mAndroidADBDriver.GetScreenShotAsBitmapImage();
-                              
+
             //            if (BI != null)  // it can be null if screen didn't changed
             //            {
             //                mDeviceViewPage.UpdateDeviceScreenShot(BI);
@@ -356,7 +353,7 @@ namespace GingerCore.Drivers.AndroidADB
             //                Thread.Sleep(100);  // no need to update/check the screen more than 10 times per second, if there is no change, so sleep a bit more
             //            }
             //            General.DoEvents();
-                        
+
             //        });
             //    }
 
@@ -392,13 +389,13 @@ namespace GingerCore.Drivers.AndroidADB
         //    //        ratio_Y = (DeviceImage.Source.Height / 2) / DeviceImage.ActualHeight;
         //    //        break;
         //    //}
-            
+
         //        //ratio_X = (DeviceImage.Source.Width / 2) / DeviceImage.ActualWidth;
         //        //ratio_Y = (DeviceImage.Source.Height / 2) / DeviceImage.ActualHeight;
 
         //    ratio_X = DeviceImage.Source.Width / DeviceImage.ActualWidth;
         //    ratio_Y = DeviceImage.Source.Height / DeviceImage.ActualHeight;
-            
+
 
         //    pointOnMobile.X = (long)(pointOnImage.X * ratio_X);
         //    pointOnMobile.Y = (long)(pointOnImage.Y * ratio_Y);
@@ -562,11 +559,15 @@ namespace GingerCore.Drivers.AndroidADB
                 string endNode = "</" + nodeName + ">";
                 int startIndx = xml.IndexOf(startNode, searchStartIndx);
                 if (startIndx == -1)
+                {
                     return;
+                }
                 else
+                {
                     RemoveXmlNode(ref xml, nodeName, startIndx + 9);//remove the more dipper node
+                }
                 //remove node
-                int endIndx = xml.IndexOf(endNode, startIndx+9);
+                int endIndx = xml.IndexOf(endNode, startIndx + 9);
                 if (endIndx != -1 && endIndx > startIndx)
                 {
                     xml = xml.Remove(startIndx, endIndx - startIndx + 9);
@@ -579,7 +580,7 @@ namespace GingerCore.Drivers.AndroidADB
             }
         }
 
-        
+
 
         private void RecordAction(long pointOnMobile_X, long pointOnMobile_Y, ActGenElement.eGenElementAction actionType)
         {
@@ -843,16 +844,16 @@ namespace GingerCore.Drivers.AndroidADB
         //    }
         //}
 
-        
+
 
         public void HighLightElement(AndroidElementInfo AEI)
         {
-            DrawElementRectangle(AEI.XmlNode);            
+            DrawElementRectangle(AEI.XmlNode);
         }
 
         public void StartRecording()
         {
-            RecordBtn.IsChecked = true;        
+            RecordBtn.IsChecked = true;
         }
 
         internal void StopRecording()
@@ -875,12 +876,12 @@ namespace GingerCore.Drivers.AndroidADB
             }
         }
 
-    
-        
+
+
 
         #endregion Functions
 
-        
+
 
         private void Window_KeyUp(object sender, KeyEventArgs e)
         {
@@ -892,7 +893,7 @@ namespace GingerCore.Drivers.AndroidADB
 
             //string AndroidKey = GetAndroidKey(e.Key);
 
-            
+
             //if (AndroidKey != null)
             //{
             //    if (IsRecording)
@@ -915,26 +916,26 @@ namespace GingerCore.Drivers.AndroidADB
             switch (k)
             {
                 case Key.RightCtrl:
-                case Key.LeftCtrl:                    
+                case Key.LeftCtrl:
                     return null; // We ignore some keys
 
-                case Key.D0 : return "0";
-                case Key.D1 : return "1";
-                case Key.D2 : return "2";
-                case Key.D3 : return "3";
-                case Key.D4 : return "4";
-                case Key.D5 : return "5";
-                case Key.D6 : return "6";
-                case Key.D7 : return "7";
-                case Key.D8 : return "8";
-                case Key.D9 : return "9";                    
+                case Key.D0: return "0";
+                case Key.D1: return "1";
+                case Key.D2: return "2";
+                case Key.D3: return "3";
+                case Key.D4: return "4";
+                case Key.D5: return "5";
+                case Key.D6: return "6";
+                case Key.D7: return "7";
+                case Key.D8: return "8";
+                case Key.D9: return "9";
             }
-                        
+
             // if (k == Key.Delete) return "???";
 
             return k.ToString();
 
-            
+
         }
 
 
@@ -952,17 +953,17 @@ namespace GingerCore.Drivers.AndroidADB
 
             //Stopwatch st = new Stopwatch();
             //st.Start();
-            
+
             //string rc = mAndroidADBDriver.ExecuteShellCommand(cmd);
             //st.Stop();            
             //OutputTextBlock.Text = rc;
             //ElapsedLabel.Content = "Elapsed: " + st.ElapsedMilliseconds + " ms";            
 
-            
+
         }
 
 
-      
+
 
         private void LiveRefreshCheckBox_Checked(object sender, RoutedEventArgs e)
         {
@@ -970,7 +971,7 @@ namespace GingerCore.Drivers.AndroidADB
             {
                 mLiveRefresh = true;
                 StartLiveRefresh();
-            }         
+            }
         }
 
         private void LiveRefreshCheckBox_Unchecked(object sender, RoutedEventArgs e)
@@ -985,7 +986,7 @@ namespace GingerCore.Drivers.AndroidADB
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
-        {            
+        {
             //UpdateDeviceScreenShot();
             //mLiveRefresh = true;
             //LiveRefreshCheckBox.IsChecked = true;            
@@ -1052,10 +1053,10 @@ namespace GingerCore.Drivers.AndroidADB
                         // Need to set value in both since sending direct to driver
                         // a.ElementLocateValue = cpresourceid.Value;
                         a.GetOrCreateInputParam(ActUIElement.Fields.ElementLocateValue).ValueForDriver = cpresourceid.Value;
-                        
+
 
                         a.GetOrCreateInputParam(ActUIElement.Fields.Value).ValueForDriver = SetValueTextBox.Text;
-                        
+
 
                         // a.Value = SendKeysTextBox.Text;
                         //mAndroidADBDriver.RunAction(a);  // !!!!!!!!!!!!!!!!
@@ -1068,10 +1069,10 @@ namespace GingerCore.Drivers.AndroidADB
                             {
                                 desc = cpresourceid;
                             }
-                            a.Description = "Set '" + desc.Value + "' value to '" + SetValueTextBox.Text +  "'";
+                            a.Description = "Set '" + desc.Value + "' value to '" + SetValueTextBox.Text + "'";
                             a.GetOrCreateInputParam(ActUIElement.Fields.Value).Value = SetValueTextBox.Text;
                             a.GetOrCreateInputParam(ActUIElement.Fields.ElementLocateValue).Value = cpresourceid.Value;
-                            
+
                             mBusinessFlow.AddAct(a);
                         }
 
@@ -1079,8 +1080,8 @@ namespace GingerCore.Drivers.AndroidADB
                     }
                 }
             }
-            
-            
+
+
 
         }
 
@@ -1093,7 +1094,7 @@ namespace GingerCore.Drivers.AndroidADB
         }
 
         internal void LostConenction()
-        {            
+        {
             Reporter.ToUser(eUserMsgKey.LostConnection, "Lost connection with the device");
             CloseWindow();
         }

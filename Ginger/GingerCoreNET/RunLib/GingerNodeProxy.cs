@@ -34,7 +34,7 @@ namespace GingerCoreNET.RunLib
         public GingerGrid GingerGrid { get; set; }
 
         GingerNodeInfo mGingerNodeInfo;
-        
+
         bool mRecordingSocketTraffic = false;
 
         private bool mIsConnected = false;
@@ -66,7 +66,7 @@ namespace GingerCoreNET.RunLib
         /// <param name="hubClient"></param>
         /// <param name="sessionID"></param>
         public GingerNodeProxy(GingerSocketClient2 hubClient, Guid sessionID)
-        {            
+        {
             this.hubClient = hubClient;
             this.sessionID = sessionID;
             isLocalGrid = false;
@@ -81,11 +81,11 @@ namespace GingerCoreNET.RunLib
         /// <param name="remoteServiceGrids"></param>
         /// <returns></returns>
         public static GingerNodeProxy FindRemoteNode(string ServiceID, ObservableList<RemoteServiceGrid> remoteServiceGrids)
-        {            
+        {
             foreach (RemoteServiceGrid remoteServiceGrid in remoteServiceGrids)
             {
                 GingerSocketClient2 hubClient = new GingerSocketClient2();
-                hubClient.Connect(remoteServiceGrid.Host, remoteServiceGrid.HostPort);                
+                hubClient.Connect(remoteServiceGrid.Host, remoteServiceGrid.HostPort);
 
                 NewPayLoad findNodePayload = new NewPayLoad(SocketMessages.FindNode, ServiceID, "ccc");    // !!!!!!!!!!!!!!!!   ccc
                 NewPayLoad RC = hubClient.SendRequestPayLoad(findNodePayload);
@@ -94,7 +94,7 @@ namespace GingerCoreNET.RunLib
                     Guid sessionID = RC.GetGuid();
                     GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(hubClient, sessionID);
                     return gingerNodeProxy;
-                }                   
+                }
             }
             return null;
         }
@@ -153,14 +153,14 @@ namespace GingerCoreNET.RunLib
         public static string RemoteGridIP = SocketHelper.GetLocalHostIP();
         public static int RemoteGridPort = 15555;
 
-        
+
 
 
         public NewPayLoad SendRequestPayLoad(NewPayLoad payload)
         {
             if (!mRecordingSocketTraffic)
             {
-                return SendToNode(payload);                
+                return SendToNode(payload);
             }
             else
             {
@@ -170,8 +170,8 @@ namespace GingerCoreNET.RunLib
                 Monitor.Add(gingerSocketLog);
 
                 Stopwatch st = Stopwatch.StartNew();
-                
-                NewPayLoad responsePayload = SendToNode(payload);                
+
+                NewPayLoad responsePayload = SendToNode(payload);
 
                 st.Stop();
 
@@ -198,12 +198,12 @@ namespace GingerCoreNET.RunLib
             }
         }
 
-        
+
         private GingerSocketClient2 hubClient;
 
         public NewPayLoad ExecuteActionOnRemoteGridPlugin(NewPayLoad payload)
         {
-            bool closeConn = false;            
+            bool closeConn = false;
             if (hubClient == null)
             {
                 hubClient = new GingerSocketClient2();
@@ -218,10 +218,10 @@ namespace GingerCoreNET.RunLib
             }
             else
             {
-                
+
             }
 
-            
+
             //  TODO: reserve if session
 
 
@@ -234,11 +234,11 @@ namespace GingerCoreNET.RunLib
                 hubClient.CloseConnection();   // Not for session
             }
 
-            return rc4;                        
+            return rc4;
         }
 
 
-        public void StartDriver(Amdocs.Ginger.Common.ObservableList<DriverConfigParam> driverConfiguration=null)
+        public void StartDriver(Amdocs.Ginger.Common.ObservableList<DriverConfigParam> driverConfiguration = null)
         {
             //TODO: get return code - based on it set status if running OK
             NewPayLoad PL = new NewPayLoad("StartDriver");    //!!!! Rename to StartService + use const

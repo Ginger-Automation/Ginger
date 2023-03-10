@@ -22,11 +22,11 @@ namespace Amdocs.Ginger.Repository
 {
     //Class to create link to repository item by GUID - which is saved - serialized and contain also the item name in case needed for analyzer when target item Guid not found can auto repair
 
-    public class RepositoryItemKey 
-    {        
+    public class RepositoryItemKey
+    {
         public Guid Guid { get; set; }
         public string ItemName { get; set; }
-                
+
 
         public string Key
         {
@@ -49,6 +49,6 @@ namespace Amdocs.Ginger.Repository
             return Key;
         }
 
-        
+
     }
 }

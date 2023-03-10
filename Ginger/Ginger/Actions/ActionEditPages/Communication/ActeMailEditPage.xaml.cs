@@ -16,23 +16,19 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Windows;
-using System.Windows.Controls;
 using Amdocs.Ginger.Common;
+using Ginger.UserControlsLib.UCEmailConfigView;
 using GingerCore.Actions.Communication;
 using GingerCore.GeneralLib;
-using CheckBox = System.Windows.Controls.CheckBox;
-using System.Linq;
-using System.ComponentModel;
 using NUglify.Helpers;
+using System;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using NPOI.HPSF;
-using System.Dynamic;
-using System.Collections.Generic;
-using System.Xml.Schema;
+using System.Linq;
 using System.Linq.Dynamic.Core;
-using Ginger.UserControlsLib.UCEmailConfigView;
+using System.Windows;
+using System.Windows.Controls;
+using CheckBox = System.Windows.Controls.CheckBox;
 
 namespace Ginger.Actions.Communication
 {
@@ -118,7 +114,7 @@ namespace Ginger.Actions.Communication
                 mAct.MailFromDisplayName = "_Amdocs Ginger Automation";
             }
 
-            if(string.IsNullOrEmpty(mAct.AttachmentDownloadPath))
+            if (string.IsNullOrEmpty(mAct.AttachmentDownloadPath))
             {
                 mAct.AttachmentDownloadPath = @"~\\Documents\EmailAttachments";
             }
@@ -160,7 +156,7 @@ namespace Ginger.Actions.Communication
             xEmailConfigView.xFilterSubjectVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterSubject));
             xEmailConfigView.xFilterBodyVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterBody));
             xEmailConfigView.xHasAttachmentsComboBox.SelectedItem = FindComboBoxItem(
-                xEmailConfigView.xHasAttachmentsComboBox, 
+                xEmailConfigView.xHasAttachmentsComboBox,
                 item => (EmailReadFilters.eHasAttachmentsFilter)item.Value == mAct.FilterHasAttachments);
             xEmailConfigView.xFilterAttachmentContentTypeVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterAttachmentContentType));
             xEmailConfigView.xDownloadAttachmentYesRadioButton.IsChecked = mAct.DownloadAttachments;
@@ -182,7 +178,7 @@ namespace Ginger.Actions.Communication
 
         private static ComboEnumItem FindComboBoxItem(ComboBox comboBox, Predicate<ComboEnumItem> predicate)
         {
-            foreach(ComboEnumItem item in comboBox.Items)
+            foreach (ComboEnumItem item in comboBox.Items)
             {
                 if (predicate(item))
                 {

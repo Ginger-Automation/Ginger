@@ -16,9 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using Amdocs.Ginger.Common.UIElement;
-using GingerCore.Drivers.Common;
+using System.Windows.Controls;
 
 namespace Ginger.Drivers.Common
 {
@@ -27,7 +26,7 @@ namespace Ginger.Drivers.Common
     /// element which have more info can override and create it's own page for view 
     /// </summary>
     public partial class ElementInfoPage : Page
-    {        
+    {
         ElementInfo mElementInfo;
 
         public ElementInfoPage(ElementInfo EI)

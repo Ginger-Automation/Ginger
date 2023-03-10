@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.UserControls;
 using Ginger.Activities;
 using Ginger.Repository;
 using Ginger.UserControlsLib.UCListView;
@@ -198,7 +197,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public List<ListItemNotification> GetItemNotificationsList(object item)
         {
             SetItem(item);
-            List<ListItemNotification> notificationsList = new List<ListItemNotification>();           
+            List<ListItemNotification> notificationsList = new List<ListItemNotification>();
             return notificationsList;
         }
 
@@ -228,8 +227,9 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 usagePage.ShowAsWindow();
             }
             else
-                Reporter.ToUser(eUserMsgKey.NoItemWasSelected); 
-            
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
         }
 
         public List<ListItemOperation> GetItemExtraOperationsList(object item)

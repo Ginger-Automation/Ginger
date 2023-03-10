@@ -1,19 +1,14 @@
-﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
+﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
-using GingerCore.Actions.Common;
-using GingerCoreNETUnitTest.RunTestslib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 
 namespace GingerCoreNETUnitTest.RecordingLibTest
-{    
+{
     [TestClass]
     public class RecordingManagerTest
     {
@@ -25,7 +20,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            
+
         }
 
         [TestInitialize]
@@ -54,7 +49,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
         public void DoRecordingWithoutPOMTest()
         {
             //Arrange
-            ObservableList<ApplicationPOMModel> currentPOM = null;          
+            ObservableList<ApplicationPOMModel> currentPOM = null;
             RecordingManager mngr = new RecordingManager(currentPOM, mBF, Context, mDriver, PlatformInfo);
 
             //Act
@@ -79,7 +74,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             ApplicationPOMModel currentPOM = new ApplicationPOMModel();
             lstPOM.Add(currentPOM);
             RecordingManager mngr = new RecordingManager(lstPOM, mBF, Context, mDriver, PlatformInfo);
-            
+
             //Act
             mngr.StartRecording();
             mngr.StopRecording();
@@ -103,7 +98,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             ApplicationPOMModel currentPOM = new ApplicationPOMModel();
             lstPOM.Add(currentPOM);
             RecordingManager mngr = new RecordingManager(lstPOM, mBF, Context, mDriver, PlatformInfo);
-            
+
             //Act
             mngr.StartRecording();
             mngr.StopRecording();

@@ -24,7 +24,7 @@ namespace GingerCore.Drivers
 {
     public class DriverWindowDispatcher : IDispatcher
     {
-        Dispatcher mDispatcher;        
+        Dispatcher mDispatcher;
 
         public DriverWindowDispatcher(Dispatcher dispatcher)
         {

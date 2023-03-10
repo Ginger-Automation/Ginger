@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using GingerCoreNET.ALMLib;
 
 namespace Ginger.SolutionGeneral
 {

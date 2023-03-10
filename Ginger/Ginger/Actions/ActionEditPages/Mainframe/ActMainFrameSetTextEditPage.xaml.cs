@@ -17,12 +17,12 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
+using GingerCore.Actions.MainFrame;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using GingerCore.Actions.MainFrame;
-using Ginger.UserControls;
-using Amdocs.Ginger.Repository;
 
 namespace Ginger.Actions.Mainframe
 {
@@ -40,48 +40,53 @@ namespace Ginger.Actions.Mainframe
             GingerCore.General.FillComboFromEnumObj(SetTextModeCombo, mAct.SetTextMode);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SetTextModeCombo, ComboBox.SelectedValueProperty, mAct, "SetTextMode");
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ReloadValue, CheckBox.IsCheckedProperty, mAct, "ReloadValue");
-            SetCaretValueGrid ();
-            CaretValueGrid.btnAdd.AddHandler (Button.ClickEvent, new RoutedEventHandler (AddCaretValueItem));
+            SetCaretValueGrid();
+            CaretValueGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddCaretValueItem));
         }
 
         private void SetCaretValueGrid()
         {
-            GridViewDef view = new GridViewDef (GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView> ();
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add (new GridColView () { Field = nameof(ActInputValue.Param), Header = "Caret", WidthWeight = 150 });
-            view.GridColsView.Add (new GridColView () { Field = nameof(ActInputValue.Value), Header = "Text", WidthWeight = 150 });
-            view.GridColsView.Add (new GridColView () { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["HttpHeadersValueExpressionButton"] });
-            view.GridColsView.Add (new GridColView () { Field = nameof(ActInputValue.ValueForDriver), Header = "Replace With Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Caret", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Text", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["HttpHeadersValueExpressionButton"] });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Replace With Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
 
-            CaretValueGrid.SetAllColumnsDefaultView (view);
-            CaretValueGrid.InitViewItems ();
+            CaretValueGrid.SetAllColumnsDefaultView(view);
+            CaretValueGrid.InitViewItems();
             CaretValueGrid.DataSourceList = mAct.CaretValueList;
         }
 
         private void AddCaretValueItem(object sender, RoutedEventArgs e)
         {
             string PlaceHolderName = "{Place Holder " + (mAct.CaretValueList.Count + 1) + "}";
-            mAct.CaretValueList.Add (new ActInputValue () { Param = PlaceHolderName });
+            mAct.CaretValueList.Add(new ActInputValue() { Param = PlaceHolderName });
         }
 
         private void LoadFields_Click(object sender, RoutedEventArgs e)
         {
             Context.GetAsContext(mAct.Context).Runner.PrepActionValueExpression(mAct);
-            mAct.LoadCaretValueList ();
+            mAct.LoadCaretValueList();
             CaretValueGrid.DataSourceList = mAct.CaretValueList;
         }
 
         private void SetTextModeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (SetTextModeCombo.SelectedValue == null)
+            {
                 return;
-            if (SetTextModeCombo.SelectedValue.ToString () == "SetMultipleFields")
+            }
+
+            if (SetTextModeCombo.SelectedValue.ToString() == "SetMultipleFields")
             {
                 MultiFieldPanel.Visibility = System.Windows.Visibility.Visible;
             }
-            else 
-            MultiFieldPanel.Visibility = System.Windows.Visibility.Collapsed;
+            else
+            {
+                MultiFieldPanel.Visibility = System.Windows.Visibility.Collapsed;
+            }
         }
     }
 }

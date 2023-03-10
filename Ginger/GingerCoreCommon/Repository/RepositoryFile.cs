@@ -54,14 +54,14 @@ namespace Amdocs.Ginger.Repository
                 // we catch the result for speed
                 if (mFileType == null)
                 {
-                    mFileType = GetFileType();                    
+                    mFileType = GetFileType();
                 }
                 return mFileType;
             }
         }
 
         private eFileType? GetFileType()
-        {            
+        {
             string s = Path.GetFileName(FilePath);
             if (s.Contains(".BusinessFlow.xml")) return eFileType.BusinessFlow;   // TODO: use const
             if (s.Contains(".Agent.xml")) return eFileType.Agent;   // TODO: use const

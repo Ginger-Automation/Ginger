@@ -16,14 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
+using GingerCore.Platforms;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.CoreNET.Run;
-using GingerCore.Platforms;
 
 namespace GingerCore.Actions
 {
@@ -36,7 +36,7 @@ namespace GingerCore.Actions
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to automate smart sync.");
-        }        
+        }
 
         public override string ActionEditPage { get { return "ActSmartSyncEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
@@ -62,13 +62,13 @@ namespace GingerCore.Actions
         public enum eSmartSyncAction
         {
             WaitUntilDisplay = 1,
-            WaitUntilDisapear = 2, 
+            WaitUntilDisapear = 2,
         }
         public new static partial class Fields
         {
             public static string WaitTime = "WaitTime";
             public static string SmartSyncAction = "SmartSyncAction";
-        
+
         }
 
         public int? WaitTime
@@ -78,7 +78,7 @@ namespace GingerCore.Actions
 
 
                 int i;
-                return int.TryParse(GetOrCreateInputParam(Fields.WaitTime).Value, out i)?i: (int?)null; ;
+                return int.TryParse(GetOrCreateInputParam(Fields.WaitTime).Value, out i) ? i : (int?)null; ;
 
             }
             set
@@ -89,16 +89,16 @@ namespace GingerCore.Actions
 
         public eSmartSyncAction SmartSyncAction
         {
-            get { return GetOrCreateInputParam<eSmartSyncAction>(Fields.SmartSyncAction,eSmartSyncAction.WaitUntilDisplay); }
+            get { return GetOrCreateInputParam<eSmartSyncAction>(Fields.SmartSyncAction, eSmartSyncAction.WaitUntilDisplay); }
             set
             {
                 GetOrCreateInputParam(Fields.SmartSyncAction).Value = value.ToString();
-            }           
+            }
         }
 
         public override String ToString()
         {
-            return "SmartSync: " + GetInputParamValue("Value");            
+            return "SmartSync: " + GetInputParamValue("Value");
         }
 
 
@@ -120,22 +120,22 @@ namespace GingerCore.Actions
 
         public PlatformAction GetAsPlatformAction()
         {
-                   
-                PlatformAction platformAction = new PlatformAction(this);
 
-                foreach (ActInputValue aiv in this.InputValues)
+            PlatformAction platformAction = new PlatformAction(this);
+
+            foreach (ActInputValue aiv in this.InputValues)
+            {
+
+                string ValueforDriver = aiv.ValueForDriver;
+                if (!platformAction.InputParams.ContainsKey(aiv.Param) && !String.IsNullOrEmpty(ValueforDriver))
                 {
-
-                    string ValueforDriver = aiv.ValueForDriver;
-                    if (!platformAction.InputParams.ContainsKey(aiv.Param) && !String.IsNullOrEmpty(ValueforDriver))
-                    {
-                        platformAction.InputParams.Add(aiv.Param, ValueforDriver);
-                    }
+                    platformAction.InputParams.Add(aiv.Param, ValueforDriver);
                 }
-                                                                                     
-
-                return platformAction;
             }
+
+
+            return platformAction;
         }
     }
+}
 

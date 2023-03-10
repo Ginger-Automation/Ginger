@@ -17,21 +17,20 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
-using System;
-using System.Collections.Generic;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.UIAutomation;
-using mshtml;
 using GingerCore.Drivers.PBDriver;
-
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
+using mshtml;
+using System;
+using System.Collections.Generic;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace GingerCore.Drivers.Common
 {
-    public abstract  class UIAutomationDriverBase: DriverBase, IXPath
+    public abstract class UIAutomationDriverBase : DriverBase, IXPath
     {
         public override bool IsWindowExplorerSupportReady()
         {
@@ -41,7 +40,7 @@ namespace GingerCore.Drivers.Common
         public enum eUIALibraryType
         {
             ComWrapper = 0
-            
+
         }
 
         public UIAutomationHelperBase mUIAutomationHelper;
@@ -50,12 +49,12 @@ namespace GingerCore.Drivers.Common
         Boolean retryForCOMExceptionDoneFlag = false;
 
         public eUIALibraryType LibraryType { get; set; }
-        
+
         #region IXPath
         // ----------------------------------------------------------------------------------------------------------------------------
         // IXPath Implementation
         // ----------------------------------------------------------------------------------------------------------------------------
-        
+
         ElementInfo IXPath.GetRootElement()
         {
             return ((IXPath)mUIAutomationHelper).GetRootElement();
@@ -73,7 +72,7 @@ namespace GingerCore.Drivers.Common
 
         ElementInfo IXPath.GetElementParent(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
-            return ((IXPath)mUIAutomationHelper).GetElementParent(ElementInfo,pomSetting);
+            return ((IXPath)mUIAutomationHelper).GetElementParent(ElementInfo, pomSetting);
         }
 
         string IXPath.GetElementProperty(ElementInfo ElementInfo, string PropertyName)
@@ -123,7 +122,7 @@ namespace GingerCore.Drivers.Common
         #endregion IXPath
 
         public void HighLightElement(ElementInfo ElementInfo)
-        {            
+        {
             if (ElementInfo.GetType() == typeof(UIAElementInfo))
             {
                 mUIAutomationHelper.HiglightElement(((UIAElementInfo)ElementInfo));
@@ -198,21 +197,27 @@ namespace GingerCore.Drivers.Common
                         list = mUIAutomationHelper.GetHTMLHelper().GetElementChildren(htmlRootEI);
                     }
                     else
+                    {
                         list = mUIAutomationHelper.GetElementChilderns(ElementInfo.ElementObject);
+                    }
                 }
                 else
                 {
                     list = mUIAutomationHelper.GetHTMLHelper().GetElementChildren(ElementInfo);
-                } 
+                }
             }
-            
+
             return list;
         }
 
         public ElementInfo GetControlFromMousePosition()
         {
             object obj = mUIAutomationHelper.GetElementFromCursor();
-            if (obj == null) return null;
+            if (obj == null)
+            {
+                return null;
+            }
+
             ElementInfo EI = null;
 
             if (obj.GetType().Equals(typeof(UIAuto.AutomationElement)))
@@ -223,22 +228,24 @@ namespace GingerCore.Drivers.Common
             else
             {
                 EI = mUIAutomationHelper.GetHTMLHelper().GetHtmlElementInfo((IHTMLElement)obj);
-            }     
+            }
             return EI;
         }
 
         internal void CheckRetrySwitchWindowIsNeeded()
         {
-                // Skip the switch window action
-                object obj = mUIAutomationHelper.GetCurrentWindow();
-                if (obj != null)
+            // Skip the switch window action
+            object obj = mUIAutomationHelper.GetCurrentWindow();
+            if (obj != null)
+            {
+                if (!mUIAutomationHelper.IsWindowValid(obj))
                 {
-                    if (!mUIAutomationHelper.IsWindowValid(obj))
+                    if (mUIAutomationHelper.CurrentWindowRootElement != null && mUIAutomationHelper.CurrentWindowRootElement.ElementName != null)
                     {
-                        if (mUIAutomationHelper.CurrentWindowRootElement != null && mUIAutomationHelper.CurrentWindowRootElement.ElementName != null)
-                            mUIAutomationHelper.SwitchToWindow(mUIAutomationHelper.CurrentWindowRootElement.ElementName);
+                        mUIAutomationHelper.SwitchToWindow(mUIAutomationHelper.CurrentWindowRootElement.ElementName);
                     }
                 }
+            }
         }
 
         internal void CheckAndRetryRunAction(Act act, Exception e)

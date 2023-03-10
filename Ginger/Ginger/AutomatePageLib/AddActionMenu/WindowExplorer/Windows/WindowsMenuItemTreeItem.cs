@@ -17,12 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
 using Ginger.WindowExplorer;
-using GingerCore;
 using GingerCore.Actions;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Controls;
 
 namespace Ginger.Drivers.Windows
 {
@@ -36,29 +35,29 @@ namespace Ginger.Drivers.Windows
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
             ObservableList<Act> list = new ObservableList<Act>();
-          
-                ActMenuItem actMenuAction_Expand = new ActMenuItem()
-                {
-                    Description = "Expand " + UIAElementInfo.ElementTitle + " Menu Item",
-                    MenuAction = ActMenuItem.eMenuAction.Expand
-                };
 
-                list.Add(actMenuAction_Expand);
+            ActMenuItem actMenuAction_Expand = new ActMenuItem()
+            {
+                Description = "Expand " + UIAElementInfo.ElementTitle + " Menu Item",
+                MenuAction = ActMenuItem.eMenuAction.Expand
+            };
 
-                ActMenuItem actMenuAction_Collapse = new ActMenuItem()
-                {
-                    Description = "Collapse " + UIAElementInfo.ElementTitle + " Menu Item",
-                    MenuAction = ActMenuItem.eMenuAction.Collapse,
-                };
+            list.Add(actMenuAction_Expand);
 
-                list.Add(actMenuAction_Collapse);
+            ActMenuItem actMenuAction_Collapse = new ActMenuItem()
+            {
+                Description = "Collapse " + UIAElementInfo.ElementTitle + " Menu Item",
+                MenuAction = ActMenuItem.eMenuAction.Collapse,
+            };
+
+            list.Add(actMenuAction_Collapse);
 
 
-                list.Add(new ActMenuItem()
-                {
-                    Description = "Click Menu Item",
-                    MenuAction = ActMenuItem.eMenuAction.Click
-                });
+            list.Add(new ActMenuItem()
+            {
+                Description = "Click Menu Item",
+                MenuAction = ActMenuItem.eMenuAction.Click
+            });
 
             return list;
         }

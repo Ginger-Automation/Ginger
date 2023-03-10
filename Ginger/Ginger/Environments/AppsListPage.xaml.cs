@@ -16,17 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
+using Ginger.UserControlsLib;
+using GingerCore.Environments;
+using GingerCore.GeneralLib;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.UserControls;
-using GingerCore.Environments;
-using GingerCore;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
-using GingerCore.GeneralLib;
-using Ginger.UserControlsLib;
 
 namespace Ginger.Environments
 {
@@ -52,20 +51,20 @@ namespace Ginger.Environments
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, AppEnvironmnet, nameof(RepositoryItemBase.Publish));
 
 
-            grdApps.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddApp));          
+            grdApps.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddApp));
             grdApps.AddToolbarTool("@Share_16x16.png", "Add Selected Applications to All Environments", new RoutedEventHandler(AddAppsToOtherEnvironments));
 
             TagsViewer.Init(AppEnvironmnet.Tags);
-        }       
+        }
 
         private void AddApp(object sender, RoutedEventArgs e)
         {
             EnvApplication app = new EnvApplication();
             app.Name = "New";
-            app.Active = true;  
+            app.Active = true;
             AppEnvironmnet.Applications.Add(app);
         }
-        
+
         #region Functions
         private void SetGridView()
         {
@@ -76,7 +75,7 @@ namespace Ginger.Environments
             //Set the Tool Bar look
             grdApps.ShowUpDown = Visibility.Collapsed;
             grdApps.ShowUndo = Visibility.Visible;
-            
+
             //Set the Data Grid columns
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
@@ -89,13 +88,13 @@ namespace Ginger.Environments
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.CoreProductName), WidthWeight = 150, Header = "Core Product Name" });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.AppVersion), WidthWeight = 150, Header = "Application Version" });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Url), WidthWeight = 100, Header = "URL" });
-            
+
             grdApps.SetAllColumnsDefaultView(view);
             grdApps.InitViewItems();
         }
 
         private void SetGridData()
-        {            
+        {
             grdApps.DataSourceList = AppEnvironmnet.Applications;
         }
 
@@ -115,7 +114,7 @@ namespace Ginger.Environments
                             if (env.Applications.Where(x => x.Name == ((EnvApplication)obj).Name).FirstOrDefault() == null)
                             {
                                 EnvApplication app = (EnvApplication)(((RepositoryItemBase)obj).CreateCopy());
-                                env.Applications.Add(app);                                
+                                env.Applications.Add(app);
                                 appsWereAdded = true;
                             }
                         }
@@ -123,10 +122,14 @@ namespace Ginger.Environments
                 }
 
                 if (appsWereAdded)
+                {
                     Reporter.ToUser(eUserMsgKey.ShareEnvAppWithAllEnvs);
+                }
             }
             else
+            {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
         }
 
         #endregion Functions

@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
-using Ginger.Repository;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Repository;
@@ -34,29 +33,30 @@ namespace UnitTests.NonUITests
     [TestClass]
     [Level1]
     public class RepositoryXMLConverterTest
-    {                
+    {
 
-        [ClassInitialize]        
+        [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
             TargetFrameworkHelper.Helper = new DotNetFrameworkHelper();
-            WorkSpace.Init(new WorkSpaceEventHandler());                   
+            WorkSpace.Init(new WorkSpaceEventHandler());
         }
 
         [ClassCleanup]
         public static void ClassCleanUp()
         {
-            
+
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
-            
+
         }
 
         [Ignore] // need to add handle for old serializer event to handle old action 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void BusinessFlowDeserializationTest()
         {
             //Arrange            
@@ -68,26 +68,28 @@ namespace UnitTests.NonUITests
 
             //Assert
             //TODO: add more asserts
-           Assert.AreEqual(14, BF.Activities.Count, "BF has 14 activities");
+            Assert.AreEqual(14, BF.Activities.Count, "BF has 14 activities");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void AgentDeserializationTest()
         {
             //Arrange
             RepositorySerializer RepositorySerializer = new RepositorySerializer();
-            string sFileName = TestResources.GetTestResourcesFile( @"Converter" + Path.DirectorySeparatorChar + "IB1.Ginger.Agent.xml");
+            string sFileName = TestResources.GetTestResourcesFile(@"Converter" + Path.DirectorySeparatorChar + "IB1.Ginger.Agent.xml");
 
             //Act
             Agent agent = (Agent)RepositorySerializer.DeserializeFromFile(typeof(Agent), sFileName);
 
             //Assert
             //TODO: add more asserts
-           Assert.AreEqual(agent.Name, "IB1");
-           Assert.AreEqual(agent.DriverType,Agent.eDriverType.InternalBrowser);
+            Assert.AreEqual(agent.Name, "IB1");
+            Assert.AreEqual(agent.DriverType, Agent.eDriverType.InternalBrowser);
         }
-        
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void EnvironmentDeserializationTest()
         {
             //Arrange
@@ -98,11 +100,11 @@ namespace UnitTests.NonUITests
             ProjEnvironment env = (ProjEnvironment)RepositorySerializer.DeserializeFromFile(typeof(ProjEnvironment), sFileName);
 
             //Assert            
-           Assert.AreEqual(env.Name, "CMI IIS test server");
-           Assert.AreEqual(env.Applications.Count, 2);
+            Assert.AreEqual(env.Name, "CMI IIS test server");
+            Assert.AreEqual(env.Applications.Count, 2);
             //TODO: add more asserts
         }
-      
+
 
 
     }

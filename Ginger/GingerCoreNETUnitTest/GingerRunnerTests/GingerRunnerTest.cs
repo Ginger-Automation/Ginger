@@ -114,7 +114,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.SpecificEnvironmentName = environment.Name;
             mGR.UseSpecificEnvironment = false;
 
-            string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" +Path.DirectorySeparatorChar + "BasicSimple"));
+            string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple"));
             string solutionFile = System.IO.Path.Combine(path, @"Ginger.Solution.xml");
             solution = SolutionOperations.LoadSolution(solutionFile);
             SR = GingerSolutionRepository.CreateGingerSolutionRepository();
@@ -357,12 +357,12 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             XmlNodeList runsetoperations = xDoc.GetElementsByTagName("AddRunsetOperation");
 
             //Assert
-            Assert.AreEqual(runsetoperations.Count , 3);
+            Assert.AreEqual(runsetoperations.Count, 3);
             Assert.AreEqual(runsetoperations[0].FirstChild.Name, "MailFrom");
-            Assert.AreEqual(runsetoperations[0].LastChild.Name, "IncludeAttachmentReport") ;
+            Assert.AreEqual(runsetoperations[0].LastChild.Name, "IncludeAttachmentReport");
             Assert.AreEqual(runsetoperations[1].FirstChild.Name, "HTMLReportFolderName");
             Assert.AreEqual(runsetoperations[1].LastChild.Name, "isHTMLReportPermanentFolderNameUsed");
-            Assert.AreEqual(runsetoperations[2].HasChildNodes,false);
+            Assert.AreEqual(runsetoperations[2].HasChildNodes, false);
 
         }
 
@@ -421,15 +421,15 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             cLIHelper1.DownloadUpgradeSolutionFromSourceControl = false;
 
             RunSetAutoRunConfiguration autoRunConfiguration1 = new RunSetAutoRunConfiguration(solution, GMR1, cLIHelper1);
-            CLIDynamicFile mCLIDynamicXML1= new CLIDynamicFile(CLIDynamicFile.eFileType.XML);
+            CLIDynamicFile mCLIDynamicXML1 = new CLIDynamicFile(CLIDynamicFile.eFileType.XML);
             autoRunConfiguration1.SelectedCLI = mCLIDynamicXML1;
-            String xmlFile =autoRunConfiguration1.SelectedCLI.CreateConfigurationsContent(solution, GMR1, cLIHelper1);
+            String xmlFile = autoRunConfiguration1.SelectedCLI.CreateConfigurationsContent(solution, GMR1, cLIHelper1);
 
             autoRunConfiguration1.CreateContentFile();
 
             CLIProcessor cLIProcessor = new CLIProcessor();
-            string[] args = new string[]{ autoRunConfiguration1.SelectedCLI.Verb, "--" + CLIOptionClassHelper.FILENAME, autoRunConfiguration1.ConfigFileFullPath};
-           
+            string[] args = new string[] { autoRunConfiguration1.SelectedCLI.Verb, "--" + CLIOptionClassHelper.FILENAME, autoRunConfiguration1.ConfigFileFullPath };
+
             //Act
             cLIProcessor.ExecuteArgs(args).Wait();
 
@@ -537,7 +537,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             flowControl.Operator = eFCOperator.ActionPassed;
             flowControl.FlowControlAction = eFlowControlAction.GoToAction;
-            flowControl.Value= act1.Guid + flowControl.GUID_NAME_SEPERATOR;
+            flowControl.Value = act1.Guid + flowControl.GUID_NAME_SEPERATOR;
 
             action.FlowControls.Add(flowControl);
 
@@ -554,8 +554,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         public void RunActionWithoutFlowControlAndMoveNext()
         {
             //Arrange
-            
-            Activity activity = GetActivityFromRepository(); 
+
+            Activity activity = GetActivityFromRepository();
             ActDummy act1 = new ActDummy();
             act1.Active = true;
             activity.Acts.Add(act1);
@@ -573,7 +573,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(action.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
             Assert.AreEqual(mGR.Executor.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem, mGR.Executor.CurrentBusinessFlow.CurrentActivity.Acts[1]);
         }
-      
+
         public Activity GetActivityFromRepository()
         {
             Context context = new Context();

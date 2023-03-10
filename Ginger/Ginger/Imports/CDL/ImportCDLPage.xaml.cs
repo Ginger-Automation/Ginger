@@ -28,7 +28,7 @@ namespace Ginger.Imports.CDL
     {
         public ImportCDLPage()
         {
-            InitializeComponent();            
+            InitializeComponent();
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -36,7 +36,7 @@ namespace Ginger.Imports.CDL
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    
+
 
                     break;
                 case EventType.Active:

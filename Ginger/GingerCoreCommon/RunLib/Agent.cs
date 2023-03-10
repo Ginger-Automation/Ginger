@@ -17,28 +17,22 @@ limitations under the License.
 #endregion
 
 //using amdocs.ginger.GingerCoreNET;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.Common.Run;
-using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
-using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 
 
 namespace GingerCore
@@ -126,7 +120,7 @@ namespace GingerCore
             Completed,
             FailedToStart
         }
-        
+
         [IsSerializedForLocalRepository]
         public bool Active { get; set; }
 
@@ -149,7 +143,7 @@ namespace GingerCore
                 }
             }
         }
-        public eStatus Status 
+        public eStatus Status
         {
             get
             {
@@ -277,7 +271,7 @@ namespace GingerCore
             return Name;
         }
 
-       
+
         public void CancelTMSTATask(object sender, DoWorkEventArgs e)
         {
             if (MSTATask == null)

@@ -16,14 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Ginger.Reports;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
 {
@@ -49,7 +47,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
 
         public override List<eRunAt> GetRunOptions()
         {
-            List<eRunAt> list = new List<eRunAt>();            
+            List<eRunAt> list = new List<eRunAt>();
             list.Add(eRunAt.ExecutionEnd);
             return list;
         }

@@ -17,13 +17,13 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Ginger.GherkinLib;
+using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControlsLib.TextEditor.Gherkin;
 using GingerCore;
 using GingerWPF.WizardLib;
 using System.IO;
-using Ginger.SolutionWindows.TreeViewItems;
-using Amdocs.Ginger.Common;
 
 namespace Ginger.BDD
 {
@@ -34,7 +34,7 @@ namespace Ginger.BDD
             string FileName = string.Empty;
             if (GingerCore.General.GetInputWithValidation("New Feature File", "File Name:", ref FileName, System.IO.Path.GetInvalidFileNameChars(), false, null))
             {
-                string FullDirectoryPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, "Documents", "Features");
+                string FullDirectoryPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, "Documents", "Features");
                 if (!System.IO.Directory.Exists(FullDirectoryPath))
                 {
                     System.IO.Directory.CreateDirectory(FullDirectoryPath);
@@ -51,16 +51,18 @@ namespace Ginger.BDD
                     System.IO.File.WriteAllText(FullFilePath, FileContent);
                 }
                 else
+                {
                     Reporter.ToUser(eUserMsgKey.GherkinNotifyFeatureFileExists, FullFilePath);
+                }
             }
         }
 
         public bool ImportFeatureFile()
-        {            
+        {
             BusinessFlowsFolderTreeItem bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>(), eBusinessFlowsTreeViewMode.ReadOnly);
             if (WorkSpace.Instance.BetaFeatures.ImportGherkinFeatureWizrd)
             {
-                WizardWindow.ShowWizard(new ImportGherkinFeatureWizard(bfsFolder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder));                
+                WizardWindow.ShowWizard(new ImportGherkinFeatureWizard(bfsFolder, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder));
             }
             return true;
         }
