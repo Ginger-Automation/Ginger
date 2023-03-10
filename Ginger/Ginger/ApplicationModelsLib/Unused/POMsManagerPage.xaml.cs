@@ -35,13 +35,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
         public POMsManagerPage(RepositoryFolder<ApplicationPOMModel> RF)
         {
             InitializeComponent();
-            
+
             ApplicationPOMsTreeItem t = new ApplicationPOMsTreeItem(RF);
             MainFrame.SetContent(new TreeViewExplorerPage(t));
-            
+
             InitGrid();
             RefreshPOMs();
-            
+
         }
 
         private void RefreshPOMs()
@@ -97,10 +97,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             ////TODO: add event for Wiz close so we can hook and call refresh
         }
 
-        
+
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
-        {            
+        {
 
             // GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this);
         }
@@ -113,15 +113,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
             //    string filename = POM.FileName.Replace("xml", "Screenshot.bmp");  // TODO: use same const                
             //    //POM.ScreenShot = General.LoadBitmapFromFile(filename);
             //}
-            
+
             //ScreenShotViewPage p = new ScreenShotViewPage(POM.Name, POM.ScreenShot);
             //POMFrame.Content = p;
-            
+
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            WizardWindow.ShowWizard(new AddPOMWizard());                        
+            WizardWindow.ShowWizard(new AddPOMWizard());
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

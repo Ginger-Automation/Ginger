@@ -16,17 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using System.Collections.Generic;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
-using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System.Collections.Generic;
 
 namespace GingerCore.Actions.PlugIns
 {
     public class ActPlugIn : ActWithoutDriver
     {
-      
+
         public override string ActionType
         {
             get
@@ -38,25 +37,25 @@ namespace GingerCore.Actions.PlugIns
         public override string ActionDescription
         {
             get
-            {                
+            {
                 // TODO: get action description from plugin
                 return PluginId + "." + ServiceId + "." + ActionId;
             }
         }
 
-        public override string ActionEditPage { get { return "PlugIns.ActPlugInEditPage"; } }  
+        public override string ActionEditPage { get { return "PlugIns.ActPlugInEditPage"; } }
 
         public override string ActionUserDescription
         {
             get
-            {                
-                return "Plugin Action";   
+            {
+                return "Plugin Action";
             }
         }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("See Plugin Documentation");             
+            TBH.AddText("See Plugin Documentation");
         }
 
         public override bool ObjectLocatorConfigsNeeded
@@ -96,8 +95,8 @@ namespace GingerCore.Actions.PlugIns
         [IsSerializedForLocalRepository]
         public string ActionId { get; set; }
 
-        
-        
+
+
         public override void Execute() { }// Execute is being performed inside Ginger Runner
     }
 }

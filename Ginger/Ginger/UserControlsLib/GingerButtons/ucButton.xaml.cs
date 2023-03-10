@@ -16,12 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Core;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Amdocs.Ginger.UserControls
 {
@@ -77,14 +76,14 @@ namespace Amdocs.Ginger.UserControls
         {
             get { return xButtonText.Text.ToString(); }
             set { xButtonText.Text = value; }
-        }      
-        
+        }
+
         public eImageType ButtonImageType
         {
             get { return (eImageType)GetValue(ButtonImageTypeProperty); }
             set
             {
-                SetValue(ButtonImageTypeProperty, value);               
+                SetValue(ButtonImageTypeProperty, value);
             }
         }
         public bool SetBorder
@@ -125,20 +124,20 @@ namespace Amdocs.Ginger.UserControls
             {
                 case (Core.eButtonType.ImageButton):
                     xButtonText.Visibility = Visibility.Collapsed;
-                    xButton.Style = FindResource("$ImageButtonStyle") as Style;                    
+                    xButton.Style = FindResource("$ImageButtonStyle") as Style;
                     break;
                 case (Core.eButtonType.RoundTextAndImageButton):
                     xButtonText.Visibility = Visibility.Visible;
                     xButtonText.Margin = new Thickness(10, 0, 10, 0);
                     xButtonImage.Margin = new Thickness(0, 0, 10, 0);
-                    xButton.Style = FindResource("$RoundTextAndImageButtonStyle") as Style;                  
+                    xButton.Style = FindResource("$RoundTextAndImageButtonStyle") as Style;
                     break;
                 case (Core.eButtonType.CircleImageButton):
                     xButtonText.Visibility = Visibility.Collapsed;
                     xButton.Style = FindResource("$CircleImageButtonStyle") as Style;
                     xButton.Width = ButtonImageWidth + (ButtonImageWidth / 2);
                     xButton.Height = ButtonImageHeight + (ButtonImageHeight / 2);
-                    xButtonImage.Margin = new Thickness(3);                    
+                    xButtonImage.Margin = new Thickness(3);
                     break;
                 case (Core.eButtonType.CircleImageLightButton):
                     xButtonText.Visibility = Visibility.Collapsed;
@@ -154,11 +153,11 @@ namespace Amdocs.Ginger.UserControls
                     xButton.Style = FindResource("$PanelButtonStyle") as Style;
                     break;
             }
-        }     
-              
+        }
+
 
         public event RoutedEventHandler Click;
-  
+
 
         private void xButton_Click(object sender, RoutedEventArgs e)
         {
@@ -179,7 +178,7 @@ namespace Amdocs.Ginger.UserControls
                 mPreviousStyle = xButton.Style;
                 switch (ButtonType)
                 {
-                    case (Core.eButtonType.ImageButton):                       
+                    case (Core.eButtonType.ImageButton):
                         xButton.Style = FindResource("$ImageButtonStyle_Disabled") as Style;
                         break;
                     case (Core.eButtonType.RoundTextAndImageButton):
@@ -197,6 +196,6 @@ namespace Amdocs.Ginger.UserControls
             {
                 xButton.Style = mPreviousStyle;
             }
-        }     
+        }
     }
 }

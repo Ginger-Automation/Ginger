@@ -45,8 +45,6 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
-using GingerCore.Actions.WebAPI;
-using GingerCore.Actions.WebServices;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json;
@@ -66,7 +64,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -1601,7 +1598,9 @@ namespace Amdocs.Ginger.CoreNET
                 return aw;
             }
             else
+            {
                 return null;
+            }
         }
 
         async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
@@ -1618,7 +1617,9 @@ namespace Amdocs.Ginger.CoreNET
                 mIsDriverBusy = true;
 
                 if (foundElementsList == null)
+                {
                     foundElementsList = new ObservableList<ElementInfo>();
+                }
 
                 await GetPageSourceDocument(true);
 
@@ -1656,19 +1657,25 @@ namespace Amdocs.Ginger.CoreNET
                             eLocateBy CustomLocLocateBy = eLocateBy.ByRelXPath;
 
                             if (template.Contains('{'))
+                            {
                                 CustomLocLocateBy = eLocateBy.iOSPredicateString;
+                            }
 
                             var customLocator = GetUserDefinedCustomLocatorFromTemplates(template, CustomLocLocateBy, EI.Properties.ToList());
 
                             if (customLocator != null)
+                            {
                                 EI.Locators.Add(customLocator);
+                            }
                             //CreateXpathFromUserTemplate(template, foundElemntInfo);
                         }
                     }
 
                     if (pomSetting.filteredElementType == null ||
                         (pomSetting.filteredElementType != null && pomSetting.filteredElementType.Contains(EI.ElementTypeEnum)))
+                    {
                         foundElementsList.Add(EI);
+                    }
                 }
 
                 return foundElementsList.ToList();
@@ -1881,9 +1888,13 @@ namespace Amdocs.Ginger.CoreNET
 
             // the path to a node is the path to its parent, plus "/node()[n]", where n is its position among its siblings.
             if (node.Name.ToLower() == "appiumaut")
+            {
                 return string.Format("/");
+            }
             else
+            {
                 return String.Format("{0}/{1}[{2}]", await GetXPathToNode(node.ParentNode), node.Name, indexInParent);          //Testing Async
+            }
         }
 
         List<ElementInfo> IWindowExplorer.GetElementChildren(ElementInfo ElementInfo)
@@ -1941,16 +1952,30 @@ namespace Amdocs.Ginger.CoreNET
             }
 
             if (!string.IsNullOrEmpty(Name))
+            {
                 return Name;
+            }
 
             return xmlNode.Name;
         }
 
         static string GetAttrValue(XmlNode xmlNode, string attr)
         {
-            if (xmlNode.Attributes == null) return null;
-            if (xmlNode.Attributes[attr] == null) return null;
-            if (string.IsNullOrEmpty(xmlNode.Attributes[attr].Value)) return null;
+            if (xmlNode.Attributes == null)
+            {
+                return null;
+            }
+
+            if (xmlNode.Attributes[attr] == null)
+            {
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(xmlNode.Attributes[attr].Value))
+            {
+                return null;
+            }
+
             return xmlNode.Attributes[attr].Value;
         }
 
@@ -2100,11 +2125,17 @@ namespace Amdocs.Ginger.CoreNET
 
             XmlNode node = ElementInfo.ElementObject as XmlNode;
 
-            if (node == null) return list;
+            if (node == null)
+            {
+                return list;
+            }
 
             XmlAttributeCollection attrs = node.Attributes;
 
-            if (attrs == null) return list;
+            if (attrs == null)
+            {
+                return list;
+            }
 
             for (int i = 0; i < attrs.Count; i++)
             {
@@ -2114,9 +2145,13 @@ namespace Amdocs.Ginger.CoreNET
                 list.Add(CP);
 
                 if (CP.Name == "x")
+                {
                     ElementInfo.X = Convert.ToInt32(CP.Value);
+                }
                 else if (CP.Name == "y")
+                {
                     ElementInfo.Y = Convert.ToInt32(CP.Value);
+                }
             }
 
             return list;
@@ -2586,9 +2621,13 @@ namespace Amdocs.Ginger.CoreNET
                 // Do once?
                 // if XMLSOurce changed we need to refresh
                 if (IsAsyncCall)
+                {
                     pageSourceString = await GetPageSource();
+                }
                 else
+                {
                     pageSourceString = Driver.PageSource;
+                }
 
                 pageSourceXml = new XmlDocument();
                 pageSourceXml.LoadXml(pageSourceString);
@@ -2626,7 +2665,9 @@ namespace Amdocs.Ginger.CoreNET
                         //}
 
                         if (!skipElement)
+                        {
                             ElmsNodesColc.Add(elemNode);
+                        }
                     }
 
                     Dictionary<XmlNode, long> foundElements = new Dictionary<XmlNode, long>();
@@ -2724,7 +2765,9 @@ namespace Amdocs.Ginger.CoreNET
                         }
                     }
                     if (foundNode != null)
+                    {
                         return foundNode;
+                    }
                 }
 
                 return null;
@@ -2952,7 +2995,9 @@ namespace Amdocs.Ginger.CoreNET
             }
 
             if (ReloadHtmlDoc)
+            {
                 pageSourceXml = null;
+            }
 
             if (pageSourceXml == null)
             {

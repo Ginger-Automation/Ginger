@@ -34,7 +34,8 @@ namespace GingerCoreCommonTest
             //TODO::
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ObservableListCast()
         {
             //Arrange

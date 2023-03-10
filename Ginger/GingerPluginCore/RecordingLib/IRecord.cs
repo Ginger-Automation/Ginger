@@ -26,7 +26,7 @@ namespace Amdocs.Ginger.Plugin.Core
     {
         void ResetRecordingEventHandler();
         event RecordingEventHandler RecordingEvent;
-        
+
         void StartRecording(bool learnAdditionalChanges);
         void StopRecording();
     }

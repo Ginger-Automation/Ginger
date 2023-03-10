@@ -18,11 +18,6 @@ limitations under the License.
 
 
 using GingerWPFUnitTest.POMs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
@@ -57,8 +52,9 @@ namespace GingerTest.POMs.Common
             get
             {
                 DependencyObject dependencyObject = null;
-                Execute(() => {                    
-                    dependencyObject = FindControlByAutomationId(mPage, name);                    
+                Execute(() =>
+                {
+                    dependencyObject = FindControlByAutomationId(mPage, name);
                 });
                 return new UIElementPOM(dependencyObject);
             }
@@ -72,10 +68,13 @@ namespace GingerTest.POMs.Common
         /// <param name="automationID"></param>
         /// <returns></returns>
         private DependencyObject FindControlByAutomationId(DependencyObject control, string automationID)
-        {            
+        {
             string AID = (string)control.GetValue(AutomationProperties.AutomationIdProperty);
-            if (AID == automationID) return control;
-            
+            if (AID == automationID)
+            {
+                return control;
+            }
+
             foreach (object subControl in LogicalTreeHelper.GetChildren(control))
             {
                 if (subControl is FrameworkElement)
@@ -84,11 +83,14 @@ namespace GingerTest.POMs.Common
                     if (frameworkElement != null)
                     {
                         DependencyObject DO = FindControlByAutomationId(frameworkElement, automationID);
-                        if (DO != null) return DO;
+                        if (DO != null)
+                        {
+                            return DO;
+                        }
                     }
                 }
             }
-            
+
             return null;
         }
 

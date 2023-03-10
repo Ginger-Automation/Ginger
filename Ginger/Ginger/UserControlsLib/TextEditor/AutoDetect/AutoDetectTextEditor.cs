@@ -16,20 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Plugin.Core;
+using Ginger.UserControlsLib.TextEditor.Common;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Highlighting;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using Ginger.UserControlsLib.TextEditor.Common;
-using ICSharpCode.AvalonEdit.CodeCompletion;
-using GingerPlugIns.TextEditorLib;
-using Amdocs.Ginger.Plugin.Core;
 
 namespace Ginger.UserControlsLib.TextEditor.VBS
 {
     public class AutoDetectTextEditor : TextEditorBase
     {
-        public override string Descritpion { get {throw new NotImplementedException();}}
+        public override string Descritpion { get { throw new NotImplementedException(); } }
         public override Image Icon { get { throw new NotImplementedException(); } }
 
         public override List<string> Extensions
@@ -39,7 +38,7 @@ namespace Ginger.UserControlsLib.TextEditor.VBS
                 return null;
             }
         }
-        
+
         public string ext { get; set; }
 
         public override IHighlightingDefinition HighlightingDefinition
@@ -53,7 +52,7 @@ namespace Ginger.UserControlsLib.TextEditor.VBS
         public override IFoldingStrategy FoldingStrategy
         {
             get
-            {                
+            {
                 return null;
             }
         }

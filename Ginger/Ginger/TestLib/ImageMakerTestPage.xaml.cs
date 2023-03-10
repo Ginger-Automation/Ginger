@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Core;
 using Amdocs.Ginger.UserControls;
 using System;
 using System.Collections.Generic;
@@ -35,19 +34,19 @@ namespace GingerWPF.UserControlsLib.ImageMakerLib
 
         public ImageMakerTestPage()
         {
-            InitializeComponent();            
-            ShowIcons(1,20);
+            InitializeComponent();
+            ShowIcons(1, 20);
         }
 
         public void StopSpinners()
         {
-            foreach(ImageMakerControl c in mImageMakerControls)
+            foreach (ImageMakerControl c in mImageMakerControls)
             {
                 c.StopImageSpin();
             }
         }
 
-        public void ShowIcons(int from , int count)
+        public void ShowIcons(int from, int count)
         {
             // Arrange            
             Grid grid = IconsGrid;
@@ -75,8 +74,15 @@ namespace GingerWPF.UserControlsLib.ImageMakerLib
             foreach (eImageType icon in icons)
             {
                 counter++;
-                if (counter < from) continue;
-                if (counter >= from + count) return;
+                if (counter < from)
+                {
+                    continue;
+                }
+
+                if (counter >= from + count)
+                {
+                    return;
+                }
 
                 StackPanel sp = new StackPanel();
                 sp.Orientation = Orientation.Vertical;
@@ -85,7 +91,7 @@ namespace GingerWPF.UserControlsLib.ImageMakerLib
                 IMK.ImageType = icon;
                 IMK.Width = 32;
                 IMK.Height = 32;
-                IMK.FontSize = 32;                
+                IMK.FontSize = 32;
                 sp.Children.Add(IMK);
                 mImageMakerControls.Add(IMK);
                 Label l = new Label();

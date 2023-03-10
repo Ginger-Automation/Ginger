@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows;
-using System.Windows.Controls;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Actions
 {
@@ -36,8 +36,8 @@ namespace Ginger.Actions
 
             this.mAct = Act;
 
-            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.GenElementAction);                     
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.SelectedValueProperty, Act, "GenElementAction"); 
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.GenElementAction);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.SelectedValueProperty, Act, "GenElementAction");
 
             Xoffset.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActGenElement.Fields.Xoffset), true);
             Yoffset.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActGenElement.Fields.Yoffset), true);
@@ -46,9 +46,13 @@ namespace Ginger.Actions
         private void ActionNameSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ActionNameComboBox.SelectedValue.Equals(ActGenElement.eGenElementAction.XYClick) || ActionNameComboBox.SelectedValue.Equals(ActGenElement.eGenElementAction.XYDoubleClick) || ActionNameComboBox.SelectedValue.Equals(ActGenElement.eGenElementAction.XYSendKeys))
+            {
                 CanvasStackPanel.Visibility = Visibility.Visible;
+            }
             else
+            {
                 CanvasStackPanel.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }

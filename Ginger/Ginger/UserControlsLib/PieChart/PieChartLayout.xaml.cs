@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using Ginger.ScottLogic.PieChart;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.ScottLogic.PieChart;
 
 namespace Ginger.UserControlsLib.PieChart
 {
@@ -43,7 +43,7 @@ namespace Ginger.UserControlsLib.PieChart
         public static readonly DependencyProperty PlottedPropertyProperty =
                        DependencyProperty.RegisterAttached("PlottedProperty", typeof(String), typeof(PieChartLayout),
                        new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.Inherits));
-        
+
         // PlottedProperty attached property accessors
         public static void SetPlottedProperty(UIElement element, String value)
         {

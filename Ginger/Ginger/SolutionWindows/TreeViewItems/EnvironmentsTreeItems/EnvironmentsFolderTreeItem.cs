@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Environments;
@@ -34,8 +33,8 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
 {
     public class EnvironmentsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
-        public RepositoryFolder<ProjEnvironment> mProjEnvironmentFolder;        
-     
+        public RepositoryFolder<ProjEnvironment> mProjEnvironmentFolder;
+
         private EnvsListPage mEnvsListPage;
 
         public EnvironmentsFolderTreeItem(RepositoryFolder<ProjEnvironment> projEnvironmentFolder)
@@ -49,7 +48,7 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
         }
 
         override public string NodePath()
-        {           
+        {
             return mProjEnvironmentFolder.FolderFullPath;
         }
 
@@ -59,9 +58,9 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {            
+        {
             return NewTVItemFolderHeaderStyle(mProjEnvironmentFolder);
-        }        
+        }
 
         public override ITreeViewItem GetFolderTreeItem(RepositoryFolderBase folder)
         {
@@ -85,7 +84,7 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            return GetChildrentGeneric<ProjEnvironment>(mProjEnvironmentFolder);            
+            return GetChildrentGeneric<ProjEnvironment>(mProjEnvironmentFolder);
         }
 
         bool ITreeViewItem.IsExpandable()
@@ -96,7 +95,10 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             if (mEnvsListPage == null)
+            {
                 mEnvsListPage = new EnvsListPage(mProjEnvironmentFolder);
+            }
+
             return mEnvsListPage;
         }
 
@@ -104,7 +106,7 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
         {
             return mContextMenu;
         }
-        
+
         void ITreeViewItem.SetTools(ITreeView TV)
         {
             mTreeView = TV;
@@ -112,20 +114,24 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Add New Environment", AddItemHandler, null, eImageType.Add);
             if (mProjEnvironmentFolder.IsRootFolder)
+            {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Environment", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true);
+            }
             else
+            {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Environment", allowAddNew: false, allowRefresh: false);
+            }
 
             AddSourceControlOptions(mContextMenu);
         }
 
         public override void PostSaveTreeItemHandler()
-        {                 
+        {
         }
 
         internal void AddItemHandler(object sender, RoutedEventArgs e)
         {
-            WizardWindow.ShowWizard(new AddEnvironmentWizard(mProjEnvironmentFolder));            
+            WizardWindow.ShowWizard(new AddEnvironmentWizard(mProjEnvironmentFolder));
         }
     }
 }

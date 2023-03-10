@@ -1,7 +1,4 @@
 ﻿using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
-using GingerCoreNET.GeneralLib;
-using GingerCoreNET.SolutionRepositoryLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,18 +34,18 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                 }
                 else if (v is IObservableList)
                 {
-                    List<NewPayLoad> lst = new List<NewPayLoad>();                    
+                    List<NewPayLoad> lst = new List<NewPayLoad>();
                     foreach (object o in v)
                     {
                         ObjectReflectionHelper ORHItem = new ObjectReflectionHelper();
                         ORHItem.obj = o;
                         NewPayLoad PL1 = ORHItem.GetObjectAsPayLoad("Item", attr);
-                        lst.Add(PL1);                        
+                        lst.Add(PL1);
                     }
                     PL.AddListPayLoad(lst);
 
                 }
-                else if (PI.PropertyType.Name == "String" )
+                else if (PI.PropertyType.Name == "String")
                 {
                     PL.AddValue((string)v);
                 }
@@ -66,11 +63,11 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         public void CreateObjectFromPayLoad(NewPayLoad PL, Attribute attr)
         {
             string cls = PL.GetValueString();
-            
+
             //TODO:  test it - where is it used? !!!
             //FIXME!! need for remoteobj
             //mObj = NewRepositorySerializer.GingerCoreNETAssembly.CreateInstance(cls);
-            
+
             UpdateObjectFromPayLoad(PL, attr);
         }
 
@@ -121,7 +118,11 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             {
 
                 Attribute token = Attribute.GetCustomAttribute(mi, attr.GetType(), false);
-                if (token == null) continue;                
+                if (token == null)
+                {
+                    continue;
+                }
+
                 PropertyInfo PI = mObj.GetType().GetProperty(mi.Name);
                 list.Add(PI);
             }

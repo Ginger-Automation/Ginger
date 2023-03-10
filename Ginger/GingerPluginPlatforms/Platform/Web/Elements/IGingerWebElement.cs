@@ -16,10 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 
 namespace Ginger.Plugin.Platform.Web.Elements
 {
@@ -27,7 +24,7 @@ namespace Ginger.Plugin.Platform.Web.Elements
     /// <summary>
     /// Exposes the common functionality of all web elements.
     /// </summary>
-   public interface IGingerWebElement
+    public interface IGingerWebElement
     {
 
 
@@ -51,7 +48,7 @@ namespace Ginger.Plugin.Platform.Web.Elements
         /// </summary>
         /// <param name="DragDropType">it SUpports Selenium and Javascript Drag and drop</param>
         /// <param name="Element"></param>
-        void DragAndDrop(string DragDropType,IGingerWebElement Element);
+        void DragAndDrop(string DragDropType, IGingerWebElement Element);
         /// <summary>
         /// Get Value of the provided Attribute
         /// </summary>
@@ -121,7 +118,7 @@ namespace Ginger.Plugin.Platform.Web.Elements
         /// Sets Focus to Current Element
         /// </summary>
         void SetFocus();
-     
+
 
     }
 }

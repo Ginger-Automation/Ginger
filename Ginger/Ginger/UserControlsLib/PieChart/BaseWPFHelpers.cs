@@ -17,15 +17,14 @@ limitations under the License.
 #endregion
 
 #region Using
+using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
-using System.Windows;
 using System.Reflection;
-using System.Windows.Media.Imaging;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using GingerCore;
-using Amdocs.Ginger.Common;
+using System.Windows.Media.Imaging;
 
 #endregion
 
@@ -130,7 +129,10 @@ namespace Ginger.UserControlsLib.PieChart
 
                 if (item is FrameworkElement)
                 {
-                    if ((item as FrameworkElement).Name == _name) bMatch = true;
+                    if ((item as FrameworkElement).Name == _name)
+                    {
+                        bMatch = true;
+                    }
                 }
 
                 return bMatch;
@@ -162,7 +164,10 @@ namespace Ginger.UserControlsLib.PieChart
 
                 if (item is FrameworkElement)
                 {
-                    if ((item as FrameworkElement).IsFocused) bMatch = true;
+                    if ((item as FrameworkElement).IsFocused)
+                    {
+                        bMatch = true;
+                    }
                 }
 
                 return bMatch;
@@ -181,7 +186,7 @@ namespace Ginger.UserControlsLib.PieChart
                 {
                 }
             }
-           
+
         }
 
         /// <summary>
@@ -195,7 +200,10 @@ namespace Ginger.UserControlsLib.PieChart
 
                 if (item is Panel)
                 {
-                    if ((item as Panel).IsItemsHost) bMatch = true;
+                    if ((item as Panel).IsItemsHost)
+                    {
+                        bMatch = true;
+                    }
                 }
 
                 return bMatch;
@@ -234,7 +242,10 @@ namespace Ginger.UserControlsLib.PieChart
 
             FrameworkElement feRet = null;
 
-            if (lst.Count > 0) feRet = lst[0];
+            if (lst.Count > 0)
+            {
+                feRet = lst[0];
+            }
 
             return feRet;
         }
@@ -257,7 +268,10 @@ namespace Ginger.UserControlsLib.PieChart
 
             FrameworkElement feRet = null;
 
-            if (lst.Count > 0) feRet = lst[0];
+            if (lst.Count > 0)
+            {
+                feRet = lst[0];
+            }
 
             return feRet;
         }
@@ -303,7 +317,10 @@ namespace Ginger.UserControlsLib.PieChart
         {
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
             {
-                if (lst.Count > 0 && helper.StopAfterFirst) break;
+                if (lst.Count > 0 && helper.StopAfterFirst)
+                {
+                    break;
+                }
 
                 DependencyObject visual = VisualTreeHelper.GetChild(parent, i);
 
@@ -317,7 +334,10 @@ namespace Ginger.UserControlsLib.PieChart
                     lst.Add(visual as FrameworkElement);
                 }
 
-                if (lst.Count > 0 && helper.StopAfterFirst) break;
+                if (lst.Count > 0 && helper.StopAfterFirst)
+                {
+                    break;
+                }
 
                 if (visual != ignore)
                 {
@@ -405,14 +425,14 @@ namespace Ginger.UserControlsLib.PieChart
         {
             return SingleFindInTree(parent, new FinderMatchType(ty));
         }
-        
+
         /// <summary>
         /// Helper to pause any media elements down in the visual tree
         /// </summary>
         /// <param name="parent"></param>
         public static void TurnOffMediaElements(Visual parent)
         {
-            List<FrameworkElement> lst = FindElementsOfType(parent,typeof(MediaElement));
+            List<FrameworkElement> lst = FindElementsOfType(parent, typeof(MediaElement));
 
             foreach (FrameworkElement me in lst)
             {

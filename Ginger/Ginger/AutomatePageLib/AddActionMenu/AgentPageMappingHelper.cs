@@ -26,12 +26,12 @@ namespace Ginger.BusinessFlowPages
         /// Gets/Sets ObjectWindowPage
         /// </summary>
         public object ObjectWindowPage { get; set; }
-        
+
         /// <summary>
         /// Gets/Sets ObjectAgent
         /// </summary>
         public Agent ObjectAgent { get; set; }
-        
+
         /// <summary>
         /// Constructor
         /// </summary>

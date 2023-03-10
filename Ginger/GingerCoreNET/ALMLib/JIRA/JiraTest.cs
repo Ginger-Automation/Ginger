@@ -52,7 +52,7 @@ namespace GingerCore.ALM.JIRA
         public string Labels { get; set; }
 
         //Called Test Parameters
-        public List<JiraTestParameter> Parameters { get; set; }  
-        public List<JiraTestStep> Steps { get; set; } 
+        public List<JiraTestParameter> Parameters { get; set; }
+        public List<JiraTestStep> Steps { get; set; }
     }
 }

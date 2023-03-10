@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore.GeneralLib;
-using System;
-using System.Collections.Generic;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -30,7 +30,7 @@ namespace Ginger.Run.RunSetActions
         public IRunSetActionSendSMSOperations RunSetActionSendSMSOperations;
         [IsSerializedForLocalRepository]
         public Email SMSEmail = new Email();
-      
+
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
             List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();
@@ -43,7 +43,7 @@ namespace Ginger.Run.RunSetActions
         {
             get { return true; }
         }
-      
+
         public override void Execute(IReportInfo RI)
         {
             RunSetActionSendSMSOperations.Execute(RI);

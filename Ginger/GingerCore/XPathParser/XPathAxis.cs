@@ -17,22 +17,24 @@ limitations under the License.
 #endregion
 
 
-namespace GingerCore.XPathParser {
-    public enum XPathAxis {
-        Unknown      = 0,
-        Ancestor        ,
-        AncestorOrSelf  ,
-        Attribute       ,
-        Child           ,
-        Descendant      ,
+namespace GingerCore.XPathParser
+{
+    public enum XPathAxis
+    {
+        Unknown = 0,
+        Ancestor,
+        AncestorOrSelf,
+        Attribute,
+        Child,
+        Descendant,
         DescendantOrSelf,
-        Following       ,
+        Following,
         FollowingSibling,
-        Namespace       ,
-        Parent          ,
-        Preceding       ,
+        Namespace,
+        Parent,
+        Preceding,
         PrecedingSibling,
-        Self            ,
-        Root            ,
+        Self,
+        Root,
     }
 }

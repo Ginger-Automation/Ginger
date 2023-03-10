@@ -20,9 +20,9 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Drivers.Common;
 
 namespace GingerCore.Actions.UIAutomation
-{ 
+{
     public class UIAElementInfo : ElementInfo
-    {  
+    {
         //TOOD: if needed do lazy loading and read it from th obj above
         public double XCordinate;
         public double YCordinate;
@@ -50,7 +50,7 @@ namespace GingerCore.Actions.UIAutomation
             // start with the text on the control 
             // then try Name
             // else get control type and automation ID
-            
+
             return ((UIAutomationDriverBase)WindowExplorer).mUIAutomationHelper.GetElementTitle(ElementObject);
         }
 
@@ -62,7 +62,7 @@ namespace GingerCore.Actions.UIAutomation
         public override string GetValue()
         {
             //TODO: check and find the best, if no value take maybe Name or something else, maybe change to content instead of value
-          return  ((UIAutomationDriverBase)WindowExplorer).mUIAutomationHelper.GetControlPropertyValue(ElementObject,"Value");
+            return ((UIAutomationDriverBase)WindowExplorer).mUIAutomationHelper.GetControlPropertyValue(ElementObject, "Value");
         }
     }
 }

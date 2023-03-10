@@ -16,14 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore.GingerOCR;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using GingerTestHelper;
-using GingerCore.Actions;
-using GingerCore.Actions.XML;
-using Amdocs.Ginger.Common;
-using GingerCore;
-using GingerCore.GingerOCR;
 
 namespace GingerCoreTest.Misc
 {

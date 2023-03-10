@@ -16,14 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using Amdocs.Ginger.CoreNET.Utility;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-
-using Newtonsoft.Json;
 using System.IO;
-using Amdocs.Ginger.CoreNET.Utility;
-using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using System.Linq;
 
 namespace Ginger.Reports
 {
@@ -84,7 +83,7 @@ namespace Ginger.Reports
         [FieldParamsIsSelected(true)]
         [UsingUTCTimeFormat]
         public DateTime EndTimeStamp { get; set; }
-        
+
         [JsonProperty]
         public string GUID { get; set; }
 
@@ -181,7 +180,7 @@ namespace Ginger.Reports
         public double? Elapsed { get; set; }
 
         public string ExecutionDurationHHMMSS { get; set; }
-        
+
 
         public string LogFolder { get; set; }
 
@@ -202,7 +201,7 @@ namespace Ginger.Reports
                         {
                             try
                             {
-                                GingerReport gr = (GingerReport)JsonLib.LoadObjFromJSonFile(Path.Combine(folder,"Ginger.txt"), typeof(GingerReport));
+                                GingerReport gr = (GingerReport)JsonLib.LoadObjFromJSonFile(Path.Combine(folder, "Ginger.txt"), typeof(GingerReport));
                                 gr.LogFolder = folder;
                                 gingerReports.Add(gr);
                             }
@@ -269,7 +268,7 @@ namespace Ginger.Reports
             Elapsed = runSet.Elapsed;
             ExecutionDurationHHMMSS = GingerCoreNET.GeneralLib.General.TimeConvert(Elapsed.ToString());
             Amdocs.Ginger.CoreNET.Execution.eRunStatus myStatus;
-            if(Enum.TryParse(runSet.RunStatus, out myStatus))
+            if (Enum.TryParse(runSet.RunStatus, out myStatus))
             {
                 RunSetExecutionStatus = myStatus;
             }

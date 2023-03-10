@@ -16,11 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using GingerCore.Actions;
-using System.Windows.Controls;
 using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
-using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Actions.VisualTesting
 {

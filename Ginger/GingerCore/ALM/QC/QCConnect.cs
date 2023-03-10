@@ -19,8 +19,8 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
+using System.Reflection;
 using TDAPIOLELib;
 
 namespace GingerCore.ALM.QC
@@ -44,9 +44,15 @@ namespace GingerCore.ALM.QC
                 try
                 {
                     if (mTDConn != null)
+                    {
                         if (mTDConn.Connected)
+                        {
                             if (mTDConn.LoggedIn)
+                            {
                                 return true;
+                            }
+                        }
+                    }
 
                     return false;
                 }
@@ -65,8 +71,12 @@ namespace GingerCore.ALM.QC
                 try
                 {
                     if (IsServerConnected)
+                    {
                         if (mTDConn.ProjectConnected)
+                        {
                             return true;
+                        }
+                    }
 
                     return false;
                 }
@@ -83,9 +93,13 @@ namespace GingerCore.ALM.QC
             get
             {
                 if (mTDConn != null)
+                {
                     return mTDConn.DomainName;
+                }
                 else
+                {
                     return null;
+                }
             }
         }
 
@@ -94,16 +108,20 @@ namespace GingerCore.ALM.QC
             get
             {
                 if (mTDConn != null)
+                {
                     return mTDConn.ProjectName;
+                }
                 else
+                {
                     return null;
+                }
             }
         }
 
         // Opening QC Connection 
         public static bool ConnectQCServer(string QCServerUrl, string QCUserName, string QCPassword)
         {
-            if(string.IsNullOrEmpty(QCServerUrl) || string.IsNullOrEmpty(QCUserName) || string.IsNullOrEmpty(QCPassword))
+            if (string.IsNullOrEmpty(QCServerUrl) || string.IsNullOrEmpty(QCUserName) || string.IsNullOrEmpty(QCPassword))
             {
                 return false;
             }
@@ -119,11 +137,19 @@ namespace GingerCore.ALM.QC
         public static void DisconnectQCServer()
         {
             if (IsProjectConnected)
+            {
                 mTDConn.DisconnectProject();
+            }
+
             if (IsServerConnected)
+            {
                 mTDConn.Logout();
+            }
+
             if (mTDConn != null && mTDConn.Connected)
+            {
                 mTDConn.Disconnect();
+            }
         }
 
         // QC Login Function      
@@ -133,7 +159,7 @@ namespace GingerCore.ALM.QC
             {
                 mTDConn.Connect(QCDomain, QCProject);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
@@ -143,7 +169,9 @@ namespace GingerCore.ALM.QC
                 return true;
             }
             else //testTDConn.Disconnect(); 
+            {
                 return false;
+            }
         }
 
         public static bool ConnectQCProject(string QCServerUrl, string QCUserName, string QCPassword, string QCDomain, string QCProject)
@@ -155,7 +183,9 @@ namespace GingerCore.ALM.QC
                 string.IsNullOrEmpty(QCProject) == false)
             {
                 if (ConnectQCServer(QCServerUrl, QCUserName, QCPassword))
+                {
                     return ConnectQCProject(QCDomain, QCProject);
+                }
             }
             return false;
         }
@@ -208,7 +238,7 @@ namespace GingerCore.ALM.QC
             return QCDomains;
         }
 
-        public static Dictionary<string,string> GetQCDomainProjects(string domainName)
+        public static Dictionary<string, string> GetQCDomainProjects(string domainName)
         {
             dynamic lstProjects = mTDConn.VisibleProjects[domainName];
             List<string> strProjects = new List<string>();
@@ -242,7 +272,9 @@ namespace GingerCore.ALM.QC
             TestSetTreeManager treeM = (TestSetTreeManager)mTDConn.TestSetTreeManager;
             TestSetFolder tsFolder = (TestSetFolder)treeM.get_NodeByPath(PathNode);
             if (tsFolder == null && PathNode.ToUpper() == "ROOT")
+            {
                 tsFolder = (TestSetFolder)treeM.Root;
+            }
 
             List FoldersList = tsFolder.NewList();
             List<string> testlabPathList = new List<string>();
@@ -261,7 +293,9 @@ namespace GingerCore.ALM.QC
             TestSetTreeManager treeM = (TestSetTreeManager)mTDConn.TestSetTreeManager;
             TestSetFolder tsFolder = (TestSetFolder)treeM.get_NodeByPath(PathNode);
             if (tsFolder == null && PathNode.ToUpper() == "ROOT")
+            {
                 tsFolder = (TestSetFolder)treeM.Root;
+            }
 
             TestSetFactory TSetFact = (TestSetFactory)mTDConn.TestSetFactory;
             TDFilter tsFilter = (TDFilter)TSetFact.Filter;

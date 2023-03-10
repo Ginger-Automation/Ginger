@@ -16,19 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ginger.Repository;
-using GingerCore;
-using GingerCore.Actions;
-using HtmlAgilityPack;
-using GingerCore.GeneralLib;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 
 namespace Ginger.Import
 {
@@ -39,7 +37,7 @@ namespace Ginger.Import
             //TODO: move code from here to converter/import class
             var doc = new HtmlDocument();
             Activity result = new Activity() { Active = true };
-            
+
             BusinessFlow bf = new BusinessFlow("");
             ePlatformType actionsPlatform = ePlatformType.Web;
             try
@@ -49,7 +47,9 @@ namespace Ginger.Import
                 if (InputBoxWindow.OpenDialog("Required Platform", "Required platform (set 'Web' or 'Mobile'):", ref selectedPlatform))
                 {
                     if (selectedPlatform.Trim().ToUpper() == "MOBILE")
+                    {
                         actionsPlatform = ePlatformType.Mobile;
+                    }
                 }
 
                 doc.Load(FileName);
@@ -73,7 +73,7 @@ namespace Ginger.Import
                     {
                         if (bf != null)
                         {
-                            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(bf);                            
+                            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(bf);
                         }
                         bf = new BusinessFlow(row.Descendants("title").FirstOrDefault().InnerText);
                         result = new Activity() { Active = true };
@@ -147,7 +147,7 @@ namespace Ginger.Import
                 }
                 if (bf != null)
                 {
-                    return bf;                                       
+                    return bf;
                 }
             }
             catch (Exception)

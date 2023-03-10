@@ -31,7 +31,7 @@ using System;
 using System.IO;
 
 namespace WorkspaceHold
-{        
+{
     [Ignore] // Failing on Linux and Mac with timeout
     [TestClass]
     [Level1]
@@ -47,14 +47,14 @@ namespace WorkspaceHold
 
         [ClassInitialize()]
         public static void ClassInit(TestContext TestContext)
-        {            
+        {
             mTestHelper.ClassInitialize(TestContext);
             Prep();
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
-        {                        
+        {
             WorkSpace.Instance.PlugInsManager.CloseAllRunningPluginProcesses();
             mTestHelper.ClassCleanup();
         }
@@ -63,7 +63,7 @@ namespace WorkspaceHold
         public void TestInitialize()
         {
             //WorkSpace.LockWS();
-            
+
             mTestHelper.TestInitialize(TestContext);
         }
 
@@ -74,7 +74,7 @@ namespace WorkspaceHold
             mTestHelper.TestCleanup();
         }
 
-        static  void Prep()
+        static void Prep()
         {
             // Create new solution
             mBusinessFlow = new BusinessFlow();
@@ -110,7 +110,7 @@ namespace WorkspaceHold
             Console.WriteLine("LocalGingerGrid Status: " + WorkSpace.Instance.LocalGingerGrid.Status);
         }
 
-        
+
 
 
         private void ResetBusinessFlow()
@@ -121,7 +121,7 @@ namespace WorkspaceHold
         }
 
 
-        
+
         [TestMethod]
         [Timeout(60000)]
         public void PluginSay()
@@ -156,7 +156,7 @@ namespace WorkspaceHold
         }
 
 
-        
+
         [TestMethod]
         [Timeout(60000)]
         public void MemoPluginSpeedTest()
@@ -196,7 +196,7 @@ namespace WorkspaceHold
         }
 
 
-      
+
 
 
     }

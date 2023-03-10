@@ -18,8 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.GingerRuntime.ReporterLib
 {
@@ -34,27 +32,27 @@ namespace Amdocs.Ginger.GingerRuntime.ReporterLib
             // TODO: change console color
             // switch (buttonsType )
             // {
-                // TODO: !!!!!!!!!!!!!!!!!!!!!!
-                // show buttons [Ok] - O
-                // Y, N, C
+            // TODO: !!!!!!!!!!!!!!!!!!!!!!
+            // show buttons [Ok] - O
+            // Y, N, C
             // }
             Console.WriteLine(txt);
-            
+
             return defualtResualt; // TEMP !!!!!!!!!            
         }
 
         public override void ToStatus(eStatusMsgType messageType, string statusText)
         {
-           /// Console.WriteLine(statusText); //write to Console already been done by Reporter
+            /// Console.WriteLine(statusText); //write to Console already been done by Reporter
         }
-        
+
 
         public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
             try
-            {                
+            {
                 switch (logLevel)
-                {                    
+                {
                     case eLogLevel.DEBUG:
                         log.Debug(messageToLog, exceptionToLog);
                         break;
@@ -81,7 +79,7 @@ namespace Amdocs.Ginger.GingerRuntime.ReporterLib
                 throw (ex);
             }
         }
-        
-        
+
+
     }
 }

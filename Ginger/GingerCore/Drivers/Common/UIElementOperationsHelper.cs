@@ -22,7 +22,6 @@ using GingerCore.Actions.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 
 using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
@@ -31,9 +30,9 @@ namespace GingerCore.Drivers.Common
 {
     public class ActionResult
     {
-        public string errorMessage { get; set;  }
-        public string executionInfo { get; set;  }
-        public string outputValue { get; set;  }
+        public string errorMessage { get; set; }
+        public string executionInfo { get; set; }
+        public string outputValue { get; set; }
     }
 
 
@@ -44,7 +43,7 @@ namespace GingerCore.Drivers.Common
         public bool taskFinished;
         public ActionResult ToggleElement(UIAuto.AutomationElement automationElement, eElementType elementType)
         {
-            ActionResult actionResult = new ActionResult();           
+            ActionResult actionResult = new ActionResult();
             object togglePattern;
 
             try
@@ -70,7 +69,7 @@ namespace GingerCore.Drivers.Common
                 }
                 else
                 {
-                    actionResult.errorMessage = "Toggle is not supported for this element type "+ elementType;
+                    actionResult.errorMessage = "Toggle is not supported for this element type " + elementType;
                 }
             }
             catch (Exception ex)
@@ -265,7 +264,7 @@ namespace GingerCore.Drivers.Common
             object scrollPattern;
             automationElement.TryGetCurrentPattern(UIAuto.ScrollItemPattern.Pattern, out scrollPattern);
             if (scrollPattern != null)
-            {               
+            {
                 ((UIAuto.ScrollItemPattern)scrollPattern).ScrollIntoView();
                 actionResult.executionInfo = "Successfully scrolled the element into view";
             }
@@ -278,10 +277,10 @@ namespace GingerCore.Drivers.Common
 
         internal ActionResult GetPropertyValue(UIAuto.AutomationElement automationElement, UIAuto.AutomationProperty automationProperty)
         {
-  
+
 
             ActionResult actionResult = new ActionResult();
-            object selectedValue=  automationElement.GetCurrentPropertyValue(automationProperty);
+            object selectedValue = automationElement.GetCurrentPropertyValue(automationProperty);
 
             if (selectedValue != null)
             {
@@ -301,12 +300,12 @@ namespace GingerCore.Drivers.Common
             Boolean clickTriggeredFlag = false;
             try
             {
-               actionResult= ClickUsingInvokePattern(automationElement, ref clickTriggeredFlag);
+                actionResult = ClickUsingInvokePattern(automationElement, ref clickTriggeredFlag);
                 if (!string.IsNullOrEmpty(actionResult.errorMessage))
                 {
                     clickTriggeredFlag = false;
                     actionResult = ClickUsingLegacyPattern(automationElement, ref clickTriggeredFlag);
-                }                       
+                }
             }
             catch (Exception ex)
             {
@@ -318,11 +317,11 @@ namespace GingerCore.Drivers.Common
 
         public ActionResult MouseClickElement(UIAuto.AutomationElement automationElement)
         {
-            ActionResult actionResult = new ActionResult();         
+            ActionResult actionResult = new ActionResult();
             try
             {
-               winAPI.SendClick(automationElement);
-               actionResult.executionInfo = "Successfully clicked the element";
+                winAPI.SendClick(automationElement);
+                actionResult.executionInfo = "Successfully clicked the element";
             }
             catch (Exception ex)
             {
@@ -357,9 +356,9 @@ namespace GingerCore.Drivers.Common
             try
             {
                 string xy = string.Empty;
-                if(xCoordinate !=0 && yCoordinate!=0)
+                if (xCoordinate != 0 && yCoordinate != 0)
                 {
-                    xy= xCoordinate + ","+ yCoordinate; 
+                    xy = xCoordinate + "," + yCoordinate;
                 }
 
                 winAPI.SendDoubleClick(automationElement, xy);
@@ -412,13 +411,13 @@ namespace GingerCore.Drivers.Common
                     }
 
                 }));
-                UIAClickThread.IsBackground = true;            
+                UIAClickThread.IsBackground = true;
                 UIAClickThread.Start();
 
                 Stopwatch st = new Stopwatch();
                 st.Start();
 
-                while (clickTriggeredFlag==false && st.ElapsedMilliseconds < 30000)
+                while (clickTriggeredFlag == false && st.ElapsedMilliseconds < 30000)
                 {
                     Thread.Sleep(10);
                 }
@@ -428,7 +427,7 @@ namespace GingerCore.Drivers.Common
 
                 UIAClickThread.Abort();
 
-               if(clickTriggeredFlag)
+                if (clickTriggeredFlag)
                 {
                     actionResult.executionInfo = "Successfully triggered async click";
                 }
@@ -458,7 +457,7 @@ namespace GingerCore.Drivers.Common
 
                 if (invokePattern != null)
                 {
-                    clickTriggeredFlag = true;                   
+                    clickTriggeredFlag = true;
                     ((UIAuto.InvokePattern)invokePattern).Invoke();
                     actionResult.executionInfo = "Successfully clicked the element";
                 }
@@ -487,10 +486,10 @@ namespace GingerCore.Drivers.Common
 
                 if (legacyPattern != null)
                 {
-                    actionResult= GetPropertyValue(automationElement,UIAuto.LegacyIAccessiblePatternIdentifiers.DefaultActionProperty);
-                    if(string.IsNullOrEmpty(actionResult.errorMessage))
+                    actionResult = GetPropertyValue(automationElement, UIAuto.LegacyIAccessiblePatternIdentifiers.DefaultActionProperty);
+                    if (string.IsNullOrEmpty(actionResult.errorMessage))
                     {
-                        if(!string.IsNullOrEmpty(actionResult.outputValue))
+                        if (!string.IsNullOrEmpty(actionResult.outputValue))
                         {
                             clickTriggeredFlag = true;
                             ((UIAuto.LegacyIAccessiblePattern)legacyPattern).DoDefaultAction();
@@ -500,7 +499,7 @@ namespace GingerCore.Drivers.Common
                         {
                             actionResult.errorMessage = "Failed to click the element";
                         }
-                    }                  
+                    }
                 }
                 else
                 {
@@ -551,11 +550,11 @@ namespace GingerCore.Drivers.Common
                 //}
                 //else
                 //{
-                    actionResult = GetPropertyValue(automationElement, UIAuto.ValuePatternIdentifiers.ValueProperty);
-                    if (!string.IsNullOrEmpty(actionResult.errorMessage)|| string.IsNullOrEmpty(actionResult.outputValue))
-                    {
-                        actionResult = GetPropertyValue(automationElement, UIAuto.LegacyIAccessiblePatternIdentifiers.ValueProperty);
-                    }
+                actionResult = GetPropertyValue(automationElement, UIAuto.ValuePatternIdentifiers.ValueProperty);
+                if (!string.IsNullOrEmpty(actionResult.errorMessage) || string.IsNullOrEmpty(actionResult.outputValue))
+                {
+                    actionResult = GetPropertyValue(automationElement, UIAuto.LegacyIAccessiblePatternIdentifiers.ValueProperty);
+                }
                 //}      
             }
             catch (Exception ex)
@@ -698,7 +697,7 @@ namespace GingerCore.Drivers.Common
                 actionResult.errorMessage = "Unable to close the window";
             }
             return actionResult;
-            
+
         }
 
         public ActionResult GetTitle(UIAuto.AutomationElement window)
@@ -732,7 +731,7 @@ namespace GingerCore.Drivers.Common
                 }
                 else
                 {
-                    actionResult.errorMessage = "Unable to "+ windowVisualState + " the window";
+                    actionResult.errorMessage = "Unable to " + windowVisualState + " the window";
                 }
             }
             catch (Exception ex)
@@ -743,7 +742,7 @@ namespace GingerCore.Drivers.Common
             return actionResult;
 
         }
-        
+
         public bool PerformClick(UIAuto.AutomationElement automationElement, ActUIElement.eElementAction clickType)
         {
             ActionResult actionResult = new ActionResult();
@@ -840,7 +839,7 @@ namespace GingerCore.Drivers.Common
             }
             if (isValidated)
             {
-               actionResult.executionInfo = "Successfully clicked and validated";
+                actionResult.executionInfo = "Successfully clicked and validated";
             }
             return actionResult;
         }

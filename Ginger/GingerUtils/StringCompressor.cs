@@ -81,7 +81,7 @@ namespace GingerUtils
             var memoryStream = new MemoryStream();
             using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Compress, true))
             {
-                gZipStream.Write(buffer, 0, buffer.Length);                
+                gZipStream.Write(buffer, 0, buffer.Length);
             }
             //TODO: check if it will reduce mem
             return memoryStream;
@@ -93,17 +93,17 @@ namespace GingerUtils
         /// <param name="compressedText">The compressed text.</param>
         /// <returns></returns>
         public static string DecompressStringFromBytes(MemoryStream memoryStream, int Len)
-        {            
-                var buffer = new byte[Len];
+        {
+            var buffer = new byte[Len];
 
-                // memoryStream.
-                memoryStream.Position = 0;
-                using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
-                {
-                    gZipStream.Read(buffer, 0, buffer.Length);
-                }
+            // memoryStream.
+            memoryStream.Position = 0;
+            using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Decompress))
+            {
+                gZipStream.Read(buffer, 0, buffer.Length);
+            }
 
-                return Encoding.UTF8.GetString(buffer);
+            return Encoding.UTF8.GetString(buffer);
         }
     }
 }

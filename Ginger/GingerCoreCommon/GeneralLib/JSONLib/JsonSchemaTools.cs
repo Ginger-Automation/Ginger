@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NJsonSchema;
-using System.Collections.Generic;
 
 namespace Amdocs.Ginger.Common
 {

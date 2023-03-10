@@ -69,14 +69,17 @@ namespace Ginger.TagsLib
         {
             // We create a temp list for selection and mark the selected if exist already
             list = new ObservableList<SelectedTag>();
-            foreach(RepositoryItemTag t in  WorkSpace.Instance.Solution.Tags)
+            foreach (RepositoryItemTag t in WorkSpace.Instance.Solution.Tags)
             {
                 SelectedTag st = new SelectedTag();
                 st.Name = t.Name;
                 st.Description = t.Description;
                 st.GUID = t.Guid;
 
-                if (mTags.Contains(t.Guid)) st.Selected = true;
+                if (mTags.Contains(t.Guid))
+                {
+                    st.Selected = true;
+                }
 
                 list.Add(st);
             }
@@ -96,13 +99,13 @@ namespace Ginger.TagsLib
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
-        {            
+        {
             mTags.Clear();
             foreach (SelectedTag TA in list)
             {
                 if (TA.Selected)
                 {
-                    mTags.Add(TA.GUID);                    
+                    mTags.Add(TA.GUID);
                 }
             }
             _pageGenericWin.Close();

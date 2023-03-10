@@ -36,7 +36,7 @@ namespace Amdocs.Ginger.Common
             Console.WriteLine("ToUser: " + txt);
             return defualtResault;
         }
-        
+
 
         public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {

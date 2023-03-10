@@ -48,10 +48,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         // when server send to client
         ReceviedRequest,
         ProcessingRequest,
-        SendingResponse        
+        SendingResponse
         // Back to Ready
     }
-    
+
     public enum eGingerSocketProtocolMessageType
     {
         // First we do handshake

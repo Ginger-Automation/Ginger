@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using GingerWPF;
 using GingerWPF.SolutionLib;
 using System.Diagnostics;
 using System.Windows;
@@ -36,7 +35,7 @@ namespace Ginger
 
             //TODO: load from external - so easier to update
             lblAppVersion.Content = "Version ZZZZZZZZZZZZZ";  //+ Ginger.App.AppVersion;
-            
+
             SolutionsFrame.SetContent(new RecentSolutionsPage());
         }
 

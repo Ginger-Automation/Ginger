@@ -17,31 +17,30 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
+using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.PBDriver;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCore.Actions.UIAutomation;
 using System.Windows;
-using System.IO;
-using GingerCore.Common;
-using GingerCore.GeneralLib;
 using System.Windows.Automation;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 // a lot of samples from Microsoft on UIA at: https://uiautomationverify.svn.codeplex.com/svn/UIAVerify/
 // DO NOT add any specific driver here, this is generic windows app driver helper 
@@ -54,7 +53,7 @@ namespace GingerCore.Drivers
 
         // the current App window we do all searches on
         public string CurrentWindowName { get; set; }
-        public UIAuto.AutomationElement CurrentWindow { get; set; }      
+        public UIAuto.AutomationElement CurrentWindow { get; set; }
 
         public ObservableList<Act> ElementLocators = new ObservableList<Act>();
         public ObservableList<Act> ParentLocators = new ObservableList<Act>();
@@ -63,8 +62,8 @@ namespace GingerCore.Drivers
 
         private int loadwaitSeconds;
         private WinAPIAutomation winAPI = new WinAPIAutomation();
-          public Dictionary<string, UIAuto.AutomationElement[]> MainDict = new Dictionary<string, UIAuto.AutomationElement[]>();
-        public HTMLHelper HTMLhelperObj{get;set;}
+        public Dictionary<string, UIAuto.AutomationElement[]> MainDict = new Dictionary<string, UIAuto.AutomationElement[]>();
+        public HTMLHelper HTMLhelperObj { get; set; }
 
         List<string> ImportentProperties = new List<string>();
 
@@ -81,7 +80,7 @@ namespace GingerCore.Drivers
 
             InitXpathHelper();
         }
-        
+
         private void InitXpathHelper()
         {
             mXPathHelper = new XPathHelper(this, ImportentProperties);
@@ -90,9 +89,9 @@ namespace GingerCore.Drivers
             ImportentProperties.Add("LocalizedControlType");
             mXPathHelper = new XPathHelper(this, ImportentProperties);
         }
-        
+
         private UIAuto.AutomationElement lastFocusedElement;
-        
+
         /// <summary>
         /// Determines if element is a content element used for searching elements that content is presented to user (non peripheral elements)
         /// </summary>
@@ -133,7 +132,7 @@ namespace GingerCore.Drivers
 
             UIAuto.AutomationProperty[] propertyList = new[]{
               UIAuto.TogglePattern.ToggleStateProperty,
-                 UIAuto.ExpandCollapsePattern.ExpandCollapseStateProperty                 
+                 UIAuto.ExpandCollapsePattern.ExpandCollapseStateProperty
             };
 
             UIAuto.Automation.AddAutomationPropertyChangedEventHandler(CurrentWindow, Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, OnPropertyChange, propertyList);
@@ -171,11 +170,14 @@ namespace GingerCore.Drivers
                 //}
             }
         }
-        
+
         private void recElementSelectedEvent(object sender, UIAuto.AutomationEventArgs e)
         {
             UIAuto.AutomationElement AE = (UIAuto.AutomationElement)sender;
-            if (sLastEvent == GetAEEventInfo(AE, e.EventId)) return;
+            if (sLastEvent == GetAEEventInfo(AE, e.EventId))
+            {
+                return;
+            }
 
             string controlType = AE.Current.LocalizedControlType;
 
@@ -214,7 +216,10 @@ namespace GingerCore.Drivers
         private void recWindowOpenedEvent(object sender, UIAuto.AutomationEventArgs e)
         {
             UIAuto.AutomationElement AE = (UIAuto.AutomationElement)sender;
-            if (sLastEvent == GetAEEventInfo(AE, e.EventId)) return;
+            if (sLastEvent == GetAEEventInfo(AE, e.EventId))
+            {
+                return;
+            }
 
             if (AE.Current.LocalizedControlType == "window")
             {
@@ -227,7 +232,11 @@ namespace GingerCore.Drivers
         private void recInvokedEvent(object sender, UIAuto.AutomationEventArgs e)
         {
             UIAuto.AutomationElement AE = (UIAuto.AutomationElement)sender;
-            if (sLastEvent == GetAEEventInfo(AE, e.EventId)) return;
+            if (sLastEvent == GetAEEventInfo(AE, e.EventId))
+            {
+                return;
+            }
+
             CreateActionEvent(AE, DriverBase.ActionName.Click);
             SetLastEvent(AE, e.EventId);
         }
@@ -247,7 +256,10 @@ namespace GingerCore.Drivers
         private void OnPropertyChange(object src, UIAuto.AutomationPropertyChangedEventArgs e)
         {
             UIAuto.AutomationElement AE = (UIAuto.AutomationElement)src;
-            if (sLastEvent == GetAEEventInfo(AE, e.EventId)) return;
+            if (sLastEvent == GetAEEventInfo(AE, e.EventId))
+            {
+                return;
+            }
 
             string controlType = AE.Current.LocalizedControlType;
             switch (controlType)
@@ -328,7 +340,7 @@ namespace GingerCore.Drivers
                 UIAuto.InvokePattern ivp = AE.GetCurrentPattern(UIAuto.InvokePattern.Pattern) as UIAuto.InvokePattern;
                 ivp.Invoke();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Exception in DragDropControl", ex);
             }
@@ -374,8 +386,15 @@ namespace GingerCore.Drivers
                     conditions.Add(new UIAuto.PropertyCondition(UIAuto.AutomationElement.IsOffscreenProperty, true));
                 }
             }
-            if (conditions.Count == 1) ElementCondition = conditions[0];
-            else ElementCondition = new UIAuto.AndCondition(conditions.ToArray());
+            if (conditions.Count == 1)
+            {
+                ElementCondition = conditions[0];
+            }
+            else
+            {
+                ElementCondition = new UIAuto.AndCondition(conditions.ToArray());
+            }
+
             return ElementCondition;
         }
         public bool isChildofAppWindow(UIAuto.AutomationElement AE)
@@ -395,7 +414,7 @@ namespace GingerCore.Drivers
             }
             return foundParent;
         }
-              
+
         public override List<object> GetListOfWindows()
         {
             List<object> appWindows = new List<object>();
@@ -404,12 +423,12 @@ namespace GingerCore.Drivers
 
             while (PE != null)
             {
-                appWindows.Add(PE);               
+                appWindows.Add(PE);
                 try
                 {
                     PE = walker.GetNextSibling(PE);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     // Do nothing
                     // other option is to turn this exception off...
@@ -442,7 +461,7 @@ namespace GingerCore.Drivers
                         {
                             continue;
                         }
-                        if(CheckUserSpecificProcess(window) == false)
+                        if (CheckUserSpecificProcess(window) == false)
                         {
                             continue;
                         }
@@ -463,7 +482,7 @@ namespace GingerCore.Drivers
                                 if (p.ProcessName == "AcroRd32")
                                 {
                                     WindowTitle = Process.GetProcessById(window.Current.ProcessId).MainWindowTitle;
-                                }                                
+                                }
                             }
                             if (!String.IsNullOrEmpty(WindowTitle))
                             {
@@ -475,8 +494,8 @@ namespace GingerCore.Drivers
                             {
                                 if (IsWindowValid(window))
                                 {
-                                    CurrentWindow = window;                                    
-                                    CurrentWindowName = GetWindowInfo(window);                                    
+                                    CurrentWindow = window;
+                                    CurrentWindowName = GetWindowInfo(window);
                                 }
                             }
                         }
@@ -489,7 +508,7 @@ namespace GingerCore.Drivers
 
                     foreach (UIAuto.AutomationElement window in AppWindows)
                     {
-                        if (!IsWindowValid(window)) 
+                        if (!IsWindowValid(window))
                         {
                             continue;
                         }
@@ -557,7 +576,7 @@ namespace GingerCore.Drivers
                 else
                 {
                     return true;
-                }                
+                }
             }
             catch (Exception ex)
             {
@@ -565,7 +584,7 @@ namespace GingerCore.Drivers
                 return false;
             }
         }
- 
+
 
         #endregion RECORDING DRIVER
 
@@ -587,7 +606,10 @@ namespace GingerCore.Drivers
                     }
                 }
             }
-            if (Locators.Count == 0) Locators.Add(new ActDummy() { LocateBy = eLocateBy.ByLocalizedControlType, LocateValue = "edit" });
+            if (Locators.Count == 0)
+            {
+                Locators.Add(new ActDummy() { LocateBy = eLocateBy.ByLocalizedControlType, LocateValue = "edit" });
+            }
         }
 
 
@@ -605,8 +627,14 @@ namespace GingerCore.Drivers
 
         public bool ifSameParent(Act a, ObservableList<Act> olParent)
         {
-            if (olParent == CreateParentLocators(a)) return true;
-            else return false;
+            if (olParent == CreateParentLocators(a))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
 
@@ -645,9 +673,19 @@ namespace GingerCore.Drivers
 
         public bool getActParentLevel(Act a)
         {
-            if (a.LocateValue == null) return false;
-            if (a.LocateValue.ToString().IndexOf("#RootWindow") >= 0) return true;
-            else return false;
+            if (a.LocateValue == null)
+            {
+                return false;
+            }
+
+            if (a.LocateValue.ToString().IndexOf("#RootWindow") >= 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
 
@@ -658,21 +696,39 @@ namespace GingerCore.Drivers
             {
                 conditions.Add(new UIAuto.PropertyCondition(getAELocatorTypeByString(aLoc.LocateBy.ToString()), aLoc.LocateValue));
             }
-            if (conditions.Count == 1) ElementCondition = conditions[0];
-            else ElementCondition = new UIAuto.AndCondition(conditions.ToArray());
+            if (conditions.Count == 1)
+            {
+                ElementCondition = conditions[0];
+            }
+            else
+            {
+                ElementCondition = new UIAuto.AndCondition(conditions.ToArray());
+            }
+
             return ElementCondition;
         }
-        
+
         public UIAuto.Condition CreateParentCondition(Act a)
         {
             List<UIAuto.Condition> conditions = new List<UIAuto.Condition>();
-            if (ParentLocators.Count == 0) CreateParentLocators(a);
+            if (ParentLocators.Count == 0)
+            {
+                CreateParentLocators(a);
+            }
+
             foreach (Act aLoc in ParentLocators)
             {
                 conditions.Add(new UIAuto.PropertyCondition(getAELocatorTypeByString(aLoc.LocateBy.ToString()), aLoc.LocateValue));
             }
-            if (conditions.Count == 1) ParentCondition = conditions[0];
-            else ParentCondition = new UIAuto.AndCondition(conditions.ToArray());
+            if (conditions.Count == 1)
+            {
+                ParentCondition = conditions[0];
+            }
+            else
+            {
+                ParentCondition = new UIAuto.AndCondition(conditions.ToArray());
+            }
+
             return ParentCondition;
         }
 
@@ -834,7 +890,7 @@ namespace GingerCore.Drivers
                             element = CurrentWindow.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, nameCondition);
 
                             //If Name has been derived using Controltype & AutomationId
-                            if (element==null && locateValue.Contains("(") && locateValue.Contains(")"))
+                            if (element == null && locateValue.Contains("(") && locateValue.Contains(")"))
                             {
                                 int lastIndex = locateValue.IndexOf(")");
                                 int firstindex = locateValue.IndexOf("(");
@@ -897,13 +953,15 @@ namespace GingerCore.Drivers
                             throw new Exception("Locator not implement - " + locateBy.ToString());
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     ecount++;
                     Thread.Sleep(100);
                     Reporter.ToLog(eLogLevel.DEBUG, "Exception in FindElementByLocator", e);
-                    if (ecount<5)
+                    if (ecount < 5)
+                    {
                         continue;
+                    }
                 }
                 Reporter.ToLog(eLogLevel.DEBUG, "** Total time" + (DateTime.Now - startingTime).TotalSeconds + "  Load Wait Time  :  " + loadwaitSeconds);
                 if (element == null && (DateTime.Now - startingTime).TotalSeconds <= mImplicitWait && !taskFinished)
@@ -911,9 +969,12 @@ namespace GingerCore.Drivers
                     continue;
                 }
                 if (element == null)
+                {
                     break;
+                }
+
                 count++;
-                if ((element!=null && IsWindowValid(element)) || count >= 3)
+                if ((element != null && IsWindowValid(element)) || count >= 3)
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "FindElementByLocator Trying again count-" + count);
                     isLoaded = true;
@@ -921,13 +982,19 @@ namespace GingerCore.Drivers
 
             }
 
-            if(element == null)
+            if (element == null)
+            {
                 Reporter.ToLog(eLogLevel.DEBUG, "FindElementByLocator Element is NULL.");
+            }
             else
+            {
                 Reporter.ToLog(eLogLevel.DEBUG, "FindElementByLocator Element found Successfully.");
+            }
 
             if (!IsWindowValid(element))
+            {
                 return null;
+            }
 
             return element;
         }
@@ -951,7 +1018,7 @@ namespace GingerCore.Drivers
                             currentWin = window;
                             UpdateRootElement();
                             CurrentWindowName = CurrentWindow.Current.Name;
-                            break; 
+                            break;
                         }
                     }
                 }
@@ -963,10 +1030,10 @@ namespace GingerCore.Drivers
             return currentWin;
         }
 
-        public override bool ClickContextMenuItem(object obj,string value)
+        public override bool ClickContextMenuItem(object obj, string value)
         {
             bool result = false;
-            UIAuto.AutomationElement element = null,AE=null;
+            UIAuto.AutomationElement element = null, AE = null;
             try
             {
                 AE = obj as UIAuto.AutomationElement;
@@ -979,12 +1046,16 @@ namespace GingerCore.Drivers
                 UIAuto.AutomationElementCollection AELIst = UIAuto.AutomationElement.RootElement.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, conditionGroup);
 
                 if (AELIst.Count == 0)
+                {
                     return false;
+                }
 
                 UIAuto.AutomationElement paneAE = AELIst[0];
 
                 if (paneAE == null)
+                {
                     return false;
+                }
 
                 controlTypeCondition = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.LocalizedControlTypeProperty, "list");
 
@@ -993,7 +1064,7 @@ namespace GingerCore.Drivers
                 int x = 0, incremFact = 10;
                 int y = 0;
                 bool found = false;
-                x = Convert.ToInt32(boundingRec.X+(boundingRec.Width / 2));
+                x = Convert.ToInt32(boundingRec.X + (boundingRec.Width / 2));
                 y = Convert.ToInt32(boundingRec.Y);
                 while (!found && y <= (boundingRec.Y + boundingRec.Height))
                 {
@@ -1009,7 +1080,9 @@ namespace GingerCore.Drivers
                             found = true;
                         }
                         else
+                        {
                             y += incremFact;
+                        }
                     }
                 }
                 if (found)
@@ -1029,20 +1102,34 @@ namespace GingerCore.Drivers
         private UIAuto.AutomationElement GetElementByText(UIAuto.AutomationElement root, string locateValue)
         {
             string txt;
-            if (!root.Current.IsContentElement) return null;
+            if (!root.Current.IsContentElement)
+            {
+                return null;
+            }
+
             UIAuto.AutomationElement AE = UIAuto.TreeWalker.ContentViewWalker.GetFirstChild(root);
-            if (AE == null) return null;
+            if (AE == null)
+            {
+                return null;
+            }
+
             while (AE != null && !taskFinished)
             {
                 txt = GetElementTitle(AE);
-                if (txt == locateValue) return AE;
+                if (txt == locateValue)
+                {
+                    return AE;
+                }
 
                 //Try children, drill down recursively
-                UIAuto.AutomationElement AE1= GetElementByText(AE, locateValue);
+                UIAuto.AutomationElement AE1 = GetElementByText(AE, locateValue);
                 if (AE1 != null)
                 {
                     txt = GetElementTitle(AE1);
-                    if (txt == locateValue) return AE1;
+                    if (txt == locateValue)
+                    {
+                        return AE1;
+                    }
                 }
                 AE = UIAuto.TreeWalker.ContentViewWalker.GetNextSibling(AE);
             }
@@ -1060,7 +1147,7 @@ namespace GingerCore.Drivers
             {
                 case eLocateBy.ByName:
                     UIAuto.Condition NameCond = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.NameProperty, LocValueCalculated);
-                    AECollection = CurrentWindow.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, NameCond);                                        
+                    AECollection = CurrentWindow.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, NameCond);
                     return GetElementsListFromCollection(AECollection);
                 case eLocateBy.ByXPath:
                     return GetElementsByXpath(LocValueCalculated);
@@ -1105,7 +1192,10 @@ namespace GingerCore.Drivers
 
         private List<UIAuto.AutomationElement> GetElementsListFromCollection(UIAuto.AutomationElementCollection CurAE)
         {
-            if (CurAE.Count == 0) return null;
+            if (CurAE.Count == 0)
+            {
+                return null;
+            }
 
             List<UIAuto.AutomationElement> list = new List<UIAuto.AutomationElement>();
             for (int i = 0; i < CurAE.Count; i++)
@@ -1119,12 +1209,14 @@ namespace GingerCore.Drivers
         {
             UIAuto.AutomationElement AE = null;
             string[] PathItems;
-            if(XPath.Contains("/"))
+            if (XPath.Contains("/"))
             {
                 PathItems = XPath.Split('/');
             }
             else
+            {
                 PathItems = XPath.Split('\\');
+            }
 
             UIAuto.Condition CurCond2 = null;
             int? index2 = null;
@@ -1134,7 +1226,10 @@ namespace GingerCore.Drivers
             foreach (string PathItem in PathItems)
             {
                 if (PathItem == "")
+                {
                     continue;
+                }
+
                 if (PathItem.ToUpper() == "DESKTOP") { continue; }
                 int i = -1;
                 string attr = null;
@@ -1202,20 +1297,24 @@ namespace GingerCore.Drivers
                     {
 
                         if (PathNode.Contains(":"))
+                        {
                             i = PathNode.IndexOf(":");
+                        }
                         else if (PathNode.Contains("~"))
+                        {
                             i = PathNode.IndexOf("~");
+                        }
 
                         attr = PathNode.Substring(1, i - 1);
                         value = PathNode.Substring(i + 1, PathNode.Length - attr.Length - 3);
 
                         //check for index
                         int i1 = value.IndexOf('[');
-                        int i2= value.IndexOf(']');
+                        int i2 = value.IndexOf(']');
 
-                        if (i1>0 && i2 > 0) // We have index
+                        if (i1 > 0 && i2 > 0) // We have index
                         {
-                            string sIDX = value.Substring(i1+1, i2 - i1 -1);
+                            string sIDX = value.Substring(i1 + 1, i2 - i1 - 1);
                             value = value.Substring(0, i1);
                             index2 = int.Parse(sIDX);
                         }
@@ -1243,15 +1342,15 @@ namespace GingerCore.Drivers
                         // sub item so start from the last AE
                         if (index2 == null)
                         {
-                            AE = AE.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children , CurCond2);
+                            AE = AE.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, CurCond2);
                         }
                         else
                         {
                             //TODO: fix me for speed use walker instead of FindAll which is heavy.
 
                             // We have index so move next till the item we want
-                            
-                           UIAuto.AutomationElementCollection AEC = AE.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, CurCond2);
+
+                            UIAuto.AutomationElementCollection AEC = AE.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, CurCond2);
                             if ((int)index2 < AEC.Count - 1)  // make sure we don't try to get elem out of boundaries
                             {
                                 AE = AEC[(int)index2];
@@ -1264,7 +1363,7 @@ namespace GingerCore.Drivers
                     }
                     //If we didn't find sub elem we throw exception and show the path till were we got OK.
 
-                    if (AE == null )
+                    if (AE == null)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "Cannot find element, Found path to element at:" + PathOK + ",But couldn't find next element:" + PathNode);
                     }
@@ -1289,7 +1388,7 @@ namespace GingerCore.Drivers
         {
             List<ElementInfo> elems = mXPathHelper.GetElementsByXpath(XPath);
             List<UIAuto.AutomationElement> list = new List<UIAuto.AutomationElement>();
-            foreach(ElementInfo EI in elems)
+            foreach (ElementInfo EI in elems)
             {
                 list.Add((UIAuto.AutomationElement)EI.ElementObject);
             }
@@ -1303,11 +1402,20 @@ namespace GingerCore.Drivers
             string attributeValue = null;
             int i = -1;
 
-            if (Node.Contains("[[")) Node = Node.Replace("[[", string.Empty);
+            if (Node.Contains("[["))
+            {
+                Node = Node.Replace("[[", string.Empty);
+            }
 
-            if (Node.Contains("[")) Node = Node.Replace("[", string.Empty);
+            if (Node.Contains("["))
+            {
+                Node = Node.Replace("[", string.Empty);
+            }
 
-            if (Node.Contains("]]")) Node = Node.Replace("]]", string.Empty);
+            if (Node.Contains("]]"))
+            {
+                Node = Node.Replace("]]", string.Empty);
+            }
 
             string[] subPathItems = Node.Split(']');
 
@@ -1317,9 +1425,14 @@ namespace GingerCore.Drivers
             foreach (string subPathNode in subPathItems)
             {
 
-                if (subPathNode.Contains(":")) i = subPathNode.IndexOf(":");
-
-                else if (subPathNode.Contains("~")) i = subPathNode.IndexOf("~");
+                if (subPathNode.Contains(":"))
+                {
+                    i = subPathNode.IndexOf(":");
+                }
+                else if (subPathNode.Contains("~"))
+                {
+                    i = subPathNode.IndexOf("~");
+                }
 
                 attributeName = subPathNode.Substring(0, i);
                 attributeValue = subPathNode.Substring(i + 1, subPathNode.Length - attributeName.Length - 1);
@@ -1330,8 +1443,9 @@ namespace GingerCore.Drivers
 
                 }
                 else
+                {
                     attributeValueList.Add(new KeyValuePair<string, string>(attributeName, attributeValue));
-
+                }
             }
 
             return attributeValueList;
@@ -1348,8 +1462,15 @@ namespace GingerCore.Drivers
             while (iterator < PathNode.Length)
             {
                 tempChar = tempArray[iterator];
-                if (tempChar.Equals('[')) openParenthesisCount++;
-                else if (tempChar.Equals(']')) closingParenthesisCount++;
+                if (tempChar.Equals('['))
+                {
+                    openParenthesisCount++;
+                }
+                else if (tempChar.Equals(']'))
+                {
+                    closingParenthesisCount++;
+                }
+
                 iterator++;
 
             }
@@ -1374,7 +1495,7 @@ namespace GingerCore.Drivers
                     element = elementList[index];
                 }
                 catch (IndexOutOfRangeException)
-                {                    
+                {
                     Reporter.ToUser(eUserMsgKey.InvalidIndexValue, index + "\n\n Valid Index should be between 0 to " + (elementList.Count - 1));
                 }
             }
@@ -1428,13 +1549,21 @@ namespace GingerCore.Drivers
 
                 case "Interop.UIAutomationClient.ToggleState":
                     Interop.UIAutomationClient.ToggleState toggleState = Interop.UIAutomationClient.ToggleState.ToggleState_Off;
-                    if (value == "True") toggleState = Interop.UIAutomationClient.ToggleState.ToggleState_On;
+                    if (value == "True")
+                    {
+                        toggleState = Interop.UIAutomationClient.ToggleState.ToggleState_On;
+                    }
+
                     attributeMatchCondition = new UIAuto.PropertyCondition(UIAuto.TogglePatternIdentifiers.ToggleStateProperty, toggleState);
                     break;
 
                 case "IsSelected":
                     bool IsSelected = false;
-                    if (value == "True") IsSelected = true;
+                    if (value == "True")
+                    {
+                        IsSelected = true;
+                    }
+
                     attributeMatchCondition = new UIAuto.PropertyCondition(UIAuto.SelectionItemPatternIdentifiers.IsSelectedProperty, IsSelected);
                     break;
             }
@@ -1478,7 +1607,7 @@ namespace GingerCore.Drivers
             }
             return elementProperty;
         }
-        
+
         public UIAuto.Condition getGridActColumnCond(Act act)
         {
             UIAuto.AndCondition GridCond;
@@ -1494,8 +1623,14 @@ namespace GingerCore.Drivers
             {
                 conditions.Add(new UIAuto.PropertyCondition(getAELocatorTypeByString(aLoc.LocateBy.ToString()), aLoc.LocateValue));
             }
-            if (conditions.Count == 1) ColumnPropertiesConds = new UIAuto.AndCondition(conditions[0]);
-            else ColumnPropertiesConds = new UIAuto.AndCondition(conditions.ToArray());
+            if (conditions.Count == 1)
+            {
+                ColumnPropertiesConds = new UIAuto.AndCondition(conditions[0]);
+            }
+            else
+            {
+                ColumnPropertiesConds = new UIAuto.AndCondition(conditions.ToArray());
+            }
 
             GridCond = new UIAuto.AndCondition(ConditionContent, ColumnPropertiesConds);
             return GridCond;
@@ -1525,7 +1660,7 @@ namespace GingerCore.Drivers
             }
             return olElementLoc;
         }
-        
+
         public override Boolean IsWindowExist(Act act)
         {
             bool isExist = false;
@@ -1544,19 +1679,19 @@ namespace GingerCore.Drivers
                 act.Error += "ERROR::";
                 act.ExInfo += ex.Message;
                 Reporter.ToLog(eLogLevel.DEBUG, "Exception in getting the window", ex);
-            }               
-            
+            }
+
             return isExist;
         }
 
         public override Boolean CloseWindow(Act act)
         {
             bool isClosed = false;
-            UIAuto.AutomationElement AEWindow = null;         
+            UIAuto.AutomationElement AEWindow = null;
             try
             {
                 AEWindow = (UIAuto.AutomationElement)FindWindowByLocator(act.LocateBy, act.LocateValueCalculated);
-                
+
                 if (AEWindow != null)
                 {
                     (AEWindow.GetCurrentPattern(UIAuto.WindowPattern.Pattern) as UIAuto.WindowPattern).Close();
@@ -1572,9 +1707,9 @@ namespace GingerCore.Drivers
 
             return isClosed;
         }
-        public override object FindWindowByLocator(eLocateBy locateBy,string locateValue)
+        public override object FindWindowByLocator(eLocateBy locateBy, string locateValue)
         {
-            UIAuto.AutomationElement AEWindow=null;
+            UIAuto.AutomationElement AEWindow = null;
             try
             {
                 if (locateBy == eLocateBy.ByTitle)
@@ -1605,8 +1740,8 @@ namespace GingerCore.Drivers
                 }
                 else
                 {
-                    throw new Exception(locateBy.ToString() + " is not valid for is Exist.Only locate by title is supported");                    
-                }                
+                    throw new Exception(locateBy.ToString() + " is not valid for is Exist.Only locate by title is supported");
+                }
             }
             catch (Exception ex)
             {
@@ -1614,24 +1749,24 @@ namespace GingerCore.Drivers
             }
             return AEWindow;
         }
-       
+
         public override Boolean SetWindowVisualState(ActWindow act)
         {
-            UIAuto.AutomationElement AEWindow = null;        
+            UIAuto.AutomationElement AEWindow = null;
 
             AEWindow = (UIAuto.AutomationElement)FindWindowByLocator(act.LocateBy, act.LocateValueCalculated);
 
             string status = SetElementVisualState(AEWindow, act.WindowActionType.ToString());
 
-            if(status != "State set successfully")                
+            if (status != "State set successfully")
             {
                 act.Error += "ERROR::";
                 act.ExInfo += status;
                 return false;
             }
-            return true;            
+            return true;
         }
-        public override string SetElementVisualState(object objAE,string State)
+        public override string SetElementVisualState(object objAE, string State)
         {
             try
             {
@@ -1640,12 +1775,16 @@ namespace GingerCore.Drivers
                 object vp;
 
                 if (AE == null)
+                {
                     return "Element not found";
+                }
 
                 AE.TryGetCurrentPattern(UIAuto.WindowPattern.Pattern, out vp);
 
                 if (vp == null)
+                {
                     return "Unable to perform Action";
+                }
 
                 windowPattern = (UIAuto.WindowPattern)vp;
                 // Make sure the element is usable.
@@ -1708,30 +1847,40 @@ namespace GingerCore.Drivers
             {
                 string[] ls = size.Split(',');
                 if (ls.Length == 1)
+                {
                     return "Invalid value for size::" + size;
+                }
 
-                if (!Double.TryParse(ls[0], out width) || !Double.TryParse(ls[1], out height))               
+                if (!Double.TryParse(ls[0], out width) || !Double.TryParse(ls[1], out height))
+                {
                     return "Invalid value for size::" + size;
+                }
 
                 UIAuto.AutomationElement AE = (UIAuto.AutomationElement)objAE;
                 UIAuto.TransformPattern transformPattern = null;
                 object vp;
 
                 if (AE == null)
+                {
                     return "Element not found";
+                }
 
                 AE.TryGetCurrentPattern(UIAuto.TransformPattern.Pattern, out vp);
 
                 if (vp == null)
+                {
                     return "Unable to perform Action";
+                }
 
                 transformPattern = (UIAuto.TransformPattern)vp;
 
-                if (!transformPattern.Current.CanResize)                
+                if (!transformPattern.Current.CanResize)
+                {
                     return "Unable to perform Action";
+                }
 
                 transformPattern.Resize(width, height);
-                
+
                 return "Element resize Successfully";
             }
             catch (Exception ex)
@@ -1748,7 +1897,7 @@ namespace GingerCore.Drivers
             UIAuto.AutomationElement SourceElement = (UIAuto.AutomationElement)obj;
 
             UIAuto.AutomationElement TargetElement = (UIAuto.AutomationElement)FindElementByLocator((eLocateBy)actUIDragAndDrop.TargetLocateBy, actUIDragAndDrop.TargetLocateValueForDriver);
-            if(TargetElement == null)
+            if (TargetElement == null)
             {
                 act.Error = "Target Element not FOund";
                 return;
@@ -1799,19 +1948,21 @@ namespace GingerCore.Drivers
                 return;
             }
             else
+            {
                 act.ExInfo = act.LocateValueCalculated + "Dragged and Dropped on " + act.ValueForDriver;
+            }
         }
 
         public override string ClickAndValidteHandler(object obj, ActUIElement act)
         {
-            UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;                        
+            UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
             ActUIElement.eElementAction clickType;
             if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ClickType).ToString(), out clickType) == false)
             {
                 act.Error = "Unknown Click Type";
                 return "false";
             }
-            
+
             ActUIElement.eElementAction validationType;
             if (Enum.TryParse<ActUIElement.eElementAction>(act.GetInputParamValue(ActUIElement.Fields.ValidationType).ToString(), out validationType) == false)
             {
@@ -1819,7 +1970,7 @@ namespace GingerCore.Drivers
                 return "false";
             }
             string validationElementType = act.GetInputParamValue(ActUIElement.Fields.ValidationElement);
-            
+
             eLocateBy validationElementLocateby;
             if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocateBy).ToString(), out validationElementLocateby) == false)
             {
@@ -1830,26 +1981,28 @@ namespace GingerCore.Drivers
             string validattionElementLocateValue = act.GetInputParamValue(ActUIElement.Fields.ValidationElementLocatorValue);
             bool LoopNextCheck = false;
             if ((act.GetInputParamValue(ActUIElement.Fields.LoopThroughClicks).ToString()) == "True")
+            {
                 LoopNextCheck = true;
+            }
 
             string result;
             bool flag;
 
-            result=DoUIElementClick(clickType, AE);
+            result = DoUIElementClick(clickType, AE);
 
-            
+
             List<ActUIElement.eElementAction> clicks = PlatformInfoBase.GetPlatformImpl(mPlatform).GetPlatformUIClickTypeList();
-            
+
             if (result.Contains("Clicked Successfully"))
             {
                 flag = LocateAndValidateElement(validationElementLocateby, validattionElementLocateValue, validationElementType, validationType);
-                if(flag)
+                if (flag)
                 {
                     return result;
                 }
                 if ((!flag) && (LoopNextCheck))
                 {
-                    return ClickElementByOthertypes(clickType,clicks, AE, validationElementLocateby, validattionElementLocateValue, validationElementType, validationType);
+                    return ClickElementByOthertypes(clickType, clicks, AE, validationElementLocateby, validattionElementLocateValue, validationElementType, validationType);
                 }
                 else
                 {
@@ -1863,11 +2016,11 @@ namespace GingerCore.Drivers
                     return ClickElementByOthertypes(clickType, clicks, AE, validationElementLocateby, validattionElementLocateValue, validationElementType, validationType);
                 }
             }
-            
-            return result;     
+
+            return result;
         }
 
-        public string ClickElementByOthertypes(ActUIElement.eElementAction executedClick, List<ActUIElement.eElementAction> clicks, UIAuto.AutomationElement AE, eLocateBy validationElementLocateby,string validattionElementLocateValue,string validationElementType,ActUIElement.eElementAction validationType)
+        public string ClickElementByOthertypes(ActUIElement.eElementAction executedClick, List<ActUIElement.eElementAction> clicks, UIAuto.AutomationElement AE, eLocateBy validationElementLocateby, string validattionElementLocateValue, string validationElementType, ActUIElement.eElementAction validationType)
         {
             ActUIElement.eElementAction currentClick;
             string result = "";
@@ -1878,7 +2031,7 @@ namespace GingerCore.Drivers
                 currentClick = clicks[i];
                 if (currentClick != executedClick)
                 {
-                    result=DoUIElementClick(currentClick, AE);
+                    result = DoUIElementClick(currentClick, AE);
                     if (result.Contains("Clicked Successfully"))
                     {
                         flag = LocateAndValidateElement(validationElementLocateby, validattionElementLocateValue, validationElementType, validationType);
@@ -1893,25 +2046,27 @@ namespace GingerCore.Drivers
         }
 
         public string DoUIElementClick(ActUIElement.eElementAction clickType, UIAuto.AutomationElement element)
-        {            
+        {
             Boolean clickTriggeredFlag = false;
             string result = "";
-            
+
             while (!IsWindowValid(element) && !taskFinished)
             {
                 Thread.Sleep(100);
             }
             if (taskFinished)
+            {
                 return "Unable to load the click element";
+            }
 
             switch (clickType)
             {
                 case ActUIElement.eElementAction.InvokeClick:
-                    result=ClickElementUsingInvokePattern(element, ref clickTriggeredFlag);
+                    result = ClickElementUsingInvokePattern(element, ref clickTriggeredFlag);
                     break;
 
                 case ActUIElement.eElementAction.LegacyClick:
-                    result=ClickElementUsingLegacyPattern(element, ref clickTriggeredFlag);
+                    result = ClickElementUsingLegacyPattern(element, ref clickTriggeredFlag);
                     break;
 
                 case ActUIElement.eElementAction.MouseClick:
@@ -1928,20 +2083,23 @@ namespace GingerCore.Drivers
 
             bool DefineHandleAction = false;
             if ((act.GetInputParamValue(ActUIElement.Fields.DefineHandleAction).ToString()) == "True")
+            {
                 DefineHandleAction = true;
+            }
+
             eLocateBy handleElementLocateby = eLocateBy.ByAutomationID;
             string handleElementLocateValue = "";
             ActUIElement.eElementAction handleActionType = ActUIElement.eElementAction.Click;
 
-            if (DefineHandleAction==true)
-            {   
+            if (DefineHandleAction == true)
+            {
                 if (Enum.TryParse<eLocateBy>(act.GetInputParamValue(ActUIElement.Fields.HandleElementLocateBy).ToString(), out handleElementLocateby) == false)
                 {
                     act.Error = "Unknown Handle Element Locate By";
                     return "false";
                 }
                 handleElementLocateValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.HandleElementLocatorValue);
-                handleActionType = act.HandleActionType;                
+                handleActionType = act.HandleActionType;
             }
 
             ActUIElement.eElementAction validationType;
@@ -1962,34 +2120,34 @@ namespace GingerCore.Drivers
             string validationValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.ValidationElementValue);
 
             string Value = act.GetInputParamCalculatedValue(ActUIElement.Fields.Value).ToString();
-             
-            
-            bool flag=false;
-            int iLoop = 0;
-           
 
-            while (flag == false && iLoop<20)
+
+            bool flag = false;
+            int iLoop = 0;
+
+
+            while (flag == false && iLoop < 20)
             {
                 SendKeysToControl(AE, Value);
                 if (DefineHandleAction == true)
                 {
                     LocateAndHandleActionElement(handleElementLocateby, handleElementLocateValue, validationElementType, handleActionType);
                 }
-                flag = LocateAndValidateElement(validationElementLocateby, validattionElementLocateValue, validationElementType, validationType,validationValue);
-                   
+                flag = LocateAndValidateElement(validationElementLocateby, validattionElementLocateValue, validationElementType, validationType, validationValue);
+
                 if (flag)
                 {
                     return "true";
-                }                
+                }
                 iLoop++;
-                if ((!flag) && (iLoop>=20))                
+                if ((!flag) && (iLoop >= 20))
                 {
                     return "Validation Failed";
-                }                
+                }
             }
             return "true";
         }
-        public bool LocateAndValidateElement(eLocateBy LocateBy, string LocateValue, string elementType, ActUIElement.eElementAction actionType,string validationValue="")
+        public bool LocateAndValidateElement(eLocateBy LocateBy, string LocateValue, string elementType, ActUIElement.eElementAction actionType, string validationValue = "")
         {
             object obj = null;
             try
@@ -2036,9 +2194,12 @@ namespace GingerCore.Drivers
                     if (AE == null)
                     {
                         return false;
-                    }                    
-                    if(GetControlValue(AE) ==  validationValue)
+                    }
+                    if (GetControlValue(AE) == validationValue)
+                    {
                         return true;
+                    }
+
                     break;
             }
             return false;
@@ -2051,7 +2212,10 @@ namespace GingerCore.Drivers
 
             bool DefineHandleAction = false;
             if ((act.GetInputParamValue(ActUIElement.Fields.DefineHandleAction).ToString()) == "True")
+            {
                 DefineHandleAction = true;
+            }
+
             eLocateBy handleElementLocateby = eLocateBy.ByAutomationID;
             string handleElementLocateValue = "";
             ActUIElement.eElementAction handleActionType = ActUIElement.eElementAction.Click;
@@ -2065,7 +2229,7 @@ namespace GingerCore.Drivers
                 }
                 handleElementLocateValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.HandleElementLocatorValue);
                 handleActionType = act.HandleActionType;
-            }           
+            }
             string subElementType = act.GetInputParamValue(ActUIElement.Fields.SubElementType);
 
             eLocateBy subElementLocateby;
@@ -2074,25 +2238,25 @@ namespace GingerCore.Drivers
                 act.Error = "Unknown Validation Element Locate By";
                 return "false";
             }
-            string subElementLocateValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.SubElementLocatorValue);            
+            string subElementLocateValue = act.GetInputParamCalculatedValue(ActUIElement.Fields.SubElementLocatorValue);
             string Value = act.GetInputParamCalculatedValue(ActUIElement.Fields.Value).ToString();
 
 
             bool flag = false;
             bool endPane = false;
-            int iLoop = 0;            
+            int iLoop = 0;
             int iPaneY = 0;
-            if(subElementType == ActUIElement.eSubElementType.Pane.ToString())
+            if (subElementType == ActUIElement.eSubElementType.Pane.ToString())
             {
                 if (GetControlValue(AE) == Value)
-                { 
+                {
                     return "true";
                 }
 
                 int iClick = 0;
                 string oldValue = "&*%^%$#";
                 while (flag == false && iLoop < 30)
-                {   
+                {
                     ClickOnXYPoint(AE, "10,10");
                     UIAuto.AutomationElement subElement = (UIAuto.AutomationElement)FindElementByLocator(subElementLocateby, subElementLocateValue);
                     if (subElement == null || subElement.Current.LocalizedControlType != "pane")
@@ -2113,37 +2277,37 @@ namespace GingerCore.Drivers
                         foreach (UIAuto.AutomationElement subChild in gridControls)
                         {
                             if (subChild.Current.Name == "Page down")
-                            { 
+                            {
                                 pageDown = subChild;
                             }
                             else if (subChild.Current.Name == "Page up")
-                            { 
+                            {
                                 pageUp = subChild;
                             }
                             else if (subChild.Current.Name == "Line up")
-                            { 
+                            {
                                 lineUp = subChild;
                             }
                             else if (subChild.Current.Name == "Line down")
-                            { 
+                            {
                                 lineDown = subChild;
                             }
                         }
-                    }                    
+                    }
                     int iCount = 0;
-                    while (lineUp != null && iCount < 30 && iLoop==0)
+                    while (lineUp != null && iCount < 30 && iLoop == 0)
                     {
                         ClickOnXYPoint(lineUp, "5,5");
                         iCount++;
                         Reporter.ToLog(eLogLevel.DEBUG, "lineDown:iCount:" + iCount);
-                    }                    
+                    }
                     for (int i = 0; i < iClick; i++)
                     {
                         ClickOnXYPoint(lineDown, "5,5");
                         Reporter.ToLog(eLogLevel.DEBUG, "lineDown:" + iClick + ":" + i);
                     }
                     ClickOnXYPoint(subElement, "10," + (10 + iPaneY));
-                    Reporter.ToLog(eLogLevel.DEBUG, "iPaneY:" + iPaneY);                   
+                    Reporter.ToLog(eLogLevel.DEBUG, "iPaneY:" + iPaneY);
 
                     string newValue = GetControlValue(AE);
                     bool ishandled = false;
@@ -2154,26 +2318,26 @@ namespace GingerCore.Drivers
                         Reporter.ToLog(eLogLevel.DEBUG, "ishandled:" + ishandled);
                         if (ishandled)
                         {
-                            iClick++;                            
-                        }                            
+                            iClick++;
+                        }
                         else
                         {
                             iClick = 1;
                         }
                         //reset implicit wait time
-                        mImplicitWait = mImplicitWaitCopy;                        
+                        mImplicitWait = mImplicitWaitCopy;
                         Reporter.ToLog(eLogLevel.DEBUG, "DefineHandleAction:" + iClick);
                     }
                     else
-                    { 
+                    {
                         iClick = 1;
                     }
 
                     if (newValue.Replace("&", "") == Value.Replace("&", ""))
                     {
-                        if(GetControlValue(AE).Replace("&", "") == Value.Replace("&", ""))
+                        if (GetControlValue(AE).Replace("&", "") == Value.Replace("&", ""))
                         {
-                            return "true";                           
+                            return "true";
                         }
                         else
                         {
@@ -2181,35 +2345,35 @@ namespace GingerCore.Drivers
                         }
                     }
                     Reporter.ToLog(eLogLevel.DEBUG, "oldValue:" + oldValue + " newValue:" + newValue + " endPane:" + endPane);
-                    if (oldValue != newValue && endPane==false)
+                    if (oldValue != newValue && endPane == false)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "in not end pane:");
                         if (iLoop == 0 && iClick == 2)
-                        { 
+                        {
                             iLoop = 0;
                         }
                         else
-                        { 
+                        {
                             iLoop++;
                         }
                         oldValue = newValue;
-                    }                        
+                    }
                     else
                     {
                         iClick = 0;
                         Reporter.ToLog(eLogLevel.DEBUG, "in end pane:");
                         endPane = true;
                         if (iPaneY < subElement.Current.BoundingRectangle.Height)
-                        { 
+                        {
                             iPaneY += 10;
                         }
                         else
-                        { 
+                        {
                             break;
                         }
                     }
-                    Reporter.ToLog(eLogLevel.DEBUG, "iLoop now:" + iLoop);                    
-                }                          
+                    Reporter.ToLog(eLogLevel.DEBUG, "iLoop now:" + iLoop);
+                }
             }
             return "Could not find the Value in the list-" + Value;
         }
@@ -2263,7 +2427,10 @@ namespace GingerCore.Drivers
                         return false;
                     }
                     if (GetControlValue(AE) == validationValue)
+                    {
                         return true;
+                    }
+
                     break;
             }
             return false;
@@ -2274,8 +2441,11 @@ namespace GingerCore.Drivers
             UIAuto.AutomationElement AE = null;
             try
             {
-                AE = (UIAuto.AutomationElement) FindElementByLocator(LocateBy, LocateValue);
-                if (AE != null) return true;
+                AE = (UIAuto.AutomationElement)FindElementByLocator(LocateBy, LocateValue);
+                if (AE != null)
+                {
+                    return true;
+                }
             }
             catch (Exception)
             {
@@ -2283,7 +2453,7 @@ namespace GingerCore.Drivers
             return false;
         }
 
-        public override Boolean IsChildElementExist(eLocateBy LocateBy, string LocateValue,string ValueForDriver)
+        public override Boolean IsChildElementExist(eLocateBy LocateBy, string LocateValue, string ValueForDriver)
         {
             UIAuto.AutomationElement AE = null;
             UIAuto.AutomationElement childAE = null;
@@ -2292,12 +2462,12 @@ namespace GingerCore.Drivers
                 AE = (UIAuto.AutomationElement)FindElementByLocator(LocateBy, LocateValue);
                 if (AE != null)
                 {
-                    if(AE.Current.ClassName.Equals("PBTabControl32_100"))
+                    if (AE.Current.ClassName.Equals("PBTabControl32_100"))
                     {
-                        
+
                         UIAuto.PropertyCondition tabSelectCondition = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.LocalizedControlTypeProperty, "pane");
                         childAE = AE.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, tabSelectCondition);
-                        bool result= SelectTab(AE, ValueForDriver, false);                        
+                        bool result = SelectTab(AE, ValueForDriver, false);
                         SelectTab(AE, childAE.Current.Name, false);
                         return result;
                     }
@@ -2306,9 +2476,13 @@ namespace GingerCore.Drivers
                         UIAuto.PropertyCondition childNameCondition = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.NameProperty, ValueForDriver);
                         childAE = AE.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, childNameCondition);
                         if (childAE == null)
+                        {
                             return false;
+                        }
                         else
+                        {
                             return true;
+                        }
                     }
                 }
             }
@@ -2325,11 +2499,14 @@ namespace GingerCore.Drivers
             UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
             Reporter.ToLog(eLogLevel.DEBUG, "Check if AE NUll:");
             if (AE == null)
+            {
                 return false;
+            }
+
             Reporter.ToLog(eLogLevel.DEBUG, "After AE not NUll:");
             switch (actionType)
             {
-                case ActUIElement.eElementAction.Click:                    
+                case ActUIElement.eElementAction.Click:
                     string result = ClickElement(AE);
                     if (result.Equals("true"))
                     {
@@ -2342,8 +2519,8 @@ namespace GingerCore.Drivers
                     {
                         ElementInfo EI = new ElementInfo();
                         EI.ElementObject = AE;
-                        List<ElementInfo> lstElem=GetElementChildren(EI);
-                        foreach(ElementInfo elemInfo in lstElem)
+                        List<ElementInfo> lstElem = GetElementChildren(EI);
+                        foreach (ElementInfo elemInfo in lstElem)
                         {
                             if (((UIAuto.AutomationElement)elemInfo.ElementObject).Current.Name.ToString().ToLower() == "cancel")
                             {
@@ -2370,7 +2547,7 @@ namespace GingerCore.Drivers
                         List<ElementInfo> lstElem = GetElementChildren(EI);
                         foreach (ElementInfo elemInfo in lstElem)
                         {
-                            if (((UIAuto.AutomationElement)elemInfo.ElementObject).Current.Name.ToString().ToLower() == "ok" )
+                            if (((UIAuto.AutomationElement)elemInfo.ElementObject).Current.Name.ToString().ToLower() == "ok")
                             {
                                 result = ClickElement(elemInfo.ElementObject);
                                 Reporter.ToLog(eLogLevel.DEBUG, "after click ok:" + result);
@@ -2468,13 +2645,16 @@ namespace GingerCore.Drivers
             return;
         }
 
-        
+
         public string ClickElementUsingInvokePattern(UIAuto.AutomationElement element, ref Boolean clickTriggeredFlag)
         {
             try
             {
                 UIAuto.InvokePattern invokePattern = (UIAuto.InvokePattern)element.GetCurrentPattern(UIAuto.InvokePattern.Pattern);
-                if (invokePattern == null) return "Failed to Perform Click , Invoke pattern is not available";
+                if (invokePattern == null)
+                {
+                    return "Failed to Perform Click , Invoke pattern is not available";
+                }
 
                 clickTriggeredFlag = true;
 
@@ -2510,14 +2690,20 @@ namespace GingerCore.Drivers
             try
             {
                 UIAuto.LegacyIAccessiblePattern legacyPattern = (UIAuto.LegacyIAccessiblePattern)element.GetCurrentPattern(UIAuto.LegacyIAccessiblePattern.Pattern);
-                if (legacyPattern == null) return "Failed to Perform click , Legacy Pattern is not available";
+                if (legacyPattern == null)
+                {
+                    return "Failed to Perform click , Legacy Pattern is not available";
+                }
 
                 String sLegacyDefaultAction = (String)element.GetCurrentPropertyValue(UIAuto.LegacyIAccessiblePatternIdentifiers.DefaultActionProperty);
 
-                if (sLegacyDefaultAction == null) return "Failed to Perform click, Do Default of Legacy action is not available";
+                if (sLegacyDefaultAction == null)
+                {
+                    return "Failed to Perform click, Do Default of Legacy action is not available";
+                }
 
                 clickTriggeredFlag = true;
-                legacyPattern.DoDefaultAction();                
+                legacyPattern.DoDefaultAction();
             }
             catch (COMException e)
             {
@@ -2541,7 +2727,7 @@ namespace GingerCore.Drivers
             }
             return "Clicked Successfully using Legacy Pattern";
         }
-        
+
         public override string ClickElement(object obj, bool asyncFlag = false)
         {
             UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
@@ -2549,11 +2735,11 @@ namespace GingerCore.Drivers
             if (element.Current.IsEnabled)
             {
 
-               //TODO: Instead of using flags, use Autoresetevent
+                //TODO: Instead of using flags, use Autoresetevent
                 Boolean clickTriggeredFlag = false;
                 Exception e = null;
-                
-                if(!asyncFlag)// Regular Click
+
+                if (!asyncFlag)// Regular Click
                 {
                     string status = ClickElementUsingInvokePattern(element, ref clickTriggeredFlag);
                     if (!status.Contains("Clicked Successfully"))
@@ -2574,7 +2760,7 @@ namespace GingerCore.Drivers
                     {
                         try
                         {
-                             status = ClickElementUsingLegacyPattern(element, ref clickTriggeredFlag);
+                            status = ClickElementUsingLegacyPattern(element, ref clickTriggeredFlag);
                             if (!status.Contains("Clicked Successfully"))
                             {
                                 status = ClickElementUsingInvokePattern(element, ref clickTriggeredFlag);
@@ -2586,9 +2772,9 @@ namespace GingerCore.Drivers
                                 }
                             }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
-                            e = ex;                            
+                            e = ex;
                         }
 
                     }));
@@ -2605,7 +2791,10 @@ namespace GingerCore.Drivers
                     }
                     Thread.Sleep(100);
 
-                    if (e != null) throw e;
+                    if (e != null)
+                    {
+                        throw e;
+                    }
 
                     UIAClickThread.Abort();
                     return status;
@@ -2620,7 +2809,7 @@ namespace GingerCore.Drivers
 
         public override void ClickOnXYPoint(object obj, string clickPoint)
         {
-            UIAuto.AutomationElement AE = (UIAuto.AutomationElement) obj;
+            UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
             string[] coordinates = clickPoint.Split(',');
             int x = (int)AE.Current.BoundingRectangle.X + Int32.Parse(coordinates[0]);
             int y = (int)AE.Current.BoundingRectangle.Y + Int32.Parse(coordinates[1]);
@@ -2628,32 +2817,32 @@ namespace GingerCore.Drivers
             winAPI.SendClickOnXYPoint(AE, x, y);
         }
 
-        public override void DoRightClick(object obj,string XY="")
+        public override void DoRightClick(object obj, string XY = "")
         {
-            UIAuto.AutomationElement AE = (UIAuto.AutomationElement) obj;
+            UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
             winAPI.SendRightClick(AE, XY);
         }
 
         public override void DoDoubleClick(object obj, string XY = "")
         {
-            UIAuto.AutomationElement element = (UIAuto.AutomationElement) obj;
+            UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
             winAPI.SendDoubleClick(element, XY);
         }
 
         public override void ClickMenuElement(Act act)
         {
-            System.Drawing.Point currentPosition = System.Windows.Forms.Cursor.Position;            
+            System.Drawing.Point currentPosition = System.Windows.Forms.Cursor.Position;
             System.Drawing.Point newPosition = new System.Drawing.Point(1, 1);
             if (CurrentWindow.Current.BoundingRectangle != null)
             {
-                newPosition.X = (int)CurrentWindow.Current.BoundingRectangle.X+7;
-                newPosition.Y = (int)CurrentWindow.Current.BoundingRectangle.Y+7;
+                newPosition.X = (int)CurrentWindow.Current.BoundingRectangle.X + 7;
+                newPosition.Y = (int)CurrentWindow.Current.BoundingRectangle.Y + 7;
             }
             System.Windows.Forms.Cursor.Position = newPosition;
             string str = act.LocateValueCalculated;
             string[] locateValues = str.Split('|');
             int j = 0;
-            
+
             foreach (string nodeItem in locateValues)
             {
                 str = nodeItem;
@@ -2677,9 +2866,9 @@ namespace GingerCore.Drivers
             UIAuto.AutomationElement menuElement = null, rootElement = null;
             rootElement = (UIAuto.AutomationElement)FindElementByLocator(eLocateBy.ByName, locateValues[0]);
             menuElement = rootElement;
-                                    
+
             CollapseControlElement(rootElement);
-                
+
             if (menuElement == null)
             {
                 act.Error = "Cannot find Menu element: " + locateValues[i];
@@ -2699,11 +2888,14 @@ namespace GingerCore.Drivers
                     do
                     {
                         tempAE = GetNextMenuElement(menuElement, locateValues[i]);
-                        if (tempAE != null)                            
+                        if (tempAE != null)
+                        {
                             break;
+                        }
+
                         Thread.Sleep(100);
                         counter++;
-                    } while (tempAE == null && counter < 10 && !taskFinished);                    
+                    } while (tempAE == null && counter < 10 && !taskFinished);
                     if (tempAE == null)
                     {
                         //act.Error = "Cannot find '" + locateValues[i] + "' Sub menu elements should be separated with '|'";
@@ -2721,9 +2913,9 @@ namespace GingerCore.Drivers
                 }
                 System.Windows.Forms.Cursor.Position = currentPosition;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Exception while finding sub menu... ",e);                
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception while finding sub menu... ", e);
 
                 CollapseControlElement(rootElement);
                 string status = ClickMenuElementByXY(rootElement, locateValues);
@@ -2736,10 +2928,10 @@ namespace GingerCore.Drivers
             }
         }
 
-        public string ClickMenuElementByXY(UIAuto.AutomationElement rootElement,string[] locateValues)
-        {            
-            string str="";
-            int i = 1,x=0,y=0;
+        public string ClickMenuElementByXY(UIAuto.AutomationElement rootElement, string[] locateValues)
+        {
+            string str = "";
+            int i = 1, x = 0, y = 0;
             UIAuto.AutomationElement menuElement = rootElement;
             System.Drawing.Point point;
 
@@ -2753,8 +2945,8 @@ namespace GingerCore.Drivers
             for (; i < locateValues.Count() && (Convert.ToBoolean(str)); i++)
             {
                 str = "False";
-                Reporter.ToLog(eLogLevel.DEBUG, "***** Started Menu click by location for  :  " + locateValues[i]);                           
-                while (menuElement != null && !taskFinished && ((menuElement.Current.ProcessId==rootElement.Current.ProcessId)||(menuElement.Current.ProcessId==0)))
+                Reporter.ToLog(eLogLevel.DEBUG, "***** Started Menu click by location for  :  " + locateValues[i]);
+                while (menuElement != null && !taskFinished && ((menuElement.Current.ProcessId == rootElement.Current.ProcessId) || (menuElement.Current.ProcessId == 0)))
                 {
                     if (menuElement.Current.LocalizedControlType.Equals("menu item"))
                     {
@@ -2773,19 +2965,19 @@ namespace GingerCore.Drivers
                                 }
                                 while (((menuElement.Current.ProcessId == rootElement.Current.ProcessId) || (menuElement.Current.ProcessId == 0)) && menuElement.Current.Name.Equals(locateValues[i]) && !taskFinished)
                                 {
-                                    
+
                                     x = x + 10;
-                                    Reporter.ToLog(eLogLevel.DEBUG, "*****  changing the X to " +x);
+                                    Reporter.ToLog(eLogLevel.DEBUG, "*****  changing the X to " + x);
                                     point = new System.Drawing.Point(x, y);
                                     menuElement = UIAuto.AutomationElement.FromPoint(point);
                                 }
-                                
+
                                 //x = (int)menuElement.Current.BoundingRectangle.Width + 25;                                
                                 break;
                             }
                             else
                             {
-                                Reporter.ToLog(eLogLevel.DEBUG, "***** Menu Element :  "+locateValues[i]+" is not enabled");
+                                Reporter.ToLog(eLogLevel.DEBUG, "***** Menu Element :  " + locateValues[i] + " is not enabled");
                                 return false + " " + locateValues[i - 1] + " Element is not enabled";
                             }
                         }
@@ -2797,32 +2989,32 @@ namespace GingerCore.Drivers
                         menuElement = UIAuto.AutomationElement.FromPoint(point);
                     }
                     else
-                    {                        
-                        while(menuElement!=null && !taskFinished && (!(menuElement.Current.LocalizedControlType.Equals("menu item"))) && ((menuElement.Current.ProcessId == rootElement.Current.ProcessId) || (menuElement.Current.ProcessId == 0)))
+                    {
+                        while (menuElement != null && !taskFinished && (!(menuElement.Current.LocalizedControlType.Equals("menu item"))) && ((menuElement.Current.ProcessId == rootElement.Current.ProcessId) || (menuElement.Current.ProcessId == 0)))
                         {
                             y = y + 4;
-                            point = new System.Drawing.Point(x, y);                            
+                            point = new System.Drawing.Point(x, y);
                             menuElement = UIAuto.AutomationElement.FromPoint(point);
                         }
-                    }                                        
+                    }
                 }
-                Reporter.ToLog(eLogLevel.DEBUG, "***** Exit from While loop, Element :  "+locateValues[i] + " Not Found!");
+                Reporter.ToLog(eLogLevel.DEBUG, "***** Exit from While loop, Element :  " + locateValues[i] + " Not Found!");
             }
             Reporter.ToLog(eLogLevel.DEBUG, "***** Exit from locate value loop  ");
-            return false+" "+locateValues[i-1]+" Element not found";
+            return false + " " + locateValues[i - 1] + " Element not found";
         }
-        
+
         public UIAuto.AutomationElement GetNextMenuElement(UIAuto.AutomationElement menuElement, string NextItem)
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Start GetNextMenuElement  :  " + menuElement.Current.Name);
             List<UIAuto.Condition> conditions = new List<UIAuto.Condition>();
             conditions.Add(new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.LocalizedControlTypeProperty, menuElement.Current.LocalizedControlType));
-            conditions.Add(new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.NameProperty, NextItem));            
+            conditions.Add(new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.NameProperty, NextItem));
             UIAuto.AndCondition CurCond2 = new UIAuto.AndCondition(conditions.ToArray());
-            menuElement = CurrentWindow.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, CurCond2);            
+            menuElement = CurrentWindow.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Subtree, CurCond2);
             return menuElement;
         }
-        
+
 
 
         public override void SendKeysToControl(object obj, string value)
@@ -2889,8 +3081,8 @@ namespace GingerCore.Drivers
             }
 
             while (startPoint < endPoint && !taskFinished)
-            {                
-                winAPI.SendClickOnXYPoint(element,startPoint, y1);
+            {
+                winAPI.SendClickOnXYPoint(element, startPoint, y1);
                 UIAuto.AutomationElement currentAE = element.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, tabSelectCondition);
                 if (currentAE != childAE)
                 {
@@ -2965,7 +3157,7 @@ namespace GingerCore.Drivers
                                     ((UIAuto.ValuePattern)vp).SetValue(value);
 
                                     WinAPIAutomation.SendTabKey();
-                                    }
+                                }
                                 else
                                 {
 
@@ -2986,7 +3178,7 @@ namespace GingerCore.Drivers
                                         //// Find The PB Edit box which is created after click cell
                                         //UIAuto.PropertyCondition cond = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.AutomationIdProperty, "10"); 
                                         //UIAuto.AutomationElement AEEditBox = parentElement2.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, cond);
-                                        
+
                                         winAPI.SetElementText(element, value);
                                         element.TryGetCurrentPattern(UIAuto.ValuePattern.Pattern, out vp);
                                     }
@@ -3027,7 +3219,7 @@ namespace GingerCore.Drivers
                                 ((UIAuto.ValuePattern)vp).SetValue(value);
 
                                 WinAPIAutomation.SendTabKey();
-                                    }
+                            }
                             else
                             {
                                 try
@@ -3050,7 +3242,7 @@ namespace GingerCore.Drivers
                                         throw new System.NullReferenceException();
                                     }
                                     UIAuto.AutomationElement FirstElement = element.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, new UIAuto.PropertyCondition(UIAuto.AutomationElement.ProcessIdProperty, element.Current.ProcessId));
-                                    
+
                                     childElement.TryGetCurrentPattern(UIAuto.InvokePatternIdentifiers.Pattern, out vp);
                                     if (vp != null)
                                     {
@@ -3161,7 +3353,7 @@ namespace GingerCore.Drivers
                     case "tree view item":
                         Reporter.ToLog(eLogLevel.DEBUG, "In List Item ::");
                         UIAuto.AutomationElement parentElement = UIAuto.TreeWalker.ContentViewWalker.GetParent(element);
-                        
+
                         bool isMultiSelect = (bool)parentElement.GetCurrentPropertyValue(UIAuto.SelectionPatternIdentifiers.CanSelectMultipleProperty);
                         Reporter.ToLog(eLogLevel.DEBUG, "In List Item isMultiSelect::" + isMultiSelect);
                         if (isMultiSelect)
@@ -3187,7 +3379,7 @@ namespace GingerCore.Drivers
                                 Reporter.ToLog(eLogLevel.DEBUG, "In Scrolltoview ::");
                                 ((UIAuto.ScrollItemPattern)vp).ScrollIntoView();
                             }
-                                
+
 
                             element.TryGetCurrentPattern(UIAuto.SelectionItemPattern.Pattern, out vp);
                             if (vp != null)
@@ -3200,16 +3392,16 @@ namespace GingerCore.Drivers
                             {
                                 Reporter.ToLog(eLogLevel.DEBUG, "In Send keys ::");
                                 UIAuto.AutomationElement ParentElement = UIAuto.TreeWalker.ContentViewWalker.GetParent(element);
-                                winAPI.SendKeysByLibrary(ParentElement,element.Current.Name);
+                                winAPI.SendKeysByLibrary(ParentElement, element.Current.Name);
                                 string selItem = GetSelectedItem(ParentElement);
                                 if (selItem != element.Current.Name)
                                 {
                                     Reporter.ToLog(eLogLevel.DEBUG, "In Send keys ENTER. Current Selected Item is" + selItem);
                                     winAPI.SendKeysByLibrary(ParentElement, "{ENTER}");
                                 }
-                                    
+
                             }
-                                
+
                         }
                         break;
 
@@ -3235,7 +3427,7 @@ namespace GingerCore.Drivers
                     case "tab item":
                     case "item":
                         element.TryGetCurrentPattern(UIAuto.SelectionItemPatternIdentifiers.Pattern, out vp);
-                            ((UIAuto.SelectionItemPattern)vp).Select();
+                        ((UIAuto.SelectionItemPattern)vp).Select();
 
                         break;
 
@@ -3252,13 +3444,15 @@ namespace GingerCore.Drivers
                     // TODO:Find a better way to handle this.
                     //To handle document objects in CSM having blank control type
                     case "":
-                            winAPI.SetElementText(element, value);
+                        winAPI.SetElementText(element, value);
 
                         break;
 
                     case "tree view":
-                        if(string.IsNullOrEmpty(value))
+                        if (string.IsNullOrEmpty(value))
+                        {
                             return "Empty Value: [" + value + "] for Tree View ";
+                        }
 
                         List<string> nodeNames = value.Split(';').ToList<string>();
                         string IsTreeViewExpanded = (element.GetCurrentPropertyValue(UIAuto.ExpandCollapsePatternIdentifiers.ExpandCollapseStateProperty).ToString());
@@ -3273,13 +3467,19 @@ namespace GingerCore.Drivers
                         {
                             element = ExpandTreeNode(element, nodeNames[i]);
                             if (element == null)
+                            {
                                 return nodeNames[i] + " not found in " + value;
+                            }
+
                             element = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(element);
                         }
                         if (AddChildToSelection(element, nodeNames[nodeNames.Count - 1]) == false)
+                        {
                             return nodeNames[nodeNames.Count - 1] + "not found" + value;
+                        }
+
                         break;
-                    default:                        
+                    default:
                         Reporter.ToUser(eUserMsgKey.ActionNotImplemented, controlType);
                         break;
 
@@ -3296,23 +3496,23 @@ namespace GingerCore.Drivers
                     {
                         return "";
                     }
-                    
+
                     str = GetControlValue(element);
-                    if(String.IsNullOrEmpty(str))
+                    if (String.IsNullOrEmpty(str))
                     {
                         str = GetControlText(element);
                     }
-                    
-                    value = value.Replace(" ","").Replace("-","");
-                    str=str.Replace(" ", "").Replace("-", "");
-                    if(value.Equals(str))
+
+                    value = value.Replace(" ", "").Replace("-", "");
+                    str = str.Replace(" ", "").Replace("-", "");
+                    if (value.Equals(str))
                     {
                         return "True";
                     }
-                    if(str.StartsWith(value))
+                    if (str.StartsWith(value))
                     {
                         return "True";
-                    }                    
+                    }
 
                     DateTime outGetDate = new DateTime();
                     string[] dateformats = { "MMddyyyy", "MM/dd/yyyy", "MM-dd-yyyy", "M/d/yyyy", "M-d-yyyy", "Mdyyyy", "ddMMyyyy", "dd/MM/yyyy", "dd-MM-yyyy", "d/M/yyyy", "d-M-yyyy", "dMyyyy" };
@@ -3322,7 +3522,9 @@ namespace GingerCore.Drivers
                         if (DateTime.TryParseExact(value, dateformats, System.Globalization.CultureInfo.InvariantCulture, 0, out outSetDate))
                         {
                             if (outGetDate.ToLongDateString() == outSetDate.ToLongDateString())
+                            {
                                 return "True";
+                            }
                         }
                     }
 
@@ -3341,7 +3543,7 @@ namespace GingerCore.Drivers
                 }
                 return "True";
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Unable to set value", e);
                 throw new Exception("Unable to set value. Value - " + value);
@@ -3410,7 +3612,7 @@ namespace GingerCore.Drivers
             return isExpanded;
         }
 
-        private bool ComparePBActualExpected(string actual,string exp)
+        private bool ComparePBActualExpected(string actual, string exp)
         {
             return false;
 
@@ -3425,19 +3627,21 @@ namespace GingerCore.Drivers
                 {
                     node.TryGetCurrentPattern(UIAuto.ScrollItemPattern.Pattern, out ecp);
                     if (ecp != null)
+                    {
                         ((UIAuto.ScrollItemPattern)ecp).ScrollIntoView();
+                    }
                 }
                 if (node.Current.Name.Contains(nodeName))
                 {
                     Thread.Sleep(1000);
                     IsTreeViewExpanded = (node.GetCurrentPropertyValue(UIAuto.ExpandCollapsePatternIdentifiers.ExpandCollapseStateProperty).ToString());
-                    Reporter.ToLog(eLogLevel.DEBUG , "ExpandTreeNode::" + node.Current.Name + " IsTreeViewExpanded::" + IsTreeViewExpanded);
+                    Reporter.ToLog(eLogLevel.DEBUG, "ExpandTreeNode::" + node.Current.Name + " IsTreeViewExpanded::" + IsTreeViewExpanded);
                     if (General.CompareStringsIgnoreCase(IsTreeViewExpanded, "Collapsed"))
                     {
                         node.TryGetCurrentPattern(UIAuto.ExpandCollapsePattern.Pattern, out ecp);
-                        ((UIAuto.ExpandCollapsePattern)ecp).Expand();                        
-                    }                    
-                    return node;                    
+                        ((UIAuto.ExpandCollapsePattern)ecp).Expand();
+                    }
+                    return node;
                 }
                 node = UIAuto.TreeWalker.RawViewWalker.GetNextSibling(node);
             }
@@ -3445,7 +3649,7 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        private  bool AddChildToSelection(UIAuto.AutomationElement node, string childToSelect)
+        private bool AddChildToSelection(UIAuto.AutomationElement node, string childToSelect)
         {
             Reporter.ToLog(eLogLevel.DEBUG, "AddChildToSelection::" + childToSelect);
             object sip = null;
@@ -3455,7 +3659,9 @@ namespace GingerCore.Drivers
             string sMultiSelect = "Single";
             bool bExact = true;
             if (childToSelect == "*")
+            {
                 sMultiSelect = "All";
+            }
             else if (childToSelect.StartsWith("*") && childToSelect.EndsWith("*"))
             {
                 sMultiSelect = "Multi";
@@ -3468,11 +3674,11 @@ namespace GingerCore.Drivers
                 childToSelect = childToSelect.Substring(0, childToSelect.Length - 1);
             }
             while (node != null && !taskFinished && !String.IsNullOrEmpty(childToSelect))
-            {   
+            {
                 Reporter.ToLog(eLogLevel.DEBUG, childToSelect + " sMultiSelect::" + sMultiSelect);
-                Reporter.ToLog(eLogLevel.DEBUG, "Node Found::" + node.Current.Name);                                
+                Reporter.ToLog(eLogLevel.DEBUG, "Node Found::" + node.Current.Name);
                 bool isMultiSelect = (bool)node.GetCurrentPropertyValue(UIAuto.SelectionPatternIdentifiers.CanSelectMultipleProperty);
-                Reporter.ToLog(eLogLevel.DEBUG, "isMultiSelect ::" + isMultiSelect);                
+                Reporter.ToLog(eLogLevel.DEBUG, "isMultiSelect ::" + isMultiSelect);
                 if (node.Current.IsOffscreen)
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "Node IsOffscreen::");
@@ -3483,36 +3689,45 @@ namespace GingerCore.Drivers
                         ((UIAuto.ScrollItemPattern)sip).ScrollIntoView();
                     }
                 }
-                if(sMultiSelect == "All")
+                if (sMultiSelect == "All")
                 {
                     nodeFound = true;
                     node.TryGetCurrentPattern(UIAuto.SelectionItemPattern.Pattern, out sip);
                     string isChildSelected = (node.GetCurrentPropertyValue(UIAuto.SelectionItemPatternIdentifiers.IsSelectedProperty)).ToString();
-                    Reporter.ToLog(eLogLevel.DEBUG, "isChildSelected value :" + isChildSelected);                 
+                    Reporter.ToLog(eLogLevel.DEBUG, "isChildSelected value :" + isChildSelected);
                     if (isChildSelected == "False")
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "Inside Add to selection All");
-                        
-                        if (sip != null && isMultiSelect)                         
-                            ((UIAuto.SelectionItemPattern)sip).AddToSelection();                                                                              
+
+                        if (sip != null && isMultiSelect)
+                        {
+                            ((UIAuto.SelectionItemPattern)sip).AddToSelection();
+                        }
                         else
                         {
                             WinAPIAutomation.HoldControlKeyOfKeyboard();
-                            UIAuto.AutomationElement nodeText= node.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.LocalizedControlTypeProperty, "text"));
-                            if(nodeText != null)
+                            UIAuto.AutomationElement nodeText = node.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.LocalizedControlTypeProperty, "text"));
+                            if (nodeText != null)
+                            {
                                 winAPI.SendClick(nodeText);
+                            }
                             else
+                            {
                                 winAPI.SendClick(node);
+                            }
+
                             WinAPIAutomation.ReleaseControlKeyOfKeyboard();
                         }
-                            
+
                     }
                 }
                 else if (node.Current.Name.Contains(childToSelect))
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "Inside Contains :" + node.Current.Name);
                     if (bExact == false)
+                    {
                         nodeFound = true;
+                    }
                     else if (node.Current.Name != childToSelect && bExact == true)
                     {
                         UIAuto.AutomationElement nodeText = node.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.LocalizedControlTypeProperty, "text"));
@@ -3520,7 +3735,7 @@ namespace GingerCore.Drivers
                         if (nodeText != null && nodeText.Current.Name == childToSelect)
                         {
                             nodeFound = true;
-                        }                        
+                        }
                     }
                     Reporter.ToLog(eLogLevel.DEBUG, "nodeFound :" + nodeFound);
                     if (nodeFound == true)
@@ -3530,20 +3745,28 @@ namespace GingerCore.Drivers
                         string isChildSelected = (node.GetCurrentPropertyValue(UIAuto.SelectionItemPatternIdentifiers.IsSelectedProperty)).ToString();
                         Reporter.ToLog(eLogLevel.DEBUG, "isChildSelected value :" + isChildSelected);
                         if (isChildSelected == "True")
+                        {
                             return true;
-                        
-                        if(sMultiSelect == "Single")
+                        }
+
+                        if (sMultiSelect == "Single")
                         {
                             Reporter.ToLog(eLogLevel.DEBUG, "Inside Add to selection Single");
                             if (sip != null)
+                            {
                                 ((UIAuto.SelectionItemPattern)sip).Select();
+                            }
                             else
                             {
                                 UIAuto.AutomationElement nodeText = node.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.LocalizedControlTypeProperty, "text"));
                                 if (nodeText != null)
+                                {
                                     winAPI.SendClick(nodeText);
+                                }
                                 else
+                                {
                                     winAPI.SendClick(node);
+                                }
                             }
                             return true;
                         }
@@ -3551,19 +3774,26 @@ namespace GingerCore.Drivers
                         {
                             Reporter.ToLog(eLogLevel.DEBUG, "Inside Add to Selection Multi");
                             if (sip != null && isMultiSelect)
+                            {
                                 ((UIAuto.SelectionItemPattern)sip).AddToSelection();
+                            }
                             else
                             {
                                 WinAPIAutomation.HoldControlKeyOfKeyboard();
                                 UIAuto.AutomationElement nodeText = node.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.LocalizedControlTypeProperty, "text"));
                                 if (nodeText != null)
+                                {
                                     winAPI.SendClick(nodeText);
+                                }
                                 else
+                                {
                                     winAPI.SendClick(node);
+                                }
+
                                 WinAPIAutomation.ReleaseControlKeyOfKeyboard();
                             }
 
-                        }                                               
+                        }
                     }
                 }
                 orgElement = node;
@@ -3576,12 +3806,14 @@ namespace GingerCore.Drivers
                 return false;
             }
             else
+            {
                 return true;
+            }
         }
 
         public override void ScrollDown(object obj)
-       {
-           UIAuto.AutomationElement element = (UIAuto.AutomationElement) obj;
+        {
+            UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
             //Check if control is enabled 
             if (!element.Current.IsEnabled)
             {
@@ -3604,7 +3836,7 @@ namespace GingerCore.Drivers
                     ((UIAuto.RangeValuePattern)vp).SetValue(((UIAuto.RangeValuePattern)vp).Current.Value + ((UIAuto.RangeValuePattern)vp).Current.LargeChange);
                     break;
                 case "custom":
-                    string AutomationId = element.Current.AutomationId;                    
+                    string AutomationId = element.Current.AutomationId;
                     if (AutomationId == "Data Area")
                     {
                         int x1 = 0;
@@ -3637,11 +3869,11 @@ namespace GingerCore.Drivers
             }
         }
 
-       public override void ScrollUp(object obj)
-       {
-           UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
-                //Check if control is enabled 
-                if (!element.Current.IsEnabled)
+        public override void ScrollUp(object obj)
+        {
+            UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
+            //Check if control is enabled 
+            if (!element.Current.IsEnabled)
             {
                 throw new InvalidOperationException(
                     "The control with an AutomationID of "
@@ -3698,7 +3930,7 @@ namespace GingerCore.Drivers
 
         public override string GetControlPropertyValue(object obj, string propertyName)
         {
-            UIAuto.AutomationElement element = (UIAuto.AutomationElement) obj;
+            UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
             //TODO: Use Reflection for this instead of switch case to handle it in generic way
             string propValue = String.Empty;
             try
@@ -3711,7 +3943,10 @@ namespace GingerCore.Drivers
                     case "Value":
                         object tempVal = GetControlValue(element);
                         if (tempVal != null)
+                        {
                             propValue = tempVal.ToString();
+                        }
+
                         break;
                     case "AutomationId":
                         propValue = element.Current.AutomationId;
@@ -3816,12 +4051,12 @@ namespace GingerCore.Drivers
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetControlPropertyValue", e);
                 throw e;
-            } 
-           
+            }
+
             return propValue;
         }
 
-        public override String GetControlText(object obj, string XY="")
+        public override String GetControlText(object obj, string XY = "")
         {
             UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
 
@@ -3832,7 +4067,7 @@ namespace GingerCore.Drivers
                 if (element.Current.IsOffscreen == false)
                 {
                     ClearClipboardText();
-                    DoRightClick(obj,XY);
+                    DoRightClick(obj, XY);
                     Thread.Sleep(200);
                     CurrentWindow.SetFocus();
                     System.Windows.Forms.SendKeys.SendWait("c");
@@ -3874,18 +4109,18 @@ namespace GingerCore.Drivers
             }
             return clipboardText;
         }
-        
+
         private static void ClearClipboardText()
         {
             bool bDone = false;
             var t = new Thread(() =>
             {
                 try
-                {                    
+                {
                     Clipboard.Clear();
                     bDone = true;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetClipboardText", ex);
                     bDone = true;
@@ -3898,7 +4133,7 @@ namespace GingerCore.Drivers
                 Thread.Sleep(100);
             }
         }
-        
+
         /// <summary>
         /// This method will try to get the value from child control from the Automation element, basically it is used to get the value from Combobox control
         /// </summary>
@@ -3956,11 +4191,11 @@ namespace GingerCore.Drivers
         /// <returns></returns>
         public override String GetControlValue(object obj)
         {
-            UIAuto.AutomationElement element = (UIAuto.AutomationElement) obj;
+            UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
             object vp;
             string ControlType = element.Current.LocalizedControlType.ToString();
-            if (General.CompareStringsIgnoreCase(ControlType ,"Edit Box" )||General.CompareStringsIgnoreCase(ControlType, "edit")||
-                General.CompareStringsIgnoreCase(ControlType, "item")|| General.CompareStringsIgnoreCase(ControlType, ""))
+            if (General.CompareStringsIgnoreCase(ControlType, "Edit Box") || General.CompareStringsIgnoreCase(ControlType, "edit") ||
+                General.CompareStringsIgnoreCase(ControlType, "item") || General.CompareStringsIgnoreCase(ControlType, ""))
             {
                 string elementValue = GetElementValueByValuePattern(element);
 
@@ -4011,7 +4246,7 @@ namespace GingerCore.Drivers
             {
                 element.TryGetCurrentPattern(UIAuto.TogglePattern.Pattern, out vp);
 
-               Interop.UIAutomationClient.ToggleState x = ((UIAuto.TogglePattern)vp).Current.ToggleState;
+                Interop.UIAutomationClient.ToggleState x = ((UIAuto.TogglePattern)vp).Current.ToggleState;
 
                 if (x == Interop.UIAutomationClient.ToggleState.ToggleState_On)
                 {
@@ -4086,7 +4321,7 @@ namespace GingerCore.Drivers
 
         public override string GetControlFieldValue(object obj, string value)
         {
-            UIAuto.AutomationElement element = (UIAuto.AutomationElement) obj;
+            UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
             UIAuto.AutomationElement fieldValueElement;
             UIAuto.PropertyCondition conditionMatchMenu = new UIAuto.PropertyCondition(UIAuto.AutomationElement.NameProperty, value);
             UIAuto.AutomationElement fieldNameElement = element.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, conditionMatchMenu);
@@ -4096,7 +4331,7 @@ namespace GingerCore.Drivers
 
         public override string ToggleControlValue(object obj)
         {
-            UIAuto.AutomationElement element = (UIAuto.AutomationElement) obj;
+            UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
             //Check if control is enabled 
             if (element == null)
             {
@@ -4139,7 +4374,7 @@ namespace GingerCore.Drivers
 
         public override string IsEnabledControl(object obj)
         {
-            UIAuto.AutomationElement element = (UIAuto.AutomationElement) obj;
+            UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
             //Check if control is enabled 
             if (element == null)
             {
@@ -4148,7 +4383,7 @@ namespace GingerCore.Drivers
                     + element.Current.AutomationId.ToString()
                     + " Cannot find its value.\n\n");
             }
-            
+
             //returning the lower case string to handle existing automation
             return element.Current.IsEnabled.ToString().ToLower();
         }
@@ -4206,7 +4441,7 @@ namespace GingerCore.Drivers
                 {
                     ListItems += "," + elementNode.Current.Name;
                 }
-                
+
                 elementNode = UIAuto.TreeWalker.RawViewWalker.GetNextSibling(elementNode);
             } while (elementNode != null && !taskFinished);
             return ListItems;
@@ -4214,7 +4449,7 @@ namespace GingerCore.Drivers
 
         public override string GetDialogTitle(object obj)
         {
-            UIAuto.AutomationElement element = (UIAuto.AutomationElement) obj;
+            UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
 
             return element.Current.Name;
         }
@@ -4225,7 +4460,10 @@ namespace GingerCore.Drivers
             String ListItems = "";
             do
             {
-                if (ListItems.Length > 0) ListItems += ", ";
+                if (ListItems.Length > 0)
+                {
+                    ListItems += ", ";
+                }
 
                 ListItems += elementNode.Current.Name;
                 elementNode = UIAuto.TreeWalker.RawViewWalker.GetNextSibling(elementNode);
@@ -4252,10 +4490,10 @@ namespace GingerCore.Drivers
         public override void CollapseControlElement(object obj)
         {
             UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
-            Reporter.ToLog(eLogLevel.DEBUG, "Collapsing element  :  "+element.Current.Name);
+            Reporter.ToLog(eLogLevel.DEBUG, "Collapsing element  :  " + element.Current.Name);
             object vp;
             string status = "";
-            element.TryGetCurrentPattern(UIAuto.ExpandCollapsePattern.Pattern, out vp);            
+            element.TryGetCurrentPattern(UIAuto.ExpandCollapsePattern.Pattern, out vp);
             if (vp != null)
             {
                 status = ((UIAuto.ExpandCollapsePattern)vp).Current.ExpandCollapseState.ToString();
@@ -4265,25 +4503,25 @@ namespace GingerCore.Drivers
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "element  :  "+element.Current.Name+" is already collapsed");
+                    Reporter.ToLog(eLogLevel.DEBUG, "element  :  " + element.Current.Name + " is already collapsed");
 
                 }
             }
         }
-        
+
 
         public override string IsControlSelected(object obj)
         {
-            UIAuto.AutomationElement element=(UIAuto.AutomationElement)obj;
+            UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
             string isControlSelected = element.GetCurrentPropertyValue(UIAuto.SelectionItemPatternIdentifiers.IsSelectedProperty).ToString();
             return isControlSelected;
         }
-        
+
         private const int WmPaint = 0x000F;
 
         [DllImport("User32.dll")]
         public static extern Int64 SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
-        
+
         public static void ForcePaint(IntPtr hWnd)
         {
             SendMessage(hWnd, WmPaint, IntPtr.Zero, IntPtr.Zero);
@@ -4296,7 +4534,11 @@ namespace GingerCore.Drivers
 
         private void waitForElementState(UIAuto.AutomationElement ae)
         {
-            int itry = 0; if (loadwaitSeconds <= 0) loadwaitSeconds = 10;
+            int itry = 0; if (loadwaitSeconds <= 0)
+            {
+                loadwaitSeconds = 10;
+            }
+
             while (loadwaitSeconds >= itry && ae.Current.ItemStatus == "Busy")
             {
                 System.Threading.Thread.Sleep(1000);
@@ -4307,7 +4549,7 @@ namespace GingerCore.Drivers
             try { ae.SetFocus(); } //TODO set window focus using runtime services. http://blog.coderdowhat.com/2010/02/automationelementsetfocus-is-unreliable.html
             catch { }
         }
-        
+
         public override void SmartSwitchWindow(ActSwitchWindow actSW)
         {
             Stopwatch St = new Stopwatch();
@@ -4319,7 +4561,10 @@ namespace GingerCore.Drivers
             while (!switchDoneFlag && !taskFinished)
             {
                 if (actSW.WaitTime == -1)
+                {
                     actSW.WaitTime = mLoadTimeOut.Value;
+                }
+
                 switchDoneFlag = SwitchToWindow(windowTitle);
 
                 if (St.ElapsedMilliseconds > actSW.WaitTime * 1000)
@@ -4329,13 +4574,15 @@ namespace GingerCore.Drivers
             }
 
             if (!switchDoneFlag)
+            {
                 actSW.Error += "Window with title-" + windowTitle + " not found within specified time";
+            }
         }
 
         public override void ActUISwitchWindow(Act act)
         {
             ActUIElement actUIElement = (ActUIElement)act;
-            
+
             Stopwatch St = new Stopwatch();
             St.Reset();
             St.Start();
@@ -4359,7 +4606,9 @@ namespace GingerCore.Drivers
             }
 
             if (!switchDoneFlag)
+            {
                 actUIElement.Error += "Window with title-" + windowTitle + " not found within specified time";
+            }
         }
 
         public override void SwitchWindow(ActUIASwitchWindow act)
@@ -4392,7 +4641,7 @@ namespace GingerCore.Drivers
                                     act.ExInfo = "Switched to Window -with no title";
                                     isFound = true;
                                     CurrentWindowName = CurrentWindow.Current.Name;
-                                    break; 
+                                    break;
                                 }
                             }
                         }
@@ -4415,11 +4664,11 @@ namespace GingerCore.Drivers
                                         act.ExInfo = "Switched to Window - " + act.LocateValueCalculated;
                                         isFound = true;
                                         CurrentWindowName = CurrentWindow.Current.Name;
-                                        break; 
+                                        break;
                                     }
                                 }
                             }
-                        } 
+                        }
                     }
 
                     if (!isFound)
@@ -4439,14 +4688,17 @@ namespace GingerCore.Drivers
                                         act.ExInfo = "Switched to Window - " + act.LocateValueCalculated;
                                         isFound = true;
                                         CurrentWindowName = CurrentWindow.Current.Name;
-                                        break; 
+                                        break;
                                     }
                                 }
                             }
-                        } 
+                        }
                     }
                     if (!isFound && !taskFinished)
+                    {
                         continue;
+                    }
+
                     if (!isFound)
                     {
                         //TODO: below is not correct condition.WindowTitle is title of window from last iteration of for loop
@@ -4457,9 +4709,9 @@ namespace GingerCore.Drivers
                         else
                         {
                             act.Error = "Please Provide Window Title in Locator Value and Please select  locate By Title";
-                        } 
+                        }
                     }
-                   
+
                     isLoaded = true;
                 }
                 catch (Exception ex)
@@ -4467,14 +4719,14 @@ namespace GingerCore.Drivers
                     Reporter.ToLog(eLogLevel.DEBUG, "Error in SwitchWindow", ex);
                     isLoaded = false;
                     if (count == 6)
-                    {                        
+                    {
                         throw ex;
                     }
                 }
                 count++;
             }
         }
-        
+
         public override bool HandleSwitchWindow(eLocateBy locateBy, string locateValue)
         {
             if (locateBy == eLocateBy.ByXPath)
@@ -4486,12 +4738,12 @@ namespace GingerCore.Drivers
                     CurrentWindow = (UIAuto.AutomationElement)AE;
                     CurrentWindowName = CurrentWindow.Current.Name;
                     UpdateRootElement();
-                    return true; 
+                    return true;
                 }
             }
-            
+
             return SwitchToWindow(locateValue);
-            
+
         }
 
         public override bool SwitchToWindow(String Title)
@@ -4521,7 +4773,7 @@ namespace GingerCore.Drivers
                                 UpdateRootElement();
                                 isLoaded = true;
                                 CurrentWindowName = CurrentWindow.Current.Name;
-                                break; 
+                                break;
                             }
                         }
                         else if (WindowTitle == "")
@@ -4530,7 +4782,7 @@ namespace GingerCore.Drivers
                             //Also if more than one pdf windows are open then process for both of them will same
                             //Need to handle this scenario
                             Process[] listProcesses = Process.GetProcessesByName("AcroRd32");
-                            
+
                             foreach (Process p in listProcesses)
                             {
                                 if (p.MainWindowTitle.Contains(Title))
@@ -4542,7 +4794,7 @@ namespace GingerCore.Drivers
                                         UpdateRootElement();
                                         isLoaded = true;
                                         CurrentWindowName = AE.Current.Name;
-                                        break; 
+                                        break;
                                     }
                                 }
                             }
@@ -4553,20 +4805,20 @@ namespace GingerCore.Drivers
                             {
                                 CurrentWindow = window;
                                 UpdateRootElement();
-                                isLoaded = true;                                
-                                CurrentWindowName = GetWindowInfo(window);                                
-                                break; 
+                                isLoaded = true;
+                                CurrentWindowName = GetWindowInfo(window);
+                                break;
                             }
                         }
                     }
                     break;
-                }                
+                }
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "Error in SwitchToWindow", ex);
                     isLoaded = false;
                     if (count == 6)
-                    {                       
+                    {
                         throw ex;
                     }
                 }
@@ -4574,7 +4826,7 @@ namespace GingerCore.Drivers
             }
             return isLoaded;
         }
-        
+
         public override void TakeScreenShot(ActScreenShot act)
         {
             try
@@ -4605,7 +4857,7 @@ namespace GingerCore.Drivers
         static extern bool PrintWindow(IntPtr hwnd, IntPtr hDC, uint nFlags);
 
         public override Bitmap GetCurrentWindowBitmap()
-        {            
+        {
             Bitmap bmp = WindowToBitmap(CurrentWindow);
             return bmp;
         }
@@ -4627,7 +4879,7 @@ namespace GingerCore.Drivers
             return list;
 
         }
-        
+
         public override Bitmap GetAppWindowAsBitmap(AppWindow aw)  //******************        
         {
             try
@@ -4636,7 +4888,7 @@ namespace GingerCore.Drivers
                 Bitmap bmp = WindowToBitmap(tempWindow);
                 return bmp;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -4669,7 +4921,7 @@ namespace GingerCore.Drivers
             {
                 UIAuto.AutomationElement ele = AEList1[i];
                 Bitmap bmp = WindowToBitmap(ele);
-                bList.Add(bmp);                
+                bList.Add(bmp);
             }
 
             for (int i = 0; i < AEListWindows.Count; i++)
@@ -4688,7 +4940,7 @@ namespace GingerCore.Drivers
 
         public override bool IsWindowValid(object obj)
         {
-            if (obj!=null && obj.GetType().Equals(typeof(UIAuto.AutomationElement)))
+            if (obj != null && obj.GetType().Equals(typeof(UIAuto.AutomationElement)))
             {
                 UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
                 try
@@ -4705,26 +4957,28 @@ namespace GingerCore.Drivers
                     Reporter.ToLog(eLogLevel.DEBUG, "Exception when checking IsWindowValid", e);
                     return false;
                 }
-            }            
+            }
             return true;
 
         }
 
         public override string GetWindowInfo(object obj)
         {
-            UIAuto.AutomationElement window = (UIAuto.AutomationElement) obj;
+            UIAuto.AutomationElement window = (UIAuto.AutomationElement)obj;
             string locVal = String.Empty;
             try
             {
-                locVal = getAEProperty(window, UIAuto.AutomationElement.NameProperty);            
+                locVal = getAEProperty(window, UIAuto.AutomationElement.NameProperty);
                 if (!IsWindowValid(obj))
+                {
                     return "";
-                
+                }
+
                 if (string.IsNullOrEmpty(locVal) && !string.IsNullOrEmpty(window.Current.AutomationId))
-                {                                        
+                {
                     locVal = window.Current.LocalizedControlType;
-                    locVal += " (" + window.Current.AutomationId + ")";                    
-                }                
+                    locVal += " (" + window.Current.AutomationId + ")";
+                }
             }
             catch (COMException e)
             {
@@ -4749,7 +5003,7 @@ namespace GingerCore.Drivers
             }
             return locVal;
         }
-        
+
         public UIAuto.AutomationElement GetLastFocusedElement()
         {
             return lastFocusedElement;
@@ -4758,60 +5012,60 @@ namespace GingerCore.Drivers
         //Will get all visible control including recursive drill down, for AE which have invoke method
         public override async Task<List<ElementInfo>> GetVisibleControls()
         {
-           return await Task.Run(async() =>
-            {
+            return await Task.Run(async () =>
+             {
 
-                List<ElementInfo> list = new List<ElementInfo>();
-                List<ElementInfo> HTMLlist;
+                 List<ElementInfo> list = new List<ElementInfo>();
+                 List<ElementInfo> HTMLlist;
 
-                //TODO: find a better property - since if the window is off screen controls will not show            
-                UIAuto.Condition cond = new UIAuto.PropertyCondition(UIAuto.AutomationElement.IsOffscreenProperty, false);
-                UIAuto.AutomationElementCollection AEC = CurrentWindow.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, cond);
-                string IEElementXpath = "";
+                 //TODO: find a better property - since if the window is off screen controls will not show            
+                 UIAuto.Condition cond = new UIAuto.PropertyCondition(UIAuto.AutomationElement.IsOffscreenProperty, false);
+                 UIAuto.AutomationElementCollection AEC = CurrentWindow.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, cond);
+                 string IEElementXpath = "";
 
-                foreach (UIAuto.AutomationElement AE in AEC)
-                {
-                    if(StopProcess)
-                    {
-                        break;
-                    }
+                 foreach (UIAuto.AutomationElement AE in AEC)
+                 {
+                     if (StopProcess)
+                     {
+                         break;
+                     }
 
-                    UIAElementInfo ei = (UIAElementInfo)GetElementInfoFor(AE);
-                    if (AE.Current.ClassName.Equals("Internet Explorer_Server"))
-                    {
-                        ei = (UIAElementInfo)GetElementInfoFor(AE);
-                        IEElementXpath = ei.XPath;
-                        InitializeBrowser(AE);
-                        HTMLlist = await HTMLhelperObj.GetVisibleElement();
-                        list.Add(ei);
-                        if (HTMLlist != null && HTMLlist.Count > 0)
-                        {
-                            list.AddRange(HTMLlist);
-                        }
-                        //foreach(ElementInfo e1 in HTMLlist)
-                        //{
-                        //    list.Add(e1);
-                        //}
-                    }
+                     UIAElementInfo ei = (UIAElementInfo)GetElementInfoFor(AE);
+                     if (AE.Current.ClassName.Equals("Internet Explorer_Server"))
+                     {
+                         ei = (UIAElementInfo)GetElementInfoFor(AE);
+                         IEElementXpath = ei.XPath;
+                         InitializeBrowser(AE);
+                         HTMLlist = await HTMLhelperObj.GetVisibleElement();
+                         list.Add(ei);
+                         if (HTMLlist != null && HTMLlist.Count > 0)
+                         {
+                             list.AddRange(HTMLlist);
+                         }
+                         //foreach(ElementInfo e1 in HTMLlist)
+                         //{
+                         //    list.Add(e1);
+                         //}
+                     }
 
 
-                    if (String.IsNullOrEmpty(IEElementXpath))
-                    {
-                        list.Add(ei);
-                    }
-                    else if (!ei.XPath.Contains(IEElementXpath))
-                    {
-                        //TODO: Here we check if automation element is child of IE browser element 
-                        // If yes then we skip it because we already have HTML element for this
-                        // Checking it by XPath makes it slow , because xpath is calculated for this element at runtime
-                        // Need to find a better way to speed up
-                        list.Add(ei);
-                    }
+                     if (String.IsNullOrEmpty(IEElementXpath))
+                     {
+                         list.Add(ei);
+                     }
+                     else if (!ei.XPath.Contains(IEElementXpath))
+                     {
+                         //TODO: Here we check if automation element is child of IE browser element 
+                         // If yes then we skip it because we already have HTML element for this
+                         // Checking it by XPath makes it slow , because xpath is calculated for this element at runtime
+                         // Need to find a better way to speed up
+                         list.Add(ei);
+                     }
 
-                }
+                 }
 
-                return list;
-            });
+                 return list;
+             });
 
         }
 
@@ -4819,12 +5073,12 @@ namespace GingerCore.Drivers
         {
             UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
             string result = "";
-                    SHDocVw.InternetExplorer internetExplorer = winAPI.GetIEFromAutomationelement(AE);
-                    HTMLhelperObj = new HTMLHelper(internetExplorer,AE);
+            SHDocVw.InternetExplorer internetExplorer = winAPI.GetIEFromAutomationelement(AE);
+            HTMLhelperObj = new HTMLHelper(internetExplorer, AE);
             result = internetExplorer == null ? "false" : "true";
             return result;
         }
-        
+
         public override string GetElementAbsoluteXPath(object obj)
         {
             UIAElementInfo EI = new UIAElementInfo
@@ -4850,7 +5104,10 @@ namespace GingerCore.Drivers
                 elementParent = walker.GetParent(node);
                 if (elementParent != UIAuto.AutomationElement.RootElement)
                 {
-                    if (xPath.Length > 0) xPath = @"\" + xPath;
+                    if (xPath.Length > 0)
+                    {
+                        xPath = @"\" + xPath;
+                    }
 
                     if (!String.IsNullOrEmpty(node.Current.Name))
                     {
@@ -4932,17 +5189,21 @@ namespace GingerCore.Drivers
                 int i = 0;
                 foreach (UIAuto.AutomationElement AE in elems)
                 {
-                    if (AE == node) break;
+                    if (AE == node)
+                    {
+                        break;
+                    }
+
                     i++;
                 }
                 path += "[" + i + "]]";
             }
-            return path; 
+            return path;
         }
-        
+
         public override object GetElementData(object obj)
         {
-            UIAuto.AutomationElement AE = (UIAuto.AutomationElement) obj;
+            UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
             string type = AE.Current.LocalizedControlType;
 
 
@@ -4950,7 +5211,7 @@ namespace GingerCore.Drivers
             {
                 return GetComboValues(AE);
             }
-            if(type=="pane" && AE.Current.ClassName.StartsWith("pbd"))
+            if (type == "pane" && AE.Current.ClassName.StartsWith("pbd"))
             {
                 TableElementInfo TBI = new TableElementInfo();
                 TBI = GetTableElementInfoForGrid(AE);
@@ -4999,16 +5260,20 @@ namespace GingerCore.Drivers
         public int GetRowNumFromCollection(UIAuto.AutomationElement[] AECollection, ActTableElement.eRunColPropertyValue propVal, ActTableElement.eRunColOperator WhereOperator, string value)
         {
             UIAuto.AutomationElement targetElement;
-            string controlValue="";
+            string controlValue = "";
             if (ActTableElement.eRunColOperator.Equals == WhereOperator)
             {
                 for (int i = 0; i < AECollection.Count(); i++)
                 {
                     targetElement = AECollection[i];
                     if (propVal == ActTableElement.eRunColPropertyValue.Text)
+                    {
                         controlValue = GetControlText(targetElement);
+                    }
                     else if (propVal == ActTableElement.eRunColPropertyValue.Value)
+                    {
                         controlValue = GetControlValue(targetElement);
+                    }
 
                     if (value.Equals(controlValue))
                     {
@@ -5023,9 +5288,13 @@ namespace GingerCore.Drivers
                 {
                     targetElement = AECollection[i];
                     if (propVal == ActTableElement.eRunColPropertyValue.Text)
+                    {
                         controlValue = GetControlText(targetElement);
+                    }
                     else if (propVal == ActTableElement.eRunColPropertyValue.Value)
+                    {
                         controlValue = GetControlValue(targetElement);
+                    }
 
                     if (controlValue.Contains(value))
                     {
@@ -5135,15 +5404,15 @@ namespace GingerCore.Drivers
             //}
             try
             {
-                RowCount = GetRowCountforGrid(AE,true);
+                RowCount = GetRowCountforGrid(AE, true);
                 if (actGrid.ControlAction.Equals(ActTableElement.eTableAction.GetRowCount))
                 {
 
                     actGrid.AddOrUpdateReturnParamActual("Actual", RowCount.ToString());
                     actGrid.ExInfo = RowCount.ToString();
                     return;
-                }                                              
-                
+                }
+
                 switch (actGrid.LocateRowType)
                 {
                     case "Row Number":
@@ -5187,7 +5456,10 @@ namespace GingerCore.Drivers
                 {
                     AEColl = GetColumnCollection(actGrid.ColSelectorValue, actGrid.LocateColTitle, AE);
                     if (AEColl[RowNumber].Current.IsOffscreen)
+                    {
                         getTableElementOnScreen(AE, AEColl[RowNumber], RowNumber);
+                    }
+
                     if (AEColl[RowNumber].Current.IsOffscreen)
                     {
                         actGrid.Error = "Unable to bring cell on screen";
@@ -5202,7 +5474,7 @@ namespace GingerCore.Drivers
             catch (System.Runtime.InteropServices.COMException e)
             {
                 parentDictionary.Remove(AE);
-                Reporter.ToLog(eLogLevel.DEBUG,"Error in HandleGridcontrolAction", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error in HandleGridcontrolAction", e);
                 throw new System.Runtime.InteropServices.COMException();
             }
         }
@@ -5228,7 +5500,7 @@ namespace GingerCore.Drivers
 
             int sourceYPoint = (int)element.Current.BoundingRectangle.Height + 7;
             int tableHeight = (int)tableElement.Current.BoundingRectangle.Height;
-            UIAuto.AutomationElement Scroll = tableElement.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.OrientationProperty,  OrientationType.Vertical));
+            UIAuto.AutomationElement Scroll = tableElement.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.OrientationProperty, OrientationType.Vertical));
             UIAuto.AutomationElement pageDown = null, pageUp = null;
 
             if (Scroll != null)
@@ -5262,7 +5534,9 @@ namespace GingerCore.Drivers
                     sourceYPoint = sourceYPoint + 5;
                 }
                 if (pageDown != null && (!pageDown.Current.IsOffscreen))
+                {
                     ClickElement(pageDown);
+                }
             } while (pageDown != null);
             throw new Exception("Given Value " + whereColumnValue + " is not present in column " + whereColumnTitle);
         }
@@ -5277,7 +5551,7 @@ namespace GingerCore.Drivers
             int count = AEColl.Length, j = MainDict.Count - 1;
 
             while (count != 0 && (AEColl[0].Current.LocalizedControlType.Equals("thumb")) || AEColl[0].Current.LocalizedControlType.Equals("scroll bar") || AEColl[0].Current.LocalizedControlType.Equals("image") || (AEColl[0].Current.LocalizedControlType.Equals("button")))
-            {                
+            {
                 j--;
                 AEColl = MainDict.Values.ElementAt(j);
                 count = AEColl.Count();
@@ -5291,15 +5565,17 @@ namespace GingerCore.Drivers
         }
 
         public void getTableElementOnScreen(UIAuto.AutomationElement AE, UIAuto.AutomationElement targetAE, int RowNumber)
-        {            
-                int minRowOnScreen = -1;
-                string ColName = targetAE.Current.Name;
-                minRowOnScreen = getColumnOnScreen(AE,ColName);
-                if (minRowOnScreen == -1)
-                    return;
+        {
+            int minRowOnScreen = -1;
+            string ColName = targetAE.Current.Name;
+            minRowOnScreen = getColumnOnScreen(AE, ColName);
+            if (minRowOnScreen == -1)
+            {
+                return;
+            }
 
-                getRowOnScreen(AE, targetAE, RowNumber, minRowOnScreen);
-                return;            
+            getRowOnScreen(AE, targetAE, RowNumber, minRowOnScreen);
+            return;
         }
 
         /// <summary>
@@ -5308,7 +5584,7 @@ namespace GingerCore.Drivers
         public UIAuto.AutomationElement GetColTargetCellByPoint(UIAuto.AutomationElement tableAE, UIAuto.AutomationElement colFirstAE, string targetCellvalue)
         {
             UIAuto.AutomationElement Scroll = tableAE.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.OrientationProperty, OrientationType.Vertical));
-            UIAuto.AutomationElement pageUp = null, pageDown = null, TargetAE = null;            
+            UIAuto.AutomationElement pageUp = null, pageDown = null, TargetAE = null;
 
             int x = ((int)colFirstAE.Current.BoundingRectangle.X + 2);
             int y = ((int)tableAE.Current.BoundingRectangle.Y) + (((int)(colFirstAE.Current.BoundingRectangle.Height)) / 2);
@@ -5337,10 +5613,12 @@ namespace GingerCore.Drivers
                         return TargetAE;
                     }
                     if (pageDown != null && (!pageDown.Current.IsOffscreen))
-                        ClickElement(pageDown);                    
-                } while (pageDown!=null);                
+                    {
+                        ClickElement(pageDown);
+                    }
+                } while (pageDown != null);
             }
-            throw new Exception("Could not find Row with value  :  " + targetCellvalue);            
+            throw new Exception("Could not find Row with value  :  " + targetCellvalue);
         }
 
         /// <summary>
@@ -5355,8 +5633,10 @@ namespace GingerCore.Drivers
 
             //if element is visible on screen
             refCol = FindColumnByPoint(x, y, ((int)TableAE.Current.BoundingRectangle.X + (int)TableAE.Current.BoundingRectangle.Width), targetColValue);
-            if (refCol!=null)            
+            if (refCol != null)
+            {
                 return refCol;
+            }
 
             if (Scroll != null)
             {
@@ -5370,13 +5650,16 @@ namespace GingerCore.Drivers
                     pageRight = Scroll.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.NameProperty, "Page right"));
                     refCol = FindColumnByPoint(x, y, ((int)TableAE.Current.BoundingRectangle.X + (int)TableAE.Current.BoundingRectangle.Width), targetColValue);
                     if (refCol != null)
+                    {
                         return refCol;
+                    }
 
                     if (pageRight != null && (!pageRight.Current.IsOffscreen))
+                    {
                         ClickElement(pageRight);
-
-                } while(pageRight!=null);
-            }                       
+                    }
+                } while (pageRight != null);
+            }
             throw new Exception("Unable to bring " + targetColValue + " Column on screen ");
         }
 
@@ -5417,7 +5700,7 @@ namespace GingerCore.Drivers
         {
             UIAuto.AutomationElement ScrollButton = AE.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.OrientationProperty, OrientationType.Vertical));
             if (targetAE.Current.IsOffscreen && ScrollButton != null)
-            {                
+            {
                 if (MinRowOnScreen > RowNumber)
                 {
                     ScrollButton = ScrollButton.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.NameProperty, "Page up"));
@@ -5474,7 +5757,7 @@ namespace GingerCore.Drivers
             {
                 if (!AEColl[i].Current.IsOffscreen)
                 {
-                    return i+1;
+                    return i + 1;
                 }
             }
             return -1;
@@ -5498,7 +5781,7 @@ namespace GingerCore.Drivers
             if (element != null)
             {
                 tempcount = GetCurrentCountForGrid(AE, element, avail);
-                if(tempcount<2 && maxcount<2)
+                if (tempcount < 2 && maxcount < 2)
                 {
                     tempcount = getCountwithZeroOrOne();
                 }
@@ -5542,7 +5825,10 @@ namespace GingerCore.Drivers
                         actGrid.Error += status;
                     }
                     else
+                    {
                         actGrid.ExInfo += status;
+                    }
+
                     break;
                 case ActTableElement.eTableAction.ClickXY:
                     ClickOnXYPoint(element, actGrid.ValueForDriver);
@@ -5570,15 +5856,15 @@ namespace GingerCore.Drivers
             }
         }
 
-        public int GetCurrentCountForGrid(UIAuto.AutomationElement AE, UIAuto.AutomationElement childAE,bool avail=false)
+        public int GetCurrentCountForGrid(UIAuto.AutomationElement AE, UIAuto.AutomationElement childAE, bool avail = false)
         {
             int count = 0;
             UIAuto.AutomationElementCollection AECollection;
             UIAuto.Condition NameCond = new UIAuto.PropertyCondition(UIAuto.AutomationElementIdentifiers.NameProperty, childAE.Current.Name);
             AECollection = AE.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, NameCond);
-            if(avail == true)
+            if (avail == true)
             {
-                foreach(UIAuto.AutomationElement aeChild in AECollection)
+                foreach (UIAuto.AutomationElement aeChild in AECollection)
                 {
                     object vp = null;
                     if (aeChild.TryGetCurrentPattern(UIAuto.ValuePatternIdentifiers.Pattern, out vp))
@@ -5586,15 +5872,21 @@ namespace GingerCore.Drivers
                         if (vp != null)
                         {
                             if (((UIAuto.ValuePattern)vp).Current.Value != null && (((UIAuto.ValuePattern)vp).Current.Value != "" || (((UIAuto.ValuePattern)vp).Current.Value == "" && aeChild.Current.IsOffscreen == false)))
+                            {
                                 count++;
+                            }
                         }
                     }
                     else
+                    {
                         count++;
+                    }
                 }
             }
             else
+            {
                 count = AECollection.Count;
+            }
 
             if (AECollection.Count == 0)
             {
@@ -5688,7 +5980,7 @@ namespace GingerCore.Drivers
             int yPoint = 0;
             int count = 0;
             List<UIAuto.AutomationElement> gridControls = new List<UIAuto.AutomationElement>();
-            foreach(string str in MainDict.Keys)
+            foreach (string str in MainDict.Keys)
             {
                 gridControls.Add(MainDict[str].ToList<UIAuto.AutomationElement>()[0]);
             }
@@ -5722,7 +6014,11 @@ namespace GingerCore.Drivers
             string sElementName = "";
             do
             {
-                if (tempElement == null) break;
+                if (tempElement == null)
+                {
+                    break;
+                }
+
                 sElementName = tempElement.Current.Name;
                 if (!String.IsNullOrEmpty(sElementName))
                 {
@@ -5739,14 +6035,15 @@ namespace GingerCore.Drivers
                 try
                 {
                     tempElement = UIAuto.TreeWalker.ContentViewWalker.GetNextSibling(tempElement);
-                }catch(Exception e)                
+                }
+                catch (Exception e)
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetDictionaryForGrid", e);
                     tempElement = null;
                 }
 
             } while (tempElement != null && !taskFinished);
-            if(MainDict.Count < 4)
+            if (MainDict.Count < 4)
             {
                 List<UIAuto.AutomationElement> gridControls = GetGridControlsFromPoint(AE);
                 isElementsFromPoints = true;
@@ -5809,17 +6106,17 @@ namespace GingerCore.Drivers
             UIAuto.AutomationElement elementNode = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(AE);
             while (elementNode != null)
             {
-                ComboValues.Add(new ComboBoxElementItem() { Value = "???" , Text = elementNode.Current.Name });
+                ComboValues.Add(new ComboBoxElementItem() { Value = "???", Text = elementNode.Current.Name });
                 //elementNode = UIAuto.TreeWalker.ControlViewWalker.GetNextSibling(elementNode);
                 elementNode = UIAuto.TreeWalker.RawViewWalker.GetNextSibling(elementNode);
             }
 
             return ComboValues;
         }
-        
+
         public override ElementInfo GetElementInfoFor(object obj)
         {
-            UIAuto.AutomationElement AE = (UIAuto.AutomationElement) obj;
+            UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
             UIAElementInfo EI = new UIAElementInfo();
             EI.ElementObject = AE;
             EI.X = (int)AE.Current.BoundingRectangle.X;
@@ -5827,7 +6124,7 @@ namespace GingerCore.Drivers
             EI.Width = (int)AE.Current.BoundingRectangle.Width;
             EI.Height = (int)AE.Current.BoundingRectangle.Height;
             EI.WindowExplorer = WindowExplorer;
-            EI.ElementType= GetElementControlType(AE);
+            EI.ElementType = GetElementControlType(AE);
             EI.ElementTypeEnum = WindowsPlatform.GetElementType(EI.ElementType, GetControlPropertyValue(EI.ElementObject, "ClassName"));
             //EI.IsExpandable = AE.Current.IsContentElement;
             EI.BoundingRectangle = GetControlPropertyValue(EI.ElementObject, "BoundingRectangle");
@@ -5836,9 +6133,9 @@ namespace GingerCore.Drivers
             EI.ClassName = GetControlPropertyValue(EI.ElementObject, "ClassName");
             EI.ToggleState = GetControlPropertyValue(EI.ElementObject, "Interop.UIAutomationClient.ToggleState");
             EI.Text = GetControlPropertyValue(EI.ElementObject, "Text");
-            
+
             bool isPropertyValue;
-            if(bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsKeyboardFocusable"),out isPropertyValue))
+            if (bool.TryParse(GetControlPropertyValue(EI.ElementObject, "IsKeyboardFocusable"), out isPropertyValue))
             {
                 EI.IsKeyboardFocusable = isPropertyValue;
             }
@@ -5858,7 +6155,7 @@ namespace GingerCore.Drivers
             {
                 EI.IsSelected = isPropertyValue;
             }
-            
+
             return EI;
         }
 
@@ -5888,8 +6185,9 @@ namespace GingerCore.Drivers
                     point.X = point.X - ParentElement.Current.BoundingRectangle.X;
                     point.Y = point.Y - ParentElement.Current.BoundingRectangle.Y;
                     if (HTMLhelperObj == null)
+                    {
                         InitializeBrowser(ParentElement);
-
+                    }
 
                     element = HTMLhelperObj.GetHTMLElementFromPoint(Convert.ToInt32(point.X), Convert.ToInt32(point.Y));
                 }
@@ -5911,7 +6209,7 @@ namespace GingerCore.Drivers
             HandlePaintWindow(CurrentWindow);
             Thread.Sleep(200);
             int width = (int)tempWindow.Current.BoundingRectangle.Width;
-            int height= (int)tempWindow.Current.BoundingRectangle.Height;
+            int height = (int)tempWindow.Current.BoundingRectangle.Height;
             if (width == 0 || height == 0)
             {
                 WinAPIAutomation.ShowWindow(CurrentWindow);
@@ -5919,14 +6217,14 @@ namespace GingerCore.Drivers
                 height = (int)tempWindow.Current.BoundingRectangle.Height;
             }
             Bitmap bmp = new Bitmap(width, height);
-            
+
             Graphics memoryGraphics = Graphics.FromImage(bmp);
             IntPtr dc = memoryGraphics.GetHdc();
             PrintWindow((IntPtr)tempWindow.Current.NativeWindowHandle, dc, 0);
             memoryGraphics.ReleaseHdc(dc);
             return bmp;
         }
-        
+
         public override ObservableList<ElementInfo> GetElements(ElementLocator EL)
         {
             ObservableList<ElementInfo> list = new ObservableList<ElementInfo>();
@@ -5936,7 +6234,7 @@ namespace GingerCore.Drivers
             {
                 foreach (UIAuto.AutomationElement AE in AEList)
                 {
-                    UIAElementInfo a =(UIAElementInfo) GetElementInfoFor(AE);
+                    UIAElementInfo a = (UIAElementInfo)GetElementInfoFor(AE);
                     list.Add(a);
                 }
             }
@@ -5978,7 +6276,9 @@ namespace GingerCore.Drivers
                         if (AE.Current.LocalizedControlType == "pane" && AE.Current.ClassName.StartsWith("pbdw"))
                         {
                             if (list.Count > 500)
+                            {
                                 break;
+                            }
                         }
                     }
                     if (AE.Current.LocalizedControlType == "pane" && AE.Current.ClassName.StartsWith("pbdw"))
@@ -5996,11 +6296,11 @@ namespace GingerCore.Drivers
                                 }
                             }
                         }
-                    }  
-                }                
+                    }
+                }
             }
             else
-            {                
+            {
                 Reporter.ToUser(eUserMsgKey.ObjectUnavailable, "Selected Object is not available");
             }
             return list;
@@ -6015,29 +6315,29 @@ namespace GingerCore.Drivers
         {
             bool isPresent = false;
             try
-            {                
+            {
                 UIAuto.Condition findCondition = new UIAuto.PropertyCondition(UIAuto.AutomationElement.IsControlElementProperty, true);
                 UIAuto.AutomationElementCollection found = parent.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, findCondition);
-                UIAuto.AutomationElement childExist=UIAuto.TreeWalker.RawViewWalker.GetFirstChild(parent);
-                if (found.Count >= 1 || !(ReferenceEquals( childExist,null)))
+                UIAuto.AutomationElement childExist = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(parent);
+                if (found.Count >= 1 || !(ReferenceEquals(childExist, null)))
                 {
                     isPresent = true;
-                }                
+                }
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "COM Exception when HandlePBControlAction Error", ex);
-            }            
+            }
             return isPresent;
         }
 
         private List<UIAuto.AutomationElement> GetGridControlsFromPoint(UIAuto.AutomationElement AE)
-        {            
+        {
             List<UIAuto.AutomationElement> childList = new List<UIAuto.AutomationElement>();
             //UIAuto.AutomationElementCollection AEScrolls = AE.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Children, new UIAuto.PropertyCondition(UIAuto.AutomationElement.ControlTypeProperty, ControlType.ScrollBar));
             //UIAuto.AutomationElement horScroll=null;
             //UIAuto.AutomationElement verScroll=null;
-            updateGridControls(AE,ref childList);
+            updateGridControls(AE, ref childList);
             //TODO::Scroll Handling
             //foreach (UIAuto.AutomationElement aeScroll in AEScrolls)
             //{
@@ -6074,10 +6374,10 @@ namespace GingerCore.Drivers
             return childList;
         }
 
-        private void updateGridControls(UIAuto.AutomationElement AE,ref List<UIAuto.AutomationElement> childList)
+        private void updateGridControls(UIAuto.AutomationElement AE, ref List<UIAuto.AutomationElement> childList)
         {
             AE.SetFocus();
-           System.Drawing.Rectangle recGrid = AE.Current.BoundingRectangle;
+            System.Drawing.Rectangle recGrid = AE.Current.BoundingRectangle;
             int iX = (int)recGrid.X + 5;
             int iY = (int)recGrid.Y + 7;
             //Get All Rows
@@ -6098,7 +6398,7 @@ namespace GingerCore.Drivers
                     }
                     //ParentElement.SetFocus();
                     if (AEElement.Current.ProcessId == CurrentWindow.Current.ProcessId)
-                    {                           
+                    {
                         if (!childList.Contains((UIAuto.AutomationElement)element))
                         {
                             childList.Add((UIAuto.AutomationElement)element);
@@ -6106,17 +6406,25 @@ namespace GingerCore.Drivers
                             iX = (int)recChild.X + (int)recChild.Width + 5;
                             iY = (int)recChild.Y + 5;
                             if (iRowHeight == 0)
+                            {
                                 iRowHeight = iY + (int)recChild.Height;
-                            
+                            }
                         }
                         else
+                        {
                             iX = iX + 5;
+                        }
                     }
                     else
+                    {
                         iX = iX + 5;
+                    }
                 }
                 if (iRowHeight == 0)
+                {
                     iRowHeight = iY;
+                }
+
                 iX = (int)recGrid.X + 5;
                 iY = iRowHeight + 10;
             }
@@ -6138,7 +6446,7 @@ namespace GingerCore.Drivers
             root.ElementObject = UIAuto.AutomationElement.RootElement;
             return root;
         }
-        
+
         XPathHelper IXPath.GetXPathHelper(ElementInfo info)
         {
             return mXPathHelper;
@@ -6150,21 +6458,30 @@ namespace GingerCore.Drivers
             {
                 UIAElementInfo EI = (UIAElementInfo)ElementInfo;
                 // Check if we are at root do not go up and return null
-                if (EI.ElementObject.Equals(CurrentWindow)) return null;
+                if (EI.ElementObject.Equals(CurrentWindow))
+                {
+                    return null;
+                }
 
                 //UIAuto.TreeWalker walker = UIAuto.TreeWalker.ControlViewWalker;
                 UIAuto.TreeWalker walker = UIAuto.TreeWalker.RawViewWalker;
                 UIAuto.AutomationElement ParentAE = walker.GetParent((UIAuto.AutomationElement)EI.ElementObject);
 
                 //if (object.ReferenceEquals(ParentAE, null)) return null;
-                if (ParentAE == null) return null;
+                if (ParentAE == null)
+                {
+                    return null;
+                }
 
-                if (ParentAE.Equals(CurrentWindow)) return null; // CurrentWindowRootElement;  // Since there are check done on root element we must return the same when found
+                if (ParentAE.Equals(CurrentWindow))
+                {
+                    return null; // CurrentWindowRootElement;  // Since there are check done on root element we must return the same when found
+                }
 
                 UIAElementInfo RC = new UIAElementInfo() { ElementObject = ParentAE };    // return minimial EI
                 return RC;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetElementParent", e);
                 return null;
@@ -6190,9 +6507,17 @@ namespace GingerCore.Drivers
             }
             //TODO: the rest
 
-            if (AP == null) return null;
+            if (AP == null)
+            {
+                return null;
+            }
+
             object val = ((UIAuto.AutomationElement)EI.ElementObject).GetCurrentPropertyValue(AP);
-            if (val == null) return null;
+            if (val == null)
+            {
+                return null;
+            }
+
             return val.ToString();
         }
 
@@ -6216,19 +6541,19 @@ namespace GingerCore.Drivers
             UIAuto.AutomationElement AE = test.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Children, cond);
             if (AE == null)
             {
-                GetChildrenUsingRawWalker((UIAuto.AutomationElement)EI.ElementObject, conditions, 
-                    out List<UIAuto.AutomationElement> listChildren,true);
-                if(listChildren.Count==0)
+                GetChildrenUsingRawWalker((UIAuto.AutomationElement)EI.ElementObject, conditions,
+                    out List<UIAuto.AutomationElement> listChildren, true);
+                if (listChildren.Count == 0)
                 {
                     return null;
                 }
                 AE = listChildren[0];
             }
-            UIAElementInfo RC =(UIAElementInfo) GetElementInfoFor(AE);
+            UIAElementInfo RC = (UIAElementInfo)GetElementInfoFor(AE);
             return RC;
         }
 
-        
+
 
 
         string IXPath.GetElementID(ElementInfo EI)
@@ -6248,14 +6573,14 @@ namespace GingerCore.Drivers
 
         private void GetChildrenUsingRawWalker(
             UIAuto.AutomationElement EAE, List<XpathPropertyCondition> conditions, out List<UIAuto.AutomationElement> listRAE,
-            bool flagFindFirst=false)
+            bool flagFindFirst = false)
         {
             listRAE = new List<UIAuto.AutomationElement>();
             UIAuto.AutomationElement TAE;
             UIAuto.AutomationElement AE = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(EAE);
             while (AE != null && !taskFinished)
             {
-                
+
                 TAE = AE;
                 if (General.CompareStringsIgnoreCase(conditions[0].PropertyName, "LocalizedControlType"))
                 {
@@ -6285,10 +6610,16 @@ namespace GingerCore.Drivers
                         listRAE.Add(AE);
                     }
                 }
-                if (flagFindFirst && listRAE.Count==1) break;
+                if (flagFindFirst && listRAE.Count == 1)
+                {
+                    break;
+                }
+
                 AE = UIAuto.TreeWalker.RawViewWalker.GetNextSibling(AE);
                 if (TAE.Equals(AE))
+                {
                     break;
+                }
             }
         }
 
@@ -6320,7 +6651,7 @@ namespace GingerCore.Drivers
                 }
                 return rc;
             }
-            
+
             for (int i = 0; i < list.Count; i++)
             {
                 EI1 = new UIAElementInfo() { ElementObject = list[i] };
@@ -6334,11 +6665,15 @@ namespace GingerCore.Drivers
             try
             {
                 UIAuto.AutomationElement elementNode = UIAuto.TreeWalker.RawViewWalker.GetPreviousSibling((UIAuto.AutomationElement)EI.ElementObject);
-                if (elementNode == null) return null;
+                if (elementNode == null)
+                {
+                    return null;
+                }
+
                 UIAElementInfo RC = new UIAElementInfo() { ElementObject = elementNode };
                 return RC;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetPreviousSibling", e);
                 return null;
@@ -6350,30 +6685,69 @@ namespace GingerCore.Drivers
             try
             {
                 UIAuto.AutomationElement elementNode = UIAuto.TreeWalker.RawViewWalker.GetNextSibling((UIAuto.AutomationElement)EI.ElementObject);
-                if (elementNode == null) return null;
+                if (elementNode == null)
+                {
+                    return null;
+                }
+
                 UIAElementInfo RC = new UIAElementInfo() { ElementObject = elementNode };
                 return RC;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetNextSibling", e);
                 return null;
             }
-}
+        }
         #endregion IXPath
 
 
         UIAuto.AutomationProperty GetAutomationPropertyForXpathProp(string prop)
         {
-            if (prop == "Name") return UIAuto.AutomationElement.NameProperty;
-            if (prop == "AutomationId") return UIAuto.AutomationElement.AutomationIdProperty;
-            if (prop == "LocalizedControlType") return UIAuto.AutomationElement.LocalizedControlTypeProperty;
-            if (prop == "Value") return UIAuto.ValuePatternIdentifiers.ValueProperty;
-            if (prop == "LegacyValue") return UIAuto.LegacyIAccessiblePatternIdentifiers.ValueProperty;
-            if (prop == "ClassName") return UIAuto.AutomationElement.ClassNameProperty;
-            if (prop == "Interop.UIAutomationClient.ToggleState") return UIAuto.TogglePatternIdentifiers.ToggleStateProperty;
-            if (prop == "IsSelected") return UIAuto.SelectionItemPatternIdentifiers.IsSelectedProperty;
-            if (prop == "Text") return UIAuto.ValuePatternIdentifiers.ValueProperty;
+            if (prop == "Name")
+            {
+                return UIAuto.AutomationElement.NameProperty;
+            }
+
+            if (prop == "AutomationId")
+            {
+                return UIAuto.AutomationElement.AutomationIdProperty;
+            }
+
+            if (prop == "LocalizedControlType")
+            {
+                return UIAuto.AutomationElement.LocalizedControlTypeProperty;
+            }
+
+            if (prop == "Value")
+            {
+                return UIAuto.ValuePatternIdentifiers.ValueProperty;
+            }
+
+            if (prop == "LegacyValue")
+            {
+                return UIAuto.LegacyIAccessiblePatternIdentifiers.ValueProperty;
+            }
+
+            if (prop == "ClassName")
+            {
+                return UIAuto.AutomationElement.ClassNameProperty;
+            }
+
+            if (prop == "Interop.UIAutomationClient.ToggleState")
+            {
+                return UIAuto.TogglePatternIdentifiers.ToggleStateProperty;
+            }
+
+            if (prop == "IsSelected")
+            {
+                return UIAuto.SelectionItemPatternIdentifiers.IsSelectedProperty;
+            }
+
+            if (prop == "Text")
+            {
+                return UIAuto.ValuePatternIdentifiers.ValueProperty;
+            }
 
             //TODO: add all, and if not found lookup all properties list of AE
 
@@ -6388,27 +6762,39 @@ namespace GingerCore.Drivers
 
             UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
             if (IsWindowValid(element))
+            {
                 return element.Current.LocalizedControlType;
+            }
             else
-                return "";             
+            {
+                return "";
+            }
         }
 
         public override System.Drawing.Rectangle GetElementBoundingRectangle(object obj)
         {
             UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
             if (IsWindowValid(element))
+            {
                 return element.Current.BoundingRectangle;
+            }
             else
-                return new System.Drawing.Rectangle(0,0,0,0);
+            {
+                return new System.Drawing.Rectangle(0, 0, 0, 0);
+            }
         }
 
         public override int GetElementNativeWindowHandle(object obj)
         {
             UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
             if (IsWindowValid(element))
+            {
                 return element.Current.NativeWindowHandle;
+            }
             else
+            {
                 return 0;
+            }
         }
 
         public override string GetElementTitle(object obj)
@@ -6416,7 +6802,9 @@ namespace GingerCore.Drivers
             UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
 
             if (!IsWindowValid(element))
+            {
                 return "";
+            }
 
             string Name = WinAPIAutomation.GetText((IntPtr)element.Current.NativeWindowHandle);
             if (string.IsNullOrEmpty(Name))
@@ -6438,16 +6826,19 @@ namespace GingerCore.Drivers
         public override bool HasAtleastOneChild(object obj)
         {
             UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
-            
+
             //if (UIAuto.TreeWalker.ControlViewWalker.GetFirstChild(element)!= null)
-              if (UIAuto.TreeWalker.RawViewWalker.GetFirstChild(element)!= null)
+            if (UIAuto.TreeWalker.RawViewWalker.GetFirstChild(element) != null)
+            {
                 return true;
+            }
+
             return false;
         }
 
         public List<ElementInfo> GetElementChildren(ElementInfo ElementInfo)
         {
-            UIAElementInfo EI = (UIAElementInfo)ElementInfo;            
+            UIAElementInfo EI = (UIAElementInfo)ElementInfo;
             //UIAuto.TreeWalker walker = UIAuto.TreeWalker.ControlViewWalker;
             UIAuto.TreeWalker walker = UIAuto.TreeWalker.RawViewWalker;
 
@@ -6465,13 +6856,13 @@ namespace GingerCore.Drivers
                 }
                 return list;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG,"",ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "", ex);
                 return new List<ElementInfo>();
             }
 
-            
+
         }
 
         public override ObservableList<ControlProperty> GetElementProperties(object obj)
@@ -6480,7 +6871,7 @@ namespace GingerCore.Drivers
 
             UIAuto.AutomationElement AE = (UIAuto.AutomationElement)obj;
 
-            UIAuto.AutomationProperty[] props = AE.GetSupportedProperties();            
+            UIAuto.AutomationProperty[] props = AE.GetSupportedProperties();
             foreach (UIAuto.AutomationProperty AP in props)
             {
                 ControlProperty CP = new ControlProperty();
@@ -6492,7 +6883,7 @@ namespace GingerCore.Drivers
                 {
                     propValue = AE.GetCurrentPropertyValue(AP);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "Exception in GetElementProperties while GetCurrentPropertyValue::", e);
                     propValue = null;
@@ -6509,13 +6900,13 @@ namespace GingerCore.Drivers
 
         public override object[] GetSupportedPatterns(object obj)
         {
-            UIAuto.AutomationElement element = (UIAuto.AutomationElement) obj;
+            UIAuto.AutomationElement element = (UIAuto.AutomationElement)obj;
             return element.GetSupportedPatterns();
         }
 
         public override string GetPatternName(object pattern)
         {
-            UIAuto.AutomationPattern AP = (UIAuto.AutomationPattern) pattern;
+            UIAuto.AutomationPattern AP = (UIAuto.AutomationPattern)pattern;
             return AP.ProgrammaticName;
         }
 
@@ -6567,7 +6958,7 @@ namespace GingerCore.Drivers
                     break;
 
 
-                default:                    
+                default:
                     Reporter.ToUser(eUserMsgKey.PatternNotHandled, "Pattern not handled yet - " + PatternType);
                     break;
             }

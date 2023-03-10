@@ -30,12 +30,12 @@ namespace Amdocs.Ginger.Common.UIElement
 
     public interface IWindowExplorer
     {
-        List<AppWindow> GetAppWindows();        
-        void SwitchWindow(string Title);     
-        void HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators=false);
+        List<AppWindow> GetAppWindows();
+        void SwitchWindow(string Title);
+        void HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false);
         void UnHighLightElements();
         string GetFocusedControl();
-        ElementInfo GetControlFromMousePosition();       
+        ElementInfo GetControlFromMousePosition();
         AppWindow GetActiveWindow();
         Task<List<ElementInfo>> GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null);
         List<ElementInfo> GetElementChildren(ElementInfo ElementInfo);
@@ -73,13 +73,13 @@ namespace Amdocs.Ginger.Common.UIElement
 
         bool IsElementObjectValid(object obj);
 
-        bool TestElementLocators(ElementInfo Element, bool GetOutAfterFoundElement = false,ApplicationPOMModel mPOM = null);
+        bool TestElementLocators(ElementInfo Element, bool GetOutAfterFoundElement = false, ApplicationPOMModel mPOM = null);
         void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList);
 
         ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements);
 
         void StartSpying();
-        ElementInfo LearnElementInfoDetails(ElementInfo EI,PomSetting pomSetting=null);
+        ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting = null);
         List<AppWindow> GetWindowAllFrames();
 
         string GetCurrentPageSourceString();

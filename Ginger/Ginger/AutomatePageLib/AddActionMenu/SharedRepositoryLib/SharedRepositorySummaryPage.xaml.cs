@@ -38,7 +38,7 @@ namespace Ginger.Repository
             ShowData();
         }
 
-        private void ShowData(bool fromCache=true)
+        private void ShowData(bool fromCache = true)
         {
             ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
             ActivitiesGroupsCountLabel.Text = activitiesGroup.Count.ToString();
@@ -52,6 +52,6 @@ namespace Ginger.Repository
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             ShowData(false);
-        }               
+        }
     }
 }

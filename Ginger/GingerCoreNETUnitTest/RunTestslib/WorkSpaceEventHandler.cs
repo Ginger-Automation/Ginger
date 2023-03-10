@@ -20,8 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Ginger.SolutionGeneral;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
@@ -29,7 +27,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
     // GingerCoreNETUnitTest Workspace Event Handler
     public class WorkSpaceEventHandler : IWorkSpaceEventHandler
     {
-        
+
         public void OpenAddAPIModelWizard()
         {
             throw new System.NotImplementedException();

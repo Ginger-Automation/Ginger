@@ -23,10 +23,10 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 {
     public class GingerSocketLog
     {
-        public DateTime TimeStamp {get; set;}
-        public string LogType {get; set;}
+        public DateTime TimeStamp { get; set; }
+        public string LogType { get; set; }
         public string Name { get; set; }
-        public string Info {get; set;}
+        public string Info { get; set; }
         public int Len { get; set; }
         public long Elapsed { get; set; }
         public NewPayLoad PayLoad { get; set; }
@@ -37,14 +37,17 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         }
 
         internal void SetPayLoad(NewPayLoad pl)
-        {            
+        {
             Name = pl.Name;
             Info = pl.BufferInfo;
             Len = pl.PackageLen();
             PayLoad = pl;
         }
 
-        public string ascii { get {
+        public string ascii
+        {
+            get
+            {
                 byte[] bytes = PayLoad.GetPackage();
                 string asciiString = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
                 return asciiString;

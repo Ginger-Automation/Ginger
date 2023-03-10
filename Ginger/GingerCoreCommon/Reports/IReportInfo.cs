@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
+using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Reports
 {

@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Plugin.Core;
-using GingerPlugIns.TextEditorLib;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Highlighting;
 using System.Collections.Generic;
@@ -52,14 +51,15 @@ namespace Ginger.UserControlsLib.TextEditor.Common
 
         public override IHighlightingDefinition HighlightingDefinition
         {
-            get {
+            get
+            {
                 byte[] xml = mPlugInTextFileEditor.HighlightingDefinition;
                 MemoryStream ms = new MemoryStream(xml);
                 using (XmlReader reader = XmlReader.Create(ms))
                 {
                     IHighlightingDefinition HighlightingDefinition = ICSharpCode.AvalonEdit.Highlighting.Xshd.HighlightingLoader.Load(reader, HighlightingManager.Instance);
                     return HighlightingDefinition;
-                }                             
+                }
             }
         }
 
@@ -75,7 +75,7 @@ namespace Ginger.UserControlsLib.TextEditor.Common
                 return mPlugInTextFileEditor.Tools;
             }
         }
-            
+
 
         public override IFoldingStrategy FoldingStrategy
         {
@@ -88,7 +88,7 @@ namespace Ginger.UserControlsLib.TextEditor.Common
 
         public string Name => throw new System.NotImplementedException();
 
-        public ITextHandler TextHandler { get { return mPlugInTextFileEditor.TextHandler; } set { mPlugInTextFileEditor.TextHandler = value; } }        
+        public ITextHandler TextHandler { get { return mPlugInTextFileEditor.TextHandler; } set { mPlugInTextFileEditor.TextHandler = value; } }
 
         //public override List<ICompletionData> GetCompletionData(string txt, SelectedContentArgs SelectedContentArgs)
         //{
@@ -142,7 +142,7 @@ namespace Ginger.UserControlsLib.TextEditor.Common
         //}
 
         public override void UpdateSelectedContent()
-        {            
+        {
         }
 
         public override Page GetSelectedContentPageEditor(SelectedContentArgs SelectedContentArgs)

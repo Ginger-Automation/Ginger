@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 
 namespace GingerCore.Drivers.Common
 {
@@ -50,7 +50,7 @@ namespace GingerCore.Drivers.Common
     //                                                                \_/                     \___/  
     //                                                                 |                      |   |
     // Escape forward slash '/' = '&#x2F' (slash in hex) --> [@name='c:/temp']  ==> [@name='c:&#x2Ftemp']
-    
+
     public class XPathHelper
     {
         string XpathSlash = "&#x2F";  // avodiing conflict of xpath splitter, we replace '/' in value to '/' in hex which is &#x2F        
@@ -70,10 +70,10 @@ namespace GingerCore.Drivers.Common
 
         //Go up to root = abs - use one Importnat Prop or index of no importnat prop have value
         public string GetElementXpathAbsulote(ElementInfo EI)
-        {            
-            string Xpath = "";   
-            
-            ElementInfo node = EI;            
+        {
+            string Xpath = "";
+
+            ElementInfo node = EI;
 
             // If it is the window then return / = root 
             if (string.IsNullOrEmpty(EI.GetElementType()) || EI.ElementType.ToUpper() == "WINDOW")
@@ -86,10 +86,10 @@ namespace GingerCore.Drivers.Common
                 if (Xpath.Length > 0)
                 {
                     Xpath = @"/" + Xpath;
-                } 
-               
+                }
+
                 string nodepath = GetElemntNodeXpath(node);
-                nodepath = nodepath.Replace("/", XpathSlash);                                
+                nodepath = nodepath.Replace("/", XpathSlash);
 
                 Xpath = nodepath + Xpath;
 
@@ -130,7 +130,7 @@ namespace GingerCore.Drivers.Common
             string XPath = "";
 
             foreach (string prop in mImportnatProperties)
-            {                
+            {
                 string val = mDriver.GetElementProperty(EI, prop);
                 if (!string.IsNullOrEmpty(val))
                 {
@@ -144,7 +144,7 @@ namespace GingerCore.Drivers.Common
                         val = val.Replace(":", @"\:").Replace("[", @"\[").Replace("]", @"\]");
                         XPath = "[" + prop + ":" + val + "%INDEX%]";
                     }
-                    
+
                     //Need to see if we have similar item with same property under same parent if yes need to add index
                     int? index = GetPropValIndex(EI, prop, val);
                     string SIndex = null;
@@ -162,7 +162,7 @@ namespace GingerCore.Drivers.Common
                     //TODO: Decide to break if it is unique in parent.childs , otherwise add more props
                     // TODO: check for indexes
                     break;
-                }                
+                }
             }
             return XPath;
         }
@@ -182,11 +182,11 @@ namespace GingerCore.Drivers.Common
             while (EI11 != null)
             {
                 string val1 = mDriver.GetElementProperty(EI11, prop);
-                if (val1 == val) 
+                if (val1 == val)
                 {
                     if (index == null)
                     {
-                        index = 0; 
+                        index = 0;
                     }
                     else
                     {
@@ -219,11 +219,11 @@ namespace GingerCore.Drivers.Common
         // -------------------------------------------------------------------------------------------------------------------------------------
 
         public ElementInfo GetElementByXpath(string XPath)
-        {            
+        {
             string[] Nodes = XPath.Split('/');
             string OKPath = "";
             ElementInfo EI = null;
-            
+
             foreach (string node in Nodes)
             {
                 if (node.ToUpper() == "DESKTOP") { EI = mDriver.UseRootElement(); continue; }
@@ -238,12 +238,12 @@ namespace GingerCore.Drivers.Common
                             EI = mDriver.UseRootElement();
                         }
                         continue;
-                    }                   
+                    }
                     else
                     {
                         // Need to Find node in all descendant = Find anywhere, Xpath didn't start with '/'
                         EI = mDriver.GetRootElement();
-                        EI = FindNodeAnywhere(EI,node);
+                        EI = FindNodeAnywhere(EI, node);
                         if (EI == null)
                         {
                             throw new Exception("XPath err - XPath OK until element: '" + OKPath + "' , but FindNodeAnywhere failed to locate: '" + node + "'");
@@ -252,7 +252,7 @@ namespace GingerCore.Drivers.Common
                     }
                 }
                 string nodePath = node.Replace(XpathSlash, "/");  //move up
-                EI = FindNode(EI, nodePath);  
+                EI = FindNode(EI, nodePath);
                 if (EI == null)
                 {
                     //error cannot drill down more
@@ -273,18 +273,22 @@ namespace GingerCore.Drivers.Common
         private ElementInfo FindNodeAnywhere(ElementInfo BaseElement, string NodePath)
         {
             ElementInfo EI = FindNode(BaseElement, NodePath);
-            
+
             List<ElementInfo> children = mDriver.GetElementChildren(BaseElement);
             // we drill per each child till the end, once done move to next child, so faster and less memory.
             foreach (ElementInfo EIChild in children)
             {
                 EI = FindNode(EIChild, NodePath);
-                if (EI != null) 
+                if (EI != null)
+                {
                     return EI;
+                }
                 // Not found in Base Children let's drill down recursively
                 EI = FindNodeAnywhere(EIChild, NodePath);
                 if (EI != null)
+                {
                     return EI;
+                }
             }
             return EI;
         }
@@ -306,12 +310,12 @@ namespace GingerCore.Drivers.Common
             string prop = null;
             string val = null;
             GetPropValIndex(NodePath, ref prop, ref val);
-            val= val.Replace(XpathLeftBrck,"[").Replace(XpathRightBrck,"]").Replace(XpathCol,":");
+            val = val.Replace(XpathLeftBrck, "[").Replace(XpathRightBrck, "]").Replace(XpathCol, ":");
             XpathPropertyCondition cond = new XpathPropertyCondition() { PropertyName = prop, Value = val };
             conditions.Add(cond);
             ElementInfo RC;
 
-            if (!NodePath.StartsWith("[") || index != null & index != 0 )
+            if (!NodePath.StartsWith("[") || index != null & index != 0)
             {
                 if (index == null || index == 0)
                 {
@@ -334,7 +338,7 @@ namespace GingerCore.Drivers.Common
 
             RC = mDriver.FindFirst(BaseElement, conditions);
             return RC;
-            
+
             //node can be 'Name' or '[LocalizedControlType:button]' or with index '[LocalizedControlType:button[3]]'
             // or multiple attrs, will handle later - [[LocalizedControlType:button][AutomationID:A123]...]
 
@@ -350,7 +354,7 @@ namespace GingerCore.Drivers.Common
             if (NodePath.IndexOf(']') > 0)
             {
                 string[] a = NodePath.Substring(1, NodePath.Length - 2).Split(':');
-                if(a.Length < 3)
+                if (a.Length < 3)
                 {
                     prop = a[0];
                     val = a[1];
@@ -361,7 +365,7 @@ namespace GingerCore.Drivers.Common
                     prop = NodePath.Substring(1, i - 1);
                     val = NodePath.Substring(i + 1, NodePath.Length - prop.Length - 3);
                 }
-            }          
+            }
             else if (!NodePath.Contains(':') || NodePath.Contains("file:") || NodePath.Contains('*') || NodePath.IndexOf(':') == NodePath.Length - 1) //TODO add all special chars
             {
                 prop = "Name";
@@ -386,17 +390,26 @@ namespace GingerCore.Drivers.Common
         // Get the index if exist and update the NodePath
         private void GetNodePathIndex(ref string NodePath, ref int? index)
         {
-            if (string.IsNullOrEmpty(NodePath)) return;            
+            if (string.IsNullOrEmpty(NodePath))
+            {
+                return;
+            }
+
             int i1 = NodePath.Substring(1).IndexOf('[');
             int i2 = NodePath.IndexOf(']');
 
             if (i1 > 0 && i2 > 0) // We have index
             {
                 string sIDX = NodePath.Substring(i1 + 2, i2 - i1 - 2);
-                if(NodePath.EndsWith("]]"))
+                if (NodePath.EndsWith("]]"))
+                {
                     NodePath = NodePath.Substring(0, i1 + 1) + "]";
+                }
                 else
+                {
                     NodePath = NodePath.Substring(0, i1 + 1);
+                }
+
                 index = int.Parse(sIDX);
             }
         }
@@ -408,12 +421,12 @@ namespace GingerCore.Drivers.Common
             //temp just do find first
 
             List<ElementInfo> list = new List<ElementInfo>();
-            ElementInfo EI =  GetElementByXpath(XPath);
+            ElementInfo EI = GetElementByXpath(XPath);
             list.Add(EI);
             return list;
         }
 
-        public string GetElementRelXPath(ElementInfo elemInfo, PomSetting pomSetting=null)
+        public string GetElementRelXPath(ElementInfo elemInfo, PomSetting pomSetting = null)
         {
             var relxpath = "";
             string xpath = elemInfo.XPath;
@@ -426,20 +439,21 @@ namespace GingerCore.Drivers.Common
                     if (!string.IsNullOrEmpty(id))
                     {
                         relxpath = xpath.Replace(elemInfo.XPath, "//" + mDriver.GetElementTagName(elemInfo).ToLower() + "[@id='" + id + "']");
-                        elemsList = mDriver.GetAllElementsByLocator(eLocateBy.ByRelXPath,relxpath);
-                        if (elemsList == null || (elemsList != null && elemsList.Count() < 2)) {
+                        elemsList = mDriver.GetAllElementsByLocator(eLocateBy.ByRelXPath, relxpath);
+                        if (elemsList == null || (elemsList != null && elemsList.Count() < 2))
+                        {
                             continue;
-                        }                        
+                        }
                     }
-                    string name = Convert.ToString(mDriver.GetElementProperty(elemInfo,"name"));
+                    string name = Convert.ToString(mDriver.GetElementProperty(elemInfo, "name"));
                     if (!string.IsNullOrEmpty(name))
                     {
-                        if(relxpath == "")
-                        { 
+                        if (relxpath == "")
+                        {
                             relxpath = xpath.Replace(elemInfo.XPath, "//" + mDriver.GetElementTagName(elemInfo).ToLower() + "[@name='" + name + "']");
                         }
                         else
-                        { 
+                        {
                             relxpath = xpath.Replace(elemInfo.XPath, "//" + mDriver.GetElementTagName(elemInfo).ToLower() + "[@id='" + id + "' and @name ='" + name + "']");
                         }
                         elemsList = mDriver.GetAllElementsByLocator(eLocateBy.ByRelXPath, relxpath);
@@ -448,23 +462,23 @@ namespace GingerCore.Drivers.Common
                             continue;
                         }
                     }
-                    if(relxpath.IndexOf("//") != -1 && elemsList != null)
+                    if (relxpath.IndexOf("//") != -1 && elemsList != null)
                     {
                         string path = relxpath;
                         for (int i = 1; i <= elemsList.Count(); i++)
                         {
                             relxpath = "(" + path + ")[" + i + "]";
                             List<object> newElem = mDriver.GetAllElementsByLocator(eLocateBy.ByRelXPath, relxpath);
-                            if (newElem != null && newElem.Count() >0 && newElem[0].Equals(elemInfo.ElementObject))
+                            if (newElem != null && newElem.Count() > 0 && newElem[0].Equals(elemInfo.ElementObject))
                             {
                                 break;
                             }
                         }
                         continue;
                     }
-                    if(relxpath== "")
+                    if (relxpath == "")
                     {
-                        elemInfo = mDriver.GetElementParent(elemInfo,pomSetting);
+                        elemInfo = mDriver.GetElementParent(elemInfo, pomSetting);
                         if (elemInfo is HTMLElementInfo && !string.IsNullOrEmpty(((HTMLElementInfo)elemInfo).RelXpath))
                         {
                             relxpath = xpath.Replace(elemInfo.XPath, ((HTMLElementInfo)elemInfo).RelXpath);
@@ -481,7 +495,7 @@ namespace GingerCore.Drivers.Common
             if (relxpath == "")
             {
                 relxpath = xpath;
-            }                
+            }
             return relxpath;
         }
 
@@ -514,29 +528,29 @@ namespace GingerCore.Drivers.Common
                         }
                     }
 
-                   if(!string.IsNullOrEmpty(elementAttributes.ToString()))
-                   {
+                    if (!string.IsNullOrEmpty(elementAttributes.ToString()))
+                    {
                         elementAttributes = elementAttributes.Remove(elementAttributes.Length - 5, 5);
                         relXpath = string.Concat("//", mDriver.GetElementTagName(elementInfo), "[", elementAttributes, "]");
-                   }
+                    }
                 }
             }
-            catch (Exception  ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Error  occured when creating  relative xapth with attributes values", ex);
             }
-                
+
             return relXpath;
-            
+
         }
 
-        internal string CreateRelativeXpathWithTextMatch(ElementInfo elementInfo,bool isExactMatch=true)
+        internal string CreateRelativeXpathWithTextMatch(ElementInfo elementInfo, bool isExactMatch = true)
         {
             var relXpath = string.Empty;
 
             // checking svg element
             var isParentContainsSVG = mDriver.GetInnerHtml(elementInfo).Contains("<svg");
-            if(isParentContainsSVG)
+            if (isParentContainsSVG)
             {
                 return relXpath;
             }
@@ -544,11 +558,11 @@ namespace GingerCore.Drivers.Common
             var tagStartWithName = "*";
             var tagName = mDriver.GetElementTagName(elementInfo);
 
-            if (tagName.ToLower().Equals(eElementType.Label.ToString().ToLower()) ||(tagName.ToLower().Equals(eElementType.Div.ToString().ToLower()) && !isExactMatch))
+            if (tagName.ToLower().Equals(eElementType.Label.ToString().ToLower()) || (tagName.ToLower().Equals(eElementType.Div.ToString().ToLower()) && !isExactMatch))
             {
                 tagStartWithName = tagName;
             }
-            
+
             var innerText = mDriver.GetInnerText(elementInfo);
             if (isExactMatch)
             {
@@ -568,12 +582,12 @@ namespace GingerCore.Drivers.Common
             var relXpath = string.Empty;
 
             var previousSiblingInnerText = mDriver.GetPreviousSiblingInnerText(elementInfo);
-            
+
             if (!string.IsNullOrEmpty(previousSiblingInnerText))
             {
-                relXpath = string.Concat("//*[text()=\'", previousSiblingInnerText, "\']//following::",mDriver.GetElementTagName(elementInfo));
+                relXpath = string.Concat("//*[text()=\'", previousSiblingInnerText, "\']//following::", mDriver.GetElementTagName(elementInfo));
             }
-            
+
             return relXpath;
         }
     }

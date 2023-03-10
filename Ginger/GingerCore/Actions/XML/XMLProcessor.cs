@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Repository;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +31,7 @@ namespace GingerCore.Actions.XML
         public void ParseToReturnValues(string XML, Act act)
         {
             XmlDocument xmlReqDoc = new XmlDocument();
-            xmlReqDoc.LoadXml(XML);            
+            xmlReqDoc.LoadXml(XML);
             SetOutput(xmlReqDoc, act);
         }
 
@@ -42,7 +41,7 @@ namespace GingerCore.Actions.XML
             XmlReader xmlReader = XmlReader.Create(new System.IO.StringReader(xmlDoc.InnerXml));
             XmlReader subXmlReader = null;
             string xmlElement = "";
-            
+
             ArrayList elementArrayList = new ArrayList();
             List<string> DeParams = new List<string>();
             foreach (ActReturnValue actReturnValue in act.ReturnValues)

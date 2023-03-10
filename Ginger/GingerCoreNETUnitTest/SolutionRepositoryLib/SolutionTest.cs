@@ -16,33 +16,32 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Ginger.SolutionGeneral;
 using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
-{    
+{
     [TestClass]
     [Level1]
-    public class SolutionTest 
-    {        
+    public class SolutionTest
+    {
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.CreateWorkspace2();                     
+            WorkspaceHelper.CreateWorkspace2();
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+
         }
 
 
-        
+
 
 
         [TestInitialize]
@@ -61,13 +60,14 @@ namespace UnitTests.NonUITests
         /// <summary>
         /// Test the new solution been created successfully
         /// </summary>
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void CreateNewSolution()
         {
             // Arrange
             Solution createSol = new Solution();
             createSol.Name = "NonUi Solution Test";
-            
+
             string SolFile = TestResources.GetTempFile("Solution1.Ginger.Solution.xml");
 
             //Act
@@ -75,29 +75,30 @@ namespace UnitTests.NonUITests
             Solution loadSol = SolutionOperations.LoadSolution(SolFile, false);
 
             //Assert
-           Assert.AreEqual(loadSol.Name, createSol.Name);
-           Assert.AreEqual(loadSol.MainPlatform, createSol.MainPlatform);
+            Assert.AreEqual(loadSol.Name, createSol.Name);
+            Assert.AreEqual(loadSol.MainPlatform, createSol.MainPlatform);
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void CreateNewSolutionWithMultiUnderscore()
         {
             // Arrange
             Solution createSol = new Solution();
             createSol.Name = "Non_Ui_Solution_Test";
             string solFile = TestResources.GetTempFile("Solution2.Ginger.Solution.xml");
-            
+
             //Act
             createSol.RepositorySerializer.SaveToFile(createSol, solFile);
             Solution loadSol = SolutionOperations.LoadSolution(solFile, false);
 
             //Assert
-           Assert.AreEqual(loadSol.Name, createSol.Name);
-           Assert.AreEqual(loadSol.MainPlatform, createSol.MainPlatform);
+            Assert.AreEqual(loadSol.Name, createSol.Name);
+            Assert.AreEqual(loadSol.MainPlatform, createSol.MainPlatform);
         }
 
-        
+
 
     }
 }

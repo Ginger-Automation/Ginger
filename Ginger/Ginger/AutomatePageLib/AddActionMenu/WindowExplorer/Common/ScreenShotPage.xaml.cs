@@ -33,16 +33,16 @@ namespace Ginger.WindowExplorer.Common
 
         public void ShowScreenShot(Bitmap ScreenShot)
         {
-            Bitmap tmp = ScreenShot; 
+            Bitmap tmp = ScreenShot;
             tmp = new Bitmap(tmp, new System.Drawing.Size(tmp.Width, tmp.Height));
             DeviceImage.Source = General.ToBitmapSource(tmp);
         }
 
         public void ShowScreenShot(string FileName)
-        {                        
-            Bitmap tmp = new Bitmap(FileName); 
+        {
+            Bitmap tmp = new Bitmap(FileName);
             tmp = new Bitmap(tmp, new System.Drawing.Size(tmp.Width, tmp.Height));
-            DeviceImage.Source = General.ToBitmapSource(tmp);            
+            DeviceImage.Source = General.ToBitmapSource(tmp);
         }
     }
 }

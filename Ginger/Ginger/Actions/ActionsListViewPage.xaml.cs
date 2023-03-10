@@ -23,25 +23,24 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger;
 using Ginger.Actions;
-using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.BusinessFlowPages;
+using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System.Linq;
-using Amdocs.Ginger.Common.InterfacesLib;
-using System.Threading.Tasks;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -206,7 +205,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mActionsListHelper.UpdatePageViewMode(mPageViewMode);
                 mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
-                if(mActionsListHelper.Context != null && mActivity != mActionsListHelper.Context.Activity)
+                if (mActionsListHelper.Context != null && mActivity != mActionsListHelper.Context.Activity)
                 {
                     UpdateActivity(mActionsListHelper.Context.Activity);
                 }

@@ -21,6 +21,6 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
 {
     public class HarResult
     {
-        public Log Log { get; set; }    
+        public Log Log { get; set; }
     }
 }

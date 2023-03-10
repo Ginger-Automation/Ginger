@@ -1,7 +1,6 @@
 ﻿using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Plugin.Core;
 using System;
-using System.Timers;
 
 namespace GingerCoreNETUnitTest.RecordingLibTest
 {
@@ -20,10 +19,10 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             LearnAdditionalDetails = learnAdditionalChanges;
             for (int i = 0; i < 2; i++)
             {
-                DoRecording(i); 
+                DoRecording(i);
             }
         }
-        
+
         private void DoRecording(int i)
         {
             string name = "Name_" + Convert.ToString(i);
@@ -62,7 +61,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             if (i != 2)
             {
                 pageArgs.PageURL = "www.google.com";
-                pageArgs.PageTitle = "Google";                
+                pageArgs.PageTitle = "Google";
             }
             else
             {
@@ -71,7 +70,7 @@ namespace GingerCoreNETUnitTest.RecordingLibTest
             }
 
             OnRecordingEvent(new RecordingEventArgs() { EventType = eRecordingEvent.PageChanged, EventArgs = pageArgs });
-            OnRecordingEvent(new RecordingEventArgs() { EventType = eRecordingEvent.ElementRecorded, EventArgs = eleArgs });            
+            OnRecordingEvent(new RecordingEventArgs() { EventType = eRecordingEvent.ElementRecorded, EventArgs = eleArgs });
         }
 
         public void StopRecording()

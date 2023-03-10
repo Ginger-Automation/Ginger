@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Repository;
-using GingerCore;
 
 namespace Ginger.Support
 {
@@ -37,7 +36,7 @@ namespace Ginger.Support
             Developer = 2,
             Tester = 3
         }
-      
+
 
         [IsSerializedForLocalRepository]
         public string Title { get; set; }

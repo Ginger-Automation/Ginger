@@ -39,14 +39,14 @@ namespace GingerCore.Drivers.ASCF
         }
 
         public string Name { get; set; }
-        public string Path { get; set; }        
+        public string Path { get; set; }
         public eControlType ControlType { get; set; }
 
         public ObservableList<ControlProperty> Properties = new ObservableList<ControlProperty>();
 
         internal void SetPath()
         {
-            Path = GetProperty("XPath");            
+            Path = GetProperty("XPath");
         }
 
         internal void SetControlType()
@@ -59,9 +59,21 @@ namespace GingerCore.Drivers.ASCF
                 case "INPUT":
                     string InputType = (from x in Properties where x.Name == "type" select x.Value).FirstOrDefault();
 
-                    if (InputType == "text") ControlType = ASCFBrowserElementInfo.eControlType.TextBox;
-                    if (InputType == "button") ControlType = ASCFBrowserElementInfo.eControlType.Button;
-                    if (InputType == "checkbox") ControlType = ASCFBrowserElementInfo.eControlType.CheckBox;
+                    if (InputType == "text")
+                    {
+                        ControlType = ASCFBrowserElementInfo.eControlType.TextBox;
+                    }
+
+                    if (InputType == "button")
+                    {
+                        ControlType = ASCFBrowserElementInfo.eControlType.Button;
+                    }
+
+                    if (InputType == "checkbox")
+                    {
+                        ControlType = ASCFBrowserElementInfo.eControlType.CheckBox;
+                    }
+
                     break;
                 case "A":
                     ControlType = ASCFBrowserElementInfo.eControlType.Link;
@@ -73,7 +85,7 @@ namespace GingerCore.Drivers.ASCF
                     ControlType = ASCFBrowserElementInfo.eControlType.DropDown;
                     break;
 
-                    //TODO: add more HTML tags
+                //TODO: add more HTML tags
 
                 default:
                     break;
@@ -84,15 +96,24 @@ namespace GingerCore.Drivers.ASCF
         {
             // try ID
             Name = GetProperty("id");
-            if (Name != null) return;
+            if (Name != null)
+            {
+                return;
+            }
 
             //Try Name
             Name = GetProperty("name");
-            if (Name != null) return;
+            if (Name != null)
+            {
+                return;
+            }
 
             //XPath
             Name = GetProperty("XPath");
-            if (Name != null) return;
+            if (Name != null)
+            {
+                return;
+            }
         }
 
         internal void SetInfo()
@@ -124,7 +145,11 @@ namespace GingerCore.Drivers.ASCF
         public string GetID()
         {
             string s = GetProperty("id");
-            if (s == "undefined") return "";
+            if (s == "undefined")
+            {
+                return "";
+            }
+
             return s;
         }
     }

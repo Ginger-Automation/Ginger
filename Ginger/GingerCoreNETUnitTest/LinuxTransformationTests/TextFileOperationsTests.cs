@@ -43,7 +43,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Act
             actReadTextFile.TextFileEncoding = ActReadTextFile.eTextFileEncodings.UTF8;
-            ExecuteActionOperation(actReadTextFile, ActReadTextFile.eTextFileActionMode.Write, false,true);
+            ExecuteActionOperation(actReadTextFile, ActReadTextFile.eTextFileActionMode.Write, false, true);
             string textWriteToFile = System.IO.File.ReadAllText(actReadTextFile.TextFilePath);
 
             //Assert
@@ -67,7 +67,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Assert
             Assert.AreEqual(returnValue.Actual, txt);
-        } 
+        }
 
         [TestMethod]
         [Timeout(60000)]
@@ -80,7 +80,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Act
             actReadTextFile.TextFileEncoding = ActReadTextFile.eTextFileEncodings.UTF8;
-            ExecuteActionOperation(actReadTextFile, ActReadTextFile.eTextFileActionMode.Write, false,true);
+            ExecuteActionOperation(actReadTextFile, ActReadTextFile.eTextFileActionMode.Write, false, true);
             actReadTextFile.TextToWrite = "Appended Text";
             ExecuteActionOperation(actReadTextFile, ActReadTextFile.eTextFileActionMode.Append, false, true, ActReadTextFile.eAppendAt.End);
             string textAppendedToFile = System.IO.File.ReadAllText(actReadTextFile.TextFilePath);
@@ -91,7 +91,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
         private void ExecuteActionOperation(ActReadTextFile textFileOperation, ActReadTextFile.eTextFileActionMode actionMode, bool addNewReturnParams
             , bool isValueForDriver, ActReadTextFile.eAppendAt appendAt = ActReadTextFile.eAppendAt.End)
         {
-            if(isValueForDriver)
+            if (isValueForDriver)
             {
                 gingerRunner.ProcessInputValueForDriver(textFileOperation);
             }

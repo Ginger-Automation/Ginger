@@ -16,10 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using System;
 
 
 namespace Amdocs.Ginger.Common.UIElement

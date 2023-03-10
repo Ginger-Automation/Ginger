@@ -25,9 +25,9 @@ using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Activities;
 using GingerWPF.DragDropLib;
-using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Ginger.BusinessFlowPages
@@ -82,7 +82,7 @@ namespace Ginger.BusinessFlowPages
             // Disable ScrollViewer's CanContentScroll property for smooth scrolling 
             xActivitiesListView.List.SetValue(ScrollViewer.CanContentScrollProperty, false);
 
-            if (mPageViewMode == Ginger.General.eRIPageViewMode.View|| mPageViewMode == General.eRIPageViewMode.ViewAndExecute)
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == General.eRIPageViewMode.ViewAndExecute)
             {
                 xActivitiesListView.IsDragDropCompatible = false;
             }
@@ -99,7 +99,7 @@ namespace Ginger.BusinessFlowPages
                 xActivitiesListView.AddGrouping(nameof(Activity.ActivitiesGroupID));
 
                 //shared repo indicator
-                await Task.Run(() => this.SetSharedRepositoryMark());                
+                await Task.Run(() => this.SetSharedRepositoryMark());
             }
             else
             {
@@ -126,11 +126,11 @@ namespace Ginger.BusinessFlowPages
                             {
                                 mContext.BusinessFlow.MoveActivityBetweenGroups(draggedActivity, mContext.BusinessFlow.GetActivitiesGroupByName(activityDroppedOn.ActivitiesGroupID), mContext.BusinessFlow.Activities.IndexOf(activityDroppedOn));
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
                                 Reporter.ToLog(eLogLevel.DEBUG, "Error occurred while dragging Activity to other group", ex);
                             }
-                            ListView.UpdateGrouping();                            
+                            ListView.UpdateGrouping();
                         }
                         else
                         {
@@ -173,7 +173,7 @@ namespace Ginger.BusinessFlowPages
                 {
                     string activityGroupID = null;
                     int activityIndex = -1;
-                    Activity activityDroppedOn = DragDrop2.GetRepositoryItemHit(ListView) as Activity;                     
+                    Activity activityDroppedOn = DragDrop2.GetRepositoryItemHit(ListView) as Activity;
 
                     if (activityDroppedOn != null)
                     {

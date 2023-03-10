@@ -16,13 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
+using GingerCore;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
-using Ginger.UserControls;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -30,12 +30,12 @@ namespace Ginger.BusinessFlowWindows
     /// Interaction logic for ExplorerBusinessFlowsPage.xaml
     /// </summary>
     public partial class ExplorerBusinessFlowsPage : Page
-    {        
+    {
         public ExplorerBusinessFlowsPage(RepositoryFolder<BusinessFlow> repositoryFolder)
         {
             InitializeComponent();
-                        
-            grdBusinessFlows.btnRefresh.Visibility = Visibility.Collapsed; 
+
+            grdBusinessFlows.btnRefresh.Visibility = Visibility.Collapsed;
             SetBusinessFlowsGridView();
 
             if (repositoryFolder.IsRootFolder)
@@ -55,7 +55,7 @@ namespace Ginger.BusinessFlowWindows
 
             view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.Name), WidthWeight = 250 });
             view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.Description), WidthWeight = 250 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.FilePath) ,Header = "Local Path", WidthWeight = 250 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.FilePath), Header = "Local Path", WidthWeight = 250 });
             view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlow.Status), WidthWeight = 50 });
 
             grdBusinessFlows.SetAllColumnsDefaultView(view);
@@ -63,7 +63,7 @@ namespace Ginger.BusinessFlowWindows
             grdBusinessFlows.ShowTagsFilter = Visibility.Visible;
         }
 
-        
+
 
 
     }

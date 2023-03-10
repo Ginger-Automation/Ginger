@@ -29,19 +29,23 @@ namespace GingerCore.Drivers.Common
     {
         public static class Fields
         {
-            public static string ItemList = "ItemList";                      
+            public static string ItemList = "ItemList";
         }
         private List<String> mItemList = null;
         public List<String> ItemList
         {
             get
             {
-                if (mItemList == null) mItemList = GetItemList();
+                if (mItemList == null)
+                {
+                    mItemList = GetItemList();
+                }
+
                 return mItemList;
             }
             set { mItemList = value; }
         }
-       
+
         // Used for Lazy loading when possible
         public virtual List<String> GetItemList()
         {

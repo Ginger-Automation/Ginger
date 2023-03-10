@@ -26,7 +26,7 @@ namespace Amdocs.Ginger.Plugin.Core
     }
 
 
-    
+
     public interface ITakeScreenShot
     {
         [GingerAction("TakeScreenShot", "Take Screen Shot")]

@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using GingerCore;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
 using System;
@@ -39,7 +38,7 @@ namespace Ginger.Actions
         public ActLaunchJavaWSApplicationEditPage(ActLaunchJavaWSApplication act)
         {
             InitializeComponent();
-            
+
             mAct = act;
 
             //initial content look
@@ -73,7 +72,7 @@ namespace Ginger.Actions
             AttachAgentProcessSyncTime.Init(Context.GetAsContext(mAct.Context), mAct, ActLaunchJavaWSApplication.Fields.AttachAgentProcessSyncTime);
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ShowAgent, CheckBox.IsCheckedProperty, mAct, ActLaunchJavaWSApplication.Fields.ShowAgent);
-            
+
             rbGroupPortConfig.Init(typeof(ActLaunchJavaWSApplication.ePortConfigType), RadioButtonPanel, mAct.GetOrCreateInputParam(ActLaunchJavaWSApplication.Fields.PortConfigParam, ActLaunchJavaWSApplication.ePortConfigType.Manual.ToString()), new RoutedEventHandler(PortConfigRB_Click));
             UpdateAgentPortTextBoxEnabledStatus();
         }
@@ -82,28 +81,44 @@ namespace Ginger.Actions
         {
             JavaPathHomeRdb.Content = "Use JAVA HOME Environment Variable (" + CommonLib.GetJavaHome() + ")";
             if (string.IsNullOrEmpty(mAct.JavaWSEXEPath))
+            {
                 JavaPathHomeRdb.IsChecked = true;
+            }
             else
+            {
                 JavaPathOtherRdb.IsChecked = true;
+            }
 
             if (string.IsNullOrEmpty(mAct.JavaAgentPath))
+            {
                 GingerAgentFromGingerFolderRdb.IsChecked = true;
+            }
             else
+            {
                 GingerAgentFromOtherRdb.IsChecked = true;
+            }
         }
 
         private void RemoveOldInputParams()
         {
             if (mAct.InputValues.Where(x => x.Param == "Value" && x.Value == string.Empty).FirstOrDefault() != null)
+            {
                 mAct.RemoveInputParam("Value");
+            }
+
             if (mAct.InputValues.Where(x => x.Param == "Port").FirstOrDefault() != null)
+            {
                 mAct.RemoveInputParam("Port");
+            }
+
             if (mAct.InputValues.Where(x => x.Param == "URL").FirstOrDefault() != null)
+            {
                 mAct.RemoveInputParam("URL");
+            }
         }
 
         private void AddParam_Click(object sender, RoutedEventArgs e)
-        {           
+        {
             mAct.InputValues.Add(new ActInputValue() { Param = "ParamName", Value = "ParamValue" });
         }
 
@@ -111,7 +126,9 @@ namespace Ginger.Actions
         {
             string selectedFolder = OpenFolderDialog("Select Agent Jars Folder", Environment.SpecialFolder.MyComputer, mAct.JavaAgentPath);
             if (string.IsNullOrEmpty(selectedFolder) == false)
+            {
                 mAct.JavaAgentPath = selectedFolder;
+            }
         }
 
         private void JavaPathOtherRdb_CheckedUnchecked(object sender, RoutedEventArgs e)
@@ -124,7 +141,10 @@ namespace Ginger.Actions
             else
             {
                 if (JavaPathOtherRdb.IsVisible)
+                {
                     mAct.JavaWSEXEPath = string.Empty;
+                }
+
                 JavaPathTextBox.IsEnabled = false;
                 BrowseJavaPath.IsEnabled = false;
             }
@@ -140,7 +160,10 @@ namespace Ginger.Actions
             else
             {
                 if (GingerAgentFromOtherRdb.IsVisible)
+                {
                     mAct.JavaAgentPath = string.Empty;
+                }
+
                 AgentPathTextBox.IsEnabled = false;
                 BrowseAgentPath.IsEnabled = false;
             }
@@ -150,7 +173,7 @@ namespace Ginger.Actions
         {
             if (LaunchJavaApplicationChkbox.IsChecked == true)
             {
-                LaunchJavaApplicationChkbox.Content= "Launch Java Application:";
+                LaunchJavaApplicationChkbox.Content = "Launch Java Application:";
                 LaunchJavaApplicationArgsPnl.Visibility = System.Windows.Visibility.Visible;
             }
             else
@@ -175,13 +198,16 @@ namespace Ginger.Actions
             }
         }
 
-        private string OpenFolderDialog(string desc, Environment.SpecialFolder rootFolder, string currentFolder="")
+        private string OpenFolderDialog(string desc, Environment.SpecialFolder rootFolder, string currentFolder = "")
         {
             var dlg = new System.Windows.Forms.FolderBrowserDialog();
             dlg.Description = desc;
             dlg.RootFolder = rootFolder;
             if (currentFolder != "")
+            {
                 dlg.SelectedPath = currentFolder;
+            }
+
             System.Windows.Forms.DialogResult result = dlg.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)
             {
@@ -194,7 +220,9 @@ namespace Ginger.Actions
         {
             string selectedFolder = OpenFolderDialog("Select Java Version Bin Folder", Environment.SpecialFolder.ProgramFilesX86, mAct.JavaWSEXEPath);
             if (string.IsNullOrEmpty(selectedFolder) == false)
+            {
                 mAct.JavaWSEXEPath = selectedFolder;
+            }
         }
 
         private void BrowseJavaAppPath_Click(object sender, RoutedEventArgs e)
@@ -216,7 +244,7 @@ namespace Ginger.Actions
             {
                 if (LaunchWithAgent.IsChecked == true)
                 {
-                    
+
                     Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Wait for Java application window must be done if Attach Ginger Agent operation is selected.");
                     e.Handled = true;
                     JavaApplicationLaunchWaitForWinTitleChckBox.IsChecked = true;

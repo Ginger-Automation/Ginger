@@ -17,12 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.UserControls;
 using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace GingerWPF.DragDropLib
 {
@@ -43,7 +41,7 @@ namespace GingerWPF.DragDropLib
         }
 
         internal void MoveToMousePosition()
-        {            
+        {
             Point p = GetMousePosition();
             i++;
             this.Top = p.Y + 10;

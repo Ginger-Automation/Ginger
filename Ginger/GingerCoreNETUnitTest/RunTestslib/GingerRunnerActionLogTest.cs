@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Repository;
@@ -30,25 +29,25 @@ using System.IO;
 using System.Text.RegularExpressions;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
-{    
+{
     [Level1]
     [TestClass]
     public class GingerRunnerActionLogTest
-    {        
+    {
         private const string INP_VAL_EXPECTED = "TestInputValue";
         private const string RET_VAL_EXPECTED = "123456";
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            EmptyTempActionLogFolder();            
+            EmptyTempActionLogFolder();
             WorkspaceHelper.CreateWorkspace2();
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+
         }
 
         [TestInitialize]
@@ -63,7 +62,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             //after every test
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestActionLog_Text()
         {
             //Arrange
@@ -84,7 +84,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.IsTrue(IsFileContains(fileName, actionLogText));
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestActionLog_InputValues()
         {
             //Arrange 
@@ -109,10 +110,11 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             gingerRunnerLogger.LogAction(actDummy);
 
             //Assert
-            Assert.IsTrue(IsFileContains(fileName, INP_VAL_EXPECTED));            
+            Assert.IsTrue(IsFileContains(fileName, INP_VAL_EXPECTED));
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestActionLog_ReturnValues()
         {
             //Arrange  
@@ -140,7 +142,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(FindTextOccurrencesInFile(fileName, RET_VAL_EXPECTED), 2);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestActionLog_InputAndReturnValues()
         {
             //Arrange
@@ -175,7 +178,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.IsTrue(IsFileContains(fileName, RET_VAL_EXPECTED));
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestActionLog_RunStatusFailCheck()
         {
             //Arrange
@@ -198,7 +202,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.IsTrue(IsFileContains(fileName, "Failed"));
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestActionLog_RunStatusPassCheck()
         {
             //Arrange
@@ -221,7 +226,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.IsTrue(IsFileContains(fileName, "Passed"));
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestActionLog_NoFileExistsOnDisableLog()
         {
             //Arrange
@@ -243,7 +249,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.IsFalse(IsFileExists(fileName));
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestActionLog_MultipleOccurancesOfReturnValues()
         {
             //Arrange
@@ -283,11 +290,12 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(FindTextOccurrencesInFile(fileName, RET_VAL_EXPECTED), 3);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestActionLog_CheckActionLogEnableOptionSavedInBFXML()
         {
             //Arrange
-            
+
             // define action
             ActDummy actDummy = new ActDummy();
             // set all the values in the action
@@ -319,7 +327,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             // Assert
             Assert.AreEqual(actDummyRead.EnableActionLogConfig, actDummy.EnableActionLogConfig);
             Assert.AreEqual(actDummyRead.ActionLogConfig.ActionLogText, actDummy.ActionLogConfig.ActionLogText);
-            Assert.AreEqual(actDummyRead.ActionLogConfig.LogRunStatus , actDummy.ActionLogConfig.LogRunStatus);
+            Assert.AreEqual(actDummyRead.ActionLogConfig.LogRunStatus, actDummy.ActionLogConfig.LogRunStatus);
         }
 
 
@@ -360,7 +368,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
-       
+
 
     }
 }

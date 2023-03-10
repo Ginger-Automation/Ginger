@@ -16,31 +16,29 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
-using GingerCore.Helpers;
+using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using GingerCore.GeneralLib;
 using System.Text;
 using System.Threading;
-using Newtonsoft.Json;
 using System.Xml;
-using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.RobotFramework
 {
     public class ActRobot : ActWithoutDriver
     {
-        
+
         public ActInputValue PythonExecutable => GetOrCreateInputParam(nameof(PythonExecutable));
-        
+
         public ActInputValue RobotExecutable => GetOrCreateInputParam(nameof(RobotExecutable));
-        
+
         public ActInputValue RobotFileName => GetOrCreateInputParam(nameof(RobotFileName));
-        
-        public ActInputValue RobotLibraries => GetOrCreateInputParam(nameof(RobotLibraries));        
+
+        public ActInputValue RobotLibraries => GetOrCreateInputParam(nameof(RobotLibraries));
 
         public override string ActionDescription { get { return "Robot File Action"; } }
 
@@ -51,9 +49,9 @@ namespace GingerCore.Actions.RobotFramework
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
 
         public override bool ValueConfigsNeeded { get { return false; } }
-        
+
         public override string ActionEditPage { get { return "RobotFramework.ActRobotEditPage"; } }
-        
+
         public override List<ePlatformType> Platforms
         {
             get
@@ -100,12 +98,12 @@ namespace GingerCore.Actions.RobotFramework
                     sb.Append(vbItem.Name);
                     sb.Append(",");
                     sb.Append(vbItem.Value);
-                    
+
                     writer.WriteLine(sb.ToString());
                 }
-            }            
+            }
         }
-        
+
         public void WriteVariablesToJSONFile(string fileName, List<GingerParam> gingerParamsLst)
         {
             //open file stream
@@ -120,12 +118,16 @@ namespace GingerCore.Actions.RobotFramework
         public void WriteVariablesToJSONFile_V2(string fileName, List<GingerParam> gingerParamsLst)
         {
             StringBuilder sbr = new StringBuilder();
-            int recNum = 0; 
+            int recNum = 0;
 
             sbr.Append("{");
             foreach (GingerParam paramLine in gingerParamsLst)
             {
-                if (recNum > 0) sbr.Append(", ");
+                if (recNum > 0)
+                {
+                    sbr.Append(", ");
+                }
+
                 sbr.Append("\"");
                 sbr.Append(paramLine.key);
                 sbr.Append("\"");
@@ -212,7 +214,7 @@ namespace GingerCore.Actions.RobotFramework
 
                 // create variables in CSV
                 List<Variables.VariableBase> lstVarBase = CreateBusinessAndActivityVariablesToList();
-                
+
                 List<GingerParam> lstGingerVars = GetCreateBusinessAndActivityVariablesToJSONList();
                 string fileName = System.IO.Path.GetTempFileName().Replace(".tmp", ".json");
                 WriteVariablesToJSONFile_V2(fileName, lstGingerVars);
@@ -227,7 +229,7 @@ namespace GingerCore.Actions.RobotFramework
 
                 //overriding to hardcode for now
                 // robot with library path
-                
+
                 string robotLibraries = RobotLibraries.ValueForDriver;
                 StringBuilder sbr = new StringBuilder();
                 sbr.Append("call robot");
@@ -246,7 +248,7 @@ namespace GingerCore.Actions.RobotFramework
                 sbr.Append(fileName);
                 sbr.Append(" ");
                 sbr.Append(@robotFileName);
-                
+
                 string commandString = sbr.ToString();
 
                 ExecuteCommandSync(commandString); // make run and wait 
@@ -300,12 +302,12 @@ namespace GingerCore.Actions.RobotFramework
                 // Get the output into a string
                 ExInfo = command + Environment.NewLine + DataBuffer;
 
-                string pwd = Directory.GetCurrentDirectory().Replace("\\","/");
+                string pwd = Directory.GetCurrentDirectory().Replace("\\", "/");
                 string outputFile = pwd + "/output.xml";
-                
+
                 // execution details in the list and need to process them as needed
-                List<RobotTestCase> lstRobotTCs =  ReadXML_GetRobotTestExecutionDetails(@outputFile);
-                
+                List<RobotTestCase> lstRobotTCs = ReadXML_GetRobotTestExecutionDetails(@outputFile);
+
                 string reportOutput = FormatRobotStatsListAsPipeSeparated(lstRobotTCs);
 
                 // appending the execution stats
@@ -320,7 +322,7 @@ namespace GingerCore.Actions.RobotFramework
                 Error = ex.Message;
             }
         } // end of ExecuteCommandSync
-        
+
         string DataBuffer = "";
         string ErrorBuffer = "";
 
@@ -342,7 +344,7 @@ namespace GingerCore.Actions.RobotFramework
         {
             int testStatus = 0;
             int statPass = 0;
-            int statFail = 0; 
+            int statFail = 0;
 
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(fileName);
@@ -352,16 +354,16 @@ namespace GingerCore.Actions.RobotFramework
             {
                 if (statNode.InnerText.Equals("All Tests"))
                 {
-                    statPass = int.Parse(statNode.Attributes["pass"].Value); 
+                    statPass = int.Parse(statNode.Attributes["pass"].Value);
                     statFail = int.Parse(statNode.Attributes["fail"].Value);
-                    break;                     
+                    break;
                 }
             }
 
             if (statPass > 0 || statFail > 0)
             {
-                if ( statFail > 0 ) { testStatus = 0;  }
-                else { testStatus = 1;  }
+                if (statFail > 0) { testStatus = 0; }
+                else { testStatus = 1; }
             }
 
             return testStatus;

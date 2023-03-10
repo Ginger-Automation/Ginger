@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Ginger.Help;
 using System.Windows;
 using System.Windows.Input;
-using Ginger.Help;
 
 namespace Ginger.GeneralLib
 {
@@ -53,12 +53,12 @@ namespace Ginger.GeneralLib
             // Set our window of tooltip popup, must be on dispatcher
             ToolTipPopupTextBlock.Dispatcher.Invoke(() =>
             {
-                ToolTipPopupTextBlock.Text = txt;                
+                ToolTipPopupTextBlock.Text = txt;
                 this.Topmost = true;
                 this.Top = position.Y + Height;
                 this.Left = position.X;
                 this.Show();
-                                    
+
                 //Hide the toolTip after 1.5 sec
                 var timer = new System.Timers.Timer(1500) { AutoReset = false };
                 timer.Elapsed += delegate
@@ -66,7 +66,7 @@ namespace Ginger.GeneralLib
                     HideToolTip();
                 };
 
-                timer.Enabled = true;    
+                timer.Enabled = true;
             });
         }
 
@@ -101,7 +101,7 @@ namespace Ginger.GeneralLib
 
         private void elem_MouseLeave(object sender, MouseEventArgs e)
         {
-             HideToolTip();
+            HideToolTip();
         }
     }
 }

@@ -17,10 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using System.Windows;
 using System.Windows.Controls;
-using Amdocs.Ginger.Repository;
 
 namespace Ginger.Actions
 {
@@ -54,7 +54,7 @@ namespace Ginger.Actions
         {
             mContext = context;
             DataSource = dataSource;
-            SetVEGrid(gridTitle, paramTitle, valueTitle,  valueForDriverTitle);
+            SetVEGrid(gridTitle, paramTitle, valueTitle, valueForDriverTitle);
         }
 
         public void SetVEGrid(string gridTitle, string paramTitle, string valueTitle, string valueForDriverTitle)
@@ -77,7 +77,7 @@ namespace Ginger.Actions
             VEGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddRow));
         }
 
-         private void VEGridInputGridVEButton_Click(object sender, RoutedEventArgs e)
+        private void VEGridInputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)VEGrid.CurrentItem;
             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), mContext);

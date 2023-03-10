@@ -22,8 +22,6 @@ using Ginger.Plugin.Platform.Web;
 using Ginger.Plugin.Platform.Web.Elements;
 using Ginger.Plugin.Platform.Web.Execution;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
 {

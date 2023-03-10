@@ -23,7 +23,6 @@ using Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
-using GingerCore.Variables;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -48,7 +47,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         }
 
 
-        public SharedRepositoryNavPage(Context context)     
+        public SharedRepositoryNavPage(Context context)
         {
             InitializeComponent();
             mContext = context;
@@ -66,16 +65,19 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     foreach (TabItem tab in xTabRepository.Items)
                     {
                         foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
-
+                        {
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (xTabRepository.SelectedItem == tab)
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                }
                                 else
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
-
-                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                                } ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
+                        }
                     }
                 }
             }

@@ -24,8 +24,8 @@ namespace Ginger.ReporterLib
 {
     public class GingerWorkSpaceReporter : WorkSpaceReporterBase
     {
-        
-        
+
+
         public override Amdocs.Ginger.Common.eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResault)
         {
             eUserMsgSelection result = defualtResault;  // if user just close the window we return the default defined result
@@ -35,7 +35,7 @@ namespace Ginger.ReporterLib
                 result = eUserMsgSelection.Yes;
             }
 
-            if (! WorkSpace.Instance.RunningInExecutionMode && !WorkSpace.Instance.RunningFromUnitTest)
+            if (!WorkSpace.Instance.RunningInExecutionMode && !WorkSpace.Instance.RunningFromUnitTest)
             {
                 App.MainWindow.Dispatcher.Invoke(() =>
                 {
@@ -66,7 +66,7 @@ namespace Ginger.ReporterLib
         public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.ToLog(logLevel, messageToLog, exceptionToLog);
-            
+
         }
     }
 }

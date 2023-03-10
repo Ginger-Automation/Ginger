@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using System;
 
 namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
 {
@@ -135,7 +134,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
         {
             get
             {
-                return GetPlatformImage( mPlatform);
+                return GetPlatformImage(mPlatform);
             }
         }
 

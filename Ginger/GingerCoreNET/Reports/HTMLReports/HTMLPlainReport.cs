@@ -16,11 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using GingerCore;
 
 namespace Ginger.Reports.HTMLReports
 {
@@ -71,7 +71,7 @@ namespace Ginger.Reports.HTMLReports
                 xFail.SetAttributeValue("style", "color:red");
             }
             s += xFail.ToString();
-            
+
             List<string> headers = new List<string>();
             headers.Add(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
             headers.Add("Elapsed");

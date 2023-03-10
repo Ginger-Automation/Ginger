@@ -191,9 +191,13 @@ namespace Ginger.SourceControl
             string Title = string.Empty;
             //Todo create different header for file/repository
             if (mSCIInfoDetails.ShowRepositoryInfo)
+            {
                 Title = "Source Control Repository Info";
+            }
             else
+            {
                 Title = "Source Control File Info";
+            }
 
             GingerCore.General.LoadGenericWindow(ref _GenWin, null, windowStyle, Title, this);
         }

@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Core;
 using Ginger.Reports;
 using Ginger.Reports.Designer;
 using GingerWPF.TreeViewItemsLib;
@@ -43,13 +42,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {          
+        {
             // create binded SP            
-            return TreeViewUtils.CreateItemHeader(HTMLReportTemplate.Name, "@HTMLReport_16x16.png", Ginger.SourceControl.SourceControlUI.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));          
+            return TreeViewUtils.CreateItemHeader(HTMLReportTemplate.Name, "@HTMLReport_16x16.png", Ginger.SourceControl.SourceControlUI.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
-        {            
+        {
             return null;
         }
 
@@ -70,13 +69,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
         ContextMenu ITreeViewItem.Menu()
         {
             ContextMenu CM = new ContextMenu();
-            TreeViewUtils.AddMenuItem(CM, "Save", Save, null, eImageType.Save);            
+            TreeViewUtils.AddMenuItem(CM, "Save", Save, null, eImageType.Save);
             return CM;
         }
 
         void ITreeViewItem.SetTools(ITreeView TV)
         {
-            TV.AddToolbarTool("@Save_16x16.png", "Save", Save);            
+            TV.AddToolbarTool("@Save_16x16.png", "Save", Save);
         }
 
         private void Save(object sender, System.Windows.RoutedEventArgs e)

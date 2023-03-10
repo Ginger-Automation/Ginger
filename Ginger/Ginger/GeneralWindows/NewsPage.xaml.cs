@@ -42,7 +42,7 @@ namespace Ginger
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
-        {          
+        {
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, null, windowStyle, "Ginger News", this, null, true);
         }
     }

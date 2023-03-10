@@ -18,20 +18,18 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.BusinessFlowWindows;
-using GingerCore;
 using Ginger;
+using Ginger.BusinessFlowWindows;
+using Ginger.UserControls;
+using GingerCore;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
-using GingerCore.Platforms;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.Repository;
-using Ginger.UserControls;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -81,7 +79,7 @@ namespace GingerWPF.BusinessFlowsLib
             xAppsGrid.DataSourceList = mBusinessFlow.TargetApplicationPlatforms;
         }
 
-       
+
 
         private void TrackBusinessFlowAutomationPrecentage()
         {
@@ -101,10 +99,10 @@ namespace GingerWPF.BusinessFlowsLib
                 if (string.IsNullOrEmpty(changedActivity.ActivitiesGroupID) == false)
                 {
                     ActivitiesGroup actGroup = mBusinessFlow.ActivitiesGroups.Where(x => x.Name == changedActivity.ActivitiesGroupID).FirstOrDefault();
-                    if(actGroup != null)
+                    if (actGroup != null)
                     {
                         actGroup.OnPropertyChanged(nameof(ActivitiesGroup.AutomationPrecentage));
-                    }                    
+                    }
                 }
             }
         }
@@ -116,17 +114,17 @@ namespace GingerWPF.BusinessFlowsLib
             //Perf imrprovements
             //if (WorkSpace.Instance.BetaFeatures.BFPageActivitiesHookOnlyNewActivities)
             //{
-                if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            {
+                foreach (object o in e.NewItems)
                 {
-                    foreach (object o in e.NewItems)
-                    {
-                        Activity activity = (Activity)o;
-                        activity.PropertyChanged += mBusinessFlowActivity_PropertyChanged;
-                    }
+                    Activity activity = (Activity)o;
+                    activity.PropertyChanged += mBusinessFlowActivity_PropertyChanged;
                 }
+            }
             //}            
         }
-        
+
 
         private void BindControls()
         {
@@ -217,8 +215,12 @@ namespace GingerWPF.BusinessFlowsLib
 
             //make sure all Activities mapped to Application after change
             foreach (Activity activity in mBusinessFlow.Activities)
+            {
                 if (mBusinessFlow.TargetApplications.Where(x => x.Name == activity.TargetApplication).FirstOrDefault() == null)
+                {
                     activity.TargetApplication = mBusinessFlow.TargetApplications[0].Name;
+                }
+            }
         }
 
     }

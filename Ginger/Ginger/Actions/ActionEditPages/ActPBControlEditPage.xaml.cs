@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using GingerCore.Actions;
+using System.Windows.Controls;
 
 namespace Ginger.Actions
 {
@@ -44,11 +44,11 @@ namespace Ginger.Actions
             switch (mAct.ControlAction)
             {
                 case ActPBControl.eControlAction.SetValue:
-                    //TODO: show ValueTextBox
+                //TODO: show ValueTextBox
                 case ActPBControl.eControlAction.GetValue:
                     //TODO: hide ValueTextBox
                     break;
-                    
+
             }
         }
     }

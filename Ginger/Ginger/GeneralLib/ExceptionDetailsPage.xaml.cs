@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Reflection;
@@ -34,10 +33,10 @@ namespace Ginger.GeneralLib
     /// Interaction logic for ExceptionDetailsPage.xaml
     /// </summary>
     public partial class ExceptionDetailsPage : Page
-    {        
+    {
         GenericWindow _pageGenericWin;
         Exception mException;
-        bool _ShowingFull;        
+        bool _ShowingFull;
 
         public static void ShowError(Exception ex)
         {
@@ -56,10 +55,10 @@ namespace Ginger.GeneralLib
         }
 
         private void ShowFullDetails(bool toShow)
-        {            
+        {
             if (toShow)
             {
-                FullErrorDetailsRow.Height = new GridLength(80, GridUnitType.Star);                
+                FullErrorDetailsRow.Height = new GridLength(80, GridUnitType.Star);
             }
             else
             {
@@ -105,7 +104,7 @@ namespace Ginger.GeneralLib
             SendMailBtn.Content = "Send Mail";
             SendMailBtn.Click += new RoutedEventHandler(SendMailBtn_Click);
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();          
+            ObservableList<Button> winButtons = new ObservableList<Button>();
             winButtons.Add(CopyToClipboradBtn);
             winButtons.Add(ViewLogBtn);
             winButtons.Add(SendMailBtn);
@@ -117,9 +116,13 @@ namespace Ginger.GeneralLib
         {
             ShowFullDetails(!_ShowingFull);
             if (_ShowingFull)
+            {
                 MoreLessInfoBtn.Content = "Less";
+            }
             else
+            {
                 MoreLessInfoBtn.Content = "More";
+            }
         }
 
         private string GetFullErrorText()
@@ -137,7 +140,7 @@ namespace Ginger.GeneralLib
 
         private void ViewLogBtn_Click(object sender, RoutedEventArgs e)
         {
-            
+
             if (System.IO.File.Exists(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile))
             {
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile, UseShellExecute = true });
@@ -172,14 +175,16 @@ namespace Ginger.GeneralLib
                 if (System.IO.File.Exists(screenShot))
                 {
                     mail.Attachments.Add(screenShot);
-                }                
+                }
 
                 mail.EmailOperations.DisplayAsOutlookMail();
 
                 if (mail.Event != null && mail.Event.IndexOf("Failed") >= 0)
+                {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to send the error mail." + System.Environment.NewLine + System.Environment.NewLine + "Details: " + mail.Event);
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to send the error mail." + System.Environment.NewLine + System.Environment.NewLine + "Details: " + ex.Message);
             }
@@ -187,7 +192,7 @@ namespace Ginger.GeneralLib
 
         private string TakeScreenShot()
         {
-            string imagePath=string.Empty;
+            string imagePath = string.Empty;
             try
             {
                 System.Drawing.Rectangle bounds = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
@@ -197,11 +202,11 @@ namespace Ginger.GeneralLib
                     {
                         g.CopyFromScreen(System.Drawing.Point.Empty, System.Drawing.Point.Empty, bounds.Size);
                     }
-                    imagePath= System.IO.Path.Combine(System.IO.Path.GetTempPath(), "ScreenShot_"+ DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss")+".jpg");
+                    imagePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "ScreenShot_" + DateTime.Now.ToString("MM-dd-yyyy_HH-mm-ss") + ".jpg");
                     bitmap.Save(imagePath, ImageFormat.Jpeg);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
@@ -211,7 +216,7 @@ namespace Ginger.GeneralLib
 
         private string BuildErrorAsHTML()
         {
-            StringBuilder html= new StringBuilder();
+            StringBuilder html = new StringBuilder();
             html.Append(@"<html xmlns=""http://www.w3.org/1999/xhtml"">").AppendLine();
             html.Append(@"<body>").AppendLine();
             html.Append(@"<table width=""100%"" border=""0"" cellpadding=""0"" cellspacing=""0"" style=""font-family:arial;"">").AppendLine();
@@ -222,7 +227,7 @@ namespace Ginger.GeneralLib
             html.Append(@"<tr><td><p>" + "1. " + "<br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + "2. " + "<br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + "3. " + "<br><br><br></p></td></tr>").AppendLine();
-            html.Append(@"<tr><td><p>" + "<b>Error:</b>"+@"<font color=""red""> " + mException.Message + "</font><br><br></p></td></tr>").AppendLine();
+            html.Append(@"<tr><td><p>" + "<b>Error:</b>" + @"<font color=""red""> " + mException.Message + "</font><br><br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + "<b>Source:</b> " + mException.Source + "<br><br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + "<b>Stack Trace:</b> " + "<br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + mException.StackTrace.Replace("\n", "<br>") + "<br></p></td></tr>").AppendLine();

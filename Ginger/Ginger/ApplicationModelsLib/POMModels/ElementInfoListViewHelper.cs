@@ -18,11 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.UserControls;
 using Ginger.UserControlsLib.UCListView;
-using GingerCore;
-using GingerCore.Actions;
 using System.Collections.Generic;
 using System.Windows;
 
@@ -31,7 +27,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
     public class ElementInfoListViewHelper : IListViewHelper
     {
         ElementInfo mElementInfo;
-        
+
         public General.eRIPageViewMode PageViewMode { get; set; }
 
         UcListView mListView = null;

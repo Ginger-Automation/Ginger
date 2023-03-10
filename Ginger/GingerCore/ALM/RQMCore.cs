@@ -35,25 +35,18 @@ limitations under the License.
 //#endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using GingerCore.Activities;
 using GingerCore.ALM.RQM;
-using Ginger;
+using GingerCoreNET.ALMLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using GingerCore.Activities;
-using TDAPIOLELib;
-using AlmDataContractsStd.Enums;
-using GingerCore.ALM.QC;
 using System.ComponentModel;
 using System.IO;
-using System.Xml;
 using System.IO.Compression;
-using Newtonsoft.Json;
-using GingerCore.External;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.InterfacesLib;
 using System.Linq;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNET.ALMLib;
+using System.Xml;
 
 namespace GingerCore.ALM
 {
@@ -240,11 +233,13 @@ namespace GingerCore.ALM
                 using (ZipArchive zipArchive = new ZipArchive(configPackageZipFile))
                 {
                     foreach (ZipArchiveEntry entry in zipArchive.Entries)
+                    {
                         if (entry.Name == "RQMSettings.xml")
                         {
                             containRQMSettingsFile = true;
                             break;
                         }
+                    }
                 }
             }
             return containRQMSettingsFile;
@@ -253,8 +248,13 @@ namespace GingerCore.ALM
         private string GetServerValueFromDict(Dictionary<string, object> dic)
         {
             if (dic.ContainsKey("ServerURL"))
+            {
                 return (string)dic["ServerURL"];
-            else return "";
+            }
+            else
+            {
+                return "";
+            }
         }
         #endregion
 

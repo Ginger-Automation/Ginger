@@ -81,7 +81,7 @@ namespace GingerCoreNET.DataSource
         /// </returns>
         protected override Type GetRowType()
         {
-            return typeof (LiteDataRow);
+            return typeof(LiteDataRow);
         }
 
         /// <summary>

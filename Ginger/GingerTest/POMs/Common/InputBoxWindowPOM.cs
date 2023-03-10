@@ -18,21 +18,17 @@ limitations under the License.
 
 using GingerCore.GeneralLib;
 using GingerWPFUnitTest.POMs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace GingerTest.POMs.Common
 {
     public class InputBoxWindowPOM : GingerPOMBase
-    {        
+    {
         public void SetText(string txt)
         {
-            Execute(() => {                
+            Execute(() =>
+            {
                 TextBox textBox = (TextBox)InputBoxWindow.CurrentInputBoxWindow.FindName("ValueTextBox");
                 textBox.Text = txt;
             });
@@ -40,7 +36,8 @@ namespace GingerTest.POMs.Common
 
         public void ClickOK()
         {
-            Execute(() => {
+            Execute(() =>
+            {
                 Button OKbutton = (Button)InputBoxWindow.CurrentInputBoxWindow.FindName("OKButton");
                 OKbutton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 

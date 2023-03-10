@@ -16,13 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.Actions
 {
@@ -46,7 +46,7 @@ namespace GingerCore.Actions
         public override string ActionEditPage { get { return "ActLogActionPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return false; } }
-        
+
         public string LogText
         {
             get
@@ -72,7 +72,7 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public eActionLogLevels SelectedLogLevel { get; set; }
-      
+
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
         {
@@ -99,7 +99,7 @@ namespace GingerCore.Actions
         eLogLevel GetLogLevel(eActionLogLevels loglevel)
         {
             eLogLevel logLevel;
-            switch(loglevel)
+            switch (loglevel)
             {
                 case eActionLogLevels.ERROR:
                     logLevel = eLogLevel.ERROR;
@@ -117,8 +117,8 @@ namespace GingerCore.Actions
         }
 
         public override void Execute()
-        {         
-            Reporter.ToLog(GetLogLevel(SelectedLogLevel), GetInputParamCalculatedValue("LogText"));            
+        {
+            Reporter.ToLog(GetLogLevel(SelectedLogLevel), GetInputParamCalculatedValue("LogText"));
         }
     }
 }

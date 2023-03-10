@@ -121,7 +121,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             public List<Enum> ElementOperationsList = new List<Enum>();
             private bool mIsCommonElementType;
 
-            public bool IsCommonElementType { get { return mIsCommonElementType;} set { mIsCommonElementType = value; } }
+            public bool IsCommonElementType { get { return mIsCommonElementType; } set { mIsCommonElementType = value; } }
         }
 
         internal static List<eLocateBy> GetPlatformUIElementLocatorsList(ePlatformType Platform)
@@ -157,7 +157,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             elementPropertyList.Add(ActUIElement.eElementProperty.Type);
             elementPropertyList.Add(ActUIElement.eElementProperty.Value);
             elementPropertyList.Add(ActUIElement.eElementProperty.Visible);
-            return elementPropertyList;          
+            return elementPropertyList;
         }
 
         public virtual List<eElementType> GetPlatformUIElementsType()
@@ -200,7 +200,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         }
 
         public virtual Act GetPlatformActionByElementInfo(ElementInfo elementInfo, ElementActionCongifuration actConfig)
-        {           
+        {
             return null;
         }
 
@@ -208,7 +208,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             return GetPlatformActionByElementInfo(eInfo, actConfig);
         }
-        
+
         public virtual List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
         {
             List<ActUIElement.eElementAction> list = new List<ActUIElement.eElementAction>();
@@ -264,7 +264,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         }
 
         public abstract Dictionary<string, ObservableList<UIElementFilter>> GetUIElementFilterList();
-      
+
 
         public virtual List<ActUIElement.eTableAction> GetTableControlActions(ActUIElement.eElementAction tableAction)
         {

@@ -17,9 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
@@ -49,8 +47,8 @@ namespace UnitTests.NonUITests
 {
     [TestClass]
     [Level3]
-    public class WebServicesTest 
-    {        
+    public class WebServicesTest
+    {
         static BusinessFlow mBF;
         static GingerRunner mGR;
         static Agent wsAgent = new Agent();
@@ -66,8 +64,8 @@ namespace UnitTests.NonUITests
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
 
             // Init SR
-            SolutionRepository  mSolutionRepository = WorkSpace.Instance.SolutionRepository;
-     
+            SolutionRepository mSolutionRepository = WorkSpace.Instance.SolutionRepository;
+
             string TempRepositoryFolder = TestResources.GetTestTempFolder(Path.Combine("Solutions", "temp"));
             mSolutionRepository.Open(TempRepositoryFolder);
             Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
@@ -77,7 +75,7 @@ namespace UnitTests.NonUITests
             {
                 WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
             }
-            WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = Path.Combine(TempRepositoryFolder,"ExecutionResults");
+            WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = Path.Combine(TempRepositoryFolder, "ExecutionResults");
 
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
@@ -86,7 +84,7 @@ namespace UnitTests.NonUITests
 
 
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.WebServices;            
+            p.PlatformType = ePlatformType.WebServices;
 
 
             mDriver = new WebServicesDriver(mBF);
@@ -107,20 +105,20 @@ namespace UnitTests.NonUITests
 
             mGR.Executor.BusinessFlows.Add(mBF);
 
-          
+
 
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
-            
+
         }
         [TestCleanup]
         public void TestMethodCleanUP()
@@ -128,7 +126,8 @@ namespace UnitTests.NonUITests
             mBF.Activities.ClearAll();
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void APIModelExecutionTest()
         {
 
@@ -154,7 +153,7 @@ namespace UnitTests.NonUITests
             //Act            
             mGR.Executor.RunRunner();
 
-           
+
             //Assert
             //TODO: add some assert??
 
@@ -249,7 +248,7 @@ namespace UnitTests.NonUITests
         //}
 
         [Ignore]
-        [TestMethod]  
+        [TestMethod]
         [Timeout(60000)]
         public void WebServices_WebServiceSendXML()
         {
@@ -259,17 +258,18 @@ namespace UnitTests.NonUITests
             string xmlRequest = @"<?xml version=""1.0"" encoding=""utf-8""?><soap12:Envelope xmlns:soap12=""http://www.w3.org/2003/05/soap-envelope""> <soap12:Body> <ListOfCountryNamesByName xmlns=""http://www.oorsprong.org/websamples.countryinfo""> </ListOfCountryNamesByName></soap12:Body></soap12:Envelope>";
             string Status = "test";
             bool failFlag = false;
-            string webRespone = webServiceCall.SendXMLRequest(URL, soapAction, xmlRequest,ref Status,ref failFlag, null);
+            string webRespone = webServiceCall.SendXMLRequest(URL, soapAction, xmlRequest, ref Status, ref failFlag, null);
 
             StringAssert.Contains(webRespone, "<m:sName>Åland Islands</m:sName>");
-            
-            
+
+
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void WebServices_WebAPISOAP()
         {
-                       
+
 
             Activity Activity1 = new Activity();
             Activity1.Active = true;
@@ -310,14 +310,17 @@ namespace UnitTests.NonUITests
                 foreach (ActReturnValue val in soapAct.ReturnValues)
                 {
                     if (val.Actual.ToString() == "59586")
-                        Assert.AreEqual(val.Actual,"59586");
+                    {
+                        Assert.AreEqual(val.Actual, "59586");
+                    }
                 }
             }
         }
 
         //Start Here
-        [TestMethod][Timeout(600000)]
-        public void WebServices_RawRequestWebAPIRestWithJSON() 
+        [TestMethod]
+        [Timeout(600000)]
+        public void WebServices_RawRequestWebAPIRestWithJSON()
         {
             //Arrange
             mGR = new GingerRunner();
@@ -414,7 +417,8 @@ namespace UnitTests.NonUITests
             StringAssert.Contains(rawRequestContent, "<tem:intB>3</tem:intB>");
         }
 
-        [TestMethod]  [Timeout(600000)]
+        [TestMethod]
+        [Timeout(600000)]
         public void WebServices_RawRequestWebAPIRestWithXML()
         {
             //Arrange:
@@ -460,7 +464,8 @@ namespace UnitTests.NonUITests
             StringAssert.Contains(rawRequestContent, "<name>Dogs</name>");
         }
 
-        [TestMethod]  [Timeout(600000)]
+        [TestMethod]
+        [Timeout(600000)]
         public void WebServices_RawRequestWebAPIRestWithFormData()
         {
             //Arrange
@@ -518,7 +523,8 @@ namespace UnitTests.NonUITests
             StringAssert.Contains(rawRequestContent, "available");
         }
 
-        [TestMethod]  [Timeout(600000)]
+        [TestMethod]
+        [Timeout(600000)]
         public void WebServices_RawRequestWebAPIRestWithHeaders()
         {
             //Arrange:
@@ -562,7 +568,8 @@ namespace UnitTests.NonUITests
             StringAssert.Contains(rawRequestContent, "Host: usstlattstl01:8002");
         }
 
-        [TestMethod] [Timeout(600000)]
+        [TestMethod]
+        [Timeout(600000)]
         public void WebServices_RawRequestWebAPIRestWithAuthentication()
         {
             //Arrange:
@@ -651,7 +658,7 @@ namespace UnitTests.NonUITests
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.UseLegacyJSONParsing, Boolean.FalseString);
             restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.RequestBody, "{\r\n  \"id\": 55,\r\n  \"category\": {\r\n    \"id\": 0,\r\n    \"name\": \"string\"\r\n  },\r\n  \"name\": \"{CS Exp=System.Environment.UserName}\",\r\n  \"photoUrls\": [\r\n    \"string\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 0,\r\n      \"name\": \"string\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}");
             restAct.AddOrUpdateInputParamValue(ActWebAPIRest.Fields.ReqHttpVersion, ApplicationAPIUtils.eHttpVersion.HTTPV10.ToString());
-            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton,ApplicationAPIUtils.eNetworkCredentials.Default.ToString());
+            restAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.NetworkCredentialsRadioButton, ApplicationAPIUtils.eNetworkCredentials.Default.ToString());
 
             restAct.Active = true;
             restAct.EnableRetryMechanism = false;
@@ -666,7 +673,8 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(restAct.ReturnValues[0].Actual, "OK");
         }
 
-        [TestMethod]  [Timeout(600000)]
+        [TestMethod]
+        [Timeout(600000)]
         public void WebServices_WebAPIRest()
         {
             //Arrange
@@ -717,12 +725,13 @@ namespace UnitTests.NonUITests
             mGR.Executor.RunRunner();
 
             Assert.AreEqual(restAct.ReturnValues[0].Actual, "OK");
-        }       
+        }
 
 
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestXMLReader()
         {
 
@@ -748,9 +757,14 @@ namespace UnitTests.NonUITests
                 {
                     Elm = rdr.Name;
                     if (ls.Count <= rdr.Depth)
+                    {
                         ls.Add(Elm);
+                    }
                     else
+                    {
                         ls[rdr.Depth] = Elm;
+                    }
+
                     depth = rdr.Depth;
                 }
 
@@ -766,8 +780,8 @@ namespace UnitTests.NonUITests
                     else
                     {
                         sPath = "/" + string.Join("/", ls.ToArray().Take(rdr.Depth));
-                        
-                    
+
+
                     }
                 }
 
@@ -824,10 +838,10 @@ namespace UnitTests.NonUITests
 
             ActSoapUI actSoapUi = new ActSoapUI();
 
-            var xmlFilePath = TestResources.GetTestResourcesFile(@"XML"+Path.DirectorySeparatorChar+"calculator_soapui_project.xml");
-            actSoapUi.AddNewReturnParams=true;
+            var xmlFilePath = TestResources.GetTestResourcesFile(@"XML" + Path.DirectorySeparatorChar + "calculator_soapui_project.xml");
+            actSoapUi.AddNewReturnParams = true;
             actSoapUi.AddOrUpdateInputParamValue(ActSoapUI.Fields.ImportFile, xmlFilePath);
-            
+
             mBF.Activities[0].Acts.Add(actSoapUi);
 
             Assert.AreEqual(1, actSoapUi.ActInputValues.Count);
@@ -842,9 +856,9 @@ namespace UnitTests.NonUITests
             //Arrange
             ActSoapUI actSoapUI = new ActSoapUI();
             actSoapUI.Description = "Soap Wrapper acttion test ";
-            
-            var xmlFilePath = TestResources.GetTestResourcesFile(@"XML"+ Path.DirectorySeparatorChar + "calculator_soapui_project.xml");
-            
+
+            var xmlFilePath = TestResources.GetTestResourcesFile(@"XML" + Path.DirectorySeparatorChar + "calculator_soapui_project.xml");
+
             actSoapUI.AddOrUpdateInputParamValue(ActSoapUI.Fields.ImportFile, xmlFilePath);
             actSoapUI.GetOrCreateInputParam(ActSoapUI.Fields.UIrelated, "False");
             actSoapUI.GetOrCreateInputParam(ActSoapUI.Fields.ImportFile, "True");
@@ -878,20 +892,20 @@ namespace UnitTests.NonUITests
             actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.URL, @"http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso");
             actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.SOAPAction, @"");
 
-            var xmlFileNamePath = TestResources.GetTestResourcesFile(@"XML"+ Path.DirectorySeparatorChar + "stock.xml");
+            var xmlFileNamePath = TestResources.GetTestResourcesFile(@"XML" + Path.DirectorySeparatorChar + "stock.xml");
             actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.XMLfileName, xmlFileNamePath);
-            
+
             actLegacyWebService.FileName = "Web Service Action";
             actLegacyWebService.FilePath = "Web Service Action";
             actLegacyWebService.Active = true;
             actLegacyWebService.AddNewReturnParams = true;
-           
+
             mBF.Activities[0].Acts.Add(actLegacyWebService);
             mDriver.StartDriver();
             mGR.Executor.RunRunner();
 
             Assert.AreNotEqual(0, actLegacyWebService.ReturnValues.Count);
-            Assert.AreEqual("Åland Islands", actLegacyWebService.ReturnValues.FirstOrDefault(x =>x.Param == @"m:sName").Actual);
+            Assert.AreEqual("Åland Islands", actLegacyWebService.ReturnValues.FirstOrDefault(x => x.Param == @"m:sName").Actual);
 
             //Convert the legacy action
             Activity newActivity = new Activity() { Active = true };
@@ -912,7 +926,7 @@ namespace UnitTests.NonUITests
 
             //Run newAction
             mGR.Executor.RunRunner();
-            
+
             //assert newaction
             Assert.AreNotEqual(0, newAction.ReturnValues.Count);
             Assert.AreEqual("Åland Islands", newAction.ReturnValues.FirstOrDefault(x => x.Param == @"m:sName").Actual);
@@ -947,7 +961,7 @@ namespace UnitTests.NonUITests
 
             //Assert old action
             Assert.AreNotEqual(0, actLegacyRestService.ReturnValues.Count);
-            var expected = actLegacyRestService.ReturnValues.FirstOrDefault(x =>x.Actual == "OK");
+            var expected = actLegacyRestService.ReturnValues.FirstOrDefault(x => x.Actual == "OK");
             Assert.AreNotEqual(null, expected);
 
             //Convert the legacy action
@@ -991,7 +1005,9 @@ namespace UnitTests.NonUITests
             for (int i = 0; i < versionName.Length; i++)
             {
                 if (Char.IsDigit(versionName[i]))
+                {
                     versionStr += versionName[i];
+                }
             }
 
             if (versionStr.Length > 0)
@@ -1003,7 +1019,7 @@ namespace UnitTests.NonUITests
                     throw new NotImplementedException("Enhance SecurityProtocolType code in WebService driver asper dotnet framework version");
                 }
             }
-               
+
 
         }
     }

@@ -16,17 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.InterfacesLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.GeneralLib
 {
@@ -74,11 +70,20 @@ namespace Ginger.GeneralLib
         {
             System.Windows.Documents.Run formattedTxt = new System.Windows.Documents.Run(txt);
             if (isBold)
+            {
                 formattedTxt.FontWeight = FontWeights.Bold;
+            }
+
             if (isUnderline)
+            {
                 formattedTxt.TextDecorations = TextDecorations.Underline;
+            }
+
             if (txtColor != null)
+            {
                 formattedTxt.Foreground = (SolidColorBrush)txtColor;
+            }
+
             mTextBlock.Inlines.Add(formattedTxt);
         }
         public string GetText()
@@ -95,7 +100,7 @@ namespace Ginger.GeneralLib
                     text = text + Environment.NewLine;
                 }
             }
-            return text;            
+            return text;
         }
         public void AddImage(string image, int width, int height)
         {

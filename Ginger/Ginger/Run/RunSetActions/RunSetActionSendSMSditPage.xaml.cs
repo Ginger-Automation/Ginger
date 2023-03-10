@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using System.Diagnostics;
-using System.Windows.Controls;
-using System.Windows.Navigation;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore.GeneralLib;
+using System.Diagnostics;
+using System.Windows.Controls;
+using System.Windows.Navigation;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -36,7 +36,7 @@ namespace Ginger.Run.RunSetActions
 
             if (runSetActionSendSMS.SMSEmail == null)
             {
-                runSetActionSendSMS.SMSEmail = new Email();                
+                runSetActionSendSMS.SMSEmail = new Email();
             }
 
             RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionSendSMS.SMSEmail);

@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
-using GingerCore.DataSource;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using GingerCore.DataSource;
 
 namespace Amdocs.Ginger.CoreNET.DataSource
 {
@@ -30,13 +30,13 @@ namespace Amdocs.Ginger.CoreNET.DataSource
         private string mExcelSheetName = string.Empty;
 
         [IsSerializedForLocalRepository]
-        public string ExcelSheetName 
+        public string ExcelSheetName
         {
             get
             {
                 return mExcelSheetName;
             }
-            set 
+            set
             {
                 mExcelSheetName = value;
                 OnPropertyChanged("ExcelSheetName");
@@ -45,9 +45,9 @@ namespace Amdocs.Ginger.CoreNET.DataSource
 
         private string mExcelPath = string.Empty;
 
-       [IsSerializedForLocalRepository]
-        public string ExcelPath 
-        { 
+        [IsSerializedForLocalRepository]
+        public string ExcelPath
+        {
             get
             {
                 return mExcelPath;
@@ -58,7 +58,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
 
                 OnPropertyChanged("ExcelPath");
             }
-        } 
+        }
 
         private string mExportQueryValue = string.Empty;
 
@@ -78,7 +78,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
 
         [IsSerializedForLocalRepository]
         public ObservableList<ColumnCheckListItem> ColumnList { get; set; }
-       
+
 
         [IsSerializedForLocalRepository]
         public ObservableList<WhereConditionItem> WhereConditionStringList { get; set; }
@@ -110,7 +110,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
 
             if (selectedColumn[selectedColumn.Length - 1].Equals(','))
             {
-                selectedColumn = selectedColumn.Remove((selectedColumn.Length - 1),1);
+                selectedColumn = selectedColumn.Remove((selectedColumn.Length - 1), 1);
             }
 
             var query = "";
@@ -121,7 +121,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
             }
             else
             {
-                query =string.Concat("Select ", selectedColumn," from ", tableName);
+                query = string.Concat("Select ", selectedColumn, " from ", tableName);
             }
 
             return query;
@@ -171,7 +171,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
                 {
                     if (wColVal == "GINGER_ID")
                     {
-                        wQuery = string.Concat(wQuery," ", wCond," ",wColVal," <> ", wRowVal);
+                        wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " <> ", wRowVal);
                     }
                     else
                     {
@@ -180,7 +180,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
                 }
                 else if (wOpr == "Contains")
                 {
-                    wQuery = string.Concat(wQuery, " ", wCond , " ", wColVal, " Like ", "\"%", wRowVal, "%\"");
+                    wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " Like ", "\"%", wRowVal, "%\"");
                 }
                 else if (wOpr == "NotContains")
                 {
@@ -188,7 +188,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
                 }
                 else if (wOpr == "StartsWith")
                 {
-                    wQuery = string.Concat(wQuery , " ", wCond, " ", wColVal, " like ", "\"", wRowVal, "%\"");
+                    wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " like ", "\"", wRowVal, "%\"");
                 }
                 else if (wOpr == "NotStartsWith")
                 {
@@ -230,7 +230,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
             {
                 return dsConditionList;
             }
-          
+
             List<string> tableColsValue = new List<string>();
             var columns = mDataTable.Columns;
             foreach (var item in columns)
@@ -270,7 +270,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
 
         public ObservableList<WhereConditionItem> CreateConditionStringList(ObservableList<GingerCore.DataSource.ActDSConditon> whereConditionList)
         {
-            var   conditionStringList = new ObservableList<WhereConditionItem>();
+            var conditionStringList = new ObservableList<WhereConditionItem>();
             if (whereConditionList != null)
             {
                 for (int i = 0; i < whereConditionList.Count; i++)
@@ -280,7 +280,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
                     var wOpr = whereConditionList[i].wOperator.ToString();
                     var wRowVal = Convert.ToString(whereConditionList[i].wValue);
 
-                    conditionStringList.Add(new WhereConditionItem() { Condition = wCond,TableColumn= wColVal,Opertor= wOpr, RowValue= wRowVal });
+                    conditionStringList.Add(new WhereConditionItem() { Condition = wCond, TableColumn = wColVal, Opertor = wOpr, RowValue = wRowVal });
                 }
 
             }

@@ -17,31 +17,15 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Ginger.UserControls;
+using Ginger.UserControlsLib;
+using GingerCore.DataSource;
+using GingerCore.GeneralLib;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using GingerCore;
-using GingerCore.Drivers;
-using GingerCore.Drivers.Appium;
-using GingerCore.Drivers.ConsoleDriverLib;
-using GingerCore.Drivers.InternalBrowserLib;
-using Ginger.UserControls;
-using GingerCore.Drivers.ASCF;
-using GingerCore.DataSource;
-using Ginger.Actions;
-using GingerCore.Drivers.PBDriver;
-using Ginger.WindowExplorer;
-using GingerCore.Drivers.WebServicesDriverLib;
-using GingerCore.Drivers.WindowsLib;
-using GingerCore.Drivers.JavaDriverLib;
-using Ginger.Drivers;
-using GingerCore.Drivers.MainFrame;
-using GingerCore.Drivers.AndroidADB;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.GeneralLib;
-using Ginger.UserControlsLib;
 
 namespace Ginger.DataSource
 {
@@ -131,7 +115,9 @@ namespace Ginger.DataSource
             {
                 mDSTableList = mDSDetails.GetTablesList();
                 foreach (DataSourceTable dsTable in mDSTableList)
+                {
                     mDSDetails.DeleteTable(dsTable.Name);
+                }
 
                 SetGridData();
             }
@@ -142,8 +128,9 @@ namespace Ginger.DataSource
             foreach (DataSourceTable dsTable in mDSTableList)
             {
                 if (dsTable.DataTable != null)
+                {
                     dsTable.DSC.SaveTable(dsTable.DataTable);
-
+                }
             }
         }
 

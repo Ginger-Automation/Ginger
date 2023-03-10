@@ -28,7 +28,7 @@ namespace GingerWPF.RunLib
     /// </summary>
     public partial class GingerRunnerControlsMiniWindow : Window
     {
-        Window mBigWindow;        
+        Window mBigWindow;
         ContentControl mGingerRunnerControlsPageContentControl;
         Grid mGrid;
         private Action<bool> setMiniView;
@@ -52,7 +52,7 @@ namespace GingerWPF.RunLib
         private void MaxButton_Click(object sender, RoutedEventArgs e)
         {
             mGingerRunnerControlsPageContentControl.Content = mGrid;
-                
+
             //restore to previous status
             mBigWindow.WindowState = WindowState.Maximized;
             mBigWindow.ShowInTaskbar = true;

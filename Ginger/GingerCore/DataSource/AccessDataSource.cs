@@ -16,18 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.Linq;
-using DocumentFormat.OpenXml.Packaging;
-using System.IO;
 using System.Reflection;
-using Amdocs.Ginger.Repository;
-using System.Runtime.CompilerServices;
-using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.DataSource
 {
@@ -40,9 +36,13 @@ namespace GingerCore.DataSource
             string strAccessConn = "";
 
             if (sMode == "Read")
+            {
                 strAccessConn = @"Provider=Microsoft.ACE.OLEDB.12.0;Mode=" + sMode + ";Data Source=" + FileFullPath;
+            }
             else
+            {
                 strAccessConn = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + FileFullPath;
+            }
 
             return strAccessConn;
         }
@@ -95,16 +95,26 @@ namespace GingerCore.DataSource
             {
 
                 if (column.ToString() == "GINGER_KEY_NAME" || column.ToString() == "GINGER_KEY_VALUE")
+                {
                     iCount++;
+                }
                 else if (column.ToString() == "GINGER_ID")
+                {
                     iIdCount++;
+                }
                 else if (column.ToString() == "GINGER_LAST_UPDATE_DATETIME" || column.ToString() == "GINGER_LAST_UPDATED_BY")
+                {
                     iUpdateCount++;
+                }
             }
             if (iCount == 2 && dtTable.Columns.Count == 2 + iIdCount + iUpdateCount)
+            {
                 sTableDetail.DSTableType = DataSourceTable.eDSTableType.GingerKeyValue;
+            }
             else
+            {
                 sTableDetail.DSTableType = DataSourceTable.eDSTableType.Customized;
+            }
 
             OleDbCommand myCommand = new OleDbCommand();
             if (iIdCount == 0)
@@ -113,7 +123,7 @@ namespace GingerCore.DataSource
                 RunQuery(query);
             }
             sTableDetail.DSC = this;
-            return sTableDetail;            
+            return sTableDetail;
         }
 
         public override void AddColumn(string tableName, string columnName, string columnType)
@@ -135,10 +145,17 @@ namespace GingerCore.DataSource
             {
                 bool sTblFound = false;
                 foreach (DataSourceTable dsTable in dsTableList)
+                {
                     if (dsTable.Name == dsTableLatest.Name)
+                    {
                         sTblFound = true;
-                if(sTblFound == false)
-                      DeleteTable(dsTableLatest.Name);
+                    }
+                }
+
+                if (sTblFound == false)
+                {
+                    DeleteTable(dsTableLatest.Name);
+                }
             }
         }
 
@@ -223,13 +240,13 @@ namespace GingerCore.DataSource
             return true;
         }
 
-        public override void AddTable(string TableName,string columnlist="")
+        public override void AddTable(string TableName, string columnlist = "")
         {
             var query = "CREATE TABLE " + TableName + "(" + columnlist + ")";
             RunQuery(query);
         }
 
-        public override bool ExporttoExcel(string TableName,string sExcelPath, string sSheetName,string sTableQueryValue="" )
+        public override bool ExporttoExcel(string TableName, string sExcelPath, string sSheetName, string sTableQueryValue = "")
         {
             var query = "select * from " + TableName;
             if (!string.IsNullOrEmpty(sTableQueryValue))
@@ -238,7 +255,7 @@ namespace GingerCore.DataSource
             }
             DataTable dsTable = GetQueryOutput(query);
             bool result;
-            lock(thisObj)
+            lock (thisObj)
             {
                 result = ExportDSToExcel(dsTable, sExcelPath, sSheetName);
             }
@@ -257,7 +274,9 @@ namespace GingerCore.DataSource
                 foreach (DataRow row in dt.Rows)
                 {
                     if (TableName == (string)row[2])
+                    {
                         return true;
+                    }
                 }
             }
             return false;
@@ -267,7 +286,9 @@ namespace GingerCore.DataSource
             string CopyTableName = tableName;
 
             while (IsTableExist(CopyTableName))
+            {
                 CopyTableName = CopyTableName + "_Copy";
+            }
 
             if (CopyTableName != tableName)
             {
@@ -278,7 +299,7 @@ namespace GingerCore.DataSource
         }
         public override void RenameTable(string TableName, string NewTableName)
         {
-            if(!TableName.Equals(NewTableName, StringComparison.OrdinalIgnoreCase))
+            if (!TableName.Equals(NewTableName, StringComparison.OrdinalIgnoreCase))
             {
                 var query = "SELECT * INTO " + NewTableName + " FROM " + TableName;
                 if (RunQuery(query))
@@ -287,20 +308,22 @@ namespace GingerCore.DataSource
                 }
             }
         }
-        
+
         public override void DeleteTable(string TableName)
         {
             var query = "DROP TABLE " + TableName;
             RunQuery(query);
         }
-             
+
         public override void SaveTable(DataTable dataTable)
         {
             try
             {
                 DataTable dtChange = dataTable.GetChanges();
                 if (dtChange == null)
+                {
                     return;
+                }
 
                 foreach (DataRow row in dataTable.Rows)
                 {
@@ -308,15 +331,24 @@ namespace GingerCore.DataSource
                     {
                         string updateCommand = "UPDATE " + row.Table.TableName + " SET ";
                         for (int iRow = 0; iRow < row.ItemArray.Count(); iRow++)
+                        {
                             if (row.Table.Columns[iRow].ColumnName != "GINGER_ID")
                             {
                                 if (row.Table.Columns[iRow].ColumnName == "GINGER_LAST_UPDATED_BY")
+                                {
                                     updateCommand = updateCommand + row.Table.Columns[iRow] + "='" + System.Environment.UserName + "',";
+                                }
                                 else if (row.Table.Columns[iRow].ColumnName == "GINGER_LAST_UPDATE_DATETIME")
+                                {
                                     updateCommand = updateCommand + row.Table.Columns[iRow] + "='" + DateTime.Now.ToString() + "',";
+                                }
                                 else
-                                    updateCommand = updateCommand  + "["+ row.Table.Columns[iRow] + "] ='" + row.ItemArray[iRow].ToString().Replace("'", "''") + "',";
+                                {
+                                    updateCommand = updateCommand + "[" + row.Table.Columns[iRow] + "] ='" + row.ItemArray[iRow].ToString().Replace("'", "''") + "',";
+                                }
                             }
+                        }
+
                         updateCommand = updateCommand.Substring(0, updateCommand.Length - 1);
                         updateCommand = updateCommand + " where GINGER_ID = " + row["GINGER_ID", DataRowVersion.Original];
                         RunQuery(updateCommand);
@@ -325,19 +357,33 @@ namespace GingerCore.DataSource
                     {
                         string insertCommand = "INSERT INTO " + row.Table.TableName + " (";
                         for (int iRow = 0; iRow < row.ItemArray.Count(); iRow++)
+                        {
                             if (row.Table.Columns[iRow].ColumnName != "GINGER_ID")
+                            {
                                 insertCommand = insertCommand + "[" + row.Table.Columns[iRow].ColumnName + "],";
+                            }
+                        }
+
                         insertCommand = insertCommand.Substring(0, insertCommand.Length - 1) + ") VALUES (";
                         for (int iRow = 0; iRow < row.ItemArray.Count(); iRow++)
+                        {
                             if (row.Table.Columns[iRow].ColumnName != "GINGER_ID")
                             {
                                 if (row.Table.Columns[iRow].ColumnName == "GINGER_LAST_UPDATED_BY")
+                                {
                                     insertCommand = insertCommand + "'" + System.Environment.UserName + "',";
+                                }
                                 else if (row.Table.Columns[iRow].ColumnName == "GINGER_LAST_UPDATE_DATETIME")
+                                {
                                     insertCommand = insertCommand + "'" + DateTime.Now.ToString() + "',";
+                                }
                                 else
-                                    insertCommand = insertCommand + "'" + row.ItemArray[iRow].ToString().Replace("'","''") + "',";
+                                {
+                                    insertCommand = insertCommand + "'" + row.ItemArray[iRow].ToString().Replace("'", "''") + "',";
+                                }
                             }
+                        }
+
                         insertCommand = insertCommand.Substring(0, insertCommand.Length - 1) + ");";
 
                         RunQuery(insertCommand);
@@ -374,7 +420,7 @@ namespace GingerCore.DataSource
             return GingerCoreNET.GeneralLib.General.ExportToExcel(table, sFilePath, sSheetName);
         }
 
-        
+
         public override DataTable GetTable(string TableName)
         {
             return GetQueryOutput("Select * from " + TableName);
@@ -486,7 +532,7 @@ namespace GingerCore.DataSource
         {
             return GetQueryOutput("Select GINGER_KEY_NAME from " + mDSTableName + " WHERE GINGER_KEY_NAME is not null and Trim(GINGER_KEY_NAME) <> ''");
         }
-        
+
         public override void DeleteAll(List<object> AllItemsList, string TName = null)
         {
             foreach (object o in AllItemsList)

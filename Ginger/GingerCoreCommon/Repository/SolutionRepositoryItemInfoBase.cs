@@ -21,12 +21,12 @@ using System;
 namespace Amdocs.Ginger.Repository
 {
     public abstract class SolutionRepositoryItemInfoBase
-    {      
+    {
         public Type ItemType;
 
         public string ItemFileSystemRootFolder { get; set; }
-        
-        public abstract RepositoryFolderBase ItemRootRepositoryFolder { get;  }
+
+        public abstract RepositoryFolderBase ItemRootRepositoryFolder { get; }
 
         /// <summary>
         /// Get the parent folder of the Repository Item

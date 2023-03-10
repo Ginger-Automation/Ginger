@@ -24,7 +24,7 @@ using System;
 
 namespace Ginger.BusinessFlowPages
 {
-    public class AddActivityWizard: WizardBase
+    public class AddActivityWizard : WizardBase
     {
         public Context Context;
         public ActivitiesGroup ParentActivitiesGroup { get; set; }
@@ -49,11 +49,11 @@ namespace Ginger.BusinessFlowPages
                     ParentActivitiesGroup = Context.BusinessFlow.ActivitiesGroups[0];
                 }
                 else
-                {                    
+                {
                     ParentActivitiesGroup = Context.BusinessFlow.AddActivitiesGroup();
                 }
             }
-            
+
             //AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Agents Introduction", Page: new WizardIntroPage("/Agents/AddAgentWizardLib/AddAgentIntro.md"));
 
             AddPage(Name: "General Details", Title: "General Details", SubTitle: String.Format("Set New {0} General Details", GingerDicser.GetTermResValue(eTermResKey.Activity)), Page: new AddActivityDetailsPage());

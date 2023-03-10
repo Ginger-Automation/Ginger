@@ -33,7 +33,7 @@ namespace GingerWPF.SolutionLib
         public SaveNewSolutionWizardPage(Solution solution)
         {
             InitializeComponent();
-            mSolution = solution;            
+            mSolution = solution;
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -43,14 +43,14 @@ namespace GingerWPF.SolutionLib
                 case EventType.Init:
                     mWizard = (NewSolutionWizard)WizardEventArgs.Wizard;
                     break;
-                
+
                 case EventType.Active:
                     UpdateSummary();
                     break;
             }
         }
 
-        
+
 
         private void UpdateSummary()
         {

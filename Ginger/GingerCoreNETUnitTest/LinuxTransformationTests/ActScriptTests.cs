@@ -19,7 +19,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
     {
         GingerExecutionEngine mGR;
         bool isOSWindows = true;
-        
+
         [TestInitialize]
         public void TestInitialize()
         {
@@ -48,7 +48,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
         [Timeout(60000)]
         public void VBSSum2ArgsTest()
         {
-            if(!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 return;
             }
@@ -139,7 +139,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             ActScript actScript = new ActScript();
             actScript.ScriptInterpreter = ActScript.eScriptInterpreterType.VBS.ToString();
             actScript.ScriptCommand = ActScript.eScriptAct.Script;
-            actScript.ScriptName = TestResources.GetTestResourcesFile(Path.Combine(@"Files",@"ScriptWithGingerOutputIndexZero.vbs"));
+            actScript.ScriptName = TestResources.GetTestResourcesFile(Path.Combine(@"Files", @"ScriptWithGingerOutputIndexZero.vbs"));
             actScript.Active = true;
             actScript.AddNewReturnParams = true;
 
@@ -263,7 +263,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
         /// Running a free Batch command
         /// </summary>
         [Timeout(60000)]
-        [TestMethod]  
+        [TestMethod]
         public void FreeCommandBAT()
         {
             if (!isOSWindows)

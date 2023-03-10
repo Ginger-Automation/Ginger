@@ -16,21 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
-using System;
-using System.Collections.Generic;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger.Reports;
 using GingerCore;
-using GingerCore.ALM;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.DataSource;
-using Amdocs.Ginger.Common.InterfacesLib;
-using static Ginger.Run.RunSetActions.RunSetActionBase;
-using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
-using static GingerCore.ALM.PublishToALMConfig;
 using GingerCore.Activities;
+using GingerCore.ALM;
+using GingerCore.DataSource;
+using System;
+using static Ginger.Run.RunSetActions.RunSetActionBase;
+using static GingerCore.ALM.PublishToALMConfig;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -75,7 +72,7 @@ namespace Ginger.Run.RunSetActions
                 PublishToALMConfig.PublishALMType = almType;
             }
 
-            PublishToALMConfig.ALMTestSetLevel = RunSetActionPublishToQC.ALMTestSetLevel; 
+            PublishToALMConfig.ALMTestSetLevel = RunSetActionPublishToQC.ALMTestSetLevel;
             PublishToALMConfig.ExportType = RunSetActionPublishToQC.ExportType;
             PublishToALMConfig.AlmFields = RunSetActionPublishToQC.AlmFields;
             PublishToALMConfig.TestSetFolderDestination = RunSetActionPublishToQC.TestSetFolderDestination;
@@ -141,7 +138,7 @@ namespace Ginger.Run.RunSetActions
                 foreach (GingerRunner runSetrunner in runSetExec.Runners)
                 {
                     // if executor is null when run if from file
-                    if(runSetrunner.Executor is null)
+                    if (runSetrunner.Executor is null)
                     {
                         runSetrunner.Executor = new GingerExecutionEngine(runSetrunner);
                     }
@@ -169,7 +166,7 @@ namespace Ginger.Run.RunSetActions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert Run Set to BF for ALM Export" , ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert Run Set to BF for ALM Export", ex);
                 return null;
             }
         }

@@ -16,20 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
-using Ginger.UserControls;
-using System.ComponentModel;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
-using Ginger.Run;
-using Ginger.Run.RunSetActions;
-using GingerCore.ALM;
 
 namespace Ginger.ALM
 {
@@ -88,7 +84,9 @@ namespace Ginger.ALM
         private void Refresh(object sender, RoutedEventArgs e)
         {
             if (Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            {
                 RunWorker(true);
+            }
         }
 
         public void ShowAsWindow(bool refreshFields = true, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)

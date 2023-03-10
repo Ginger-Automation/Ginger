@@ -90,16 +90,20 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             get
             {
                 if (Agent != null)
+                {
                     return ((IWindowExplorer)(((AgentOperations)Agent.AgentOperations).Driver));
+                }
                 else
+                {
                     return null;
+                }
             }
         }
 
         public Bitmap ScreenShot { get; set; }
         public string SpecificFramePath { get; set; }
 
-        public PomLearnUtils(ApplicationPOMModel pom, Agent agent=null, RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
+        public PomLearnUtils(ApplicationPOMModel pom, Agent agent = null, RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
         {
             POM = pom;
             mAgent = agent;
@@ -118,7 +122,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 }
             }
 
-            if(Agent != null)
+            if (Agent != null)
             {
                 POM.LastUsedAgent = Agent.Guid;
             }
@@ -190,13 +194,13 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             LearnScreenShot();
             POM.PageURL = ((DriverBase)((AgentOperations)Agent.AgentOperations).Driver).GetURL();
             POM.Name = IWindowExplorerDriver.GetActiveWindow().Title;
-            
+
             // appending Specific frame title in POM name
             if (!string.IsNullOrEmpty(SpecificFramePath))
             {
                 var frame = IWindowExplorerDriver.GetWindowAllFrames().Where(x => x.Path.Equals(SpecificFramePath)).FirstOrDefault();
-                
-                if(frame != null)
+
+                if (frame != null)
                 {
                     POM.Name = string.Concat(POM.Name, " : ", frame.Title);
                 }
@@ -209,13 +213,13 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 if (SelectedElementTypesList.Count > 0)
                 {
-                    await IWindowExplorerDriver.GetVisibleControls(pomSetting,mElementsList, POM.ApplicationPOMMetaData);
+                    await IWindowExplorerDriver.GetVisibleControls(pomSetting, mElementsList, POM.ApplicationPOMMetaData);
                 }
             }
             else
             {
                 pomSetting.filteredElementType = null;
-               await IWindowExplorerDriver.GetVisibleControls(pomSetting, mElementsList, POM.ApplicationPOMMetaData);
+                await IWindowExplorerDriver.GetVisibleControls(pomSetting, mElementsList, POM.ApplicationPOMMetaData);
             }
 
         }

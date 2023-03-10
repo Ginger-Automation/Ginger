@@ -377,11 +377,15 @@ namespace GingerCore.Drivers
             }
 
             if (ImplicitWait == 0)
+            {
                 ImplicitWait = 30;
+            }
 
             String[] SeleniumUserArgs = null;
             if (!string.IsNullOrEmpty(SeleniumUserArguments))
+            {
                 SeleniumUserArgs = SeleniumUserArguments.Split(';');
+            }
 
             //TODO: launch the driver/agent per combo selection
             try
@@ -416,13 +420,20 @@ namespace GingerCore.Drivers
                             ieoptions.EnableNativeEvents = true;
                         }
                         if (!(String.IsNullOrEmpty(SeleniumUserArguments) && String.IsNullOrWhiteSpace(SeleniumUserArguments)))
+                        {
                             ieoptions.BrowserCommandLineArguments += "," + SeleniumUserArguments;
+                        }
 
                         if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey)))
+                        {
                             ieoptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey;
+                        }
 
                         if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl)))
+                        {
                             ieoptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
+                        }
+
                         InternetExplorerDriverService IEService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
                         IEService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new InternetExplorerDriver(IEService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
@@ -476,9 +487,13 @@ namespace GingerCore.Drivers
                         SetCurrentPageLoadStrategy(options);
 
                         if (IsUserProfileFolderPathValid())
+                        {
                             options.AddArguments("user-data-dir=" + UserProfileFolderPath);
+                        }
                         else if (!string.IsNullOrEmpty(ExtensionPath))
+                        {
                             options.AddExtension(Path.GetFullPath(ExtensionPath));
+                        }
 
                         //setting proxy
                         SetProxy(options);
@@ -504,8 +519,12 @@ namespace GingerCore.Drivers
                         }
 
                         if (SeleniumUserArgs != null)
+                        {
                             foreach (string arg in SeleniumUserArgs)
+                            {
                                 options.AddArgument(arg);
+                            }
+                        }
 
                         if (!string.IsNullOrEmpty(EmulationDeviceName))
                         {
@@ -517,10 +536,14 @@ namespace GingerCore.Drivers
                         }
 
                         if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey)))
+                        {
                             options.AddArgument(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey);
+                        }
 
                         if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl)))
+                        {
                             options.AddArgument(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl);
+                        }
 
                         ChromeDriverService ChService = ChromeDriverService.CreateDefaultService(GetDriversPathPerOS());
                         if (HideConsoleWindow)
@@ -599,13 +622,20 @@ namespace GingerCore.Drivers
                                 ieOptions.EnableNativeEvents = true;
                             }
                             if (!(String.IsNullOrEmpty(SeleniumUserArguments) && String.IsNullOrWhiteSpace(SeleniumUserArguments)))
+                            {
                                 ieOptions.BrowserCommandLineArguments += "," + SeleniumUserArguments;
+                            }
 
                             if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey)))
+                            {
                                 ieOptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiKey;
+                            }
 
                             if (!(String.IsNullOrEmpty(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl) && String.IsNullOrWhiteSpace(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl)))
+                            {
                                 ieOptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
+                            }
+
                             SetCurrentPageLoadStrategy(ieOptions);
                             ieOptions.IgnoreZoomLevel = true;
                             InternetExplorerDriverService IExplorerService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
@@ -620,7 +650,10 @@ namespace GingerCore.Drivers
                             //EDOpts.UseChromium = true;
                             EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
                             if (IsUserProfileFolderPathValid())
+                            {
                                 EDOpts.AddAdditionalEdgeOption("user-data-dir=", UserProfileFolderPath);
+                            }
+
                             SetCurrentPageLoadStrategy(EDOpts);
                             EdgeDriverService EDService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
                             EDService.HideCommandPromptWindow = HideConsoleWindow;
@@ -663,9 +696,13 @@ namespace GingerCore.Drivers
                             fxOptions.SetPreference("network.proxy.type", (int)ProxyKind.AutoDetect);
 
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
+                            {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), fxOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
                             else
+                            {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), fxOptions.ToCapabilities());
+                            }
                             // TODO: make Sauce lab driver/config
 
                             //TODO: For sauce lab - externalize - try without amdocs proxy hot spot works then it is proxy issue
@@ -676,9 +713,14 @@ namespace GingerCore.Drivers
                             ChromeOptions chromeOptions = new ChromeOptions();
                             chromeOptions.Proxy = mProxy == null ? null : mProxy;
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
+                            {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), chromeOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
                             else
+                            {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), chromeOptions.ToCapabilities());
+                            }
+
                             break;
                         }
                         else if (RemoteBrowserName.Equals("MicrosoftEdge"))
@@ -696,9 +738,14 @@ namespace GingerCore.Drivers
 
                             edgeOptions.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
+                            {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), edgeOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
                             else
+                            {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), edgeOptions.ToCapabilities());
+                            }
+
                             break;
                         }
                         else
@@ -714,9 +761,13 @@ namespace GingerCore.Drivers
                                 internetExplorerOptions.AddAdditionalOption(SeleniumDriver.RemoteVersionParam, RemoteVersion);
                             }
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
+                            {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), (ICapabilities)internetExplorerOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            }
                             else
+                            {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), internetExplorerOptions);
+                            }
 
                             break;
                         }
@@ -724,7 +775,9 @@ namespace GingerCore.Drivers
                 }
 
                 if (BrowserMinimized == true && mBrowserTpe != eBrowserType.Edge)
+                {
                     Driver.Manage().Window.Minimize();
+                }
 
                 if (!string.IsNullOrEmpty(BrowserHeight) && !string.IsNullOrEmpty(BrowserWidth))
                 {
@@ -738,7 +791,9 @@ namespace GingerCore.Drivers
 
                 //set pageLoad timeout limit
                 if ((int)PageLoadTimeOut == 0)
+                {
                     PageLoadTimeOut = 60;
+                }
 
                 Driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds((int)PageLoadTimeOut);
 
@@ -799,7 +854,11 @@ namespace GingerCore.Drivers
 
         private void SetProxy(dynamic options)
         {
-            if (mProxy == null) return;
+            if (mProxy == null)
+            {
+                return;
+            }
+
             options.Proxy = new Proxy();
             switch (mProxy.Kind)
             {
@@ -1354,7 +1413,9 @@ namespace GingerCore.Drivers
             List<Bitmap> bitmapsToMerge = new();
             Bitmap browserHeaderScreenshot = GetBrowserHeaderScreenShot();
             if (browserHeaderScreenshot != null)
+            {
                 bitmapsToMerge.Add(browserHeaderScreenshot);
+            }
 
             Bitmap browserFullPageScreenshot = GetScreenShot(true);
             bitmapsToMerge.Add(browserFullPageScreenshot);
@@ -1370,7 +1431,9 @@ namespace GingerCore.Drivers
         private Bitmap GetBrowserHeaderScreenShot()
         {
             if (HeadlessBrowserMode)
+            {
                 return null;
+            }
 
             IJavaScriptExecutor javaScriptExecutor = (IJavaScriptExecutor)Driver;
 
@@ -1489,14 +1552,20 @@ namespace GingerCore.Drivers
             if (e != null)
             {
                 if (actLabel.LabelAction == ActLabel.eLabelAction.IsVisible)
+                {
                     actLabel.AddOrUpdateReturnParamActual("Actual", "True");
+                }
                 else
+                {
                     actLabel.AddOrUpdateReturnParamActual("Actual", e.Text);
+                }
             }
             else
             {
                 if (actLabel.LabelAction == ActLabel.eLabelAction.IsVisible)
+                {
                     actLabel.AddOrUpdateReturnParamActual("Actual", "False");
+                }
             }
         }
 
@@ -1518,11 +1587,15 @@ namespace GingerCore.Drivers
                     if (!String.IsNullOrEmpty(actTextBox.GetInputParamCalculatedValue("Value")))
                     {
                         if (Driver.GetType() == typeof(FirefoxDriver))
+                        {
                             e.SendKeys(actTextBox.GetInputParamCalculatedValue("Value"));
+                        }
                         else
+                        {
                             //TODO: How do we check for errors? do negative UT check for below
                             // + Why FF is different? what happened?
                             ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, actTextBox.GetInputParamCalculatedValue("Value"));
+                        }
                     }
                     break;
                 case ActTextBox.eTextBoxAction.Clear:
@@ -1540,9 +1613,13 @@ namespace GingerCore.Drivers
                 case ActTextBox.eTextBoxAction.GetValue:
                     //TODO: New Style - Jack update all other actions
                     if (!string.IsNullOrEmpty(e.Text))
+                    {
                         actTextBox.AddOrUpdateReturnParamActual("Actual", e.Text);
+                    }
                     else
+                    {
                         actTextBox.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("value"));
+                    }
 
                     //Do it once after actions Actual -> to Var
                     //if (actTextBox.VarbObj != null) actTextBox.VarbObj.Value = actTextBox.Actual;
@@ -1947,9 +2024,14 @@ namespace GingerCore.Drivers
                 case ActGenElement.eGenElementAction.GetWindowTitle: //TODO: FIXME: This action should not be part of GenElement
                     string title = Driver.Title;
                     if (!string.IsNullOrEmpty(title))
+                    {
                         act.AddOrUpdateReturnParamActual("Actual", title);
+                    }
                     else
+                    {
                         act.AddOrUpdateReturnParamActual("Actual", "");
+                    }
+
                     break;
                 case ActGenElement.eGenElementAction.MouseClick:
                     e = LocateElement(act);
@@ -2181,7 +2263,9 @@ namespace GingerCore.Drivers
                             action.MoveToElement(e).Build().Perform();
                             act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("value"));
                             if (act.GetReturnParam("Actual") == null)
+                            {
                                 act.AddOrUpdateReturnParamActual("Actual", e.Text);
+                            }
                         }
                         // TODO: its a workaround when running from firefox to handle an exception(https://github.com/nightwatchjs/nightwatch/issues/1272). Need to remove 
                         catch
@@ -2198,7 +2282,10 @@ namespace GingerCore.Drivers
 
                 case ActGenElement.eGenElementAction.Disabled:
                     e = LocateElement(act);
-                    if (e == null) return;
+                    if (e == null)
+                    {
+                        return;
+                    }
 
                     if ((e.Displayed && e.Enabled))
                     {
@@ -2219,7 +2306,9 @@ namespace GingerCore.Drivers
                         action.MoveToElement(e).Build().Perform();
                         act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("textContent"));
                         if (act.GetReturnParam("Actual") == null)
+                        {
                             act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("innerText"));
+                        }
                     }
                     else
                     {
@@ -2342,7 +2431,9 @@ namespace GingerCore.Drivers
                             }
                         }
                         else
+                        {
                             ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.GetInputParamCalculatedValue("Value"));
+                        }
                     }
                     else
                     {
@@ -2537,7 +2628,9 @@ namespace GingerCore.Drivers
                         }
                         a = ((IJavaScriptExecutor)Driver).ExecuteScript(script);
                         if (a != null)
+                        {
                             act.AddOrUpdateReturnParamActual("Actual", a.ToString());
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -2565,8 +2658,9 @@ namespace GingerCore.Drivers
                         string insertval = act.GetInputParamCalculatedValue("Value");
                         string[] vals = insertval.Split(delimit, 2);
                         if (vals.Count() != 2)
+                        {
                             throw new Exception(@"Inot string should be in the format : attribute=value");
-                        ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
+                        } ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0]." + vals[0] + "=arguments[1]", e, vals[1]);
                     }
                     break;
                 default:
@@ -2724,7 +2818,11 @@ namespace GingerCore.Drivers
             try
             {
                 IWebElement e = LocateElement(dd);
-                if (e == null) return;
+                if (e == null)
+                {
+                    return;
+                }
+
                 SelectElement se = new SelectElement(e);
                 switch (dd.ActDropDownListAction)
                 {
@@ -3001,7 +3099,9 @@ namespace GingerCore.Drivers
                 foreach (IWebElement elm in Driver.FindElements(By.CssSelector(cssSelectorVal)))
                 {
                     if (elm != null)
+                    {
                         aValues = elm.GetAttribute("value") + "|" + aValues;
+                    }
                 }
                 actRadioButton.AddOrUpdateReturnParamActual("Actual", aValues);
             }
@@ -3107,9 +3207,13 @@ namespace GingerCore.Drivers
                 try
                 {
                     if (e != null)
+                    {
                         actLink.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("href"));
+                    }
                     else
+                    {
                         actLink.AddOrUpdateReturnParamActual("Actual", "");
+                    }
                 }
                 catch (Exception)
                 { }
@@ -3121,7 +3225,9 @@ namespace GingerCore.Drivers
                 try
                 {
                     if (e != null)
+                    {
                         actLink.AddOrUpdateReturnParamActual("Actual", e.Displayed + "");
+                    }
                 }
                 catch (Exception)
                 { }
@@ -3177,7 +3283,10 @@ namespace GingerCore.Drivers
                 }
             }
             else
+            {
                 Button.Error = "Error: Element not found - " + Button.LocateBy + " " + Button.LocateValue;
+            }
+
             return;
         }
 
@@ -3336,40 +3445,60 @@ namespace GingerCore.Drivers
                     foreach (IWebElement e in elem)
                     {
                         if (e.GetAttribute("id") != null)
+                        {
                             if (reg.Matches(e.GetAttribute("id")).Count > 0)
+                            {
                                 return e;
+                            }
+                        }
                     }
                     break;
                 case eLocateBy.ByName:
                     foreach (IWebElement e in elem)
                     {
                         if (e.GetAttribute("name") != null)
+                        {
                             if (reg.Matches(e.GetAttribute("name")).Count > 0)
+                            {
                                 return e;
+                            }
+                        }
                     }
                     break;
                 case eLocateBy.ByLinkText:
                     foreach (IWebElement e in elem)
                     {
                         if (e.Text != null)
+                        {
                             if (reg.Matches(e.Text).Count > 0)
+                            {
                                 return e;
+                            }
+                        }
                     }
                     break;
                 case eLocateBy.ByValue:
                     foreach (IWebElement e in elem)
                     {
                         if (e.GetAttribute("value") != null)
+                        {
                             if (reg.Matches(e.GetAttribute("value")).Count > 0)
+                            {
                                 return e;
+                            }
+                        }
                     }
                     break;
                 case eLocateBy.ByHref:
                     foreach (IWebElement e in elem)
                     {
                         if (e.GetAttribute("href") != null)
+                        {
                             if (reg.Matches(e.GetAttribute("href")).Count > 0 && e.Text != "")
+                            {
                                 return e;
+                            }
+                        }
                     }
                     break;
             }
@@ -3596,7 +3725,9 @@ namespace GingerCore.Drivers
                         return elem;
                     }
                     else
+                    {
                         throw;
+                    }
                 }
 
 
@@ -3689,7 +3820,9 @@ namespace GingerCore.Drivers
                     try
                     {
                         if (locator.LocateValue.IndexOf("{RE:") >= 0)
+                        {
                             elem = FindElementReg(locator.LocateBy, locator.LocateValue);
+                        }
                         else
                         {
                             if (locator.EnableFriendlyLocator && friendlyLocatorElements.Count > 0)
@@ -3702,6 +3835,7 @@ namespace GingerCore.Drivers
                                 elem = Driver.FindElement(By.LinkText(locator.LocateValue));
                             }
                             if (elem == null)
+                            {
                                 if (locator.EnableFriendlyLocator && friendlyLocatorElements.Count > 0)
                                 {
                                     By by = By.XPath("//*[text()='" + locator.LocateValue + "']") as By;
@@ -3711,6 +3845,7 @@ namespace GingerCore.Drivers
                                 {
                                     elem = Driver.FindElement(By.XPath("//*[text()='" + locator.LocateValue + "']"));
                                 }
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -3836,7 +3971,9 @@ namespace GingerCore.Drivers
                     return elem;
                 }
                 else
+                {
                     throw;
+                }
             }
             catch (Exception ex)
             {
@@ -3848,7 +3985,9 @@ namespace GingerCore.Drivers
                     return elem;
                 }
                 else
+                {
                     throw ex;
+                }
             }
 
             if (elem != null)
@@ -3903,7 +4042,10 @@ namespace GingerCore.Drivers
             string[] a0 = a[0].Split('=');
 
             string id = null;
-            if (a0[0] == "id") id = a0[1];
+            if (a0[0] == "id")
+            {
+                id = a0[1];
+            }
 
             string[] a1 = a[1].Split('=');
             string attr = a1[0];
@@ -4135,8 +4277,8 @@ namespace GingerCore.Drivers
                         }
                         catch (Exception ex)
                         {
-                        //throw exception to outer catch
-                        Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex);
+                            //throw exception to outer catch
+                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex);
                             throw;
                         }
 
@@ -4148,9 +4290,14 @@ namespace GingerCore.Drivers
                     if (action.Wait(10000))
                     {
                         if (count == 0)
+                        {
                             return false;
+                        }
+
                         if (count > 0)
+                        {
                             return true;
+                        }
                     }
                     else
                     {
@@ -4161,10 +4308,14 @@ namespace GingerCore.Drivers
                         }
                         var currentWindow = Driver.CurrentWindowHandle;
                         if (!string.IsNullOrEmpty(currentWindow))
+                        {
                             return true;
+                        }
                     }
                     if (count == 0)
+                    {
                         return false;
+                    }
                 }
                 catch (OpenQA.Selenium.UnhandledAlertException)
                 {
@@ -4175,7 +4326,10 @@ namespace GingerCore.Drivers
                     Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex);
                     var currentWindow = Driver.CurrentWindowHandle;
                     if (!string.IsNullOrEmpty(currentWindow))
+                    {
                         return true;
+                    }
+
                     if (exceptioncount < 5)
                     {
                         exceptioncount++;
@@ -4187,7 +4341,10 @@ namespace GingerCore.Drivers
                     Reporter.ToLog(eLogLevel.DEBUG, "Timeout exception occured when we are checking IsRunning", ex);
                     var currentWindow = Driver.CurrentWindowHandle;
                     if (!string.IsNullOrEmpty(currentWindow))
+                    {
                         return true;
+                    }
+
                     if (exceptioncount < 5)
                     {
                         exceptioncount++;
@@ -4199,7 +4356,10 @@ namespace GingerCore.Drivers
                     Reporter.ToLog(eLogLevel.DEBUG, "Webdriver exception occured when we are checking IsRunning", ex);
 
                     if (PreviousRunStopped && ex.Message == "Unexpected error. Error 404: Not Found\r\nNot Found")
+                    {
                         return true;
+                    }
+
                     if (exceptioncount < 5)
                     {
                         exceptioncount++;
@@ -4211,7 +4371,9 @@ namespace GingerCore.Drivers
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex2);
                     if (ex2.Message.ToString().ToUpper().Contains("DIALOG"))
+                    {
                         return true;
+                    }
 
                     return false;
                 }
@@ -4324,7 +4486,10 @@ namespace GingerCore.Drivers
                 PomMetaData = new ObservableList<POMPageMetaData>();
             }
             if (foundElementsList == null)
+            {
                 foundElementsList = new ObservableList<ElementInfo>();
+            }
+
             List<HtmlNode> formElementsList = new List<HtmlNode>();
             string documentContents = Driver.PageSource;
             HtmlDocument htmlDoc = new HtmlDocument();
@@ -4358,7 +4523,9 @@ namespace GingerCore.Drivers
                         {
                             //Case Learn Only Mapped Element : set learnElement to false in case element doesn't exist in the filteredElementType List AND element is not frame element
                             if (!pomSetting.filteredElementType.Contains(elementTypeEnum.Item2))
+                            {
                                 learnElement = false;
+                            }
                         }
 
                         IWebElement webElement = null;
@@ -4669,9 +4836,14 @@ namespace GingerCore.Drivers
             else if ((el != null) && (jsType == null))
             {
                 if ((el.TagName != null) && (el.TagName != string.Empty))
+                {
                     elementTagName = el.TagName.ToUpper();
+                }
                 else
+                {
                     elementTagName = "INPUT";
+                }
+
                 elementTypeAtt = el.GetAttribute("type");
             }
             else if (htmlNode != null)
@@ -4781,7 +4953,10 @@ namespace GingerCore.Drivers
                 elementType = eElementType.Svg;
             }
             else
+            {
                 elementType = eElementType.Unknown;
+            }
+
             returnTuple = new Tuple<string, eElementType>(elementTagName, elementType);
 
             return returnTuple;
@@ -4912,7 +5087,9 @@ namespace GingerCore.Drivers
                 foreach (string att in list)
                 {
                     if (!string.IsNullOrEmpty(att) && !bestElementName.Contains(att))
+                    {
                         bestElementName = bestElementName + " " + att;
+                    }
                 }
 
 
@@ -4972,7 +5149,9 @@ namespace GingerCore.Drivers
 
             int index = elementType.IndexOf("[");
             if (index != -1)
+            {
                 elementType = elementType.Substring(0, index);
+            }
 
             if (CurrentFrame != ElementInfo.Path && !(elementType == "iframe" || elementType == "frame"))
             {
@@ -4984,9 +5163,13 @@ namespace GingerCore.Drivers
             {
                 Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(ElementInfo.XPath)));
                 if (string.IsNullOrEmpty(CurrentFrame))
+                {
                     CurrentFrame = ElementInfo.XPath;
+                }
                 else
+                {
                     CurrentFrame = CurrentFrame + "," + ElementInfo.XPath;
+                }
             }
             else if (CurrentFrame != ElementInfo.Path && (elementType == "iframe" || elementType == "frame"))
             {
@@ -5039,12 +5222,18 @@ namespace GingerCore.Drivers
             string path = string.Empty;
             int index = elementType.IndexOf("[");
             if (index != -1)
+            {
                 elementType = elementType.Substring(0, index);
+            }
 
             if (elementType == "iframe" || elementType == "frame")
+            {
                 path = "/html/*";
+            }
             else
+            {
                 path = xpath + "/*";
+            }
 
             return path;
         }
@@ -5064,7 +5253,9 @@ namespace GingerCore.Drivers
 
                 int index = elementType.IndexOf("[");
                 if (index != -1)
+                {
                     elementType = elementType.Substring(0, index);
+                }
             }
 
             if ((elementType == "iframe" || elementType == "frame") && string.IsNullOrEmpty(path) && !otherThenGetElementChildren)
@@ -5097,23 +5288,34 @@ namespace GingerCore.Drivers
             Dictionary<string, int> ElementsCount = new Dictionary<string, int>();
 
             if (string.IsNullOrEmpty(path))
+            {
                 path = string.Empty;
+            }
 
             foreach (IWebElement EL in ElementsList)
             {
 
                 if (!ElementsCount.ContainsKey(EL.TagName))
+                {
                     ElementsCount.Add(EL.TagName, 1);
+                }
                 else
+                {
                     ElementsCount[EL.TagName] += 1;
+                }
             }
 
             foreach (IWebElement EL in ElementsList)
             {
                 if (!ElementsIndexes.ContainsKey(EL.TagName))
+                {
                     ElementsIndexes.Add(EL.TagName, 0);
+                }
                 else
+                {
                     ElementsIndexes[EL.TagName] += 1;
+                }
+
                 HTMLElementInfo EI = new HTMLElementInfo();
                 EI.ElementObject = EL;
                 EI.ElementTitle = GenerateElementTitle(EL);
@@ -5155,9 +5357,15 @@ namespace GingerCore.Drivers
         {
             string name = EL.TagName;
             if (string.IsNullOrEmpty(name))
+            {
                 name = EL.GetAttribute("name");
+            }
+
             if (string.IsNullOrEmpty(name))
+            {
                 name = string.Empty;
+            }
+
             return name;
         }
 
@@ -5181,15 +5389,25 @@ namespace GingerCore.Drivers
 
             int index = elementType.IndexOf("[");
             if (index != -1)
+            {
                 elementType = elementType.Substring(0, index);
+            }
 
             if (elementType == "iframe" || elementType == "frame")
+            {
                 if (!string.IsNullOrEmpty(path))
+                {
                     return path + "," + xpath;
+                }
                 else
+                {
                     return xpath;
+                }
+            }
             else
+            {
                 return path;
+            }
         }
 
         private string GenerateXpath(string path, string xpath, string tagName, int id, int totalSameTags)
@@ -5200,12 +5418,15 @@ namespace GingerCore.Drivers
 
             int index = elementType.IndexOf("[");
             if (index != -1)
+            {
                 elementType = elementType.Substring(0, index);
-
+            }
 
             string returnXPath = string.Empty;
             if (elementType == "iframe" || elementType == "frame")
+            {
                 xpath = "html";
+            }
 
             id += 1;
             returnXPath = xpath + "/" + tagName + "[" + id + "]";
@@ -5220,16 +5441,24 @@ namespace GingerCore.Drivers
             string value = EL.GetAttribute("value");
 
             if (tagName.ToUpper() == "TABLE")
+            {
                 return "Table";
+            }
 
             if (!string.IsNullOrEmpty(name))
+            {
                 return name + " " + tagName;
+            }
 
             if (!string.IsNullOrEmpty(id))
+            {
                 return id + " " + tagName;
+            }
 
             if (!string.IsNullOrEmpty(value))
+            {
                 return GetShortName(value) + " " + tagName;
+            }
 
             return tagName;
         }
@@ -5238,7 +5467,10 @@ namespace GingerCore.Drivers
         {
             string returnString = value;
             if (value.Length > 50)
+            {
                 returnString = value.Substring(0, 50) + "...";
+            }
+
             return returnString;
         }
 
@@ -5264,9 +5496,13 @@ namespace GingerCore.Drivers
             {
                 string value = EL.GetAttribute("value");
                 if (value == null || tagName == "button")
+                {
                     ElementValue = EL.Text;
+                }
                 else
+                {
                     ElementValue = value;
+                }
             }
             return ElementValue;
         }
@@ -5291,11 +5527,17 @@ namespace GingerCore.Drivers
             string tagName = EL.TagName;
             string type = EL.GetAttribute("type");
             if (tagName == "input")
+            {
                 elementType = tagName + "." + type;
+            }
             else if (tagName == "a" || tagName == "li")
+            {
                 elementType = "link";
+            }
             else
+            {
                 elementType = tagName;
+            }
 
             return elementType.ToUpper();
         }
@@ -5381,7 +5623,9 @@ namespace GingerCore.Drivers
                         ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
                     }
                     if (!string.IsNullOrEmpty(ElementInfo.XPath))
+                    {
                         ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
+                    }
                 }
                 if ((IWebElement)ElementInfo.ElementObject == null)
                 {
@@ -5454,7 +5698,10 @@ namespace GingerCore.Drivers
                 else
                 {
                     if (string.IsNullOrEmpty(ElementInfo.XPath))
+                    {
                         ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
+                    }
+
                     el = Driver.FindElement(By.XPath(ElementInfo.XPath));
                     ElementInfo.ElementObject = el;
                 }
@@ -5889,7 +6136,9 @@ namespace GingerCore.Drivers
             {
                 //Case Learn Only Mapped Element : set learnElement to false in case element doesn't exist in the filteredElementType List AND element is not frame element
                 if (!pomSetting.filteredElementType.Contains(elementTypeEnum.Item2))
+                {
                     learnElement = false;
+                }
             }
             ElementLocator elemLocator = new ElementLocator();
             elemLocator.Active = true;
@@ -6110,7 +6359,9 @@ namespace GingerCore.Drivers
         public string GenerateXpathForIWebElement(IWebElement IWE, string current)
         {
             if (IWE.TagName == "html")
+            {
                 return "/" + IWE.TagName + "[1]" + current;
+            }
 
             IWebElement parentElement = IWE.FindElement(By.XPath(".."));
             ReadOnlyCollection<IWebElement> childrenElements = parentElement.FindElements(By.XPath("./" + IWE.TagName));
@@ -6147,7 +6398,9 @@ namespace GingerCore.Drivers
         public async Task<string> GenerateXpathForIWebElementAsync(IWebElement IWE, string current)
         {
             if (IWE.TagName == "html")
+            {
                 return "/" + IWE.TagName + "[1]" + current;
+            }
 
             IWebElement parentElement = IWE.FindElement(By.XPath(".."));
             ReadOnlyCollection<IWebElement> childrenElements = parentElement.FindElements(By.XPath("./" + IWE.TagName));
@@ -6630,7 +6883,9 @@ namespace GingerCore.Drivers
             actUI.ElementLocateValue = configArgs.LocateValue;
             actUI.ElementType = (eElementType)configArgs.Type;
             if (Enum.IsDefined(typeof(ActUIElement.eElementAction), configArgs.Operation))
+            {
                 actUI.ElementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), configArgs.Operation);
+            }
             else
             {
                 actUI = null;
@@ -6890,7 +7145,9 @@ namespace GingerCore.Drivers
                         string AlertBoxText = Driver.SwitchTo().Alert().Text;
                         act.AddOrUpdateReturnParamActual("Actual", AlertBoxText);
                         if (act.GetReturnParam("Actual") == null)
+                        {
                             act.AddOrUpdateReturnParamActual("Actual", AlertBoxText);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -6994,12 +7251,18 @@ namespace GingerCore.Drivers
                     }
                     catch
                     { break; }
-                    if (BFound) return;
+                    if (BFound)
+                    {
+                        return;
+                    }
+
                     Thread.Sleep(500);
                 }
             }
             if (BFound)
+            {
                 return;//window found
+            }
             else
             {
                 // Added below code to verify if there is any window exist with blank title - 
@@ -7137,6 +7400,7 @@ namespace GingerCore.Drivers
                     }
                 }
                 else if (!string.IsNullOrEmpty(act.GetInputParamCalculatedValue("Value")))
+                {
                     if (act.GetInputParamCalculatedValue("Value").Trim().ToUpper() != "DEFAULT")
                     {
                         Driver.SwitchTo().Frame(act.GetInputParamCalculatedValue("Value"));
@@ -7147,6 +7411,7 @@ namespace GingerCore.Drivers
                         Driver.SwitchTo().DefaultContent();
                         return;
                     }
+                }
                 else if ((act.GetInputParamCalculatedValue("Value") == "" || act.GetInputParamCalculatedValue("Value") == null) && (act.LocateValue == "" || act.LocateValue == null))
                 {
                     act.Error = "Locate Value or Value is Empty";
@@ -7260,9 +7525,14 @@ namespace GingerCore.Drivers
                 case ActBrowserElement.eControlAction.GetWindowTitle:
                     string title = Driver.Title;
                     if (!string.IsNullOrEmpty(title))
+                    {
                         act.AddOrUpdateReturnParamActual("Actual", title);
+                    }
                     else
+                    {
                         act.AddOrUpdateReturnParamActual("Actual", "");
+                    }
+
                     break;
 
                 case ActBrowserElement.eControlAction.DeleteAllCookies:
@@ -7297,7 +7567,9 @@ namespace GingerCore.Drivers
                         }
                         a = ((IJavaScriptExecutor)Driver).ExecuteScript(script);
                         if (a != null)
+                        {
                             act.AddOrUpdateReturnParamActual("Actual", a.ToString());
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -7392,7 +7664,9 @@ namespace GingerCore.Drivers
                         string AlertBoxText = Driver.SwitchTo().Alert().Text;
                         act.AddOrUpdateReturnParamActual("Actual", AlertBoxText);
                         if (act.GetReturnParam("Actual") == null)
+                        {
                             act.AddOrUpdateReturnParamActual("Actual", AlertBoxText);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -7451,9 +7725,13 @@ namespace GingerCore.Drivers
             else
             {
                 if (String.IsNullOrEmpty(act.LocateValueCalculated) == false)
+                {
                     searchedWinTitle = act.LocateValueCalculated;
+                }
                 else
+                {
                     searchedWinTitle = act.ValueForDriver;
+                }
             }
             return searchedWinTitle;
         }
@@ -7551,9 +7829,13 @@ namespace GingerCore.Drivers
                         if (act.ElementType == eElementType.HyperLink)
                         {
                             if (e != null)
+                            {
                                 act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("href"));
+                            }
                             else
+                            {
                                 act.AddOrUpdateReturnParamActual("Actual", "");
+                            }
                         }
                         else
                         {
@@ -7606,7 +7888,10 @@ namespace GingerCore.Drivers
                             }
                         }
                         else
+                        {
                             ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.GetInputParamCalculatedValue("Value"));
+                        }
+
                         break;
 
                     case ActUIElement.eElementAction.SendKeys:
@@ -7692,7 +7977,9 @@ namespace GingerCore.Drivers
                                 if (act.ElementLocateBy != eLocateBy.NA)
                                 {
                                     if (script.ToLower().Contains("arguments[0]") && e != null)
+                                    {
                                         a = ((IJavaScriptExecutor)Driver).ExecuteScript(script, e);
+                                    }
                                 }
                                 else
                                 {
@@ -7700,7 +7987,9 @@ namespace GingerCore.Drivers
                                 }
 
                                 if (a != null)
+                                {
                                     act.AddOrUpdateReturnParamActual("Actual", a.ToString());
+                                }
                             }
                         }
                         catch (Exception ex)
@@ -8089,7 +8378,9 @@ namespace GingerCore.Drivers
             //Loop through clicks flag check:
             bool ClickLoop = false;
             if ((act.GetInputParamValue(ActUIElement.Fields.LoopThroughClicks).ToString()) == "True")
+            {
                 ClickLoop = true;
+            }
 
             //Do click:
             DoUIElementClick(clickType, clickElement);
@@ -8097,7 +8388,9 @@ namespace GingerCore.Drivers
             IWebElement elmToValidate = LocateElement(act, true, validationElementLocateby.ToString(), validationElementLocatorValue);
 
             if (elmToValidate != null)
+            {
                 return true;
+            }
             else
             {
                 if (ClickLoop)
@@ -8155,14 +8448,18 @@ namespace GingerCore.Drivers
                     var newHeight = viewportHeight;
                     // Fix if the height of the element is too big
                     if (y + viewportHeight > totalHeight)
+                    {
                         newHeight = totalHeight - y;
+                    }
                     // Loop until the totalWidth is reached
                     for (var x = 0; x < totalWidth; x += viewportWidth)
                     {
                         var newWidth = viewportWidth;
                         // Fix if the Width of the Element is too big
                         if (x + viewportWidth > totalWidth)
+                        {
                             newWidth = totalWidth - x;
+                        }
                         // Create and add the Rectangle
                         var currRect = new Rectangle(x, y, newWidth, newHeight);
                         rectangles.Add(currRect);
@@ -8334,10 +8631,14 @@ namespace GingerCore.Drivers
 
                 RemoteWebElement i_Elem = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, X, Y);
                 if (i_Elem == null)
+                {
                     return null;
+                }
 
                 if (i_Elem.TagName != "frame" && i_Elem.TagName != "iframe")
+                {
                     return i_Elem;
+                }
 
                 Point p_Pos = GetElementPosition(i_Elem);
                 X -= p_Pos.X;
@@ -8383,9 +8684,13 @@ namespace GingerCore.Drivers
                     //Driver.Manage().Window.Position = new System.Drawing.Point(0, 0);
                     //System.Drawing.Size originalSize = Driver.Manage().Window.Size;
                     if (setScreenSize == null)
+                    {
                         Driver.Manage().Window.Maximize();
+                    }
                     else
+                    {
                         Driver.Manage().Window.Size = new System.Drawing.Size(setScreenSize.Item1, setScreenSize.Item2);
+                    }
                     //Bitmap screenShot = GetScreenShot();
                     //Driver.Manage().Window.Size = originalSize;
                     //return screenShot;
@@ -8432,14 +8737,18 @@ namespace GingerCore.Drivers
                     var newHeight = clientHeihgt;
                     // Fix if the height of the element is too big
                     if (y + clientHeihgt > scrollHeight)
+                    {
                         newHeight = scrollHeight - y;
+                    }
                     // Loop until the totalWidth is reached
                     for (var x = 0; x < offsetWidth; x += clientWidth)
                     {
                         var newWidth = clientWidth;
                         // Fix if the Width of the Element is too big
                         if (x + clientWidth > offsetWidth)
+                        {
                             newWidth = offsetWidth - x;
+                        }
                         // Create and add the Rectangle
                         var currRect = new Rectangle(x, y, newWidth, newHeight);
                         rectangles.Add(currRect);
@@ -8568,7 +8877,9 @@ namespace GingerCore.Drivers
             }
 
             if (string.IsNullOrEmpty(EI.XPath))
+            {
                 EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, "");
+            }
 
             IWebElement e = (IWebElement)EI.ElementObject;
             if (e != null)
@@ -8625,7 +8936,9 @@ namespace GingerCore.Drivers
             else
             {
                 if (ElementInfo.ElementObject == null)
+                {
                     ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
+                }
 
                 parentElementIWebElement = ((IWebElement)ElementInfo.ElementObject).FindElement(By.XPath(".."));
                 parentEI = allReadElem.Find(el => el.ElementObject != null && el.ElementObject.Equals(parentElementIWebElement));
@@ -8778,19 +9091,28 @@ namespace GingerCore.Drivers
                             {
                                 case XpathPropertyCondition.XpathConditionOperator.Equel:
                                     if (ElementInfo.Value != value)
+                                    {
                                         allTestsPassed = false;
+                                    }
+
                                     break;
                                 case XpathPropertyCondition.XpathConditionOperator.Less:
                                     elementInfoValue = Convert.ToInt32(ElementInfo.Value);
                                     elementvalue = Convert.ToInt32(value);
                                     if (elementInfoValue < elementvalue)
+                                    {
                                         allTestsPassed = false;
+                                    }
+
                                     break;
                                 case XpathPropertyCondition.XpathConditionOperator.More:
                                     elementInfoValue = Convert.ToInt32(ElementInfo.Value);
                                     elementvalue = Convert.ToInt32(value);
                                     if (elementInfoValue > elementvalue)
+                                    {
                                         returnElementInfo = GetElementInfoWithIWebElementWithXpath(el, "");
+                                    }
+
                                     break;
                             }
                         }
@@ -8844,19 +9166,28 @@ namespace GingerCore.Drivers
                             {
                                 case XpathPropertyCondition.XpathConditionOperator.Equel:
                                     if (ElementInfo.Value != value)
+                                    {
                                         allTestsPassed = false;
+                                    }
+
                                     break;
                                 case XpathPropertyCondition.XpathConditionOperator.Less:
                                     elementInfoValue = Convert.ToInt32(ElementInfo.Value);
                                     elementvalue = Convert.ToInt32(value);
                                     if (elementInfoValue < elementvalue)
+                                    {
                                         allTestsPassed = false;
+                                    }
+
                                     break;
                                 case XpathPropertyCondition.XpathConditionOperator.More:
                                     elementInfoValue = Convert.ToInt32(ElementInfo.Value);
                                     elementvalue = Convert.ToInt32(value);
                                     if (elementInfoValue > elementvalue)
+                                    {
                                         returnElementInfo = GetElementInfoWithIWebElementWithXpath(el, "");
+                                    }
+
                                     break;
                             }
                         }
@@ -9246,7 +9577,9 @@ namespace GingerCore.Drivers
         async Task<object> IWindowExplorer.GetPageSourceDocument(bool ReloadHtmlDoc)
         {
             if (ReloadHtmlDoc)
+            {
                 SSPageDoc = null;
+            }
 
             if (SSPageDoc == null)
             {

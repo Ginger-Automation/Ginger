@@ -109,8 +109,8 @@ namespace GingerCore.Actions.Communication
             get { return "Email" + eMailActionType.ToString(); }
         }
 
-        public eEmailActionType eMailActionType 
-        { 
+        public eEmailActionType eMailActionType
+        {
             get
             {
                 return GetOrCreateInputParam(nameof(eMailActionType), eEmailActionType.SendEmail);
@@ -179,7 +179,7 @@ namespace GingerCore.Actions.Communication
                 OnPropertyChanged(nameof(MSGraphClientId));
             }
         }
-        
+
         public string MSGraphTenantId
         {
             get
@@ -491,7 +491,9 @@ namespace GingerCore.Actions.Communication
                     return returnValue;
                 }
                 else
+                {
                     return false;
+                }
             }
         }
         #endregion  
@@ -516,7 +518,10 @@ namespace GingerCore.Actions.Communication
 
             bool isSuccess;
             if (!string.IsNullOrEmpty(Host))
+            {
                 email.SMTPMailHost = Host;
+            }
+
             try { email.SMTPPort = Convert.ToInt32(this.GetInputParamCalculatedValue(nameof(Port))); }
             catch { email.SMTPPort = 25; }
 
@@ -627,7 +632,7 @@ namespace GingerCore.Actions.Communication
             EmailReadFilters filters = CreateEmailReadFilters();
             MSGraphConfig config = CreateMSGraphConfig();
             int index = 1;
-            emailReadOperations.ReadEmails(filters, config, email => 
+            emailReadOperations.ReadEmails(filters, config, email =>
             {
                 AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.From), email.From, index.ToString());
                 AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Subject), email.Subject, index.ToString());
@@ -637,7 +642,7 @@ namespace GingerCore.Actions.Communication
                 if (DownloadAttachments && FilterHasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes)
                 {
                     IEnumerable<(string filename, string filepath)> fileNamesAndPaths = DownloadAttachmentFiles(email);
-                    foreach((string filename, string filepath) in fileNamesAndPaths)
+                    foreach ((string filename, string filepath) in fileNamesAndPaths)
                     {
                         AddOrUpdateReturnParamActualWithPath(filename, filepath, index.ToString());
                     }
@@ -727,7 +732,7 @@ namespace GingerCore.Actions.Communication
 
             foreach (ReadEmail.Attachment attachment in email.Attachments)
             {
-                if (expectedContentTypes != null && expectedContentTypes.Count() > 0 && 
+                if (expectedContentTypes != null && expectedContentTypes.Count() > 0 &&
                     !expectedContentTypes.Any(expectedContentType => expectedContentType.Equals(attachment.ContentType)))
                 {
                     continue;

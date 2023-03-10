@@ -35,8 +35,8 @@ namespace GingerCoreNET.Drivers.CommonLib
             Regex,
             [EnumValueDescription("Start With")]
             StartWith,
-            [EnumValueDescription("End With")]            
-            EndWith            
+            [EnumValueDescription("End With")]
+            EndWith
         }
 
         [IsSerializedForLocalRepository]
@@ -44,7 +44,7 @@ namespace GingerCoreNET.Drivers.CommonLib
 
         [IsSerializedForLocalRepository]
         public eLocatorOpertor Opertor;
-    
+
         [IsSerializedForLocalRepository]
         public string Value;
     }

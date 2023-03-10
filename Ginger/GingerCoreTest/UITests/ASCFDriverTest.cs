@@ -16,24 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Diagnostics;
-using System.Text;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Drivers;
-using GingerCore.Drivers.ASCF;
-using GingerCore.Platforms;
-using GingerCore.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GingerCore.Actions.Common;
 
 
 namespace UnitTests.UITests.ASCFDriverTest
 {
     [TestClass]
 
-    public class ASCFDriverTest 
+    public class ASCFDriverTest
     {/*
 
         BusinessFlow mBF;
@@ -938,7 +928,7 @@ namespace UnitTests.UITests.ASCFDriverTest
         */
 
 
-        
+
     }
-    
+
 }
