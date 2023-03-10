@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -123,6 +123,7 @@ namespace GingerCore
             //set fields default values
             mAutomationStatus = eActivityAutomationStatus.Development;
             mActionRunOption = eActionRunOption.StopActionsRunOnFailure;
+            Tags.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Tags));
         }
 
         public override string ToString()
