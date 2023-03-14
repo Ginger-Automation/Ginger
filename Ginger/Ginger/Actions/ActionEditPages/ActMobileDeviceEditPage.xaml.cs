@@ -53,6 +53,8 @@ namespace Ginger.Actions
         {
             xOperationNameComboBox.Init(mAct, nameof(mAct.MobileDeviceAction), typeof(ActMobileDevice.eMobileDeviceAction), ActionNameComboBox_SelectionChanged);
 
+            xAuthResultComboBox.Init(mAct, nameof(mAct.AuthResultSimulation), typeof(ActMobileDevice.eAuthResultSimulation), AuthResultComboBox_SelectionChanged);
+
             xKeyPressComboBox.Init(mAct, nameof(mAct.MobilePressKey), typeof(ActMobileDevice.ePressKey));
 
             xX1TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.X1, nameof(ActInputValue.Value));
@@ -149,13 +151,48 @@ namespace Ginger.Actions
             SetControlsView();
         }
 
+        private void AuthResultComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ChangeAuthResultDetailsComboBox();
+        }
+
+        private void ChangeAuthResultDetailsComboBox()
+        {
+            switch (mAct.AuthResultSimulation)
+            {
+                case ActMobileDevice.eAuthResultSimulation.Success:
+                    {
+                        xAuthResultDetailsLbl.Visibility = Visibility.Collapsed;
+                        xAuthResultDetailsComboBox.Visibility = Visibility.Collapsed;
+                        break;
+                    }
+                case ActMobileDevice.eAuthResultSimulation.Failure:
+                    {
+                        xAuthResultDetailsLbl.Visibility = Visibility.Visible;
+                        xAuthResultDetailsComboBox.Visibility = Visibility.Visible;
+                        xAuthResultDetailsComboBox.Init(mAct, nameof(mAct.AuthResultDetailsFailureSimulation), typeof(ActMobileDevice.eAuthResultDetailsFailureSimulation));
+                        break;
+                    }
+                case ActMobileDevice.eAuthResultSimulation.Cancel:
+                    {
+                        xAuthResultDetailsComboBox.Visibility = Visibility.Visible;
+                        xAuthResultDetailsComboBox.Init(mAct, nameof(mAct.AuthResultDetailsCancelSimulation), typeof(ActMobileDevice.eAuthResultDetailsCancelSimulation));
+                        break;
+                    }
+                default:
+                    xAuthResultDetailsLbl.Visibility = Visibility.Collapsed;
+                    xAuthResultDetailsComboBox.Visibility = Visibility.Collapsed;
+                    break;
+            }
+        }
+
         private void SetControlsView()
         {
             xKeyPressPnl.Visibility = Visibility.Collapsed;
             xXY1Pnl.Visibility = Visibility.Collapsed;
             xXY2Pnl.Visibility = Visibility.Collapsed;
             xPhotoSimulationPnl.Visibility = Visibility.Collapsed;
-
+            xAuthSimulationPnl.Visibility = Visibility.Collapsed;
 
             switch (mAct.MobileDeviceAction)
             {
@@ -176,7 +213,11 @@ namespace Ginger.Actions
                     xXY2Pnl.Visibility = Visibility.Visible;
                     break;
                 case ActMobileDevice.eMobileDeviceAction.SimulatePhoto:
+                case ActMobileDevice.eMobileDeviceAction.SimulateBarcode:
                     xPhotoSimulationPnl.Visibility = Visibility.Visible;
+                    break;
+                case ActMobileDevice.eMobileDeviceAction.SimulateBiometrics:
+                    xAuthSimulationPnl.Visibility = Visibility.Visible;
                     break;
             }
         }

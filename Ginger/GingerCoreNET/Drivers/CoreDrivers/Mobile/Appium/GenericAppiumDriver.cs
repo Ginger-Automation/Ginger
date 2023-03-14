@@ -47,6 +47,7 @@ using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.Graph.SecurityNamespace;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
@@ -902,7 +903,6 @@ namespace Amdocs.Ginger.CoreNET
                     case ActMobileDevice.eMobileDeviceAction.SwipeUp:
                         SwipeScreen(eSwipeSide.Up, 0.25);
                         break;
-
                     case ActMobileDevice.eMobileDeviceAction.SwipeLeft:
                         SwipeScreen(eSwipeSide.Left);
                         break;
@@ -961,25 +961,10 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.LockDevice:
-                        if (DevicePlatformType == eDevicePlatformType.Android)
-                        {
                             PerformLockButtonPress(eLockOperation.Lock);
-                        }
-                        else
-                        {
-                            act.Error = "Operation not supported for this mobile OS or application type.";
-                        }
                         break;
-
                     case ActMobileDevice.eMobileDeviceAction.UnlockDevice:
-                        if (DevicePlatformType == eDevicePlatformType.Android)
-                        {
                             PerformLockButtonPress(eLockOperation.UnLock);
-                        }
-                        else
-                        {
-                            act.Error = "Operation not supported for this mobile OS or application type.";
-                        }
                         break;
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceBattery:
                         AddReturnParamFromDict(GetDeviceBatteryInfo(), act);
@@ -1005,23 +990,49 @@ namespace Amdocs.Ginger.CoreNET
                         break;
                     case ActMobileDevice.eMobileDeviceAction.SimulatePhoto:
                         string photoString = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).ValueForDriver);
-                        Bitmap picture = null;
-                        if (isValidPhotoExtention(photoString))
+                        string photoSimulationResponse = SimulatePhotoOrBarcode(photoString, "camera");
+                        if (!string.IsNullOrEmpty(photoSimulationResponse) && photoSimulationResponse != "success")
                         {
-                            picture = new Bitmap(photoString);
-                            string photoSimulation = CameraSimulation(picture, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
-                            if (photoSimulation != "success")
-                            {
-                                act.Error = "An Error occured during camera simulation. Error: " + photoSimulation;
-                            }
-                        }
-                        else
-                        {
-                            act.Error = "File is not supported. Upload a supported file to use Camera simulation";
+                            act.Error = photoSimulationResponse;
                         }
                         break;
+                    case ActMobileDevice.eMobileDeviceAction.SimulateBarcode:
+                        string barcodeString = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).ValueForDriver);
+                        string barcodeSimulationResponse = SimulatePhotoOrBarcode(barcodeString, "barcode");
+                        if (!string.IsNullOrEmpty(barcodeSimulationResponse) && barcodeSimulationResponse != "success")
+                        {
+                            act.Error = barcodeSimulationResponse;
+                        }
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.SimulateBiometrics:
+                        {
+                            string biometricsAnswer = string.Empty;
+                            switch (act.AuthResultSimulation)
+                            {
+                                case ActMobileDevice.eAuthResultSimulation.Success:
+                                    {
+                                        biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), "");
+                                        break;
+                                    }
+                                case ActMobileDevice.eAuthResultSimulation.Failure:
+                                    {
+                                        biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsFailureSimulation.ToString());
+                                        break;
+                                    }
+                                case ActMobileDevice.eAuthResultSimulation.Cancel:
+                                    {
+                                        biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsCancelSimulation.ToString());
+                                        break;
+                                    }
+                            }
+                            if (!string.IsNullOrEmpty(biometricsAnswer) && biometricsAnswer != "success")
+                            {
+                                act.Error = "An Error occured during biometrics simulation. Error2: " + biometricsAnswer;
+                            }
+                            break;
+                        }
                     case ActMobileDevice.eMobileDeviceAction.StopSimulatePhotoOrVideo:
-                        CameraSimulation(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
+                        CameraAndBarcodeSimulationRequest(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
                         break;
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
@@ -1031,6 +1042,26 @@ namespace Amdocs.Ginger.CoreNET
             {
                 act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
             }
+        }
+
+        public string SimulatePhotoOrBarcode(string photoString, string action)
+        {
+            Bitmap picture = null;
+            string response = string.Empty;
+            if (isValidPhotoExtention(photoString))
+            {
+                picture = new Bitmap(photoString);
+                response = CameraAndBarcodeSimulationRequest(picture, ImageFormat.Png, contentType: "image", fileName: "image.png", action: action);
+                if (response != "success")
+                {
+                    return "An Error occured during " + action + " simulation. Error: " + response;
+                }
+            }
+            else
+            {
+                return "File is not supported. Upload a supported file to use " + action + " simulation";
+            }
+            return response;
         }
 
         public bool isValidPhotoExtention(string photo)
@@ -1049,7 +1080,7 @@ namespace Amdocs.Ginger.CoreNET
                 return false;
             }
         }
-        public string CameraSimulation(Bitmap picture, ImageFormat format, string contentType, string fileName, string action)
+        public string CameraAndBarcodeSimulationRequest(Bitmap picture, ImageFormat format, string contentType, string fileName, string action)
         {
             MemoryStream ms = new MemoryStream();
             string encodeString = "0";
@@ -1066,6 +1097,22 @@ namespace Amdocs.Ginger.CoreNET
                 { "fileName", fileName },
                 { "action", action }
             };
+
+            string simulationResult = JsonConvert.SerializeObject(Driver.ExecuteScript("mc:sensorSimulation", sensorSimulationMap));
+            return JToken.Parse(simulationResult)["message"].ToString();
+        }
+
+        public string BiometricSimulation(string authResult, string authResultDetails)
+        {
+            Dictionary<string, object> sensorSimulationMap = new Dictionary<string, object>();
+            Dictionary<string, string> simulationData = new Dictionary<string, string>
+            {
+                { "authResult", authResult },
+                { "authType", "Fingerprint" },
+                { "authResultDetails", authResultDetails }
+            };
+            sensorSimulationMap.Add("simulationData", simulationData);
+            sensorSimulationMap.Add("action", "authentication");
 
             string simulationResult = JsonConvert.SerializeObject(Driver.ExecuteScript("mc:sensorSimulation", sensorSimulationMap));
             return JToken.Parse(simulationResult)["message"].ToString();
@@ -1276,10 +1323,21 @@ namespace Amdocs.Ginger.CoreNET
                             break;
                         case eLockOperation.UnLock:
                             ((AndroidDriver)Driver).Unlock();
+                            System.Threading.Thread.Sleep(200);
+                            SwipeScreen(eSwipeSide.Up);
                             break;
                     }
                     break;
                 case eDevicePlatformType.iOS:
+                    switch (LockOperation)
+                    {
+                        case eLockOperation.Lock:
+                            ((IOSDriver)Driver).Lock();
+                            break;
+                        case eLockOperation.UnLock:
+                            ((IOSDriver)Driver).Unlock();
+                            break;
+                    }
                     break;
             }
 

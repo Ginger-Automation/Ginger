@@ -63,6 +63,45 @@ namespace GingerCore.Actions
             }
         }
 
+        public eAuthResultSimulation AuthResultSimulation
+        {
+            get
+            {
+                return (eAuthResultSimulation)GetOrCreateInputParam<eAuthResultSimulation>(nameof(AuthResultSimulation), eAuthResultSimulation.Success);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(AuthResultSimulation), value.ToString());
+                OnPropertyChanged(nameof(AuthResultSimulation));
+            }
+        }
+
+        public eAuthResultDetailsFailureSimulation AuthResultDetailsFailureSimulation
+        {
+            get
+            {
+                return (eAuthResultDetailsFailureSimulation)GetOrCreateInputParam<eAuthResultDetailsFailureSimulation>(nameof(AuthResultDetailsFailureSimulation), eAuthResultDetailsFailureSimulation.NotRecognized);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(AuthResultDetailsFailureSimulation), value.ToString());
+                OnPropertyChanged(nameof(AuthResultDetailsFailureSimulation));
+            }
+        }
+
+        public eAuthResultDetailsCancelSimulation AuthResultDetailsCancelSimulation
+        {
+            get
+            {
+                return (eAuthResultDetailsCancelSimulation)GetOrCreateInputParam<eAuthResultDetailsCancelSimulation>(nameof(AuthResultDetailsCancelSimulation), eAuthResultDetailsCancelSimulation.User);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(AuthResultDetailsCancelSimulation), value.ToString());
+                OnPropertyChanged(nameof(AuthResultDetailsCancelSimulation));
+            }
+        }
+
         public ePressKey MobilePressKey
         {
             get
@@ -159,6 +198,38 @@ namespace GingerCore.Actions
             }
         }
 
+        public enum eAuthResultSimulation
+        {
+            [EnumValueDescription("Success")]
+            Success,
+            [EnumValueDescription("Failure")]
+            Failure,
+            [EnumValueDescription("Cancel")]
+            Cancel
+        }
+
+        public enum eAuthResultDetailsFailureSimulation
+        {
+            [EnumValueDescription("Not Recognized")]
+            NotRecognized,
+            [EnumValueDescription("Lockout")]
+            Lockout,
+            [EnumValueDescription("Finger Incomplete (Android Only)")]
+            FingerIncomplete,
+            [EnumValueDescription("Sensor Dirty (Android Only)")]
+            SensorDirty,
+            [EnumValueDescription("No Fingerprint Registered (iOS Only)")]
+            NoFingerprintRegistered
+        }
+
+        public enum eAuthResultDetailsCancelSimulation
+        {
+            [EnumValueDescription("User Cancel")]
+            User,
+            [EnumValueDescription("System Cancel")]
+            System
+        }
+
         public enum eMobileDeviceAction
         {
             [EnumValueDescription("Press XY")]
@@ -222,6 +293,10 @@ namespace GingerCore.Actions
             GetDeviceGeneralInfo,
             [EnumValueDescription("Simulate Photo")]
             SimulatePhoto,
+            [EnumValueDescription("Simulate Barcode")]
+            SimulateBarcode,
+            [EnumValueDescription("Simulate Biometrics")]
+            SimulateBiometrics,
             [EnumValueDescription("Stop Simulate Photo\\Video")]
             StopSimulatePhotoOrVideo,
         }

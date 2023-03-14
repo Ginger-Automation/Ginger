@@ -519,16 +519,16 @@ namespace Ginger.Drivers.DriversWindows
 
             if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
             {
-                mDeviceDetails.Add(new DeviceInfo("Package", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
-                mDeviceDetails.Add(new DeviceInfo("Activity", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+                mDeviceDetails.Add(new DeviceInfo("Package:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
+                mDeviceDetails.Add(new DeviceInfo("Activity:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
             }
             else
             {
                 string activity, package;
                 mActivityAndPackageInfo.TryGetValue("Activity", out activity);
                 mActivityAndPackageInfo.TryGetValue("Package", out package);
-                mDeviceDetails.Add(new DeviceInfo("Package", package, DeviceInfo.eDeviceInfoCategory.Detail));
-                mDeviceDetails.Add(new DeviceInfo("Activity", activity, DeviceInfo.eDeviceInfoCategory.Detail));
+                mDeviceDetails.Add(new DeviceInfo("Package:", package, DeviceInfo.eDeviceInfoCategory.Detail, package));
+                mDeviceDetails.Add(new DeviceInfo("Activity:", activity, DeviceInfo.eDeviceInfoCategory.Detail, activity));
             }
 
 
@@ -963,12 +963,6 @@ namespace Ginger.Drivers.DriversWindows
         bool lockDone;
         private void xLockPnl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (mDriver.GetAppType() == eAppType.Web || mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
-            {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation not supported for this mobile OS or application type.");
-                return;
-            }
-
             try
             {
                 if (!lockDone)
@@ -1105,6 +1099,16 @@ namespace Ginger.Drivers.DriversWindows
         private void xSwipeUp_Click(object sender, RoutedEventArgs e)
         {
             PerformScreenSwipe(eSwipeSide.Up, 0.25);
+        }
+
+        private void xSwipeUp_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            PerformScreenSwipe(eSwipeSide.Up, 0.5);
+        }
+
+        private void xSwipeDown_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            PerformScreenSwipe(eSwipeSide.Down, 0.5);
         }
 
         private void xSwipeDown_Click(object sender, RoutedEventArgs e)
@@ -1609,6 +1613,12 @@ namespace Ginger.Drivers.DriversWindows
                     break;
                 case "App CPU Usage:":
                     OpenPopUpWindow(deviceInfo.ExtraInfo.Replace(", ", Environment.NewLine), "Full device's CPU Information");
+                    break;
+                case "Activity:":
+                    OpenPopUpWindow(deviceInfo.ExtraInfo.Replace(", ", Environment.NewLine), "Application Activity");
+                    break;
+                case "Package:":
+                    OpenPopUpWindow(deviceInfo.ExtraInfo.Replace(", ", Environment.NewLine), "Application Package");
                     break;
                 case "Ginger Agent:":
                     Application.Current.Dispatcher.Invoke(() =>

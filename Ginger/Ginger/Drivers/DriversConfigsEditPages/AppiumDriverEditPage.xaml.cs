@@ -159,7 +159,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 DeleteUFTMServerCapabilities();
                 DeleteUFTMSupportSimulationsCapabilities();
             }
-            else if (mDeviceSource.Value == eDeviceSource.MicroFoucsUFTMLab.ToString())
+            else if (mDeviceSource.Value == eDeviceSource.MicroFoucsUFTMLab.ToString() && !IsUFTCapabilityExist())
             {
                 DriverConfigParam uftClientId = new DriverConfigParam() { Parameter = "uftm:oauthClientId", Description = "UFT Execution key Client Id" };
                 DriverConfigParam uftClientSecret = new DriverConfigParam() { Parameter = "uftm:oauthClientSecret", Description = "UFT Execution key Client Password" };
