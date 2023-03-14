@@ -183,6 +183,8 @@ namespace Ginger.Actions
                         xAuthResultDetailsComboBox.Init(mAct, nameof(mAct.AuthResultDetailsCancelSimulation), typeof(ActMobileDevice.eAuthResultDetailsCancelSimulation));
                         break;
                     }
+                default:
+                    break;
             }
         }
 
@@ -218,8 +220,6 @@ namespace Ginger.Actions
                     break;
                 case ActMobileDevice.eMobileDeviceAction.SimulateBiometrics:
                     xAuthSimulationPnl.Visibility = Visibility.Visible;
-                    break;
-                default:
                     break;
             }
         }
