@@ -183,6 +183,10 @@ namespace Ginger.Actions
                         xAuthResultDetailsComboBox.Init(mAct, nameof(mAct.AuthResultDetailsCancelSimulation), typeof(ActMobileDevice.eAuthResultDetailsCancelSimulation));
                         break;
                     }
+                default:
+                    xAuthResultDetailsLbl.Visibility = Visibility.Collapsed;
+                    xAuthResultDetailsComboBox.Visibility = Visibility.Collapsed;
+                    break;
             }
         }
 
