@@ -33,19 +33,25 @@ namespace Ginger.UserControls
         private IObservableList l;
         public UCDataColGrid()
         {
-            InitializeComponent();      
-            this.DataContextChanged += UCDataColGrid_DataContextChanged;                        
+            InitializeComponent();
+            this.DataContextChanged += UCDataColGrid_DataContextChanged;
         }
 
         private void UCDataColGrid_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             //TODO: check why we come here with non matching object
-            if (!typeof(IObservableList).IsAssignableFrom(e.NewValue.GetType())) return; //avoid invalid cast exception
+            if (!typeof(IObservableList).IsAssignableFrom(e.NewValue.GetType()))
+            {
+                return; //avoid invalid cast exception
+            }
 
             this.Dispatcher.Invoke(() =>
             {
                 l = (IObservableList)e.NewValue;
-                if (l.Count == 0) return;
+                if (l.Count == 0)
+                {
+                    return;
+                }
 
                 // If it is input and we have only one row then no need to show the grid
                 if (l[0].GetType() == typeof(ActInputValue) && l.Count == 1)

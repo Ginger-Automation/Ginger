@@ -17,49 +17,47 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System;
-using System.Collections.Generic;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.WindowExplorer;
 using Ginger.WindowExplorer.ASCF;
-using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Drivers;
 using GingerCore.Drivers.ASCF;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
+using System;
+using System.Collections.Generic;
+using System.Windows.Controls;
 
 namespace Ginger.Actions.Locators.ASCF
 {
     //Base class for ASCF controls 
     class ASCFControlTreeItem : TreeViewItemBase, ITreeViewItem, IWindowExplorerTreeItem
     {
-        public ASCFControlInfo ASCFControlInfo {get; set;}
+        public ASCFControlInfo ASCFControlInfo { get; set; }
 
         public string Name { get; set; }
-        public string Path {get; set;}
+        public string Path { get; set; }
 
         private ASCFControlInfoPage mASCFControlInfoPage;
 
         Object ITreeViewItem.NodeObject()
-        {            
+        {
             return ASCFControlInfo;
         }
 
         StackPanel ITreeViewItem.Header()
         {
-            string ImageFileName = "ASCF16x16.png";            
-            return TreeViewUtils.CreateItemHeader(Name, ImageFileName);                        
+            string ImageFileName = "ASCF16x16.png";
+            return TreeViewUtils.CreateItemHeader(Name, ImageFileName);
         }
 
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
-        {            
-            return null;            
+        {
+            return null;
         }
-             
+
 
         bool ITreeViewItem.IsExpandable()
         {
@@ -67,12 +65,12 @@ namespace Ginger.Actions.Locators.ASCF
         }
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
-        {            
+        {
             if (mASCFControlInfoPage == null)
             {
                 mASCFControlInfoPage = new ASCFControlInfoPage(ASCFControlInfo);
             }
-            return mASCFControlInfoPage;            
+            return mASCFControlInfoPage;
         }
 
         ContextMenu ITreeViewItem.Menu()
@@ -87,7 +85,7 @@ namespace Ginger.Actions.Locators.ASCF
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
             // Will be overridden in derived class
-             ObservableList<Act> list = new ObservableList<Act>();
+            ObservableList<Act> list = new ObservableList<Act>();
             return list;
         }
 

@@ -18,7 +18,6 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core.DatabaseLib
 {
@@ -27,7 +26,7 @@ namespace Amdocs.Ginger.Plugin.Core.DatabaseLib
         List<string> GetTablesList();
 
         List<string> GetTablesColumns(string table);
-        
+
         Int64 GetRecordCount(string Query);
     }
 }

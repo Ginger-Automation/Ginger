@@ -16,14 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using System.Windows;
-using System.Windows.Controls;
+using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore.Environments;
-using GingerCore;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Environments
 {
@@ -32,7 +31,7 @@ namespace Ginger.Environments
     /// </summary>
     public partial class EnvsListPage : Page
     {
-        RepositoryFolder<ProjEnvironment> mFolder;        
+        RepositoryFolder<ProjEnvironment> mFolder;
 
         public EnvsListPage(RepositoryFolder<ProjEnvironment> folder)
         {
@@ -45,7 +44,7 @@ namespace Ginger.Environments
             grdEnvs.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(Refresh));
         }
 
-        
+
         #region Functions
         private void SetGridView()
         {
@@ -55,16 +54,16 @@ namespace Ginger.Environments
             grdEnvs.ShowTagsFilter = Visibility.Visible;
             grdEnvs.ShowEdit = Visibility.Collapsed;
             grdEnvs.ShowRefresh = Visibility.Collapsed;
-            grdEnvs.SetTitleLightStyle=true;
+            grdEnvs.SetTitleLightStyle = true;
 
             //Set the Data Grid columns
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            
-            view.GridColsView.Add(new GridColView() { Field = ProjEnvironment.Fields.Name, WidthWeight = 200 });          
+
+            view.GridColsView.Add(new GridColView() { Field = ProjEnvironment.Fields.Name, WidthWeight = 200 });
             view.GridColsView.Add(new GridColView() { Field = ProjEnvironment.Fields.ReleaseVersion, WidthWeight = 80, Header = "Release Version" });
             view.GridColsView.Add(new GridColView() { Field = ProjEnvironment.Fields.Notes, WidthWeight = 500 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.FileName), Header="Local File Path", WidthWeight = 250 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.FileName), Header = "Local File Path", WidthWeight = 250 });
 
             grdEnvs.SetAllColumnsDefaultView(view);
             grdEnvs.InitViewItems();
@@ -73,9 +72,13 @@ namespace Ginger.Environments
         private void SetGridData()
         {
             if (mFolder.IsRootFolder)
+            {
                 grdEnvs.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+            }
             else
+            {
                 grdEnvs.DataSourceList = mFolder.GetFolderItems();
+            }
         }
 
         private void Refresh(object sender, RoutedEventArgs e)

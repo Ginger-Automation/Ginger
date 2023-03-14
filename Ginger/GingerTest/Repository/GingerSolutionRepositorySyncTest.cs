@@ -31,16 +31,16 @@ using System.IO;
 using System.Linq;
 
 namespace GingerTest
-{    
+{
     [Ignore] // get stuck
     [TestClass]
     [Level1]
     public class GingerSolutionRepositorySyncTest
-    {        
+    {
 
         static SolutionRepository mSolutionRepository;
-        static BusinessFlow mBF;        
-        static string solutionName; 
+        static BusinessFlow mBF;
+        static string solutionName;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
@@ -61,8 +61,8 @@ namespace GingerTest
 
         [ClassCleanup]
         public static void ClassCleanup()
-        {            
-            
+        {
+
 
         }
 
@@ -90,14 +90,15 @@ namespace GingerTest
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestBusinessFlowVariableSyncWithRepo()
         {
             string variableName = "BFV1";
             string initialValue = "123";
             string updatedValue = "abc123";
 
-            mBF = new BusinessFlow() { Name= "TestBFVarSync", Active=true };
+            mBF = new BusinessFlow() { Name = "TestBFVarSync", Active = true };
 
             VariableString V1 = new VariableString() { Name = variableName, InitialStringValue = initialValue };
             mBF.AddVariable(V1);
@@ -106,7 +107,7 @@ namespace GingerTest
             mSolutionRepository.AddRepositoryItem(mBF);
 
             // prepare to add the variable to the shared repository
-            UploadItemSelection uploadItemSelection = new UploadItemSelection() { UsageItem = V1, ItemUploadType = UploadItemSelection.eItemUploadType.New};
+            UploadItemSelection uploadItemSelection = new UploadItemSelection() { UsageItem = V1, ItemUploadType = UploadItemSelection.eItemUploadType.New };
             (new SharedRepositoryOperations()).UploadItemToRepository(new Context() { BusinessFlow = mBF }, uploadItemSelection);
 
             // find the newly added variable from the shared repo
@@ -128,7 +129,8 @@ namespace GingerTest
             Assert.AreEqual(updatedValue, V2.InitialStringValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestActivityVariablesSyncWithRepo()
         {
             string variableName = "ACTVAR1";
@@ -162,7 +164,7 @@ namespace GingerTest
             sharedV1.UpdateInstance(V1, "All", activity);
 
             // get the updated value from the business flow
-            VariableString V2 = (VariableString) activity.Variables[0];
+            VariableString V2 = (VariableString)activity.Variables[0];
 
             //Assert
             Assert.AreEqual(1, activity.Variables.Count);
@@ -171,7 +173,8 @@ namespace GingerTest
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestActivityVariablesSyncWithRepo_v2()
         {
             string variableName = "ACTVAR2";
@@ -254,6 +257,6 @@ namespace GingerTest
         //    Assert.AreNotSame(V1, V2);
         //    Assert.AreEqual(updatedValue, V2.InitialStringValue);
         //}
-      
+
     }
 }

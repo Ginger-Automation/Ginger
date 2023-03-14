@@ -39,29 +39,30 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
-        {            
+        {
             string TempSolutionFolder = TestResources.GetTestTempFolder(@"Solutions" + Path.DirectorySeparatorChar + "APIModelsTest");
             if (Directory.Exists(TempSolutionFolder))
             {
                 Directory.Delete(TempSolutionFolder, true);
             }
             SR = GingerSolutionRepository.CreateGingerSolutionRepository();
-            
+
 
             SR.CreateRepository(TempSolutionFolder);
 
             NewRepositorySerializer RS = new NewRepositorySerializer();
             NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommon);
-            SR.Open(TempSolutionFolder);            
+            SR.Open(TempSolutionFolder);
         }
 
         [TestCleanup]
         public void TestCleanUp()
         {
-        
+
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void VerifyApplicationAPIModelFileExtension()
         {
             // Need to verify ext is coming from ApplicationAPIModel and file name will not have ApplicationAPIModel 
@@ -77,7 +78,8 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         }
 
         [Ignore]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void AddAPIFromXMLAndAvoidDuplicateNodesTest()
         {
             //Arrange
@@ -108,7 +110,8 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         }
 
         [Ignore]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void AddAPIFromJSONAndAvoidDuplicateNodesTest()
         {
             //Arrange
@@ -137,14 +140,15 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
 
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ApplicationAPIModelVerifySavedFile()
         {
             // Arrange
             ApplicationAPIModel AAMS1 = new ApplicationAPIModel();
             //AAMS1.GroupName = "Group1";
             AAMS1.Name = "Group1_Operation1";
-            SR.AddRepositoryItem(AAMS1);            
+            SR.AddRepositoryItem(AAMS1);
 
             //Act            
             ObservableList<ApplicationAPIModel> AAMBList = SR.GetAllRepositoryItems<ApplicationAPIModel>();
@@ -156,14 +160,15 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             //Assert
             Assert.IsTrue(AAMS2 != null, "New API Model found in AllItems");
             Assert.AreEqual(AAMS1, AAMS2, "Same object is retrieved");
-            
+
             Assert.AreEqual(AAMS1.Name, ApplicationAPIModelFromDisk.Name, "Name saved to file");
             Assert.AreEqual(AAMS1.Guid, ApplicationAPIModelFromDisk.Guid, "Guid saved to file");
             // TODO: can add more validation
 
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ApplicationAPIModelMixSoapAndRestSaveAndLoad()
         {
             // Arrange
@@ -177,7 +182,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             AAMR1.Name = "Group2_Operation1";
             SR.AddRepositoryItem(AAMR1);
 
-            
+
             //Act
             ObservableList<ApplicationAPIModel> AAMBList = SR.GetAllRepositoryItems<ApplicationAPIModel>();
             ApplicationAPIModel AAMS2 = (ApplicationAPIModel)(from x in AAMBList where x.Guid == AAMS1.Guid select x).FirstOrDefault();
@@ -189,7 +194,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
 
         }
 
-        
+
         //[TestMethod]  [Timeout(60000)]
         //public void ApplicationAPIModelMultipleSoapAndRestSaveAndLoad()
         //{
@@ -212,7 +217,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         //    subFolder.AddRepositoryItem(AAMR2);
         //    ApplicationAPIModel AAMR3 = new ApplicationAPIModel() { Name = "Group2_Operation3" };
         //    subFolder.AddRepositoryItem(AAMR3);
-            
+
         //    ObservableList<ApplicationAPIModel> AAMBList = SR.GetAllRepositoryItems<ApplicationAPIModel>();          
         //    RepositoryFolder<ApplicationAPIModel> SecondFolder = RFRoot.GetSubFolder("SecondFolder");
         //    ObservableList<ApplicationAPIModel> AAMBListSubFolder = SecondFolder.GetFolderItems();
@@ -223,7 +228,8 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
         //    Assert.AreEqual(AAMBListSubFolder.Count,3, "Second Folder should have 3 files");
         //}
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void APIParsingSavingAndPulling()
         {
             // Arrange

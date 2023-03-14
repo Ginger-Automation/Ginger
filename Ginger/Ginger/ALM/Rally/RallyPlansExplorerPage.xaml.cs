@@ -18,15 +18,10 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Ginger.UserControls;
-using GingerCore;
-using System;
-using System.Linq;
+using GingerCore.ALM.Rally;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using GingerCore.ALM.Rally;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.ALM;
 
 namespace Ginger.ALM.Rally
 {
@@ -86,7 +81,7 @@ namespace Ginger.ALM.Rally
         {
             SetGridData();
         }
-        
+
         private void ImportTestPlan(object sender, RoutedEventArgs e)
         {
             ImportTestPlan();

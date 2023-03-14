@@ -13,7 +13,7 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
     {
 
         public static void CreateWorkspaceWithTempSolution(string solutionFolderName)
-        {            
+        {
             WorkSpace.Init(new WorkSpaceEventHandler());
             WorkSpace.Instance.RunningFromUnitTest = true;
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
@@ -25,31 +25,31 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
             }
             WorkSpace.Instance.SolutionRepository.CreateRepository(solutionfolder);
             WorkSpace.Instance.SolutionRepository.Open(solutionfolder);
-            
+
         }
 
-     
+
         internal static void InitConsoleWorkspace()
-        {            
+        {
             ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
             WorkSpace.Init(consoleWorkspaceEventHandler);
         }
 
 
-       
+
 
         internal static SolutionRepository CreateWorkspaceAndOpenSolution(string path)
-        {    
+        {
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.RunningFromUnitTest = true;
-            WorkSpace.Instance.SolutionRepository  = GingerSolutionRepository.CreateGingerSolutionRepository();
+            WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
             WorkSpace.Instance.SolutionRepository.Open(path);
             return WorkSpace.Instance.SolutionRepository;
         }
 
         internal static void CreateWorkspace2()
-        {         
+        {
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.RunningFromUnitTest = true;
@@ -59,7 +59,7 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
         }
 
         internal static void CreateDummyWorkSpace()
-        {         
+        {
             DummyWorkSpace ws = new DummyWorkSpace();
             WorkSpace.Init(ws);
             WorkSpace.Instance.RunningFromUnitTest = true;

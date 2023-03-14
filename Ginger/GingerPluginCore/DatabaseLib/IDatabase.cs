@@ -26,7 +26,7 @@ namespace Amdocs.Ginger.Plugin.Core.DatabaseLib
     // Mark it as plugin interface so will be written to the services json
     [GingerInterface("IDatabase", "Database Interface")]
     public interface IDatabase
-    {        
+    {
         Boolean OpenConnection();
         void CloseConnection();
 

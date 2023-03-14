@@ -18,8 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using GingerCoreNET.SolutionRepositoryLib;
-using GingerWPF.TreeViewItemsLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -236,7 +234,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 await Task.Delay(1000);
                 return txt != xSearchTextBox.Text;
             }
-            if (await UserKeepsTyping() || xSearchTextBox.Text == mSearchString) return;
+            if (await UserKeepsTyping() || xSearchTextBox.Text == mSearchString)
+            {
+                return;
+            }
 
             mSearchString = xSearchTextBox.Text;
             await SearchAsync();

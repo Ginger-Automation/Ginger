@@ -16,15 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Ginger.SolutionWindows.TreeViewItems;
+using Ginger.WindowExplorer.HTMLCommon;
 using GingerCore.Drivers.CommunicationProtocol;
 using GingerCore.Drivers.JavaDriverLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
-using GingerWPF.UserControlsLib.UCTreeView;
-using Ginger.WindowExplorer.HTMLCommon;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Common;
 
 namespace Ginger.WindowExplorer.Java
 {
@@ -34,19 +34,23 @@ namespace Ginger.WindowExplorer.Java
         public string Name { get { return this.JavaElementInfo.ElementTitle; } set { this.JavaElementInfo.ElementTitle = value; } }
         public Boolean IsExpandable { get { return this.JavaElementInfo.IsExpandable; } set { this.JavaElementInfo.IsExpandable = value; } }
 
-       public List<ITreeViewItem> Childrens()
+        public List<ITreeViewItem> Childrens()
         {
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
             try
             {
                 PayLoad Response = getChilderns();
                 List<PayLoad> controls = Response.GetListPayLoad();
-               
+
                 if (Response.Name == "ContainerComponents")
+                {
                     Childrens = GetControlsAsTreeItems(controls);
+                }
 
                 if (Response.Name == "EditorChildrens")
+                {
                     Childrens = GetHTMLControlsAsTreeItems(controls);
+                }
             }
             catch (Exception ex)
             {
@@ -56,71 +60,73 @@ namespace Ginger.WindowExplorer.Java
 
         }
 
-       List<ITreeViewItem> GetControlsAsTreeItems(List<PayLoad> controls)
-       {
-           List<ITreeViewItem> items = new List<ITreeViewItem>();
-           foreach (PayLoad pl in controls)
-           {
-               ElementInfo CI = JavaDriver.GetControlInfoFromPayLoad(pl);
-               CI.WindowExplorer = JavaElementInfo.WindowExplorer;  // pass the driver down to elements to use
-               ITreeViewItem tvi = JavaElementInfoConverter.GetTreeViewItemFor(CI);
-               items.Add(tvi);
-           }
-           return items;
-       }
+        List<ITreeViewItem> GetControlsAsTreeItems(List<PayLoad> controls)
+        {
+            List<ITreeViewItem> items = new List<ITreeViewItem>();
+            foreach (PayLoad pl in controls)
+            {
+                ElementInfo CI = JavaDriver.GetControlInfoFromPayLoad(pl);
+                CI.WindowExplorer = JavaElementInfo.WindowExplorer;  // pass the driver down to elements to use
+                ITreeViewItem tvi = JavaElementInfoConverter.GetTreeViewItemFor(CI);
+                items.Add(tvi);
+            }
+            return items;
+        }
 
-       List<ITreeViewItem> GetHTMLControlsAsTreeItems(List<PayLoad> controls)
-       {
-           List<ITreeViewItem> items = new List<ITreeViewItem>();
+        List<ITreeViewItem> GetHTMLControlsAsTreeItems(List<PayLoad> controls)
+        {
+            List<ITreeViewItem> items = new List<ITreeViewItem>();
 
-           foreach (PayLoad pl in controls)
-           {
-               ElementInfo CI = JavaDriver.GetHTMLElementInfoFromPL(pl);
-               CI.WindowExplorer = JavaElementInfo.WindowExplorer;  // pass the driver down to elements to use
-               ITreeViewItem tvi = HTMLElementInfoConverter.GetHTMLElementTreeItem(CI);
-               items.Add(tvi);
-           }
-           return items;
-       }
+            foreach (PayLoad pl in controls)
+            {
+                ElementInfo CI = JavaDriver.GetHTMLElementInfoFromPL(pl);
+                CI.WindowExplorer = JavaElementInfo.WindowExplorer;  // pass the driver down to elements to use
+                ITreeViewItem tvi = HTMLElementInfoConverter.GetHTMLElementTreeItem(CI);
+                items.Add(tvi);
+            }
+            return items;
+        }
 
-       private PayLoad getChilderns()
-       {
+        private PayLoad getChilderns()
+        {
             //TODO: J.G: Move this to Java Driver. why here ?
 
-           JavaDriver d = (JavaDriver)JavaElementInfo.WindowExplorer;
-           PayLoad Request = null;
-            if (JavaElementInfo.ElementTypeEnum== eElementType.Browser)
+            JavaDriver d = (JavaDriver)JavaElementInfo.WindowExplorer;
+            PayLoad Request = null;
+            if (JavaElementInfo.ElementTypeEnum == eElementType.Browser)
             {
-                    d.InitializeBrowser(JavaElementInfo);        
+                d.InitializeBrowser(JavaElementInfo);
                 Request = new PayLoad("GetElementChildren");
                 Request.AddValue("");
                 Request.AddValue("/");
                 Request.ClosePackage();
-            } 
+            }
             else if (JavaElementInfo.ElementTypeEnum == eElementType.EditorPane)
             {
                 d.InitializeJEditorPane(JavaElementInfo);
                 Request = new PayLoad(JavaDriver.CommandType.WindowExplorerOperation.ToString());
                 Request.AddEnumValue(JavaDriver.WindowExplorerOperationType.GetEditorChildrens);
-                Request.AddValue(JavaElementInfo.XPath);        
-                Request.ClosePackage();
-            }
-           else
-           {
-               Request = new PayLoad(JavaDriver.CommandType.WindowExplorerOperation.ToString());
-               Request.AddEnumValue(JavaDriver.WindowExplorerOperationType.GetContainerControls);
                 Request.AddValue(JavaElementInfo.XPath);
                 Request.ClosePackage();
-           }
-           PayLoad Response = d.Send(Request);
+            }
+            else
+            {
+                Request = new PayLoad(JavaDriver.CommandType.WindowExplorerOperation.ToString());
+                Request.AddEnumValue(JavaDriver.WindowExplorerOperationType.GetContainerControls);
+                Request.AddValue(JavaElementInfo.XPath);
+                Request.ClosePackage();
+            }
+            PayLoad Response = d.Send(Request);
 
-           if (Response.Name == "ERROR")
-           {
-               string ErrMsg = Response.GetValueString();
-               throw new Exception(ErrMsg);
-           }
-           else
-               return Response;
-       }
+            if (Response.Name == "ERROR")
+            {
+                string ErrMsg = Response.GetValueString();
+                throw new Exception(ErrMsg);
+            }
+            else
+            {
+                return Response;
+            }
+        }
     }
 }

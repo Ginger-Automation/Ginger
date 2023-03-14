@@ -29,8 +29,8 @@ namespace GingerCore.Actions
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("Use this action to open an alert on web page.To open an alert,select control property type from Locate By drop down and then enter the value of that control and provide value in Value textbox and run the action");            
-        }        
+            TBH.AddText("Use this action to open an alert on web page.To open an alert,select control property type from Locate By drop down and then enter the value of that control and provide value in Value textbox and run the action");
+        }
 
         public override string ActionEditPage { get { return null; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
@@ -46,7 +46,7 @@ namespace GingerCore.Actions
                 {
                     mPlatforms.Add(ePlatformType.Web);
                     // Since, the action isn't supported by Windows Platform hence, it's commented
-                    mPlatforms.Add(ePlatformType.ASCF);                    
+                    mPlatforms.Add(ePlatformType.ASCF);
                 }
                 return mPlatforms;
             }

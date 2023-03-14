@@ -18,17 +18,17 @@ limitations under the License.
 
 
 
-using System.Collections.Generic;
 using Ginger.SolutionGeneral;
+using System.Collections.Generic;
 
 namespace amdocs.ginger.GingerCoreNET
 {
     public interface IWorkSpaceEventHandler
-    {             
+    {
         void ShowBusinessFlows();
 
         void OpenAddAPIModelWizard();
-        
+
 
         // Occur when Solution is closed
         void SolutionClosed();

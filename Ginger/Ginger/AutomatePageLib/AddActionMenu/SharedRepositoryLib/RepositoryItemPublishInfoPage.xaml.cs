@@ -21,22 +21,10 @@ using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.IO;
-using System.Collections;
-using GingerCore.GeneralLib;
 
 namespace Ginger.Repository
 {
@@ -72,7 +60,7 @@ namespace Ginger.Repository
                 Header = "Publish Type",
                 WidthWeight = 10,
                 StyleType = GridColView.eGridColStyleType.Template,
-                CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.eRepositoryItemPublishType)), nameof(RepositoryItemUsage.RepositoryItemPublishType),false,true)
+                CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(RepositoryItemUsage.eRepositoryItemPublishType)), nameof(RepositoryItemUsage.RepositoryItemPublishType), false, true)
             });
 
 

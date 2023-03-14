@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 //using Ginger.SolutionGeneral;
 
 namespace Ginger

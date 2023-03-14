@@ -53,7 +53,7 @@ namespace Amdocs.Ginger.Repository
             public static string StoreToVariable = "StoreToVariable";
             public static string StoreToDataSource = "StoreToDataSource";
             public static string StoreTo = "StoreTo";
-            public static string StoreToValue = "StoreToValue";           
+            public static string StoreToValue = "StoreToValue";
         }
 
         [IsSerializedForLocalRepository]
@@ -89,10 +89,11 @@ namespace Amdocs.Ginger.Repository
 
         private eOperator? mOperator;
         [IsSerializedForLocalRepository]
-        public eOperator Operator {
+        public eOperator Operator
+        {
             get
             {
-                if(mOperator==null)
+                if (mOperator == null)
                 {
                     return eOperator.Legacy;
                 }
@@ -113,7 +114,7 @@ namespace Amdocs.Ginger.Repository
         {
             None,
             Variable,
-            GlobalVariable,            
+            GlobalVariable,
             ApplicationModelParameter,
             DataSource
         }

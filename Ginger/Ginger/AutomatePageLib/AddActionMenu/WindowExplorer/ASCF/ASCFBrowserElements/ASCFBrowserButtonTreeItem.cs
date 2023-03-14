@@ -17,12 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.ASCF;
 using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.ASCF
 {
@@ -41,12 +40,13 @@ namespace Ginger.WindowExplorer.ASCF
             // click link the most common
             if (ASCFBrowserElementInfo.HasID())
             {
-                list.Add(new ActASCFBrowserElement(){
+                list.Add(new ActASCFBrowserElement()
+                {
                     Description = "Click Button " + ASCFBrowserElementInfo.Name,
                     LocateBy = eLocateBy.ByID,
                     LocateValue = ASCFBrowserElementInfo.GetID(),
                     ControlAction = ActASCFBrowserElement.eControlAction.Click
-                });                
+                });
             }
 
             list.Add(new ActASCFBrowserElement()
@@ -56,7 +56,7 @@ namespace Ginger.WindowExplorer.ASCF
                 LocateValue = ASCFBrowserElementInfo.GetProperty("XPath"),
                 ControlAction = ActASCFBrowserElement.eControlAction.Click
             });
-            
+
             return list;
         }
     }

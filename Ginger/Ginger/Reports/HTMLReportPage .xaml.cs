@@ -26,7 +26,6 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using GingerCore;
 
 namespace Ginger.Reports
 {
@@ -64,7 +63,10 @@ namespace Ginger.Reports
         {
             var BusinessFlowsData = "";
             var BusinessFlowTemplate = GetStringBetween(ReportHTML, "<!--BusinessFlowStart-->", "<!--BusinessFlowEnd-->");
-            if (string.IsNullOrEmpty(BusinessFlowTemplate)) return;
+            if (string.IsNullOrEmpty(BusinessFlowTemplate))
+            {
+                return;
+            }
 
             for (var i = 0; i < list.Count; i++)
             {
@@ -86,7 +88,10 @@ namespace Ginger.Reports
         {
             var ActivitiesData = "";
             var ActivityTemplate = GetStringBetween(BusinessFlowData, "<!--ActivityStart-->", "<!--ActivityEnd-->");
-            if (string.IsNullOrEmpty(ActivityTemplate)) return;
+            if (string.IsNullOrEmpty(ActivityTemplate))
+            {
+                return;
+            }
 
             for (var i = 0; i < BFR.Activities.Count; i++)
             {
@@ -103,7 +108,11 @@ namespace Ginger.Reports
         {
             var ActionsData = "";
             var ActionTemplate = GetStringBetween(ActivityData, "<!--ActionStart-->", "<!--ActionEnd-->");
-            if (string.IsNullOrEmpty(ActionTemplate)) return;
+            if (string.IsNullOrEmpty(ActionTemplate))
+            {
+                return;
+            }
+
             for (var i = 0; i < activity.Actions.Count; i++)
             {
                 var ActionData = ReplaceDataDyncmically(activity.Actions[i], ActionTemplate,
@@ -123,7 +132,7 @@ namespace Ginger.Reports
             {
                 Bitmap bmp = Ginger.Utils.BitmapManager.FileToBitmapImage(bitmapsource);
                 var txt = string.Empty;
-             
+
                 //Bitmap bitmap;
                 using (var outStream = new MemoryStream())
                 {
@@ -143,7 +152,11 @@ namespace Ginger.Reports
         {
             var VariablesData = "";
             var VariableTemplate = GetStringBetween(BusinessFlowData, "<!--VariableStart-->", "<!--VariableEnd-->");
-            if (string.IsNullOrEmpty(VariableTemplate)) return;
+            if (string.IsNullOrEmpty(VariableTemplate))
+            {
+                return;
+            }
+
             for (var i = 0; i < BFR.Variables.Count; i++)
             {
                 var VariableData = VariableTemplate.Replace("BusinessFlows[i].Variables[i].Seq",
@@ -204,15 +217,19 @@ namespace Ginger.Reports
                     TypeFullName.StartsWith(@"System.Nullable`1[[System.Single"))
                 {
                     if (property.GetValue(Obj) != null)
+                    {
                         inputhtml = inputhtml.Replace(value + "." + property.Name, property.GetValue(Obj).ToString());
+                    }
                     else
+                    {
                         inputhtml = inputhtml.Replace(value + "." + property.Name, "");
+                    }
                 }
             }
             return inputhtml;
         }
 
-        public string ReplaceDataDyncmicallyWithSkip(object Obj, string inputhtml,string[] skiplist)
+        public string ReplaceDataDyncmicallyWithSkip(object Obj, string inputhtml, string[] skiplist)
         {
             var properties = Obj.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
             foreach (var property in properties)
@@ -225,9 +242,13 @@ namespace Ginger.Reports
                         TypeFullName.StartsWith(@"System.Nullable`1[[System.Single"))
                     {
                         if (property.GetValue(Obj) != null)
+                        {
                             inputhtml = inputhtml.Replace(property.Name, property.GetValue(Obj).ToString());
+                        }
                         else
+                        {
                             inputhtml = inputhtml.Replace(property.Name, "");
+                        }
                     }
                 }
             }

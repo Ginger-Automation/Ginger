@@ -17,12 +17,10 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core
 {
-   
+
     [System.AttributeUsage(System.AttributeTargets.All, AllowMultiple = false)]
     public class MinValueAttribute : Attribute, IParamProperty
     {
@@ -33,7 +31,7 @@ namespace Amdocs.Ginger.Plugin.Core
 
         public MinValueAttribute(int minValue)
         {
-            MinValue = minValue; 
+            MinValue = minValue;
         }
 
         public MinValueAttribute()

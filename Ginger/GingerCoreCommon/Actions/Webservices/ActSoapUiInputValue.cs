@@ -22,7 +22,7 @@ namespace GingerCore.Actions.WebServices
 {
     public class ActSoapUiInputValue : ActInputValue
     {
-       
+
         public enum ePropertyType
         {
             System,
@@ -34,13 +34,13 @@ namespace GingerCore.Actions.WebServices
         }
         [IsSerializedForLocalRepository]
         public string Type { get; set; }
-       public ActSoapUiInputValue(ePropertyType properTpe, ActInputValue actInputValue)
+        public ActSoapUiInputValue(ePropertyType properTpe, ActInputValue actInputValue)
         {
             this.Type = properTpe.ToString();
             this.Param = actInputValue.Param;
             this.Value = actInputValue.Value;
             this.ValueForDriver = actInputValue.Value;
         }
-       public ActSoapUiInputValue() { }
+        public ActSoapUiInputValue() { }
     }
 }

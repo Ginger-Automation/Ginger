@@ -73,7 +73,7 @@ limitations under the License.
 //        {
 //            return mContextMenu;
 //        }
-        
+
 //        void ITreeViewItem.SetTools(ITreeView TV)
 //        {
 //            mTreeView = TV;

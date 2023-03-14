@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using Ginger;
+using System.Windows.Controls;
 
 namespace GingerCore.Drivers.InternalBrowserLib
 {
@@ -37,7 +37,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
         }
 
         internal void ShowAsWindow()
-        {            
+        {
             GenericWindow genWin = null;
             GingerCore.General.LoadGenericWindow(ref genWin, IBW, eWindowShowStyle.Dialog, this.Title, this);
         }

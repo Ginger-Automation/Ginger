@@ -16,14 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
-using GingerCore;
-using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.Configurations
 {
-    
+
     public class SealightsConfiguration : RepositoryItemBase
     {
         public enum eSealightsEntityLevel
@@ -54,7 +52,7 @@ namespace Ginger.Configurations
             set
             {
                 if (mSealightsLog != value)
-                { 
+                {
                     mSealightsLog = value;
                     OnPropertyChanged(nameof(SealightsLog));
                 }

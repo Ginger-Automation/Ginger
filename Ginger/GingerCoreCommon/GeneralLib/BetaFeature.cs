@@ -16,15 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Common.GeneralLib
 {
-    
+
     [JsonObject(MemberSerialization.OptIn)]
     public class BetaFeature : INotifyPropertyChanged
     {
@@ -32,7 +29,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
         [JsonProperty]
         public bool Selected { get { return mSelected; } set { if (mSelected != value) { mSelected = value; OnPropertyChanged(ID); } } }
-        
+
         public string Group { get; set; }
 
         [JsonProperty]

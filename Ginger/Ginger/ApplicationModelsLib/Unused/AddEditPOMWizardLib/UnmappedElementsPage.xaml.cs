@@ -20,20 +20,10 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
@@ -75,7 +65,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void AddButtonClicked(object sender, RoutedEventArgs e)
         {
-            List<ElementInfo> ItemsToAddList =  mPOM.UnMappedUIElements.Where(x => x.Selected).ToList();
+            List<ElementInfo> ItemsToAddList = mPOM.UnMappedUIElements.Where(x => x.Selected).ToList();
 
             foreach (ElementInfo EI in ItemsToAddList)
             {

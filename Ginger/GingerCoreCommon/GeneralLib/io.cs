@@ -16,11 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.IO;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using Amdocs.Ginger.IO;
 
 namespace Amdocs.Ginger.Common.GeneralLib
 {

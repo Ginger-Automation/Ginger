@@ -30,7 +30,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
     {
         public string Name { get; set; }
         public string Path { get; set; }
-        
+
         Object ITreeViewItem.NodeObject()
         {
             return null;
@@ -114,9 +114,14 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             mContextMenu = new ContextMenu();
 
             if (IsGingerDefualtFolder)
+            {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false, allowRenameFolder: false, allowDeleteFolder: false, allowDeleteAllItems: true);
+            }
             else
+            {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false);
+            }
+
             AddSourceControlOptions(mContextMenu, false, false);
         }
     }

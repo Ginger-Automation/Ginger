@@ -21,10 +21,10 @@ namespace GingerWPF.WizardLib
 {
     public class WizardPage
     {
-        public string Name { get; set;}
+        public string Name { get; set; }
         public string Title { get; set; }
         public string SubTitle { get; set; }
         public IWizardPage Page { get; set; }
-        public bool HasErrors { get; set; }        
+        public bool HasErrors { get; set; }
     }
 }

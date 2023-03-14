@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GingerCore.GeneralLib
 {
@@ -14,7 +11,7 @@ namespace GingerCore.GeneralLib
         public DateTime ReceivedDateTime { get; init; }
         public bool HasAttachments { get; init; }
         public IEnumerable<Attachment> Attachments { get; init; }
-        
+
         public sealed class Attachment
         {
             public string Name { get; init; }

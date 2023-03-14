@@ -29,8 +29,8 @@ namespace GingerCoreCommonTest.Repository
 {
 
     // Tests to verify that Solution Repository is multi threaded 
-    
-    [TestClass]    
+
+    [TestClass]
     [Level1]
     public class SolutionRepositoryMultiThreadTest
     {
@@ -40,7 +40,7 @@ namespace GingerCoreCommonTest.Repository
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
-        {            
+        {
             TempRepositoryFolder = TestResources.GetTestTempFolder("Solutions", "SRMultiThreadTestTemp");
             Console.WriteLine("SolutionRepositoryTest folder: " + TempRepositoryFolder);
 
@@ -51,25 +51,25 @@ namespace GingerCoreCommonTest.Repository
             mRepositorySerializer = new NewRepositorySerializer();
             // Init SR
             mSolutionRepository = new SolutionRepository();
-            mSolutionRepository.AddItemInfo<MyRepositoryItem>( pattern: "*.Ginger.MyRepositoryItem.xml",   // Need to use for file name 
-                                                               rootFolder: SolutionRepository.cSolutionRootFolderSign + "MyRepositoryItems", 
-                                                               containRepositoryItems: true, 
-                                                               displayName: "My Repository Item", 
+            mSolutionRepository.AddItemInfo<MyRepositoryItem>(pattern: "*.Ginger.MyRepositoryItem.xml",   // Need to use for file name 
+                                                               rootFolder: SolutionRepository.cSolutionRootFolderSign + "MyRepositoryItems",
+                                                               containRepositoryItems: true,
+                                                               displayName: "My Repository Item",
                                                                PropertyNameForFileName: nameof(MyRepositoryItem.Name)
                                                                );
 
-            NewRepositorySerializer RS = new NewRepositorySerializer();                        
-            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommonTest);            
+            NewRepositorySerializer RS = new NewRepositorySerializer();
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommonTest);
             mSolutionRepository.Open(TempRepositoryFolder);
 
-          
+
 
         }
 
         private static void CreateTestSolution()
         {
             // First we create a basic solution with some sample items
-            SolutionRepository SR = new SolutionRepository();                        
+            SolutionRepository SR = new SolutionRepository();
             if (Directory.Exists(TempRepositoryFolder))
             {
                 Directory.Delete(TempRepositoryFolder, true);
@@ -85,7 +85,7 @@ namespace GingerCoreCommonTest.Repository
 
 
             SR.CreateRepository(TempRepositoryFolder);
-            SR.Open(TempRepositoryFolder);            
+            SR.Open(TempRepositoryFolder);
 
             MyRepositoryItem A1 = new MyRepositoryItem("A1");
             SR.AddRepositoryItem(A1);
@@ -122,7 +122,7 @@ namespace GingerCoreCommonTest.Repository
 
 
             // Add another 100 big item so it will take time loading and we can check multi thread access while load in progress
-            for (int i=0;i<100;i++)
+            for (int i = 0; i < 100; i++)
             {
                 MyRepositoryItem bigItem = new MyRepositoryItem("Big Item #" + i);
                 bigItem.BigStringHolderSlowSet = new string('a', 150000);
@@ -159,11 +159,11 @@ namespace GingerCoreCommonTest.Repository
         public void GetAllRepositoryItemsUsingParallel()
         {
             //Arrange
-            int t1Count=0;
-            int t2Count=0;
+            int t1Count = 0;
+            int t2Count = 0;
 
             //Act            
-            Task t1 = new Task(() => 
+            Task t1 = new Task(() =>
             {
                 ObservableList<MyRepositoryItem> allMRIs = mSolutionRepository.GetAllRepositoryItems<MyRepositoryItem>();
                 t1Count = allMRIs.Count;
@@ -197,7 +197,7 @@ namespace GingerCoreCommonTest.Repository
         }
 
 
-       
+
 
 
 

@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
-using Amdocs.Ginger.CoreNET.Run;
 using Ginger.Plugin.Platform.Web;
 using Ginger.Plugin.Platform.Web.Elements;
 using Ginger.Run;
@@ -126,13 +125,13 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         [TestMethod]
         public void SpeedTest()
         {
-            for (int i = 0; i < 10000;i++)
+            for (int i = 0; i < 10000; i++)
             {
                 // SetTextBoxText();
-                 // ClickButtonGrid();
-                 // ClickButtonNotExist();
-                  GotoURLGrid();
-                 // GotoURLDirect();
+                // ClickButtonGrid();
+                // ClickButtonNotExist();
+                GotoURLGrid();
+                // GotoURLDirect();
             }
         }
 
@@ -168,9 +167,9 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             mGR.Executor.RunAction(actBrowserElement, false);
 
             //Assert            
-            Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error), "No Error");            
-            Assert.IsTrue(actBrowserElement.ExInfo.Contains("Navigated to: " + url), "ExInfo");            
-           
+            Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error), "No Error");
+            Assert.IsTrue(actBrowserElement.ExInfo.Contains("Navigated to: " + url), "ExInfo");
+
         }
 
         //[Ignore] // Failing need GR + VE, Create test with GR
@@ -207,7 +206,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             // Act
             IButton elem = (IButton)webPlatform.LocateWebElement.LocateElementByID(Ginger.Plugin.Platform.Web.Elements.eElementType.Button, "button1");
             elem.Click();
-            
+
 
             //Assert
             // Assert.AreEqual(url, browserurl, "URL of naviagte equel browser url");
@@ -233,7 +232,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             //ACT
             mGR.Executor.RunAction(actUIElement, false);
 
-       
+
 
             //Assert                        
             Assert.IsTrue(string.IsNullOrEmpty(actUIElement.Error), "No Error");
@@ -259,7 +258,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             //ACT
             mGR.Executor.RunAction(actUIElement, false);
             //Assert                        
-            Assert.IsTrue(actUIElement.Error.Contains("Element not found"), "actUIElement.Error");            
+            Assert.IsTrue(actUIElement.Error.Contains("Element not found"), "actUIElement.Error");
         }
 
 

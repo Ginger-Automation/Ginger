@@ -16,24 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Core;
-using GingerCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using amdocs.ginger.GingerCoreNET;
 namespace Ginger.User
 {
     /// <summary>
@@ -48,16 +35,16 @@ namespace Ginger.User
         {
             InitializeComponent();
 
-            mOriginalTerminologyType =  WorkSpace.Instance.UserProfile.TerminologyDictionaryType;
-            xTerminologyTypeComboBox.BindControl( WorkSpace.Instance.UserProfile, nameof(UserProfile.TerminologyDictionaryType));
+            mOriginalTerminologyType = WorkSpace.Instance.UserProfile.TerminologyDictionaryType;
+            xTerminologyTypeComboBox.BindControl(WorkSpace.Instance.UserProfile, nameof(UserProfile.TerminologyDictionaryType));
             xTerminologyTypeNoteLbl.Visibility = Visibility.Collapsed;
 
-            xLoggingLevelComboBox.BindControl( WorkSpace.Instance.UserProfile, nameof(UserProfile.AppLogLevel));
+            xLoggingLevelComboBox.BindControl(WorkSpace.Instance.UserProfile, nameof(UserProfile.AppLogLevel));
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoLoadLastSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAskToUpgradeSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAskToRecoverSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));            
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoLoadLastRunSetCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoLoadLastRunSet));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoLoadLastSolutionCheckBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAskToUpgradeSolutionCheckBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAskToRecoverSolutionCheckBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoLoadLastRunSetCheckBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoLoadLastRunSet));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xShowEnterpriseFeatures, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.ShowEnterpriseFeatures));
         }
 
@@ -75,7 +62,7 @@ namespace Ginger.User
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
-             WorkSpace.Instance.UserProfile.SaveBackup();
+            WorkSpace.Instance.UserProfile.SaveBackup();
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button saveBtn = new Button();
@@ -98,7 +85,7 @@ namespace Ginger.User
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
-             WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
+            WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
             _pageGenericWin.Close();
         }
 
@@ -112,7 +99,7 @@ namespace Ginger.User
 
         private void UndoChangesAndClose()
         {
-             WorkSpace.Instance.UserProfile.RestoreFromBackup(true);
+            WorkSpace.Instance.UserProfile.RestoreFromBackup(true);
             _pageGenericWin.Close();
         }
     }

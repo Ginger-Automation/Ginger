@@ -17,13 +17,13 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Collections.Generic;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
 using Ginger.WindowExplorer;
 using GingerCore.Actions;
 using GingerCore.Drivers.Common;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
+using System.Collections.Generic;
+using System.Windows.Controls;
 
 namespace Ginger.Drivers.PowerBuilder
 {
@@ -41,7 +41,7 @@ namespace Ginger.Drivers.PowerBuilder
             list.Add(new ActPBControl()
             {
                 Description = "Set ComboBox to Value " + UIAElementInfo.ElementTitle,
-                ControlAction = ActPBControl.eControlAction.SetValue,               
+                ControlAction = ActPBControl.eControlAction.SetValue,
             });
 
             list.Add(new ActPBControl()
@@ -49,7 +49,7 @@ namespace Ginger.Drivers.PowerBuilder
                 Description = "Get ComboBox Value " + UIAElementInfo.ElementTitle,
                 ControlAction = ActPBControl.eControlAction.GetValue,
             });
-            
+
             //Add option to select the valid values
             List<ComboBoxElementItem> ComboValues = (List<ComboBoxElementItem>)UIAElementInfo.GetElementData();
             foreach (ComboBoxElementItem CBEI in ComboValues)
@@ -57,7 +57,7 @@ namespace Ginger.Drivers.PowerBuilder
                 list.Add(new ActPBControl()
                 {
                     Description = "Set ComboBox Text of '" + this.UIAElementInfo.ElementTitle + "' to '" + CBEI.Text + "'",
-                    ControlAction = ActPBControl.eControlAction.SetValue,               
+                    ControlAction = ActPBControl.eControlAction.SetValue,
                     Value = CBEI.Text
                 });
             }

@@ -16,33 +16,30 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.Common.InterfacesLib
 {
-  public  interface ITextBoxFormatter
+    public interface ITextBoxFormatter
     {
-      
-         void AddText(string txt);
+
+        void AddText(string txt);
 
 
-         void AddLineBreak();
+        void AddLineBreak();
 
 
-         void AddHeader1(string txt);
+        void AddHeader1(string txt);
 
-         void AddBoldText(string txt);
+        void AddBoldText(string txt);
 
 
-         void AddUnderLineText(string txt);
+        void AddUnderLineText(string txt);
 
-         void AddFormattedText(string txt, object txtColor, bool isBold = false, bool isUnderline = false); 
-       
-         string GetText();
+        void AddFormattedText(string txt, object txtColor, bool isBold = false, bool isUnderline = false);
 
-         void AddImage(string image, int width, int height);
-       
+        string GetText();
+
+        void AddImage(string image, int width, int height);
+
     }
 }

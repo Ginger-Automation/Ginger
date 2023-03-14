@@ -16,15 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using System.Runtime.InteropServices;
-using amdocs.ginger.GingerCoreNET;
 // This class is for dummy act - good for agile, and to be replace later on when real
 //  act is available, so tester can write the step to be.
 namespace GingerCore.Actions
@@ -66,7 +64,7 @@ namespace GingerCore.Actions
         {
             UTF8, Unicode, UTF32, UTF7, ASCII, BigEndianUnicode
         }
-        public eTextFileEncodings TextFileEncoding 
+        public eTextFileEncodings TextFileEncoding
         {
             get
             {
@@ -78,7 +76,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public eAppendAt AppendAt 
+        public eAppendAt AppendAt
         {
             get
             {
@@ -90,7 +88,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public string AppendLineNumber 
+        public string AppendLineNumber
         {
             get
             {

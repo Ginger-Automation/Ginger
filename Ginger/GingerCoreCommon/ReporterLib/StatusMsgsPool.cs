@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using GingerCore;
 using System.Collections.Generic;
+using GingerCore;
 
 namespace Amdocs.Ginger.Common
 {
@@ -39,7 +39,7 @@ namespace Amdocs.Ginger.Common
         ScriptImported_RefreshSolution,
         ALMTestSetImport, ExportItemToALM, ALMTestSetMap,
         AddingToSharedRepository,
-        CheckInToSourceControl, GetLatestFromSourceControl, DownloadSolutionFromSourceControl,ResolveSourceControlConflicts,RevertChangesFromSourceControl,
+        CheckInToSourceControl, GetLatestFromSourceControl, DownloadSolutionFromSourceControl, ResolveSourceControlConflicts, RevertChangesFromSourceControl,
         ExportExecutionDetails, UndoChanges,
         LoadingRunSet,
         RunCompleted,
@@ -49,7 +49,7 @@ namespace Amdocs.Ginger.Common
         ASCFTryToConnect, JavaDRiverTryToConnect,
         MainframeIncorrectConfiguration,
         ShowBetaFeatures,
-        AnalyzerFixingIssues,AnalyzerSavingFixedIssues,AnalyzerIsAnalyzing,
+        AnalyzerFixingIssues, AnalyzerSavingFixedIssues, AnalyzerIsAnalyzing,
         GingerHelpLibrary,
         LoadingSolution,
         ExportItem,
@@ -120,7 +120,7 @@ namespace Amdocs.Ginger.Common
             #region Import/Export Messages
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ALMTestSetImport, new StatusMsg(eStatusMsgType.PROCESS, "Importing QC/ALM Test Set", "Importing the ALM Test Set: '{0}'"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ExportItemToALM, new StatusMsg(eStatusMsgType.PROCESS, "Exporting to ALM", "Exporting the item: '{0}'"));
-            Reporter.StatusMsgsPool.Add(eStatusMsgKey.ALMTestSetMap, new StatusMsg(eStatusMsgType.PROCESS, "Mapping To ALM Wizard upload" , "Prepares 'Map To ALM' Wizard data."));
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.ALMTestSetMap, new StatusMsg(eStatusMsgType.PROCESS, "Mapping To ALM Wizard upload", "Prepares 'Map To ALM' Wizard data."));
             #endregion Import/Export Messages
 
             #region BusinessFlows Messages

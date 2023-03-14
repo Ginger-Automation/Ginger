@@ -16,10 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
+using System;
 
 namespace GingerCore.Drivers.ScriptDriverLib
 {
@@ -32,7 +31,7 @@ namespace GingerCore.Drivers.ScriptDriverLib
 
         // Get the action command to be send to the specific derived driver
         public abstract string GetCommandText(ActScript act);
-        
+
         public override void StartDriver()
         {
         }
@@ -49,9 +48,9 @@ namespace GingerCore.Drivers.ScriptDriverLib
         }
 
         protected virtual string RunScript(string cmd) { return cmd; }
-       
+
         protected void Process_Exited(object sender, EventArgs e)
-        {            
+        {
             Reporter.ToLog(eLogLevel.DEBUG, "Data=" + DataBuffer);
             Reporter.ToLog(eLogLevel.DEBUG, "Error=" + ErrorBuffer);
         }
@@ -64,7 +63,7 @@ namespace GingerCore.Drivers.ScriptDriverLib
         protected void AddData(string outLine)
         {
             DataBuffer += outLine;
-        } 
+        }
 
         public override Act GetCurrentElement()
         {
@@ -87,11 +86,11 @@ namespace GingerCore.Drivers.ScriptDriverLib
                     if (command.StartsWith("GINGER_RC="))
                     {
                         //This is FTP command and we already have the result
-                        act.AddOrUpdateReturnParamActual("GINGER_RC",command.Replace("GINGER_RC=", ""));
+                        act.AddOrUpdateReturnParamActual("GINGER_RC", command.Replace("GINGER_RC=", ""));
                     }
                     else
                     {
-                        string sRC="";
+                        string sRC = "";
                         //Send the command via driver
                         if (ACC.ScriptCommand == ActScript.eScriptAct.Script)
                         {
@@ -102,16 +101,16 @@ namespace GingerCore.Drivers.ScriptDriverLib
                         {
                             sRC = RunScript(command);
                         }
-                        sRC =sRC.Replace("\r", "");
+                        sRC = sRC.Replace("\r", "");
                         string[] RCValues = sRC.Split('\n');
                         foreach (string RCValue in RCValues)
                         {
                             if (RCValue.Length > 0) // Ignore empty lines
-                            {                                                                
+                            {
                                 string Param;
                                 string Value;
                                 int i = RCValue.IndexOf('=');
-                                if (i > 0) 
+                                if (i > 0)
                                 {
                                     Param = RCValue.Substring(0, i);
                                     //the rest is the value
@@ -138,7 +137,7 @@ namespace GingerCore.Drivers.ScriptDriverLib
             return "TBD";
         }
 
-        
+
 
         public override void HighlightActElement(Act act)
         {

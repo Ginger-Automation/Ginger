@@ -23,7 +23,7 @@ namespace Amdocs.Ginger.Plugin.Core
 
 
     [GingerInterface("WebBrowser", "Web Browser Automation")]
-    public interface IWebBrowser 
+    public interface IWebBrowser
     {
         /// <summary>
         /// 

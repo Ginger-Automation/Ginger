@@ -49,11 +49,11 @@ namespace UnitTests.NonUITests
         public static void ClassInit(TestContext context)
         {
 
-            BusinessFlow mBF = new BusinessFlow();            
+            BusinessFlow mBF = new BusinessFlow();
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF1";
-           
+
             a1.ActivityName = "Activity1";
             a1.Active = true;
             a1.TargetApplication = "WebApp";
@@ -71,14 +71,14 @@ namespace UnitTests.NonUITests
 
 
 
-        
+
         public void ResetActionList()
         {
             a1.Acts.Clear();
 
             ActUIElement actWebAPISoap = new ActUIElement();
             actWebAPISoap.ItemName = "Action1";
-            actWebAPISoap.ActInputValues.Add(new Amdocs.Ginger.Repository.ActInputValue() { Param = ActUIElement.Fields.ValueToSelect , Value = "bla bli bla VTFInsideList bla bla bla" });
+            actWebAPISoap.ActInputValues.Add(new Amdocs.Ginger.Repository.ActInputValue() { Param = ActUIElement.Fields.ValueToSelect, Value = "bla bli bla VTFInsideList bla bla bla" });
             actWebAPISoap.ActReturnValues.Add(new Amdocs.Ginger.Repository.ActReturnValue() { Param = "ReturnValue1", Expected = "I expect you to VTFInsideList behave" });
             actWebAPISoap.Active = true;
             a1.Acts.Add(actWebAPISoap);
@@ -107,7 +107,8 @@ namespace UnitTests.NonUITests
 
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void FindEqualStringValueTest()
         {
             ResetActionList();
@@ -123,7 +124,8 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void FindStringValueMatchCaseNotAllWordTest()
         {
             ResetActionList();
@@ -138,7 +140,8 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void FindStringValueNotMatchCaseButAllWordTest()
         {
             ResetActionList();
@@ -157,7 +160,8 @@ namespace UnitTests.NonUITests
 
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ReplaceRootedStringValueTest()
         {
             ResetActionList();
@@ -174,7 +178,8 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(value, "My Variable is Changed String", "string Value Validation");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ReplaceInnerListStringValueTest()
         {
             ResetActionList();
@@ -191,7 +196,8 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(value, "bla bli bla Changed String bla bla bla", "InnerList string Value Validation");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ReplaceBoolValueTest()
         {
             ResetActionList();
@@ -209,7 +215,8 @@ namespace UnitTests.NonUITests
         }
 
         [Ignore]  // Fixme missing ActScript in coreNet
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ReplaceEnumValueTest()
         {
             //ResetActionList();
@@ -226,8 +233,9 @@ namespace UnitTests.NonUITests
             //Assert.AreEqual(value, ActScript.eScriptAct.Script, "Enum Value Validation");
         }
 
-        
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void ReplaceIntValueTest()
         {
             ResetActionList();
@@ -238,7 +246,7 @@ namespace UnitTests.NonUITests
 
             FoundItem FI = foundItemsList[0];
             FindAndReplaceUtils findAndReplaceUtils = new FindAndReplaceUtils();
-            findAndReplaceUtils.ReplaceItem(mSearchConfig1, "13132424",FI, "333444");
+            findAndReplaceUtils.ReplaceItem(mSearchConfig1, "13132424", FI, "333444");
             PropertyInfo PI = FI.ItemObject.GetType().GetProperty(FI.FieldName);
             dynamic value = PI.GetValue(FI.ItemObject);
             Assert.AreEqual(value, "333444", "Int Value Validation");
@@ -247,7 +255,8 @@ namespace UnitTests.NonUITests
 
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void FindValuesFromRootedStringField_NameAndValueTest()
         {
             ResetActionList();
@@ -262,7 +271,8 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void FindValuesFromRootedIntField_NameAndValueTest()
         {
             ResetActionList();
@@ -278,13 +288,14 @@ namespace UnitTests.NonUITests
 
 
         [Ignore] //FIXME
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void FindValuesFromRootedEnumField_NameAndValueTest()
         {
             ResetActionList();
 
             ObservableList<FoundItem> foundItemsList = new ObservableList<FoundItem>();
-            List<string> ValuesToFind = new List<string>() { "FreeCommand"};
+            List<string> ValuesToFind = new List<string>() { "FreeCommand" };
             FindFieldsFromAllActionsOnBusinessFlowsList(foundItemsList, ValuesToFind, mSearchConfig1);
 
             Assert.AreEqual(foundItemsList.Count, 1, "Found items count");
@@ -293,7 +304,8 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void FindValuesFromListField_NameAndValueTest()
         {
             ResetActionList();
@@ -310,7 +322,8 @@ namespace UnitTests.NonUITests
         }
 
         [Ignore] //FIXME
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void FindValuesFromList_PathGenerationTest()
         {
             ResetActionList();

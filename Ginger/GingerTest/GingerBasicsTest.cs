@@ -31,7 +31,7 @@ namespace GingerWPFUnitTest
     public class GingerBasicsTest
     {
         static TestContext mTC;
-        static GingerAutomator mGingerAutomator; 
+        static GingerAutomator mGingerAutomator;
         static string SolutionFolder;
         static Mutex mutex = new Mutex();
 
@@ -56,7 +56,7 @@ namespace GingerWPFUnitTest
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            GingerAutomator.EndSession();            
+            GingerAutomator.EndSession();
         }
 
         // Run before each test
@@ -74,7 +74,7 @@ namespace GingerWPFUnitTest
 
 
         [TestMethod]
-        [Timeout(60000)]        
+        [Timeout(60000)]
         public void CheckTabsWhenSolutionClosed()
         {
             //Arrange
@@ -88,7 +88,7 @@ namespace GingerWPFUnitTest
             Assert.AreEqual("xSolutionSelectionMenu,xExtraSolutionOperationsMenu,xSolutionSourceControlMenu,xUserOperationsMenu,xExtraOperationsMenu", tabs);
         }
 
-        
+
 
 
     }

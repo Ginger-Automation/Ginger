@@ -42,7 +42,7 @@ namespace UnitTests.UITests
     [TestClass]
     [Level3]
     public class WebDriverUnitTest
-    {        
+    {
 
         static BusinessFlow mBF;
         static GingerRunner mGR = null;
@@ -91,7 +91,7 @@ namespace UnitTests.UITests
             mGR.Executor.SetCurrentActivityAgent();
 
             // use helper !!!!
-            Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");            
+            Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
@@ -100,7 +100,7 @@ namespace UnitTests.UITests
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+
         }
 
         [TestInitialize]
@@ -184,7 +184,7 @@ namespace UnitTests.UITests
 
             mGR.Executor.CurrentBusinessFlow.CurrentActivity.Acts.Add(actBrowser);
 
-            ActBrowserElement actBrowser2 = new ActBrowserElement() { Active = true, AddNewReturnParams=true};
+            ActBrowserElement actBrowser2 = new ActBrowserElement() { Active = true, AddNewReturnParams = true };
             actBrowser2.ControlAction = ActBrowserElement.eControlAction.GetBrowserLog;
             mGR.Executor.CurrentBusinessFlow.CurrentActivity.Acts.Add(actBrowser2);
 
@@ -321,7 +321,7 @@ namespace UnitTests.UITests
             Assert.AreEqual(eRunStatus.Passed, actGetPageURL.Status, "Action Status");
         }
 
-     
+
         [TestMethod]
         public void CloseTabExceptByTitle()
         {
@@ -490,7 +490,7 @@ namespace UnitTests.UITests
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actBrowser.Status, "Action Status");
         }
-        
+
         [TestMethod]
         public void RunJavaScript()
         {
@@ -618,7 +618,7 @@ namespace UnitTests.UITests
             actBrowser2.ControlAction = ActBrowserElement.eControlAction.SwitchWindow;
             actBrowser2.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByIndex;
             actBrowser2.LocateValue = "1";
-            
+
             //validation
             ActBrowserElement actBrowser3 = new ActBrowserElement();
             actBrowser3.ControlAction = ActBrowserElement.eControlAction.GetWindowTitle;
@@ -648,7 +648,7 @@ namespace UnitTests.UITests
             ActSwitchWindow actSwitchWindow = new ActSwitchWindow();
             actSwitchWindow.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByTitle;
             actSwitchWindow.LocateValue = "Google";
-            actSwitchWindow.GetOrCreateInputParam(ActSwitchWindow.Fields.WaitTime,"10");
+            actSwitchWindow.GetOrCreateInputParam(ActSwitchWindow.Fields.WaitTime, "10");
 
             ActBrowserElement actBrowser1 = new ActBrowserElement();
             actBrowser1.ControlAction = ActBrowserElement.eControlAction.GetWindowTitle;
@@ -786,7 +786,7 @@ namespace UnitTests.UITests
             ActBrowserElement actBrowser = new ActBrowserElement();
             actBrowser.ControlAction = ActBrowserElement.eControlAction.GotoURL;
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString());
-            actBrowser.GetOrCreateInputParam("Value",TestResources.GetTestResourcesFile("TestForm.htm"));
+            actBrowser.GetOrCreateInputParam("Value", TestResources.GetTestResourcesFile("TestForm.htm"));
             actBrowser.AddOrUpdateInputParamValue(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString());
 
             ActUIElement actUIElement = new ActUIElement();
@@ -804,7 +804,7 @@ namespace UnitTests.UITests
             mGR.Executor.RunAction(actBrowser, false);
             mGR.Executor.RunAction(actUIElement, false);
             mGR.Executor.RunAction(actSmartSync, false);
-                
+
             //Assert
             Assert.AreEqual(eRunStatus.Passed, actSmartSync.Status, "Action Status");
         }
@@ -989,7 +989,7 @@ namespace UnitTests.UITests
             actBrowser.GetOrCreateInputParam("Value", "http://www.google.com");
             actBrowser.Active = true;
             activity.Acts.Add(actBrowser);
-           
+
             //act
             ActBrowserElement actBrowser2 = new ActBrowserElement();
             actBrowser2.ControlAction = ActBrowserElement.eControlAction.RunJavaScript;
@@ -1001,7 +1001,7 @@ namespace UnitTests.UITests
             mGR.Executor.RunActivity(activity);
 
             //assert
-            Assert.AreEqual(true,actBrowser2.ReturnValues.FirstOrDefault().Actual.Contains("iPad"));
+            Assert.AreEqual(true, actBrowser2.ReturnValues.FirstOrDefault().Actual.Contains("iPad"));
         }
 
         [TestMethod]

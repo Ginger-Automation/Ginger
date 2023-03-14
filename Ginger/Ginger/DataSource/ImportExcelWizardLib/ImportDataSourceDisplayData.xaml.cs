@@ -16,19 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Ginger.ApplicationModelsLib.ModelOptionalValue;
+using Ginger.UserControlsLib.UCDataGridView;
+using GingerCore.DataSource;
+using GingerWPF.WizardLib;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
-using GingerCore.DataSource;
-using System.Reflection;
-using Ginger.ApplicationModelsLib.ModelOptionalValue;
-using System.Data;
-using System;
-using GingerWPF.WizardLib;
 using System.Windows.Input;
-using System.Collections.Generic;
-using Amdocs.Ginger.Common;
-using Ginger.UserControlsLib.UCDataGridView;
 
 namespace Ginger.DataSource.ImportExcelWizardLib
 {
@@ -41,7 +40,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         ImportOptionalValuesForParameters impParams;
         public DataSet ExcelImportData;
         WizardEventArgs mWizardEventArgs;
-                
+
         private string Path;
         private string SheetName;
         private bool HeadingRow;
@@ -61,7 +60,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             {
                 case EventType.Init:
                     break;
-                case EventType.Active:                    
+                case EventType.Active:
                     Path = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).Path;
                     SheetName = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).SheetName;
                     HeadingRow = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).HeadingRow;
@@ -71,7 +70,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                     impParams.ExcelFileName = Path;
                     impParams.ExcelSheetName = SheetName;
                     DisplayData();
-                    break;                
+                    break;
                 case EventType.LeavingForNextPage:
                     if (xSelectRowTextBox.Text != null && !(string.IsNullOrWhiteSpace(xSelectRowTextBox.Text)))
                     {
@@ -92,7 +91,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                     {
                         ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).ExcelImportData = ExcelImportData;
                     }
-                    
+
 
                     break;
                 default:
@@ -104,7 +103,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         /// Constructor for ImportDataSourceDisplayData class
         /// </summary>
         public ImportDataSourceDisplayData()
-        {           
+        {
             InitializeComponent();
             impParams = new ImportOptionalValuesForParameters();
             ShowRelevantPanel();
@@ -128,7 +127,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-        
+
         /// <summary>
         /// This event is used to view the data from excel
         /// </summary>
@@ -172,7 +171,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                             xExcelDataGrid.ItemsSource = ExcelImportData.Tables[0].AsDataView();
                             xExcelDataGridDockPanel.Visibility = Visibility.Visible;
                         }
-                    }                    
+                    }
                 }
                 else
                 {
@@ -242,7 +241,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                 {
                     xExcelDataGrid.ItemsSource = dt.AsDataView();
                     xExcelDataGridDockPanel.Visibility = Visibility.Visible;
-                    
+
                 }
 
                 mWizardEventArgs.Wizard.ProcessEnded();

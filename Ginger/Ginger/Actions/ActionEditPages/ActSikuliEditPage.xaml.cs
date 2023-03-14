@@ -16,24 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Ginger.Actions.UserControls;
+using GingerCore.Actions;
+using GingerCore.GeneralLib;
+using ScreenSnipApplication;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Media.Imaging;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.UIElement;
-using Ginger.Actions.UserControls;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Actions.ScreenCapture;
-using GingerCore.DataSource;
-using GingerCore.Drivers;
-using GingerCore.GeneralLib;
-using ScreenSnipApplication;
 
 namespace Ginger.Actions
 {

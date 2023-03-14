@@ -16,17 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages;
-using GingerCore.Actions;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace Ginger.UserControlsLib
 {
@@ -112,7 +107,7 @@ namespace Ginger.UserControlsLib
         /// </summary>
         /// <param name="containerControl">The UI control which paste is done on (DataGrid/TreeView/ListView)</param>
         /// <param name="propertiesToSet">List of properties PropertyName-Value to set in reflection to they paste item</param>
-        public static void PasteItems(IClipboardOperations containerControl,  List<Tuple<string,object>> propertiesToSet = null, int currentIndex = -1, Context context = null)
+        public static void PasteItems(IClipboardOperations containerControl, List<Tuple<string, object>> propertiesToSet = null, int currentIndex = -1, Context context = null)
         {
             bool IsValidActionPlatform = true;
 
@@ -172,7 +167,7 @@ namespace Ginger.UserControlsLib
                                 SetProperties(copiedItem, propertiesToSet);
 
                                 //check action platform before copy
-                                if (!ActionsFactory.IsValidActionPlatformForActivity(copiedItem,context))
+                                if (!ActionsFactory.IsValidActionPlatformForActivity(copiedItem, context))
                                 {
                                     IsValidActionPlatform = false;
                                     continue;
@@ -194,7 +189,7 @@ namespace Ginger.UserControlsLib
                     }
                 }
                 catch (Exception ex)
-                {                   
+                {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation Failed, make sure the copied/cut items type and destination type is matching." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + ex.Message);
                     //CutSourceList = null;
                     //CopiedorCutItems.Clear();                    
@@ -229,7 +224,7 @@ namespace Ginger.UserControlsLib
             int insertIndex = 0;
 
             //adding the new item after current selected item            
-            if (currentIndex == -1 || containerControl.GetSourceItemsAsIList().CurrentItem != null) 
+            if (currentIndex == -1 || containerControl.GetSourceItemsAsIList().CurrentItem != null)
             {
                 currentIndex = containerControl.GetSourceItemsAsIList().IndexOf((RepositoryItemBase)containerControl.GetSourceItemsAsIList().CurrentItem);
             }
@@ -241,7 +236,7 @@ namespace Ginger.UserControlsLib
 
             containerControl.GetSourceItemsAsIList().Insert(insertIndex, item);
 
-            return insertIndex;            
+            return insertIndex;
         }
 
     }

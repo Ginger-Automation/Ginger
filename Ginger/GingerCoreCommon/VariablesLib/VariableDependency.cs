@@ -16,14 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Variables
 {
     public class VariableDependency : RepositoryItemBase
-    {        
+    {
 
         public VariableDependency()
         {

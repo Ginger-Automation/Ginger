@@ -16,21 +16,19 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common;
 using System;
-using System.Data;
 using System.Collections.Generic;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCore.Actions;
+using System.Data;
 using System.Linq;
 using System.Reflection;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.DataSource
-{    
+{
 
-    public abstract class DataSourceBase : RepositoryItemBase 
+    public abstract class DataSourceBase : RepositoryItemBase
     {
         public enum eDSType
         {
@@ -38,16 +36,16 @@ namespace GingerCore.DataSource
             LiteDataBase,
             // Access
             [EnumValueDescription("MS Access")]
-            MSAccess,           
+            MSAccess,
         }
 
-        public  static class Fields
+        public static class Fields
         {
             public static string DSType = "DSType";
             public static string Name = "Name";
             public static string FilePath = "FilePath";
-            public static string FileFullPath = "FileFullPath";            
-            public static DataSourceBase DSC = null;                  
+            public static string FileFullPath = "FileFullPath";
+            public static DataSourceBase DSC = null;
         }
 
         private string mName { get; set; }
@@ -59,7 +57,7 @@ namespace GingerCore.DataSource
 
         private string mFilePath;
         private string mFileFullPath;
-        
+
 
         [IsSerializedForLocalRepository]
         public new string FilePath
@@ -96,7 +94,7 @@ namespace GingerCore.DataSource
 
         //Do not use this Observable List
         public ObservableList<DataSourceTable> DSTableList = new ObservableList<DataSourceTable>();
-        
+
 
         public override string ItemName
         {
@@ -109,13 +107,13 @@ namespace GingerCore.DataSource
                 this.Name = value;
             }
         }
-        
+
 
         public override string GetNameForFileName()
         {
             return Name;
         }
-       
+
         public abstract ObservableList<DataSourceTable> GetTablesList();
 
         public abstract void UpdateTableList(ObservableList<DataSourceTable> dsTableList);
@@ -125,14 +123,14 @@ namespace GingerCore.DataSource
 
         public abstract void InitConnection();
         public abstract void AddRow(List<string> mColumnNames, DataSourceTable mDSTableDetails);
-       
-        public abstract void DeleteAll(List<object> AllItemsList, string TName=null);
+
+        public abstract void DeleteAll(List<object> AllItemsList, string TName = null);
         public abstract DataTable GetKeyName(string mDSTableName);
 
-        public abstract void DuplicateRow(List<string> mColumnNames, List<object> SelectedItemsList,  DataSourceTable mDSTableDetails);
-        
+        public abstract void DuplicateRow(List<string> mColumnNames, List<object> SelectedItemsList, DataSourceTable mDSTableDetails);
+
         public abstract DataTable GetTable(string TableName);
-        
+
         public abstract string AddNewCustomizedTableQuery();
 
         public abstract string AddColumnName(string ColunmName);
@@ -149,7 +147,7 @@ namespace GingerCore.DataSource
         public abstract void RemoveColumn(string tableName, string columnName);
 
         public abstract void DeleteTable(string tableName);
-        
+
         public abstract void RenameTable(string tableName, string newTableName);
 
         public abstract string CopyTable(string tableName);
@@ -157,7 +155,7 @@ namespace GingerCore.DataSource
         public abstract bool IsTableExist(string tableName);
 
         public abstract void SaveTable(DataTable dataTable);
-        public abstract bool ExporttoExcel(string TableName, string sExcelPath,String sSheetName,string sTableQueryValue="");
+        public abstract bool ExporttoExcel(string TableName, string sExcelPath, String sSheetName, string sTableQueryValue = "");
 
         //public override void Save()
         //{

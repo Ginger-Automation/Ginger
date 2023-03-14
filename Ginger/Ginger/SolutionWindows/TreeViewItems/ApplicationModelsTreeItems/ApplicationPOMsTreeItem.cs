@@ -21,8 +21,6 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib;
-using Ginger.SourceControl;
-using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -119,9 +117,13 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             TreeViewUtils.AddSubMenuItem(addMenu, "Learn POM from live page", AddPOM, null, eImageType.Screen);
             TreeViewUtils.AddSubMenuItem(addMenu, "Empty POM", AddEmptyPOM, null, eImageType.ApplicationPOMModel);
             if (mPOMModelFolder.IsRootFolder)
+            {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true);
+            }
             else
+            {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowRefresh: false);
+            }
 
             AddSourceControlOptions(mContextMenu);
         }

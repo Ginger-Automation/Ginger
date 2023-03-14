@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using System;
 using System.Windows;
@@ -40,7 +39,7 @@ namespace Ginger
             InitializeComponent();
             mTag = tag;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(lblTagName, Label.ContentProperty, mTag, RepositoryItemTag.Fields.Name);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(lblTagName, Label.ToolTipProperty, mTag, RepositoryItemTag.Fields.Description);            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(lblTagName, Label.ToolTipProperty, mTag, RepositoryItemTag.Fields.Description);
             closeImage.Visibility = Visibility.Hidden;
 
             xDeleteTagBtn.Tag = tag;

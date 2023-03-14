@@ -39,7 +39,7 @@ namespace WorkspaceHold
     [TestClass]
     public class GingerRunnerTest
     {
-        
+
         static DummyDriver mDummyDriver;
         static GingerGrid mGingerGrid;
         static GingerExecutionEngine mGingerRunner;
@@ -47,21 +47,21 @@ namespace WorkspaceHold
         const string cWebApp = "Web";
         static string mPluginId = "DummyPlugin";
         static string mServiceId = "DummyService";
-        
+
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
-        {            
-            
+        {
+
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-           
+
         }
 
-        
+
 
         [TestInitialize]
         public void TestInitialize()
@@ -75,29 +75,29 @@ namespace WorkspaceHold
 
         }
 
-        
+
         [TestMethod]
         [Timeout(60000)]
         public void RunFlow()
         {
             //Arrange  
             WorkSpace.LockWS();
-                Agent agent =prep();
-                BusinessFlow BF = new BusinessFlow("BF1");
-                BF.TargetApplications.Add(new TargetApplication() { AppName = cWebApp });
-                BF.Activities[0].TargetApplication = cWebApp;
-                ActPlugIn a1 = new ActPlugIn() { PluginId = mPluginId, ServiceId = mServiceId, ActionId = "A1", Active = true };
-                BF.Activities[0].Acts.Add(a1);
+            Agent agent = prep();
+            BusinessFlow BF = new BusinessFlow("BF1");
+            BF.TargetApplications.Add(new TargetApplication() { AppName = cWebApp });
+            BF.Activities[0].TargetApplication = cWebApp;
+            ActPlugIn a1 = new ActPlugIn() { PluginId = mPluginId, ServiceId = mServiceId, ActionId = "A1", Active = true };
+            BF.Activities[0].Acts.Add(a1);
 
-                //Act            
-                mGingerRunner.RunBusinessFlow(BF);
-                Console.WriteLine("a1.Error = " + a1.Error);
-                agent.AgentOperations.Close();
+            //Act            
+            mGingerRunner.RunBusinessFlow(BF);
+            Console.WriteLine("a1.Error = " + a1.Error);
+            agent.AgentOperations.Close();
 
-                //Assert
-                Assert.IsTrue(string.IsNullOrEmpty(a1.Error), "Action.Error=null");
-                Assert.AreEqual(eRunStatus.Passed, a1.Status, "a1.Status");
-                Assert.AreEqual(eRunStatus.Passed, BF.Activities[0].Status, "Activity Status = Pass");
+            //Assert
+            Assert.IsTrue(string.IsNullOrEmpty(a1.Error), "Action.Error=null");
+            Assert.AreEqual(eRunStatus.Passed, a1.Status, "a1.Status");
+            Assert.AreEqual(eRunStatus.Passed, BF.Activities[0].Status, "Activity Status = Pass");
             WorkSpace.RelWS();
         }
 

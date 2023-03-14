@@ -48,7 +48,7 @@ namespace GingerCore.ALM.QCRestAPI
             if (validateQcServerUrl.ToLowerInvariant().EndsWith("qcbin"))
             {
                 validateQcServerUrl = qcServerUrl.Remove(qcServerUrl.Length - 5);
-            }  
+            }
             if (QcRestClient == null || validateQcServerUrl != ServerURL || qcUserName != UserName || qcPassword != Password)
             {
                 QcRestClient = new QCClient(validateQcServerUrl, qcUserName, qcPassword);
@@ -68,11 +68,17 @@ namespace GingerCore.ALM.QCRestAPI
                 try
                 {
                     if (QcRestClient != null)
+                    {
                         if (QcRestClient.IsAuthenticated())
+                        {
                             return true;
+                        }
                         else
                             if (QcRestClient.Login())
+                        {
                             return true;
+                        }
+                    }
 
                     return false;
                 }
@@ -87,7 +93,9 @@ namespace GingerCore.ALM.QCRestAPI
         public static void DisconnectQCServer()
         {
             if (QcRestClient == null)
+            {
                 return;
+            }
 
             QcRestClient.Logout();
         }
@@ -98,9 +106,14 @@ namespace GingerCore.ALM.QCRestAPI
             CurrentProject = null;
 
             if (QcRestClient == null)
+            {
                 QcRestClient = new QCClient(ServerURL, UserName, Password);
+            }
+
             if (!QcRestClient.IsAuthenticated())
+            {
                 return QcRestClient.Login();
+            }
 
             return true;
         }
@@ -137,7 +150,7 @@ namespace GingerCore.ALM.QCRestAPI
 
         public static Dictionary<string, string> GetQCDomainProjects(string domainName)
         {
-            return QcRestClient.getProjectsList(domainName).ToDictionary(prj => prj, prj => prj); 
+            return QcRestClient.getProjectsList(domainName).ToDictionary(prj => prj, prj => prj);
         }
 
         public static int GetLastTestPlanIdFromPath(string PathNode)
@@ -148,7 +161,9 @@ namespace GingerCore.ALM.QCRestAPI
             separatePath[0] = ExploredTestPlanFolder.ContainsKey("Subject") ? ExploredTestPlanFolder["Subject"] : QcRestClient.GetTestPlanRootFolder().Id;
 
             if (!ExploredTestPlanFolder.ContainsKey("Subject"))
+            {
                 ExploredTestPlanFolder.Add("Subject", separatePath[0]);
+            }
 
             for (int i = 1; i < separatePath.Length; i++)
             {
@@ -166,7 +181,9 @@ namespace GingerCore.ALM.QCRestAPI
             separatePath[0] = ExploredTestLabFolder.ContainsKey("Root") ? ExploredTestLabFolder["Root"] : QcRestClient.GetTestSetRootFolder().Id;
 
             if (!ExploredTestLabFolder.ContainsKey("Root"))
+            {
                 ExploredTestLabFolder.Add("Root", separatePath[0]);
+            }
 
             for (int i = 1; i < separatePath.Length; i++)
             {
@@ -185,7 +202,9 @@ namespace GingerCore.ALM.QCRestAPI
             separatePath[0] = ExploredTestPlanFolder.ContainsKey("Subject") ? ExploredTestPlanFolder["Subject"] : QcRestClient.GetTestPlanRootFolder().Id;
 
             if (!ExploredTestPlanFolder.ContainsKey("Subject"))
+            {
                 ExploredTestPlanFolder.Add("Subject", separatePath[0]);
+            }
 
             for (int i = 1; i < separatePath.Length; i++)
             {
@@ -195,7 +214,9 @@ namespace GingerCore.ALM.QCRestAPI
             QCTestPlan testPlanToExplor = QcRestClient.GetTestPlanTreeLayerByFilter(separatePath[separatePath.Length - 1], "");
 
             foreach (QCTestFolder folder in testPlanToExplor.folders)
+            {
                 testPlanPathList.Add(folder.Name);
+            }
 
             return testPlanPathList;
         }
@@ -214,7 +235,9 @@ namespace GingerCore.ALM.QCRestAPI
                 separatePath[0] = ExploredTestLabFolder.ContainsKey("Root") ? ExploredTestLabFolder["Root"] : QcRestClient.GetTestSetRootFolder().Id;
 
                 if (!ExploredTestLabFolder.ContainsKey("Root"))
+                {
                     ExploredTestLabFolder.Add("Root", separatePath[0]);
+                }
 
                 for (int i = 1; i < separatePath.Length; i++)
                 {
@@ -224,7 +247,9 @@ namespace GingerCore.ALM.QCRestAPI
                 QCTestSetFolderColl foldersToExplor = QcRestClient.GetTestSetTreeLayerByFilter(separatePath[separatePath.Length - 1], "");
 
                 foreach (QCTestSetFolder folders in foldersToExplor)
+                {
                     testlabPathList.Add(folders.Name);
+                }
             }
             catch (Exception ex)
             {
@@ -243,7 +268,9 @@ namespace GingerCore.ALM.QCRestAPI
                 separatePath[0] = ExploredTestLabFolder.ContainsKey("Root") ? ExploredTestLabFolder["Root"] : QcRestClient.GetTestSetRootFolder().Id;
 
                 if (!ExploredTestLabFolder.ContainsKey("Root"))
+                {
                     ExploredTestLabFolder.Add("Root", separatePath[0]);
+                }
 
                 for (int i = 1; i < separatePath.Length; i++)
                 {
@@ -324,7 +351,7 @@ namespace GingerCore.ALM.QCRestAPI
             {
                 return QcRestClient.GetTestCases(testCasesIds);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to get test cases with REST API", ex);
                 return null;
@@ -466,7 +493,7 @@ namespace GingerCore.ALM.QCRestAPI
         {
             try
             {
-                return QcRestClient.CreateNewEntity(resourceType , item);
+                return QcRestClient.CreateNewEntity(resourceType, item);
             }
             catch (Exception ex)
             {
@@ -502,7 +529,7 @@ namespace GingerCore.ALM.QCRestAPI
         {
             try
             {
-                return QcRestClient.UpdateEntity(resourceType, id , itemDesignStep);
+                return QcRestClient.UpdateEntity(resourceType, id, itemDesignStep);
             }
             catch (Exception ex)
             {

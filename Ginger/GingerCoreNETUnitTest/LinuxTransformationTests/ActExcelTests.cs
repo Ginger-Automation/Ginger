@@ -24,7 +24,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
         {
             WorkSpace.Init(new WorkSpaceEventHandler());
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-            File.Copy(excelPathWrite, excelPathWriteTemp,true);
+            File.Copy(excelPathWrite, excelPathWriteTemp, true);
             if (WorkSpace.Instance.Solution != null)
             {
                 if (WorkSpace.Instance.Solution.SolutionOperations == null)
@@ -38,7 +38,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
             }
         }
-        
+
         [TestMethod]
         public void ReadExcelFirstRowTest()
         {
@@ -54,7 +54,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             actExcel.Execute();
 
             //Assert
-            Assert.AreEqual(actExcel.ActReturnValues.Count,4);
+            Assert.AreEqual(actExcel.ActReturnValues.Count, 4);
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "1,Mark,Cohen,2109 Fox Dr");
             Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address");
         }

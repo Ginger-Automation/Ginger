@@ -100,6 +100,6 @@ namespace Amdocs.Ginger.Repository
                 this.AlmType = AlmType;
             }
         }
-        
+
     }
 }

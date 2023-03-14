@@ -30,7 +30,6 @@ using Ginger.Run.RunSetActions;
 using Ginger.SolutionAutoSaveAndRecover;
 using Ginger.SourceControl;
 using GingerCore;
-using GingerCore.Actions;
 using GingerCore.ALM;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
@@ -56,7 +55,6 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -291,7 +289,9 @@ namespace Ginger
                     foreach (string AttachmentFileName in Attachments)
                     {
                         if (String.IsNullOrEmpty(AttachmentFileName) == false)
+                        {
                             mOutlookMail.Attachments.Add(AttachmentFileName, Type.Missing, Type.Missing, Type.Missing);
+                        }
                     }
 
                     //attachment which is embeded into the email body(images).                       
@@ -529,7 +529,7 @@ namespace Ginger
 
                 //Make it Generic or Const string for names used for File
                 string NewReportName = string.Empty;
-                if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars(), false , NewReportTemplate))
+                if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars(), false, NewReportTemplate))
                 {
                     NewReportTemplate.Name = NewReportName;
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);
@@ -595,5 +595,5 @@ namespace Ginger
         }
     }
 }
-    
+
 

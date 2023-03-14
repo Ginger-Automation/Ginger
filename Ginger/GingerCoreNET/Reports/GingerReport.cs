@@ -134,7 +134,7 @@ namespace Ginger.Reports
                         {
                             try
                             {
-                                BusinessFlowReport br = (BusinessFlowReport)JsonLib.LoadObjFromJSonFile(Path.Combine(folder,"BusinessFlow.txt"), typeof(BusinessFlowReport));
+                                BusinessFlowReport br = (BusinessFlowReport)JsonLib.LoadObjFromJSonFile(Path.Combine(folder, "BusinessFlow.txt"), typeof(BusinessFlowReport));
                                 br.LogFolder = folder;
                                 br.ExecutionLoggerIsEnabled = true;
                                 businessFlowReports.Add(br);
@@ -195,7 +195,7 @@ namespace Ginger.Reports
                         return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
                     }
                 }
-                else if(GingerRunner != null)
+                else if (GingerRunner != null)
                 {
                     return GingerRunner.Status;
                 }
@@ -247,9 +247,13 @@ namespace Ginger.Reports
             get
             {
                 if (TotalBusinessFlows != 0)
+                {
                     return TotalBusinessFlowsPassed * 100 / TotalBusinessFlows;
+                }
                 else
+                {
                     return 0;
+                }
             }
         }
 

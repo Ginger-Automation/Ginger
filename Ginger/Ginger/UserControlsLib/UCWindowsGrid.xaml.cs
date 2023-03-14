@@ -18,27 +18,12 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET;
-using Ginger.Actions.Locators.ASCF;
 using Ginger.BusinessFlowsLibNew.AddActionMenu;
-using Ginger.Drivers.PowerBuilder;
-using Ginger.Drivers.Windows;
-using Ginger.WindowExplorer.Appium;
-using Ginger.WindowExplorer.HTMLCommon;
-using Ginger.WindowExplorer.Java;
-using Ginger.WindowExplorer.Mainframe;
-using GingerCore.Actions.UIAutomation;
-using GingerCore.DataSource;
-using GingerCore.Drivers.Appium;
-using GingerCore.Drivers.Common;
-using GingerCore.Drivers.JavaDriverLib;
 using GingerCore.Platforms.PlatformsInfo;
-using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Xml;
 
 namespace Ginger.UserControlsLib
 {
@@ -48,7 +33,8 @@ namespace Ginger.UserControlsLib
     public partial class UCWindowsGrid : UserControl
     {
         IWindowExplorer windowExplorerDriver;
-        public IWindowExplorer mWindowExplorerDriver {
+        public IWindowExplorer mWindowExplorerDriver
+        {
             get
             {
                 return windowExplorerDriver;
@@ -89,7 +75,7 @@ namespace Ginger.UserControlsLib
         public Context mContext
         {
             get { return GetValue(ContextProperty) as Context; }
-            set { SetValue(ContextProperty, value);  }
+            set { SetValue(ContextProperty, value); }
         }
 
         public bool AddSwitchActionRequired
@@ -117,7 +103,9 @@ namespace Ginger.UserControlsLib
             SelectedWindow = WindowsComboBox.SelectedItem;
             AppWindow AW = (AppWindow)WindowsComboBox.SelectedItem;
             if (AW == null)
+            {
                 return;
+            }
 
             mWindowExplorerDriver.SwitchWindow(AW.Title);
 
@@ -206,12 +194,12 @@ namespace Ginger.UserControlsLib
         {
             if (WindowsComboBox.SelectedValue != null)
             {
-                WindowExplorerCommon.CreateActUISwitchWindowAction((WindowsComboBox.SelectedValue as AppWindow).Title,mContext);
+                WindowExplorerCommon.CreateActUISwitchWindowAction((WindowsComboBox.SelectedValue as AppWindow).Title, mContext);
             }
         }
 
         public void UpdateWindowsList()
-        {            
+        {
             try
             {
                 if (mWindowExplorerDriver != null)
@@ -223,10 +211,10 @@ namespace Ginger.UserControlsLib
                     //TODO: If no selection then select the first if only one window exist in list
                     //if (!(mWindowExplorerDriver is GenericAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
                     //{
-                        if (WindowsComboBox.Items.Count == 1)
-                        {
-                            WindowsComboBox.SelectedValue = WindowsComboBox.Items[0];
-                        }
+                    if (WindowsComboBox.Items.Count == 1)
+                    {
+                        WindowsComboBox.SelectedValue = WindowsComboBox.Items[0];
+                    }
                     //} 
                 }
             }

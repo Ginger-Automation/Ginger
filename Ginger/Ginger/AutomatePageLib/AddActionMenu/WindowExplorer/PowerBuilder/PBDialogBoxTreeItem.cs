@@ -17,10 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
 using Ginger.WindowExplorer;
 using GingerCore.Actions;
 using GingerWPF.UserControlsLib.UCTreeView;
+using System.Windows.Controls;
 
 namespace Ginger.Drivers.PowerBuilder
 {
@@ -30,13 +30,13 @@ namespace Ginger.Drivers.PowerBuilder
         {
             string ImageFileName = "@Info_16x16.png";
             string Title = UIAElementInfo.ElementTitle;
-            return TreeViewUtils.CreateItemHeader(Title, ImageFileName);            
+            return TreeViewUtils.CreateItemHeader(Title, ImageFileName);
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
             ObservableList<Act> list = new ObservableList<Act>();
-           
+
             list.Add(new ActPBControl()
             {
                 Description = "Get Dialog Title " + UIAElementInfo.ElementTitle,

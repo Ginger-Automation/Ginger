@@ -18,10 +18,9 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using GingerCoreNET.SourceControl;
+using Medallion.Shell;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Medallion.Shell;
 using System.IO;
 
 namespace Amdocs.Ginger.CoreNET.SourceControl
@@ -112,7 +111,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
         public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths)
         {
             RunGITCommand(new object[] { "reset", "--hard", "HEAD" }, path);
-            RunGITCommand(new object[] { "fetch"}, path);
+            RunGITCommand(new object[] { "fetch" }, path);
             return RunGITCommand(new object[] { "pull" }, path);
         }
 
@@ -132,20 +131,20 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
 
 
-            return RunGITCommand(new object[] { "clone",  GetCloneUrlString(),"." }, Path);
+            return RunGITCommand(new object[] { "clone", GetCloneUrlString(), "." }, Path);
 
 
 
             string GetCloneUrlString()
             {
-                if(string.IsNullOrEmpty(SourceControlUser))
+                if (string.IsNullOrEmpty(SourceControlUser))
                 {
                     return URI;
                 }
                 Uri url = new Uri(URI);
                 string scheme = url.Scheme;
 
-                return url.Scheme+@"://" + SourceControlUser + ":" + SourceControlPass + "@" + url.Host + url.AbsolutePath;
+                return url.Scheme + @"://" + SourceControlUser + ":" + SourceControlPass + "@" + url.Host + url.AbsolutePath;
             }
         }
 
@@ -167,7 +166,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override void Init()
         {
-           
+
         }
 
         public override bool Lock(string path, string lockComment, ref string error)
@@ -202,13 +201,13 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         private static bool RunGITCommand(object[] args, string Path)
         {
-            if(!Directory.Exists(Path))
+            if (!Directory.Exists(Path))
             {
                 Directory.CreateDirectory(Path);
             }
             var command = "git";
 
-  
+
             var result = Command.Run("git",
                 args,
              options: o => o.WorkingDirectory(Path)).Result;

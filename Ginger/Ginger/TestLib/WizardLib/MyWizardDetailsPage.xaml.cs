@@ -19,8 +19,6 @@ limitations under the License.
 
 using Ginger;
 using GingerWPF.WizardLib;
-using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Controls;
 
 
@@ -31,12 +29,12 @@ namespace GingerTest.WizardLib
     /// </summary>
     public partial class MyWizardDetailsPage : Page, IWizardPage
     {
-        MyWizard mWizard;        
-        
+        MyWizard mWizard;
+
         public MyWizardDetailsPage()
         {
-             InitializeComponent();            
-        }        
+            InitializeComponent();
+        }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
@@ -68,7 +66,7 @@ namespace GingerTest.WizardLib
             }
 
         }
-        
+
 
         private void xPlatformTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -92,7 +90,7 @@ namespace GingerTest.WizardLib
 
         private void xDriverTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-           // mWizard.Agent.InitDriverConfigs();
+            // mWizard.Agent.InitDriverConfigs();
         }
     }
 }

@@ -98,6 +98,6 @@ namespace Amdocs.Ginger.Repository
             {
                 this.Name = value;
             }
-        }     
+        }
     }
 }

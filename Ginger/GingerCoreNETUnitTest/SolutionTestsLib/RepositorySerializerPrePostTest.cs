@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Drivers;
@@ -32,29 +31,29 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
     [TestClass]
     public class RepositorySerializerPrePostTest
     {
-        
+
 
         NewRepositorySerializer RS = new NewRepositorySerializer();
-        
+
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.CreateWorkspace2();            
-            NewRepositorySerializer.AddClass(typeof(DummyAction).Name, typeof(DummyAction));          
+            WorkspaceHelper.CreateWorkspace2();
+            NewRepositorySerializer.AddClass(typeof(DummyAction).Name, typeof(DummyAction));
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+
         }
 
 
         [TestCleanup]
         public void TestCleanUp()
         {
-         
+
         }
 
 
@@ -103,15 +102,15 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
 
                 return false;
             }
-            
+
         }
 
 
-        [TestMethod]        
+        [TestMethod]
         public void SimpleActionToStringAndBack()
         {
             //Arrange
-            DummyAction dummyActionOriginal = new DummyAction() { Name = "d1", Age = 3, NewAge = 3.2};
+            DummyAction dummyActionOriginal = new DummyAction() { Name = "d1", Age = 3, NewAge = 3.2 };
 
             //Act
             string xml = RS.SerializeToString(dummyActionOriginal);
@@ -144,7 +143,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             DummyAction dummyActionOriginal = new DummyAction() { Name = "post", Age = 999 };
 
             //Act
-            string xml = RS.SerializeToString(dummyActionOriginal);            
+            string xml = RS.SerializeToString(dummyActionOriginal);
             DummyAction dummyActionCopy = (DummyAction)NewRepositorySerializer.DeserializeFromText(xml);
 
             //Assert
@@ -159,7 +158,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
 
             //Act
             DummyAction dummyAction = (DummyAction)RS.DeserializeFromFile(fileName);
-            
+
             //Assert
             Assert.AreEqual(7, dummyAction.Age, "Age = 7");
         }
@@ -180,7 +179,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             Assert.AreEqual("Action Timeout - default is 30 seconds", actionTimeoutParameter.Description, "ActionTimeout Description Validation");
         }
 
-     
+
 
 
     }

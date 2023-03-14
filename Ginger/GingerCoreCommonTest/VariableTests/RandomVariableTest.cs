@@ -28,7 +28,7 @@ namespace GingerCoreCommonTest.VariableTests
 {
     [TestClass]
     [Level1]
-    public class RandomVariableTest 
+    public class RandomVariableTest
     {
 
         #region Default Class/Test Initialize Methods
@@ -57,7 +57,8 @@ namespace GingerCoreCommonTest.VariableTests
         }
         #endregion
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomNumberVar_TestImageType()
         {
             //Arrange
@@ -70,7 +71,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(eImageType.Random, eImageType, "RandomNumber Variable Image Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomStringVar_TestImageType()
         {
             //Arrange
@@ -83,7 +85,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(eImageType.Languages, eImageType, "RandomString Variable Image Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomNumberVar_Min5_Max10_Interval_1()
         {
             //Arrange
@@ -101,7 +104,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(decimal.Parse(variableRandomNumber.Value) <= 10, "vn.Value<=10");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomNumberVar_Min10_Max100_Interval_5()
         {
             //We want to verify that the numbers we get are in interval of 5, can be 10,15,20 etc... but number like 17 is not valid
@@ -113,7 +117,7 @@ namespace GingerCoreCommonTest.VariableTests
             //Arrange
             VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
             variableRandomNumber.Min = min;
-            variableRandomNumber.Max = max;            
+            variableRandomNumber.Max = max;
             variableRandomNumber.Interval = interval;
 
             //Act
@@ -137,7 +141,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(num3 % 5 == 0 || num3 % 5 == 5, "num1 % 5 == 0 || num1 % 5 == 5");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomNumberVar_Min500_Max100()
         {
             //Arrange
@@ -148,7 +153,7 @@ namespace GingerCoreCommonTest.VariableTests
 
             //Act
             string errorMsg = string.Empty;
-            variableRandomNumber.GenerateAutoValue(ref errorMsg);          
+            variableRandomNumber.GenerateAutoValue(ref errorMsg);
 
             //Assert
             Assert.AreEqual(variableRandomNumber.Value, "Error: Min > Max", "Error: Min > Max");
@@ -156,7 +161,8 @@ namespace GingerCoreCommonTest.VariableTests
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomNumberVar_var500_Interval_40()
         {
             //Arrange
@@ -169,13 +175,14 @@ namespace GingerCoreCommonTest.VariableTests
             string errorMsg = string.Empty;
             variableRandomNumber.GenerateAutoValue(ref errorMsg);
             decimal num1 = decimal.Parse(variableRandomNumber.Value);
-            
+
             //Verify numbers areof mutlipliers of 40 starting with 0
             Assert.IsTrue(num1 >= 0 && num1 <= 500, "num1>=0 && num1 <=500");
-            Assert.AreEqual(num1 % 40, 0, "num1 % 40 = 0");            
+            Assert.AreEqual(num1 % 40, 0, "num1 % 40 = 0");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomNumberVar_Negative_Minus10_to_Minus_5()
         {
             //Arrange
@@ -189,10 +196,11 @@ namespace GingerCoreCommonTest.VariableTests
             decimal num1 = decimal.Parse(variableRandomNumber.Value);
 
             //Verify numbers areof mutlipliers of 40 starting with 0
-            Assert.IsTrue(num1 >= -10 && num1 <= -5, "num1>=-10 && num1 <=-5");            
+            Assert.IsTrue(num1 >= -10 && num1 <= -5, "num1>=-10 && num1 <=-5");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomStringVar_LowerString15char()
         {
             //Arrange
@@ -205,10 +213,11 @@ namespace GingerCoreCommonTest.VariableTests
             variableRandomString.GenerateAutoValue(ref errorMsg);
 
             //Assert
-           Assert.AreEqual(variableRandomString.Value, variableRandomString.Value.ToLower(), "variableRandomString.Value, variableRandomString.Value.ToLower()");
+            Assert.AreEqual(variableRandomString.Value, variableRandomString.Value.ToLower(), "variableRandomString.Value, variableRandomString.Value.ToLower()");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomStringVar_UpperString15char()
         {
             //Arrange
@@ -221,10 +230,11 @@ namespace GingerCoreCommonTest.VariableTests
             variableRandomString.GenerateAutoValue(ref errorMsg);
 
             //Assert
-           Assert.AreEqual(variableRandomString.Value.ToUpper(), variableRandomString.Value, "variableRandomString.Value, variableRandomString.Value.ToUpper()");
+            Assert.AreEqual(variableRandomString.Value.ToUpper(), variableRandomString.Value, "variableRandomString.Value, variableRandomString.Value.ToUpper()");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomStringVar_BothupperlowerString15char_ShowError()
         {
             //Arrange
@@ -246,7 +256,8 @@ namespace GingerCoreCommonTest.VariableTests
             //Assert.AreEqual(variableRandomString.Formula, "Error", "variableRandomString.Formula=Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomStringVar_0_10_chars()
         {
             //Arrange
@@ -260,14 +271,25 @@ namespace GingerCoreCommonTest.VariableTests
             //Act   
             Stopwatch stopwatch = Stopwatch.StartNew();
             // Run until we hit all numbers or 10 seconds
-            while (!(Hit0 && Hit5 && Hit10) && stopwatch.ElapsedMilliseconds < 10000)            
+            while (!(Hit0 && Hit5 && Hit10) && stopwatch.ElapsedMilliseconds < 10000)
             {
                 string errorMsg = string.Empty;
                 variableRandomString.GenerateAutoValue(ref errorMsg);
-                Assert.IsTrue(variableRandomString.Value.Length >= 0 && variableRandomString.Value.Length <= 10, "variableRandomString.Value.Length >= 0 && variableRandomString.Value.Length <= 10");                
-                if (variableRandomString.Value.Length == 0) Hit0 = true;
-                if (variableRandomString.Value.Length == 5) Hit5 = true;
-                if (variableRandomString.Value.Length == 10) Hit10 = true;                
+                Assert.IsTrue(variableRandomString.Value.Length >= 0 && variableRandomString.Value.Length <= 10, "variableRandomString.Value.Length >= 0 && variableRandomString.Value.Length <= 10");
+                if (variableRandomString.Value.Length == 0)
+                {
+                    Hit0 = true;
+                }
+
+                if (variableRandomString.Value.Length == 5)
+                {
+                    Hit5 = true;
+                }
+
+                if (variableRandomString.Value.Length == 10)
+                {
+                    Hit10 = true;
+                }
             }
 
             //Verify we hit the boundaries at least once
@@ -276,12 +298,13 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(Hit10, "Hit10");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomStringVar_DigitsString15char()
         {
             //Arrange
             VariableRandomString variableRandomString = new VariableRandomString();
-            variableRandomString.Max = 15;            
+            variableRandomString.Max = 15;
             variableRandomString.IsDigit = true;
 
             //Act
@@ -294,7 +317,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(isDigits, "String does not contain digits");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomNumberVar_BigNumbers_1111111111111__()
         {
             //Arrange
@@ -308,10 +332,11 @@ namespace GingerCoreCommonTest.VariableTests
             decimal num1 = decimal.Parse(variableRandomNumber.Value);
 
             //Assert            
-            Assert.IsTrue(num1 >= 1111111111111 && num1 <= 9999999999999, "num1 >= 1111111111111 && num1 <= 9999999999999");            
+            Assert.IsTrue(num1 >= 1111111111111 && num1 <= 9999999999999, "num1 >= 1111111111111 && num1 <= 9999999999999");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomNumberVar_Integer_1_10_checkNoFractions()
         {
             //Arrange
@@ -331,7 +356,8 @@ namespace GingerCoreCommonTest.VariableTests
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomNumberVar_With_Fractions()
         {
             //Arrange
@@ -345,10 +371,10 @@ namespace GingerCoreCommonTest.VariableTests
             decimal num1 = decimal.Parse(variableRandomNumber.Value);
 
             //Assert            
-            Assert.IsTrue(num1 >= 1.5M && num1 <= 1.7M, "num1 >= 1.5M && num1 <= 1.7M");            
+            Assert.IsTrue(num1 >= 1.5M && num1 <= 1.7M, "num1 >= 1.5M && num1 <= 1.7M");
         }
 
-        
+
         [TestMethod]
         [Timeout(60000)]
         public void Random_Check_Hit_All_Numbers()
@@ -378,14 +404,15 @@ namespace GingerCoreCommonTest.VariableTests
 
             // We check that each number was hit            
             for (int i = 0; i < 20; i++)
-            {                
-                Assert.IsTrue(numbers[i] > 0, "Hit count a[i]>0 i=" + i);                
-            }                        
+            {
+                Assert.IsTrue(numbers[i] > 0, "Hit count a[i]>0 i=" + i);
+            }
         }
 
-        
 
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomStringVar_Digit_5_8()
         {
             //Arrange
@@ -402,8 +429,9 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(variableRandomString.Value.Length >= 5 && variableRandomString.Value.Length <= 8, "variableRandomString.Value.Length >= 5 && variableRandomString.Value.Length <= 8");
         }
 
-        
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomStringVar_Digit_6_10_HitAllRange()
         {
             //Arrange
@@ -421,11 +449,11 @@ namespace GingerCoreCommonTest.VariableTests
                 variableRandomString.GenerateAutoValue(ref errorMsg);
                 decimal num1 = decimal.Parse(variableRandomString.Value);
                 Assert.IsTrue(variableRandomString.Value.Length >= 6 && variableRandomString.Value.Length <= 10, "variableRandomString.Value.Length >= 6 && variableRandomString.Value.Length <= 10");
-                a[variableRandomString.Value.Length-6]++;                
+                a[variableRandomString.Value.Length - 6]++;
             }
 
             //Assert                                    
-            Assert.IsTrue(CheckHits(a), "all items in array hit");             
+            Assert.IsTrue(CheckHits(a), "all items in array hit");
         }
 
         /// <summary>
@@ -445,7 +473,8 @@ namespace GingerCoreCommonTest.VariableTests
             return true;
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomStringVar_0_5_Hit0()
         {
             //Arrange
@@ -467,10 +496,11 @@ namespace GingerCoreCommonTest.VariableTests
             }
 
             //Assert
-            Assert.IsTrue(Hit0, "Hit0");             
+            Assert.IsTrue(Hit0, "Hit0");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RandomStringVar_Digit_13()
         {
             //Arrange

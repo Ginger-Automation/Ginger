@@ -16,9 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using System.ComponentModel;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
 
 namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
 {
@@ -30,7 +28,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
         [EnumValueDescription("Web")]
         Web,
         [EnumValueDescription("Mobile")]
-        Mobile,  
+        Mobile,
         [EnumValueDescription("Unix")]
         Unix,
         [EnumValueDescription("ASCF")]
@@ -49,7 +47,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
         Java,
         [EnumValueDescription("Mainframe")]
         MainFrame,
-        [EnumValueDescription("Ginger Service")]       
+        [EnumValueDescription("Ginger Service")]
         Service
         //AndroidDevice,  // rename to Android, join with Android
     }

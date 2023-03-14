@@ -23,7 +23,7 @@ namespace Amdocs.Ginger.Repository
         public static class Fields
         {
             public static string Name = "Name";
-            public static string Description = "Description";          
+            public static string Description = "Description";
         }
 
 

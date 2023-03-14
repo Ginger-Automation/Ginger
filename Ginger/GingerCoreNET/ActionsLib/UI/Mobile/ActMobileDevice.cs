@@ -23,7 +23,6 @@ using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace GingerCore.Actions
 {

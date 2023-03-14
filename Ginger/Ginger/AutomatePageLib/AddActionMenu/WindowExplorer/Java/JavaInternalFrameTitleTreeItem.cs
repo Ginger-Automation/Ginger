@@ -17,12 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
-using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Java;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.Java
 {
@@ -33,11 +31,11 @@ namespace Ginger.WindowExplorer.Java
             string ImageFileName = "@Browser_16x16.png";
             return TreeViewUtils.CreateItemHeader(Name, ImageFileName);
         }
-       
+
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
             ObservableList<Act> list = new ObservableList<Act>();
-            
+
             list.Add(new ActJavaElement()
             {
                 Description = "Get " + Name + " Value",

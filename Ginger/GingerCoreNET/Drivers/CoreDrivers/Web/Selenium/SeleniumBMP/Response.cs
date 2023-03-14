@@ -29,7 +29,7 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
         public string HttpVersion { get; set; }
         public int HeadersSize { get; set; }
         public string StatusText { get; set; }
-        public string RedirectUrl { get; set; }            
+        public string RedirectUrl { get; set; }
         public string Comment { get; set; }
     }
 }

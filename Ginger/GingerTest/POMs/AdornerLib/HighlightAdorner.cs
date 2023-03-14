@@ -34,13 +34,13 @@ namespace GingerTest
 
         public HighlightAdorner(UIElement adornedElement) :
         base(adornedElement)
-        {            
+        {
             visualChildren = new VisualCollection(this);
-            highlighterAdorner.Opacity = 0.20;         
-            visualChildren.Add(highlighterAdorner);            
+            highlighterAdorner.Opacity = 0.20;
+            visualChildren.Add(highlighterAdorner);
             var layer = AdornerLayer.GetAdornerLayer(adornedElement);
             layer.Add(this);
-            adornedElement.InvalidateVisual();          
+            adornedElement.InvalidateVisual();
         }
 
 
@@ -51,7 +51,7 @@ namespace GingerTest
             double desiredHeight = AdornedElement.DesiredSize.Height + 10;
 
             highlighterAdorner.Arrange(new Rect(-10, -10, desiredWidth, desiredHeight));
-            
+
             return finalSize;
         }
 

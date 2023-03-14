@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using GingerWPF.WizardLib;
 using System;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -30,12 +29,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     /// </summary>
     public partial class POMObjectsMappingWizardPage : Page, IWizardPage
     {
-        public AddPOMWizard mWizard;                            
-        PomAllElementsPage mPomAllElementsPage = null;        
+        public AddPOMWizard mWizard;
+        PomAllElementsPage mPomAllElementsPage = null;
 
         public POMObjectsMappingWizardPage()
         {
-            InitializeComponent();                       
+            InitializeComponent();
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -45,7 +44,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 case EventType.Init:
                     mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
                     if (!mWizard.ManualElementConfiguration)
-                    {                        
+                    {
                         InitilizePomElementsMappingPage();
                     }
                     break;
@@ -67,7 +66,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
 
                         xReLearnButton.Visibility = Visibility.Visible;
-                        
+
                         Learn();
                     }
                     break;
@@ -128,7 +127,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (mPomAllElementsPage == null)
             {
-                mPomAllElementsPage = new PomAllElementsPage(mWizard.mPomLearnUtils.POM, PomAllElementsPage.eAllElementsPageContext.AddPOMWizard,false);
+                mPomAllElementsPage = new PomAllElementsPage(mWizard.mPomLearnUtils.POM, PomAllElementsPage.eAllElementsPageContext.AddPOMWizard, false);
                 mPomAllElementsPage.ShowTestAllElementsButton = Visibility.Collapsed;
                 mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
                 xPomElementsMappingPageFrame.Content = mPomAllElementsPage;
@@ -141,7 +140,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xStopLoadButton.IsEnabled = false;
             mWizard.mPomLearnUtils.StopLearning();
         }
-         
+
 
         private void ReLearnButtonClicked(object sender, RoutedEventArgs e)
         {

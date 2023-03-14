@@ -62,7 +62,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
         //UTF16 for String which are created by the user and might have language or special chars
         public static System.Text.UnicodeEncoding UTF16 = new System.Text.UnicodeEncoding();
-        
+
         //Const - Data Type - one byte before each type in package
         const byte StringType = 1;    // string
         const byte IntType = 2;       // int
@@ -79,17 +79,17 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         const byte Struct = 11;    // Struct for fixed struct with simple propers like int, float not for dynamic values
         const byte JSONStruct = 12;    // Struct for fixed struct with simple propers like int, float not for dynamic values
         const byte PayLoadType = 13;
-        
+
 
         // Last char is 255 - looks like space but is not and marking end of packaet
         const byte LastByteMarker = 255;
         const int cNULLStringLen = -1;    // if the string we write is null we write len = -1 - save space and parsing time
-        
+
         byte[] mBuffer = new byte[4096];  // start with initial buffer of 1024, will grow if needed
         int mBufferIndex = 4; // We strat to write data at position 4, the first 4 bytes will be the data length
 
-        public string Name {get; set;}
-        
+        public string Name { get; set; }
+
         /// Create new empty Payload with name 
         public NewPayLoad(string Name)
         {
@@ -105,14 +105,14 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             //TODO: check if we need to do memcopy, to dup and not use the original, since we do not change packets it should be OK.
             mBuffer = bytes;
             ReadPayloadType();
-            Name = ReadString();   
+            Name = ReadString();
 
             //Verify integrity
             if (IgnoreExtraSpace)
             {
                 // verify Last byte marker at the index len
                 int len = GetDataLen();
-                byte b = bytes[len +3];
+                byte b = bytes[len + 3];
                 if (b != LastByteMarker)
                 {
                     throw new InvalidOperationException("PayLoad Integrity Error - last byte != 255");
@@ -132,7 +132,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         public void Truncate()
         {
             int totalLen = GetDataLen() + 4;
-            Array.Resize(ref mBuffer, totalLen); 
+            Array.Resize(ref mBuffer, totalLen);
         }
 
         public string GetHexString()
@@ -141,7 +141,10 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             StringBuilder hex = new StringBuilder(mBuffer.Length * 2);
 
             foreach (byte b in mBuffer)
+            {
                 hex.AppendFormat("{0:x2}", b);
+            }
+
             return hex.ToString();
         }
 
@@ -159,8 +162,8 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             mBuffer[mBufferIndex] = LastByteMarker;
             mBufferIndex++;
 
-            SetDataLen(mBufferIndex-4);   //-4 since len is not included
-                                          // TODO: find a way instead of copy to return subset of buffer          
+            SetDataLen(mBufferIndex - 4);   //-4 since len is not included
+                                            // TODO: find a way instead of copy to return subset of buffer          
 
             Array.Resize(ref mBuffer, mBufferIndex); // Cut the extra unused buffer        
 
@@ -181,7 +184,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             mBuffer[0] = (byte)(Len >> 24);
             mBuffer[1] = (byte)(Len >> 16);
             mBuffer[2] = (byte)(Len >> 8);
-            mBuffer[3] = (byte)Len;            
+            mBuffer[3] = (byte)Len;
         }
 
         private int GetDataLen()
@@ -206,7 +209,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
             else
             {
-                WriteInt(cNULLStringLen);                               
+                WriteInt(cNULLStringLen);
             }
         }
         private void WriteUnicodeString(string val)
@@ -254,9 +257,9 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         private String ReadUnicodeString()
         {
             int len = ReadInt();
-            String s = UTF16.GetString(mBuffer,mBufferIndex,len);
+            String s = UTF16.GetString(mBuffer, mBufferIndex, len);
             mBufferIndex += len;
-            return s;            
+            return s;
         }
 
         private void WriteInt(int val)
@@ -273,9 +276,9 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
         private int ReadInt()
         {
-            int val = ((mBuffer[mBufferIndex]) << 24) + (mBuffer[mBufferIndex + 1] << 16) + (mBuffer[mBufferIndex + 2] << 8) + mBuffer[mBufferIndex +3];            
+            int val = ((mBuffer[mBufferIndex]) << 24) + (mBuffer[mBufferIndex + 1] << 16) + (mBuffer[mBufferIndex + 2] << 8) + mBuffer[mBufferIndex + 3];
             mBufferIndex += 4;
-            return val;          
+            return val;
         }
 
         /// <summary>
@@ -287,11 +290,11 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             if (mBufferIndex + Len > mBuffer.Length)
             {
                 int SpaceToAdd = 1024;
-                if (Len > SpaceToAdd) 
+                if (Len > SpaceToAdd)
                 {
                     SpaceToAdd = Len + 1024;  // Make sure that we add enought space to hold the new data
                 }
-                
+
                 Array.Resize(ref mBuffer, mBuffer.Length + SpaceToAdd); // Add more space in chuncks of 1024
             }
         }
@@ -312,8 +315,8 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         // ----------------------------------------------------------------------------------------------------------------------------------------------------
         //   Payload type - new in GingerCoreNet for async communication
         // ----------------------------------------------------------------------------------------------------------------------------------------------------
-        
-            //TODO: use the same enum style for val type for enum of byte
+
+        //TODO: use the same enum style for val type for enum of byte
 
         public enum ePaylodType : byte
         {
@@ -345,7 +348,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         private void ReadPayloadType()
         {
             mPaylodType = (ePaylodType)mBuffer[mBufferIndex];
-            mBufferIndex++;            
+            mBufferIndex++;
         }
 
         // ----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -355,8 +358,8 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         //1 - Add String Simple UTF8
         public void AddValue(string s)
         {
-            if (s!=null)
-            {               
+            if (s != null)
+            {
                 CheckBuffer(s.Length + 5); // String is 1(type) + 4(len) + data           
             }
             else
@@ -399,29 +402,31 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             WriteValueType(StringUTF16Type);
             WriteUnicodeString(val);
         }
-        
+
         //5 Add - List of Strings
-        public void AddValue(List<String> list) 
-	    {
-		    // List is #5
-		    // First we write the zise of the List and then String one after another 
-		    if (list != null)
+        public void AddValue(List<String> list)
+        {
+            // List is #5
+            // First we write the zise of the List and then String one after another 
+            if (list != null)
             {
                 int len = 0;
                 foreach (string s in list)
                 {
                     if (s != null)
+                    {
                         len += s.Length;
+                    }
                 }
-                CheckBuffer(len + 5); 
+                CheckBuffer(len + 5);
             }
-		    WriteValueType(ListStringType);
-		    WriteInt(list.Count);
-		    foreach(string s in list)
-		    {
-			    WriteString(s);	
-		    }
-	    }
+            WriteValueType(ListStringType);
+            WriteInt(list.Count);
+            foreach (string s in list)
+            {
+                WriteString(s);
+            }
+        }
 
         // 6 List of PayLoad
         public void AddListPayLoad(List<NewPayLoad> elements)
@@ -437,7 +442,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
         }
 
-        
+
 
         // 7 Add Bytes
         public void AddBytes(Byte[] bytes)
@@ -453,7 +458,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         {
             CheckBuffer(1 + 16);  // Guid to byte[] is 16 bytes length + 1 for type
             byte[] bytes = guid.ToByteArray();
-            WriteValueType(GuidType);     
+            WriteValueType(GuidType);
             Buffer.BlockCopy(bytes, 0, mBuffer, mBufferIndex, bytes.Length);
             mBufferIndex += 16;
         }
@@ -469,10 +474,10 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             else
             {
                 WriteValueType(BoolFalse);
-            }            
+            }
         }
 
-        
+
         // 11 add Struct        
         /// <summary>
         /// Add value to payload of type struct as byte array
@@ -488,22 +493,22 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         {
             // Since we use unmanaged, memory, pointers etc adding try/catch
 
-            IntPtr ptr = IntPtr.Zero;            
+            IntPtr ptr = IntPtr.Zero;
             try
-            {                
+            {
                 //TODO: Copy direct to buffer !!!!
 
-                var size = Marshal.SizeOf(typeof(T));             
+                var size = Marshal.SizeOf(typeof(T));
                 var bytes = new byte[size];
                 ptr = Marshal.AllocHGlobal(size);
                 Marshal.StructureToPtr(structValue, ptr, true);
-                Marshal.Copy(ptr, bytes, 0, size);                
+                Marshal.Copy(ptr, bytes, 0, size);
                 CheckBuffer(1 + 4 + bytes.Length);  // type + len
                 WriteValueType(Struct);
                 WriteInt(bytes.Length);
                 WriteBytes(bytes);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Error in Payload AddValue for struct: " + ex.Message);
                 throw ex;
@@ -517,13 +522,13 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
         }
 
-        
+
         public T GetValue<T>() where T : struct
         {
             byte b = ReadValueType();
 
             if (b == Struct)
-            {                
+            {
                 int size = Marshal.SizeOf(typeof(T));
                 IntPtr ptr = Marshal.AllocHGlobal(size);
 
@@ -561,9 +566,9 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         /// <param name="structValue"></param>
         public void AddJSONValue<T>(T structValue) where T : struct
         {
-            var json = JsonConvert.SerializeObject(structValue);                        
+            var json = JsonConvert.SerializeObject(structValue);
             WriteValueType(JSONStruct);
-            WriteString(json);            
+            WriteString(json);
         }
 
         public T GetJSONValue<T>() where T : struct
@@ -590,12 +595,12 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         {
             CheckBuffer(1 + item.PackageLen() + 4);
             WriteValueType(PayLoadType);
-            WriteBytes(item.GetPackage());            
+            WriteBytes(item.GetPackage());
         }
 
         // 13 Read Payload
         public NewPayLoad ReadPayload()
-        {                        
+        {
             byte b = ReadValueType();
 
             if (b == PayLoadType)
@@ -613,7 +618,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
         public void AddValueByObjectType(object obj)
         {
-            string pType = obj.GetType().Name;            
+            string pType = obj.GetType().Name;
             switch (pType)
             {
                 case nameof(String):
@@ -632,13 +637,13 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         }
 
         public object GetValueByObjectType()
-        {            
+        {
             byte bType = mBuffer[mBufferIndex];  // peek in the next value type             
             switch (bType)
-            {                
+            {
                 case IntType:
                     int i = GetValueInt();
-                    return i;                    
+                    return i;
                 case StringType:
                     string s = GetValueString();
                     if (s == "NULL")
@@ -662,45 +667,45 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         // ----------------------------------------------------------------------------------------------------------------------------------------------------
         //   EOF - Public Add to package functions
         // ----------------------------------------------------------------------------------------------------------------------------------------------------
-        
+
         public List<object> GetParsedResult()
         {
             List<object> result = new List<object>();
             byte byteValue = ReadValueType();
             switch (byteValue)
-                {
-                    case StringType:
-                        result.Add(ReadString());
-                        break;
-                    case IntType:
-                        result.Add(ReadInt());
-                        break;
-                    case EnumValueType:                    
-                        result.Add(ReadString());
-                        break;
-                    case StringUTF16Type:
-                        result.Add(ReadUnicodeString());                         
-                        break;
-                    case ListStringType:
-                        int count = ReadInt();
-                        for (int i = 0; i < count; i++)
-                        {
-                            string s = ReadString();
-                            result.Add(s);
-                        }
-                        break;
-                    default:
-                        throw new InvalidOperationException("Parsing Error/Wrong Value Type b =" + byteValue + ". Name of the Payload is " + Name + " & Buffer Index is " + mBufferIndex);
-                }           
+            {
+                case StringType:
+                    result.Add(ReadString());
+                    break;
+                case IntType:
+                    result.Add(ReadInt());
+                    break;
+                case EnumValueType:
+                    result.Add(ReadString());
+                    break;
+                case StringUTF16Type:
+                    result.Add(ReadUnicodeString());
+                    break;
+                case ListStringType:
+                    int count = ReadInt();
+                    for (int i = 0; i < count; i++)
+                    {
+                        string s = ReadString();
+                        result.Add(s);
+                    }
+                    break;
+                default:
+                    throw new InvalidOperationException("Parsing Error/Wrong Value Type b =" + byteValue + ". Name of the Payload is " + Name + " & Buffer Index is " + mBufferIndex);
+            }
             return result;
         }
 
         public string GetValueString()
         {
             byte b = ReadValueType();
-            
+
             if (b == StringType)
-            {                
+            {
                 string s = ReadString();
                 return s;
             }
@@ -713,7 +718,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         public int GetValueInt()
         {
             byte b = ReadValueType();
-            
+
             if (b == IntType)
             {
                 int val = ReadInt();
@@ -728,7 +733,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         public string GetValueEnum()
         {
             byte b = ReadValueType();
-            
+
             if (b == EnumValueType)
             {
                 string s = ReadString();
@@ -742,9 +747,9 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
         public string GetStringUTF16()
         {
-            
+
             byte b = ReadValueType();
-            
+
             if (b == StringUTF16Type)
             {
                 string s = ReadUnicodeString();
@@ -760,16 +765,16 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         {
             List<string> list = new List<string>();
 
-            byte b = ReadValueType();        
-            
+            byte b = ReadValueType();
+
             if (b == ListStringType)
             {
                 int count = ReadInt();
-                for(int i=0;i<count;i++)
+                for (int i = 0; i < count; i++)
                 {
                     string s = ReadString();
                     list.Add(s);
-                }                
+                }
                 return list;
             }
             else
@@ -797,7 +802,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         {
             CheckBuffer(Bytes.Length + 4);   // why + 4 if not used !!!???
 
-            Buffer.BlockCopy(Bytes, 0, mBuffer, mBufferIndex, Bytes.Length);            
+            Buffer.BlockCopy(Bytes, 0, mBuffer, mBufferIndex, Bytes.Length);
             mBufferIndex += Bytes.Length;
         }
 
@@ -805,13 +810,13 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         {
             List<NewPayLoad> list = new List<NewPayLoad>();
 
-            byte b = ReadValueType();           
+            byte b = ReadValueType();
             if (b == ListPayLoadType)
             {
                 int count = ReadInt(); // How many Payloads are in the list
                 for (int i = 0; i < count; i++)
                 {
-                    NewPayLoad PL = ReadPayLoad();                    
+                    NewPayLoad PL = ReadPayLoad();
                     list.Add(PL);
                 }
                 return list;
@@ -827,7 +832,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             int len = ReadInt();
             mBufferIndex -= 4;
             Byte[] Bytes = new byte[len + 4];
-            Buffer.BlockCopy(mBuffer, mBufferIndex, Bytes, 0, len +4);
+            Buffer.BlockCopy(mBuffer, mBufferIndex, Bytes, 0, len + 4);
             mBufferIndex += len + 4;
             NewPayLoad PL = new NewPayLoad(Bytes);
             return PL;
@@ -842,25 +847,25 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         {
             get
             {
-                if(VerifyPaylod())
-                {                    
+                if (VerifyPaylod())
+                {
                     return BufferToText();
                 }
                 else
                 {
                     return "Payload verify failed, not closed or bad length check";
-                }                
+                }
             }
         }
 
         private bool VerifyPaylod()
         {
             int len = GetDataLen();
-            if (mBuffer.Length != len + 4 && mBuffer.Length != 1024) 
+            if (mBuffer.Length != len + 4 && mBuffer.Length != 1024)
             {
                 return false;
             }
-            if (mBuffer[len+3] != LastByteMarker)
+            if (mBuffer[len + 3] != LastByteMarker)
             {
                 return false;
             }
@@ -870,7 +875,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
         //For Easy debugging and enable to see the payload we override toString
         public string BufferToText()
-        {            
+        {
             //TODO: add try catch return buffer index safe
 
             string s = "Packet Dump: " + Environment.NewLine;
@@ -879,7 +884,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             s += "Len = " + GetDataLen() + Environment.NewLine;
             ReadPayloadType();
             s += "PayloadType = " + PaylodType.ToString() + Environment.NewLine;
-            s += ",Name = " + ReadString() + Environment.NewLine;            
+            s += ",Name = " + ReadString() + Environment.NewLine;
 
             byte ValueType = mBuffer[mBufferIndex];
             int idx = 0;
@@ -909,11 +914,14 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                         List<string> list = GetListString();
                         string sList = "";
                         for (int iCount = 0; iCount < list.Count(); iCount++)
+                        {
                             sList = sList + "::" + list[iCount];
+                        }
+
                         s += "List= " + sList + Environment.NewLine;
                         break;
                     case 6:
-                            // List of Payloads          
+                        // List of Payloads          
                         List<NewPayLoad> PLs = GetListPayLoad();
                         string sPLList = "List of Payloads, len=" + PLs.Count + Environment.NewLine;
                         int PLi = 0;
@@ -926,12 +934,12 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                         s += "List of Payloads= " + sPLList + Environment.NewLine;
                         break;
                     case 7:
-                        byte[] b =  GetBytes();
-                          //Bytes - for screen shot or any binary
-                        s += "Bytes(Binary), Len=" + b.Length  + Environment.NewLine;
+                        byte[] b = GetBytes();
+                        //Bytes - for screen shot or any binary
+                        s += "Bytes(Binary), Len=" + b.Length + Environment.NewLine;
                         break;
                     case 8: // Guid
-                        Guid g = GetGuid();                                              
+                        Guid g = GetGuid();
                         s += "GUID= " + g.ToString() + Environment.NewLine;
                         break;
                     case 9: // bool false                        
@@ -942,24 +950,24 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                         break;
                     case Struct:
                         mBufferIndex++;
-                             //    // TODO: Create display for struct!?
-                        int structlen = ReadInt();                                                
-                        mBufferIndex += structlen;                        
-                        s += "struct binary len=" + structlen +  Environment.NewLine;
+                        //    // TODO: Create display for struct!?
+                        int structlen = ReadInt();
+                        mBufferIndex += structlen;
+                        s += "struct binary len=" + structlen + Environment.NewLine;
                         break;
                     case JSONStruct:
                         mBufferIndex++;
-                        string json = ReadString();                        
+                        string json = ReadString();
                         s += "jsonstruct= " + json + Environment.NewLine;
                         break;
                     case PayLoadType:
                         NewPayLoad payloadInPayload = ReadPayload();
-                        string payload = "PayloadInPayload, package len=" + payloadInPayload.PackageLen() + Environment.NewLine;                        
+                        string payload = "PayloadInPayload, package len=" + payloadInPayload.PackageLen() + Environment.NewLine;
                         string PayloadInPayloadDump = payloadInPayload.BufferInfo;
                         payload += "Payload data" + Environment.NewLine + PayloadInPayloadDump + Environment.NewLine;
                         s += payload;
                         break;
-                        
+
                     default:
                         mBufferIndex = CurrentBufferIndex;
                         throw new InvalidOperationException("Payload.ToString() Error - Unknown ValueType: " + ValueType);
@@ -1016,7 +1024,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         {
             this.Name = Name;
             WritePayloadType();
-            WriteString(Name);            
+            WriteString(Name);
 
             foreach (object item in items)
             {
@@ -1069,7 +1077,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             ClosePackage();
         }
 
-        
+
 
         public Guid GetGuid()
         {
@@ -1090,7 +1098,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
         public Byte[] GetBytes()
         {
-            byte b = ReadValueType();                        
+            byte b = ReadValueType();
             if (b == BytesType)
             {
                 int len = ReadInt();

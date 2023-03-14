@@ -21,37 +21,36 @@ using Ginger.SolutionGeneral;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 
 namespace GingerCoreNETUnitTest.WorkSpaceLib
 {
     [TestClass]
     public class UserProfileTest
     {
-        
+
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            WorkspaceHelper.CreateDummyWorkSpace();            
+            WorkspaceHelper.CreateDummyWorkSpace();
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+
         }
 
 
         [TestCleanup]
         public void TestCleanUp()
         {
-            
+
         }
 
         [Ignore]
         [TestMethod]
-         // Failing !!! needs fix!!! in UserProfile have one list of recent as string and one as objects causin exception
+        // Failing !!! needs fix!!! in UserProfile have one list of recent as string and one as objects causin exception
         public void NewProfileSaveLoad()
         {
             //Arrange                        
@@ -63,8 +62,8 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
             // WorkSpace.Instance.UserProfile = userProfile;
 
 
-            string LastSolutionFolder = @"c:\ginger\sol1";  
-            Solution solution = new Solution() {Name = "sol1" , Folder = LastSolutionFolder }; // just something to verify it is loaded later doesn't need to exist
+            string LastSolutionFolder = @"c:\ginger\sol1";
+            Solution solution = new Solution() { Name = "sol1", Folder = LastSolutionFolder }; // just something to verify it is loaded later doesn't need to exist
 
 
             //Act
@@ -78,7 +77,7 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
             //Assert
             Assert.AreEqual(LastSolutionFolder, UP2.RecentSolutions[0]);
         }
-        
+
         [TestMethod]
         [Timeout(60000)]
         public void CreateUserProfileFileName()
@@ -93,10 +92,10 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
 
 
             //Assert
-            Assert.AreEqual(expected, userProfileFilePath, "UserProfileFilePath");   
+            Assert.AreEqual(expected, userProfileFilePath, "UserProfileFilePath");
         }
 
-    
+
 
     }
 }

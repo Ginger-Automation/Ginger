@@ -83,7 +83,7 @@ namespace Amdocs.Ginger.Repository
         protected ConcurrentDictionary<string, object> mBackupDic;
         protected bool mBackupInProgress = false;
 
-        public bool IsBackupExist 
+        public bool IsBackupExist
         {
             get
             {

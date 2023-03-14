@@ -17,10 +17,7 @@ limitations under the License.
 #endregion
 
 using CommandLine;
-using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {

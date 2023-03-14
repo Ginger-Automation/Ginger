@@ -32,22 +32,22 @@ namespace Ginger.Actions
     /// <summary>
     /// Interaction logic for XLSReadDataToVariablesPage.xaml
     /// </summary>
-    public partial class ActCreatePDFChartEditPage 
-    {       
+    public partial class ActCreatePDFChartEditPage
+    {
         public ActionEditPage actp;
-        private ActCreatePDFChart mAct;        
+        private ActCreatePDFChart mAct;
 
         public ActCreatePDFChartEditPage(ActCreatePDFChart act)
-        {     
-                InitializeComponent();
-                mAct = act;
-                Bind();
-                mAct.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();                   
+        {
+            InitializeComponent();
+            mAct = act;
+            Bind();
+            mAct.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
         }
-                
+
         public void Bind()
         {
-            DataFileNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActCreatePDFChart.Fields.DataFileName), nameof (ActInputValue.Value));
+            DataFileNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActCreatePDFChart.Fields.DataFileName), nameof(ActInputValue.Value));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ParamsComboBox.ComboBox, ComboBox.SelectedValueProperty, mAct, ActCreatePDFChart.Fields.ParamName);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ParamsComboBox.ComboBox, ComboBox.ItemsSourceProperty, mAct, ActCreatePDFChart.Fields.ParamList);
             DataFileNameTextBox.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
@@ -56,16 +56,16 @@ namespace Ginger.Actions
 
         private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            mAct.ParamList= SetParamsCombo();            
+            mAct.ParamList = SetParamsCombo();
         }
 
         private void BrowseDataButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg=  new System.Windows.Forms.OpenFileDialog();
+            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
 
             dlg.DefaultExt = "*.csv";
             dlg.Filter = "CSV Files (*.csv)|*.csv";
-            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper(); 
+            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -76,36 +76,38 @@ namespace Ginger.Actions
                     FileName = FileName.Replace(SolutionFolder, @"~\");
                 }
 
-                DataFileNameTextBox.ValueTextBox.Text = FileName;                
-            }           
+                DataFileNameTextBox.ValueTextBox.Text = FileName;
+            }
         }
 
         private List<string> SetParamsCombo()
         {
-            List<string> tmp=new List<string>();
-            object tempFileName = mAct.GetDataFileName();            
+            List<string> tmp = new List<string>();
+            object tempFileName = mAct.GetDataFileName();
             string dataFileName = Convert.ToString(tempFileName);
-            
-                if (File.Exists(dataFileName))
-                {
-                    StreamReader sr = new StreamReader(dataFileName);
-                    var lines = new List<string[]>();
 
-                    while (!sr.EndOfStream && lines.Count<=0)
+            if (File.Exists(dataFileName))
+            {
+                StreamReader sr = new StreamReader(dataFileName);
+                var lines = new List<string[]>();
+
+                while (!sr.EndOfStream && lines.Count <= 0)
+                {
+                    string[] Line = sr.ReadLine().Split(',').Select(a => a.Trim()).ToArray();
+                    lines.Add(Line);
+                };
+                tmp = lines[0].ToList();
+                for (int i = 0; i < tmp.Count; i++)
+                {
+                    if (tmp[i].Contains("\""))
                     {
-                        string[] Line = sr.ReadLine().Split(',').Select(a=>a.Trim()).ToArray();
-                        lines.Add(Line);
-                    };
-                    tmp = lines[0].ToList();
-                    for (int i = 0; i < tmp.Count; i++)
-                    {
-                        if (tmp[i].Contains("\""))
-                            tmp[i]=tmp[i].Replace("\"", "");
+                        tmp[i] = tmp[i].Replace("\"", "");
                     }
                 }
-                
+            }
+
             return tmp;
-            
-        }     
+
+        }
     }
 }

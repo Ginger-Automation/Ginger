@@ -22,29 +22,23 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.UserControls;
-using FontAwesome5;
 using Ginger.Agents;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.TextEditor;
 using GingerCore;
 using GingerCore.Drivers;
-using OpenQA.Selenium;
-using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using OpenQA.Selenium.Appium;
-using OpenQA.Selenium.Appium.Android;
-using System.Text;
 
 namespace Ginger.Drivers.DriversWindows
 {
@@ -210,9 +204,13 @@ namespace Ginger.Drivers.DriversWindows
             Dispatcher.Invoke(() =>
             {
                 if (ShowRecordIcon)
+                {
                     xRecordingImage.Visibility = Visibility.Visible;
+                }
                 else
+                {
                     xRecordingImage.Visibility = Visibility.Collapsed;
+                }
             });
         }
 
@@ -518,7 +516,7 @@ namespace Ginger.Drivers.DriversWindows
                 }
             }
 
-            
+
             if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
             {
                 mDeviceDetails.Add(new DeviceInfo("Package:", "N/A", DeviceInfo.eDeviceInfoCategory.Detail));
@@ -526,7 +524,7 @@ namespace Ginger.Drivers.DriversWindows
             }
             else
             {
-                string activity, package; 
+                string activity, package;
                 mActivityAndPackageInfo.TryGetValue("Activity", out activity);
                 mActivityAndPackageInfo.TryGetValue("Package", out package);
                 mDeviceDetails.Add(new DeviceInfo("Package:", package, DeviceInfo.eDeviceInfoCategory.Detail, package));

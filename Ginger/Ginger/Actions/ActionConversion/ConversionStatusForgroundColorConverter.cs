@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.CoreNET;
 using System;
 using System.Globalization;
 using System.Windows.Data;

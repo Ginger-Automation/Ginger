@@ -18,15 +18,10 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using GingerCore.GeneralLib;
-using GingerCoreNET.Application_Models;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GingerCoreNET.Application_Models
 {
@@ -202,7 +197,9 @@ namespace GingerCoreNET.Application_Models
                 if (comparisonStatus == eComparisonOutput.New || comparisonStatus == eComparisonOutput.Unknown)
                 {
                     if (enumItem == eHandlingOperations.MergeChanges || enumItem == eHandlingOperations.ReplaceExisting)
+                    {
                         continue;
+                    }
 
                     if (enumItem == eHandlingOperations.Add)
                     {
@@ -213,7 +210,9 @@ namespace GingerCoreNET.Application_Models
                 else if (comparisonStatus == eComparisonOutput.Unchanged)
                 {
                     if (enumItem == eHandlingOperations.MergeChanges)
+                    {
                         continue;
+                    }
 
                     if (enumItem == eHandlingOperations.DoNotAdd)
                     {
@@ -272,12 +271,12 @@ namespace GingerCoreNET.Application_Models
         {
             get
             {
-                switch(comparisonStatus)
+                switch (comparisonStatus)
                 {
-                    case eComparisonOutput.New : return Amdocs.Ginger.Common.Enums.eImageType.Added;
-                    case eComparisonOutput.Modified : return Amdocs.Ginger.Common.Enums.eImageType.Changed;
-                    case eComparisonOutput.Unchanged : return Amdocs.Ginger.Common.Enums.eImageType.Unchanged;
-                    default : return Amdocs.Ginger.Common.Enums.eImageType.Unknown;
+                    case eComparisonOutput.New: return Amdocs.Ginger.Common.Enums.eImageType.Added;
+                    case eComparisonOutput.Modified: return Amdocs.Ginger.Common.Enums.eImageType.Changed;
+                    case eComparisonOutput.Unchanged: return Amdocs.Ginger.Common.Enums.eImageType.Unchanged;
+                    default: return Amdocs.Ginger.Common.Enums.eImageType.Unknown;
                 }
             }
         }
@@ -302,7 +301,11 @@ namespace GingerCoreNET.Application_Models
         public static T GetValueFromDescription<T>(string description)
         {
             var type = typeof(T);
-            if (!type.IsEnum) throw new InvalidOperationException();
+            if (!type.IsEnum)
+            {
+                throw new InvalidOperationException();
+            }
+
             foreach (var field in type.GetFields())
             {
                 var attribute = Attribute.GetCustomAttribute(field,
@@ -310,12 +313,16 @@ namespace GingerCoreNET.Application_Models
                 if (attribute != null)
                 {
                     if (attribute.Description == description)
+                    {
                         return (T)field.GetValue(null);
+                    }
                 }
                 else
                 {
                     if (field.Name == description)
+                    {
                         return (T)field.GetValue(null);
+                    }
                 }
             }
             throw new ArgumentException("Not found.", nameof(description));

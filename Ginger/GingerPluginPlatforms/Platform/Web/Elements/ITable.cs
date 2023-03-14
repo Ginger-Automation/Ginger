@@ -17,16 +17,13 @@ limitations under the License.
 #endregion
 
 using Ginger.Plugin.Platform.Web.Actions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Ginger.Plugin.Platform.Web.Elements
 {
     /// <summary>
     /// Exposes operation that can be performed on Table Element
     /// </summary>
-    public interface ITable:IGingerWebElement, IGetValue
+    public interface ITable : IGingerWebElement, IGetValue
     {
 
 

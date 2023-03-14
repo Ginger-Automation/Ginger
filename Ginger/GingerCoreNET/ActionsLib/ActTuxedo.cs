@@ -43,7 +43,7 @@ namespace GingerCore.Actions.Tuxedo
             public static string PrivateKeyPassPhrase = "PrivateKeyPassPhrase";
             public static string UnixPath = "UnixPath";
             public static string PCPath = "PCPath";
-            public static string PreCommand = "PreCommand";                        
+            public static string PreCommand = "PreCommand";
         }
 
         public override string ActionDescription { get { return "Tuxedo UD File Action"; } }
@@ -62,7 +62,7 @@ namespace GingerCore.Actions.Tuxedo
         public override bool ValueConfigsNeeded { get { return false; } }
 
         public override string ActionEditPage { get { return "Tuxedo.ActTuxedoEditPage"; } }
-        
+
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
         {
@@ -75,30 +75,30 @@ namespace GingerCore.Actions.Tuxedo
                 return mPlatforms;
             }
         }
-        
+
         private SftpClient UnixFTPClient;
         private string workdir;
-        
+
         public ActInputValue Host { get { return GetOrCreateInputParam(Fields.Host); } }
-        
+
         public ActInputValue Port { get { return GetOrCreateInputParam(Fields.Port); } }
-        
+
         public ActInputValue UserName { get { return GetOrCreateInputParam(Fields.UserName); } }
-       
+
         public ActInputValue Password { get { return GetOrCreateInputParam(Fields.Password); } }
-       
+
         public ActInputValue PrivateKey { get { return GetOrCreateInputParam(Fields.PrivateKey); } }
-        
+
         public ActInputValue PrivateKeyPassPhrase { get { return GetOrCreateInputParam(Fields.PrivateKeyPassPhrase); } }
-       
+
         public ActInputValue PCPath { get { return GetOrCreateInputParam(Fields.PCPath); } }
-        
+
         public ActInputValue UnixPath { get { return GetOrCreateInputParam(Fields.UnixPath); } }
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> DynamicUDElements = new ObservableList<ActInputValue>();
-        
-     
+
+
         public ActInputValue PreCommand { get { return GetOrCreateInputParam(Fields.PreCommand); } }
 
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
@@ -107,7 +107,7 @@ namespace GingerCore.Actions.Tuxedo
             list.Add(DynamicUDElements);
             return list;
         }
-        
+
         public override String ActionType
         {
             get
@@ -124,16 +124,18 @@ namespace GingerCore.Actions.Tuxedo
             {
                 //TODO: add option to use passkey
 
-                 var connectionInfo = new PasswordConnectionInfo(Host.ValueForDriver, UserName.ValueForDriver, Password.ValueForDriver);
-                    UnixFTPClient = new SftpClient(connectionInfo);
-                    UnixFTPClient.Connect();
-                    workdir = UnixFTPClient.WorkingDirectory;
+                var connectionInfo = new PasswordConnectionInfo(Host.ValueForDriver, UserName.ValueForDriver, Password.ValueForDriver);
+                UnixFTPClient = new SftpClient(connectionInfo);
+                UnixFTPClient.Connect();
+                workdir = UnixFTPClient.WorkingDirectory;
                 if (UnixFTPClient.IsConnected)
+                {
                     return true;
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Cannot Login to Unix" , ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Cannot Login to Unix", ex);
                 throw (ex);
             }
             return false;
@@ -149,38 +151,42 @@ namespace GingerCore.Actions.Tuxedo
             // 5. Parse result to Act.ReturnValues 
 
             // TODO: add optional save result to local file
-             string drvUnixPath = GetInputParamCalculatedValue("UnixPath");
-        
+            string drvUnixPath = GetInputParamCalculatedValue("UnixPath");
+
             string UnixTargetFilePath = "";
             try
             {
                 if (!FTPConnect())
-                    {
-                        Error = "Failed to login!";
-                        return;
-                    }
-                    if (String.IsNullOrEmpty(drvUnixPath))
-                    {
-                        UnixTargetFilePath = workdir + "/";
-                    }
-                    else if (UnixFTPClient.Exists(drvUnixPath.Replace("~/", workdir + "/")))
-                    {
-                        UnixTargetFilePath = drvUnixPath.Replace("~/", workdir + "/");
-                    }
-                    string LocalUDFileName = PrepareUDFile();
+                {
+                    Error = "Failed to login!";
+                    return;
+                }
+                if (String.IsNullOrEmpty(drvUnixPath))
+                {
+                    UnixTargetFilePath = workdir + "/";
+                }
+                else if (UnixFTPClient.Exists(drvUnixPath.Replace("~/", workdir + "/")))
+                {
+                    UnixTargetFilePath = drvUnixPath.Replace("~/", workdir + "/");
+                }
+                string LocalUDFileName = PrepareUDFile();
 
-                    string UnixUDfileName = "GingerUD_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".ud";
+                string UnixUDfileName = "GingerUD_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".ud";
 
-                    if (!UnixTargetFilePath.EndsWith("/"))
-                            UnixTargetFilePath += "/";
+                if (!UnixTargetFilePath.EndsWith("/"))
+                {
+                    UnixTargetFilePath += "/";
+                }
 
-                    UploadUDFile(UnixTargetFilePath + UnixUDfileName, LocalUDFileName);                    
-                    
-                    string Result = ExecuteUDCommand(PreCommand.ValueForDriver, "ud32 –n < " + UnixTargetFilePath + UnixUDfileName);
+                UploadUDFile(UnixTargetFilePath + UnixUDfileName, LocalUDFileName);
 
-                    //TODO: temp for testing
-                    if(!String.IsNullOrEmpty(Result))
-                        ParseResult(Result);     
+                string Result = ExecuteUDCommand(PreCommand.ValueForDriver, "ud32 –n < " + UnixTargetFilePath + UnixUDfileName);
+
+                //TODO: temp for testing
+                if (!String.IsNullOrEmpty(Result))
+                {
+                    ParseResult(Result);
+                }
             }
             catch (Exception e)
             {
@@ -193,28 +199,28 @@ namespace GingerCore.Actions.Tuxedo
         {
             Result = Result.Replace("\r", "");
             Result = Result.Replace("\t", "");
-            
-            AddOrUpdateReturnParamActual("Actual", Result);            
+
+            AddOrUpdateReturnParamActual("Actual", Result);
         }
 
         private void UploadUDFile(string UnixUDfileName, string LocalTempUDFileName)
         {
             //  check Unix folder exist
-            
+
             using (var f = File.OpenRead(LocalTempUDFileName))
             {
-                UnixFTPClient.UploadFile(f,UnixUDfileName, null);
+                UnixFTPClient.UploadFile(f, UnixUDfileName, null);
             }
         }
 
         private string PrepareUDFile()
         {
             string txt = "";
-            
-            foreach(ActInputValue AIV in DynamicUDElements)
+
+            foreach (ActInputValue AIV in DynamicUDElements)
             {
-                txt += AIV.Param + "\t"+ AIV.ValueForDriver+"\n";  // Add \t for tab and \r for new line
-            
+                txt += AIV.Param + "\t" + AIV.ValueForDriver + "\n";  // Add \t for tab and \r for new line
+
             }
             txt += "\n";
             string TempFileName = System.IO.Path.GetTempFileName();
@@ -230,19 +236,22 @@ namespace GingerCore.Actions.Tuxedo
             string cmdResult = string.Empty;
             int iPort;
             ConnectionInfo connectionInfo;
-            if (int.TryParse(Port.ValueForDriver,out iPort))            
-                connectionInfo = new ConnectionInfo(Host.ValueForDriver,iPort, UserName.ValueForDriver,
+            if (int.TryParse(Port.ValueForDriver, out iPort))
+            {
+                connectionInfo = new ConnectionInfo(Host.ValueForDriver, iPort, UserName.ValueForDriver,
                             new PasswordAuthenticationMethod(UserName.ValueForDriver, Password.ValueForDriver));
-            
+            }
             else
+            {
                 connectionInfo = new ConnectionInfo(Host.ValueForDriver, UserName.ValueForDriver,
                             new PasswordAuthenticationMethod(UserName.ValueForDriver, Password.ValueForDriver));
+            }
 
-            UnixClient = new SshClient(connectionInfo);           
+            UnixClient = new SshClient(connectionInfo);
             UnixClient.Connect();
             if (UnixClient.IsConnected)
-            {                
-                ExInfo += "Connected to: " + Host.ValueForDriver;                
+            {
+                ExInfo += "Connected to: " + Host.ValueForDriver;
             }
             else
             {
@@ -251,16 +260,16 @@ namespace GingerCore.Actions.Tuxedo
                 return null;
             }
             using (ShellStream shell = UnixClient.CreateShellStream("tmp", 80, 24, 800, 600, 1024))
-            {                
+            {
                 //StreamWriter writer = new StreamWriter(shell);
 
                 if (PreCommand != "")
                 {
-                    ExInfo += ", Sending PreCommand: " + PreCommand;                   
+                    ExInfo += ", Sending PreCommand: " + PreCommand;
                     foreach (string sCmd in PreCommand.Split(';'))
                     {
                         cmdResult += ExecuteCommandUsingShellStream(shell, sCmd);
-                    }                    
+                    }
                     ExInfo += ", PreCommandResult: " + cmdResult;
                 }
                 cmdResult = ExecuteCommandUsingShellStream(shell, Command);
@@ -274,8 +283,8 @@ namespace GingerCore.Actions.Tuxedo
 
         private string ExecuteCommandUsingShellStream(ShellStream shell, string Command)
         {
-            string cmdResult=string.Empty;           
-            StreamReader reader = new StreamReader(shell);            
+            string cmdResult = string.Empty;
+            StreamReader reader = new StreamReader(shell);
             shell.Flush();
             cmdResult = string.Empty;
             ExInfo += ", Sending Command: " + Command;
@@ -283,11 +292,11 @@ namespace GingerCore.Actions.Tuxedo
             cmdResult = reader.ReadToEnd();
             int iCount = 1;
             Regex regExp = new Regex(@"ENTER ...|continue ...|option :|\> |\$ |\%");
-            while (regExp.Matches(cmdResult.ToString()).Count == 0 && iCount<20)
+            while (regExp.Matches(cmdResult.ToString()).Count == 0 && iCount < 20)
             {
                 cmdResult += reader.ReadToEnd();
-               
-                cmdResult=Regex.Replace(cmdResult, @"[\u001b]\[[0-9]+m", "");
+
+                cmdResult = Regex.Replace(cmdResult, @"[\u001b]\[[0-9]+m", "");
                 Thread.Sleep(1000);
                 iCount++;
             }

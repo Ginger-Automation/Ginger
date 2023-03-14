@@ -40,7 +40,7 @@ namespace GingerWPF.SolutionLib
 
             AddPage(Name: "Plugin Packages", Title: "Plugin Packages", SubTitle: "Select Plugin Packages", Page: new NewSolutionPluginsWizardPage(mSolution));
 
-            AddPage(Name: "Target Application", Title: "Target Applications", SubTitle: "Select Target Application and Platform", Page: new NewSolutionTargetApplicationWizardPage(mSolution));            
+            AddPage(Name: "Target Application", Title: "Target Applications", SubTitle: "Select Target Application and Platform", Page: new NewSolutionTargetApplicationWizardPage(mSolution));
 
             AddPage(Name: "Agent", Title: "Create Agent", SubTitle: "Create Agent", Page: new NewSolutionAgentsWizardPage(mSolution));
 
@@ -49,14 +49,14 @@ namespace GingerWPF.SolutionLib
 
         public override void Finish()
         {
-            
-                //Solution.SaveSolution(mSolution);
-                //WorkSpace.Instance.OpenSolution(mSolution.Folder);
-                //foreach (PluginPackage p in mWizard.SelectedPluginPackages)
-                //{
-                //    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(p);
-                //}
-            
+
+            //Solution.SaveSolution(mSolution);
+            //WorkSpace.Instance.OpenSolution(mSolution.Folder);
+            //foreach (PluginPackage p in mWizard.SelectedPluginPackages)
+            //{
+            //    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(p);
+            //}
+
         }
     }
 }

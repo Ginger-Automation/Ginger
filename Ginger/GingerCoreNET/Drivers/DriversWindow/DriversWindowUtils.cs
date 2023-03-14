@@ -18,8 +18,6 @@ limitations under the License.
 
 using GingerCore.Drivers;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
 {
@@ -41,7 +39,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
     {
         public enum eEventType
         {
-            ShowDriverWindow, 
+            ShowDriverWindow,
             CloseDriverWindow
         }
 

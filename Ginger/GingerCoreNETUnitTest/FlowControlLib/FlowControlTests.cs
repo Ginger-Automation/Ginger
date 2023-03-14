@@ -1,11 +1,8 @@
-﻿using Ginger.Run;
+﻿using Amdocs.Ginger.CoreNET.Execution;
+using Ginger.Run;
 using GingerCore.Actions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Amdocs.Ginger.CoreNET.Execution;
 using GingerTestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GingerCore.FlowControlLib.Tests
 {
@@ -26,7 +23,7 @@ namespace GingerCore.FlowControlLib.Tests
             ActDummy act = new ActDummy();
 
             act.Status = eRunStatus.Passed;
-            bool FcStatus = GingerExecutionEngine.CalculateFlowControlStatus(act, LastActivity,null, FC.Operator, "");
+            bool FcStatus = GingerExecutionEngine.CalculateFlowControlStatus(act, LastActivity, null, FC.Operator, "");
             Assert.AreEqual(true, FcStatus);
             act.Status = eRunStatus.Failed;
             FcStatus = GingerExecutionEngine.CalculateFlowControlStatus(act, LastActivity, null, FC.Operator, "");

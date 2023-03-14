@@ -18,19 +18,10 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.CoreNET.Execution;
-
-
-using Amdocs.Ginger.Repository;
 using Ginger.Reports;
-using GingerCore;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 
 namespace Ginger.Run.RunSetActions
 {

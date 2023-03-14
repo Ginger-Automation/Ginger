@@ -16,15 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Amdocs.Ginger.Common.Enums;
 using GingerCore;
 
 namespace Amdocs.Ginger.Common.Repository.BusinessFlowLib
 {
-    public class CleanUpActivity: Activity
+    public class CleanUpActivity : Activity
     {
         public override eImageType ItemImageType
         {

@@ -82,7 +82,10 @@ namespace Amdocs.Ginger.GingerRuntime
                         while (Keepalive)
                         {
                             MenuManager.eMenuReturnCode rc = mMenuManager.ShowMenu();
-                            if (rc == MenuManager.eMenuReturnCode.Quit) return;
+                            if (rc == MenuManager.eMenuReturnCode.Quit)
+                            {
+                                return;
+                            }
                         }
                     }
                     else

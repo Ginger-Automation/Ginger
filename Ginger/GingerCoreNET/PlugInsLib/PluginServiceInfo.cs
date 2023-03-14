@@ -16,18 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using System.Collections.Generic;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Amdocs.Ginger.Common
 {
     [JsonObject(MemberSerialization.OptIn)]
     public class PluginServiceInfo
-    {        
+    {
         [JsonProperty]
         public string ServiceId { get; set; }
-      
+
         [JsonProperty]
         public string Description { get; set; }
 

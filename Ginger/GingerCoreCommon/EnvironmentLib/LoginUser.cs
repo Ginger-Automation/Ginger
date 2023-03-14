@@ -21,7 +21,7 @@ using Amdocs.Ginger.Repository;
 namespace GingerCore.Environments
 {
     public class LoginUser : RepositoryItemBase
-    {        
+    {
 
         [IsSerializedForLocalRepository]
         public string UserProfileName { get; set; }

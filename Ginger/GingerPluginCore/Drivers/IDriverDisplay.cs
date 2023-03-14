@@ -17,10 +17,10 @@ limitations under the License.
 #endregion
 
 
-namespace  Amdocs.Ginger.Plugin.Core.Drivers
+namespace Amdocs.Ginger.Plugin.Core.Drivers
 {
-    public interface IDriverDisplay 
+    public interface IDriverDisplay
     {
-        void AttachDisplay(object display);        
+        void AttachDisplay(object display);
     }
 }

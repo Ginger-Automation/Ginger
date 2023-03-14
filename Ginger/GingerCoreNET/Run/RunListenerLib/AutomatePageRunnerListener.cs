@@ -34,9 +34,10 @@ namespace Amdocs.Ginger.Run
             // Get bulk of message update by timer
 
             // since this is only for doevents we can run on another task and release faster -speed
-            Task.Factory.StartNew(() => {
+            Task.Factory.StartNew(() =>
+            {
                 AutomatePageRunnerListenerGiveUserFeedback.Invoke(this, null);
-            });            
+            });
         }
     }
 }

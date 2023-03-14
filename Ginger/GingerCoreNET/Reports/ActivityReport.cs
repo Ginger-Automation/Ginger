@@ -16,16 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
-using System.IO;
-using System.Data;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Utility;
 using GingerCore;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
 
 namespace Ginger.Reports
 {
@@ -33,7 +33,7 @@ namespace Ginger.Reports
     [JsonObject(MemberSerialization.OptIn)]
     public class ActivityReport
     {
-        enum ActStatus {  Passed, Other }
+        enum ActStatus { Passed, Other }
         public static partial class Fields
         {
             public static string ActivityGroupName = "ActivityGroupName";
@@ -64,7 +64,7 @@ namespace Ginger.Reports
         }
 
         // use empty constructor when we load from file - Json
-       public ActivityReport()
+        public ActivityReport()
         {
             mActivity = new Activity();
         }
@@ -109,7 +109,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(false)]
         [FieldParamsIsSelected(true)]
-        public string ActivityName { get { return mActivity.ActivityName; } set { mActivity.ActivityName = value; }}
+        public string ActivityName { get { return mActivity.ActivityName; } set { mActivity.ActivityName = value; } }
 
         [JsonProperty]
         [FieldParams]
@@ -146,7 +146,7 @@ namespace Ginger.Reports
         public DateTime EndTimeStamp { get { return mActivity.EndTimeStamp; } set { mActivity.EndTimeStamp = value; } }
 
         [JsonProperty]
-        public long? Elapsed { get { return mActivity.Elapsed; } set { mActivity.Elapsed = value; }}
+        public long? Elapsed { get { return mActivity.Elapsed; } set { mActivity.Elapsed = value; } }
 
         [FieldParams]
         [FieldParamsNameCaption("Elapsed")]
@@ -222,11 +222,11 @@ namespace Ginger.Reports
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
         public double PassPercent { get { return ActionReports.Count != 0 ? Math.Round((double)TotalActionsPassed * 100 / ActionReports.Count, MidpointRounding.AwayFromZero) + AddOnePercent(ActStatus.Passed) : 0; } }
-        
+
         public double FailPercent { get { return ActionReports.Count != 0 ? Math.Round((double)TotalActionsFailed * 100 / ActionReports.Count, MidpointRounding.AwayFromZero) : 0; } }
-        
+
         public double StoppedPercent { get { return ActionReports.Count != 0 ? Math.Round((double)TotalActionsStopped * 100 / ActionReports.Count, MidpointRounding.AwayFromZero) : 0; } }
-        
+
         public double OtherPercent { get { return ActionReports.Count != 0 ? Math.Round((double)TotalActionsOther * 100 / ActionReports.Count, MidpointRounding.AwayFromZero) + AddOnePercent(ActStatus.Other) : 0; } }
 
         [JsonProperty]
@@ -246,7 +246,7 @@ namespace Ginger.Reports
             set { variablesAfterExec = value; }
         }
         private List<string> variablesAfterExec;
-        
+
         [FieldParams]
         [FieldParamsNameCaption("Variables Details")]
         [FieldParamsFieldType(FieldsType.Section)]
@@ -265,8 +265,8 @@ namespace Ginger.Reports
                 dt.Columns["ValueBeforeExec"].Caption = "Value on Execution Start";
                 dt.Columns.Add("ValueAfterExec");
                 dt.Columns["ValueAfterExec"].Caption = "Value on Execution End";
-              
-                if(VariablesBeforeExec!=null)
+
+                if (VariablesBeforeExec != null)
                 {
                     foreach (string variable in VariablesBeforeExec)
                     {
@@ -280,21 +280,21 @@ namespace Ginger.Reports
                             dt.Rows.Add(dr);
                         }
                     }
-                }     
-                if(VariablesAfterExec!=null)
+                }
+                if (VariablesAfterExec != null)
                 {
                     foreach (string variable in VariablesAfterExec)
                     {
                         String[] elementsAfter = variable.Split(new string[] { "_:_" }, StringSplitOptions.None);
                         if (elementsAfter.Count() >= 2)
                         {
-                          
 
-                            dt.Select("Name = '" + elementsAfter[0]+"'").FirstOrDefault()["ValueAfterExec"] = elementsAfter[1];
-                          
+
+                            dt.Select("Name = '" + elementsAfter[0] + "'").FirstOrDefault()["ValueAfterExec"] = elementsAfter[1];
+
                         }
-                    }                
-                }                    
+                    }
+                }
                 return dt;
             }
         }
@@ -334,7 +334,7 @@ namespace Ginger.Reports
                         {
                             try
                             {
-                                ActionReport actrR = (ActionReport)JsonLib.LoadObjFromJSonFile(Path.Combine(folder,"Action.txt"), typeof(ActionReport));
+                                ActionReport actrR = (ActionReport)JsonLib.LoadObjFromJSonFile(Path.Combine(folder, "Action.txt"), typeof(ActionReport));
                                 actrR.LogFolder = folder;
                                 actionReports.Add(actrR);
                             }
@@ -388,11 +388,19 @@ namespace Ginger.Reports
         private int AddOnePercent(ActStatus actionsStatus)
         {
             double totalActPassed = Math.Round((double)TotalActionsPassed * 100 / ActionReports.Count, MidpointRounding.AwayFromZero);
-            if (actionsStatus.Equals(ActStatus.Other) && totalActPassed > 0) return 0;
+            if (actionsStatus.Equals(ActStatus.Other) && totalActPassed > 0)
+            {
+                return 0;
+            }
+
             double totalActFailed = Math.Round((double)TotalActionsFailed * 100 / ActionReports.Count, MidpointRounding.AwayFromZero);
             double totalActStopped = Math.Round((double)TotalActionsStopped * 100 / ActionReports.Count, MidpointRounding.AwayFromZero);
             double totalActOther = Math.Round((double)TotalActionsOther * 100 / ActionReports.Count, MidpointRounding.AwayFromZero);
-            if ((totalActFailed + totalActPassed + totalActStopped + totalActOther) == 99 && totalActPassed != 0) return 1;
+            if ((totalActFailed + totalActPassed + totalActStopped + totalActOther) == 99 && totalActPassed != 0)
+            {
+                return 1;
+            }
+
             return 0;
         }
     }

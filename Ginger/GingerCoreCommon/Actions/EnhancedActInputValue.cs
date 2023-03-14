@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using System;
+using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.Repository
 {

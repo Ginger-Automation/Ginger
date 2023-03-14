@@ -28,7 +28,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 {
@@ -39,7 +38,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
         private string[] PomElementGUID;// => mAct.ElementLocateValue.ToString().Split('_');
         public POMExecutionUtils(Act act, string elementLocateValue)
         {
-            
+
             mAct = act;
             var context = Context.GetAsContext(mAct.Context);
             ExecutedFrom = context.ExecutedFrom;
@@ -49,11 +48,11 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
         public POMExecutionUtils()
         {
-            
+
         }
 
 
-        
+
 
 
         public ApplicationPOMModel GetCurrentPOM()

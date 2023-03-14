@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.UserControls;
-using GingerWPF.UserControlsLib;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -79,7 +78,9 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             SelectedParameter = (AppModelParameter)xModelParamSelectionGrid.Grid.SelectedItem;
 
             if (mGenericWindow != null)
+            {
                 mGenericWindow.Close();
+            }
         }
 
         private void CloseWinClicked(object sender, EventArgs e)

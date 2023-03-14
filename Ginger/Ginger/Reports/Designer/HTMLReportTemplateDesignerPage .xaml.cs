@@ -16,7 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.Run;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Environments;
+using GingerCore.Variables;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,13 +33,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
-using Ginger.Run;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Environments;
-using GingerCore.Variables;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Reports.Designer
 {
@@ -85,7 +85,7 @@ namespace Ginger.Reports.Designer
             // Add sample screen shot
             Bitmap tempBmp = new Bitmap(Ginger.Properties.Resources.ScreenShot1);
             act2.ScreenShots.Add(GingerCore.General.BitmapImageToFile(tempBmp));
-            
+
             a1.Acts.Add(act2);
 
             ActTextBox act3 = new ActTextBox() { Description = "Enter Password", Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, Elapsed = 112 };
@@ -120,11 +120,11 @@ namespace Ginger.Reports.Designer
             BF1.Variables.Add(v2);
 
             //Add a few simple BFs            
-            BusinessFlow BF2 = new BusinessFlow() { Name = "BF2 - Customer Order Product", Description = "", Active = true };            
+            BusinessFlow BF2 = new BusinessFlow() { Name = "BF2 - Customer Order Product", Description = "", Active = true };
             BF2.Activities = new ObservableList<Activity>();
             BF2.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             BF2.Elapsed = 1249;
-            
+
             ProjEnvironment env = new ProjEnvironment() { Name = "Env1" };
             //TODO: add more env info
 
@@ -134,7 +134,7 @@ namespace Ginger.Reports.Designer
             GingerRunner GR = new GingerRunner();
             GR.Executor.BusinessFlows.Add(BF1);
             GR.Executor.BusinessFlows.Add(BF2);
-            GR.Executor.CurrentSolution =  WorkSpace.Instance.Solution;
+            GR.Executor.CurrentSolution = WorkSpace.Instance.Solution;
             GMR.Runners.Add(GR);
 
             ReportInfo RI = new ReportInfo(env, GMR);
@@ -146,7 +146,7 @@ namespace Ginger.Reports.Designer
         {
             LoadReportTemplatePage();
         }
-        
+
         private void LoadReportInfoTreeView()
         {
             TreeViewItem tvi0 = new TreeViewItem() { Header = "Report Data" };
@@ -170,7 +170,7 @@ namespace Ginger.Reports.Designer
         {
             Type T = obj.GetType();
             PropertyInfo[] properties = T.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            
+
             foreach (PropertyInfo pi in properties)
             {
                 // First handle generic types
@@ -203,7 +203,7 @@ namespace Ginger.Reports.Designer
                     {
                         CurrObj = pi.GetValue(obj);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     }
@@ -220,8 +220,8 @@ namespace Ginger.Reports.Designer
                             object obj1 = null;
                             foreach (object o in listObject)
                             {
-                                    obj1 = o;
-                                    break;
+                                obj1 = o;
+                                break;
                             }
                             if (obj1 == null)
                             {
@@ -240,25 +240,25 @@ namespace Ginger.Reports.Designer
         private void ReportObjectsTreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             // Loop all the way to the root.
-            
-            TreeViewItem tvi=(TreeViewItem)sender;
+
+            TreeViewItem tvi = (TreeViewItem)sender;
 
             string path = (string)(tvi).DataContext;
 
-            while (tvi.Parent is TreeViewItem) 
-            {               
-                tvi = (TreeViewItem)tvi.Parent;                                
+            while (tvi.Parent is TreeViewItem)
+            {
+                tvi = (TreeViewItem)tvi.Parent;
                 // path = "." + path;
-                
+
                 if ((string)(tvi).DataContext != null)
                 {
                     path = "[i]." + path;
                 }
 
-                string s = (string)(tvi).DataContext;                
-                path = s + path;                
+                string s = (string)(tvi).DataContext;
+                path = s + path;
             }
-            
+
             if (path != null)
             {
                 ReportHTMLTextBox.Focus();
@@ -287,6 +287,6 @@ namespace Ginger.Reports.Designer
                     yield return position.Parent;
                 }
             }
-        }  
+        }
     }
 }

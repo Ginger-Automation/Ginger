@@ -16,15 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using CommandLine;
+using Ginger.Configurations;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
-using System;
 using System.Threading.Tasks;
-using static Ginger.Reports.ExecutionLoggerConfiguration;
-using Ginger.Configurations;
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public class CLIArgs : ICLI
@@ -157,7 +154,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
 
         public void LoadRunsetConfigurations(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
-        {           
+        {
         }
 
         public async Task Execute(RunsetExecutor runsetExecutor)

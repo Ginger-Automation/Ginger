@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Windows.Controls;
-using GingerCoreNET.GeneralLib;
 
 namespace GingerWPF.UserControlsLib
 {
@@ -32,8 +31,8 @@ namespace GingerWPF.UserControlsLib
         public TreeViewExplorerPage(ITreeViewItem Root)
         {
             Init();
-            TreeViewItem r = MainTreeView.Tree.AddItem(Root);             
-            r.IsExpanded = true;            
+            TreeViewItem r = MainTreeView.Tree.AddItem(Root);
+            r.IsExpanded = true;
         }
 
         private void Init()
@@ -48,10 +47,10 @@ namespace GingerWPF.UserControlsLib
 
             MainTreeView.Tree.ItemSelected += MainTreeView_ItemSelected;
 
-            foreach(ITreeViewItem TVI in RootItems)
+            foreach (ITreeViewItem TVI in RootItems)
             {
                 TreeViewItem r = MainTreeView.Tree.AddItem(TVI);
-            }            
+            }
         }
 
         private void MainTreeView_ItemSelected(object sender, EventArgs e)
@@ -60,10 +59,10 @@ namespace GingerWPF.UserControlsLib
             ITreeViewItem TVObj = (ITreeViewItem)TVI.Tag;
             if (TVObj is ITreeViewItem)
             {
-                DetailsFrame.Content = TVObj.EditPage();                                
+                DetailsFrame.Content = TVObj.EditPage();
             }
             else
-            {                
+            {
                 DetailsFrame.Content = "Object doesn't have edit page yet - " + TVObj.GetType().Name;
             }
         }

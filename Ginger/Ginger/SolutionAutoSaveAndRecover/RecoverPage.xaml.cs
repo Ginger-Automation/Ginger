@@ -183,11 +183,20 @@ namespace Ginger.SolutionAutoSaveAndRecover
 
         private void SelectAll(object sender, RoutedEventArgs e)
         {
-            if (mRecoveredItems == null) return;
+            if (mRecoveredItems == null)
+            {
+                return;
+            }
+
             if (selected == false)
+            {
                 selected = true;
+            }
             else
+            {
                 selected = false;
+            }
+
             foreach (RecoveredItem RI in mRecoveredItems)
             {
                 RI.Selected = selected;

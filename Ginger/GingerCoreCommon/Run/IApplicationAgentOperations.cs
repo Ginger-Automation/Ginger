@@ -16,9 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.InterfacesLib;
-using System;
 using System.Collections.Generic;
+using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace GingerCore.Platforms
 {

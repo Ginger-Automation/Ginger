@@ -16,16 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using GingerCore.Helpers;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run;
-using GingerCore.Platforms;
 using Amdocs.Ginger.Repository;
-using System.Collections.Generic;
+using GingerCore.Platforms;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using static GingerCore.Actions.WebAPIKeyBodyValues;
-using System.Linq;
 
 namespace GingerCore.Actions.WebServices
 {
@@ -46,7 +44,7 @@ namespace GingerCore.Actions.WebServices
         }
 
 
-        public new static partial class Fields 
+        public new static partial class Fields
         {
             public static string ReqHttpVersion = "ReqHttpVersion";
             public static string CookieMode = "CookieMode";
@@ -87,7 +85,7 @@ namespace GingerCore.Actions.WebServices
             {
 
 
-                sHttpHeaders.Add(header.Param,header.ValueForDriver);
+                sHttpHeaders.Add(header.Param, header.ValueForDriver);
 
             }
             platformAction.InputParams.Add("Headers", sHttpHeaders);
@@ -104,9 +102,9 @@ namespace GingerCore.Actions.WebServices
                 wakv.Value = WKBV.ValueForDriver;
                 wakv.ValueType = WKBV.ValueType;
 
-                if (WKBV.ValueType==WebAPIKeyBodyValues.eValueType.File)
+                if (WKBV.ValueType == WebAPIKeyBodyValues.eValueType.File)
                 {
-                    wakv.FileBytes= File.ReadAllBytes(WKBV.ValueForDriver);
+                    wakv.FileBytes = File.ReadAllBytes(WKBV.ValueForDriver);
 
                 }
 
@@ -142,5 +140,5 @@ namespace GingerCore.Actions.WebServices
     }
 
 
- 
+
 }

@@ -24,7 +24,7 @@ using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.ValueExpression
 {
-    public  class ValueExpessionGeneralFunctions
+    public class ValueExpessionGeneralFunctions
     {
         #region PlaceHolders
 
@@ -142,10 +142,10 @@ namespace Amdocs.Ginger.CoreNET.ValueExpression
             {
                 return obj[0].ToString().Replace(obj[1].ToString(), obj[2].ToString());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.WARN, "User provided invalid number of string arguments");
-                return "Invalid string with arguments. "+ex.Message;
+                return "Invalid string with arguments. " + ex.Message;
 
             }
         }

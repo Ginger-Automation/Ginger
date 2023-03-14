@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using GingerCore.Drivers.ASCF;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.ASCF
 {
@@ -29,7 +29,7 @@ namespace Ginger.WindowExplorer.ASCF
         public ASCFControlInfoPage(ASCFControlInfo CI)
         {
             InitializeComponent();
-             ShowControlInfo(CI);
+            ShowControlInfo(CI);
         }
 
         private void ShowControlInfo(ASCFControlInfo CI)

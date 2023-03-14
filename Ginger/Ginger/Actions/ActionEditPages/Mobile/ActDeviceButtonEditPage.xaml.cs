@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using GingerCore.Actions.Common;
+using System.Windows.Controls;
 
 namespace Ginger.Actions._Common
 {
@@ -34,11 +34,11 @@ namespace Ginger.Actions._Common
 
             mAct = act;
 
-            ButtonActionComboBox.BindControl(mAct, ActDeviceButton.Fields.DeviceButtonAction);           
+            ButtonActionComboBox.BindControl(mAct, ActDeviceButton.Fields.DeviceButtonAction);
         }
 
         private void ButtonActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {            
+        {
 
             if (ButtonActionComboBox.SelectedValue == null)
             {

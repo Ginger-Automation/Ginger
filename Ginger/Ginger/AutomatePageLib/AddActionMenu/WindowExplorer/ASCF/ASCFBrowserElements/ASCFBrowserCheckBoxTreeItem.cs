@@ -17,16 +17,16 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.ASCF;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.ASCF
 {
     class ASCFBrowserCheckBoxTreeItem : ASCFBrowserElementTreeItem, ITreeViewItem, IWindowExplorerTreeItem
-    {        
+    {
         StackPanel ITreeViewItem.Header()
         {
             return TreeViewUtils.CreateItemHeader(Name, ElementInfo.GetElementTypeImage(eElementType.CheckBox));

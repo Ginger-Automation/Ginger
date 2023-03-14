@@ -48,7 +48,7 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                mIsDefault = value;                
+                mIsDefault = value;
                 //OnPropertyChanged(nameof(IsDefault));
             }
         }

@@ -16,18 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.UserControlsLib;
+using Ginger.ValidationRules;
 using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
-using Ginger.UserControls;
-using amdocs.ginger.GingerCoreNET;
-using System.Windows.Input;
-using System.Text.RegularExpressions;
-using Ginger.ValidationRules;
-using Ginger.UserControlsLib;
 
 namespace Ginger.Configurations
 {

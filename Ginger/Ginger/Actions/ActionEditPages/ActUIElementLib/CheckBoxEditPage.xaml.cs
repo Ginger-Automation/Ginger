@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore.Actions.Common;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore.Actions.Common;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {

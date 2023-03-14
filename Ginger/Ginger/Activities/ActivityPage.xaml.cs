@@ -79,7 +79,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             mPageViewMode = pageViewMod;
             SetUIView();
-           
+
         }
 
         private void SetIconImageType()
@@ -138,7 +138,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xEditButton.Visibility = Visibility.Collapsed;
                 xSaveButton.Visibility = Visibility.Collapsed;
                 xUploadToShareRepoMenuItem.Visibility = Visibility.Collapsed;
-            }      
+            }
 
             else if (mPageViewMode == Ginger.General.eRIPageViewMode.SharedReposiotry)
             {
@@ -163,7 +163,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void BindControlsToActivity()
         {
-            if (mPageViewMode != Ginger.General.eRIPageViewMode.View && mPageViewMode != Ginger.General.eRIPageViewMode.ViewAndExecute  && mActivity.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange)
+            if (mPageViewMode != Ginger.General.eRIPageViewMode.View && mPageViewMode != Ginger.General.eRIPageViewMode.ViewAndExecute && mActivity.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange)
             {
                 mActivity.SaveBackup();
             }
@@ -212,11 +212,11 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     if (mActivity.Type == eSharedItemType.Link)//Check if this is callled when opening activity from runset?
                     {
-                        UpdateActivityViewMode(Ginger.General.eRIPageViewMode.ViewAndExecute);                      
+                        UpdateActivityViewMode(Ginger.General.eRIPageViewMode.ViewAndExecute);
                     }
                     else
                     {
-                        UpdateActivityViewMode(Ginger.General.eRIPageViewMode.Automation);                     
+                        UpdateActivityViewMode(Ginger.General.eRIPageViewMode.Automation);
                     }
 
                     BindControlsToActivity();
@@ -290,7 +290,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void MActionsPage_ShiftToActionEditEvent(object sender, RoutedEventArgs e)
         {
-            if (mPageViewMode == Ginger.General.eRIPageViewMode.Automation|| mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.Automation || mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
             {
                 xRunSelectedActionBtn.Visibility = Visibility.Collapsed;
             }
@@ -303,7 +303,7 @@ namespace GingerWPF.BusinessFlowsLib
             mActivity.Acts.CollectionChanged -= Acts_CollectionChanged;
             mActivity.Variables.CollectionChanged -= Variables_CollectionChanged;
 
-            if (mActivity != null && mPageViewMode != Ginger.General.eRIPageViewMode.View  && mPageViewMode != Ginger.General.eRIPageViewMode.ViewAndExecute && mActivity.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange)
+            if (mActivity != null && mPageViewMode != Ginger.General.eRIPageViewMode.View && mPageViewMode != Ginger.General.eRIPageViewMode.ViewAndExecute && mActivity.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange)
             {
                 mActivity.ClearBackup();
             }

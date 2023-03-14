@@ -19,26 +19,11 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GlobalSolutionLib;
 using Amdocs.Ginger.CoreNET.GlobalSolutionLib;
-using Amdocs.Ginger.Repository;
-using Ginger.Actions;
 using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using GingerWPF.WizardLib;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 {
@@ -86,7 +71,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                         wiz.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
                         GlobalSolutionUtils.Instance.EncryptionKey = wiz.EncryptionKey;
                     }
-                    else 
+                    else
                     {
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Loading Solution- Error: Encryption key validation failed.");
                         WizardEventArgs.CancelEvent = true;
@@ -126,7 +111,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     continue;
                 }
                 var description = ((EnumValueDescriptionAttribute[])typeof(GlobalSolution.eImportItemType).GetField(ItemType.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false))[0].ValueDescription;
-                ItemTypeListToImport.Add(new GlobalSolutionItem(ItemType, "",description, true, "", ""));
+                ItemTypeListToImport.Add(new GlobalSolutionItem(ItemType, "", description, true, "", ""));
             }
             return ItemTypeListToImport;
         }
