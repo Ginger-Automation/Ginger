@@ -219,6 +219,8 @@ namespace Ginger.Actions
                 case ActMobileDevice.eMobileDeviceAction.SimulateBiometrics:
                     xAuthSimulationPnl.Visibility = Visibility.Visible;
                     break;
+                default:
+                    break;
             }
         }
 
