@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -155,7 +155,7 @@ namespace Ginger.Reports
         }
 
 
-        private eDataPublishingPhase mDataPublishingPhase = eDataPublishingPhase.PostExecution;
+        private eDataPublishingPhase mDataPublishingPhase = eDataPublishingPhase.DuringExecution;
 
         [IsSerializedForLocalRepository]
         public eDataPublishingPhase DataPublishingPhase
