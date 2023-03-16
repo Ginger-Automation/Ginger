@@ -16,18 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using GingerWPF.WizardLib;
-using System.Windows.Controls;
-using Ginger.SolutionWindows.TreeViewItems;
 using amdocs.ginger.GingerCoreNET;
-using static Ginger.GherkinLib.ImportGherkinFeatureFilePage;
+using Amdocs.Ginger.Common.Enums;
+using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.Enums;
-using System.Collections.Generic;
+using GingerWPF.WizardLib;
 using System.IO;
-using Ginger.GherkinLib;
-using Amdocs.Ginger.ValidationRules;
+using System.Windows.Controls;
+using static Ginger.GherkinLib.ImportGherkinFeatureFilePage;
 
 namespace Ginger.UserControlsLib.TextEditor.Gherkin
 {
@@ -55,40 +52,40 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                     wiz = (ImportGherkinFeatureWizard)WizardEventArgs.Wizard;
                     if (mContext == eImportGherkinFileContext.DocumentsFolder)
                     {
-                        BusinessFlowsFolderTreeItem bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>(),eBusinessFlowsTreeViewMode.ReadOnly);
-                        
-                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);                        
+                        BusinessFlowsFolderTreeItem bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>(), eBusinessFlowsTreeViewMode.ReadOnly);
+
+                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);
                     }
-                    else if(mContext == eImportGherkinFileContext.BusinessFlowFolder)
+                    else if (mContext == eImportGherkinFileContext.BusinessFlowFolder)
                     {
                         DocumentsFolderTreeItem documentsFolderRoot = new DocumentsFolderTreeItem();
                         documentsFolderRoot.IsGingerDefualtFolder = true;
                         documentsFolderRoot.Path = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Documents");
                         documentsFolderRoot.Folder = "Documents";
-                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage("Documents", eImageType.File, documentsFolderRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);                        
-                    }                    
+                        mTargetFolderSelectionPage = new SingleItemTreeViewSelectionPage("Documents", eImageType.File, documentsFolderRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Folder, true);
+                    }
                     mTargetFolderSelectionPage.xTreeView.xTreeViewTree.ValidationRules.Add(UCTreeView.eUcTreeValidationRules.NoItemSelected);
 
                     mTargetFolderSelectionPage.OnSelect += MTargetFolderSelectionPage_OnSelectItem;
-                    
+
                     TargetPath.Content = mTargetFolderSelectionPage;
                     break;
                 case EventType.LeavingForNextPage:
                     if (mContext == eImportGherkinFileContext.BusinessFlowFolder)
-                    { 
+                    {
                         wiz.featureTargetFolder = (ITreeViewItem)mTargetFolder;
                     }
                     else
-                    { 
+                    {
                         wiz.bizFlowTargetFolder = (ITreeViewItem)mTargetFolder;
                     }
-                    break;                       
+                    break;
             }
 
         }
         private void MTargetFolderSelectionPage_OnSelectItem(object sender, SelectionTreeEventArgs e)
         {
-            mTargetFolder = e.SelectedItems[0];           
-        }        
+            mTargetFolder = e.SelectedItems[0];
+        }
     }
 }

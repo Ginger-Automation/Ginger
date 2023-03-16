@@ -17,9 +17,9 @@ limitations under the License.
 #endregion
 
 
-using GingerCore;
 using System;
 using System.Collections.Generic;
+using GingerCore;
 
 namespace Amdocs.Ginger.Common
 {

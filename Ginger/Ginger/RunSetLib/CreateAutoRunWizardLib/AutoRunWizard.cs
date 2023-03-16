@@ -51,12 +51,12 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         {
             RunsetConfig = runSetConfig;
             mContext = context;
-            CliHelper = new CLIHelper();           
+            CliHelper = new CLIHelper();
             AutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, CliHelper);
             AutoRunShortcut = new RunSetAutoRunShortcut(AutoRunConfiguration);
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Auto Run Configuration Introduction", Page: new WizardIntroPage("/RunSetLib/CreateAutoRunWizardLib/AutoRunIntroduction.md"));
-            AddPage(Name: "General Options", Title: "General Options", SubTitle: "Set Auto Run General Options", Page: new AutoRunWizardOptionsPage());                        
+            AddPage(Name: "General Options", Title: "General Options", SubTitle: "Set Auto Run General Options", Page: new AutoRunWizardOptionsPage());
             AddPage(Name: "Execution Configurations", Title: "Execution Configurations", SubTitle: "Execution Configurations", Page: new AutoRunWizardCLITypePage());
             AddPage(Name: "Execute", Title: "Execute", SubTitle: "Execute", Page: new AutoRunWizardShortcutPage());
         }
@@ -95,7 +95,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Error occurred while creating the Auto Run Configuration/Shortcut/Execution." + Environment.NewLine + "Error: " + ex.Message);
                 }
             });
-            
+
         }
 
         private string ExecuteCommand(string userMsg)
@@ -105,7 +105,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 var count = 1;
                 var successCount = 0;
                 var failCount = 0;
-                if(AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote)
+                if (AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote)
                 {
                     Reporter.ToStatus(eStatusMsgKey.StaticStatusMessage, null, "Sending the execution requests is in progress...");
                 }
@@ -167,7 +167,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 Reporter.HideStatusMessage();
             }
-           
+
         }
 
         public string SaveShortcut()
@@ -197,7 +197,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 }
 
                 shortcut.Save();
-                msg= "Execution shortcut file created successfully." + Environment.NewLine;
+                msg = "Execution shortcut file created successfully." + Environment.NewLine;
             }
             catch (Exception ex)
             {

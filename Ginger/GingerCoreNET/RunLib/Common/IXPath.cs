@@ -44,14 +44,14 @@ namespace GingerCore.Drivers.Common
         ElementInfo GetRootElement();
 
         ElementInfo UseRootElement();
-        
+
         ElementInfo GetElementParent(ElementInfo ElementInfo, PomSetting pomSetting = null);
 
-        string GetElementProperty(ElementInfo ElementInfo, string PropertyName);        
+        string GetElementProperty(ElementInfo ElementInfo, string PropertyName);
 
         List<ElementInfo> GetElementChildren(ElementInfo ElementInfo);
 
-        ElementInfo FindFirst(ElementInfo ElementInfo, List<XpathPropertyCondition> conditions) ;
+        ElementInfo FindFirst(ElementInfo ElementInfo, List<XpathPropertyCondition> conditions);
 
         List<ElementInfo> FindAll(ElementInfo ElementInfo, List<XpathPropertyCondition> conditions);
 

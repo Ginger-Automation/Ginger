@@ -17,8 +17,6 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core
 {
@@ -27,7 +25,7 @@ namespace Amdocs.Ginger.Plugin.Core
     {
         public string PropertyName => "FileType";
 
-        public string FileType { get; set; }        
+        public string FileType { get; set; }
 
         public FileTypeAttribute(string fileType)
         {

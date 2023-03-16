@@ -21,12 +21,12 @@ namespace GingerATS
 {
     public enum eGingerRepoItemType
     {
-        ActivitiesGroup,Activity,Action,Variable
+        ActivitiesGroup, Activity, Action, Variable
     }
 
     public enum eGeneralGingerRepoAttributes
     {
-        Guid, ExternalID,LastUpdate
+        Guid, ExternalID, LastUpdate
     }
 
     public class GingerRepositoryItem
@@ -37,7 +37,7 @@ namespace GingerATS
         public string ExternalID { get; set; }
         public string FilePath { get; set; }
         public string LastUpdated { get; set; }
-        public string XmlFileDetails { get; set; }        
+        public string XmlFileDetails { get; set; }
 
         public static string ActivityAutomationStatusAttributeName { get { return "AutomationStatus"; } }
         public static string ActivityAutomationStatusAutomatedValue { get { return "Automated"; } }

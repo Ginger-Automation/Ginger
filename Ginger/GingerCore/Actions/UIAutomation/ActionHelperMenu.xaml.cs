@@ -30,7 +30,7 @@ namespace GingerCore.Actions.UIAutomation
     /// <summary>
     /// Interaction logic for ActionHelper.xaml
     /// </summary>
-    public partial class ActionHelperMenu : Window 
+    public partial class ActionHelperMenu : Window
     {
         /// <summary>
         /// Position to lock for change size in horizontal way (x)
@@ -64,12 +64,14 @@ namespace GingerCore.Actions.UIAutomation
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
+            {
                 this.DragMove();
+            }
         }
 
         public void AnimateResize(double changeWidth = 0d, double changeHeight = 0d, double durationMilisec = 200.0)
         {
-            Storyboard sb = new Storyboard { Duration = new Duration(TimeSpan.FromMilliseconds(durationMilisec)) }; 
+            Storyboard sb = new Storyboard { Duration = new Duration(TimeSpan.FromMilliseconds(durationMilisec)) };
 
             DoubleAnimationUsingKeyFrames daw;
             DoubleAnimationUsingKeyFrames dah;
@@ -87,7 +89,7 @@ namespace GingerCore.Actions.UIAutomation
                 dah.DecelerationRatio = 0.6;
                 Storyboard.SetTarget(dah, this);
                 Storyboard.SetTargetProperty(dah, new PropertyPath(Window.HeightProperty));
-                sb.Children.Add(dah); 
+                sb.Children.Add(dah);
             }
 
             if (changeWidth != 0.0)
@@ -127,7 +129,7 @@ namespace GingerCore.Actions.UIAutomation
 
                 Storyboard.SetTarget(dax, this);
                 Storyboard.SetTargetProperty(dax, new PropertyPath(Window.LeftProperty));
-                sb.Children.Add(dax); 
+                sb.Children.Add(dax);
             }
 
             // animate window move vertical 
@@ -151,20 +153,20 @@ namespace GingerCore.Actions.UIAutomation
 
                 Storyboard.SetTarget(day, this);
                 Storyboard.SetTargetProperty(day, new PropertyPath(Window.TopProperty));
-                sb.Children.Add(day); 
+                sb.Children.Add(day);
             }
             sb.Begin();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            this.AnimateResize(100,200, 1000.0);
+            this.AnimateResize(100, 200, 1000.0);
 
             Parallel.Invoke(() =>
                 {
 
                     bindmouse();
-             });
+                });
         }
 
         private async void bindmouse()
@@ -180,9 +182,9 @@ namespace GingerCore.Actions.UIAutomation
                 }
                 else if (this != null)
                 {
-                   await this.Dispatcher.BeginInvoke((Action)(() =>
-                    {
-                    }));
+                    await this.Dispatcher.BeginInvoke((Action)(() =>
+                     {
+                     }));
                 }
             }
         }
@@ -204,7 +206,7 @@ namespace GingerCore.Actions.UIAutomation
             Console.WriteLine("Mouse-X:" + w32Mouse.X.ToString() + "Y:" + w32Mouse.Y.ToString());
             return new Point(w32Mouse.X, w32Mouse.Y);
         }
-        
+
         public class MouseTrackerDecorator : Decorator
         {
             static readonly DependencyProperty MousePositionProperty;
@@ -222,7 +224,10 @@ namespace GingerCore.Actions.UIAutomation
                 set
                 {
                     if (base.Child != null)
+                    {
                         base.Child.MouseMove -= _controlledObject_MouseMove;
+                    }
+
                     base.Child = value;
                     base.Child.MouseMove += _controlledObject_MouseMove;
                 }

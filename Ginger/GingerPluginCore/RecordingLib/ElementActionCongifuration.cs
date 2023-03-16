@@ -16,9 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core
 {
@@ -35,7 +32,7 @@ namespace Amdocs.Ginger.Plugin.Core
         public bool AddPOMToAction { get; set; }
         public string POMGuid { get; set; }
         public string ElementGuid { get; set; }
-        
+
         #region java driver table element specific property
         public string WhereColumnValue { get; set; }
         public string RowValue { get; set; }

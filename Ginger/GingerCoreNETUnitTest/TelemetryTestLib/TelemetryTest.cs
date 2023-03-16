@@ -1,9 +1,6 @@
 ﻿using Amdocs.Ginger.CoreNET.TelemetryLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GingerCoreNETUnitTest.TelemetryTestLib
 {
@@ -15,7 +12,7 @@ namespace GingerCoreNETUnitTest.TelemetryTestLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-           
+
         }
 
         [TestCleanup]
@@ -23,9 +20,10 @@ namespace GingerCoreNETUnitTest.TelemetryTestLib
         {
 
         }
- 
 
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void VerifyApplicationAPIModelFileExtension()
         {
 
@@ -39,6 +37,6 @@ namespace GingerCoreNETUnitTest.TelemetryTestLib
             //Assert            
             // Assert.AreEqual(ext, "Ginger.ApplicationAPIModel");
         }
-        
+
     }
 }

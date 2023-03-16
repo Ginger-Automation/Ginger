@@ -18,16 +18,11 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
-using GingerCore.DataSource;
 using GingerCore.GeneralLib;
-using GingerCore;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -73,7 +68,7 @@ namespace Ginger.Run.RunSetActions
         private string mMailTo;
         [IsSerializedForLocalRepository]
         public string MailTo { get { return mMailTo; } set { if (mMailTo != value) { mMailTo = value; OnPropertyChanged(nameof(MailTo)); } } }
-       
+
         public string MailHost
         {
             get
@@ -84,11 +79,11 @@ namespace Ginger.Run.RunSetActions
             {
                 if (Email.SMTPMailHost != value)
                 {
-                    Email.SMTPMailHost = value;                    
+                    Email.SMTPMailHost = value;
                 }
             }
         }
-       
+
         public string MailUser
         {
             get
@@ -99,7 +94,7 @@ namespace Ginger.Run.RunSetActions
             {
                 if (Email.SMTPUser != value)
                 {
-                    Email.SMTPUser = value;                   
+                    Email.SMTPUser = value;
                 }
             }
         }

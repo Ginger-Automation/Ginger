@@ -125,7 +125,7 @@ namespace Amdocs.Ginger.Common.Helpers
             return cmd.Replace("\"", "\\\"");
         }
 
-    
+
 
 
     }

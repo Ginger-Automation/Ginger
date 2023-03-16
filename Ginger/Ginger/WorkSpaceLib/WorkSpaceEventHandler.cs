@@ -30,7 +30,7 @@ namespace GingerWPF.WorkSpaceLib
     // Ginger.exe Workspace Event Handler
 
     public class WorkSpaceEventHandler : IWorkSpaceEventHandler
-    {        
+    {
         public void AddApplication()
         {
         }
@@ -40,7 +40,7 @@ namespace GingerWPF.WorkSpaceLib
         }
 
         public void SetSolutionSourceControl(Solution solution, ref string repositoryRootFolder)
-        {           
+        {
             SourceControlBase.eSourceControlType type = SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref repositoryRootFolder);
             if (type == SourceControlBase.eSourceControlType.GIT)
             {
@@ -105,7 +105,7 @@ namespace GingerWPF.WorkSpaceLib
         public bool OpenEncryptionKeyHandler(Solution solution)
         {
             SolutionPage solutionPage = new SolutionPage();
-            if(solution==null)
+            if (solution == null)
             {
                 solutionPage.ShowAsWindow();
                 return true;

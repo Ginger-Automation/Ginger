@@ -22,7 +22,6 @@ using System.Drawing;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using static Ginger.Run.GingerExecutionEngine;
 using static Ginger.Run.GingerRunner;
 
 namespace Ginger.MoveToGingerWPF.Run_Set_Pages
@@ -30,7 +29,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
     public class StatusIconConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {            
+        {
             eImageType ico = eImageType.Pending;//default icon
 
             if (value != null && value.GetType() == typeof(Amdocs.Ginger.CoreNET.Execution.eRunStatus))
@@ -64,7 +63,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
                         break;
                 }
             }
-            
+
             return ico;
         }
 
@@ -78,7 +77,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            eImageType ico = new eImageType();           
+            eImageType ico = new eImageType();
             bool status = (bool)value;
             switch (status)
             {
@@ -89,7 +88,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
                     ico = eImageType.InActive;
                     break;
             }
-             return ico;
+            return ico;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -166,5 +165,5 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
         {
             throw new NotImplementedException();
         }
-    }   
+    }
 }

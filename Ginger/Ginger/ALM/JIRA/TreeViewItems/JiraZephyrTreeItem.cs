@@ -41,7 +41,7 @@ namespace Ginger.ALM.JIRA.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(Name, "@WorkFlow_16x16.png");          
+            return TreeViewUtils.CreateItemHeader(Name, "@WorkFlow_16x16.png");
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -63,7 +63,7 @@ namespace Ginger.ALM.JIRA.TreeViewItems
         {
             return null;
         }
-        
+
         void ITreeViewItem.SetTools(ITreeView TV)
         {
             // there is not tools needed at this stage

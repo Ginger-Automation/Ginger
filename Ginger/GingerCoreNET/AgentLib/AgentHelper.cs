@@ -40,7 +40,7 @@ namespace GingerCoreNET
             ApplicationAgent appAgent = null;
             if (context != null && activity != null)
             {
-                appAgent = (ApplicationAgent)runner.GingerRunner.ApplicationAgents.Where(x => x.AppName == activity.TargetApplication).FirstOrDefault();                
+                appAgent = (ApplicationAgent)runner.GingerRunner.ApplicationAgents.Where(x => x.AppName == activity.TargetApplication).FirstOrDefault();
             }
             return appAgent;
         }

@@ -21,8 +21,8 @@ namespace GingerCore.Actions.Common
 {
     public class ActionParamInfo
     {
-        public string Param {get; set;}
-        public string Value {get; set;}
+        public string Param { get; set; }
+        public string Value { get; set; }
         public string CalculatedValue { get; set; }
 
         // We can add formatting or other cool feature for how to display this value

@@ -39,7 +39,7 @@ namespace Ginger.UserControlsLib.TextEditor
     {
         static List<TextEditorBase> TextEditors = null;
 
-        public DocumentEditorPage(string FileName, bool enableEdit = true,bool RemoveToolBar = false,string UCTextEditorTitle = null)
+        public DocumentEditorPage(string FileName, bool enableEdit = true, bool RemoveToolBar = false, string UCTextEditorTitle = null)
         {
             InitializeComponent();
 
@@ -57,12 +57,17 @@ namespace Ginger.UserControlsLib.TextEditor
                 else
                 {
                     // Load regular UCtextEditor and init with TE
-                    UCTextEditor UCTE = new UCTextEditor();                    
+                    UCTextEditor UCTE = new UCTextEditor();
                     UCTE.Init(FileName, TE, enableEdit, RemoveToolBar);
                     if (UCTextEditorTitle != null)
-                       UCTE.SetContentEditorTitleLabel(UCTextEditorTitle);
+                    {
+                        UCTE.SetContentEditorTitleLabel(UCTextEditorTitle);
+                    }
                     else if (!string.IsNullOrEmpty(TE.Title()))
+                    {
                         UCTE.SetContentEditorTitleLabel(TE.Title());
+                    }
+
                     EditorFrame.Content = UCTE;
                 }
             }
@@ -74,10 +79,13 @@ namespace Ginger.UserControlsLib.TextEditor
                     UCTextEditor UCTE = new UCTextEditor();
                     AutoDetectTextEditor AD = new AutoDetectTextEditor();
                     AD.ext = Path.GetExtension(FileName);
-                    TE = AD;                    
+                    TE = AD;
                     UCTE.Init(FileName, TE, enableEdit, RemoveToolBar);
                     if (UCTextEditorTitle != null)
+                    {
                         UCTE.SetContentEditorTitleLabel(UCTextEditorTitle);
+                    }
+
                     EditorFrame.Content = UCTE;
                 }
                 else
@@ -110,23 +118,26 @@ namespace Ginger.UserControlsLib.TextEditor
         GenericWindow genWin;
 
         private bool IsTextFile(string fileName)
-        {            
+        {
             // Method #1
-            if (IsTextFileByExtension(Path.GetExtension(fileName).ToLower())) return true;
+            if (IsTextFileByExtension(Path.GetExtension(fileName).ToLower()))
+            {
+                return true;
+            }
 
             // Method #2
             //Not full proof but good enough
             // Check for consecutive nulls in the first 10K..
             byte[] content = File.ReadAllBytes(fileName);
-                for (int i = 1; i < 10000 && i < content.Length; i++)
+            for (int i = 1; i < 10000 && i < content.Length; i++)
+            {
+                if (content[i] == 0x00 && content[i - 1] == 0x00)
                 {
-                    if (content[i] == 0x00 && content[i - 1] == 0x00)
-                    {
-                        return false;
-                    }
-                }            
+                    return false;
+                }
+            }
             return true;
-            
+
         }
 
         static List<string> ExtensiosnList = null;
@@ -138,7 +149,7 @@ namespace Ginger.UserControlsLib.TextEditor
             if (ExtensiosnList == null)
             {
                 FillExtensionsList();
-                
+
             }
             if (ExtensiosnList.Contains(sExt))
             {
@@ -187,7 +198,7 @@ namespace Ginger.UserControlsLib.TextEditor
         private TextEditorBase GetTextEditorByExtension(string FileName)
         {
             ScanTextEditors();
-            
+
             //TODO: if there is more than one let the user pick
             string ext = Path.GetExtension(FileName).ToLower();
             foreach (TextEditorBase TE in TextEditors)
@@ -200,7 +211,7 @@ namespace Ginger.UserControlsLib.TextEditor
                     }
                 }
             }
-            
+
             return null;
         }
 
@@ -217,7 +228,11 @@ namespace Ginger.UserControlsLib.TextEditor
 
                 foreach (Type t in list)
                 {
-                    if (t == typeof(PlugInTextEditorWrapper) || t == typeof(ValueExpression.ValueExpressionEditor)) continue;
+                    if (t == typeof(PlugInTextEditorWrapper) || t == typeof(ValueExpression.ValueExpressionEditor))
+                    {
+                        continue;
+                    }
+
                     if (t != typeof(ITextEditor))
                     {
                         TextEditorBase TE = (TextEditorBase)Activator.CreateInstance(t);
@@ -236,18 +251,18 @@ namespace Ginger.UserControlsLib.TextEditor
                     {
                         continue;
                     }
-                    
+
                     foreach (ITextEditor TE in PluginTextEditorHelper.GetTextFileEditors(pluginPackage))
                     {
-                        PlugInTextEditorWrapper plugInTextEditorWrapper = new PlugInTextEditorWrapper(TE);                        
+                        PlugInTextEditorWrapper plugInTextEditorWrapper = new PlugInTextEditorWrapper(TE);
                         TextEditors.Add(plugInTextEditorWrapper);
-                    }                    
+                    }
                 }
             }
         }
 
-       
-       
+
+
 
         public void Save()
         {

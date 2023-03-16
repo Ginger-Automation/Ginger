@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
 using GingerCoreNET.SourceControl;
 using SharpSvn;
 using System;
@@ -96,9 +95,15 @@ namespace GingerCore.SourceControl
         [MethodImpl(MethodImplOptions.Synchronized)] // Removed since causing long queue for big BF folders
         public override SourceControlFileInfo.eRepositoryItemStatus GetFileStatus(string Path, bool ShowIndicationkForLockedItems, ref string error)
         {
-            if (Path == null || Path.Length == 0) return SourceControlFileInfo.eRepositoryItemStatus.Unknown;
+            if (Path == null || Path.Length == 0)
+            {
+                return SourceControlFileInfo.eRepositoryItemStatus.Unknown;
+            }
 
-            if (client == null) Init();
+            if (client == null)
+            {
+                Init();
+            }
 
             System.Collections.ObjectModel.Collection<SvnStatusEventArgs> statuses;
 
@@ -115,9 +120,13 @@ namespace GingerCore.SourceControl
 
 
                     if (ListEventArgs != null && ListEventArgs[0].Lock != null && ListEventArgs[0].Lock.Owner == SourceControlUser)
+                    {
                         return SourceControlFileInfo.eRepositoryItemStatus.LockedByMe;
+                    }
                     else if (ListEventArgs != null && ListEventArgs[0].Lock != null && ListEventArgs[0].Lock.Owner != SourceControlUser)
+                    {
                         return SourceControlFileInfo.eRepositoryItemStatus.LockedByAnotherUser;
+                    }
                 }
 
                 client.GetStatus(Path, out statuses);
@@ -151,7 +160,11 @@ namespace GingerCore.SourceControl
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override ObservableList<SourceControlFileInfo> GetPathFilesStatus(string Path, ref string error, bool includLockedFiles = false)
         {
-            if (client == null) Init();
+            if (client == null)
+            {
+                Init();
+            }
+
             ObservableList<SourceControlFileInfo> files = new ObservableList<SourceControlFileInfo>();
 
             System.Collections.ObjectModel.Collection<SvnStatusEventArgs> statuses;
@@ -167,7 +180,9 @@ namespace GingerCore.SourceControl
                     }
 
                     if (System.IO.Path.GetExtension(arg.FullPath) == ".ldb" || System.IO.Path.GetExtension(arg.FullPath) == ".ignore")
+                    {
                         continue;
+                    }
 
                     SourceControlFileInfo SCFI = new SourceControlFileInfo();
                     SCFI.Path = arg.FullPath;
@@ -212,7 +227,9 @@ namespace GingerCore.SourceControl
                     }
 
                     if (SCFI.Status != SourceControlFileInfo.eRepositoryItemStatus.Unknown)
+                    {
                         files.Add(SCFI);
+                    }
                 }
             }
             catch (Exception ex)
@@ -257,7 +274,11 @@ namespace GingerCore.SourceControl
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths)
         {
-            if (client == null) Init();
+            if (client == null)
+            {
+                Init();
+            }
+
             SvnUpdateResult result;
 
             try
@@ -276,16 +297,24 @@ namespace GingerCore.SourceControl
                 if (result.Revision != -1)
                 {
                     if (supressMessage == true)
+                    {
                         Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully to revision:  " + result.Revision);
+                    }
                     else
+                    {
                         Reporter.ToUser(eUserMsgKey.UpdateToRevision, result.Revision);
+                    }
                 }
                 else
                 {
                     if (supressMessage == true)
+                    {
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to update the solution from source control.Error Details: 'The files are not connected to source control'");
+                    }
                     else
+                    {
                         Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "The files are not connected to source control");
+                    }
                 }
             }
             catch (Exception ex)
@@ -299,7 +328,11 @@ namespace GingerCore.SourceControl
 
         public override bool GetProject(string Path, string URI, ref string error)
         {
-            if (client == null) Init();
+            if (client == null)
+            {
+                Init();
+            }
+
             SvnUpdateResult result;
 
             try
@@ -365,6 +398,7 @@ namespace GingerCore.SourceControl
 
                 client.Commit(Paths, ca, out result);
                 if (result != null)
+                {
                     if (result.Revision != -1)
                     {
                         Reporter.ToUser(eUserMsgKey.CommitedToRevision, result.Revision);
@@ -373,6 +407,7 @@ namespace GingerCore.SourceControl
                     {
                         Reporter.ToUser(eUserMsgKey.SourceControlCommitFailed, "The files are not connected to source control");
                     }
+                }
             }
             catch (Exception e)
             {
@@ -392,7 +427,11 @@ namespace GingerCore.SourceControl
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override void CleanUp(string Path)
         {
-            if (client == null) Init();
+            if (client == null)
+            {
+                Init();
+            }
+
             try
             {
                 client.CleanUp(Path);
@@ -453,7 +492,11 @@ namespace GingerCore.SourceControl
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override bool UnLock(string Path, ref string error)
         {
-            if (client == null) Init();
+            if (client == null)
+            {
+                Init();
+            }
+
             bool result = false;
             try
             {
@@ -501,7 +544,11 @@ namespace GingerCore.SourceControl
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override bool ResolveConflicts(string Path, eResolveConflictsSide side, ref string error)
         {
-            if (client == null) Init();
+            if (client == null)
+            {
+                Init();
+            }
+
             try
             {
                 CleanUp(System.IO.Path.GetDirectoryName(Path));
@@ -519,7 +566,9 @@ namespace GingerCore.SourceControl
 
                 string fileContent = File.ReadAllText(Path);
                 if (fileContent.Contains("<<<<<<<"))
+                {
                     Reporter.ToUser(eUserMsgKey.SourceControlConflictResolveFailed, Path);
+                }
             }
             catch (Exception e)
             {
@@ -532,7 +581,11 @@ namespace GingerCore.SourceControl
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override bool Revert(string Path, ref string error)
         {
-            if (client == null) Init();
+            if (client == null)
+            {
+                Init();
+            }
+
             try
             {
                 client.Revert(Path, new SvnRevertArgs { Depth = SvnDepth.Infinity });//throw all local changes and return to base copy
@@ -588,7 +641,9 @@ namespace GingerCore.SourceControl
                         string SolutionName = sLine.Substring(0, end - 1);
 
                         if (!SolutionName.Contains("."))
+                        {
                             AddSolution(SourceControlSolutions, localPath + @"\" + SolutionName, SolutionName);
+                        }
                     }
                 }
             }
@@ -619,9 +674,14 @@ namespace GingerCore.SourceControl
             SolutionInfo sol = new SolutionInfo();
             sol.LocalFolder = LocalFolder;
             if (Directory.Exists(sol.LocalFolder))
+            {
                 sol.ExistInLocaly = true;
+            }
             else
+            {
                 sol.ExistInLocaly = false;
+            }
+
             sol.SourceControlLocation = SourceControlLocation;
             SourceControlSolutions.Add(sol);
         }
@@ -727,8 +787,10 @@ namespace GingerCore.SourceControl
 
         public override string GetRepositoryURL(ref string error)
         {
-            if (client == null) Init();
-
+            if (client == null)
+            {
+                Init();
+            }
 
             SvnInfoEventArgs info;
             client.GetInfo(SolutionFolder, out info);
@@ -743,7 +805,11 @@ namespace GingerCore.SourceControl
 
             try
             {
-                if (client == null) Init();
+                if (client == null)
+                {
+                    Init();
+                }
+
                 SvnInfoEventArgs info;
                 client.GetInfo(path, out info);
                 System.Collections.ObjectModel.Collection<SvnStatusEventArgs> statuses;
@@ -780,7 +846,10 @@ namespace GingerCore.SourceControl
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override string GetLockOwner(string path, ref string error)
         {
-            if (client == null) Init();
+            if (client == null)
+            {
+                Init();
+            }
 
             Collection<SvnListEventArgs> ListEventArgs;
             Uri targetUri = GetRemoteUriFromPath(path, out ListEventArgs);
@@ -798,7 +867,11 @@ namespace GingerCore.SourceControl
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override SourceControlItemInfoDetails GetRepositoryInfo(ref string error)
         {
-            if (client == null) Init();
+            if (client == null)
+            {
+                Init();
+            }
+
             try
             {
                 SvnInfoEventArgs info;

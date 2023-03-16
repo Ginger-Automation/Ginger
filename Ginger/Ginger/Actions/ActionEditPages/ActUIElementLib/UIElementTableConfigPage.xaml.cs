@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
@@ -42,11 +41,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
     {
         public ActUIElement mAct;
         int mRowCount = 0;
-        List<String> mColNames = null;      
+        List<String> mColNames = null;
         PlatformInfoBase mPlatform;
         ElementInfo mElementInfo;
         ObservableList<Act> mActions = null;
-        ObservableList<Act> mOriginalActions = null;       
+        ObservableList<Act> mOriginalActions = null;
         BaseWindow eBaseWindow;
         private enum BaseWindow
         {
@@ -63,7 +62,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mPlatform = Platform;
 
             InitializeComponent();
-            if(Act.ElementData != null)
+            if (Act.ElementData != null)
             {
                 if (Act.ElementType == eElementType.EditorPane || Act.ElementType.ToString() == "JEditor")
                 {
@@ -95,7 +94,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mAct.Context = context;
             mAct.Description = "UI Element Table";
             string targetApp = context?.BusinessFlow.CurrentActivity.TargetApplication;
-            mPlatform = PlatformInfoBase.GetPlatformImpl((from x in  WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetApp select x.Platform).FirstOrDefault());
+            mPlatform = PlatformInfoBase.GetPlatformImpl((from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetApp select x.Platform).FirstOrDefault());
 
             if (ElementInfo.ElementType.Contains("JEditor"))
             {
@@ -108,8 +107,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 mAct.ElementType = eElementType.Table;
                 mAct.ElementAction = ActUIElement.eElementAction.TableCellAction;
-            }                 
-            
+            }
+
             mElementInfo = ElementInfo;
             mActions = Actions;
             ShowCellActions();
@@ -131,15 +130,15 @@ namespace Ginger.Actions._Common.ActUIElementLib
             RowSelectorPanelInit();
             //TODO:Use binding for row locator type radio buttons
             //xLocateRowTypeRadioButtonGroup.Init(typeof(ActUIElement.eLocateRowTypeOptions), RowSelectorPanel, mAct.GetOrCreateInputParam(ActUIElement.Fields.LocateRowType));
-            WhereColumn.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector,mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector)), typeof(ActUIElement.eTableElementRunColSelectorValue), isVENeeded: false, UCselectionChange: WhereColumn_SelectionChanged);    
+            WhereColumn.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector, mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector)), typeof(ActUIElement.eTableElementRunColSelectorValue), isVENeeded: false, UCselectionChange: WhereColumn_SelectionChanged);
             WhereColumnTitle.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle)), isVENeeded: true, UCselectionChange: WhereColumnTitle_SelectionChanged, context: Context.GetAsContext(mAct.Context));
             WhereProperty.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, mAct.GetInputParamValue(ActUIElement.Fields.WhereProperty)), typeof(ActUIElement.eTableElementRunColPropertyValue), isVENeeded: false, UCselectionChange: WhereProperty_SelectionChanged);
             WhereOperator.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereOperator, mAct.GetInputParamValue(ActUIElement.Fields.WhereOperator)), typeof(ActUIElement.eTableElementRunColOperator), isVENeeded: false, UCselectionChange: WhereOperator_SelectionChanged);
             WhereColumnValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnValue)));
-            
-            RowSelectorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue), isVENeeded: true, UCselectionChange: RowSelectorValue_SelectionChanged, context: Context.GetAsContext(mAct.Context));          
+
+            RowSelectorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue), isVENeeded: true, UCselectionChange: RowSelectorValue_SelectionChanged, context: Context.GetAsContext(mAct.Context));
         }
-        
+
         private void InitTableInfo()
         {
             object o = null;
@@ -148,7 +147,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 o = mElementInfo.GetElementData();
             }
-            else if(mAct.ElementData != null)
+            else if (mAct.ElementData != null)
             {
                 o = mAct.ElementData;
             }
@@ -185,7 +184,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             RowSelectorValue.ComboBox.SelectedIndex = 0;
             mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.WhereColSelector, ActUIElement.eTableElementRunColSelectorValue.ColTitle.ToString());
             mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.WhereProperty, ActUIElement.eTableElementRunColPropertyValue.Value.ToString());
-            mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.WhereOperator, ActUIElement.eTableElementRunColOperator.Equals.ToString());            
+            mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.WhereOperator, ActUIElement.eTableElementRunColOperator.Equals.ToString());
         }
 
 
@@ -211,8 +210,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         ColumnLabelPanel.Visibility = Visibility.Visible;
                         cmbColSelectorValuePanel.Visibility = Visibility.Visible;
                         cmbColumnValuePanel.Visibility = Visibility.Visible;
-                       // cmbColSelectorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ColSelectorValue), typeof(ActUIElement.eTableElementRunColSelectorValue), isVENeeded: false, UCselectionChange: ColSelectorValue_SelectionChanged);
-                       // cmbColumnValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle), isVENeeded: true, UCselectionChange: ColumnValue_SelectionChanged);
+                        // cmbColSelectorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ColSelectorValue), typeof(ActUIElement.eTableElementRunColSelectorValue), isVENeeded: false, UCselectionChange: ColSelectorValue_SelectionChanged);
+                        // cmbColumnValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle), isVENeeded: true, UCselectionChange: ColumnValue_SelectionChanged);
                         //TableActionFieldBinding();
                     }
                     else if (selectedSubElementAction == ActUIElement.eElementAction.TableRowAction)
@@ -243,11 +242,13 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             string currentValue = mAct.GetInputParamValue(ActUIElement.Fields.LocateRowType);
             foreach (RadioButton rdb in RowSelectorPanel.Children)
+            {
                 if (rdb.Tag.ToString() == currentValue)
                 {
                     rdb.IsChecked = true;
                     break;
                 }
+            }
         }
 
         public void ShowTableControlActionConfigPage(PlatformInfoBase mPlatform)
@@ -288,7 +289,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 WhereColumnValue.Visibility = Visibility.Visible;
                 TableActionFieldBinding();
             }
-            if (mAct.ElementAction == ActUIElement.eElementAction.TableCellAction|| mAct.GetInputParamValue(ActUIElement.Fields.SubElementAction) == ActUIElement.eElementAction.TableCellAction.ToString())
+            if (mAct.ElementAction == ActUIElement.eElementAction.TableCellAction || mAct.GetInputParamValue(ActUIElement.Fields.SubElementAction) == ActUIElement.eElementAction.TableCellAction.ToString())
             {
                 RowLabelPanel.Visibility = Visibility.Visible;
                 RowSelectorPanel.Visibility = Visibility.Visible;
@@ -296,12 +297,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 WhereColumnValue.Visibility = Visibility.Visible;
                 ColumnLabelPanel.Visibility = Visibility.Visible;
                 cmbColSelectorValuePanel.Visibility = Visibility.Visible;
-                cmbColumnValuePanel.Visibility = Visibility.Visible;                
+                cmbColumnValuePanel.Visibility = Visibility.Visible;
                 cmbColSelectorValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ColSelectorValue), typeof(ActUIElement.eTableElementRunColSelectorValue), isVENeeded: false, UCselectionChange: ColSelectorValue_SelectionChanged);
                 cmbColumnValue.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle), isVENeeded: true, UCselectionChange: ColumnValue_SelectionChanged, context: Context.GetAsContext(mAct.Context));
                 TableActionFieldBinding();
             }
-            if(mAct.ElementAction == ActUIElement.eElementAction.TableAction)
+            if (mAct.ElementAction == ActUIElement.eElementAction.TableAction)
             {
                 RowLabelPanel.Visibility = Visibility.Collapsed;
                 RowSelectorPanel.Visibility = Visibility.Collapsed;
@@ -325,17 +326,26 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 TBH.AddUnderLineText(cmbColSelectorValue.ComboBox.SelectedItem?.ToString());
                 TBH.AddText(" ");
                 if (cmbColumnValue.ComboBox.SelectedIndex != -1)
+                {
                     TBH.AddBoldText(cmbColumnValue.ComboBox.SelectedItem?.ToString());
+                }
                 else
+                {
                     TBH.AddBoldText(cmbColumnValue.ComboBox.Text);
+                }
+
                 TBH.AddText(" and ");
                 if (RowNum.IsChecked == true)
                 {
                     TBH.AddUnderLineText(" row number ");
                     if (RowSelectorValue.ComboBox.SelectedIndex != -1)
+                    {
                         TBH.AddBoldText(RowSelectorValue.ComboBox.SelectedItem?.ToString());
+                    }
                     else
+                    {
                         TBH.AddBoldText(RowSelectorValue.ComboBox.Text);
+                    }
                 }
                 else if (AnyRow.IsChecked == true)
                 {
@@ -348,9 +358,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     TBH.AddUnderLineText(WhereColumn.ComboBox.SelectedItem?.ToString());
                     TBH.AddText(" ");
                     if (WhereColumnTitle.ComboBox.SelectedIndex != -1)
+                    {
                         TBH.AddBoldText(WhereColumnTitle.ComboBox.SelectedItem?.ToString());
+                    }
                     else
+                    {
                         TBH.AddBoldText(WhereColumnTitle.ComboBox.Text);
+                    }
+
                     TBH.AddText(" having control property ");
                     TBH.AddUnderLineText(WhereProperty.ComboBox.SelectedItem?.ToString());
                     TBH.AddText(" ");
@@ -380,19 +395,23 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     Enum.TryParse(((ComboEnumItem)WhereColumn.ComboBox.SelectedItem).Value.ToString(), out WhereColumnTitleSelectedValue);
 
                     if (WhereColumnTitleSelectedValue == ActTableElement.eRunColSelectorValue.ColTitle)
+                    {
                         WhereColumnTitle.ComboBox.Items.Add(mColNames[i].ToString());
+                    }
                     else if (WhereColumnTitleSelectedValue == ActTableElement.eRunColSelectorValue.ColNum)
+                    {
                         WhereColumnTitle.ComboBox.Items.Add(i.ToString());
+                    }
                     else
                     {
                         // if col name do thing for now
                     }
                 }
                 WhereColumnTitle.ComboBox.SelectedIndex = 0;
-                
+
             }
-           
-                SetDescriptionDetails();
+
+            SetDescriptionDetails();
         }
 
         private void ColSelectorValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -406,9 +425,13 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     Enum.TryParse(((ComboEnumItem)cmbColSelectorValue.ComboBox.SelectedItem).Value.ToString(), out colSelectorSelectedValue);
 
                     if (colSelectorSelectedValue == ActTableElement.eRunColSelectorValue.ColTitle)
+                    {
                         cmbColumnValue.ComboBox.Items.Add(mColNames[i].ToString());
+                    }
                     else if (colSelectorSelectedValue == ActTableElement.eRunColSelectorValue.ColNum)
+                    {
                         cmbColumnValue.ComboBox.Items.Add(i.ToString());
+                    }
                     else
                     {
                         // if col name do thing for now
@@ -427,7 +450,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private void RowNum_Checked(object sender, RoutedEventArgs e)
         {
             if (RowSelectorValue != null)
+            {
                 RowSelectorValue.IsEnabled = true;
+            }
 
             if (WherePanel != null)
             {
@@ -446,7 +471,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private void BySelectedRow_Checked(object sender, RoutedEventArgs e)
         {
             if (RowSelectorValue != null)
+            {
                 RowSelectorValue.IsEnabled = true;
+            }
 
             if (WherePanel != null)
             {
@@ -471,8 +498,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
             RowSelectorValue.IsEnabled = false;
             WherePanel.Visibility = Visibility.Visible;
             mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, (((RadioButton)sender).Tag).ToString());
-            WhereDataRow.Height = new GridLength(100);       
-                SetDescriptionDetails();           
+            WhereDataRow.Height = new GridLength(100);
+            SetDescriptionDetails();
         }
 
         private void Where_Unchecked(object sender, RoutedEventArgs e)
@@ -488,9 +515,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
         }
 
         private void RowSelectorValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {            
+        {
             mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, RowSelectorValue.ComboBox.SelectedValue.ToString());
-            
+
             SetDescriptionDetails();
         }
 
@@ -506,7 +533,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void ControlActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SetDescriptionDetails();          
+            SetDescriptionDetails();
 
             Page setControlActionValuePage = GetControlActionValue();
             if (setControlActionValuePage == null)
@@ -542,7 +569,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 }
             }
             return getControlActionValuePage;
-        }        
+        }
 
         void ShowCellActions()
         {
@@ -552,8 +579,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 mOriginalActions.Add(a);
             }
         }
-       
-        
+
+
 
         private void RestoreOriginalActions()
         {
@@ -564,18 +591,22 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     mActions.Add(a);
                 }
             }
-        }             
+        }
 
 
         public ActUIElement.eTableElementRunColOperator WhereOperator_Value
         {
             get
             {
-                ActUIElement.eTableElementRunColOperator eVal = ActUIElement. eTableElementRunColOperator.Contains;//default value 
+                ActUIElement.eTableElementRunColOperator eVal = ActUIElement.eTableElementRunColOperator.Contains;//default value 
                 if (Enum.TryParse<ActUIElement.eTableElementRunColOperator>(mAct.GetInputParamValue(ActUIElement.Fields.WhereOperator), out eVal))
+                {
                     return eVal;
+                }
                 else
-                    return eVal;           
+                {
+                    return eVal;
+                }
             }
             set
             {
@@ -589,9 +620,13 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 ActUIElement.eTableElementRunColPropertyValue eVal = ActUIElement.eTableElementRunColPropertyValue.Value;//default value 
                 if (Enum.TryParse<ActUIElement.eTableElementRunColPropertyValue>(mAct.GetInputParamValue(ActUIElement.Fields.WhereProperty), out eVal))
+                {
                     return eVal;
+                }
                 else
+                {
                     return eVal;
+                }
             }
             set
             {
@@ -605,9 +640,13 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 ActUIElement.eTableElementRunActionOn eVal = ActUIElement.eTableElementRunActionOn.OnCellRowNumColName;//default value 
                 if (Enum.TryParse<ActUIElement.eTableElementRunActionOn>(mAct.GetInputParamValue(ActUIElement.Fields.RunActionOn), out eVal))
+                {
                     return eVal;
+                }
                 else
+                {
                     return eVal;
+                }
             }
             set
             {
@@ -621,9 +660,13 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 ActUIElement.eTableElementRunColSelectorValue eVal = ActUIElement.eTableElementRunColSelectorValue.ColNum;//default value 
                 if (Enum.TryParse<ActUIElement.eTableElementRunColSelectorValue>(mAct.GetInputParamValue(ActUIElement.Fields.ColSelectorValue), out eVal))
+                {
                     return eVal;
+                }
                 else
+                {
                     return eVal;
+                }
             }
             set
             {
@@ -637,14 +680,18 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 ActUIElement.eTableElementRunColSelectorValue eVal = ActUIElement.eTableElementRunColSelectorValue.ColNum;//default value 
                 if (Enum.TryParse<ActUIElement.eTableElementRunColSelectorValue>(mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector), out eVal))
+                {
                     return eVal;
+                }
                 else
+                {
                     return eVal;
+                }
             }
             set
             {
                 mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.WhereColSelector, value.ToString());
             }
-        }        
+        }
     }
 }

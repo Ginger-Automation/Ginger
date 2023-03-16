@@ -32,13 +32,13 @@ namespace GingerCore.ALM.Qtest
         {
             RunID = runID;
             RunName = runName;
-            Status = status;         
+            Status = status;
             Tester = tester;
         }
 
         public QtestTestRun()
         {
-            
+
         }
     }
 }

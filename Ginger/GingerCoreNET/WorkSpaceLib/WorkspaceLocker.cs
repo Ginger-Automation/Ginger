@@ -50,7 +50,7 @@ limitations under the License.
 //            //mWorkspaceHolder = name;
 //        }
 
-        
+
 
 
 //        // TOD: remove !!!!!!!!!!!!!!!!!!!
@@ -88,7 +88,7 @@ limitations under the License.
 
 
 
-        
+
 
 //        public void ReleaseWorkspace()
 //        {
@@ -120,7 +120,7 @@ limitations under the License.
 
 //        public void Dispose()
 //        {
-            
+
 //        }
 //    }
 //}

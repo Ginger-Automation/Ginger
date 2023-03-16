@@ -17,22 +17,18 @@ limitations under the License.
 #endregion
 
 
-using Amdocs.Ginger.Repository;
-using Ginger.Run.RunSetActions;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using Ginger.Reports;
 using Amdocs.Ginger.Common;
-using GingerCore;
+using Amdocs.Ginger.Repository;
+using Ginger.Reports;
 
 namespace Ginger.Run.RunSetActions
 {
     public class RunSetActionGenerateTestNGReport : RunSetActionBase
     {
         public IRunSetActionGenerateTestNGReportOperations RunSetActionGenerateTestNGReportOperations;
-        
+
         [IsSerializedForLocalRepository(false)]
         public bool ConfiguerDynamicParameters { get; set; }
 

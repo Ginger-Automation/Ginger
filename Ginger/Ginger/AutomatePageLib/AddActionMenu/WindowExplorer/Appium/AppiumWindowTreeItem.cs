@@ -17,18 +17,17 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
-using GingerCore;
-using GingerCore.Actions;
-using GingerWPF.UserControlsLib.UCTreeView;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions;
+using GingerWPF.UserControlsLib.UCTreeView;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.Appium
 {
     public class AppiumWindowTreeItem : AppiumElementTreeItemBase, ITreeViewItem, IWindowExplorerTreeItem
     {
-        AppiumWindowPage mAppiumWindowPage =null;
+        AppiumWindowPage mAppiumWindowPage = null;
 
         StackPanel ITreeViewItem.Header()
         {
@@ -47,7 +46,7 @@ namespace Ginger.WindowExplorer.Appium
         }
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
-        {            
+        {
             if (mAppiumWindowPage == null)
             {
                 mAppiumWindowPage = new AppiumWindowPage(ElementInfo);

@@ -17,22 +17,22 @@ limitations under the License.
 #endregion
 
 namespace Amdocs.Ginger.CoreNET.Execution
-{   
-        public enum eRunStatus
-        {
-            NA,
-            Pending,
-            Started,
-            Running,
-            Canceling,
-            Stopped,
-            Failed,
-            Passed,
-            Skipped,
-            Wait,
-            FailIgnored,
-            Blocked,
-            Completed,
-            Automated
-    }    
+{
+    public enum eRunStatus
+    {
+        NA,
+        Pending,
+        Started,
+        Running,
+        Canceling,
+        Stopped,
+        Failed,
+        Passed,
+        Skipped,
+        Wait,
+        FailIgnored,
+        Blocked,
+        Completed,
+        Automated
+    }
 }

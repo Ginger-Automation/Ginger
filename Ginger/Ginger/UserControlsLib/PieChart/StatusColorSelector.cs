@@ -16,11 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Windows.Media;
 using Ginger.ScottLogic.PieChart;
-using System.Windows;
 using GingerCoreNET.GeneralLib;
+using System;
+using System.Windows;
+using System.Windows.Media;
 namespace Ginger.UserControlsLib.PieChart
 {
     /// <summary>

@@ -112,7 +112,7 @@
 //            //string PACKPluginPackageFolder = @"C:\Users\yaronwe\Source\Repos\Ginger-PACT-Plugin\Ginger-PACT-Plugin\bin\Debug\netstandard2.0"; //Path.Combine(Common.GetTestResourcesFolder(), @"PluginPackages\SeleniumPluginPackage.1.0.0");
 //            //string script = CommandProcessor.CreateLoadPluginScript(PACKPluginPackageFolder);
 //            //script += CommandProcessor.CreateStartServiceScript(serviceID, "PACT Service", SocketHelper.GetLocalHostIP(), mGingerGrid.Port);
-            
+
 //            ////Act
 //            //Task t = new Task(() => {
 //            //    GingerConsoleHelper.Execute(script);            
@@ -126,7 +126,7 @@
 //            //    GNI = (from x in mGingerGrid.NodeList where x.Name == "PACT Service" select x).FirstOrDefault();
 //            //    Thread.Sleep(1000);
 //            //}
-            
+
 
 //            //GingerNodeProxy GNA = new GingerNodeProxy(GNI);
 //            //GNA.Reserve();

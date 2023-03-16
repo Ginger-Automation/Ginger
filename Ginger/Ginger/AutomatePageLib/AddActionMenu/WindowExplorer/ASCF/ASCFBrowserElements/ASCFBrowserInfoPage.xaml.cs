@@ -18,8 +18,6 @@ limitations under the License.
 
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
-using GingerCore.Drivers.ASCF;
 
 namespace Ginger.Actions.Locators.ASCF
 {
@@ -38,7 +36,7 @@ namespace Ginger.Actions.Locators.ASCF
 
         private void ShowControlInfo(string Path)
         {
-            ControlNameTextBox.Text = Path;            
+            ControlNameTextBox.Text = Path;
         }
 
         //TODO: use me

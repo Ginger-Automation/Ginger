@@ -17,22 +17,19 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.GeneralLib;
-using System;
 using System.Linq;
-using System.Collections.Generic;
-using System.Text;
-using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger
 {
     // TODO: move to GingerCoreNET once RIs moved to GingerCoreCommon
     public static class RunSetOperations
     {
-        public static RunSetConfig CreateNewRunset(string runSetName="", RepositoryFolder<RunSetConfig> runSetsFolder = null)
+        public static RunSetConfig CreateNewRunset(string runSetName = "", RepositoryFolder<RunSetConfig> runSetsFolder = null)
         {
             if (string.IsNullOrEmpty(runSetName))
             {

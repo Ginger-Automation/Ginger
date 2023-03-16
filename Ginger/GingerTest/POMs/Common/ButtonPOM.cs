@@ -32,7 +32,8 @@ namespace GingerTest.POMs.Common
 
         public void Click()
         {
-            Execute(() => {
+            Execute(() =>
+            {
 
                 if (GingerAutomator.Highlight)
                 {
@@ -44,7 +45,7 @@ namespace GingerTest.POMs.Common
                 }
                 mButton.RaiseEvent(new System.Windows.RoutedEventArgs(Button.ClickEvent));
             });
-            
+
         }
     }
 }

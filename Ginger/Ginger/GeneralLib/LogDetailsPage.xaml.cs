@@ -19,10 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
-using OpenQA.Selenium.DevTools.V101.SystemInfo;
 using System;
-using System.Diagnostics;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -77,7 +74,7 @@ namespace Ginger.GeneralLib
             mLogLevel = (eLogShowLevel)xLogTypeCombo.SelectedValue;
             await FillLogData();
         }
-        
+
         private async Task FillLogData()
         {
             //get the log file text            
@@ -89,7 +86,7 @@ namespace Ginger.GeneralLib
             //cut all log not relevant to last application launch
             int indexOfStart = mLogText.LastIndexOf("######################## Application version");
 
-            if(indexOfStart==-1)
+            if (indexOfStart == -1)
             {
                 indexOfStart = 0;
             }
@@ -97,7 +94,7 @@ namespace Ginger.GeneralLib
             mLogText = mLogText.Substring(indexOfStart);
 
             //split the log per log info
-            string[] logs = mLogText.Split(new[] { Environment.NewLine },StringSplitOptions.None);
+            string[] logs = mLogText.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
             xLogDetailsTextBlock.Text = string.Empty;
             mTextBlockHelper = new TextBlockHelper(xLogDetailsTextBlock);
@@ -109,40 +106,41 @@ namespace Ginger.GeneralLib
             {
                 for (int i = start; i < logs.Length; i++)
                 {
-                    Dispatcher.Invoke(() => { 
-                    if (logs[i] == string.Empty)
+                    Dispatcher.Invoke(() =>
                     {
-                        if (allowLogDetailsWrite)
+                        if (logs[i] == string.Empty)
                         {
-                            mTextBlockHelper.AddLineBreak();
+                            if (allowLogDetailsWrite)
+                            {
+                                mTextBlockHelper.AddLineBreak();
+                            }
                         }
-                    }
-                    else if (logs[i].Contains("#### Application version"))
-                    {
-                        mTextBlockHelper.AddFormattedText(logs[i], Brushes.Black, true);
-                    }
-                    else if (IsLogHeader(logs[i]))
-                    {
-                        if (mLogLevel == eLogShowLevel.ALL || logs[i].Contains("| " + mLogLevel.ToString()))
+                        else if (logs[i].Contains("#### Application version"))
                         {
-                            
-                            mTextBlockHelper.AddFormattedText(logs[i], GetProperLogTypeBrush(logs[i]), isBold: true);
-                            mTextBlockHelper.AddLineBreak();
-                            allowLogDetailsWrite = true;
+                            mTextBlockHelper.AddFormattedText(logs[i], Brushes.Black, true);
+                        }
+                        else if (IsLogHeader(logs[i]))
+                        {
+                            if (mLogLevel == eLogShowLevel.ALL || logs[i].Contains("| " + mLogLevel.ToString()))
+                            {
+
+                                mTextBlockHelper.AddFormattedText(logs[i], GetProperLogTypeBrush(logs[i]), isBold: true);
+                                mTextBlockHelper.AddLineBreak();
+                                allowLogDetailsWrite = true;
+                            }
+                            else
+                            {
+                                allowLogDetailsWrite = false;
+                            }
                         }
                         else
                         {
-                            allowLogDetailsWrite = false;
+                            if (allowLogDetailsWrite)
+                            {
+                                mTextBlockHelper.AddText(logs[i]);
+                                mTextBlockHelper.AddLineBreak();
+                            }
                         }
-                    }
-                    else
-                    {
-                        if (allowLogDetailsWrite)
-                        {
-                            mTextBlockHelper.AddText(logs[i]);
-                            mTextBlockHelper.AddLineBreak();
-                        }
-                    }
                     });
                 }
             });
@@ -194,8 +192,8 @@ namespace Ginger.GeneralLib
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            
-            
+
+
             Button CopyToClipboradBtn = new Button();
             CopyToClipboradBtn.Content = "Copy to Clipboard";
             CopyToClipboradBtn.Click += new RoutedEventHandler(CopyToClipboradBtn_Click);
@@ -219,7 +217,7 @@ namespace Ginger.GeneralLib
         }
 
         private void CopyToClipboradBtn_Click(object sender, RoutedEventArgs e)
-        {            
+        {
             Clipboard.SetText(mTextBlockHelper.GetText());
         }
 
@@ -253,12 +251,14 @@ namespace Ginger.GeneralLib
                 if (System.IO.File.Exists(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile))
                 {
                     mail.Attachments.Add(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile);
-                }               
+                }
 
                 mail.EmailOperations.DisplayAsOutlookMail();
 
                 if (mail.Event != null && mail.Event.IndexOf("Failed") >= 0)
+                {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Failed to send the Log Details mail." + System.Environment.NewLine + System.Environment.NewLine + "Details: " + mail.Event);
+                }
             }
             catch (Exception ex)
             {
@@ -278,7 +278,7 @@ namespace Ginger.GeneralLib
             html.Append(@"<tr><td><p>" + "<b>Steps to Reproduce:</b> " + "<br><br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + "1. " + "<br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + "2. " + "<br></p></td></tr>").AppendLine();
-            html.Append(@"<tr><td><p>" + "3. " + "<br><br><br></p></td></tr>").AppendLine();          
+            html.Append(@"<tr><td><p>" + "3. " + "<br><br><br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + "<b>Log Details:</b> " + "<br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + mTextBlockHelper.GetText().Replace("\n", "<br>") + "<br></p></td></tr>").AppendLine();
             html.Append(@"</table></body></html>").AppendLine();

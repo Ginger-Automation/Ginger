@@ -16,14 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Windows;
 
 namespace GingerUtils.TimeLine
 {
-    public class TimeLineEvent 
-    {        
+    public class TimeLineEvent
+    {
         private string mText;
 
         // keep the data in memory efficient and small use uint,  each unit is millis so max can be 4,294,967,295 = 1,193 hours
@@ -44,7 +42,7 @@ namespace GingerUtils.TimeLine
         {
             get
             {
-                return mChildren;               
+                return mChildren;
             }
         }
 
@@ -67,14 +65,14 @@ namespace GingerUtils.TimeLine
             mEnd = end;
         }
 
-       
+
         public void AddSubEvent(TimeLineEvent timeLineEvent)
         {
             timeLineEvent.Level = this.Level + 1;
             mChildren.Add(timeLineEvent);
         }
 
-        
+
         public IEnumerable<TimeLineEvent> Children
         {
             get
@@ -97,7 +95,7 @@ namespace GingerUtils.TimeLine
             get
             {
                 return mEnd - mStart;
-            }            
+            }
         }
 
         //public Thickness TextOffset
@@ -105,7 +103,7 @@ namespace GingerUtils.TimeLine
         //    get
         //    {
         //        int offset = Level * 19;   // 19 is node indent - TODO: find it progr                
-                
+
         //        return new Thickness(offset, 0, 0, 0);
         //    }
         //}
@@ -120,10 +118,10 @@ namespace GingerUtils.TimeLine
         //    }
         //}
 
-       
-        
 
 
-        
+
+
+
     }
 }

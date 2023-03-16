@@ -19,10 +19,8 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.AnalyzerLib;
-using Ginger.SolutionGeneral;
 using GingerCore;
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
@@ -32,15 +30,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         internal static void Run(DoOptions opts)
         {
             switch (opts.Operation)
-            {                
+            {
                 case DoOptions.DoOperation.analyze:
-                    DoAnalyze(opts.Solution);                    
+                    DoAnalyze(opts.Solution);
                     break;
                 case DoOptions.DoOperation.clean:
                     // TODO: remove execution folder, backups and more
                     break;
                 case DoOptions.DoOperation.info:
-                    DoInfo(opts.Solution);                    
+                    DoInfo(opts.Solution);
                     break;
             }
         }

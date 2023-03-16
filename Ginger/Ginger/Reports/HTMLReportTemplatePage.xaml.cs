@@ -16,21 +16,20 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.UserControls;
+using Ginger.UserControlsLib;
+using GingerCore.Drivers;
 using System;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using GingerCore;
-using Ginger.UserControls;
-using System.Reflection;
-using System.IO;
-using System.IO.Compression;
-using GingerCore.Drivers;
-using amdocs.ginger.GingerCoreNET;
-using Ginger.UserControlsLib;
 
 namespace Ginger.Reports
 {
@@ -66,7 +65,9 @@ namespace Ginger.Reports
             get
             {
                 if (mInstance == null)
+                {
                     mInstance = new HTMLReportTemplatePage();
+                }
 
                 return mInstance;
             }
@@ -79,7 +80,7 @@ namespace Ginger.Reports
 
             _HTMLReportConfiguration = new HTMLReportConfiguration("", false, reportConfigurationOperations);
             CurrentItemToSave = _HTMLReportConfiguration;
-            
+
 
             InitializeComponent();
             SetControlsNewTemplate();
@@ -897,9 +898,13 @@ namespace Ginger.Reports
 
             //changing the solution because report should not be created in installtion folder due to permissions issues + it can be multiple users will run same Ginger on server
             if (Directory.Exists(mPreviewDummyReportPath))
+            {
                 ClearDirectoryContent(mPreviewDummyReportPath);
+            }
             else
+            {
                 PrepareDummyReportData();
+            }
 
             Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(mPreviewDummyReportDataPath),
                                                                                                         false,
@@ -924,9 +929,14 @@ namespace Ginger.Reports
                     string tempFolder = System.IO.Path.Combine(System.IO.Path.GetTempPath() + "GingerHtmlPreviewReport");
                     mPreviewDummyReportDataPath = System.IO.Path.Combine(tempFolder, "Data");
                     if (Directory.Exists(mPreviewDummyReportDataPath))
+                    {
                         ClearDirectoryContent(mPreviewDummyReportDataPath);
+                    }
                     else
+                    {
                         Directory.CreateDirectory(mPreviewDummyReportDataPath);
+                    }
+
                     ZipFile.ExtractToDirectory(dummyReportOriginalZipFilePath, mPreviewDummyReportDataPath);
 
                     string unzippedDataTestPath = System.IO.Path.Combine(mPreviewDummyReportDataPath, "RunSet.txt");
@@ -957,9 +967,14 @@ namespace Ginger.Reports
             //clear directory
             System.IO.DirectoryInfo di = new DirectoryInfo(DirPath);
             foreach (FileInfo file in di.GetFiles())
+            {
                 file.Delete();
+            }
+
             foreach (DirectoryInfo dir in di.GetDirectories())
+            {
                 dir.Delete(true);
+            }
         }
 
         private void SetIsDefualtImage()
@@ -967,9 +982,13 @@ namespace Ginger.Reports
             this.Dispatcher.Invoke(() =>
             {
                 if (_HTMLReportConfiguration.IsDefault)
+                {
                     xDefualtImage.Visibility = Visibility.Visible;
+                }
                 else
+                {
                     xDefualtImage.Visibility = Visibility.Collapsed;
+                }
             });
         }
 

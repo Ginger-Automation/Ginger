@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using Ginger.Actions.UserControls;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.Actions.UserControls;
 
 namespace Ginger.Run
 {
@@ -29,14 +29,14 @@ namespace Ginger.Run
     public partial class FailedActionsScreenshotsPage : Page
     {
         List<string> mFailedActionsScreenshots = new List<string>();
-        
+
         public List<string> FailedActionsScreenshots
         {
             get { return mFailedActionsScreenshots; }
         }
 
         GenericWindow genWin = null;
-        
+
         public FailedActionsScreenshotsPage(List<string> failedActionsScreenshots)
         {
             InitializeComponent();
@@ -48,9 +48,13 @@ namespace Ginger.Run
             while (rowcount * colsPerRow < mFailedActionsScreenshots.Count)
             {
                 if (rowcount < colsPerRow)
+                {
                     rowcount++;    // enable 1 row 2 columns, 2x3, 3x4 etc.. - avoid showing empty row
+                }
                 else
+                {
                     colsPerRow++;
+                }
                 // we can limit cols if we want for example max 3 per row, and then the grid will have vertical scroll bar
             }
 
@@ -76,7 +80,7 @@ namespace Ginger.Run
                 //TODO: clean me when Screenshots changed to class instead of list of strings
                 // just in case we don't have name, TOOD: fix all places where we add screen shots to include name
                 string Name = "";
-                Name = "Screenshot " + (i+1).ToString();
+                Name = "Screenshot " + (i + 1).ToString();
 
                 ScreenShotViewPage p = new ScreenShotViewPage(Name, mFailedActionsScreenshots[i]);
                 Frame f = new Frame();

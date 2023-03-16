@@ -17,10 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCore.Annotations;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using GingerCore.Annotations;
 
 namespace GingerCore.ALM.Rally
 {
@@ -66,7 +66,7 @@ namespace GingerCore.ALM.Rally
         public ObservableList<RallyTestStep> TestSteps { get; set; }
 
         public ObservableList<RallyTestParameter> Parameters { get; set; }
-        
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

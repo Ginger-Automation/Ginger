@@ -22,10 +22,7 @@ using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
@@ -45,7 +42,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         int mActivitiesCounter = 0;
         int mActionsCounter = 0;
         string mDumpFolder;
-        string CurrentBusinessFlowFolder;        
+        string CurrentBusinessFlowFolder;
         string CurrentActivityFolder;
         string CurrentActionFolder;
 
@@ -56,13 +53,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 mJsonSerializer = new JsonSerializer();
             }
-            Reset();            
+            Reset();
         }
 
         private void Reset()
         {
             mBusinessFlowCounter = 0;
-            CleanDumpFolder();            
+            CleanDumpFolder();
         }
 
         private void CleanDumpFolder()
@@ -97,7 +94,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             SaveObjToJSonFile(businessFlowReport, Path.Combine(mDumpFolder, CurrentBusinessFlowFolder, "BusinessFlowReport.txt"));
         }
 
-        public override void ActivityStart(uint eventTime, Activity activity, bool continuerun= false)
+        public override void ActivityStart(uint eventTime, Activity activity, bool continuerun = false)
         {
             mActivitiesCounter++;
             mActionsCounter = 0;
@@ -119,7 +116,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
 
         public override void ActionEnd(uint eventTime, Act action, bool offlineMode = false)
-        {            
+        {
             ActionReport actionReport = new ActionReport(action, null);//need to provide valid Context
             SaveObjToJSonFile(actionReport, Path.Combine(CurrentActivityFolder, CurrentActionFolder, "ActionReport.txt"));
         }

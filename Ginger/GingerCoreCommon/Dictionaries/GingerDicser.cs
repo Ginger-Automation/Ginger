@@ -72,7 +72,7 @@ namespace GingerCore
             {
                 string strValue = "";
                 if (!string.IsNullOrEmpty(prefixString)) strValue = prefixString;
-                if (!string.IsNullOrEmpty(strValue)) strValue = strValue + " " + termResValue.ToString();  else strValue = termResValue.ToString();
+                if (!string.IsNullOrEmpty(strValue)) strValue = strValue + " " + termResValue.ToString(); else strValue = termResValue.ToString();
                 if (!string.IsNullOrEmpty(suffixString)) strValue = strValue + " " + suffixString;
                 if (setToUpperCase) strValue = strValue.ToUpper();
                 return strValue;
@@ -81,7 +81,7 @@ namespace GingerCore
             {
                 return string.Empty;  //key not found
             }
-        }        
+        }
 
     }
 }

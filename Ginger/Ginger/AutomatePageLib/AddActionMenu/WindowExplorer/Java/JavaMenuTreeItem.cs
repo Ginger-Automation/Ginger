@@ -17,12 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
-using GingerCore;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.Java;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.Java
 {
@@ -41,7 +40,7 @@ namespace Ginger.WindowExplorer.Java
             {
                 Description = "Click Menu " + Name,
                 ControlAction = ActJavaElement.eControlAction.Click,
-                WaitforIdle=ActJavaElement.eWaitForIdle.Medium
+                WaitforIdle = ActJavaElement.eWaitForIdle.Medium
             });
             return list;
         }

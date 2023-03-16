@@ -38,9 +38,13 @@ namespace Ginger.Actions
 
         private void SetPageContent()
         {
-            if (mAct == null) return;
+            if (mAct == null)
+            {
+                return;
+            }
+
             lblActionType.Content = mAct.ActionDescription;
-             mAct.ActionDescriptionTextBlock(ActionHelpTextBlock);                     
+            mAct.ActionDescriptionTextBlock(ActionHelpTextBlock);
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)

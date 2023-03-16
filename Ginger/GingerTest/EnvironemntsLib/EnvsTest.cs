@@ -29,16 +29,16 @@ namespace GingerTest
     [Ignore]  // temp fail on Azure on class init
     [TestClass]
     [Level3]
-    
+
     public class EnvsTest
-    {        
-        static GingerAutomator mGingerAutomator; 
+    {
+        static GingerAutomator mGingerAutomator;
         static string SolutionFolder;
         static Mutex mutex = new Mutex();
 
         [ClassInitialize]
         public static void ClassInit(TestContext TC)
-        {     
+        {
             string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\EnvsTest");
             SolutionFolder = TestResources.GetTestTempFolder(@"Solutions\EnvsTest");
             if (Directory.Exists(SolutionFolder))
@@ -47,34 +47,35 @@ namespace GingerTest
             }
             CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
 
-            mGingerAutomator = GingerAutomator.StartSession();            
+            mGingerAutomator = GingerAutomator.StartSession();
             mGingerAutomator.OpenSolution(SolutionFolder);
         }
 
 
         [ClassCleanup]
         public static void ClassCleanup()
-        {            
-            GingerAutomator.EndSession(); 
+        {
+            GingerAutomator.EndSession();
         }
 
         // Run before each test
         [TestInitialize]
         public void TestInitialize()
         {
-            mutex.WaitOne();            
+            mutex.WaitOne();
         }
 
         [TestCleanup]
         public void TestCleanUp()
         {
-            mutex.ReleaseMutex();            
+            mutex.ReleaseMutex();
         }
 
 
-        
 
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void VerifyEnvsShowinTree()
         {
             //Arrange            
@@ -90,7 +91,8 @@ namespace GingerTest
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void AddEnvUsingWizard()
         {
             //Arrange            
@@ -106,7 +108,8 @@ namespace GingerTest
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void AddEnvToFileSystemWillShowinEnvsTree()
         {
             // Arrange                                                
@@ -129,7 +132,8 @@ namespace GingerTest
 
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void DeleteEnvFromFileSystem()
         {
             // Arrange            
@@ -152,7 +156,8 @@ namespace GingerTest
         }
 
         [Ignore] // TODO: FIXME not showing in tree b is false
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ChangeEnvNameOnDiskUpdateObjandShowinTree()
         {
             //Arrange
@@ -165,7 +170,7 @@ namespace GingerTest
             //Act
             string txt = File.ReadAllText(env.FilePath);
             txt = txt.Replace(EnvName, EnvNewName);
-            File.WriteAllText(env.FilePath, txt);            
+            File.WriteAllText(env.FilePath, txt);
             bool b = EnvsPOM.EnvironmentsTree.IsItemExist(EnvNewName);
 
             // assert
@@ -173,9 +178,10 @@ namespace GingerTest
             Assert.IsTrue(b);
         }
 
-       
+
         [Level3]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void AddEnvFolderShowinTree()
         {
             //Arrange
@@ -195,7 +201,8 @@ namespace GingerTest
 
 
         [Level3]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void DeleteEnvFolderRemovedfromTree()
         {
             //Arrange
@@ -217,7 +224,8 @@ namespace GingerTest
         }
 
         [Ignore] //TODO: FIXME 2nd assert fail
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RenameEnvFolderSyncWithTree()
         {
             //Arrange

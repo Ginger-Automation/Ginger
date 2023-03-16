@@ -16,19 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using GingerCore;
+using Amdocs.Ginger.Repository;
 
 
 namespace Ginger.Reports
 {
     public class HTMLReportTemplate : RepositoryItemBase
     {
-        
+
 
         public enum eReportStatus
         {
@@ -130,7 +128,7 @@ namespace Ginger.Reports
             return HTML;
         }
 
-        public  static class Fields
+        public static class Fields
         {
             public static string Name = "Name";
             public static string Description = "Description";

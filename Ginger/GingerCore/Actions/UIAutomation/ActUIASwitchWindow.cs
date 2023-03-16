@@ -16,12 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using GingerCore.Helpers;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActUIASwitchWindow : Act
@@ -38,7 +36,7 @@ namespace GingerCore.Actions
             get
             {
                 if (mPlatforms.Count == 0)
-                {   
+                {
                     // Since, the action isn't supported by Windows Platform hence, it's commented
                     mPlatforms.Add(ePlatformType.PowerBuilder);
                 }
@@ -62,7 +60,7 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddText("2. For No Title window please provide string NoTitleWindow in locate value.");
-        }        
+        }
 
         public eWindow UIASwitchWindowAction
         {

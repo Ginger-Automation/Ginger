@@ -47,7 +47,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public bool CreateShortcut;
 
         public bool StartExecution;
-        public string ShortcutFileName{ get; set; }
+        public string ShortcutFileName { get; set; }
 
 
         string mShortcutFolderPath = null;
@@ -136,8 +136,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     command = "\"" + ExecuterFullPath + "\" " + args;
                 }
-                    return command;
-                
+                return command;
+
             }
         }
     }

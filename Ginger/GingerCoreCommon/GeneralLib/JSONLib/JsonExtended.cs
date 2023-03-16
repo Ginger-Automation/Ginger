@@ -16,15 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace Amdocs.Ginger.Common.GeneralLib
 {
-   public class JsonExtended
+    public class JsonExtended
     {
 
         private JToken JT;
@@ -35,7 +33,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
         {
             get
             {
-               return JT.ToString();
+                return JT.ToString();
             }
         }
         public string Path
@@ -53,53 +51,53 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
         public string XPathWithoutNamspaces;
-      /*  {
-            get
-            {
-                string tempPath = "";
-                string[] parts = XPath.Split('/');
+        /*  {
+              get
+              {
+                  string tempPath = "";
+                  string[] parts = XPath.Split('/');
 
-                string part1 = parts[2];
+                  string part1 = parts[2];
 
-                if (part1.StartsWith(@"*[name()='"))
-                {
-                    string a = part1.Replace(@"//*[name()='", "");
-                    string b = a.Replace("']", "");
-                    part1 = "//*[local-name()='" + b.Split(':').ElementAt(1) + "']";
-
-
-                }
-
-                for (int i = 3; i < parts.Length; i++)
-                {
-
-                    string[] currentParts = parts[i].Split(':');
-                    if (currentParts.Length > 1)
-                    {
-                        tempPath += "/" + currentParts[1];
-                    }
-                    else
-                    {
-                        tempPath += "/" + parts[i];
-                    }
-
-                }
-
-                return part1 + tempPath;
-            }*/
+                  if (part1.StartsWith(@"*[name()='"))
+                  {
+                      string a = part1.Replace(@"//*[name()='", "");
+                      string b = a.Replace("']", "");
+                      part1 = "//*[local-name()='" + b.Split(':').ElementAt(1) + "']";
 
 
+                  }
 
-    
+                  for (int i = 3; i < parts.Length; i++)
+                  {
 
-  
+                      string[] currentParts = parts[i].Split(':');
+                      if (currentParts.Length > 1)
+                      {
+                          tempPath += "/" + currentParts[1];
+                      }
+                      else
+                      {
+                          tempPath += "/" + parts[i];
+                      }
+
+                  }
+
+                  return part1 + tempPath;
+              }*/
+
+
+
+
+
+
         #endregion
 
         #region Constructors
         private JsonExtended(JsonExtended Parent, JToken Node)
         {
             ParentNode = Parent;
-            
+
             JT = Node;
 
             JEnumerable<JToken> childList = JT.Children();
@@ -116,12 +114,12 @@ namespace Amdocs.Ginger.Common.GeneralLib
             BuildThisNode(childList);
         }
 
- 
+
         #endregion
 
         #region PublicFunctions
- 
-   
+
+
         public List<JsonExtended> GetChildNodes()
         {
             return ChildNodes;
@@ -131,7 +129,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
 
 
-      
+
 
         public JToken GetToken()
         {
@@ -158,7 +156,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
 
 
-            List < JsonExtended > ChildNodeList = this.GetChildNodes();
+            List<JsonExtended> ChildNodeList = this.GetChildNodes();
 
             foreach (JsonExtended XDN in ChildNodeList)
             {
@@ -166,7 +164,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 int contOfChiledWithSameTokenAsParent = XDL.Where(x => x.GetToken().Parent == XDN.GetToken()).Count();
                 if (contOfChiledWithSameTokenAsParent == 0)
                     XDL.Add(XDN);
-                
+
             }
 
             return XDL;
@@ -205,13 +203,13 @@ namespace Amdocs.Ginger.Common.GeneralLib
         #endregion
 
         #region Private
-  
+
 
         private List<JsonExtended> ChildNodes = new List<JsonExtended>();
 
-       
 
- 
+
+
 
 
 
@@ -219,8 +217,8 @@ namespace Amdocs.Ginger.Common.GeneralLib
         {
             foreach (JToken XN in JTl)
             {
-              JsonExtended childJsonExtended = new JsonExtended(this, XN);
-              ChildNodes.Add(childJsonExtended);
+                JsonExtended childJsonExtended = new JsonExtended(this, XN);
+                ChildNodes.Add(childJsonExtended);
             }
         }
 

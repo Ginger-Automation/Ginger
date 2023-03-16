@@ -17,19 +17,13 @@ limitations under the License.
 #endregion
 
 
-using Ginger.Imports.UFT;
-using System.Collections.Generic;
-using System.Linq;
-
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UnitTests;
 using GingerTestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
 {
     [TestClass]
-    public class ImportTest 
+    public class ImportTest
     {
         [TestInitialize]
         public void TestInitialize()
@@ -41,7 +35,7 @@ namespace UnitTests.NonUITests
         [TestCleanup()]
         public void TestCleanUp()
         {
-            
+
         }
 
 
@@ -100,17 +94,18 @@ namespace UnitTests.NonUITests
         //}
 
         [Level3]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void Import_ASAP_1()
         {
             //Arrange            
             // OR file, code files bus
 
             //Act
-            
+
 
             //Assert
-            
+
         }
 
     }

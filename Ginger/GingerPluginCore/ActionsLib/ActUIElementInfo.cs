@@ -17,8 +17,6 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using static Amdocs.Ginger.Plugin.Core.ActionsLib.ActInfo;
 
 namespace Amdocs.Ginger.Plugin.Core.ActionsLib
@@ -40,7 +38,7 @@ namespace Amdocs.Ginger.Plugin.Core.ActionsLib
         public eElementAction ClickType { get; set; }
 
         public eElementAction ValidationType { get; set; }
-      
+
         public eLocateBy ValidationElementLocateby { get; set; }
         public string ValidationElementLocatorValue { get; set; }
         public bool LoopThroughClicks { get; set; }

@@ -30,7 +30,7 @@ namespace Amdocs.Ginger.Common.OS
     {
         public string UserAgent => "Mozilla/5.0 (X11; od-database-crawler) Gecko/20100101 Firefox/52.0";
 
-    
+
         public override string GetFirstLocalHostIPAddress()
         {
             List<UnicastIPAddressInformation> unicastIPAddressInformationList = GetIPAddressCollectionList().ToList();
@@ -98,7 +98,7 @@ namespace Amdocs.Ginger.Common.OS
                 return path;
             }
         }
-        public override string AdjustOSChars(String content) 
+        public override string AdjustOSChars(String content)
         {
             if (!string.IsNullOrEmpty(content))
             {
@@ -110,4 +110,4 @@ namespace Amdocs.Ginger.Common.OS
             }
         }
     }
-} 
+}

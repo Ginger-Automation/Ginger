@@ -27,7 +27,7 @@ namespace GingerCore.Drivers.Common.Devices
             Ellipse
         }
 
-        public string Name {get; set;}
+        public string Name { get; set; }
         public string ToolTip { get; set; }
 
         //info about the action to send, for Andorid can be 'input keyevent 3'

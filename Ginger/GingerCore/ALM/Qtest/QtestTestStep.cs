@@ -39,7 +39,7 @@ namespace GingerCore.ALM.Qtest
 
         public QtestTestStep()
         {
-           
+
         }
     }
 }

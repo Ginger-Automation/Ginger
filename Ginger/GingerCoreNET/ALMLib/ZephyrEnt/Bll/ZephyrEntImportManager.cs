@@ -42,9 +42,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
         public static ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
-        enum StatuesName { NoRun = 0, PASS = 1, FAIL = 2, WIP = 3, Blocked = 4}
-        Dictionary<int, int> statusesDic = new Dictionary<int, int>() 
-        { {(int)StatuesName.NoRun, 0 }, {(int)StatuesName.PASS, 0 }, 
+        enum StatuesName { NoRun = 0, PASS = 1, FAIL = 2, WIP = 3, Blocked = 4 }
+        Dictionary<int, int> statusesDic = new Dictionary<int, int>()
+        { {(int)StatuesName.NoRun, 0 }, {(int)StatuesName.PASS, 0 },
             {(int)StatuesName.FAIL, 0 }, {(int)StatuesName.WIP, 0 }, {(int)StatuesName.Blocked, 0 }};
         private ZephyrEntRepositoryStd zephyrEntRepository;
 
@@ -225,7 +225,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                             string linkedVariable = null;
                             if (paramSelectedValue.StartsWith("#$#"))
                             {
-                                string[] valueParts = paramSelectedValue.Split(new [] { "#$#" }, StringSplitOptions.None);
+                                string[] valueParts = paramSelectedValue.Split(new[] { "#$#" }, StringSplitOptions.None);
                                 if (valueParts.Count() == 3)
                                 {
                                     linkedVariable = valueParts[1];
@@ -458,7 +458,8 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         {
             ObservableList<ExternalItemFieldBase> almFields = new ObservableList<ExternalItemFieldBase>();
             List<Preference> fieldsValues = zephyrEntRepository.GetCustomFieldsValues();
-            zephyrEntRepository.GetCustomFields().ForEach(ent => {
+            zephyrEntRepository.GetCustomFields().ForEach(ent =>
+            {
                 if (!String.IsNullOrEmpty(ent.columnName) && ent.columnName.StartsWith("zcf_"))
                 {
                     almFields.Add(new ExternalItemFieldBase()
@@ -479,16 +480,16 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         private ObservableList<string> AddValuesToField(List<Preference> fieldsValues, string entityName, string fieldName)
         {
             ObservableList<string> possibleValues = new ObservableList<string>();
-            Preference field = fieldsValues.Find(val => val.name.Contains(String.Join(".", new [] { entityName.ToLower(), fieldName.ToLower() })));
+            Preference field = fieldsValues.Find(val => val.name.Contains(String.Join(".", new[] { entityName.ToLower(), fieldName.ToLower() })));
             if (field != null)
             {
                 List<dynamic> values = Newtonsoft.Json.JsonConvert.DeserializeObject<List<dynamic>>(field.value);
                 values.ForEach(x =>
                 {
                     Dictionary<string, string> data = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(((Newtonsoft.Json.Linq.JObject)x).ToString().Replace("{{", "{").Replace("}}", "}"));
-                    if(data != null && data.ContainsKey("value"))
+                    if (data != null && data.ContainsKey("value"))
                     {
-                        possibleValues.Add(String.Join("#",new[] { data["id"], data["value"] }));
+                        possibleValues.Add(String.Join("#", new[] { data["id"], data["value"] }));
                     }
                 });
             }

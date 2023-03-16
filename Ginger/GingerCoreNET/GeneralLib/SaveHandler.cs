@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using amdocs.ginger.GingerCoreNET;
-using Ginger.SolutionGeneral;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.SolutionGeneral;
 
 namespace Amdocs.Ginger.CoreNET.GeneralLib
 {

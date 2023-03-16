@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common.Enums;
 using GingerCore;
 using System.ComponentModel;
-using System.Drawing;
 
 namespace Amdocs.Ginger.CoreNET
 {
@@ -92,7 +91,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
             }
         }
-        
+
         eConversionSaveStatus mSaveStatus = eConversionSaveStatus.Pending;
         public eConversionSaveStatus SaveStatus
         {

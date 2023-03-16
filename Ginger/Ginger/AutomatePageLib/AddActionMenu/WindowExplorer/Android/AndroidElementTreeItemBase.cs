@@ -17,21 +17,19 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerCore.Drivers.AndroidADB;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using GingerCore.Actions;
-using GingerCore.Actions.Common;
-using GingerCore.Drivers;
-using GingerCore.Drivers.AndroidADB;
-using GingerCore.Drivers.Common;
-using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
 
 namespace Ginger.WindowExplorer.Android
 {
-    public class AndroidElementTreeItemBase :  ITreeViewItem, IWindowExplorerTreeItem
+    public class AndroidElementTreeItemBase : ITreeViewItem, IWindowExplorerTreeItem
     {
         public ITreeView TreeView
         {
@@ -51,19 +49,20 @@ namespace Ginger.WindowExplorer.Android
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
             ObservableList<Act> list = new ObservableList<Act>();
-            
-            list.Add(new ActUIElement(){
-                 Description = "Click",
-                 ElementAction = ActUIElement.eElementAction.Click
+
+            list.Add(new ActUIElement()
+            {
+                Description = "Click",
+                ElementAction = ActUIElement.eElementAction.Click
             });
 
             list.Add(new ActUIElement()
             {
-                 Description = "Get Custom Attribute text",
-                 ElementAction = ActUIElement.eElementAction.GetAttrValue,
-                 Value = "text"
+                Description = "Get Custom Attribute text",
+                ElementAction = ActUIElement.eElementAction.GetAttrValue,
+                Value = "text"
             });
-            
+
             return list;
         }
 
@@ -79,7 +78,7 @@ namespace Ginger.WindowExplorer.Android
 
             foreach (ElementInfo EI in Childrens)
             {
-                ITreeViewItem TVI = AndroidElementInfoConverter.GetTreeViewItemFor(EI);                                
+                ITreeViewItem TVI = AndroidElementInfoConverter.GetTreeViewItemFor(EI);
                 list.Add(TVI);
             }
             return list;
@@ -87,7 +86,7 @@ namespace Ginger.WindowExplorer.Android
 
         bool ITreeViewItem.IsExpandable()
         {
-            return AndroidElementInfo.XmlNode.HasChildNodes;            
+            return AndroidElementInfo.XmlNode.HasChildNodes;
         }
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)

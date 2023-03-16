@@ -7,15 +7,15 @@ namespace GingerCoreNETUnitTest.RunListeners
     [TestClass]
     public class DynamicRunSetTest
     {
-        
+
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            
+
         }
 
-        
+
 
         [ClassCleanup]
         public static void ClassCleanup()

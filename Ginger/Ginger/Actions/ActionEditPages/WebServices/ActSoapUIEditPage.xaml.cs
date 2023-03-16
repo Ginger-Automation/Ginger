@@ -16,20 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
+using GingerCore.Actions;
+using GingerCore.Actions.WebServices;
 using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using GingerCore.Actions;
-using GingerCore;
 using System.Xml;
-using System.Diagnostics;
-using Amdocs.Ginger.Repository;
-using GingerCore.Actions.WebServices;
-using Ginger.UserControls;
-using System.Linq;
-using Amdocs.Ginger.Common;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Actions.WebServices
 {
@@ -109,7 +108,9 @@ namespace Ginger.Actions.WebServices
                 {
                     var item = mAct.ProjectProperties.Where(l => l.Param == innerProperty.Param).FirstOrDefault();
                     if (item == null)
+                    {
                         mAct.ProjectProperties.Add(innerProperty);
+                    }
                 }
                 mAct.ProjectInnerProperties.Clear();
             }
@@ -212,7 +213,9 @@ namespace Ginger.Actions.WebServices
             string currentValue = mAct.GetInputParamValue(ActSoapUI.Fields.PropertiesOrPlaceHolders);
 
             if (currentValue == null)
+            {
                 return;
+            }
 
             if (currentValue == "PlaceHolders")
             {
@@ -293,7 +296,10 @@ namespace Ginger.Actions.WebServices
                 fileNum++;
                 string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
                 if (newFileName.IndexOf(copySufix) != -1)
+                {
                     newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
+                }
+
                 newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
                 destFile = System.IO.Path.Combine(targetPath, newFileName);
             }
@@ -518,12 +524,17 @@ namespace Ginger.Actions.WebServices
             ClearPropertyFromList(ActSoapUiInputValue.ePropertyType.TestCase);
 
             if (TestSuiteComboBox.SelectedValue == null)
+            {
                 return;
+            }
+
             string testSuite = TestSuiteComboBox.SelectedValue.ToString();
 
             string testCase = TestCaseComboBox.SelectedValue.ToString();
             if (string.IsNullOrEmpty(testCase))
+            {
                 return;
+            }
 
             XmlDocument doc = new XmlDocument();
             string XMLFiledValue = mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.XMLFile);
@@ -556,7 +567,10 @@ namespace Ginger.Actions.WebServices
             ClearPropertyFromList(ActSoapUiInputValue.ePropertyType.TestSuite);
 
             if (TestSuiteComboBox.SelectedValue == null)
+            {
                 return;
+            }
+
             string testSuite = TestSuiteComboBox.SelectedValue.ToString();
 
             XmlDocument doc = new XmlDocument();
@@ -589,11 +603,16 @@ namespace Ginger.Actions.WebServices
             ClearPropertyFromList(ActSoapUiInputValue.ePropertyType.TestStep);
 
             if (TestSuiteComboBox.SelectedValue == null)
+            {
                 return;
+            }
+
             string testSuite = TestSuiteComboBox.SelectedValue.ToString();
             string testCase = TestCaseComboBox.SelectedValue.ToString();
             if (string.IsNullOrEmpty(testCase))
+            {
                 return;
+            }
 
             XmlDocument doc = new XmlDocument();
             string XMLFiledValue = mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.XMLFile);
@@ -649,7 +668,9 @@ namespace Ginger.Actions.WebServices
                     {
                         var savedPropertyValue = savedProperty.Value;
                         if (!string.IsNullOrEmpty(savedPropertyValue))
+                        {
                             testProperty.Value = savedPropertyValue;
+                        }
                     }
                 }
 
@@ -674,7 +695,9 @@ namespace Ginger.Actions.WebServices
                         }
                     }
                     else
+                    {
                         mAct.TempProperties.Add(item);
+                    }
                 }
                 mAct.AllProperties.Where(l => l.Type == propertyType.ToString()).ToList().All(i => mAct.AllProperties.Remove(i));
             }

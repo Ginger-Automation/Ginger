@@ -16,16 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Ginger.Plugin.Platform.Web.Actions
 {
     /// <summary>
     /// Exposes the methods for Elements supporting Selection functionality
     /// </summary>
-   public interface ISelect
+    public interface ISelect
     {
         /// <summary>
         /// Clears the selected value if any.

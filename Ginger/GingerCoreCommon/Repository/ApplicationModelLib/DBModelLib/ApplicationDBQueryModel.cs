@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.Repository
         public string Name { get; set; }    //for example get customer by ID
 
         public string SQL { get; set; }   // SELELCT * FROM TBCustomers WHERE CUstomerID={CustID}
-        
+
 
         public List<string> InputParams;  // CustomerID (int)
 

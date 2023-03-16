@@ -19,9 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.PlugInsLib
@@ -33,10 +31,10 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
         {
             Reporter.ToLog(eLogLevel.DEBUG, "GitHTTPClient url= " + url);
             using (var client = new HttpClient())
-            {                
+            {
                 // Simulate a browser header                
                 //client.DefaultRequestHeaders.Add("User-Agent", GingerUtils.Workspace.OS.UserAgent);
-                client.DefaultRequestHeaders.Add("User-Agent", "Ginger-App");             
+                client.DefaultRequestHeaders.Add("User-Agent", "Ginger-App");
                 var result = client.GetAsync(url).Result;
                 Reporter.ToLog(eLogLevel.DEBUG, "result= " + result);
                 if (result.IsSuccessStatusCode)
@@ -56,18 +54,18 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
             Reporter.ToLog(eLogLevel.DEBUG, "Git GetJSON");
             try
             {
-                T t = default(T);                
-                string packagesjson = GetResponseString(url).Result;                
+                T t = default(T);
+                string packagesjson = GetResponseString(url).Result;
                 if (packagesjson.Contains("Error: Forbidden"))
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Git returned error Forbidden:" + url);                    
+                    Reporter.ToLog(eLogLevel.ERROR, "Git returned error Forbidden:" + url);
                     return t;
                 }
                 T obj = JsonConvert.DeserializeObject<T>(packagesjson);
                 return obj;
             }
-            catch(Exception ex)
-            {                
+            catch (Exception ex)
+            {
                 Reporter.ToLog(eLogLevel.ERROR, "Git Get JSON error", ex);
                 return default(T);
             }

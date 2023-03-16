@@ -16,11 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using System;
 
 namespace VisualRegressionTracker
 {
-    public class TestRunResult {
+    public class TestRunResult
+    {
         public TestRunStatus Status { get; set; }
         public string Url { get; set; }
         public string ImageUrl { get; set; }

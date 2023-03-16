@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Environments;
-using GingerCore;
 using GingerCore.Environments;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -53,7 +52,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {                        
+        {
             return NewTVItemHeaderStyle(EnvApplication);
         }
 
@@ -91,7 +90,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             TreeViewUtils.AddMenuItem(mContextMenu, "Save Parent Environment", Save, this, eImageType.Save);
             TreeViewUtils.AddMenuItem(mContextMenu, "Duplicate", Duplicate, null, eImageType.Duplicate);
             TreeViewUtils.AddMenuItem(mContextMenu, "Delete", Delete, null, eImageType.Delete);
-            TreeViewUtils.AddMenuItem(mContextMenu, "Share With Other Environments", Share, this, eImageType.Share);            
+            TreeViewUtils.AddMenuItem(mContextMenu, "Share With Other Environments", Share, this, eImageType.Share);
         }
 
         private void DeleteEnvTreeItems()
@@ -99,7 +98,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             ProjEnvironment.Applications.Remove(EnvApplication);
             ProjEnvironment.SaveBackup();//to mark the env as changed
         }
-            private void Delete(object sender, RoutedEventArgs e)
+        private void Delete(object sender, RoutedEventArgs e)
         {
             DeleteEnvTreeItems();
         }
@@ -121,7 +120,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return true;
         }
 
-            private void Duplicate(object sender, RoutedEventArgs e)
+        private void Duplicate(object sender, RoutedEventArgs e)
         {
             EnvApplication copy = (EnvApplication)EnvApplication.CreateCopy();
             copy.Name = copy.Name + "_copy";

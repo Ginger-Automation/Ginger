@@ -35,8 +35,8 @@ namespace GingerCore.Actions.Common
             Regex,
             [EnumValueDescription("Start With")]
             StartWith,
-            [EnumValueDescription("End With")]            
-            EndWith            
+            [EnumValueDescription("End With")]
+            EndWith
         }
 
         [IsSerializedForLocalRepository]
@@ -44,7 +44,7 @@ namespace GingerCore.Actions.Common
 
         [IsSerializedForLocalRepository]
         public eLocatorOpertor Opertor;
-   
+
         [IsSerializedForLocalRepository]
         public string Value;
     }

@@ -16,14 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using System.Xml.Linq;
 using System.Xml.XPath;
 
 namespace Amdocs.Ginger.Common
@@ -53,12 +51,12 @@ namespace Amdocs.Ginger.Common
                 string tempPath = "";
                 string[] parts = XPath.Split('/');
 
-                    string part1 = parts[2];
+                string part1 = parts[2];
 
-             if(part1.StartsWith(@"*[name()='"))
+                if (part1.StartsWith(@"*[name()='"))
                 {
-                    string a= part1.Replace(@"//*[name()='", "");
-                    string b = a.Replace("']","");
+                    string a = part1.Replace(@"//*[name()='", "");
+                    string b = a.Replace("']", "");
                     part1 = "//*[local-name()='" + b.Split(':').ElementAt(1) + "']";
 
 
@@ -79,7 +77,7 @@ namespace Amdocs.Ginger.Common
 
                 }
 
-                return part1+ tempPath;
+                return part1 + tempPath;
             }
         }
 
@@ -202,7 +200,7 @@ namespace Amdocs.Ginger.Common
 
 
 
-        public static string PrettyXml(string xml,bool newLineOnAttribue = false )
+        public static string PrettyXml(string xml, bool newLineOnAttribue = false)
         {
             try
             {
@@ -224,7 +222,7 @@ namespace Amdocs.Ginger.Common
                 return stringBuilder.ToString();
             }
 
-            catch(Exception ee)
+            catch (Exception ee)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Failed to Prettify XML", ee);
                 return xml;
@@ -282,7 +280,7 @@ namespace Amdocs.Ginger.Common
             mXN.InnerXml = newVal;
             return XD.InnerXml;
         }
-        
+
         private List<XMLDocExtended> ChildNodes = new List<XMLDocExtended>();
 
         private string SetXpath()
@@ -303,7 +301,7 @@ namespace Amdocs.Ginger.Common
 
 
 
-             const string regex = @"^\/([a-zA-Z])*:([a-zA-Z])*(\[(\d)*\]|\/)";
+            const string regex = @"^\/([a-zA-Z])*:([a-zA-Z])*(\[(\d)*\]|\/)";
             if (GetXmlNode().NodeType.ToString().ToUpper() == "TEXT")
             {
                 string removeme = Regex.Match(xpath, @"text\[(\d|\d\d|\d\d\d)\]$").Value;
@@ -321,7 +319,7 @@ namespace Amdocs.Ginger.Common
             if (!String.IsNullOrEmpty(XpathNameSpace))
             {
                 XpathNameSpace = @"//*[name()='" + XpathNameSpace + "']";
-                
+
                 xpath = xpath.Replace(Starting, "");
                 if (!xpath.StartsWith("/"))
                 {
@@ -338,14 +336,14 @@ namespace Amdocs.Ginger.Common
         {
             foreach (XmlNode XN in XNL)
             {
-                if(XN.OuterXml.ElementAt(0).Equals('<') && XN.OuterXml.ElementAt(XN.OuterXml.Length - 1).Equals('>'))
+                if (XN.OuterXml.ElementAt(0).Equals('<') && XN.OuterXml.ElementAt(XN.OuterXml.Length - 1).Equals('>'))
                 {
                     ChildNodes.Add(new XMLDocExtended(this, XN));
                 }
             }
         }
 
-        
+
         private string GetRelativeXpath()
         {
             if (ParentNode == null)

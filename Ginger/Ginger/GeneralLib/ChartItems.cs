@@ -33,12 +33,12 @@ namespace Ginger
         }
 
         public string TotalActivity { get; set; }
-        string mTotalAction = string.Empty;       
+        string mTotalAction = string.Empty;
         public string TotalAction
         {
             get
-            {               
-              return mTotalAction;
+            {
+                return mTotalAction;
             }
             set
             {
@@ -59,7 +59,7 @@ namespace Ginger
     }
 
     public class ViewModel
-    {        
+    {
         private readonly ObservableCollection<StatItems> _seriesdata = new ObservableCollection<StatItems>();
         public ObservableCollection<StatItems> SeriesData
         {

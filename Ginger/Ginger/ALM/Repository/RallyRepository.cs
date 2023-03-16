@@ -21,10 +21,7 @@ using Amdocs.Ginger.Common;
 using Ginger.ALM.Rally;
 using GingerCore;
 using GingerCore.Activities;
-using GingerCore.ALM;
 using GingerCore.ALM.Rally;
-using GingerCore.Platforms;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -274,7 +271,7 @@ namespace Ginger.ALM.Repository
         {
             throw new NotImplementedException();
         }
-         
+
 
         public override List<string> GetTestLabExplorer(string path)
         {

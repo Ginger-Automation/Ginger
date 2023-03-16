@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System.Drawing;
 using Ginger.Plugin.Platform.Web.Elements;
+using System.Drawing;
 
 namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
 {
@@ -90,6 +90,6 @@ namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
             throw new System.NotImplementedException();
         }
 
-       
+
     }
 }

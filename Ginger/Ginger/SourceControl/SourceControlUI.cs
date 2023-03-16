@@ -18,16 +18,10 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Core;
-using Amdocs.Ginger.Repository;
 using Ginger.ConflictResolve;
-using GingerCore;
-using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows.Media.Imaging;
 
 namespace Ginger.SourceControl
@@ -43,15 +37,23 @@ namespace Ginger.SourceControl
             if (res)
             {
                 if (!ignoreSuccessMessage)
+                {
                     Reporter.ToUser(eUserMsgKey.SourceControlConnSucss);
+                }
+
                 return true;
             }
             else
             {
                 if (error.Contains("remote has never connected"))
+                {
                     Reporter.ToUser(eUserMsgKey.SourceControlRemoteCannotBeAccessed, error);
+                }
                 else
+                {
                     Reporter.ToUser(eUserMsgKey.SourceControlConnFaild, error);
+                }
+
                 return false;
             }
         }

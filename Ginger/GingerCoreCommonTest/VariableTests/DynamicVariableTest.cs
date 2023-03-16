@@ -17,11 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.Enums;
-using GingerCore;
 using GingerCore.Variables;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace GingerCoreCommonTest.VariableTests
 {
@@ -55,7 +53,8 @@ namespace GingerCoreCommonTest.VariableTests
         }
         #endregion
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void DynamicVar_TestVariableType()
         {
             //Arrange
@@ -68,7 +67,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("Dynamic", varType, "Dynamic Variable Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void DynamicVar_TestVariableUIType()
         {
             //Arrange
@@ -81,7 +81,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(varType.Contains("Dynamic"), "Dynamic Variable UI Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void DynamicVar_TestImageType()
         {
             //Arrange

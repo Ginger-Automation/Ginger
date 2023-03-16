@@ -34,7 +34,7 @@ namespace Ginger.Run
             mRunSetConfig = runSetConfig;
 
             SetControls();
-        }            
+        }
 
         private void SetControls()
         {
@@ -48,7 +48,7 @@ namespace Ginger.Run
             else
             {
                 xSequentiallyOptionRdBtn.IsChecked = true;
-            }              
+            }
         }
 
         private void xParallelOptionRdBtn_Checked(object sender, RoutedEventArgs e)

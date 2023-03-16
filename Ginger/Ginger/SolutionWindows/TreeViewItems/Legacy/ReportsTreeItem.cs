@@ -32,7 +32,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     {
         private ReportTemplatesPage mReportTemplatesPage;
 
-        string Path =  WorkSpace.Instance.Solution.Folder;
+        string Path = WorkSpace.Instance.Solution.Folder;
 
         Object ITreeViewItem.NodeObject()
         {
@@ -51,10 +51,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             return TreeViewUtils.CreateItemHeader("Report Templates", "@Report2_16x16.png", Ginger.SourceControl.SourceControlUI.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
         }
-        
+
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            throw new NotImplementedException();            
+            throw new NotImplementedException();
         }
 
         bool ITreeViewItem.IsExpandable()

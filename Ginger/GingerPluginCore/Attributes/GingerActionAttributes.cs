@@ -18,7 +18,7 @@ limitations under the License.
 
 using System;
 
-namespace  Amdocs.Ginger.Plugin.Core
+namespace Amdocs.Ginger.Plugin.Core
 {
     // Annotation of [GingerAction] for function in driver we want to use as actions
     public class GingerActionAttribute : Attribute
@@ -37,7 +37,7 @@ namespace  Amdocs.Ginger.Plugin.Core
             mDescription = description;
         }
 
-        public string Id {get {return mId; } set { mId = value; }  }
+        public string Id { get { return mId; } set { mId = value; } }
         public string Description { get { return mDescription; } set { mDescription = value; } }
 
         public override string ToString()

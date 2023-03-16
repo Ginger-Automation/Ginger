@@ -18,10 +18,10 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Ginger.UserControls;
+using GingerCore.ALM.Rally;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore.ALM.Rally;
 
 namespace Ginger.ALM.Rally
 {
@@ -39,7 +39,7 @@ namespace Ginger.ALM.Rally
             InitializeComponent();
             mTestPlan = testPlan;
             mImportDestinationPath = importDestinationPath;
-            
+
             SetGridView();
             SetGridData();
         }
@@ -50,7 +50,7 @@ namespace Ginger.ALM.Rally
             view.GridColsView = new ObservableList<GridColView>();
 
             view.GridColsView.Add(new GridColView() { Field = RallyTestCase.Fields.RallyID, Header = "Test Case ID", WidthWeight = 7, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RallyTestCase.Fields.Name, Header = "Test Case Name", WidthWeight = 43,  ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = RallyTestCase.Fields.Name, Header = "Test Case Name", WidthWeight = 43, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RallyTestPlan.Fields.CreatedBy, Header = "Created By", WidthWeight = 25, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RallyTestPlan.Fields.CreationDate, Header = "Creation Date", WidthWeight = 25, ReadOnly = true });
 
@@ -91,7 +91,7 @@ namespace Ginger.ALM.Rally
             rqmTestPlanList.Add(mTestPlan);
 
             if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, rqmTestPlanList))
-                {
+            {
                 _pageGenericWin.Close();
             }
         }

@@ -31,7 +31,7 @@ namespace TimeLineControl
         {
             // indent +19 pixel per level
             int xOffset = ((TimeLineEvent)value).Level * 19;
-            return new Thickness(xOffset, 0, 0, 0);  
+            return new Thickness(xOffset, 0, 0, 0);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

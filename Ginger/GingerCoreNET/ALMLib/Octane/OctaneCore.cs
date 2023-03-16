@@ -137,7 +137,7 @@ namespace GingerCore.ALM
                 {
                     return octaneRepository.GetEntities<ApplicationModule>(GetLoginDTO(), filter);
                 }).Result;
-                
+
                 ExploredApplicationModule.Add(listnodes.FirstOrDefault().Name, listnodes.FirstOrDefault().Id);
                 return listnodes.FirstOrDefault().Id;
             }
@@ -151,20 +151,20 @@ namespace GingerCore.ALM
         {
             //if (this.loginDto == null)
             //{
-                AlmResponseWithData<AlmDomainColl> domains = Task.Run(() =>
-                {
-                    return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
-                }).Result;
-                AlmDomain domain = domains.DataResult.Where(f => f.DomainName.Equals(ALMCore.DefaultAlmConfig.ALMDomain)).FirstOrDefault();
-                ProjectArea project = domain.Projects.Where(p => p.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName)).FirstOrDefault();
-                this.loginDto = new LoginDTO()
-                {
-                    User = ALMCore.DefaultAlmConfig.ALMUserName,
-                    Password = ALMCore.DefaultAlmConfig.ALMPassword,
-                    Server = ALMCore.DefaultAlmConfig.ALMServerURL,
-                    SharedSpaceId = domain.DomainId,
-                    WorkSpaceId = project.ProjectId
-                };
+            AlmResponseWithData<AlmDomainColl> domains = Task.Run(() =>
+            {
+                return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
+            }).Result;
+            AlmDomain domain = domains.DataResult.Where(f => f.DomainName.Equals(ALMCore.DefaultAlmConfig.ALMDomain)).FirstOrDefault();
+            ProjectArea project = domain.Projects.Where(p => p.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName)).FirstOrDefault();
+            this.loginDto = new LoginDTO()
+            {
+                User = ALMCore.DefaultAlmConfig.ALMUserName,
+                Password = ALMCore.DefaultAlmConfig.ALMPassword,
+                Server = ALMCore.DefaultAlmConfig.ALMServerURL,
+                SharedSpaceId = domain.DomainId,
+                WorkSpaceId = project.ProjectId
+            };
             //}
             return this.loginDto;
         }
@@ -695,11 +695,11 @@ namespace GingerCore.ALM
                         return this.octaneRepository.CreateEntity<RunSuite>(GetLoginDTO(), runSuiteToExport, null);
                     }).Result;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "In CreateRunSuite/OctaneCore.cs method ", ex);
                 }
-                
+
                 UpdateRunSuite(runSuiteToExport);
                 return runSuiteToExport;
             }
@@ -1528,8 +1528,8 @@ namespace GingerCore.ALM
 
             int testSuiteId = Convert.ToInt32(created.Id.ToString());
 
-            DeleteLinkTestCasesToTestSuite(testSuiteId,businessFlow);
-            
+            DeleteLinkTestCasesToTestSuite(testSuiteId, businessFlow);
+
 
             return testSuiteId;
         }
@@ -1555,7 +1555,7 @@ namespace GingerCore.ALM
         }
 
 
-        private async void DeleteLinkTestCasesToTestSuite(int testSuiteId,BusinessFlow businessFlow)
+        private async void DeleteLinkTestCasesToTestSuite(int testSuiteId, BusinessFlow businessFlow)
         {
             CrossQueryPhrase qd = new CrossQueryPhrase("test_suite", new LogicalQueryPhrase("id", testSuiteId, ComparisonOperator.Equal));
             await Task.Run(() =>
@@ -1569,9 +1569,9 @@ namespace GingerCore.ALM
             string[] separatePath;
             if (!string.IsNullOrEmpty(path))
             {
-                if(!path.Contains("Application Modules"))
-                { 
-                    path =@"Application Modules\"+path;
+                if (!path.Contains("Application Modules"))
+                {
+                    path = @"Application Modules\" + path;
                 }
                 separatePath = path.Split('\\');
                 separatePath[0] = ExploredApplicationModule.ContainsKey("Application Modules") ? ExploredApplicationModule["Application Modules"] : GetRootFolderId();
@@ -1580,7 +1580,7 @@ namespace GingerCore.ALM
                 {
                     ExploredApplicationModule.Add("Application Modules", separatePath[0]);
                 }
-               for (int i = 1; i < separatePath.Length; i++)
+                for (int i = 1; i < separatePath.Length; i++)
                 {
                     separatePath[i] = GetTestLabFolderId(separatePath[i], separatePath[i - 1]);
                 }
@@ -1592,9 +1592,9 @@ namespace GingerCore.ALM
                 return ExploredApplicationModule.ContainsKey("Application Modules") ? ExploredApplicationModule["Application Modules"] : GetRootFolderId();
             }
 
-            
 
-            
+
+
         }
 
         public string CreateApplicationModule(string appModuleNameTobeCreated, string desc, string paraentId)

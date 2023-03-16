@@ -38,6 +38,7 @@ namespace GingerCore.GeneralLib
                 var chr = str[i];
 
                 if (!escape && !quoted)
+                {
                     switch (chr)
                     {
                         case '{':
@@ -55,6 +56,7 @@ namespace GingerCore.GeneralLib
                             inserts.Add(new[] { i, 0, 1, 1 });
                             break;
                     }
+                }
 
                 quoted = (chr == '"') ? !quoted : quoted;
                 escape = (chr == '\\') ? !escape : false;
@@ -72,13 +74,27 @@ namespace GingerCore.GeneralLib
 
                     sb.Append(str.Substring(lastIndex, index - lastIndex));
 
-                    if (nlBefore) sb.AppendLine();
-                    if (before > 0) sb.Append(new String(' ', before));
+                    if (nlBefore)
+                    {
+                        sb.AppendLine();
+                    }
+
+                    if (before > 0)
+                    {
+                        sb.Append(new String(' ', before));
+                    }
 
                     sb.Append(str[index]);
 
-                    if (nlAfter) sb.AppendLine();
-                    if (after > 0) sb.Append(new String(' ', after));
+                    if (nlAfter)
+                    {
+                        sb.AppendLine();
+                    }
+
+                    if (after > 0)
+                    {
+                        sb.Append(new String(' ', after));
+                    }
 
                     lastIndex = index + 1;
                 }

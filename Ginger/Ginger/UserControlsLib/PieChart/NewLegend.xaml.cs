@@ -16,14 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Ginger.ScottLogic.PieChart;
+using Ginger.UserControlsLib.PieChart;
 using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Ginger.ScottLogic.PieChart;
-using System.ComponentModel;
-using System.Collections.Specialized;
-using Ginger.UserControlsLib.PieChart;
 
 namespace Amdocs.Ginger.UserControls.PieChart
 {

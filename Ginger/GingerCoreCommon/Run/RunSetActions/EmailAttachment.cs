@@ -17,11 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Run.RunSetActions
 {

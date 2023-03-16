@@ -32,7 +32,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public const string X = "X";
         public const string Y = "Y";
         public const string Value = "Value";
-        public const string OptionalValues="Optional Values";
+        public const string OptionalValues = "Optional Values";
         public const string BoundingRectangle = "Bounding Rectangle";
         public const string LocalizedControlType = "Localized Control Type";
         public const string Name = "Name";

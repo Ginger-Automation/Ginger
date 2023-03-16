@@ -16,9 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core
 {
@@ -35,7 +32,7 @@ namespace Amdocs.Ginger.Plugin.Core
         void AddOutput(string param, object value, string path = null);
         void AddError(string error);
         void AddExInfo(string info);
-        
+
         void Log(string text, LogLevel logType = LogLevel.Info);
     }
 }

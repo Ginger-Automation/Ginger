@@ -23,7 +23,7 @@ using System.Linq;
 
 namespace GingerCoreNET.RunLib
 {
-    
+
     public class GingerNodeInfo : INotifyPropertyChanged
     {
         public enum eStatus
@@ -42,15 +42,16 @@ namespace GingerCoreNET.RunLib
         public string Ping
         {
             get { return mPing; }
-            set { if (mPing != value) { mPing = value; OnPropertyChanged(nameof(Ping)); } } }
+            set { if (mPing != value) { mPing = value; OnPropertyChanged(nameof(Ping)); } }
+        }
 
-        private eStatus mStatus;        
-        public eStatus Status { get { return mStatus; } set { if (mStatus != value) { mStatus = value; OnPropertyChanged(nameof(Status)); } } }  
-        
+        private eStatus mStatus;
+        public eStatus Status { get { return mStatus; } set { if (mStatus != value) { mStatus = value; OnPropertyChanged(nameof(Status)); } } }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         int mActionCount = 0;
-        public int ActionCount { get { return mActionCount;  } }
+        public int ActionCount { get { return mActionCount; } }
         public void IncreaseActionCount()
         {
             mActionCount++;
@@ -78,7 +79,7 @@ namespace GingerCoreNET.RunLib
                 return false;
             }
         }
-        
+
 
     }
 }

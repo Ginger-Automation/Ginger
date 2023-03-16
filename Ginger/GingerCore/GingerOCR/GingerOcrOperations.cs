@@ -17,16 +17,15 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Freeware;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Tabula;
 using Tabula.Detectors;
 using Tabula.Extractors;
-using UglyToad.PdfPig;
 using Tesseract;
-using Freeware;
-using System.IO;
-using System.Text;
+using UglyToad.PdfPig;
 using PageIterator = Tabula.PageIterator;
 
 namespace GingerCore.GingerOCR

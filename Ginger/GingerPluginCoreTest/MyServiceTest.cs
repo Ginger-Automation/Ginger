@@ -122,7 +122,7 @@ namespace GingerPluginCoreTest
             GingerAction GA = new GingerAction();
 
             //Act
-            myService.Concat(GA, "","aa", "", "");
+            myService.Concat(GA, "", "aa", "", "");
 
             //assert
             Assert.AreEqual(null, GA.Errors, "Errors=null");

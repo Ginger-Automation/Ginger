@@ -19,9 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Windows.Input;
 
 namespace GingerCore.ALM.Qtest
 {

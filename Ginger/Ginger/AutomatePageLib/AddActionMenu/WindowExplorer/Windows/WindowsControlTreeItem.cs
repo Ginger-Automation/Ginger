@@ -17,14 +17,14 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.Enums;
 using Ginger.Drivers.UIA;
 using Ginger.WindowExplorer;
 using GingerCore.Actions;
 using GingerCore.Actions.Windows;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.Enums;
+using System;
+using System.Windows.Controls;
 
 namespace Ginger.Drivers.Windows
 {
@@ -42,7 +42,7 @@ namespace Ginger.Drivers.Windows
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
-            return new UIAElementPage(base.UIAElementInfo);            
+            return new UIAElementPage(base.UIAElementInfo);
         }
 
         ContextMenu ITreeViewItem.Menu()
@@ -58,19 +58,19 @@ namespace Ginger.Drivers.Windows
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
             ObservableList<Act> list = new ObservableList<Act>();
-          
-                list.Add(new ActWindowsControl()
-                {
-                    Description = "Click " + UIAElementInfo.ElementTitle,
-                    ControlAction = ActWindowsControl.eControlAction.Click
-                });
 
-                list.Add(new ActWindowsControl()
-                {
-                    Description = "Double Click " + UIAElementInfo.ElementTitle,
-                    ControlAction = ActWindowsControl.eControlAction.DoubleClick
-                });
-          
+            list.Add(new ActWindowsControl()
+            {
+                Description = "Click " + UIAElementInfo.ElementTitle,
+                ControlAction = ActWindowsControl.eControlAction.Click
+            });
+
+            list.Add(new ActWindowsControl()
+            {
+                Description = "Double Click " + UIAElementInfo.ElementTitle,
+                ControlAction = ActWindowsControl.eControlAction.DoubleClick
+            });
+
             return list;
         }
     }

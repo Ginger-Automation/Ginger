@@ -18,7 +18,6 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Repository;
@@ -110,9 +109,9 @@ namespace GingerCore.FlowControlLib
 
     public class FlowControl : RepositoryItemBase
     {
-        public static readonly List<object> BusinessFlowFlowControls = new List<object> { eFCOperator.BusinessFlowPassed,eFCOperator.BusinessFlowFailed,eFCOperator.CSharp,eFCOperator.Legacy };
-        public static readonly List<object> ActionFlowControls = new List<object> { eFCOperator.ActionPassed, eFCOperator.ActionFailed,eFCOperator.LastActivityPassed,eFCOperator.LastActivityFailed, eFCOperator.CSharp, eFCOperator.Legacy };
-        public  static partial class Fields
+        public static readonly List<object> BusinessFlowFlowControls = new List<object> { eFCOperator.BusinessFlowPassed, eFCOperator.BusinessFlowFailed, eFCOperator.CSharp, eFCOperator.Legacy };
+        public static readonly List<object> ActionFlowControls = new List<object> { eFCOperator.ActionPassed, eFCOperator.ActionFailed, eFCOperator.LastActivityPassed, eFCOperator.LastActivityFailed, eFCOperator.CSharp, eFCOperator.Legacy };
+        public static partial class Fields
         {
             public static string Active = "Active";
             public static string Condition = "Condition";
@@ -122,11 +121,11 @@ namespace GingerCore.FlowControlLib
             public static string Value = "Value";
             public static string ValueCalculated = "ValueCalculated";
             public static string Status = "Status";
-            
+
         }
 
 
-       
+
         public string GUID_NAME_SEPERATOR = "#GUID_NAME#";
 
         private bool mActive;
@@ -147,7 +146,7 @@ namespace GingerCore.FlowControlLib
             get
             {
                 IValueExpression ve = TargetFrameworkHelper.Helper.CreateValueExpression(this, nameof(Condition));
-                return ve;                
+                return ve;
             }
         }
 
@@ -210,7 +209,7 @@ namespace GingerCore.FlowControlLib
                     mOperator = value;
                     OnPropertyChanged(nameof(Operator));
                 }
-                if(!(mOperator.Value==eFCOperator.Legacy||mOperator.Value==eFCOperator.CSharp))
+                if (!(mOperator.Value == eFCOperator.Legacy || mOperator.Value == eFCOperator.CSharp))
                 {
                     Condition = string.Empty;
                 }
@@ -261,9 +260,9 @@ namespace GingerCore.FlowControlLib
                 Condition = Condition.Replace("Fail", "Failed");
             }
 
-            IValueExpression VE = TargetFrameworkHelper.Helper.CreateValueExpression(ProjEnvironment, BusinessFlow, DSList);  
+            IValueExpression VE = TargetFrameworkHelper.Helper.CreateValueExpression(ProjEnvironment, BusinessFlow, DSList);
             VE.Value = Condition;
-            
+
             foreach (ActReturnValue ARC in act.ReturnValues)
             {
                 if (!string.IsNullOrEmpty(ARC.Actual))
@@ -285,7 +284,7 @@ namespace GingerCore.FlowControlLib
             {
                 VE.Value = VE.Value.Replace("{ActionStatus}", (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.FailIgnored ? Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed : act.Status).ToString());
             }
-            else if(VE.Value.Contains("{LastActivityStatus}"))
+            else if (VE.Value.Contains("{LastActivityStatus}"))
             {
                 VE.Value = VE.Value.Replace("{LastActivityStatus}", LastExecutedActivity != null ? LastExecutedActivity.Status.ToString() : "Last executed Activity Status not available");
             }
@@ -310,11 +309,11 @@ namespace GingerCore.FlowControlLib
                 Condition = Condition.Replace("Fail", "Failed");
             }
 
-            IValueExpression VE = TargetFrameworkHelper.Helper.CreateValueExpression(ProjEnvironment, BusinessFlow,DSList);
+            IValueExpression VE = TargetFrameworkHelper.Helper.CreateValueExpression(ProjEnvironment, BusinessFlow, DSList);
 
             VE.Value = Condition;
 
-            
+
             VE.Value = VE.Value.Replace("{BusinessFlowStatus}", (BusinessFlow.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed ? Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed : BusinessFlow.RunStatus).ToString());
 
             ConditionCalculated = VE.ValueCalculated;
@@ -338,7 +337,7 @@ namespace GingerCore.FlowControlLib
                 return;
             }
         }
-     
+
         public Guid GetGuidFromValue(bool doNotUseValueCalculated = false)
         {
             try

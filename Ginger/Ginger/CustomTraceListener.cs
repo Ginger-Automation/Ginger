@@ -4,22 +4,19 @@ Copyright © Property of Amdocs Quality Engineering
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Reflection;
-using System.Diagnostics;
-using System.IO;
-using System.Configuration;
-using System.Collections;
-using System.Threading;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using System;
+using System.Collections;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using System.Text;
+using System.Threading;
 
 namespace Ginger
 {
-   public class CustomTraceListener : TextWriterTraceListener
+    public class CustomTraceListener : TextWriterTraceListener
     {
         //The traceActivateSwitch determine if to Trace or not
         public Boolean _traceActivateSwitch = false;
@@ -44,7 +41,7 @@ namespace Ginger
         //_sessionID indicate what is the message session ID
         private string _sessionID = string.Empty;
         //_subAppName indicate what is the message sub Application source
-        
+
         //_isVerifiedToWrite determine if to write or not according to the Trace switches
         private Boolean _isVerifiedToWrite = false;
 
@@ -61,7 +58,7 @@ namespace Ginger
 
             //getting switchs values from config file
             bool tracelog = WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug ? true : false;
-            _traceActivateSwitch = tracelog; 
+            _traceActivateSwitch = tracelog;
             _traceLevelSwitch_Error = tracelog;
             _traceLevelSwitch_Info = tracelog;
 
@@ -129,14 +126,14 @@ namespace Ginger
                         {
                             newFileStream.fileStream = new FileStreamWithBackup(
                                      (logsDirectory.FullName + '\\' +
-                                      System.Configuration.ConfigurationManager.AppSettings["TRACE_DEFUALT_LOG_FILE_NAME"].ToString().ToUpper() + "_" + date.Year.ToString()+"_"+date.Month.ToString()+"_"+date.Day.ToString()+"_"+date.Millisecond.ToString() +  " -Client.log"),
+                                      System.Configuration.ConfigurationManager.AppSettings["TRACE_DEFUALT_LOG_FILE_NAME"].ToString().ToUpper() + "_" + date.Year.ToString() + "_" + date.Month.ToString() + "_" + date.Day.ToString() + "_" + date.Millisecond.ToString() + " -Client.log"),
                                       _maxFileLength, _maxFileCount, FileMode.Append);
                         }
                         else
                         {
                             newFileStream.fileStream = new FileStreamWithBackup(
                                      (logsDirectory.FullName + '\\' +
-                                      newFileStream.subApplicationName +"_"+ date.Year.ToString() + "_" + date.Month.ToString() + "_" + date.Day.ToString() + "_" + date.Millisecond.ToString() + " -Client.log"),
+                                      newFileStream.subApplicationName + "_" + date.Year.ToString() + "_" + date.Month.ToString() + "_" + date.Day.ToString() + "_" + date.Millisecond.ToString() + " -Client.log"),
                                       _maxFileLength, _maxFileCount, FileMode.Append);
                         }
 
@@ -169,7 +166,7 @@ namespace Ginger
                         }
                     }
                 }
-                    
+
 
                 //split definitions
                 ArrayList MessagDefinitions = new ArrayList(traceMessagDefinitions.ToString().ToUpper().Split(new Char[] { '#' }));
@@ -213,19 +210,19 @@ namespace Ginger
                     {
                         isConfigreAble = false;
                     }
-                        
+
                 }
                 else
                 {
                     isConfigreAble = false;
                 }
-                    
+
             }
             else
             {
                 isConfigreAble = false;
             }
-                
+
 
             //Default Setup
             if (!isConfigreAble)
@@ -457,12 +454,12 @@ namespace Ginger
                 {
                     throw new ArgumentOutOfRangeException("Invalid maximum file length");
                 }
-                    
+
                 if (maxFileCount <= 0)
                 {
                     throw new ArgumentOutOfRangeException("Invalid maximum file count");
                 }
-                  
+
 
                 m_maxFileLength = maxFileLength;
                 m_maxFileCount = maxFileCount;
@@ -493,7 +490,7 @@ namespace Ginger
                             {
                                 System.IO.File.Delete(file);
                             }
-                                
+
                         }
                         break;
 
@@ -505,13 +502,13 @@ namespace Ginger
                             {
                                 m_nextFileIndex = iFile + 1;
                             }
-                                
+
                         }
                         if (m_nextFileIndex == m_maxFileCount)
                         {
                             m_nextFileIndex = 0;
                         }
-                            
+
                         Seek(0, SeekOrigin.End);
                         break;
                 }
@@ -528,7 +525,7 @@ namespace Ginger
                 {
                     m_nextFileIndex = 0;
                 }
-                    
+
             }
 
             private string GetBackupFileName(int index)
@@ -544,7 +541,7 @@ namespace Ginger
                 {
                     sb.AppendFormat("{0}{1}", m_fileBase, index.ToString(format.ToString()));
                 }
-                    
+
                 return Path.Combine(m_fileDir, sb.ToString());
             }
 
@@ -615,7 +612,7 @@ namespace Ginger
             {
                 return (false);
             }
-                
+
         }
     }
 }

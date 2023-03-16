@@ -26,7 +26,7 @@ namespace Amdocs.Ginger.CoreNET.Run.SolutionCategory
         {
         }
 
-        public SolutionCategoryValue (string value)
+        public SolutionCategoryValue(string value)
         {
             this.Value = value;
         }

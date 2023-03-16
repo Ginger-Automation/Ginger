@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using System.Diagnostics;
 // using System.Windows.Threading;
 
@@ -36,7 +35,7 @@ namespace GingerWPF.GeneralLib
         public void StartRunWatch()
         {
             runWatch.Reset();
-            runWatch.Start();                                  
+            runWatch.Start();
             // dispatcherTimerElapsed.Start();
         }
         public void ContinueWatch()

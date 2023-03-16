@@ -16,17 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common;
-using System;
-using System.Collections.Generic;
-using Ginger.Reports;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.Reports;
 using GingerCore;
 using GingerCore.DataSource;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using RestSharp;
+using System;
+using System.Collections.Generic;
 using static Ginger.Run.RunSetActions.RunSetActionBase;
 
 namespace Ginger.Run.RunSetActions

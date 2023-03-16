@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using GingerCore;
 using System;
 using System.IO;
 using System.Windows;
@@ -50,7 +49,10 @@ namespace Ginger.UserControlsLib.TextEditor
         private void FilePathTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (string.IsNullOrEmpty(FileName.FilePathTextBox.Text))
+            {
                 return;
+            }
+
             if (System.IO.Path.GetExtension(FileName.FilePathTextBox.Text).ToUpper() != FileExtensionForBrowse.ToUpper())
             {
                 Reporter.ToUser(eUserMsgKey.FileExtensionNotSupported, FileExtensionForBrowse);
@@ -59,7 +61,7 @@ namespace Ginger.UserControlsLib.TextEditor
             }
             else
             {
-                EditorFrame.Content = new  DocumentEditorPage(FileName.FilePathTextBox.Text, false, true,"Selected Content Viewer");
+                EditorFrame.Content = new DocumentEditorPage(FileName.FilePathTextBox.Text, false, true, "Selected Content Viewer");
             }
         }
 
@@ -74,7 +76,7 @@ namespace Ginger.UserControlsLib.TextEditor
             genWin = null;
             this.Height = 400;
             this.Width = 400;
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Import "+ PlugInEditorName + " File", this, winButtons);
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Import " + PlugInEditorName + " File", this, winButtons);
         }
 
         private void ImportButton_Click(object sender, RoutedEventArgs e)

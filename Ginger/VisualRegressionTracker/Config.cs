@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
 
 namespace VisualRegressionTracker
 {
@@ -43,16 +43,20 @@ namespace VisualRegressionTracker
 
         public void CheckComplete()
         {
-            if (string.IsNullOrEmpty(ApiUrl)) {
+            if (string.IsNullOrEmpty(ApiUrl))
+            {
                 throw new MissingConfigurationError(nameof(ApiUrl), $"{nameof(ApiUrl)} is not specified.'");
             }
-            if (string.IsNullOrEmpty(BranchName)) {
+            if (string.IsNullOrEmpty(BranchName))
+            {
                 throw new MissingConfigurationError(nameof(BranchName), $"{nameof(BranchName)} is not specified.'");
             }
-            if (string.IsNullOrEmpty(Project)) {
+            if (string.IsNullOrEmpty(Project))
+            {
                 throw new MissingConfigurationError(nameof(Project), $"{nameof(Project)} is not specified.'");
             }
-            if (string.IsNullOrEmpty(ApiKey)) {
+            if (string.IsNullOrEmpty(ApiKey))
+            {
                 throw new MissingConfigurationError(nameof(ApiKey), $"{nameof(ApiKey)} is not specified.'");
             }
         }
@@ -67,11 +71,16 @@ namespace VisualRegressionTracker
             var default_path = Path.Combine(determine_config_path(), DefaultPath);
             Config cfg;
 
-            if (path != null) {
+            if (path != null)
+            {
                 cfg = FromFile(path);
-            } else if (File.Exists(default_path)) {
+            }
+            else if (File.Exists(default_path))
+            {
                 cfg = FromFile(default_path);
-            } else {
+            }
+            else
+            {
                 cfg = new Config();
             }
 
@@ -108,14 +117,15 @@ namespace VisualRegressionTracker
             maybe_apply_env("VRT_BRANCHNAME", v => BranchName = v);
             maybe_apply_env("VRT_PROJECT", v => Project = v);
             maybe_apply_env("VRT_APIKEY", v => ApiKey = v);
-            maybe_apply_env("VRT_ENABLESOFTASSERT", v => 
-                EnableSoftAssert = new[] {"true", "1"}.Contains(v.ToLowerInvariant()));
+            maybe_apply_env("VRT_ENABLESOFTASSERT", v =>
+                EnableSoftAssert = new[] { "true", "1" }.Contains(v.ToLowerInvariant()));
         }
 
         private static void maybe_apply_env(string name, Action<string> action)
         {
             var value = Environment.GetEnvironmentVariable(name);
-            if (!string.IsNullOrEmpty(value)) {
+            if (!string.IsNullOrEmpty(value))
+            {
                 action(value);
             }
         }

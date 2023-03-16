@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using GingerCore.Actions.ASCF;
+using System.Windows.Controls;
 
 namespace Ginger.Actions
 {
@@ -34,7 +34,7 @@ namespace Ginger.Actions
             mAct = act;
             //TODO: use .Fields
             GingerCore.General.FillComboFromEnumObj(ControlActionComboBox, mAct.ControlAction);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mAct, ActASCFBrowserElement.Fields.ControlAction);            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mAct, ActASCFBrowserElement.Fields.ControlAction);
         }
     }
 }

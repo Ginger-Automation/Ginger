@@ -16,16 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Ginger.Repository.ItemToRepositoryWizard;
-using GingerCore;
 using GingerCore.Activities;
 
 namespace Ginger.Repository.AddItemToRepositoryWizard
 {
     public class ActivitiesGroupValidation : ItemValidationBase
     {
-       
+
         public static void Validate(ActivitiesGroup activityGroup)
         {
 

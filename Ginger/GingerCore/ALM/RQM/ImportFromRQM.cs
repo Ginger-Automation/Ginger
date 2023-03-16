@@ -36,9 +36,7 @@ limitations under the License.
 
 using ALM_CommonStd.Abstractions;
 using ALM_CommonStd.DataContracts;
-using AlmDataContractsStd.Enums;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.External;
@@ -76,7 +74,10 @@ namespace GingerCore.ALM.RQM
         {
             try
             {
-                if (testPlan == null) return null;
+                if (testPlan == null)
+                {
+                    return null;
+                }
 
                 //Create Business Flow
                 BusinessFlow busFlow = new BusinessFlow();
@@ -103,7 +104,10 @@ namespace GingerCore.ALM.RQM
                     ActivitiesGroup tcActivsGroup;
                     ActivitiesGroup repoActivsGroup = null;
                     if (repoActivsGroup == null)
+                    {
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
+                    }
+
                     if (repoActivsGroup != null)
                     {
                         tcActivsGroup = (ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance(true);
@@ -200,10 +204,14 @@ namespace GingerCore.ALM.RQM
                             {
                                 isflowControlParam = false;
                                 if (param.Value.ToString().StartsWith("$$_"))
+                                {
                                     param.Value = param.Value.ToString().Substring(3); //get value without "$$_"
+                                }
                             }
                             else if (param.Value.ToString() != "<Empty>")
+                            {
                                 isflowControlParam = true;
+                            }
 
                             //check if already exist param with that name
                             VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.Name.ToUpper()).FirstOrDefault();
@@ -267,7 +275,9 @@ namespace GingerCore.ALM.RQM
                                     stepActivityVarOptionalVar = new OptionalValue(param.Value);
                                     ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
                                     if (isflowControlParam == true)
+                                    {
                                         stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
+                                    }
                                 }
                                 //set the selected value
                                 ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;
@@ -279,7 +289,9 @@ namespace GingerCore.ALM.RQM
                                 {
                                     stepActivityVar.Value = param.Value;
                                     if (stepActivityVar is VariableString)
+                                    {
                                         ((VariableString)stepActivityVar).InitialStringValue = param.Value;
+                                    }
                                 }
                                 catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             }
@@ -299,7 +311,10 @@ namespace GingerCore.ALM.RQM
         {
             try
             {
-                if ((testPlan == null) || (busFlow == null)) return;
+                if ((testPlan == null) || (busFlow == null))
+                {
+                    return;
+                }
 
                 // removing activityGroup/activities that going to be updated from BusinessFlow
                 var activitiesToRemove = busFlow.Activities.Where(x => TCsIDs.Select(y => { y = ExportToRQM.GetExportedIDString(y, "RQMScriptID"); return y; }).ToList()
@@ -310,7 +325,10 @@ namespace GingerCore.ALM.RQM
                 foreach (Activity activityToRemove in activitiesToRemove)
                 {
                     if (startGroupActsIndxInBf < busFlow.Activities.IndexOf(activityToRemove))
+                    {
                         startGroupActsIndxInBf = busFlow.Activities.IndexOf(activityToRemove);
+                    }
+
                     busFlow.Activities.Remove(activityToRemove);
                 }
                 var activityGroupsToRemove = busFlow.ActivitiesGroups.Where(x => TCsIDs.Contains(x.ExternalID)).ToList();
@@ -346,7 +364,10 @@ namespace GingerCore.ALM.RQM
                             ActivitiesGroup tcActivsGroup;
                             ActivitiesGroup repoActivsGroup = null;
                             if (repoActivsGroup == null)
+                            {
                                 repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
+                            }
+
                             if (repoActivsGroup != null)
                             {
                                 tcActivsGroup = (ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance();
@@ -437,10 +458,14 @@ namespace GingerCore.ALM.RQM
                                     {
                                         isflowControlParam = false;
                                         if (param.Value.ToString().StartsWith("$$_"))
+                                        {
                                             param.Value = param.Value.ToString().Substring(3); //get value without "$$_"
+                                        }
                                     }
                                     else if (param.Value.ToString() != "<Empty>")
+                                    {
                                         isflowControlParam = true;
+                                    }
 
                                     //check if already exist param with that name
                                     VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.Name.ToUpper()).FirstOrDefault();
@@ -502,7 +527,9 @@ namespace GingerCore.ALM.RQM
                                             stepActivityVarOptionalVar = new OptionalValue(param.Value);
                                             ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
                                             if (isflowControlParam == true)
+                                            {
                                                 stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
+                                            }
                                         }
                                         //set the selected value
                                         ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;
@@ -514,7 +541,9 @@ namespace GingerCore.ALM.RQM
                                         {
                                             stepActivityVar.Value = param.Value;
                                             if (stepActivityVar is VariableString)
+                                            {
                                                 ((VariableString)stepActivityVar).InitialStringValue = param.Value;
+                                            }
                                         }
                                         catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                                     }
@@ -536,7 +565,10 @@ namespace GingerCore.ALM.RQM
         {
             try
             {
-                if ((testPlan == null) || (busFlow == null)) return;
+                if ((testPlan == null) || (busFlow == null))
+                {
+                    return;
+                }
 
                 int startGroupActsIndxInBf = 0;
                 busFlow.Activities.Clear();
@@ -559,7 +591,10 @@ namespace GingerCore.ALM.RQM
                     ActivitiesGroup tcActivsGroup;
                     ActivitiesGroup repoActivsGroup = null;
                     if (repoActivsGroup == null)
+                    {
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
+                    }
+
                     if (repoActivsGroup != null)
                     {
                         tcActivsGroup = (ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance();
@@ -648,10 +683,14 @@ namespace GingerCore.ALM.RQM
                             {
                                 isflowControlParam = false;
                                 if (param.Value.ToString().StartsWith("$$_"))
+                                {
                                     param.Value = param.Value.ToString().Substring(3); //get value without "$$_"
+                                }
                             }
                             else if (param.Value.ToString() != "<Empty>")
+                            {
                                 isflowControlParam = true;
+                            }
 
                             //check if already exist param with that name
                             VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.Name.ToUpper()).FirstOrDefault();
@@ -715,7 +754,9 @@ namespace GingerCore.ALM.RQM
                                     stepActivityVarOptionalVar = new OptionalValue(param.Value);
                                     ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
                                     if (isflowControlParam == true)
+                                    {
                                         stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
+                                    }
                                 }
                                 //set the selected value
                                 ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;
@@ -727,7 +768,9 @@ namespace GingerCore.ALM.RQM
                                 {
                                     stepActivityVar.Value = param.Value;
                                     if (stepActivityVar is VariableString)
+                                    {
                                         ((VariableString)stepActivityVar).InitialStringValue = param.Value;
+                                    }
                                 }
                                 catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             }
@@ -770,7 +813,9 @@ namespace GingerCore.ALM.RQM
                 Regex reg = new Regex("<[^>]+>", RegexOptions.IgnoreCase);
                 var stripped = reg.Replace(HTMLText, "");
                 if (toDecodeHTML)
+                {
                     stripped = HttpUtility.HtmlDecode(stripped);
+                }
 
                 stripped = stripped.TrimStart(new char[] { '\r', '\n' });
                 stripped = stripped.TrimEnd(new char[] { '\r', '\n' });
@@ -787,8 +832,13 @@ namespace GingerCore.ALM.RQM
         public static ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online)
         {
             if (online)
+            {
                 return GetOnlineItemFields(bw);
-            else return GetLocalSavedPossibleValues();
+            }
+            else
+            {
+                return GetLocalSavedPossibleValues();
+            }
         }
 
         private static ObservableList<ExternalItemFieldBase> GetLocalSavedPossibleValues()
@@ -820,9 +870,13 @@ namespace GingerCore.ALM.RQM
                     itemField.SelectedValue = jsonItemField.Selected;
 
                     if (jsonItemField.PossibleValues.Count > 0)
+                    {
                         itemField.SelectedValue = jsonItemField.PossibleValues[0];
+                    }
                     else
+                    {
                         itemField.SelectedValue = "Unassigned";
+                    }
 
                     ItemFieldsPossibleValues.Add(itemField);
                 }
@@ -883,7 +937,7 @@ namespace GingerCore.ALM.RQM
             {
                 //TODO: Populate list fields with CategoryTypes
                 populatedValue = "Starting fields retrieve process... ";
-                bw.ReportProgress(totalValues, populatedValue);              
+                bw.ReportProgress(totalValues, populatedValue);
                 RqmResponseData categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + rqmDomain + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + rqmProjectGuid + "/categoryType"));
                 XmlDocument categoryTypeList = new XmlDocument();
 

@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using GingerCore.Actions.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Actions.Windows
 {
@@ -34,7 +34,7 @@ namespace Ginger.Actions.Windows
 
             mAct = Act;
 
-            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, mAct.ControlAction);            
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, mAct.ControlAction);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, ActWindowsControl.Fields.ControlAction);
         }
 
@@ -43,11 +43,11 @@ namespace Ginger.Actions.Windows
             switch (mAct.ControlAction)
             {
                 case ActWindowsControl.eControlAction.SetValue:
-                    //TODO: show ValueTextBox
+                //TODO: show ValueTextBox
                 case ActWindowsControl.eControlAction.GetValue:
                     //TODO: hide ValueTextBox
                     break;
-                    
+
             }
         }
     }

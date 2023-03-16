@@ -48,9 +48,12 @@ namespace GingerCore.NoSqlBase
                 TypeBuilder DynamicClass = this.CreateClass();
                 this.CreateConstructor(DynamicClass);
                 for (int ind = 0; ind < PropertyNames.Count(); ind++)
+                {
                     CreateProperty(DynamicClass, PropertyNames[ind], Types[ind]);
+                }
+
                 Type type = DynamicClass.CreateTypeInfo();
-                
+
                 return Activator.CreateInstance(type);
             }
 

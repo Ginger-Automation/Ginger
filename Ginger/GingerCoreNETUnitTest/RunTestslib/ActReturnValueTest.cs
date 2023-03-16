@@ -1,5 +1,4 @@
-﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
+﻿using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
@@ -15,7 +14,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         static GingerRunner mGingerRunner;
         static BusinessFlow BF;
         static RunSetConfig runSetConfig;
-        
+
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext)
         {
@@ -34,21 +33,21 @@ namespace GingerCoreNETUnitTest.RunTestslib
             BF.Activities[0].Acts.Add(act);
 
             mGingerRunner.Executor.BusinessFlows.Add(BF);
-          
+
         }
-      
+
         [TestMethod]
         public void OutputValueContainsTest()
         {
             ARC.SimulatedActual = "Test Contains";
-            ARC.Expected = "Test";            
+            ARC.Expected = "Test";
             ARC.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Contains;
-            act.ActReturnValues.Add(ARC);                
+            act.ActReturnValues.Add(ARC);
             mGingerRunner.Executor.RunRunner();
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
-      
+
         [TestMethod]
         public void OutputValueDoesNotContainsTest()
         {
@@ -60,7 +59,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
-       
+
         [TestMethod]
         public void OutputValueEqualsTest()
         {
@@ -72,7 +71,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
-       
+
         [TestMethod]
         public void OutputValueEvaluateTest()
         {
@@ -84,7 +83,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
-       
+
         [TestMethod]
         public void OutputValueGreateThanTest()
         {
@@ -96,7 +95,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
-     
+
         [TestMethod]
         public void OutputValueGreaterThanEqualsTest()
         {
@@ -108,7 +107,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
-       
+
         [TestMethod]
         public void OutputValueLessThanTest()
         {
@@ -120,7 +119,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
-       
+
         [TestMethod]
         public void OutputValueLessThanEqualsTest()
         {
@@ -132,7 +131,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
             Assert.AreEqual(act.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
-        
+
         [TestMethod]
         public void OutputValueNotEqualsTest()
         {

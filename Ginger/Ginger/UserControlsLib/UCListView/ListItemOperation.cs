@@ -27,7 +27,7 @@ namespace Ginger.UserControlsLib.UCListView
     public class ListItemOperation
     {
         public string Group = null;
-        public eImageType GroupImageType; 
+        public eImageType GroupImageType;
 
         public string Header;
         public eImageType ImageType;

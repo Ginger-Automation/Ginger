@@ -41,7 +41,7 @@ namespace GingerCore.Extensions
             double renderHeight = actualHeight * scale;
             double renderWidth = actualWidth * scale;
 
-            RenderTargetBitmap renderTarget = new RenderTargetBitmap((int) renderWidth, (int) renderHeight, 96, 96, PixelFormats.Pbgra32);
+            RenderTargetBitmap renderTarget = new RenderTargetBitmap((int)renderWidth, (int)renderHeight, 96, 96, PixelFormats.Pbgra32);
             VisualBrush sourceBrush = new VisualBrush(source);
 
             DrawingVisual drawingVisual = new DrawingVisual();
@@ -62,7 +62,7 @@ namespace GingerCore.Extensions
 
             using (MemoryStream outputStream = new MemoryStream())
             {
-                jpgEncoder.Save(outputStream);                
+                jpgEncoder.Save(outputStream);
                 _imageArray = outputStream.ToArray();
             }
 

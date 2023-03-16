@@ -17,11 +17,7 @@ limitations under the License.
 #endregion
 
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Amdocs.Ginger.Common.UIElement;
 
 namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib

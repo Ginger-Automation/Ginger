@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.RunLib;
 using System;
@@ -72,11 +71,11 @@ namespace Amdocs.Ginger.GingerRuntime
             PL.AddValue("Sum");
 
             List<NewPayLoad> Params = new List<NewPayLoad>();
-            
-            NewPayLoad p1 = new NewPayLoad("P", "a", "1");               
+
+            NewPayLoad p1 = new NewPayLoad("P", "a", "1");
             Params.Add(p1);
 
-            NewPayLoad p2 = new NewPayLoad("P", "b", "2");               
+            NewPayLoad p2 = new NewPayLoad("P", "b", "2");
             Params.Add(p2);
 
             PL.AddListPayLoad(Params);
@@ -118,8 +117,8 @@ namespace Amdocs.Ginger.GingerRuntime
             Console.Read();
         }
 
-        
-      
+
+
 
     }
 }

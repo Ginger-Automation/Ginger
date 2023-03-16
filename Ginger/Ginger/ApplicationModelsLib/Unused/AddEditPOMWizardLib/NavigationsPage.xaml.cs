@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Repository;
-using Ginger.UserControlsLib.VisualFlow;
 using System.Windows.Controls;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib

@@ -16,14 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using GingerCore.Variables;
 using GingerTest.POMs;
 using GingerTestHelper;
-using GingerWPFUnitTest;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
-using amdocs.ginger.GingerCoreNET;
 
 namespace GingerTest
 {
@@ -76,12 +75,13 @@ namespace GingerTest
         }
 
         [Ignore]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void AddGlobalStringVariable()
         {
             //Arrange
             string name = "str1";
-            
+
             //Act                        
             GlobalVariablesPOM globalVariablesPOM = mGingerAutomator.MainWindowPOM.GotoGlobalVariables();
             //Class has been commented globalVariablesPOM.AddStringVariable(name);

@@ -16,12 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Speech.Synthesis;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GingerTest
 {
@@ -72,7 +67,7 @@ namespace GingerTest
 
             //// Asynchronous
             //synthesizer.SpeakAsync("click the add button at the top of the grid");
-   
+
         }
     }
 }

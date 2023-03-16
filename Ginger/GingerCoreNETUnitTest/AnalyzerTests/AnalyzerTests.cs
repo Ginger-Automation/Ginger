@@ -16,17 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using Amdocs.Ginger.Repository;
+using Ginger.AnalyzerLib;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Ginger.SolutionGeneral;
-using Ginger.AnalyzerLib;
-using System.Linq;
-using Amdocs.Ginger.Common;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UnitTests.NonUITests
 {
@@ -41,8 +39,8 @@ namespace UnitTests.NonUITests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-             Solution = new Solution();           
-             BF = new BusinessFlow();
+            Solution = new Solution();
+            BF = new BusinessFlow();
 
             VariableString VarString = new VariableString();
             VarString.Name = "BF_VarString";
@@ -50,7 +48,7 @@ namespace UnitTests.NonUITests
             VarString.MandatoryInput = true;
             BF.Variables.Add(VarString);
 
-            VariableSelectionList VarList= new VariableSelectionList();
+            VariableSelectionList VarList = new VariableSelectionList();
             VarList.Name = "BF_VarList";
             VarList.SetAsInputValue = true;
             VarList.MandatoryInput = true;
@@ -102,9 +100,9 @@ namespace UnitTests.NonUITests
             DummyAction.ReturnValues.Add(ARV1);
 
 
-            
+
             //ActReturnValue with static value and variable
-           
+
             ActReturnValue ARV2 = new ActReturnValue
             {
                 Param = "Value2",
@@ -134,9 +132,9 @@ namespace UnitTests.NonUITests
             };
             DummyAction.ReturnValues.Add(ARV5);
 
-            ABF =  (AnalyzeBusinessFlow)AnalyzeBusinessFlow.Analyze(Solution, BF).Where(x=>x.Description.Equals(AnalyzeBusinessFlow.LegacyOutPutValidationDescription)).First();
+            ABF = (AnalyzeBusinessFlow)AnalyzeBusinessFlow.Analyze(Solution, BF).Where(x => x.Description.Equals(AnalyzeBusinessFlow.LegacyOutPutValidationDescription)).First();
         }
-        
+
 
         [TestMethod]
         public void ValidateOutPutValidationPostFixeValues()
@@ -173,7 +171,7 @@ namespace UnitTests.NonUITests
 
             //Assert
             List<AnalyzerItemBase> valIssuesList = issuesList.Where(x => x.UTDescription == "MissingMandatoryInputValue").ToList();
-            Assert.AreEqual(valIssuesList.Count, 3); 
+            Assert.AreEqual(valIssuesList.Count, 3);
             Assert.AreEqual(valIssuesList[0].ItemName, "BF_VarString");
             Assert.AreEqual(valIssuesList[1].ItemName, "BF_VarList");
             Assert.AreEqual(valIssuesList[2].ItemName, "NewVarString6");

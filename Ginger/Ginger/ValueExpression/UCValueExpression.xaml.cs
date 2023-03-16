@@ -16,13 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using GingerCore;
 using System;
-using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
-using Amdocs.Ginger.Common;
-using Ginger.ValidationRules;
-using GingerCore;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -38,7 +36,7 @@ namespace Ginger.BusinessFlowWindows
         Context mContext;
 
         public enum eBrowserType { File, Folder }
-        
+
         public UCValueExpression()
         {
             InitializeComponent();
@@ -48,11 +46,11 @@ namespace Ginger.BusinessFlowWindows
         private void UCValueExpression_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             // If the VE is in Grid, we call this function:
-                if (e.NewValue.GetType() == typeof(ValueExpression))
-                {
-                    ValueExpression ve = (ValueExpression)e.NewValue;                    
-                    Init(mContext, ve.Obj, ve.ObjAttr);                    
-                }
+            if (e.NewValue.GetType() == typeof(ValueExpression))
+            {
+                ValueExpression ve = (ValueExpression)e.NewValue;
+                Init(mContext, ve.Obj, ve.ObjAttr);
+            }
         }
 
         public void Init(Context context, object obj, string AttrName)
@@ -61,7 +59,7 @@ namespace Ginger.BusinessFlowWindows
             this.obj = obj;
             this.AttrName = AttrName;
             mContext = context;
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
         }
 
         public void Init(Context context, object obj, string AttrName, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler = null)
@@ -81,7 +79,9 @@ namespace Ginger.BusinessFlowWindows
                 BrowseButton.AddHandler(Button.ClickEvent, new RoutedEventHandler(BrowseButton_Click));
 
                 if (extraBrowserSelectionHandler != null)
+                {
                     BrowseButton.Click += extraBrowserSelectionHandler;
+                }
             }
 
             if (!isVENeeded)
@@ -89,7 +89,7 @@ namespace Ginger.BusinessFlowWindows
                 MidCol.Width = new GridLength(0);
                 OpenExpressionEditorButton.Visibility = Visibility.Collapsed;
             }
-        }   
+        }
 
         private void OpenExpressionEditorButton_Click(object sender, RoutedEventArgs e)
         {
@@ -131,7 +131,7 @@ namespace Ginger.BusinessFlowWindows
             Row.Height = new GridLength(hight);
         }
 
-        public bool IsReadOnly 
+        public bool IsReadOnly
         {
             get { return ValueTextBox.IsReadOnly; }
             set { ValueTextBox.IsReadOnly = value; }

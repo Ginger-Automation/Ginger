@@ -16,22 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCore.Actions;
-using GingerCore.Actions.Common;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Appium;
-using OpenQA.Selenium.Appium.Android;
-using OpenQA.Selenium.Appium.iOS;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Remote;
-using OpenQA.Selenium.Safari;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Threading;
 
 namespace GingerCore.Drivers.Mobile.Perfecto
 {
@@ -275,7 +259,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto
         //}
 
 
-      
+
 
         //private void MobileDeviceActionHandler(ActMobileDevice act)
         //{
@@ -716,8 +700,8 @@ namespace GingerCore.Drivers.Mobile.Perfecto
         //    return "TBD";
         //}
 
-        
-        
+
+
 
         //public override void HighlightActElement(Act act)
         //{

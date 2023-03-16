@@ -26,8 +26,8 @@ namespace Ginger.UserControlsLib.TextEditor.Office
     /// <summary>
     /// Interaction logic for OfficeDocumentPage.xaml
     /// </summary>
-    public partial class OfficeDocumentPage : System.Windows.Controls.Page, ITextEditorPage 
-    {        
+    public partial class OfficeDocumentPage : System.Windows.Controls.Page, ITextEditorPage
+    {
         string mFileName;
 
         public OfficeDocumentPage()
@@ -54,9 +54,9 @@ namespace Ginger.UserControlsLib.TextEditor.Office
         public void HostWindowInFrame(System.Windows.Controls.Frame fraContainer, System.Windows.Window win)
         {
             object tmp = win.Content;
-            
+
             win.Content = null;
-            
+
             fraContainer.Content = new System.Windows.Controls.ContentControl() { Content = tmp };
         }
 
@@ -82,7 +82,7 @@ namespace Ginger.UserControlsLib.TextEditor.Office
 
 
         void OpenFile()
-        {            
+        {
             System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo();
             procStartInfo.FileName = mFileName;
             procStartInfo.CreateNoWindow = true;

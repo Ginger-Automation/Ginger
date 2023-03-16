@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using System.IO;
 using Amdocs.Ginger.Common.Run;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
@@ -26,7 +27,6 @@ using GingerCore.Activities;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Variables;
-using System.IO;
 
 namespace Amdocs.Ginger.CoreNET.Repository
 {
@@ -48,7 +48,7 @@ namespace Amdocs.Ginger.CoreNET.Repository
             SR.AddItemInfo<ALMDefectProfile>("*.Ginger.ALMDefectProfile.xml", SolutionRepository.cSolutionRootFolderSign + "ALMDefectProfiles", true, "ALM Defect Profiles", PropertyNameForFileName: nameof(ALMDefectProfile.Name));
 
             SR.AddItemInfo<Agent>("*.Ginger.Agent.xml", SolutionRepository.cSolutionRootFolderSign + "Agents", true, "Agents", PropertyNameForFileName: nameof(Agent.Name));
-            
+
             SR.AddItemInfo<HTMLReportConfiguration>("*.Ginger.HTMLReportConfiguration.xml", SolutionRepository.cSolutionRootFolderSign + "HTMLReportConfigurations", true, "HTMLReportConfigurations", PropertyNameForFileName: nameof(HTMLReportsConfiguration.Name));
             //SR.AddItemInfo<HTMLReportTemplate>("*.Ginger.HTMLReportTemplate.xml", @"~\HTMLReportConfigurations\HTMLReportTemplate", true, "HTMLReportTemplate", PropertyNameForFileName: nameof(HTMLReportTemplate.Name));
             //SR.AddItemInfo<ReportTemplate>("*.Ginger.ReportTemplate.xml", @"~\HTMLReportConfigurations\ReportTemplates", true, "ReportTemplates", PropertyNameForFileName: nameof(ReportTemplate.Name));

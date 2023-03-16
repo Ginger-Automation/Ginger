@@ -16,17 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using GingerCore.ALM.RQM;
 using Ginger.UserControls;
-using GingerCore;
+using GingerCore.ALM;
+using GingerCore.ALM.RQM;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.ALM;
 
 namespace Ginger.ALM.RQM
 {

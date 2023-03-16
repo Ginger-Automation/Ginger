@@ -16,12 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.PlugInsWindows;
-using GingerCore;
 using GingerWPF.PluginsLib.AddPluginWizardLib;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -110,11 +108,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
         void ITreeViewItem.SetTools(ITreeView TV)
         {
             mTreeView = TV;
-            mContextMenu = new ContextMenu();        
-            TreeViewUtils.AddMenuItem(mContextMenu, "Add Plugin", AddPlugIn, null, eImageType.Add);            
+            mContextMenu = new ContextMenu();
+            TreeViewUtils.AddMenuItem(mContextMenu, "Add Plugin", AddPlugIn, null, eImageType.Add);
             TreeViewUtils.AddMenuItem(mContextMenu, "Open Folder in File Explorer", OpenTreeFolderHandler, null, eImageType.OpenFolder);
         }
-        
+
 
         public void AddPlugIn(object sender, System.Windows.RoutedEventArgs e)
         {

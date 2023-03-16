@@ -17,14 +17,12 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core
 {
     public class GingerServiceAttribute : Attribute
     {
-        string mID;        
+        string mID;
         string mDescription;
 
         /// <summary>
