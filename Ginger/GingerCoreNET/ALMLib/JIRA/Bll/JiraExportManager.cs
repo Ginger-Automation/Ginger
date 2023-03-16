@@ -26,13 +26,13 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.JIRA.Data_Contracts;
 using GingerCore.Variables;
-using JiraRepositoryStd;
 using JiraRepositoryStd.BLL;
 using JiraRepositoryStd.Data_Contracts;
 using JiraRepositoryStd.Helpers;
 using JiraRepositoryStd.Settings;
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 
@@ -294,7 +294,7 @@ namespace GingerCore.ALM.JIRA.Bll
 
         public bool ExecuteDataToJira(BusinessFlow bizFlow, PublishToALMConfig publishToALMConfig, ref string result)
         {
-            bool resultFlag = false;
+            bool resultFlag = false;          
             if (bizFlow.ExternalID != "0" && (!String.IsNullOrEmpty(bizFlow.ExternalID)))
             {
                 if (string.IsNullOrEmpty(publishToALMConfig.VariableForTCRunName))
@@ -316,6 +316,7 @@ namespace GingerCore.ALM.JIRA.Bll
 
                 var testExecutionFields = mergedFields.Where(a => a.ItemType == "TEST_EXECUTION" && (a.ToUpdate || a.Mandatory));
                 var isCreated = CreateTestExecution(bizFlow, tcArray, testExecutionFields);
+                //get the Test set TC's                
 
                 foreach (var actGroup in bizFlow.ActivitiesGroups)
                 {
@@ -335,6 +336,31 @@ namespace GingerCore.ALM.JIRA.Bll
                             stepColl.Add(new JiraRunStepStautus() { comment = comment, status = jiraStatus });
                         }
                         resultFlag = jiraRepObj.ExecuteRunStatusBySteps(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, runs, relevantTcRun.TestCaseRunId);
+
+                        // Attach ActivityGroup execution Report if needed(if Checkbox is selected in GUI)
+                        if (publishToALMConfig.ToAttachActivitiesGroupReport)
+                        {
+                            if ((actGroup.TempReportFolder != null) && (actGroup.TempReportFolder != string.Empty) &&
+                            (System.IO.Directory.Exists(actGroup.TempReportFolder)))
+                            {
+                                //Creating the Zip file - start
+                                string targetZipPath = System.IO.Directory.GetParent(actGroup.TempReportFolder).ToString();
+                                string zipFileName = targetZipPath + "\\" + actGroup.Name.ToString() + "_GingerHTMLReport.zip";
+                                if (System.IO.File.Exists(zipFileName))
+                                {
+                                    System.IO.File.Delete(zipFileName);                                    
+                                }
+                                ZipFile.CreateFromDirectory(actGroup.TempReportFolder, zipFileName);
+                                System.IO.Directory.Delete(actGroup.TempReportFolder, true);
+                                //Creating the Zip file - finish                                
+                                if (this.jiraRepObj.AddAttachment(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, relevantTcRun.TestExecutionId, zipFileName) == null)
+                                {
+                                    result = "Failed to create attachment";
+                                    return false;
+                                }
+                                System.IO.File.Delete(zipFileName);
+                            }
+                        }
                     }
                 }
             }
@@ -554,7 +580,7 @@ namespace GingerCore.ALM.JIRA.Bll
         {
             bool result = true;
             List<JiraIssueExport> exportData = new List<JiraIssueExport>();
-            JiraIssueExport jiraIssue = new JiraIssueExport();
+            JiraIssueExport jiraIssue = new JiraIssueExport();            
             jiraIssue.issueType = "Test Execution";
             jiraIssue.resourceType = ResourceType.TEST_CASE_EXECUTION_RECORDS;
             jiraIssue.ExportFields.Add("project", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.DefaultAlmConfig.ALMProjectKey } });
