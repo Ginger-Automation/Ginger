@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ namespace Ginger.Imports.UFT
 
         //Objects
         public ObservableList<ConvertedCodeLine> mCCL = new ObservableList<ConvertedCodeLine>();
-        public BusinessFlow mBusinessFlow = new BusinessFlow(); 
+        public BusinessFlow mBusinessFlow = new BusinessFlow();
         public CommonFunctionConvertor mCommonFunctionConvertor = new CommonFunctionConvertor();
 
         public UFTImportPage()
@@ -85,7 +85,7 @@ namespace Ginger.Imports.UFT
 
             eFilter mFilter = eFilter.AllLines;
             GingerCore.General.FillComboFromEnumObj(FilterComboBox, mFilter);
-            
+
             //Pre Load all the Target Applications
             TargetApplication.Items.Add("Google");
             TargetApplication.Items.Add("CRM");
@@ -97,7 +97,7 @@ namespace Ginger.Imports.UFT
             InitCommonFunctionMappingUCGrid();
 
             TargetApplication sTarget = new TargetApplication();
-            sTarget.AppName =  WorkSpace.Instance.Solution.MainApplication.ToString();
+            sTarget.AppName = WorkSpace.Instance.Solution.MainApplication.ToString();
             sTarget.Selected = true;
             TargetApplicationsList.Add(sTarget);
             mBusinessFlow.TargetApplications = TargetApplicationsList;
@@ -112,9 +112,9 @@ namespace Ginger.Imports.UFT
             //Add Button Handlers for Save and Load
             CommonFunctionMappingUCGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddAction));
             CommonFunctionMappingUCGrid.btnEdit.AddHandler(Button.ClickEvent, new RoutedEventHandler(EditAction));
-            
+
             CommonFunctionMappingUCGrid.DataSourceList = mCommonFunctionConvertor.CommonFunctionMappingList;
-            
+
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = CommonFunctionMapping.Fields.Function_Name, Header = "Function_Name", WidthWeight = 10, });
@@ -130,7 +130,7 @@ namespace Ginger.Imports.UFT
         private void EditAction(object sender, RoutedEventArgs e)
         {
             Act a = ((CommonFunctionMapping)CommonFunctionMappingUCGrid.CurrentItem).TargetAction;
-            ActionEditPage actedit = new ActionEditPage(a);            
+            ActionEditPage actedit = new ActionEditPage(a);
             actedit.ShowAsWindow();
         }
 
@@ -152,14 +152,14 @@ namespace Ginger.Imports.UFT
                         CFM1.Value = reader["Value"];
                         CFM1.NoOfParameters = reader["NoOfParameters"];
 
-                        if (CFM1.Function_Name!=null)
+                        if (CFM1.Function_Name != null)
                         {
                             Convertor.CommonFunctionMappingList.Add(CFM1);
                         }
                     }
                 }
-                
-                if (Convertor.CommonFunctionMappingList.Count>0)
+
+                if (Convertor.CommonFunctionMappingList.Count > 0)
                 {
                     //Show the common function in Grid
                     CommonFunctionMappingUCGrid.DataSourceList = Convertor.CommonFunctionMappingList;
@@ -183,29 +183,29 @@ namespace Ginger.Imports.UFT
             at.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + "1";
             mBusinessFlow.Activities.Add(at);
             mBusinessFlow.CurrentActivity = at;
-            mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.Instance.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
-            //App.BusinessFlow = mBusinessFlow;
-           
+            mBusinessFlow.CurrentActivity.TargetApplication = WorkSpace.Instance.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
+                                                                                                                      //App.BusinessFlow = mBusinessFlow;
+
             //AddActionPage addAction = new AddActionPage();
             //addAction.ShowAsWindow(ActionsList);
 
             // We will get only one action currently
             Act a = (Act)ActionsList[0];
-            CommonFunctionMapping CFM = new CommonFunctionMapping();                        
+            CommonFunctionMapping CFM = new CommonFunctionMapping();
             CFM.TargetAction = a;
             mCommonFunctionConvertor.CommonFunctionMappingList.Add(CFM);
         }
 
         private void SetActivitiesGridView()
-        {            
+        {
             //# Default View for Import from UFT Dialog
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();            
+            defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = ConvertedCodeLine.Fields.Checked, WidthWeight = 5, StyleType = Ginger.UserControls.GridColView.eGridColStyleType.CheckBox, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = ConvertedCodeLine.Fields.CodeLine, Header = "Code Line", WidthWeight = 10 });
             defView.GridColsView.Add(new GridColView() { Field = ConvertedCodeLine.Fields.Converted, WidthWeight = 10 });
             defView.GridColsView.Add(new GridColView() { Field = ConvertedCodeLine.Fields.Status, WidthWeight = 2 });
-            
+
             ResultsDataGrid.SetAllColumnsDefaultView(defView);
             ResultsDataGrid.InitViewItems();
         }
@@ -220,7 +220,7 @@ namespace Ginger.Imports.UFT
 
             if (result == System.Windows.Forms.DialogResult.OK)
             {
-                ScriptFileTextBox.Text = dlg.FileName;                
+                ScriptFileTextBox.Text = dlg.FileName;
                 path = ScriptFileTextBox.Text;
             }
         }
@@ -286,7 +286,7 @@ namespace Ginger.Imports.UFT
                 CalendarBusFunction.SelectedIndex = 0;
             }
             else
-            {                
+            {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please Enter a Valid Calendar path !!");
             }
         }
@@ -340,9 +340,9 @@ namespace Ginger.Imports.UFT
         //On Click on Fetch GUI button
         private void FetchGUI_Button_Click(object sender, RoutedEventArgs e)
         {
-            string flowName="";
+            string flowName = "";
             mCCL.Clear();
-            
+
             //Create new biz flow
             mBusinessFlow = new BusinessFlow();
 
@@ -355,7 +355,10 @@ namespace Ginger.Imports.UFT
                 BusinessFlowNameTextBox.Text = flowName;
                 mBusinessFlow.Name = flowName;
             }
-            else mBusinessFlow.Name = BusinessFlowNameTextBox.Text;
+            else
+            {
+                mBusinessFlow.Name = BusinessFlowNameTextBox.Text;
+            }
 
             if (mBusinessFlow.Name != "")
             {
@@ -384,7 +387,7 @@ namespace Ginger.Imports.UFT
 
                     if (CodeLineUpper.StartsWith("PUBLIC FUNCTION") || CodeLineUpper.StartsWith("FUNCTION") || CodeLineUpper.StartsWith("PUBLIC SUB") || CodeLineUpper.StartsWith("SUB"))
                     {
-                        string ProcessedString="";
+                        string ProcessedString = "";
 
                         if (CCL.CodeLine.Contains("("))
                         {
@@ -399,17 +402,20 @@ namespace Ginger.Imports.UFT
                             int posFun = funcName.IndexOf("(");
                             ProcessedString = funcName.Remove(posFun).Trim();
                         }
-                        else ProcessedString = funcName;
-                        
+                        else
+                        {
+                            ProcessedString = funcName;
+                        }
+
                         if (ListOfSelectedGuis.Contains(ProcessedString))
                         {
                             mCCL.Add(CCL);
                         }
                     }
                 }
-    
+
                 //Auto Check all the cgk box for Guis
-                if (mCCL != null && mCCL.Count!=0)
+                if (mCCL != null && mCCL.Count != 0)
                 {
                     for (int i = 0; i < mCCL.Count; i++)
                     {
@@ -419,12 +425,12 @@ namespace Ginger.Imports.UFT
                     ResultsDataGrid.DataSourceList = mCCL;
                 }
                 else
-                {                    
+                {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "No GUI functions fetched, Click CONVERT, to convert other actions in BUS function");
                 }
             }
             else
-            {                
+            {
                 Reporter.ToUser(eUserMsgKey.EnterValidBusinessflow);
             }
         }
@@ -433,7 +439,7 @@ namespace Ginger.Imports.UFT
         private void SaveBusinessFlowButton_Button_Click(object sender, RoutedEventArgs e)
         {
             mBusinessFlow.Name = BusinessFlowNameTextBox.Text;
-            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);            
+            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);
 
             //TODO: open the new BF in Automate tab + make sure it is added to the tree
             Reporter.ToStatus(eStatusMsgKey.ScriptImported_RefreshSolution);
@@ -442,107 +448,107 @@ namespace Ginger.Imports.UFT
 
         private int FetchBusPosition(string[] BusCodeLines)
         {
-          int pos=0;
-          string BusLineUpper;
-          foreach (string BusLine in BusCodeLines)
-          {
-            pos++;
-            BusLineUpper = BusLine.ToUpper();
-            if ((BusLineUpper.Contains("FUNCTION") || BusLineUpper.Contains("SUB")) && BusLine.Contains(CalendarBusFunction.SelectedValue.ToString()) && !BusLineUpper.Contains("'"))
+            int pos = 0;
+            string BusLineUpper;
+            foreach (string BusLine in BusCodeLines)
             {
-                return pos;
+                pos++;
+                BusLineUpper = BusLine.ToUpper();
+                if ((BusLineUpper.Contains("FUNCTION") || BusLineUpper.Contains("SUB")) && BusLine.Contains(CalendarBusFunction.SelectedValue.ToString()) && !BusLineUpper.Contains("'"))
+                {
+                    return pos;
+                }
             }
-          } 
-          return pos;     
+            return pos;
         }
 
         public void ConvertButton_Click(object sender, RoutedEventArgs e)
         {
-                //If List contains elements for common function, then assign it to main list as well 
-                if (Convertor.CommonFunctionMappingList.Count>0)    
-                {
-                    mCommonFunctionConvertor.CommonFunctionMappingList = Convertor.CommonFunctionMappingList;
-                }
-
-                //Extract Objects from XML repository
-                ProcessUFTObjectRepository();
-
-                if (ListOfSelectedGuis.Count != 0)
-                {
-                     //Identify actions from Script
-                    ProcessScript();
-                }
-                else //if BUS function does not contain any GUI functions, process BUS function to see if any Actions can be retireved
-                {
-                    //Create an Activity with the BUS function Name
-                    ConvertedCodeLine Bus = new ConvertedCodeLine();
-                    CreateActivity(BusinessFlowNameTextBox.Text, Bus);
-
-                    int Pos = 0;
-                    string BusLineUpper="";
-
-                    //Fetch the Entire BUS script
-                    string[] BusCodeLines = System.IO.File.ReadAllLines(ScriptBUSFileTextBox.Text);
-
-                    //Fetch the position of Bus function the BUS script
-                    Pos = FetchBusPosition(BusCodeLines);
-                    if (Pos!=0)
-                    {
-                        //Loop through the Specific bus Function
-                         for(int i = Pos ; i<BusCodeLines.Count() ; i++)
-                         {
-                             BusLineUpper = BusCodeLines[i].ToUpper();
-                             if (BusLineUpper.Contains("END FUNCTION") ||BusLineUpper.Contains("END SUB"))
-                             {
-                                 break;
-                             }
-
-                             ConvertedCodeLine BusCCL = new ConvertedCodeLine();
-                             BusCCL.CodeLine = BusCodeLines[i];
-                             ProceesActions(BusCCL);
-                             mCCL.Add(BusCCL);
-                         }
-                    }
-                 }
-
-                //Auto Check all the cgk box for Guis
-                if (mCCL != null)
-                {
-                    for (int i = 0; i < mCCL.Count; i++)
-                    {
-                        mCCL[i].Checked = true;
-                    }
-
-                    ResultsDataGrid.Title = "Converted Code Line Status";
-
-                    //to Show only Converted Script as default
-                    FilterComboBox.SelectedValue = "ConvertedtoScript";
-                    IEnumerable<ConvertedCodeLine> FilterdCCLs;
-                    ObservableList<ConvertedCodeLine> CCLs = new ObservableList<ConvertedCodeLine>();
-                    FilterdCCLs = from x in mCCL where x.Status == ConvertedCodeLine.eStatus.ConvertedToScript select x;
-
-                    foreach (ConvertedCodeLine CCL in FilterdCCLs)
-                    {
-                        CCLs.Add(CCL);
-                    }
-
-                    ResultsDataGrid.DataSourceList = CCLs;
-                    ResultsDataGrid.Refresh();
-                }
-
-                //Show script conversion status
-                ShowStats();
-
-                //Create Variables for each of the Parameter in the selected flow
-                CreateVaribales();
+            //If List contains elements for common function, then assign it to main list as well 
+            if (Convertor.CommonFunctionMappingList.Count > 0)
+            {
+                mCommonFunctionConvertor.CommonFunctionMappingList = Convertor.CommonFunctionMappingList;
             }
+
+            //Extract Objects from XML repository
+            ProcessUFTObjectRepository();
+
+            if (ListOfSelectedGuis.Count != 0)
+            {
+                //Identify actions from Script
+                ProcessScript();
+            }
+            else //if BUS function does not contain any GUI functions, process BUS function to see if any Actions can be retireved
+            {
+                //Create an Activity with the BUS function Name
+                ConvertedCodeLine Bus = new ConvertedCodeLine();
+                CreateActivity(BusinessFlowNameTextBox.Text, Bus);
+
+                int Pos = 0;
+                string BusLineUpper = "";
+
+                //Fetch the Entire BUS script
+                string[] BusCodeLines = System.IO.File.ReadAllLines(ScriptBUSFileTextBox.Text);
+
+                //Fetch the position of Bus function the BUS script
+                Pos = FetchBusPosition(BusCodeLines);
+                if (Pos != 0)
+                {
+                    //Loop through the Specific bus Function
+                    for (int i = Pos; i < BusCodeLines.Count(); i++)
+                    {
+                        BusLineUpper = BusCodeLines[i].ToUpper();
+                        if (BusLineUpper.Contains("END FUNCTION") || BusLineUpper.Contains("END SUB"))
+                        {
+                            break;
+                        }
+
+                        ConvertedCodeLine BusCCL = new ConvertedCodeLine();
+                        BusCCL.CodeLine = BusCodeLines[i];
+                        ProceesActions(BusCCL);
+                        mCCL.Add(BusCCL);
+                    }
+                }
+            }
+
+            //Auto Check all the cgk box for Guis
+            if (mCCL != null)
+            {
+                for (int i = 0; i < mCCL.Count; i++)
+                {
+                    mCCL[i].Checked = true;
+                }
+
+                ResultsDataGrid.Title = "Converted Code Line Status";
+
+                //to Show only Converted Script as default
+                FilterComboBox.SelectedValue = "ConvertedtoScript";
+                IEnumerable<ConvertedCodeLine> FilterdCCLs;
+                ObservableList<ConvertedCodeLine> CCLs = new ObservableList<ConvertedCodeLine>();
+                FilterdCCLs = from x in mCCL where x.Status == ConvertedCodeLine.eStatus.ConvertedToScript select x;
+
+                foreach (ConvertedCodeLine CCL in FilterdCCLs)
+                {
+                    CCLs.Add(CCL);
+                }
+
+                ResultsDataGrid.DataSourceList = CCLs;
+                ResultsDataGrid.Refresh();
+            }
+
+            //Show script conversion status
+            ShowStats();
+
+            //Create Variables for each of the Parameter in the selected flow
+            CreateVaribales();
+        }
 
         public List<string> ShowGuiAsPerBus()
         {
             string BusFunctionSelected = CalendarBusFunction.SelectedValue.ToString();
             foreach (BusFunction x in BusList)
             {
-                if( x.BusFunctionName.Replace("(","").Replace(")","").Contains(BusFunctionSelected))
+                if (x.BusFunctionName.Replace("(", "").Replace(")", "").Contains(BusFunctionSelected))
                 {
                     ListOfSelectedGuis = x.ListOfGuiFunctions;
                 }
@@ -562,10 +568,10 @@ namespace Ginger.Imports.UFT
                 mBusinessFlow.AddVariable(v);
             }
         }
-   
+
         private void ProcessUFTObjectRepository()
         {
-             //initializing variables
+            //initializing variables
             string sXMLPath;
 
             //Fetch the XML Object Repository path
@@ -574,7 +580,7 @@ namespace Ginger.Imports.UFT
             //Calling function to Process XML
             Objectlist_ORI = ObjectRepositoryConverter.ProcessXML(sXMLPath);
         }
-    
+
         private void ProcessScript()
         {
             string line;
@@ -599,7 +605,7 @@ namespace Ginger.Imports.UFT
                         string midString = fName.Substring(pos);
                         fName = fName.Replace(midString, "");
                     }
-            
+
                     if (ListOfSelectedGuis.Contains(fName))
                     {
                         ConvertedCodeLine CL = new ConvertedCodeLine();
@@ -617,7 +623,7 @@ namespace Ginger.Imports.UFT
         }
 
         public void ProcessCodeLine(string CodeLine)
-        {            
+        {
             ConvertedCodeLine CCL = new ConvertedCodeLine();
             CCL.CodeLine = CodeLine;
             CCL.Status = ConvertedCodeLine.eStatus.Unknown;
@@ -642,7 +648,7 @@ namespace Ginger.Imports.UFT
                 CCL.Converted = "Ignored (End if/Else/End Function/Sub)";
                 CCL.Status = ConvertedCodeLine.eStatus.Ignored;
             }
-            else 
+            else
             {
                 ProceesActions(CCL);
                 mCCL.Add(CCL);
@@ -660,7 +666,7 @@ namespace Ginger.Imports.UFT
             }
             else if (b.Contains("Public") && b.Contains("Sub"))
             {
-                  b = b.Replace("Public", "").Replace("Sub", "");
+                b = b.Replace("Public", "").Replace("Sub", "");
             }
             else if (b.Contains("Private") && b.Contains("Function"))
             {
@@ -672,25 +678,32 @@ namespace Ginger.Imports.UFT
             }
             else if (b.Contains("Function"))
             {
-                 b = b.Replace("Function", "");
+                b = b.Replace("Function", "");
             }
             else if (b.Contains("Sub"))
             {
                 b = b.Replace("Sub", "");
             }
-           
+
             FuncName = b.Trim();
             return FuncName;
         }
 
         //Create Activity for each function/Sub identified in script
         void CreateActivity(string ActivityName, ConvertedCodeLine CCL)
-        { 
+        {
             //Create a New Activity with the Function/Sub Name
             Activity a = new Activity();
             a.Description = GingerDicser.GetTermResValue(eTermResKey.Activity) + " Created for " + ActivityName + " function ";
-            if (ActivityName.Contains("fGui")) ActivityName = ActivityName.Replace("fGui", "");
-            if (ActivityName.Contains("_")) ActivityName = ActivityName.Replace("_", " ");
+            if (ActivityName.Contains("fGui"))
+            {
+                ActivityName = ActivityName.Replace("fGui", "");
+            }
+
+            if (ActivityName.Contains("_"))
+            {
+                ActivityName = ActivityName.Replace("_", " ");
+            }
 
             ActivityName = Regex.Replace(ActivityName, "([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))", "$1 ");
 
@@ -706,8 +719,8 @@ namespace Ginger.Imports.UFT
         {
             string xpath = "";
             string MultipleProperties = "";
-            string sProp="";
-            string sValue="";
+            string sProp = "";
+            string sValue = "";
 
             foreach (ObjectRepositoryItem Item in Objectlist_ORI)
             {
@@ -732,48 +745,48 @@ namespace Ginger.Imports.UFT
                 char[] delimiterChars = { ',' };
                 string TempParam = "";
                 string[] paramArr = ObjectName.Split(delimiterChars);
-  
+
                 foreach (string param in paramArr)
                 {
                     TempParam = param.Replace("\\", "").Replace("\\", "").Trim();
                     char[] delChr = { '=' };
                     string[] prmArr = TempParam.Split(delChr);
 
-                    if (prmArr.Count()==2)
+                    if (prmArr.Count() == 2)
                     {
-                         sProp = prmArr[0].Replace(":", "").Replace("\"", "").Trim();
-                         sValue = prmArr[1].Replace("\"","").Trim();
+                        sProp = prmArr[0].Replace(":", "").Replace("\"", "").Trim();
+                        sValue = prmArr[1].Replace("\"", "").Trim();
 
-                         if (sProp != "")
-                         {
-                             if (sProp.Contains("/"))
-                             {
-                                 sProp = sProp.Replace("/", "").Trim();
-                             }
+                        if (sProp != "")
+                        {
+                            if (sProp.Contains("/"))
+                            {
+                                sProp = sProp.Replace("/", "").Trim();
+                            }
 
-                             if (sValue.Contains("&"))
-                             {
-                                 sValue = sValue.Replace("&", "").Trim();
-                             }
+                            if (sValue.Contains("&"))
+                            {
+                                sValue = sValue.Replace("&", "").Trim();
+                            }
 
-                             //If sValue is a Global Dictionary Parameter
-                             if (sValue.ToUpper().Contains("GLOBALDICTIONARY") )
-                             {
-                                 string varName = sValue.ToUpper().Replace("GLOBALDICTIONARY(", "").Trim();
-                                 sValue = "{Var Name=" + varName + "}";
-                             }
+                            //If sValue is a Global Dictionary Parameter
+                            if (sValue.ToUpper().Contains("GLOBALDICTIONARY"))
+                            {
+                                string varName = sValue.ToUpper().Replace("GLOBALDICTIONARY(", "").Trim();
+                                sValue = "{Var Name=" + varName + "}";
+                            }
 
-                             switch (sProp)
-                             {
-                                 case "ID": MultipleProperties = MultipleProperties + "ByID:" + sValue + "|"; break;
-                                 case "Text": MultipleProperties = MultipleProperties + "ByLinkText:" + sValue + "|"; break;
-                                 case "innertext": MultipleProperties = MultipleProperties + "ByLinkText:" + sValue + "|"; break;
-                                 case "Title": MultipleProperties = MultipleProperties + "ByTitle:" + sValue + "|"; break;
-                                 case "name": MultipleProperties = MultipleProperties + "ByName:" + sValue + "|"; break;
-                                 case "index": MultipleProperties = MultipleProperties + "ByIndex:" + sValue + "|"; break;
-                                 case "class": MultipleProperties = MultipleProperties + "ByClassName:" + sValue + "|"; break;
-                             }
-                         }
+                            switch (sProp)
+                            {
+                                case "ID": MultipleProperties = MultipleProperties + "ByID:" + sValue + "|"; break;
+                                case "Text": MultipleProperties = MultipleProperties + "ByLinkText:" + sValue + "|"; break;
+                                case "innertext": MultipleProperties = MultipleProperties + "ByLinkText:" + sValue + "|"; break;
+                                case "Title": MultipleProperties = MultipleProperties + "ByTitle:" + sValue + "|"; break;
+                                case "name": MultipleProperties = MultipleProperties + "ByName:" + sValue + "|"; break;
+                                case "index": MultipleProperties = MultipleProperties + "ByIndex:" + sValue + "|"; break;
+                                case "class": MultipleProperties = MultipleProperties + "ByClassName:" + sValue + "|"; break;
+                            }
+                        }
                     }
                 }
 
@@ -783,15 +796,15 @@ namespace Ginger.Imports.UFT
             }
         }
 
-        private void ProceesActions(ConvertedCodeLine CCL) 
+        private void ProceesActions(ConvertedCodeLine CCL)
         {
             string CodeLine = CCL.CodeLine;
-            string value="";
+            string value = "";
             string SetValueinObject = "";
-            string varName="";
+            string varName = "";
             string xpath = "";
             string type = "";
-            
+
             // Extract the WebEdit/WebCheckBox
             if (CodeLine.Contains(".Set") || CodeLine.Contains(".set"))
             {
@@ -801,7 +814,10 @@ namespace Ginger.Imports.UFT
                     SetValueinObject = GetStringBetween(CodeLine, ".WebEdit(\"", "\")");
 
                     //With Space in End 
-                    if (SetValueinObject=="") SetValueinObject = GetStringBetween(CodeLine, ".WebEdit(\"", "\" )");
+                    if (SetValueinObject == "")
+                    {
+                        SetValueinObject = GetStringBetween(CodeLine, ".WebEdit(\"", "\" )");
+                    }
 
                     //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
@@ -812,7 +828,10 @@ namespace Ginger.Imports.UFT
                     SetValueinObject = GetStringBetween(CodeLine, ".WebCheckBox(\"", "\")");
 
                     //With Space in End 
-                    if (SetValueinObject == "") SetValueinObject = GetStringBetween(CodeLine, ".WebCheckBox(\"", "\" )");
+                    if (SetValueinObject == "")
+                    {
+                        SetValueinObject = GetStringBetween(CodeLine, ".WebCheckBox(\"", "\" )");
+                    }
 
                     //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
@@ -821,7 +840,7 @@ namespace Ginger.Imports.UFT
                 // for Values to Set
                 if (CodeLine.Contains("Set \""))  // For hard coded values
                 {
-                    value = GetStringBetween(CodeLine, "Set \"", CodeLine[CodeLine.Length-1].ToString());
+                    value = GetStringBetween(CodeLine, "Set \"", CodeLine[CodeLine.Length - 1].ToString());
                 }
                 else if (CodeLine.Contains("GlobalDictionary"))
                 {
@@ -850,8 +869,8 @@ namespace Ginger.Imports.UFT
                 ActGenElement act = new ActGenElement();
                 act.Value = value.Replace("\"", "").Replace("\"", "");
                 act.GenElementAction = ActGenElement.eGenElementAction.SetValue;
-              
-                if (Locator == "ByXPath"){ act.LocateBy = eLocateBy.ByXPath; }
+
+                if (Locator == "ByXPath") { act.LocateBy = eLocateBy.ByXPath; }
                 else if (Locator == "ByMulitpleProperties") { act.LocateBy = eLocateBy.ByXPath; }
 
                 act.LocateValue = xpath;
@@ -862,7 +881,7 @@ namespace Ginger.Imports.UFT
             }
             // Extract the WebButton/Link/Image/WebELemnt
             else if (CodeLine.Contains(".Click") || CodeLine.Contains(".click"))
-                {
+            {
 
                 if (CodeLine.Contains("WebButton"))
                 {
@@ -870,7 +889,10 @@ namespace Ginger.Imports.UFT
                     SetValueinObject = GetStringBetween(CodeLine, ".WebButton(\"", "\")");
 
                     //With Space in End 
-                    if (SetValueinObject == "") SetValueinObject = GetStringBetween(CodeLine, ".WebButton(\"", "\" )");
+                    if (SetValueinObject == "")
+                    {
+                        SetValueinObject = GetStringBetween(CodeLine, ".WebButton(\"", "\" )");
+                    }
 
                     //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
@@ -881,7 +903,10 @@ namespace Ginger.Imports.UFT
                     SetValueinObject = GetStringBetween(CodeLine, ".Link(\"", "\")");
 
                     //With Space in End 
-                    if (SetValueinObject == "") SetValueinObject = GetStringBetween(CodeLine, ".Link(\"", "\" )");
+                    if (SetValueinObject == "")
+                    {
+                        SetValueinObject = GetStringBetween(CodeLine, ".Link(\"", "\" )");
+                    }
 
                     //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
@@ -892,7 +917,10 @@ namespace Ginger.Imports.UFT
                     SetValueinObject = GetStringBetween(CodeLine, ".WebElement(\"", "\")");
 
                     //With Space in End 
-                    if (SetValueinObject == "") SetValueinObject = GetStringBetween(CodeLine, ".WebElement(\"", "\" )");
+                    if (SetValueinObject == "")
+                    {
+                        SetValueinObject = GetStringBetween(CodeLine, ".WebElement(\"", "\" )");
+                    }
 
                     //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
@@ -903,7 +931,10 @@ namespace Ginger.Imports.UFT
                     SetValueinObject = GetStringBetween(CodeLine, ".Image(\"", "\")");
 
                     //With Space in End 
-                    if (SetValueinObject == "") SetValueinObject = GetStringBetween(CodeLine, ".Image(\"", "\" )");
+                    if (SetValueinObject == "")
+                    {
+                        SetValueinObject = GetStringBetween(CodeLine, ".Image(\"", "\" )");
+                    }
 
                     //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
@@ -921,7 +952,7 @@ namespace Ginger.Imports.UFT
                 act.Description = "Click on " + SetValueinObject + " " + type;
                 mBusinessFlow.AddAct(act);
 
-                CCL.Converted = "New Action - ActGenElement.Click : LocateValue=" + act.LocateValue; 
+                CCL.Converted = "New Action - ActGenElement.Click : LocateValue=" + act.LocateValue;
                 CCL.Status = ConvertedCodeLine.eStatus.ConvertedToScript;
             }
             // Extract the WeBlist/WebRadiogroup
@@ -933,8 +964,11 @@ namespace Ginger.Imports.UFT
                     SetValueinObject = GetStringBetween(CodeLine, ".WebList(\"", "\")");
 
                     //With Space in End 
-                    if (SetValueinObject == "") SetValueinObject = GetStringBetween(CodeLine, ".WebList(\"", "\" )");
-                    
+                    if (SetValueinObject == "")
+                    {
+                        SetValueinObject = GetStringBetween(CodeLine, ".WebList(\"", "\" )");
+                    }
+
                     //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
@@ -944,7 +978,10 @@ namespace Ginger.Imports.UFT
                     SetValueinObject = GetStringBetween(CodeLine, ".WebRadiogroup(\"", "\")");
 
                     //With Space in End 
-                    if (SetValueinObject == "") SetValueinObject = GetStringBetween(CodeLine, ".WebRadiogroup(\"", "\" )");
+                    if (SetValueinObject == "")
+                    {
+                        SetValueinObject = GetStringBetween(CodeLine, ".WebRadiogroup(\"", "\" )");
+                    }
 
                     //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
@@ -967,7 +1004,7 @@ namespace Ginger.Imports.UFT
                     varName = varName.Replace("(", "").Replace(")", "");
                     value = "{Var Name=" + varName + "}";
                 }
-                else 
+                else
                 {
                     varName = CodeLine.Substring(CodeLine.IndexOf("Select ")).Replace("Select ", "").Trim();
                     value = "{Var Name=" + varName + "}";
@@ -1006,7 +1043,7 @@ namespace Ginger.Imports.UFT
                 CCL.Converted = "New Action - ActGotoURL : " + URL;
                 CCL.Status = ConvertedCodeLine.eStatus.ConvertedToScript;
             }
-             // Extract the URL launched using SystemUtil.Run
+            // Extract the URL launched using SystemUtil.Run
             else if (CodeLine.Contains("SystemUtil.Run") && CodeLine.Contains("iexplore.exe"))
             {
                 // Extract the URL
@@ -1029,7 +1066,7 @@ namespace Ginger.Imports.UFT
                 CCL.Converted = "New Action - DB Action ";
                 CCL.Status = ConvertedCodeLine.eStatus.ConvertedToScript;
             }
-         
+
             Dictionary<string, string> actionCommon = mCommonFunctionConvertor.ConvertCodeLine(CodeLine);
             if (actionCommon != null)
             {
@@ -1054,7 +1091,7 @@ namespace Ginger.Imports.UFT
                 // Add Action to biz flow
                 ActGenElement act = new ActGenElement();
 
-                if (actionCommon["LocateValue"] != null) 
+                if (actionCommon["LocateValue"] != null)
                 {
                     if (actionCommon["LocateValue"].ToUpper().Contains("GLOBALDICTIONARY"))
                     {
@@ -1093,10 +1130,10 @@ namespace Ginger.Imports.UFT
                 Pos2 = STR.Length;
             }
 
-            if ((Pos2 - Pos1)>0)
+            if ((Pos2 - Pos1) > 0)
             {
-                 str = STR.Substring(Pos1, Pos2 - Pos1);
-                 return str;
+                str = STR.Substring(Pos1, Pos2 - Pos1);
+                return str;
             }
             else
             {
@@ -1134,7 +1171,7 @@ namespace Ginger.Imports.UFT
                 CCLs.Add(CCL);
             }
 
-            ResultsDataGrid.DataSourceList= CCLs;
+            ResultsDataGrid.DataSourceList = CCLs;
             ResultsDataGrid.IsReadOnly = true;
             RecordsCountLabel.Content = "Records: " + CCLs.Count();
         }
@@ -1146,7 +1183,7 @@ namespace Ginger.Imports.UFT
             string perc = (int)(count / mCCL.Count() * 100) + "%";
             ConvertedCountLabel.Content = "Converted Lines: " + count + " out of " + mCCL.Count() + " " + perc;
         }
-        
+
         private void CalendarBusFunction_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //Set the Business Flow name
@@ -1155,7 +1192,7 @@ namespace Ginger.Imports.UFT
             flowName = Regex.Replace(flowName, "([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))", "$1 ");
 
             BusinessFlowNameTextBox.Text = flowName;
-            
+
             //Name of Bus Function selected form Combo Box
             string sSelectedBusFunction = CalendarBusFunction.SelectedValue.ToString();
             string sExcelFileName = CalendarTextBox.Text;
@@ -1181,7 +1218,7 @@ namespace Ginger.Imports.UFT
         {
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = Directory.GetCurrentDirectory() + @"\Help\Import_From_ASAP.pdf", UseShellExecute = true });
         }
-        
+
         private void TargetApplication_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
         }

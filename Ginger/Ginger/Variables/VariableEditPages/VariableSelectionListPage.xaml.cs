@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -73,15 +73,18 @@ namespace Ginger.Variables
         private void AddOptionalValue(object sender, RoutedEventArgs e)
         {
             if (grdOptionalValues.Grid.CurrentItem != null)
+            {
                 grdOptionalValues.Grid.CommitEdit();
+            }
+
             grdOptionalValues.Grid.SelectedItem = null;
-            grdOptionalValues.Grid.CurrentItem = null;   
+            grdOptionalValues.Grid.CurrentItem = null;
 
             OptionalValue newVal = new OptionalValue(string.Empty);
             mVar.OptionalValuesList.Add(newVal);
 
             grdOptionalValues.Grid.SelectedItem = newVal;
-            grdOptionalValues.Grid.CurrentItem = newVal;           
+            grdOptionalValues.Grid.CurrentItem = newVal;
             UpdateOptionalValues();
         }
 
@@ -108,7 +111,7 @@ namespace Ginger.Variables
         }
 
         private void UpdateOptionalValues()
-        {            
+        {
             mVar.OnPropertyChanged(nameof(VariableSelectionList.Formula));
             VerifySelectedValue();
         }

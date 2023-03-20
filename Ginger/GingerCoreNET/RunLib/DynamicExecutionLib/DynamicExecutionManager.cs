@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -42,7 +42,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using Ginger.ExecuterService.Contracts;
 using static Ginger.Configurations.SealightsConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
@@ -814,7 +813,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     operationConfigPublishToALM.RunAt = (OperationExecConfigBase.eOperationRunAt?)publishToQCAction.RunAt;
                     operationConfigPublishToALM.AlmTestSetLevel = (AlmPublishOperationExecConfig.eAlmTestSetLevel?)publishToQCAction.ALMTestSetLevel;
                     operationConfigPublishToALM.ExportType = (AlmPublishOperationExecConfig.eExportType?)Enum.Parse(typeof(AlmPublishOperationExecConfig.eExportType), publishToQCAction.ExportType.ToString());
-                    operationConfigPublishToALM.TestsetExportDestination= publishToQCAction.TestSetFolderDestination;
+                    operationConfigPublishToALM.TestsetExportDestination = publishToQCAction.TestSetFolderDestination;
                     operationConfigPublishToALM.TestcasesExportDestination = publishToQCAction.TestCaseFolderDestination;
                     operationConfigPublishToALM.TestCasesResultsToExport = (AlmPublishOperationExecConfig.eTestCasesResultsToExport?)Enum.Parse(typeof(AlmPublishOperationExecConfig.eTestCasesResultsToExport), publishToQCAction.FilterStatus.ToString());
                     operationConfigPublishToALM.AttachActivitiesGroupsReport = publishToQCAction.toAttachActivitiesGroupReport;
@@ -1114,7 +1113,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                 businessFlowRun.BusinessFlowInstanceGuid = businessFlowConfig.InstanceID.HasValue ? businessFlowConfig.InstanceID.Value : Guid.NewGuid();
                                 gingerRunner.BusinessFlowsRunList.Add(businessFlowRun);
                             }
-                           
+
                             if (businessFlowConfig.Active != null)
                             {
                                 businessFlowRun.BusinessFlowIsActive = (bool)businessFlowConfig.Active;
@@ -1449,9 +1448,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         {
                             publishToQCRunSetOperation = new RunSetActionPublishToQC();
                         }
-                        if(publishToALMOperationExecConfig.ALMType.ToLower() == "default")
+                        if (publishToALMOperationExecConfig.ALMType.ToLower() == "default")
                         {
-                            publishToQCRunSetOperation.PublishALMType = gingerExecConfig.AlmsDetails.Where(x=> x.IsDefault !=null && x.IsDefault.Value== true).FirstOrDefault().ALMType;
+                            publishToQCRunSetOperation.PublishALMType = gingerExecConfig.AlmsDetails.Where(x => x.IsDefault != null && x.IsDefault.Value == true).FirstOrDefault().ALMType;
                         }
                         else
                         {
@@ -1480,7 +1479,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
                         if (publishToALMOperationExecConfig.TestCasesResultsToExport != null)
                         {
-                             publishToQCRunSetOperation.FilterStatus = (GingerCore.ALM.FilterByStatus)publishToALMOperationExecConfig.TestCasesResultsToExport.Value;
+                            publishToQCRunSetOperation.FilterStatus = (GingerCore.ALM.FilterByStatus)publishToALMOperationExecConfig.TestCasesResultsToExport.Value;
                         }
 
                         publishToQCRunSetOperation.toAttachActivitiesGroupReport = publishToALMOperationExecConfig.AttachActivitiesGroupsReport;
@@ -1492,9 +1491,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             publishToQCRunSetOperation.VariableForTCRunName = publishToALMOperationExecConfig.UserVariableInRunInstance;
                         }
 
-                        if(publishToALMOperationExecConfig.AlmFieldsConfig != null && publishToALMOperationExecConfig.AlmFieldsConfig.Count > 0)
+                        if (publishToALMOperationExecConfig.AlmFieldsConfig != null && publishToALMOperationExecConfig.AlmFieldsConfig.Count > 0)
                         {
-                            foreach(var almFieldConfig in publishToALMOperationExecConfig.AlmFieldsConfig)
+                            foreach (var almFieldConfig in publishToALMOperationExecConfig.AlmFieldsConfig)
                             {
                                 ExternalItemFieldBase extItemFieldBase;
 

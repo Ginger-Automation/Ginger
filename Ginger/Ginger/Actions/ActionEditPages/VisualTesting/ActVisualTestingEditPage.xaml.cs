@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common;
 using Ginger.Actions.UserControls;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
 using System;
 using System.Drawing;
@@ -53,7 +52,7 @@ namespace Ginger.Actions.VisualTesting
 
             //Visual Testing Engine
             VisualTestingEngineComboBox.Init(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.VisualAnalyzer, ActVisualTesting.eVisualTestingAnalyzer.VRT.ToString()), typeof(ActVisualTesting.eVisualTestingAnalyzer), false, new SelectionChangedEventHandler(VisualTestingEngineComboBox_SelectionChanged));
-            
+
             //Saved baseline image path for that action
             CurrentBaselineImagePathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.SavedBaseImageFilenameString), true, true, UCValueExpression.eBrowserType.File, "*", BaseLineFileSelected_Click);
             UpdateBaseLineImage();
@@ -61,11 +60,11 @@ namespace Ginger.Actions.VisualTesting
 
             CurrentBaselineImagePathTxtBox.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
             //Saved Applitools baseline image path
-            
+
             //Saved Target image file path
             TargetImageFileNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.SavedTargetImageFilenameString), true, true, UCValueExpression.eBrowserType.File, "*", BrowseTargetImageFromFile_Click);
             UpdateTargetImage();
-            
+
             ShowCompareResult();
             ChangeAppScreenSizeComboBox.Init(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ChangeAppWindowSize, ActVisualTesting.eChangeAppWindowSize.None.ToString()), typeof(ActVisualTesting.eChangeAppWindowSize), false, new SelectionChangedEventHandler(ChangeAppWindowSize_Changed));
 
@@ -73,7 +72,7 @@ namespace Ginger.Actions.VisualTesting
             HeightUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.SetAppWindowHeight, "0"), true);
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFullPageScreenshotCheckbox, CheckBox.IsCheckedProperty, mAct, nameof(mAct.IsFullPageScreenshot));
-            
+
             if (mAct.IsTargetSourceFromScreenshot)
             {
                 TargetScreenShotRadioButton.IsChecked = true;
@@ -107,32 +106,47 @@ namespace Ginger.Actions.VisualTesting
                     xCompareOrCreateBaselinesRadioButtons.Visibility = ConvertVisibility(EventArgs.visibility);
                     xBaselineAndTargetImages.Visibility = ConvertVisibility(EventArgs.visibility);
                     if (ConvertVisibility(EventArgs.visibility) == Visibility.Visible)
+                    {
                         xBaselineAndTargetImagesRow.Height = new GridLength(400, GridUnitType.Pixel);
+                    }
                     else
+                    {
                         xBaselineAndTargetImagesRow.Height = new GridLength(400, GridUnitType.Star);
+                    }
+
                     break;
 
                 case VisualTestingEventArgs.eEventType.SetTargetSectionVisibility:
                     xDiffrenceImageFrame.Visibility = ConvertVisibility(EventArgs.visibility);
                     if (ConvertVisibility(EventArgs.visibility) == Visibility.Visible)
+                    {
                         xDiffrenceImageFrameRow.Height = new GridLength(500, GridUnitType.Pixel);
+                    }
                     else
+                    {
                         xDiffrenceImageFrameRow.Height = new GridLength(500, GridUnitType.Star);
+                    }
+
                     break;
 
                 case VisualTestingEventArgs.eEventType.SetResultsSectionVisibility:
                     xResultImageHeader.Visibility = ConvertVisibility(EventArgs.visibility);
                     if (ConvertVisibility(EventArgs.visibility) == Visibility.Visible)
+                    {
                         xResultImageHeaderRow.Height = new GridLength(30, GridUnitType.Pixel);
+                    }
                     else
+                    {
                         xResultImageHeaderRow.Height = new GridLength(30, GridUnitType.Star);
+                    }
+
                     break;
             }
         }
 
         private Visibility ConvertVisibility(eVisualTestingVisibility eVisualTestingVisibility)
         {
-            switch(eVisualTestingVisibility)
+            switch (eVisualTestingVisibility)
             {
                 case eVisualTestingVisibility.Visible:
                     return Visibility.Visible;
@@ -333,7 +347,7 @@ namespace Ginger.Actions.VisualTesting
                 return null;
             }
         }
-        
+
         //Maybe we don't need this method - to check
         //Helper method - Convert Bitmap to ImageSource
         private BitmapImage BitmapToImageSource(Bitmap bitmap)
@@ -395,7 +409,10 @@ namespace Ginger.Actions.VisualTesting
             //TODO: add try catch if delete failed
             try
             {
-                if (File.Exists(FileName)) DeleteOldFile(FileName);
+                if (File.Exists(FileName))
+                {
+                    DeleteOldFile(FileName);
+                }
             }
             catch (Exception ex)
             {

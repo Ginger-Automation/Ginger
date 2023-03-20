@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ namespace Amdocs.Ginger.Common.OS
     {
         public string UserAgent => "Mozilla/5.0 (X11; od-database-crawler) Gecko/20100101 Firefox/52.0";
 
-    
+
         public override string GetFirstLocalHostIPAddress()
         {
             List<UnicastIPAddressInformation> unicastIPAddressInformationList = GetIPAddressCollectionList().ToList();
@@ -98,7 +98,7 @@ namespace Amdocs.Ginger.Common.OS
                 return path;
             }
         }
-        public override string AdjustOSChars(String content) 
+        public override string AdjustOSChars(String content)
         {
             if (!string.IsNullOrEmpty(content))
             {
@@ -110,4 +110,4 @@ namespace Amdocs.Ginger.Common.OS
             }
         }
     }
-} 
+}

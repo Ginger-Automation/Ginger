@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,14 +17,13 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
-using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.MainFrame
 {
     public class ActMainframeSetText : Act
@@ -120,7 +119,10 @@ namespace GingerCore.Actions.MainFrame
             ObservableList<ActInputValue> mCaretValueList = new ObservableList<ActInputValue>();
             String LoadText = ValueForDriver;
             if (String.IsNullOrWhiteSpace(LoadText))
+            {
                 return;
+            }
+
             XmlDocument XD = new XmlDocument();
             XD.LoadXml(LoadText);
             foreach (XmlNode xn in XD.ChildNodes)

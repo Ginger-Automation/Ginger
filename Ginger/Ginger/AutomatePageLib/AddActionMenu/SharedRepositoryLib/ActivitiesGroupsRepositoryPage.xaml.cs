@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,10 +20,8 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Activities;
-using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository.AddItemToRepositoryWizard;
-using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Activities;
 using GingerWPF.DragDropLib;
@@ -31,7 +29,6 @@ using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -43,7 +40,7 @@ namespace Ginger.Repository
     /// </summary>
     public partial class ActivitiesGroupsRepositoryPage : Page
     {
-        readonly RepositoryFolder<ActivitiesGroup> mActivitiesGroupFolder;      
+        readonly RepositoryFolder<ActivitiesGroup> mActivitiesGroupFolder;
         bool mInTreeModeView = false;
 
         Context mContext = null;
@@ -55,7 +52,7 @@ namespace Ginger.Repository
             mActivitiesGroupFolder = activitiesGroupFolder;
             mContext = context;
 
-            SetActivitiesRepositoryGridView();            
+            SetActivitiesRepositoryGridView();
             SetGridAndTreeData();
         }
 
@@ -71,11 +68,11 @@ namespace Ginger.Repository
             if (mActivitiesGroupFolder.IsRootFolder)
             {
                 xActivitiesGroupsRepositoryListView.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
-            }                
+            }
             else
             {
                 xActivitiesGroupsRepositoryListView.DataSourceList = mActivitiesGroupFolder.GetFolderItems();
-            }                
+            }
         }
 
         public void UpdateBusinessFlow(BusinessFlow bf)
@@ -89,7 +86,7 @@ namespace Ginger.Repository
             xActivitiesGroupsRepositoryListView.ItemDropped += grdActivitiesGroupsRepository_ItemDropped;
             xActivitiesGroupsRepositoryListView.PreviewDragItem += grdActivitiesGroupsRepository_PreviewDragItem;
             xActivitiesGroupsRepositoryListView.xTagsFilter.Visibility = Visibility.Visible;
-            
+
         }
 
         private void EditActivityGroup(object sender, RoutedEventArgs e)
@@ -98,7 +95,7 @@ namespace Ginger.Repository
             {
                 ActivitiesGroup activityGroup = (ActivitiesGroup)xActivitiesGroupsRepositoryListView.CurrentItem;
                 BusinessFlow currentBF = null;
-                if(mContext != null)
+                if (mContext != null)
                 {
                     currentBF = mContext.BusinessFlow;
                 }
@@ -127,7 +124,7 @@ namespace Ginger.Repository
             }
         }
 
-        
+
         private void grdActivitiesGroupsRepository_ItemDropped(object sender, EventArgs e)
         {
             try
@@ -140,7 +137,7 @@ namespace Ginger.Repository
                 }
                 else if (((DragInfo)sender).Data is CollectionViewGroup)
                 {
-                    dragedItem = mContext.BusinessFlow.ActivitiesGroups.Where(x=>x.Name == ((DragInfo)sender).Header).FirstOrDefault();
+                    dragedItem = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((DragInfo)sender).Header).FirstOrDefault();
                 }
 
                 if (dragedItem != null)
@@ -152,12 +149,14 @@ namespace Ginger.Repository
                     {
                         list.Add(activityIdnt.IdentifiedActivity);
                     }
-                    WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, list));                  
+                    WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, list));
 
                     //refresh and select the item
                     ActivitiesGroup dragedItemInGrid = ((IEnumerable<ActivitiesGroup>)xActivitiesGroupsRepositoryListView.DataSourceList).Where(x => x.Guid == dragedItem.Guid).FirstOrDefault();
                     if (dragedItemInGrid != null)
+                    {
                         xActivitiesGroupsRepositoryListView.List.SelectedItem = dragedItemInGrid;
+                    }
                 }
             }
             catch (Exception ex)
@@ -165,7 +164,7 @@ namespace Ginger.Repository
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to drop " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " into Shared Repository", ex);
             }
         }
-        
+
 
         private void grdActivitiesGroupsRepository_grdMain_ItemMouseDoubleClick(object sender, EventArgs e)
         {

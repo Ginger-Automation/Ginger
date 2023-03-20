@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,10 +23,10 @@ using Amdocs.Ginger.Repository;
 namespace Amdocs.Ginger.Common.Repository.SolutionCategories
 {
     public class SolutionCategoryDefinition : RepositoryItemBase
-    {        
+    {
         public static object Solution
         {
-            get;set;
+            get; set;
         }
 
         public SolutionCategoryDefinition()
@@ -57,7 +57,7 @@ namespace Amdocs.Ginger.Common.Repository.SolutionCategories
                 this.Category = (eSolutionCategories)Enum.Parse(typeof(eSolutionCategories), value.ToString());
             }
         }
-        
+
         public string CategoryName { get; set; }
         public string Description { get; set; }
         public ObservableList<SolutionCategoryValue> CategoryOptionalValues { get; set; }

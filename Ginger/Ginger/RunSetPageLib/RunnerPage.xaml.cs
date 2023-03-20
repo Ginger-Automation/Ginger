@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -106,7 +106,10 @@ namespace Ginger.Run
             get
             {
                 if (mBusinessflowRunnerItems == null)
+                {
                     LoadBusinessflowRunnerItem(ViewMode1);
+                }
+
                 return mBusinessflowRunnerItems;
             }
         }
@@ -243,7 +246,10 @@ namespace Ginger.Run
 
         private void BusinessFlow_ResetStatus(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckCurrentRunnerIsNotRuning())
+            {
+                return;
+            }
 
             BusinessFlow bff = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
             bff.Reset();
@@ -251,7 +257,10 @@ namespace Ginger.Run
 
         private void Businessflow_RemoveClick(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckCurrentRunnerIsNotRuning())
+            {
+                return;
+            }
 
             if (Reporter.ToUser(eUserMsgKey.DeleteBusinessflow) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
@@ -263,7 +272,10 @@ namespace Ginger.Run
 
         private void Businessflow_DuplicateClick(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckCurrentRunnerIsNotRuning())
+            {
+                return;
+            }
 
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
             BusinessFlow bCopy = (BusinessFlow)bf.CreateCopy(false);
@@ -313,7 +325,11 @@ namespace Ginger.Run
 
         private void Businessflow_ClickGenerateReport(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckCurrentRunnerIsNotRuning())
+            {
+                return;
+            }
+
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
             if (mExecutorEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
@@ -411,7 +427,10 @@ namespace Ginger.Run
 
         private void Businessflow_ClickActive(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckCurrentRunnerIsNotRuning())
+            {
+                return;
+            }
 
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
             bf.Active = !bf.Active;
@@ -430,7 +449,9 @@ namespace Ginger.Run
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
             BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == bf.Guid).FirstOrDefault();
             if (actualBf != null)
+            {
                 App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.Automate, actualBf);
+            }
         }
         private void dispatcherTimerElapsedTick(object sender, EventArgs e)
         {
@@ -466,7 +487,10 @@ namespace Ginger.Run
 
         private void BusinessflowConfig_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckCurrentRunnerIsNotRuning())
+            {
+                return;
+            }
 
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
             BusinessFlowRunConfigurationsPage varsPage = new BusinessFlowRunConfigurationsPage(mExecutorEngine.GingerRunner, bf);
@@ -641,7 +665,10 @@ namespace Ginger.Run
 
         private void MarkUnMarkInActive(bool status)
         {
-            if (mExecutorEngine.BusinessFlows.Count <= 0) return;
+            if (mExecutorEngine.BusinessFlows.Count <= 0)
+            {
+                return;
+            }
 
             foreach (BusinessFlow mBusinessFlow in mExecutorEngine.BusinessFlows)
             {
@@ -687,7 +714,10 @@ namespace Ginger.Run
             foreach (ApplicationAgent appAgent in mExecutorEngine.GingerRunner.ApplicationAgents)
             {
                 if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == appAgent.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() != null)
+                {
                     continue;
+                }
+
                 TBH.AddText(LimitstringLength(appAgent.AppName, 10));
                 TBH.AddText(" > ");
                 TBH.AddText(LimitstringLength(appAgent.AgentName, 10));
@@ -709,7 +739,9 @@ namespace Ginger.Run
                 return shortStr;
             }
             else
+            {
                 return str;
+            }
         }
 
         private void xStopRunnerBtn_Click(object sender, RoutedEventArgs e)
@@ -794,7 +826,11 @@ namespace Ginger.Run
 
         private void xRunnerActive_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckCurrentRunnerIsNotRuning())
+            {
+                return;
+            }
+
             ExecutorEngine.GingerRunner.Active = !ExecutorEngine.GingerRunner.Active;
             if (!ExecutorEngine.GingerRunner.Active)
             {
@@ -811,7 +847,11 @@ namespace Ginger.Run
 
         private void xremoveRunner_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckCurrentRunnerIsNotRuning())
+            {
+                return;
+            }
+
             OnGingerRunnerEvent(RunnerPageEventArgs.eEventType.RemoveRunner, ExecutorEngine);
         }
 
@@ -822,7 +862,10 @@ namespace Ginger.Run
 
         private void xResetRunSetStatus_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckCurrentRunnerIsNotRuning()) return;
+            if (CheckCurrentRunnerIsNotRuning())
+            {
+                return;
+            }
 
             ResetRunnerPage();
         }

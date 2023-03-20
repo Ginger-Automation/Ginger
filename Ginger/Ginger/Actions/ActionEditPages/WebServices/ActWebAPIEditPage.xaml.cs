@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -45,9 +45,13 @@ namespace Ginger.Actions.WebServices
         {
             mAct = act;
             if (act.GetType() == typeof(ActWebAPIRest))
+            {
                 mWebApiType = ApplicationAPIUtils.eWebApiType.REST;
+            }
             else
+            {
                 mWebApiType = ApplicationAPIUtils.eWebApiType.SOAP;
+            }
 
             InitializeComponent();
             BindUiControls();
@@ -74,7 +78,7 @@ namespace Ginger.Actions.WebServices
 
                     //Request content type
                     ContentTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ContentType, ApplicationAPIUtils.eContentType.JSon.ToString()), typeof(ApplicationAPIUtils.eContentType), false, ContentTypeChange);
-                    
+
                     //Response Content Type
                     ResponseTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.ResponseContentType, ApplicationAPIUtils.eContentType.JSon.ToString()), typeof(ApplicationAPIUtils.eContentType), false, ResponseTypeComboBox_SelectionChanged);
 
@@ -181,7 +185,7 @@ namespace Ginger.Actions.WebServices
                 FormDataGridPanel.Visibility = System.Windows.Visibility.Visible;
                 DynamicElementGridPanel.Visibility = System.Windows.Visibility.Collapsed;
             }
-            if  (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eContentType.FormData.ToString())
+            if (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eContentType.FormData.ToString())
             {
                 FreeTextStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                 TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
@@ -242,7 +246,10 @@ namespace Ginger.Actions.WebServices
             {
                 FreeTextStackPanel.Visibility = System.Windows.Visibility.Visible;
                 if (!String.IsNullOrEmpty((mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser))))
+                {
                     TemplateFileNameFileBrowser.ValueTextBox.Text = string.Empty;
+                }
+
                 TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                 RequestBodyTypePanel.Visibility = System.Windows.Visibility.Visible;
                 BodyInputGridPannel.Visibility = System.Windows.Visibility.Collapsed;
@@ -252,7 +259,10 @@ namespace Ginger.Actions.WebServices
             {
                 TemplateStackPanel.Visibility = System.Windows.Visibility.Visible;
                 if (!String.IsNullOrEmpty((mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser))))
+                {
                     RequestBodyUCValueExpression.ValueTextBox.Text = string.Empty;
+                }
+
                 FreeTextStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                 RequestBodyTypePanel.Visibility = System.Windows.Visibility.Visible;
                 BodyInputGridPannel.Visibility = System.Windows.Visibility.Collapsed;
@@ -261,9 +271,15 @@ namespace Ginger.Actions.WebServices
             else if ((mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded.ToString()) || (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eContentType.FormData.ToString()))
             {
                 if (!String.IsNullOrEmpty((mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser))))
+                {
                     RequestBodyUCValueExpression.ValueTextBox.Text = string.Empty;
+                }
+
                 if (!String.IsNullOrEmpty((mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser))))
+                {
                     TemplateFileNameFileBrowser.ValueTextBox.Text = string.Empty;
+                }
+
                 FreeTextStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                 TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                 RequestBodyTypePanel.Visibility = System.Windows.Visibility.Collapsed;
@@ -273,7 +289,7 @@ namespace Ginger.Actions.WebServices
 
         private void BrowseTemplateFileButton_Click(object sender, RoutedEventArgs e)
         {
-            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
             if (TemplateFileNameFileBrowser.ValueTextBox.Text != null)
             {
                 // replace Absolute file name with relative to solution
@@ -303,7 +319,10 @@ namespace Ginger.Actions.WebServices
                         fileNum++;
                         string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
                         if (newFileName.IndexOf(copySufix) != -1)
+                        {
                             newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
+                        }
+
                         newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
                         destFile = System.IO.Path.Combine(targetPath, newFileName);
                     }
@@ -343,7 +362,7 @@ namespace Ginger.Actions.WebServices
 
         private void BrowseSSLCertificate(object sender, RoutedEventArgs e)
         {
-            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
             if (CertificatePath.ValueTextBox.Text != null)
             {
                 // replace Absolute file name with relative to solution
@@ -365,7 +384,7 @@ namespace Ginger.Actions.WebServices
                     {
                         System.IO.Directory.CreateDirectory(targetPath);
                     }
-                    
+
                     string destFile = System.IO.Path.Combine(targetPath, System.IO.Path.GetFileName(FileName));
 
                     int fileNum = 1;
@@ -375,11 +394,14 @@ namespace Ginger.Actions.WebServices
                         fileNum++;
                         string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
                         if (newFileName.IndexOf(copySufix) != -1)
+                        {
                             newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
+                        }
+
                         newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
                         destFile = System.IO.Path.Combine(targetPath, newFileName);
                     }
-                    
+
                     System.IO.File.Copy(FileName, destFile, true);
                     CertificatePath.ValueTextBox.Text = @"~\Documents\WebServices\Certificates\" + System.IO.Path.GetFileName(destFile);
                 }
@@ -453,7 +475,10 @@ namespace Ginger.Actions.WebServices
             if (this.IsLoaded)
             {
                 if (mAct.RequestKeyValues != null)
+                {
                     mAct.RequestKeyValues.ClearAll();
+                }
+
                 if (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded.ToString())
                 {
                     //switch combobox   & browse button off 
@@ -566,7 +591,9 @@ namespace Ginger.Actions.WebServices
                 JSON.Visibility = Visibility.Visible;
             }
             else
+            {
                 JSON.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void ReplaceWSSecurityHeader_Click(object sender, RoutedEventArgs e)
@@ -583,14 +610,14 @@ namespace Ginger.Actions.WebServices
             {
                 if (mAct.DynamicElements.Count == 0)
                 {
-                    mAct.DynamicElements.Add(new ActInputValue() { Param = SoapSecurityContent.ElementAt(i)});
+                    mAct.DynamicElements.Add(new ActInputValue() { Param = SoapSecurityContent.ElementAt(i) });
                 }
 
                 else
                 {
-                    if (mAct.DynamicElements.Where(x => x.Param.Equals(SoapSecurityContent.ElementAt(i) )).Count() == 0)
+                    if (mAct.DynamicElements.Where(x => x.Param.Equals(SoapSecurityContent.ElementAt(i))).Count() == 0)
                     {
-                        mAct.DynamicElements.Add(new ActInputValue() { Param =SoapSecurityContent.ElementAt(i)});
+                        mAct.DynamicElements.Add(new ActInputValue() { Param = SoapSecurityContent.ElementAt(i) });
                     }
                 }
             }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -32,23 +32,23 @@ namespace Ginger.Functionalties
     public class SolutionAutoSave
     {
         Timer AutoSaveTimer;
-               
+
         public string mAutoSaveFolderPath = null;
         public string AutoSaveFolderPath
         {
             get
             {
-                return mAutoSaveFolderPath;               
+                return mAutoSaveFolderPath;
             }
         }
 
         string mSolutionFolderPath;
 
-        public bool WaitForAutoSave = false;      
+        public bool WaitForAutoSave = false;
         public SolutionAutoSave()
         {
-            AutoSaveTimer = new Timer();            
-            AutoSaveTimer.Interval = new TimeSpan(0,5,0).TotalMilliseconds;
+            AutoSaveTimer = new Timer();
+            AutoSaveTimer.Interval = new TimeSpan(0, 5, 0).TotalMilliseconds;
             AutoSaveTimer.Elapsed += AutoSaveTimer_Tick;
             AutoSaveTimer.AutoReset = true;
             AutoSaveTimer.Enabled = true;
@@ -61,7 +61,7 @@ namespace Ginger.Functionalties
         }
 
         public void SolutionAutoSaveStart()
-        {            
+        {
             AutoSaveTimer.Stop();
 
             if (!Directory.Exists(mAutoSaveFolderPath))
@@ -78,7 +78,7 @@ namespace Ginger.Functionalties
 
         public void StopSolutionAutoSave()
         {
-            AutoSaveTimer.Stop();            
+            AutoSaveTimer.Stop();
         }
         public void ResumeSolutionAutoSave()
         {
@@ -92,14 +92,14 @@ namespace Ginger.Functionalties
                 DoAutoSave();
             }
         }
-        
+
         public void DoAutoSave()
-        {           
+        {
             Task.Run(() =>
             {
                 try
                 {
-                    WaitForAutoSave = true;                  
+                    WaitForAutoSave = true;
                     if (Directory.Exists(AutoSaveFolderPath))
                     {
                         try
@@ -132,10 +132,10 @@ namespace Ginger.Functionalties
                     foreach (RunSetConfig runSet in RunSets)
                     {
                         if (runSet.AllowAutoSave && runSet.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
-                        {                      
+                        {
                             runSet.UpdateRunnersBusinessFlowRunsList();
                             DirtyFileAutoSave(runSet);
-                        }                    
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -146,7 +146,7 @@ namespace Ginger.Functionalties
                 {
                     WaitForAutoSave = false;
                 }
-            });           
+            });
         }
         public void SolutionAutoSaveEnd()
         {

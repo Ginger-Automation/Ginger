@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,18 +17,11 @@ limitations under the License.
 #endregion
 
 //using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
-using GingerCore.DataSource;
-using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Mail;
-using Microsoft.CodeAnalysis.Text;
-using System.IO;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.GeneralLib
-{    
+{
 
     public class Email : RepositoryItemBase
     {
@@ -67,7 +60,7 @@ namespace GingerCore.GeneralLib
 
         private string mMailFromDisplayName;
         [IsSerializedForLocalRepository]
-         public string MailFromDisplayName
+        public string MailFromDisplayName
         {
             get
             {
@@ -266,7 +259,7 @@ namespace GingerCore.GeneralLib
         }
 
 
-        
+
 
     }
 }

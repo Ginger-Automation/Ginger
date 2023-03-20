@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,14 +25,11 @@ using GingerCore.Activities;
 using GingerCore.ALM.JIRA;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using JiraRepositoryStd;
 using JiraRepositoryStd.BLL;
 using JiraRepositoryStd.Data_Contracts;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.IO.Compression;
 using System.Linq;
 
 namespace GingerCore.ALM
@@ -162,7 +159,7 @@ namespace GingerCore.ALM
             return exportMananger.ExportBfToAlm(businessFlow, testCaseFields, testSetFields, testExecutionFields, ref responseStr);
         }
 
-        public bool ExportBfToZephyr(   BusinessFlow businessFlow, IEnumerable<ExternalItemFieldBase> testCaseFields,
+        public bool ExportBfToZephyr(BusinessFlow businessFlow, IEnumerable<ExternalItemFieldBase> testCaseFields,
                                         IEnumerable<ExternalItemFieldBase> testSetFields, IEnumerable<ExternalItemFieldBase> testExecutionFields,
                                         ref string responseStr, string versionId, string cycleId)
         {
@@ -241,7 +238,7 @@ namespace GingerCore.ALM
         {
             jiraImportObj.UpdateBussinessFlow(ref businessFlow);
         }
-        
+
         public void CreateJiraRepository()
         {
             jiraConnectObj.CreateJiraRepository();

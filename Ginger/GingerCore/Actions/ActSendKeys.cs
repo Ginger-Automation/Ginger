@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,8 +17,12 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
-using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions;
+using GingerCore.Drivers;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -26,15 +30,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
-
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Drivers;
-using GingerCore.Helpers;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 namespace Ginger.Actions
 {
 
@@ -45,8 +41,8 @@ namespace Ginger.Actions
         public override string ActionUserDescription { get { return "Send Keys to specific window"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
-        {            
-            TBH.AddText("Use this action in case you need to send keys to specific window");            
+        {
+            TBH.AddText("Use this action in case you need to send keys to specific window");
             TBH.AddLineBreak();
             TBH.AddText("Locate Value is the window title - can be partial match");
             TBH.AddLineBreak();
@@ -68,7 +64,7 @@ namespace Ginger.Actions
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
         public override bool ValueConfigsNeeded { get { return false; } }
 
-        
+
 
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
@@ -112,8 +108,8 @@ namespace Ginger.Actions
             }
         }
 
-        
-        public bool ISWindowFocusRequired 
+
+        public bool ISWindowFocusRequired
         {
             get
             {
@@ -126,7 +122,7 @@ namespace Ginger.Actions
                 AddOrUpdateInputParamValue(nameof(ISWindowFocusRequired), value.ToString());
                 OnPropertyChanged(nameof(ISWindowFocusRequired));
             }
-        }  
+        }
 
         [DllImport("user32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
@@ -152,10 +148,10 @@ namespace Ginger.Actions
                 }
 
                 //locate value
-                String titleFromUser = LocateValueCalculated;               
+                String titleFromUser = LocateValueCalculated;
                 if (string.IsNullOrEmpty(titleFromUser))
                 {
-                    Error= "Missing window Locate Value.";
+                    Error = "Missing window Locate Value.";
                     return;
 
                 }
@@ -168,85 +164,102 @@ namespace Ginger.Actions
             }
 
 
-                IntPtr winhandle = IntPtr.Zero;
-                UIAuto.AutomationElement window;
+            IntPtr winhandle = IntPtr.Zero;
+            UIAuto.AutomationElement window;
 
 
 
             //Wait max up to 30 secs for the window to appear
             for (int i = 0; i < 30; i++)
-                {
-                    window = GetWindow(LocateValueCalculated);
+            {
+                window = GetWindow(LocateValueCalculated);
 
-                    if (window != null)
+                if (window != null)
+                {
+                    winhandle = (IntPtr)window.Current.NativeWindowHandle;
+                    if (winhandle != IntPtr.Zero)
                     {
-                        winhandle = (IntPtr)window.Current.NativeWindowHandle;
-                        if (winhandle != IntPtr.Zero) break;
+                        break;
                     }
-                    Thread.Sleep(200);
                 }
+                Thread.Sleep(200);
+            }
 
-                if (winhandle == IntPtr.Zero)
+            if (winhandle == IntPtr.Zero)
+            {
+                switch (LocateBy)
                 {
-                    switch (LocateBy)
-                    {
-                        case eLocateBy.ByTitle:
-                            winhandle = ActivateApp(LocateValueCalculated);
-                            if (winhandle == IntPtr.Zero)
-                            {
-                                //Status = eStatus.Fail;
-                                Error = "Window with Title - '" + LocateValueCalculated + "' not found";
-                                return;
-                            }
-                            break;
-
-                        case eLocateBy.ByClassName:
-                            Error = "Window with Class - '" + LocateValueCalculated + "' not found";
+                    case eLocateBy.ByTitle:
+                        winhandle = ActivateApp(LocateValueCalculated);
+                        if (winhandle == IntPtr.Zero)
+                        {
+                            //Status = eStatus.Fail;
+                            Error = "Window with Title - '" + LocateValueCalculated + "' not found";
                             return;
-                            //break;
-                    }
-                }
+                        }
+                        break;
 
-                if (ISWindowFocusRequired)
-                {
-                    SetForegroundWindow(winhandle);
+                    case eLocateBy.ByClassName:
+                        Error = "Window with Class - '" + LocateValueCalculated + "' not found";
+                        return;
+                        //break;
                 }
-            
+            }
+
+            if (ISWindowFocusRequired)
+            {
+                SetForegroundWindow(winhandle);
+            }
+
             if (IsSendKeysSlowly)
-                {           
-                    SendKeysSlowly(ValueForDriver);
-                }
-                else
-                {
-                   SendKeys(ValueForDriver);
-                }
+            {
+                SendKeysSlowly(ValueForDriver);
+            }
+            else
+            {
+                SendKeys(ValueForDriver);
+            }
         }
-        
+
         internal void SendKeys(string text)
         {
-            System.Windows.Forms.SendKeys.SendWait(text); 
+            System.Windows.Forms.SendKeys.SendWait(text);
         }
 
         private void SendKeysSlowly(string text)
         {
             System.Threading.Thread.Sleep(40);
-            string tmp="";
-            bool inSpecalKey=false;
+            string tmp = "";
+            bool inSpecalKey = false;
             foreach (char s in text)
             {
                 if (s == '{')
+                {
                     inSpecalKey = true;
+                }
+
                 if (inSpecalKey)
+                {
                     tmp = tmp + s;
+                }
                 else
+                {
                     tmp = "" + s;
+                }
+
                 if (s == '}')
-                    inSpecalKey = false;               
+                {
+                    inSpecalKey = false;
+                }
+
                 if (!inSpecalKey)
                 {
                     System.Windows.Forms.SendKeys.SendWait(tmp); // Choose the appropriate send routine
-                        if(tmp.Length>1)
+                    if (tmp.Length > 1)
+                    {
                         System.Threading.Thread.Sleep(200); // Milliseconds, adjust as needed
+                    }
+
                     tmp = "";
                 }
                 System.Threading.Thread.Sleep(40); // Milliseconds, adjust as needed
@@ -258,7 +271,10 @@ namespace Ginger.Actions
 
             // Activate the first application we find with this name
             if (p.Count() > 0)
+            {
                 return p[0].MainWindowHandle;
+            }
+
             return IntPtr.Zero;
         }
         UIAuto.AutomationElement GetWindow(string LocValCal) //*******
@@ -271,13 +287,16 @@ namespace Ginger.Actions
             foreach (UIAuto.AutomationElement window in AppWindows)
             {
                 string WindowTitle = UIA.GetWindowInfo(window);
-                
+
                 if (WindowTitle == null)
+                {
                     WindowTitle = "";
+                }
+
                 Reporter.ToLog(eLogLevel.DEBUG, $"Method - {MethodBase.GetCurrentMethod().Name}, WindowTitle - {WindowTitle}");
                 switch (LocateBy)
                 {
-                       
+
                     case eLocateBy.ByTitle:
                         if (WindowTitle.Contains(LocValCal))
                         {
@@ -293,7 +312,7 @@ namespace Ginger.Actions
                 }
             }
             return null;
-          }
-  }
+        }
+    }
 
 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,7 +39,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
@@ -232,7 +231,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     fileFullPath = fileFullPath.Replace(newName + ext, OriginalName + ext);
                     continue;
                 }
-                else 
+                else
                 {
                     break;
                 }
@@ -260,7 +259,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 File.Copy(filePath, bkpFilePath + "." + bkpDateTime + ".bak");
                 File.Delete(filePath);
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 return false;
             }
@@ -331,7 +330,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             AddDependaciesForDocuments(itemActivity.ItemFullPath, ref SelectedItemsListToImport);
         }
 
-        public void AddDependaciesForActivity(Activity importedActivity, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, ref List<VariableBase> VariableListToImport, ref List<EnvApplication> EnvAppListToImport, string dependacyFor="")
+        public void AddDependaciesForActivity(Activity importedActivity, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, ref List<VariableBase> VariableListToImport, ref List<EnvApplication> EnvAppListToImport, string dependacyFor = "")
         {
             foreach (Act act in importedActivity.Acts)
             {
@@ -687,7 +686,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             }
             //check if the action has StoreTo as Variable/GlobalVariable
             var list = act.ActReturnValues.Where(x => x.StoreTo == ActReturnValue.eStoreTo.Variable || x.StoreTo == ActReturnValue.eStoreTo.GlobalVariable);
-            foreach(ActReturnValue arv in list)
+            foreach (ActReturnValue arv in list)
             {
                 AddVariableToList(arv.StoreToValue, dependancyFor, VariableListToImport, ref SelectedItemsListToImport);
             }
@@ -983,7 +982,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     skipAdd = true;
                 }
             }
-            
+
             //Check if GUID is already exist
             bool isDuplicateGUID = GlobalSolutionUtils.Instance.CheckForItemWithDuplicateGUID(itemToAdd);
             if (isDuplicateGUID)
@@ -1027,8 +1026,8 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     }
                 }
             }
-            
-            
+
+
             if (!skipAdd)
             {
                 SelectedItemsListToImport.Add(itemToAdd);

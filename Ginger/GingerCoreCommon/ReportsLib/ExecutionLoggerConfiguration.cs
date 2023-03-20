@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
-using GingerCore;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
 using static Ginger.Configurations.SealightsConfiguration;
 
 namespace Ginger.Reports
@@ -43,11 +42,11 @@ namespace Ginger.Reports
         }
         public enum DataRepositoryMethod
         {
-            TextFile=1,
-            LiteDB=0,
+            TextFile = 1,
+            LiteDB = 0,
             Remote = 2
         }
-               
+
         public enum ePublishToCentralDB
         {
             Yes,
@@ -69,7 +68,7 @@ namespace Ginger.Reports
             DuringExecution
         }
 
- 
+
 
         // Why we serialzie!!?
 
@@ -84,10 +83,10 @@ namespace Ginger.Reports
 
         private bool mExecutionLoggerConfigurationIsEnabled;
         [IsSerializedForLocalRepository]
-        public bool ExecutionLoggerConfigurationIsEnabled 
-        { 
-            get { return mExecutionLoggerConfigurationIsEnabled; } 
-            set 
+        public bool ExecutionLoggerConfigurationIsEnabled
+        {
+            get { return mExecutionLoggerConfigurationIsEnabled; }
+            set
             {
                 if (mExecutionLoggerConfigurationIsEnabled != value)
                 {
@@ -139,8 +138,8 @@ namespace Ginger.Reports
         private ePublishToCentralDB mPublishLogToCentralDB = ePublishToCentralDB.No;
 
         [IsSerializedForLocalRepository]
-        public ePublishToCentralDB PublishLogToCentralDB 
-        { 
+        public ePublishToCentralDB PublishLogToCentralDB
+        {
             get
             {
                 return mPublishLogToCentralDB;
@@ -148,15 +147,15 @@ namespace Ginger.Reports
             set
             {
                 if (mPublishLogToCentralDB != value)
-                { 
+                {
                     mPublishLogToCentralDB = value;
                     OnPropertyChanged(nameof(PublishLogToCentralDB));
-                }       
+                }
             }
         }
 
 
-        private eDataPublishingPhase mDataPublishingPhase = eDataPublishingPhase.PostExecution;
+        private eDataPublishingPhase mDataPublishingPhase = eDataPublishingPhase.DuringExecution;
 
         [IsSerializedForLocalRepository]
         public eDataPublishingPhase DataPublishingPhase
@@ -316,7 +315,7 @@ namespace Ginger.Reports
                     OnPropertyChanged(nameof(SealightsBuildSessionID));
                 }
             }
-        }        
+        }
 
         private string mSealightsSessionTimeout;
         public string SealightsSessionTimeout
@@ -374,7 +373,7 @@ namespace Ginger.Reports
             {
                 if (mDataRepositoryMethod != value)
                 {
-                    mDataRepositoryMethod = value;                    
+                    mDataRepositoryMethod = value;
                     OnPropertyChanged(nameof(SelectedDataRepositoryMethod));
                 }
             }

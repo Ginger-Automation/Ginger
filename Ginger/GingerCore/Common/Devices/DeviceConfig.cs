@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,17 +17,17 @@ limitations under the License.
 #endregion
 
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.IO;
-using System.Runtime.Serialization.Json;
 using System.ComponentModel;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 
 namespace GingerCore.Drivers.Common.Devices
 {
     //TODO: move to common area for devices so can be used also for IOS devices or other
     // This class is serialized to JSON, it holds the device config
     [DataContract]
-    public class DeviceConfig : INotifyPropertyChanged 
+    public class DeviceConfig : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -39,7 +39,7 @@ namespace GingerCore.Drivers.Common.Devices
             public static string DeviceImageScreenLeft = "DeviceImageScreenLeft";
             public static string DeviceImageScreenTop = "DeviceImageScreenTop";
             public static string DeviceImageScreenRight = "DeviceImageScreenRight";
-            public static string DeviceImageScreenBottom = "DeviceImageScreenBottom";            
+            public static string DeviceImageScreenBottom = "DeviceImageScreenBottom";
         }
 
         // Any name the user like: Nexus 5 with T-Mobile Logo, or Amazon Fire with new controller
@@ -56,9 +56,9 @@ namespace GingerCore.Drivers.Common.Devices
         [DataMember]
         public string DeviceVendor { get; set; }
 
-        
+
         // Image file of the device - picture to show the user which look like the real device or picture of the rela device
-        [DataMember]        
+        [DataMember]
         public string DeviceImage { get; set; }
 
         // On the device image where is the actual screen located
@@ -67,7 +67,7 @@ namespace GingerCore.Drivers.Common.Devices
         [DataMember]
         public double DeviceImageScreenLeft { get { return mDeviceImageScreenLeft; } set { mDeviceImageScreenLeft = value; OnPropertyChanged(Fields.DeviceImageScreenLeft); } }
         [DataMember]
-        public double DeviceImageScreenTop { get; set; }        
+        public double DeviceImageScreenTop { get; set; }
         [DataMember]
         public double DeviceImageScreenRight { get; set; }
         [DataMember]
@@ -86,18 +86,18 @@ namespace GingerCore.Drivers.Common.Devices
         public void Save(string DeviceFolder)
         {
             FileStream FS = new FileStream(Path.Combine(DeviceFolder, "DeviceConfig.json.dat"), System.IO.FileMode.Create);
-            DataContractJsonSerializerSettings formatting = new DataContractJsonSerializerSettings() { RootName = "root" };            
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(DeviceConfig), formatting);            
+            DataContractJsonSerializerSettings formatting = new DataContractJsonSerializerSettings() { RootName = "root" };
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(DeviceConfig), formatting);
             ser.WriteObject(FS, this);
             FS.Flush();
             FS.Close();
         }
 
         public static DeviceConfig LoadFromDeviceFolder(string DeviceFolder)
-        {                        
-            FileStream FS = new FileStream(Path.Combine(DeviceFolder,"DeviceConfig.json.dat"), System.IO.FileMode.Open, FileAccess.Read);            
+        {
+            FileStream FS = new FileStream(Path.Combine(DeviceFolder, "DeviceConfig.json.dat"), System.IO.FileMode.Open, FileAccess.Read);
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(DeviceConfig));
-            DeviceConfig ADC = (DeviceConfig)ser.ReadObject(FS);            
+            DeviceConfig ADC = (DeviceConfig)ser.ReadObject(FS);
             FS.Close();
             return ADC;
         }

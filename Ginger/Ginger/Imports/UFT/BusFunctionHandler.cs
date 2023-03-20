@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -41,19 +41,34 @@ namespace Ginger.Imports.UFT
 
             List<string> GuiList = new List<string>();
             string[] CodeLines = System.IO.File.ReadAllLines(sBUSfilePath);
-            string BusFuncName="" ; 
+            string BusFuncName = "";
             foreach (string CodeLine in CodeLines)
             {
                 string CodeLineUpper = CodeLine.ToUpper();
-               
+
                 // fetch Bus Function name
-                if (CodeLineUpper.Contains("FUNCTION") && CodeLineUpper.Contains("FBUS") && (CodeLineUpper.Contains("PUBLIC") || CodeLineUpper.Contains("PRIVATE"))) BusFuncName = ProcessBUSCode(CodeLine);
-                else if (CodeLineUpper.StartsWith("FUNCTION")) BusFuncName = ProcessBUSCode(CodeLine);
-                else if (CodeLineUpper.Contains("SUB") && CodeLineUpper.Contains("FBUS") && (CodeLineUpper.Contains("PUBLIC") || CodeLineUpper.Contains("PRIVATE"))) BusFuncName = ProcessBUSCode(CodeLine);
-                else if (CodeLineUpper.StartsWith("SUB")) BusFuncName = ProcessBUSCode(CodeLine);
+                if (CodeLineUpper.Contains("FUNCTION") && CodeLineUpper.Contains("FBUS") && (CodeLineUpper.Contains("PUBLIC") || CodeLineUpper.Contains("PRIVATE")))
+                {
+                    BusFuncName = ProcessBUSCode(CodeLine);
+                }
+                else if (CodeLineUpper.StartsWith("FUNCTION"))
+                {
+                    BusFuncName = ProcessBUSCode(CodeLine);
+                }
+                else if (CodeLineUpper.Contains("SUB") && CodeLineUpper.Contains("FBUS") && (CodeLineUpper.Contains("PUBLIC") || CodeLineUpper.Contains("PRIVATE")))
+                {
+                    BusFuncName = ProcessBUSCode(CodeLine);
+                }
+                else if (CodeLineUpper.StartsWith("SUB"))
+                {
+                    BusFuncName = ProcessBUSCode(CodeLine);
+                }
 
                 //Create a List of all GUIs in that BUS Function
-                else if (CodeLine.ToUpper().Contains("FGUI") && !CodeLine.ToUpper().Contains("'")) GuiList = ProcessGUICode(CodeLine);  //&& CodeLine.ToUpper().StartsWith("\tIF")
+                else if (CodeLine.ToUpper().Contains("FGUI") && !CodeLine.ToUpper().Contains("'"))
+                {
+                    GuiList = ProcessGUICode(CodeLine);  //&& CodeLine.ToUpper().StartsWith("\tIF")
+                }
 
                 //To Mark the End of a Bus Function
                 else if (CodeLineUpper.StartsWith("END FUNCTION") || CodeLineUpper.StartsWith("END SUB"))
@@ -62,7 +77,7 @@ namespace Ginger.Imports.UFT
                     List<string> fGuiListPerBus = new List<string>(GuiList);
                     BF.BusFunctionName = BusFuncName;
                     BF.ListOfGuiFunctions = fGuiListPerBus; ;
-                   
+
                     //Make sure there are no Duplicate functions
                     if (!BusList.Contains(BF))
                     {
@@ -76,7 +91,7 @@ namespace Ginger.Imports.UFT
             return BusList;
         }
 
-        private string ProcessBUSCode(string CodeLine )
+        private string ProcessBUSCode(string CodeLine)
         {
             string BusFunctionName;
             BusFunctionName = ProceesNewFunction(CodeLine);
@@ -85,39 +100,84 @@ namespace Ginger.Imports.UFT
 
         private List<string> ProcessGUICode(string CodeLine)
         {
-          
+
             int start = CodeLine.IndexOf("fGui");
             int len = CodeLine.Length;
-            string GuiName="";
-            
+            string GuiName = "";
+
 
             if (!CodeLine.StartsWith("'"))
             {
                 //Fetch GUI function
-                if (CodeLine.Contains("(")) GuiName = GetStringBetween(CodeLine," " , "(");
-                else GuiName = GetStringBetween(CodeLine," " , " ");
+                if (CodeLine.Contains("("))
+                {
+                    GuiName = GetStringBetween(CodeLine, " ", "(");
+                }
+                else
+                {
+                    GuiName = GetStringBetween(CodeLine, " ", " ");
+                }
 
                 string GuiNameUpper = GuiName.ToUpper();
 
-                if (GuiNameUpper.Contains("IF")) GuiName = GuiName.Replace("If", "");
-                if (GuiNameUpper.Contains("THEN")) GuiName = GuiName.Replace("Then", "");
-                if (GuiNameUpper.Contains("=")) GuiName = GuiName.Replace("=", "");
-                if (GuiNameUpper.Contains("\"")) GuiName = GuiName.Replace("\"", "");
-                if (GuiNameUpper.Contains("'")) GuiName = GuiName.Replace("'", "");
-                if (GuiNameUpper.Contains(",")) GuiName = GuiName.Replace(",", "");
-                if (GuiNameUpper.Contains("FALSE")) GuiName = GuiName.Replace("False", "");
-                if (GuiNameUpper.Contains("TRUE")) GuiName = GuiName.Replace("True", "");
-                if (GuiNameUpper.Contains("MICPASS")) GuiName = GuiName.Replace("micPass", "");
-                if (GuiNameUpper.Contains("MICFAIL")) GuiName = GuiName.Replace("micFail", "");
+                if (GuiNameUpper.Contains("IF"))
+                {
+                    GuiName = GuiName.Replace("If", "");
+                }
+
+                if (GuiNameUpper.Contains("THEN"))
+                {
+                    GuiName = GuiName.Replace("Then", "");
+                }
+
+                if (GuiNameUpper.Contains("="))
+                {
+                    GuiName = GuiName.Replace("=", "");
+                }
+
+                if (GuiNameUpper.Contains("\""))
+                {
+                    GuiName = GuiName.Replace("\"", "");
+                }
+
+                if (GuiNameUpper.Contains("'"))
+                {
+                    GuiName = GuiName.Replace("'", "");
+                }
+
+                if (GuiNameUpper.Contains(","))
+                {
+                    GuiName = GuiName.Replace(",", "");
+                }
+
+                if (GuiNameUpper.Contains("FALSE"))
+                {
+                    GuiName = GuiName.Replace("False", "");
+                }
+
+                if (GuiNameUpper.Contains("TRUE"))
+                {
+                    GuiName = GuiName.Replace("True", "");
+                }
+
+                if (GuiNameUpper.Contains("MICPASS"))
+                {
+                    GuiName = GuiName.Replace("micPass", "");
+                }
+
+                if (GuiNameUpper.Contains("MICFAIL"))
+                {
+                    GuiName = GuiName.Replace("micFail", "");
+                }
 
 
                 //Makes sure that Gui List contains Unique List and also its not a part of ASAP Built in function
-                if (!GuiFunctionList.Contains(GuiName) && !ASAPBuiltInFunctionList.Contains(GuiName) && GuiName.Contains("fGui")) 
+                if (!GuiFunctionList.Contains(GuiName) && !ASAPBuiltInFunctionList.Contains(GuiName) && GuiName.Contains("fGui"))
                 {
                     GuiFunctionList.Add(GuiName.Trim());
                 }
             }
-            
+
             return GuiFunctionList;
         }
 

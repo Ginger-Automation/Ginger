@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -47,18 +47,18 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             byte[] rcvLenBytesBB = new byte[4];
 
             //TODO: wait till max comm timeout                
-            
+
             while (!ns.DataAvailable)
             {
                 //TODO: adaptive sleep
                 // General.DoEvents();
 
-            // TODO: try async call instead of loop and thread sleep - = much faster
+                // TODO: try async call instead of loop and thread sleep - = much faster
                 // meanwhile we can sleep 1
                 Thread.Sleep(1);   //TODO 10 is too big how can we avoid? - change to 1 for super speed but check CPU spin on long requests
                 if (!SocketConnected(clientSocket))
                 {
-                    throw new Exception("GingerSocket.GetResponse ERROR: Lost connection");                                        
+                    throw new Exception("GingerSocket.GetResponse ERROR: Lost connection");
                 }
             }
             ns.Read(rcvLenBytesBB, 0, 4);
@@ -104,11 +104,11 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
                 {
                     //connection is closed
                     return false;
-                }                
+                }
                 return true;
             }
             catch
-            {                
+            {
                 return false;
 
             }

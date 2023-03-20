@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -612,7 +612,9 @@ namespace GingerCore
                     ReplaceDataSource(match.Value);
                     //Setting update back
                     if (bChange == true)
+                    {
                         bUpdate = true;
+                    }
                 }
                 matches = rxDSPattern.Matches(mValueCalculated);
                 iCount++;
@@ -635,8 +637,12 @@ namespace GingerCore
             }
 
             foreach (DataSourceBase ds in DSList)
+            {
                 if (ds.Name == DSName)
+                {
                     DataSource = ds;
+                }
+            }
 
             p = p.Substring(p.IndexOf(" DST=")).Trim();
             if (DataSource == null)
@@ -705,7 +711,9 @@ namespace GingerCore
                             p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
                         }
                         else
+                        {
                             p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                        }
                     }
                     if (p.IndexOf("EP=") != -1)
                     {
@@ -717,19 +725,27 @@ namespace GingerCore
                     {
                         string KeyName = p.Substring(p.IndexOf("KEY=") + 4, p.IndexOf("}") - 4);
                         if (sAct == "DR")
+                        {
                             updateQuery = "DELETE FROM " + DSTable + " WHERE GINGER_KEY_NAME = '" + KeyName + "'";
+                        }
                         else
                         {
                             if (bUpdate == true)
                             {
                                 DataTable dtTemp = DataSource.GetQueryOutput("Select count(*) from " + DSTable + " where GINGER_KEY_NAME= '" + KeyName + "'");
                                 if (dtTemp.Rows[0].ItemArray[0].ToString() != "0")
+                                {
                                     updateQuery = "UPDATE " + DSTable + " SET GINGER_KEY_VALUE = '" + updateValue.Replace("'", "''") + "',GINGER_LAST_UPDATED_BY='" + System.Environment.UserName + "',GINGER_LAST_UPDATE_DATETIME='" + DateTime.Now.ToString() + "' WHERE GINGER_KEY_NAME = '" + KeyName + "'";
+                                }
                                 else
+                                {
                                     updateQuery = "INSERT INTO " + DSTable + "(GINGER_KEY_NAME,GINGER_KEY_VALUE,GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME) VALUES ('" + KeyName + "','" + updateValue.Replace("'", "''") + "','" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "')";
+                                }
                             }
                             else
+                            {
                                 Query = "Select GINGER_KEY_VALUE FROM " + DSTable + " WHERE GINGER_KEY_NAME = '" + KeyName + "'";
+                            }
                         }
                     }
                     else if (p != "" && (sAct == "MASD" || sAct == "DR" || sAct == ""))
@@ -766,9 +782,14 @@ namespace GingerCore
                                 Query = "Select [GINGER_ID] from " + DSTable;
                             }
                             if (p.IndexOf(" ") > 0)
+                            {
                                 IRow = p.Substring(p.IndexOf("IROW=") + 5, p.IndexOf(" ") - 5);
+                            }
                             else
+                            {
                                 IRow = p.Substring(p.IndexOf("IROW=") + 5, p.IndexOf("}") - 5);
+                            }
+
                             if (IRow == "NxtAvail")
                             {
                                 Query = Query + " Where GINGER_USED <> 'True' or GINGER_USED is null";
@@ -796,9 +817,14 @@ namespace GingerCore
                                     string wOpr = "";
                                     string wRowVal = "";
                                     if (p.IndexOf("WROWVAL=") == -1)
+                                    {
                                         wOpr = p.Substring(p.IndexOf("WOPR=") + 5, p.IndexOf("}") - 5);
+                                    }
                                     else
+                                    {
                                         wOpr = p.Substring(p.IndexOf("WOPR=") + 5, p.IndexOf("WROWVAL=") - 6);
+                                    }
+
                                     if (wOpr != "Is Null" && wOpr != "Is Null")
                                     {
                                         p = p.Substring(p.TrimStart().IndexOf("WROWVAL="));
@@ -827,24 +853,42 @@ namespace GingerCore
                                         }
                                     }
                                     else if (wOpr == "Contains")
+                                    {
                                         Query = Query + wColVal + " LIKE " + "'%" + wRowVal + "%'";
+                                    }
                                     else if (wOpr == "Not Contains")
+                                    {
                                         Query = Query + wColVal + " NOT LIKE " + "'%" + wRowVal + "%'";
+                                    }
                                     else if (wOpr == "Starts With")
+                                    {
                                         Query = Query + wColVal + " LIKE '" + wRowVal + "%'";
+                                    }
                                     else if (wOpr == "Not Starts With")
+                                    {
                                         Query = Query + wColVal + " NOT LIKE '" + wRowVal + "%'";
+                                    }
                                     else if (wOpr == "Ends With")
+                                    {
                                         Query = Query + wColVal + " LIKE '%" + wRowVal + "'";
+                                    }
                                     else if (wOpr == "Not Ends With")
+                                    {
                                         Query = Query + wColVal + " NOT LIKE '%" + wRowVal + "'";
+                                    }
                                     else if (wOpr == "Is Null")
+                                    {
                                         Query = Query + wColVal + " IS NULL";
+                                    }
                                     else if (wOpr == "Is Not Null")
+                                    {
                                         Query = Query + wColVal + " IS NOT NULL";
+                                    }
                                 }
                                 else
+                                {
                                     return;
+                                }
                             }
                         }
                     }
@@ -872,12 +916,16 @@ namespace GingerCore
                         return;
                     }
                     if (dt.Rows.Count > 0 && dt.Columns.Count > 0)
+                    {
                         if (rowNum.All(char.IsDigit))
                         {
                             mValueCalculated = mValueCalculated.Replace(pOrg, dt.Rows[Convert.ToInt32(rowNum)].ItemArray[0].ToString());
                         }
                         else
+                        {
                             mValueCalculated = "ERROR: Not Valid RowNum:" + rowNum;
+                        }
+                    }
 
                     string GingerIds = "";
                     if (dt.Columns.Contains("GINGER_ID"))
@@ -885,18 +933,26 @@ namespace GingerCore
                         if (bMultiRow == "Y")
                         {
                             foreach (DataRow row in dt.Rows)
+                            {
                                 GingerIds += row["GINGER_ID"].ToString() + ",";
+                            }
+
                             GingerIds = GingerIds.Substring(0, GingerIds.Length - 1);
                         }
                         else
+                        {
                             GingerIds = dt.Rows[Convert.ToInt32(rowNum)]["GINGER_ID"].ToString();
+                        }
                     }
                     if (bUpdate == true)
                     {
                         if (updateQuery == "")
                         {
                             if (iColVal == "")
+                            {
                                 iColVal = dt.Columns[0].ColumnName;
+                            }
+
                             if (updateValue == null)
                             {
                                 updateValue = string.Empty;
@@ -905,13 +961,20 @@ namespace GingerCore
                             foreach (DataColumn sCol in dt.Columns)
                             {
                                 if (!new List<string> { "GINGER_ID", "GINGER_LAST_UPDATED_BY", "GINGER_LAST_UPDATE_DATETIME", "GINGER_KEY_NAME" }.Contains(sCol.ColumnName))
+                                {
                                     updateQuery += "[" + sCol.ColumnName + "]='" + updateValue.Replace("'", "''") + "' ,";
+                                }
                             }
                             updateQuery = updateQuery.Substring(0, updateQuery.Length - 1);
                             if (mColList.Contains("GINGER_LAST_UPDATED_BY"))
+                            {
                                 updateQuery = updateQuery + ",GINGER_LAST_UPDATED_BY='" + System.Environment.UserName + "' ";
+                            }
+
                             if (mColList.Contains("GINGER_LAST_UPDATE_DATETIME"))
+                            {
                                 updateQuery = updateQuery + ",GINGER_LAST_UPDATE_DATETIME = '" + DateTime.Now.ToString() + "' ";
+                            }
 
                             updateQuery = updateQuery + "WHERE GINGER_ID IN (" + GingerIds + ")";
                         }
@@ -922,7 +985,9 @@ namespace GingerCore
                         DataSource.RunQuery("UPDATE " + DSTable + " SET GINGER_USED ='True' WHERE GINGER_ID IN (" + GingerIds + ")");
                     }
                     else if (sAct == "DR" && bDone == true)
+                    {
                         DataSource.RunQuery("DELETE FROM " + DSTable + " WHERE GINGER_ID IN  (" + GingerIds + ")");
+                    }
                 }
                 else if (updateQuery != "" && bDone == true)
                 {
@@ -1143,11 +1208,15 @@ namespace GingerCore
         {
             MatchCollection envParamMatches = rxEnvParamPattern.Matches(mValueCalculated);
             foreach (Match match in envParamMatches)
+            {
                 ReplaceEnvParamWithValue(match.Value, null);
+            }
 
             MatchCollection envUrlMatches = rxEnvUrlPattern.Matches(mValueCalculated);
             foreach (Match match2 in envUrlMatches)
+            {
                 ReplaceEnvURLWithValue(match2.Value, null);
+            }
         }
 
         private void HandleComplexFormula(string p)
@@ -1294,7 +1363,10 @@ namespace GingerCore
                     {
                         String strValuetoPass = EncryptionHandler.DecryptwithKey(GP.Value);
                         if (!string.IsNullOrEmpty(strValuetoPass)) { mValueCalculated = mValueCalculated.Replace(p, strValuetoPass); }
-                        else mValueCalculated = mValueCalculated.Replace(p, ParamValue);
+                        else
+                        {
+                            mValueCalculated = mValueCalculated.Replace(p, ParamValue);
+                        }
                     }
                     else
                     {
@@ -1392,14 +1464,18 @@ namespace GingerCore
             if (string.IsNullOrEmpty(P1) == false)
             {
                 if (P1.Contains("\""))
+                {
                     P1 = P1.Replace("\"", "");
+                }
             }
 
             string P2 = aa.Length <= 4 ? "" : aa[4].Trim();
             if (string.IsNullOrEmpty(P2) == false)
             {
                 if (P2.Contains("\""))
+                {
                     P2 = P2.Replace("\"", "");
+                }
             }
 
             switch (FunName.Trim().ToLower())
@@ -1419,22 +1495,32 @@ namespace GingerCore
                 case "9":
                     MatchCollection Ms = new Regex(Pattern).Matches(P1);
                     if (Ms.Count > 0)
+                    {
                         foreach (Match m in Ms)
                         {
                             mValueCalculated = mValueCalculated.Replace(p, m.Groups[Convert.ToInt32(FunName.Trim())].Value);
                             break;
                         }
+                    }
                     else
+                    {
                         mValueCalculated = "";
+                    }
+
                     break;
 
                 case "matchvalue":
                     Regex re = new Regex(Pattern);
                     Match match = re.Match(P1);
                     if (match.Success)
+                    {
                         mValueCalculated = mValueCalculated.Replace(p, match.Value);
+                    }
                     else
+                    {
                         mValueCalculated = mValueCalculated.Replace(p, string.Empty);
+                    }
+
                     break;
 
                 case "ismatch":

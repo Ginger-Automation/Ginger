@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,30 +16,24 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
-using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
-using GingerCore.Platforms;
 using GingerCore.Variables;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerWPF.WizardLib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Ginger.Repository
 {
     public class SharedRepositoryOperations : ISharedRepositoryOperations
-    {        
+    {
         //public void AddItemsToRepository(Context context, List<RepositoryItemBase> listSelectedRepoItems)
         //{
         //    if (listSelectedRepoItems != null && listSelectedRepoItems.Count>0)
@@ -79,11 +73,11 @@ namespace Ginger.Repository
 
                 itemCopy.UpdateItemFieldForReposiotryUse();
 
-               
 
-                bool blockingIssuesHandled= HandleItemValidationIssues(context, itemToUpload, itemCopy, ref isOverwrite);
 
-                if(blockingIssuesHandled==false)
+                bool blockingIssuesHandled = HandleItemValidationIssues(context, itemToUpload, itemCopy, ref isOverwrite);
+
+                if (blockingIssuesHandled == false)
                 {
                     itemToUpload.ItemUploadStatus = UploadItemSelection.eItemUploadStatus.FailedToUpload;
                     return false;
@@ -92,30 +86,39 @@ namespace Ginger.Repository
                 if (itemCopy is Activity)
                 {
                     ((Activity)itemCopy).Type = eSharedItemType.Regular;
+                    foreach (Act act in ((Activity)itemCopy).Acts)
+                    {
+                        foreach (ActInputValue inputValue in act.InputValues)
+                        {
+                            inputValue.StartDirtyTracking();
+                            inputValue.OnDirtyStatusChanged += act.RaiseDirtyChanged;
+                        }
+                    }
                 }
 
                 if (isOverwrite)
                 {
                     WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(itemToUpload.ExistingItem);
-                
+
                     RepositoryFolderBase repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(itemToUpload.ExistingItem.ContainingFolderFullPath);
-                    if(repositoryFolder !=null)
+                    if (repositoryFolder != null)
                     {
-                       repositoryFolder.AddRepositoryItem(itemCopy);
-                    }                    
+                        itemCopy.ItemName = itemToUpload.ExistingItem.ItemName;
+                        repositoryFolder.AddRepositoryItem(itemCopy);
+                    }
                 }
                 else
                 {
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(itemCopy);
-                }     
+                }
 
-               
+
 
                 if (itemToUpload.ExistingItemType == UploadItemSelection.eExistingItemType.ExistingItemIsParent && itemToUpload.ItemUploadType == UploadItemSelection.eItemUploadType.New)
                 {
                     itemToUpload.UsageItem.ParentGuid = Guid.Empty;
                 }
-                if (itemToUpload.ReplaceType ==UploadItemSelection.eActivityInstanceType.LinkInstance && !itemToUpload.UsageItem.IsLinkedItem)
+                if (itemToUpload.ReplaceType == UploadItemSelection.eActivityInstanceType.LinkInstance && !itemToUpload.UsageItem.IsLinkedItem)
                 {
                     context.BusinessFlow.MarkActivityAsLink(itemToUpload.ItemGUID, itemCopy.Guid);
                 }
@@ -127,17 +130,17 @@ namespace Ginger.Repository
                 itemToUpload.ItemUploadStatus = UploadItemSelection.eItemUploadStatus.Uploaded;
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "failed to upload the repository item", e);
                 itemToUpload.ItemUploadStatus = UploadItemSelection.eItemUploadStatus.FailedToUpload;
                 return false;
             }
         }
-      
+
         private static RepositoryItemBase GetItemToOverrite(UploadItemSelection itemToUpload)
         {
-           RepositoryItemBase itemCopy = itemToUpload.UsageItem.GetUpdatedRepoItem(itemToUpload.UsageItem, itemToUpload.ExistingItem,itemToUpload.SelectedItemPart);
+            RepositoryItemBase itemCopy = itemToUpload.UsageItem.GetUpdatedRepoItem(itemToUpload.UsageItem, itemToUpload.ExistingItem, itemToUpload.SelectedItemPart);
 
             switch (itemToUpload.ExistingItemType)
             {
@@ -197,7 +200,7 @@ namespace Ginger.Repository
                             {
                                 isOverwrite = false;
                                 itemCopy.ItemName = issue.ItemNewName;
-                                selectedItem.Comment = "Uploaded with new newm"+ issue.ItemNewName;
+                                selectedItem.Comment = "Uploaded with new newm" + issue.ItemNewName;
                             }
                             else
                             {
@@ -231,13 +234,13 @@ namespace Ginger.Repository
                         //{
                         //    item.ParentGuid = item.Guid;
                         //}
-                    }                        
+                    }
                     else
                     {
                         item.IsSharedRepositoryInstance = false;
-                    }                        
+                    }
                 }
-                    
+
             }
         }
 
@@ -247,7 +250,7 @@ namespace Ginger.Repository
             bool linkIsByParentID = false;
 
             var item = GetMatchingRepoItem(repositoryItem, null, ref linkIsByExternalID, ref linkIsByParentID);
-            if(item==null)
+            if (item == null)
             {
                 return false;
             }
@@ -257,9 +260,9 @@ namespace Ginger.Repository
             }
         }
 
-        
+
         public static RepositoryItemBase GetMatchingRepoItem(RepositoryItemBase item, IEnumerable<object> existingRepoItems, ref bool linkIsByExternalID, ref bool linkIsByParentID)
-        {            
+        {
             if (existingRepoItems == null)
             {
                 if (item is ActivitiesGroup)
@@ -350,6 +353,11 @@ namespace Ginger.Repository
 
         public static void Validate(UploadItemSelection selectedItem)
         {
+            if (selectedItem.ExistingItem != null)
+            {
+                return;
+            }
+
             bool isDuplicateFound = CheckForItemWithDuplicateName(selectedItem);
             if (isDuplicateFound)
             {
@@ -433,16 +441,25 @@ namespace Ginger.Repository
                 existingRepoItems = variables.Select(x => x.ItemName).ToList();
             }
 
-            string newItemName = duplicateItem.ItemName;
-
+            string newItemName = duplicateItem.ItemName + "_copy";
+            int copyCountIndex = 0;
             while (true)
             {
-                newItemName += "_copy";
-
-                if (!existingRepoItems.Contains(newItemName))
+                string itemNameToCheck;
+                if (copyCountIndex > 0)
                 {
-                    return newItemName;
+                    itemNameToCheck = newItemName + copyCountIndex;
                 }
+                else
+                {
+                    itemNameToCheck = newItemName;
+                }
+
+                if (!existingRepoItems.Contains(itemNameToCheck))
+                {
+                    return itemNameToCheck;
+                }
+                copyCountIndex++;
             }
             //TODO - find better way to get unique name
         }

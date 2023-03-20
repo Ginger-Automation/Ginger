@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +36,8 @@ namespace Amdocs.Ginger.Repository
 
         private string mDescription;
         [IsSerializedForLocalRepository]
-        public string Description {
+        public string Description
+        {
             get
             {
                 return mDescription;
@@ -66,7 +65,7 @@ namespace Amdocs.Ginger.Repository
                 if (mValue != value)
                 {
                     mValue = value;
-                    OnPropertyChanged(Fields.Value);                
+                    OnPropertyChanged(Fields.Value);
                 }
             }
         }
@@ -85,10 +84,10 @@ namespace Amdocs.Ginger.Repository
                 }
             }
         }
-        public string NameBeforeEdit{ get; set; }
+        public string NameBeforeEdit { get; set; }
         private bool mEncryptValue;
         [IsSerializedForLocalRepository]
-        public bool Encrypt 
+        public bool Encrypt
         {
             get
             {

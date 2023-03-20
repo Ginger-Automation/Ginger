@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,16 +17,15 @@ limitations under the License.
 #endregion
 
 
-using System.Windows.Threading;
-
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using GingerTestHelper;
+using System.Windows.Threading;
 
 
 namespace UnitTests.UITests.WebBrowserPageTest
 {
-    
+
     [Level3]
     [TestClass]
     public class WebBrowserPageTest
@@ -51,7 +50,7 @@ namespace UnitTests.UITests.WebBrowserPageTest
         public void TestInitialize()
         {
             // Using HtmlAgilityPack to cross check the XPath
-            string html = System.IO.File.ReadAllText(TestResources.GetTestResourcesFile( @"HTML\SCMCusotmersIndex.HTML"));
+            string html = System.IO.File.ReadAllText(TestResources.GetTestResourcesFile(@"HTML\SCMCusotmersIndex.HTML"));
             //  hapDoc = new HtmlAgilityPack.HtmlDocument();
             // hapDoc.LoadHtml(html);
 
@@ -132,7 +131,8 @@ namespace UnitTests.UITests.WebBrowserPageTest
         }
 
         [Ignore]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void HomeLinkXPath()
         {
             //Act
@@ -140,7 +140,8 @@ namespace UnitTests.UITests.WebBrowserPageTest
         }
 
         [Ignore]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void AdminLinkXPath()
         {
             //Act
@@ -148,7 +149,8 @@ namespace UnitTests.UITests.WebBrowserPageTest
         }
 
         [Ignore]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ItemInTable()
         {
             //Act

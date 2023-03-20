@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,15 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using Amdocs.Ginger.Common;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.ALM.Qtest;
 
 namespace Ginger.ALM.JIRA.TreeViewItems
 {
@@ -39,7 +34,7 @@ namespace Ginger.ALM.JIRA.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(Name, "@Folder_16x16.png");          
+            return TreeViewUtils.CreateItemHeader(Name, "@Folder_16x16.png");
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -61,7 +56,7 @@ namespace Ginger.ALM.JIRA.TreeViewItems
         {
             return null;
         }
-        
+
         void ITreeViewItem.SetTools(ITreeView TV)
         {
             // there is not tools needed at this stage

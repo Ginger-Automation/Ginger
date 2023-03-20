@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ namespace GingerCore.Actions
             get
             {
                 if (string.IsNullOrEmpty(mScreenshotTempFolder))
-                { 
+                {
                     mScreenshotTempFolder = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "Ginger_Screenshots");
                 }
                 return mScreenshotTempFolder;
@@ -251,13 +251,14 @@ namespace GingerCore.Actions
 
         string mRawResponseValues;
 
-        public string RawResponseValues { 
-            get 
-            { 
+        public string RawResponseValues
+        {
+            get
+            {
                 return mRawResponseValues;
-            } 
-            set 
-            { 
+            }
+            set
+            {
                 mRawResponseValues = value;
                 OnPropertyChanged(nameof(RawResponseValues));
             }
@@ -793,6 +794,8 @@ namespace GingerCore.Actions
                 AIV = new ActInputValue();
                 AIV.Param = Param;
                 InputValues.Add(AIV);
+                AIV.StartDirtyTracking();
+                AIV.OnDirtyStatusChanged += this.RaiseDirtyChanged;
             }
             else
             {
@@ -808,7 +811,7 @@ namespace GingerCore.Actions
         public string GetInputParamValue(string Param)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = (from aiv in InputValues where aiv!= null &&aiv.Param == Param select aiv).FirstOrDefault();
+            ActInputValue AIV = (from aiv in InputValues where aiv != null && aiv.Param == Param select aiv).FirstOrDefault();
             if (AIV == null)
             {
                 return null;
@@ -821,11 +824,13 @@ namespace GingerCore.Actions
 
         public ActInputValue GetOrCreateInputParam(string Param, string DefaultValue = null)
         {
-            ActInputValue AIV = (from aiv in InputValues where aiv!=null && aiv.Param == Param select aiv).FirstOrDefault();
+            ActInputValue AIV = (from aiv in InputValues where aiv != null && aiv.Param == Param select aiv).FirstOrDefault();
             if (AIV == null)
             {
                 AIV = new ActInputValue() { Param = Param, Value = DefaultValue };
                 InputValues.Add(AIV);
+                AIV.StartDirtyTracking();
+                AIV.OnDirtyStatusChanged += this.RaiseDirtyChanged;
             }
             return AIV;
         }
@@ -887,7 +892,7 @@ namespace GingerCore.Actions
         public string GetInputParamCalculatedValue(string Param, bool decryptValue = true)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = (from aiv in InputValues where aiv!=null && aiv.Param == Param select aiv).FirstOrDefault();
+            ActInputValue AIV = (from aiv in InputValues where aiv != null && aiv.Param == Param select aiv).FirstOrDefault();
             if (AIV == null)
             {
                 return null;
@@ -1980,6 +1985,6 @@ namespace GingerCore.Actions
             return "Action";
         }
 
-        
+
     }
 }

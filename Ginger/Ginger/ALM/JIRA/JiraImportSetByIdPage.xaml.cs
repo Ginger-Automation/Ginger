@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ namespace Ginger.ALM.JIRA
             lblStatus.Content = "";
             lblStatus.Visibility = System.Windows.Visibility.Collapsed;
         }
-        private void UpdateStatus(string msg="")
+        private void UpdateStatus(string msg = "")
         {
             if (importStatus == false)
             {
@@ -75,7 +75,7 @@ namespace Ginger.ALM.JIRA
             testSetId = txtTestSetId.Text;
             if (testSetId != "")
             {
-                if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, new List<JiraTestSet>() { new JiraTestSet { Key = testSetId } } ) == true)
+                if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, new List<JiraTestSet>() { new JiraTestSet { Key = testSetId } }) == true)
                 {
                     _pageGenericWin.Close();
                 }

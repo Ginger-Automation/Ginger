@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.ConflictResolve;
-using Ginger.Reports;
 using Ginger.Run;
 using Ginger.UserControls;
 using GingerCore;
@@ -127,31 +126,74 @@ namespace Ginger.SourceControl
                                  SCFI.Name = item.ItemName;
                              }
                              else
+                             {
                                  SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
+                             }
                          }
                          catch (Exception ex)
                          {
 
                              //TODO: fix the path changes 
                              if (SCFI.Path.Contains('\\') && (SCFI.Path.LastIndexOf('\\') + 1 < SCFI.Path.Length - 1))
+                             {
                                  SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
+                             }
+
                              Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                          }
 
-                         if (string.IsNullOrEmpty(SCFI.Path)) SCFI.FileType = "";
-                         else if (SCFI.Path.ToUpper().Contains("AGENTS")) SCFI.FileType = "Agent";
-                         else if (SCFI.Path.ToUpper().Contains("BUSINESSFLOWS")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
-                         else if (SCFI.Path.ToUpper().Contains("DOCUMENTS")) SCFI.FileType = "Document";
-                         else if (SCFI.Path.ToUpper().Contains("ENVIRONMENTS")) SCFI.FileType = "Environment";
-                         else if (SCFI.Path.ToUpper().Contains("EXECUTIONRESULTS")) SCFI.FileType = "Execution Result";
-                         else if (SCFI.Path.ToUpper().Contains("RUNSET")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.RunSet);
-                         else if (SCFI.Path.ToUpper().Contains("ACTIONS")) SCFI.FileType = "Action";
-                         else if (SCFI.Path.ToUpper().Contains("ACTIVITIESGROUPS")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
-                         else if (SCFI.Path.ToUpper().Contains("ACTIVITIES")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Activity);
-                         else if (SCFI.Path.ToUpper().Contains("VARIABLES")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Variable);
-
-                         else if (SCFI.Path.Contains("ApplicationAPIModel")) SCFI.FileType = "Application API Model";
-                         else if (SCFI.Path.Contains("GlobalAppModelParameter")) SCFI.FileType = "Global Applications Model Parameter";
+                         if (string.IsNullOrEmpty(SCFI.Path))
+                         {
+                             SCFI.FileType = "";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("AGENTS"))
+                         {
+                             SCFI.FileType = "Agent";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("BUSINESSFLOWS"))
+                         {
+                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("DOCUMENTS"))
+                         {
+                             SCFI.FileType = "Document";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("ENVIRONMENTS"))
+                         {
+                             SCFI.FileType = "Environment";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("EXECUTIONRESULTS"))
+                         {
+                             SCFI.FileType = "Execution Result";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("RUNSET"))
+                         {
+                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.RunSet);
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("ACTIONS"))
+                         {
+                             SCFI.FileType = "Action";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("ACTIVITIESGROUPS"))
+                         {
+                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("ACTIVITIES"))
+                         {
+                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Activity);
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("VARIABLES"))
+                         {
+                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Variable);
+                         }
+                         else if (SCFI.Path.Contains("ApplicationAPIModel"))
+                         {
+                             SCFI.FileType = "Application API Model";
+                         }
+                         else if (SCFI.Path.Contains("GlobalAppModelParameter"))
+                         {
+                             SCFI.FileType = "Global Applications Model Parameter";
+                         }
                      });
                 });
 
@@ -166,7 +208,11 @@ namespace Ginger.SourceControl
         }
         private void SelectAll(object sender, RoutedEventArgs e)
         {
-            if (mFiles == null) return;
+            if (mFiles == null)
+            {
+                return;
+            }
+
             foreach (SourceControlFileInfo SCFI in mFiles)
             {
                 SCFI.Selected = true;
@@ -176,7 +222,11 @@ namespace Ginger.SourceControl
 
         private void UnSelectAll(object sender, RoutedEventArgs e)
         {
-            if (mFiles == null) return;
+            if (mFiles == null)
+            {
+                return;
+            }
+
             foreach (SourceControlFileInfo SCFI in mFiles)
             {
                 SCFI.Selected = false;
@@ -215,7 +265,10 @@ namespace Ginger.SourceControl
                     return;
                 }
                 if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtion, SelectedFiles.Count) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                {
                     return;
+                }
+
                 string Comments = CommentsTextBox.Text.ToString();
                 // performing on the another thread 
                 await Task.Run(() =>
@@ -305,21 +358,34 @@ namespace Ginger.SourceControl
                     {
                         ResolveConflictWindow resConfPage = new ResolveConflictWindow(conflictsPaths);
                         if (WorkSpace.Instance.RunningInExecutionMode == true)
+                        {
                             conflictsPaths.ForEach(cPath => SourceControlIntegration.ResolveConflicts(WorkSpace.Instance.Solution.SourceControl, cPath, eResolveConflictsSide.Server));
+                        }
                         else
+                        {
                             resConfPage.ShowAsWindow();
+                        }
+
                         result = resConfPage.IsResolved;
                         conflict = true;
                         SourceControlIntegration.conflictFlag = conflict;
                         if (SourceControl.GetSourceControlmConflict != null)
+                        {
                             SourceControl.GetSourceControlmConflict.Clear();
+                        }
                     });
                     if (!conflict)
                     {
                         if (error.Contains("too many redirects or authentication replays"))
+                        {
                             error = "Commit failed because of wrong credentials error, please enter valid Username and Password and try again";
+                        }
+
                         if (error.Contains("is locked in another working copy"))
+                        {
                             error = "This file has been locked by other user. Please remove lock and then try to Check in.";
+                        }
+
                         App.MainWindow.Dispatcher.Invoke(() =>
                         {
                             Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);

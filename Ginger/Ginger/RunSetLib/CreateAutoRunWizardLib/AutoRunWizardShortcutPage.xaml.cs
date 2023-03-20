@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            
+
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
@@ -96,7 +96,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         private void ShowHideCommandPnl()
         {
-            if (mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote )
+            if (mAutoRunWizard.AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote)
             {
                 xCLICommandPnl.Visibility = Visibility.Collapsed;
                 xShortCutCreationConfigsPnl.Visibility = Visibility.Collapsed;

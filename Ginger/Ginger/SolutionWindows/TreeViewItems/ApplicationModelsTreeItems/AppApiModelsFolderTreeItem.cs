@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,22 +16,22 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.ApiActionsConversion;
 using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Linq;
-using amdocs.ginger.GingerCoreNET;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 {
@@ -90,28 +90,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-
-            ObservableList<RepositoryFolder<ApplicationAPIModel>> subFolders = mAPIModelFolder.GetSubFolders();
-            foreach (RepositoryFolder<ApplicationAPIModel> apiFolder in subFolders)
-            {
-                AppApiModelsFolderTreeItem apiFTVI = new AppApiModelsFolderTreeItem(apiFolder, mShowEditInMenu);
-                Childrens.Add(apiFTVI);
-            }
-            subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // untrack sub folders
-            subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
-
-            //Add direct children's        
-            mChildAPIs = mAPIModelFolder.GetFolderItems();
-            mChildAPIs.CollectionChanged -= TreeFolderItems_CollectionChanged;
-            mChildAPIs.CollectionChanged += TreeFolderItems_CollectionChanged;//adding event handler to add/remove tree items automatically based on folder items collection changes
-            foreach (ApplicationAPIModel api in mChildAPIs.OrderBy(nameof(ApplicationAPIModel.Name)))
-            {
-                AppApiModelTreeItem apiTI = new AppApiModelTreeItem(api, mShowEditInMenu);
-                Childrens.Add(apiTI);
-            }
-
-            return Childrens;
+            return GetChildrentGeneric<ApplicationAPIModel>(mAPIModelFolder);
         }
 
         bool ITreeViewItem.IsExpandable()
@@ -121,8 +100,11 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
-            if(mAPIModelsPage == null)
+            if (mAPIModelsPage == null)
+            {
                 mAPIModelsPage = new APIModelsPage(mAPIModelFolder);
+            }
+
             return mAPIModelsPage;
         }
 
@@ -143,9 +125,13 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             TreeViewUtils.AddSubMenuItem(addMenu, "REST API Model", AddRESTAPIModel, null, eImageType.APIModel);
             TreeViewUtils.AddSubMenuItem(addMenu, "Convert Web services Actions", WebServiceActionsConversionHandler, null, eImageType.Convert);
             if (mAPIModelFolder.IsRootFolder)
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew:false, allowDeleteFolder:false, allowRenameFolder:false, allowRefresh: false, allowDeleteAllItems: true);
+            {
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true);
+            }
             else
+            {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew: false, allowRefresh: false);
+            }
 
             AddSourceControlOptions(mContextMenu);
         }
@@ -156,7 +142,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void WebServiceActionsConversionHandler(object sender, RoutedEventArgs e)
-        {            
+        {
             WizardWindow.ShowWizard(new ApiActionsConversionWizard(mAPIModelFolder), 900, 700);
         }
 
@@ -173,7 +159,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         private void AddSingleAPIModel(ApplicationAPIUtils.eWebApiType type)
         {
             string apiName = string.Empty; ;
-            if (InputBoxWindow.GetInputWithValidation(string.Format("Add {0} API",type.ToString()), "API Name:", ref apiName))
+            if (InputBoxWindow.GetInputWithValidation(string.Format("Add {0} API", type.ToString()), "API Name:", ref apiName))
             {
                 ApplicationAPIModel newApi = new ApplicationAPIModel();
                 newApi.APIType = type;

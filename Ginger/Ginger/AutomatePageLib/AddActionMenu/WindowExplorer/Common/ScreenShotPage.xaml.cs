@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -33,16 +33,16 @@ namespace Ginger.WindowExplorer.Common
 
         public void ShowScreenShot(Bitmap ScreenShot)
         {
-            Bitmap tmp = ScreenShot; 
+            Bitmap tmp = ScreenShot;
             tmp = new Bitmap(tmp, new System.Drawing.Size(tmp.Width, tmp.Height));
             DeviceImage.Source = General.ToBitmapSource(tmp);
         }
 
         public void ShowScreenShot(string FileName)
-        {                        
-            Bitmap tmp = new Bitmap(FileName); 
+        {
+            Bitmap tmp = new Bitmap(FileName);
             tmp = new Bitmap(tmp, new System.Drawing.Size(tmp.Width, tmp.Height));
-            DeviceImage.Source = General.ToBitmapSource(tmp);            
+            DeviceImage.Source = General.ToBitmapSource(tmp);
         }
     }
 }

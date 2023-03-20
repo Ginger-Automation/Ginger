@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +40,7 @@ namespace Amdocs.Ginger.CoreNET
         ObservableList<ApplicationPOMModel> mApplicationPOMList;
 
         public List<POMObjectRecordingHelper> ListPOMObjectHelper { get; set; }
-        
+
         public Context Context { get; set; }
 
         public BusinessFlow BusinessFlow { get; set; }
@@ -75,10 +74,10 @@ namespace Amdocs.Ginger.CoreNET
                 else
                 {
                     LearnAdditionalDetails = true;
-                    CreatePOM = true;                    
+                    CreatePOM = true;
                     if (mApplicationPOMList.Count > 0)
                     {
-                        CurrentPOM = mApplicationPOMList[0]; 
+                        CurrentPOM = mApplicationPOMList[0];
                     }
                     else
                     {
@@ -111,10 +110,10 @@ namespace Amdocs.Ginger.CoreNET
         {
             POMObjectRecordingHelper recordingHelper = new POMObjectRecordingHelper();
             try
-            {                
+            {
                 ApplicationPOMModel newPOM = new ApplicationPOMModel();
                 string uniquTitle = GetUniquePOMName(pageTitle);
-                newPOM.Name = uniquTitle;                
+                newPOM.Name = uniquTitle;
                 newPOM.PageURL = pageURL;
                 newPOM.ScreenShotImage = screenShot;
                 newPOM.MappedUIElements = new ObservableList<ElementInfo>();
@@ -239,7 +238,7 @@ namespace Amdocs.Ginger.CoreNET
                     else if (!(CurrentPOM.PageURL == obj.PageURL))
                     {
                         CurrentPOM = obj.ApplicationPOM;
-                    }                    
+                    }
                 }
                 else
                 {
@@ -374,11 +373,11 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                PlatformDriver.StopRecording();                
+                PlatformDriver.StopRecording();
                 if (ListPOMObjectHelper != null)
-                {                    
+                {
                     foreach (var cPom in ListPOMObjectHelper)
-                    {    
+                    {
                         WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(cPom.ApplicationPOM);
                     }
                 }

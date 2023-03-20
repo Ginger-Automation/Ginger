@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,22 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 //using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Run;
 //using Amdocs.Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Environments;
-using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Ginger.Run
 {
@@ -39,7 +36,7 @@ namespace Ginger.Run
     {
         ObservableList<BusinessFlow> BusinessFlows { get; set; }
         //ObservableList<BusinessFlowRun> BusinessFlowsRunList { get; set; }
-       // AccountReportExecutionLogger Centeralized_Logger { get; }
+        // AccountReportExecutionLogger Centeralized_Logger { get; }
         IContext Context { get; set; }
         BusinessFlow CurrentBusinessFlow { get; set; }
         ISolution CurrentSolution { get; set; }

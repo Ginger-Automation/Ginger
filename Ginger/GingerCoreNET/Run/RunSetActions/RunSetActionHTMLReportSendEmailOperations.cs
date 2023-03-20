@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. 
@@ -23,7 +23,6 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.CoreNET.Utility;
-using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Reports.GingerExecutionReport;
 using GingerCore;
@@ -85,15 +84,15 @@ namespace Ginger.Run.RunSetActions
                 RunSetActionHTMLReportSendEmail.Email.EmailOperations.alternateView = null;
                 LiteDbRunSet liteDbRunSet = null;
                 var loggerMode = WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod;
-                const int MAXPATHLENGTH = 150;                
+                const int MAXPATHLENGTH = 150;
                 if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
                     //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Using LiteDB and using new WebReportGenerator");
                     reportsResultFolder = Path.Combine(ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder), "Reports");
                     string RunsetName = General.RemoveInvalidFileNameChars(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name);
-                    string DateTimeStamp = DateTime.UtcNow.ToString("yyyymmddhhmmssfff");                    
+                    string DateTimeStamp = DateTime.UtcNow.ToString("yyyymmddhhmmssfff");
                     int remainingChars = MAXPATHLENGTH - (reportsResultFolder.Length + DateTimeStamp.Length);
-                    if(remainingChars > 0 && RunsetName.Length > remainingChars)
+                    if (remainingChars > 0 && RunsetName.Length > remainingChars)
                     {
                         reportsResultFolder = Path.Combine(reportsResultFolder, $"{RunsetName.Substring(0, remainingChars)}_{DateTimeStamp}");
                     }
@@ -101,7 +100,7 @@ namespace Ginger.Run.RunSetActions
                     {
                         reportsResultFolder = Path.Combine(reportsResultFolder, $"{RunsetName}_{DateTimeStamp}");
                     }
-                    
+
                     //Check if report directory already exists, if yes, change the timestamp to latest plus the retry number in report path, retry for 5 times, rare scenario where it will take 5 retries 
                     int numberOfRetry = 0;
                     while (Directory.Exists(reportsResultFolder) && numberOfRetry <= 5)
@@ -251,7 +250,10 @@ namespace Ginger.Run.RunSetActions
 
                                     var path = Path.Combine(extraInformationCalculated, $"{General.RemoveInvalidFileNameChars(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name)}_{DateTime.UtcNow.ToString("yyyymmddhhmmss")}");
                                     if (Directory.Exists(path))
+                                    {
                                         Directory.Delete(path, true);
+                                    }
+
                                     IoHandler.Instance.CopyFolderRec(reportsResultFolder, path, true);
                                     reportsResultFolder = path;
                                 }
@@ -281,7 +283,10 @@ namespace Ginger.Run.RunSetActions
                             {
                                 string reportName = "\\GingerExecutionReport.html'";
                                 if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                                {
                                     reportName = "\\viewreport.html'";
+                                }
+
                                 emailReadyHtml = emailReadyHtml.Replace("<!--FULLREPORTLINK-->", "<a href ='" + reportsResultFolder + reportName + " style ='font-size:16px;color:blue;text-decoration:underline'> Click Here to View Full Report </a>");
                                 emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->", "");
                             }
@@ -326,11 +331,20 @@ namespace Ginger.Run.RunSetActions
                         string customerLogoPath = Path.Combine(TemplatesFolder, "assets", "img", "@Ginger.png");
 
                         if (File.Exists(beatLogoPath))
+                        {
                             alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(beatLogoPath), "beat"));
+                        }
+
                         if (File.Exists(gingerLogoPath))
+                        {
                             alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(gingerLogoPath), "ginger"));
+                        }
+
                         if (File.Exists(customerLogoPath))
+                        {
                             alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(customerLogoPath), "customer"));
+                        }
+
                         if (!string.IsNullOrEmpty(RunSetActionHTMLReportSendEmail.Comments))
                         {
                             alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(Path.Combine(TemplatesFolder, "assets", "img", "comments-icon.jpg")), "comment"));
@@ -338,13 +352,24 @@ namespace Ginger.Run.RunSetActions
                         if (IsExecutionStatistic)
                         {
                             if (File.Exists(Path.Combine(tempFolder, $"GingerRunner{reportTimeStamp}.jpeg")))
+                            {
                                 alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(Path.Combine(tempFolder, $"GingerRunner{reportTimeStamp}.jpeg")), "gingerRunner" + reportTimeStamp));
+                            }
+
                             if (File.Exists(Path.Combine(tempFolder, $"Action{reportTimeStamp}.jpeg")))
+                            {
                                 alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(Path.Combine(tempFolder, $"Action{reportTimeStamp}.jpeg")), "Action" + reportTimeStamp));
+                            }
+
                             if (File.Exists(Path.Combine(tempFolder, $"Activity{reportTimeStamp}.jpeg")))
+                            {
                                 alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(Path.Combine(tempFolder, $"Activity{reportTimeStamp}.jpeg")), "Activity" + reportTimeStamp));
+                            }
+
                             if (File.Exists(Path.Combine(tempFolder, $"Businessflow{reportTimeStamp}.jpeg")))
+                            {
                                 alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(Path.Combine(tempFolder, $"Businessflow{reportTimeStamp}.jpeg")), "Businessflow" + reportTimeStamp));
+                            }
                         }
                         RunSetActionHTMLReportSendEmail.Email.EmailOperations.alternateView = alternativeView;
                     }

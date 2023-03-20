@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,19 +17,18 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
-using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     public class ActDemoPage : ActWithoutDriver
     {
         public override string ActionDescription { get { return "Demo Page Example Action22"; } }
-        
-       public override string ActionUserDescription { get { return "Code Example for Data structure and binding"; } }
+
+        public override string ActionUserDescription { get { return "Code Example for Data structure and binding"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
@@ -120,9 +119,13 @@ namespace GingerCore.Actions
             {
                 eComboBoxDataValueType eVal = eComboBoxDataValueType.Value1;
                 if (Enum.TryParse<eComboBoxDataValueType>(GetInputParamValue(Fields.ComboBoxDataValueType), out eVal))
+                {
                     return eVal;
+                }
                 else
+                {
                     return eComboBoxDataValueType.Value1;  //default value          
+                }
             }
         }
 
@@ -136,7 +139,9 @@ namespace GingerCore.Actions
                     return returnValue;
                 }
                 else
+                {
                     return false;
+                }
             }
         }
 
@@ -150,7 +155,9 @@ namespace GingerCore.Actions
                     return returnValue;
                 }
                 else
+                {
                     return returnValue;
+                }
             }
         }
 
@@ -177,7 +184,7 @@ namespace GingerCore.Actions
             //TextBox int Negative example
             AddOrUpdateInputParamValue(ActDemoPage.Fields.RegularTextBox, "aa11");
             int a2 = RegularTextBoxParam_intValue;
-            
+
             if (ComboBoxDataValueType_Value == eComboBoxDataValueType.Value2)
             {
                 string tem1 = ComboBoxDataValueType_Value.ToString();

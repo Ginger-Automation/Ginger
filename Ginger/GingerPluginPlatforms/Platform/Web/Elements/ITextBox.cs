@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,16 +17,13 @@ limitations under the License.
 #endregion
 
 using Ginger.Plugin.Platform.Web.Actions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Ginger.Plugin.Platform.Web.Elements
 {
     /// <summary>
     /// Exposes Operation for A TextBox.
     /// </summary>
-   public interface ITextBox:IGingerWebElement,IGetValue
+    public interface ITextBox : IGingerWebElement, IGetValue
     {
         /// <summary>
         /// Clears a TextBox.
@@ -54,13 +51,13 @@ namespace Ginger.Plugin.Platform.Web.Elements
         /// </summary>
         /// <returns></returns>
         bool IsValuePopulated();
-   
+
         //TODO: Enable multisetvalue
-      //  void SetMultiValue(string[] values);
-      /// <summary>
-      /// Mimic Key Type on a Text Box.
-      /// </summary>
-      /// <param name="keys"></param>
+        //  void SetMultiValue(string[] values);
+        /// <summary>
+        /// Mimic Key Type on a Text Box.
+        /// </summary>
+        /// <param name="keys"></param>
         void SendKeys(string keys);
         /// <summary>
         /// Sets text on a TextBox.

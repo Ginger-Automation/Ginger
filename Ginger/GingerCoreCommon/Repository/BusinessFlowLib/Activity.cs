@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
@@ -26,14 +31,6 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Microsoft.CodeAnalysis;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Windows;
 
 
 //TODO: change add core
@@ -126,6 +123,7 @@ namespace GingerCore
             //set fields default values
             mAutomationStatus = eActivityAutomationStatus.Development;
             mActionRunOption = eActionRunOption.StopActionsRunOnFailure;
+            Tags.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Tags));
         }
 
         public override string ToString()
@@ -498,6 +496,21 @@ namespace GingerCore
                 {
                     mEnableActionsVariablesDependenciesControl = value;
                     OnPropertyChanged(nameof(EnableActionsVariablesDependenciesControl));
+                }
+            }
+        }
+
+        private Guid mPOMMetaDataId;
+        [IsSerializedForLocalRepository]
+        public Guid POMMetaDataId
+        {
+            get { return mPOMMetaDataId; }
+            set
+            {
+                if (mPOMMetaDataId != value)
+                {
+                    mPOMMetaDataId = value;
+                    OnPropertyChanged(nameof(POMMetaDataId));
                 }
             }
         }

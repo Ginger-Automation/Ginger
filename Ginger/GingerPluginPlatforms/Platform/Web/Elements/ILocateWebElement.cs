@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,10 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Plugin.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Ginger.Plugin.Platform.Web.Elements
 {
@@ -49,7 +45,7 @@ namespace Ginger.Plugin.Platform.Web.Elements
     /// Exposes The Functionality to Locate Web Element
     /// </summary>
     public interface ILocateWebElement
-    {    
+    {
         /// <summary>
         /// Locates Element of a type by ID.
         /// </summary>
@@ -80,21 +76,21 @@ namespace Ginger.Plugin.Platform.Web.Elements
         /// <param name="elementType"></param>
         /// <param name="LocateValue"></param>
         /// <returns>IGingerWebElement</returns>
-        IGingerWebElement LocateElementByLinkTest(eElementType elementType,string LocateValue);
+        IGingerWebElement LocateElementByLinkTest(eElementType elementType, string LocateValue);
         /// <summary>
         /// Locate Web Elements by Partial Link Test and target Type
         /// </summary>
         /// <param name="elementType"></param>
         /// <param name="LocateValue"></param>
         /// <returns>IGingerWebElement</returns>
-        IGingerWebElement LocateElementByPartiallinkText(eElementType elementType,string LocateValue);
+        IGingerWebElement LocateElementByPartiallinkText(eElementType elementType, string LocateValue);
         /// <summary>
         /// Locate Web Elements by Tag and target Type
         /// </summary>
         /// <param name="elementType"></param>
         /// <param name="LocateValue"></param>
         /// <returns>IGingerWebElement</returns>
-        IGingerWebElement LocateElementByTag(eElementType elementType,string LocateValue);
+        IGingerWebElement LocateElementByTag(eElementType elementType, string LocateValue);
 
         /// <summary>
         /// Locate Web Elements by Name and target Type

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.Repository
         public string Name { get; set; }    //for example get customer by ID
 
         public string SQL { get; set; }   // SELELCT * FROM TBCustomers WHERE CUstomerID={CustID}
-        
+
 
         public List<string> InputParams;  // CustomerID (int)
 

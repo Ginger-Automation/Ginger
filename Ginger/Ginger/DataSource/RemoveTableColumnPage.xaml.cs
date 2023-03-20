@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -42,7 +42,9 @@ namespace Ginger.DataSource
             mColNameList.Remove("GINGER_LAST_UPDATE_DATETIME");
 
             if (mColNameList.Contains("GINGER_USED"))
-                mColNameList.Remove("GINGER_USED");           
+            {
+                mColNameList.Remove("GINGER_USED");
+            }
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSColNameComboBox, ComboBox.TextProperty, mDSTableCol, nameof(DataSourceTableColumn.Name));
             DSColNameComboBox.ItemsSource = mColNameList;
@@ -55,7 +57,7 @@ namespace Ginger.DataSource
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             //validate details
-           if (DSColNameComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKey.MissingNewColumn, "Column type"); return; }
+            if (DSColNameComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKey.MissingNewColumn, "Column type"); return; }
             okClicked = true;
             _pageGenericWin.Close();
         }
@@ -70,7 +72,7 @@ namespace Ginger.DataSource
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, true, "Cancel");
         }
-       
+
         public DataSourceTableColumn DSTableCol
         {
             get

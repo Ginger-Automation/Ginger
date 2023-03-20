@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,25 +17,18 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
-using GingerCore.Properties;
-using GingerCore.Repository;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using GingerCore.Platforms;
-using System.Runtime.InteropServices;
-using GingerCore.Helpers;
-using System.Drawing.Imaging;
-using System.Drawing;
-
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.CoreNET;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Runtime.InteropServices;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace GingerCore.Actions
 {
@@ -221,7 +214,10 @@ namespace GingerCore.Actions
             WinAPIAutomation winAPI = new WinAPIAutomation();
             List<System.Drawing.Point> result = new List<System.Drawing.Point>(); //System.Drawing.Point(0,0);
             if (!string.IsNullOrWhiteSpace(WindowTitle))
+            {
                 targetWin = UIAutomationGetWindowByTitle(WindowTitle);
+            }
+
             string locatorImgFilePath;
 
             //locatorImgFilePath = LocatorImgFile.Replace("~\\", SolutionFolder);
@@ -291,12 +287,20 @@ namespace GingerCore.Actions
                 foreach (UIAuto.AutomationElement w in wins)
                 {
                     if (w == UIAutomationGetWindowByTitle("Amdocs Ginger Automation"))
+                    {
                         continue;
+                    }
+
                     MainWinImage = GetWindowBitmap(w);
                     if (File.Exists(locatorImgFilePath) && MainWinImage != null)
+                    {
                         result = GetSubPositions(MainWinImage, System.Drawing.Image.FromFile(locatorImgFilePath));
+                    }
                     else
+                    {
                         continue;
+                    }
+
                     if (result.Count > 0)
                     {
                         targetWin = w;
@@ -346,7 +350,9 @@ namespace GingerCore.Actions
                     break;
             }
             if (WindowTitle == "FULLSCREEN")
+            {
                 WinAPIAutomation.NormalizeWindow(gingerWin.Current.ProcessId);
+            }
         }
 
         private UIAuto.AutomationElement UIAutomationGetWindowByTitle(string WindowTitle)
@@ -407,12 +413,15 @@ namespace GingerCore.Actions
             Color c;
 
             for (int y = 0; y < Bmp.Height; y++)
+            {
                 for (int x = 0; x < Bmp.Width; x++)
                 {
                     c = Bmp.GetPixel(x, y);
                     rgb = (int)((c.R + c.G + c.B) / 3);
                     Bmp.SetPixel(x, y, Color.FromArgb(rgb, rgb, rgb));
                 }
+            }
+
             return Bmp;
         }
 
@@ -458,7 +467,9 @@ namespace GingerCore.Actions
                         int xsub = x - item.X;
                         int ysub = y - item.Y;
                         if (xsub >= subwidth || ysub >= subheight || xsub < 0)
+                        {
                             continue;
+                        }
 
                         MyColor subcolor = GetColor(xsub, ysub, strideSub, dataSub);
 
@@ -469,7 +480,9 @@ namespace GingerCore.Actions
                     }
 
                     if (curcolor.Equals(GetColor(0, 0, strideSub, dataSub)))
+                    {
                         possiblepos.Add(new System.Drawing.Point(x, y));
+                    }
                 }
             }
 
@@ -544,10 +557,16 @@ namespace GingerCore.Actions
             public override bool Equals(object obj)
             {
                 if (!(obj is MyColor))
+                {
                     return false;
+                }
+
                 MyColor color = (MyColor)obj;
                 if (color.A == this.A && color.R == this.R && color.G == this.G && color.B == this.B)
+                {
                     return true;
+                }
+
                 return false;
             }
         }

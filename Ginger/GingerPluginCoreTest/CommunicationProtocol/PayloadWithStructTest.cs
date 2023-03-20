@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ limitations under the License.
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -30,7 +29,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
     [Level1]
     public class PayloadWithStructTest
     {
-        
+
         [TestInitialize]
         public void TestInitialize()
         {
@@ -41,7 +40,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
         {
 
         }
-  
+
 
 
         struct ppl
@@ -55,7 +54,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             public int age;
         }
 
-        
+
         [TestMethod]
         public void StructTestSpeed()
         {
@@ -159,9 +158,9 @@ namespace GingerPluginCoreTest.CommunicationProtocol
 
 
         struct complexStructwithStrings
-        {            
-            public string a;         
-            public List<string> strings;            
+        {
+            public string a;
+            public List<string> strings;
             public string b;
         }
 

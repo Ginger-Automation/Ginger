@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,13 +17,12 @@ limitations under the License.
 #endregion
 
 using Ginger.SolutionWindows.TreeViewItems;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore.ALM.QC;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Controls;
-using Amdocs.Ginger.Common;
 
 namespace Ginger.ALM.QC.TreeViewItems
 {

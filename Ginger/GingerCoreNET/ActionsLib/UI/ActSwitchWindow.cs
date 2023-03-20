@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ namespace GingerCore.Actions
         public override string ActionEditPage { get { return "ActSwitchWindowEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
         public override bool ValueConfigsNeeded { get { return false; } }
-        
+
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
         {
@@ -67,7 +67,7 @@ namespace GingerCore.Actions
                 return mPlatforms;
             }
         }
-        
+
         public override String ActionType
         {
             get
@@ -111,7 +111,7 @@ namespace GingerCore.Actions
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
             // returning true as actswitchwindow is obsolete for all platform
-             return true;
+            return true;
         }
 
         public override List<ePlatformType> LegacyActionPlatformsList
@@ -124,7 +124,7 @@ namespace GingerCore.Actions
 
         Type IObsoleteAction.TargetAction()
         {
-            if(Platform.Equals(ePlatformType.Web) || Platform.Equals(ePlatformType.Mobile))
+            if (Platform.Equals(ePlatformType.Web) || Platform.Equals(ePlatformType.Mobile))
             {
                 return typeof(ActBrowserElement);
             }
@@ -176,10 +176,15 @@ namespace GingerCore.Actions
         public PayLoad GetPayLoad()
         {
             PayLoad PL = new PayLoad("SwitchWindow");
-            if(string.IsNullOrEmpty(LocateValueCalculated) == false)
+            if (string.IsNullOrEmpty(LocateValueCalculated) == false)
+            {
                 PL.AddValue(LocateValueCalculated);
+            }
             else
+            {
                 PL.AddValue(ValueForDriver);
+            }
+
             PL.ClosePackage();
             return PL;
         }

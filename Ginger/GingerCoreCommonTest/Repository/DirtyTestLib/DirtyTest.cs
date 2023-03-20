@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,28 +16,28 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace GingerCoreCommonTest.Repository
 {
-    
+
     [TestClass]
     [Level1]
     public class DirtyTest
     {
         static TestHelper mTestHelper = new TestHelper();
-        public TestContext TestContext { get; set; }        
+        public TestContext TestContext { get; set; }
 
         [ClassInitialize()]
         public static void ClassInit(TestContext TestContext)
         {
             mTestHelper.ClassInitialize(TestContext);
-            
+
             NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommonTest);
         }
 
@@ -60,43 +60,46 @@ namespace GingerCoreCommonTest.Repository
             mTestHelper.TestCleanup();
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ObjWithoutTracking()
         {
             //Arrange
             MyComplextRepositoryItem item = new MyComplextRepositoryItem();
-            item.Name = "aaa";            
+            item.Name = "aaa";
 
             //Act                        
 
 
             //Assert  
-            Assert.AreEqual(eDirtyStatus.NoTracked, item.DirtyStatus,  "item is not tracked");
+            Assert.AreEqual(eDirtyStatus.NoTracked, item.DirtyStatus, "item is not tracked");
         }
 
 
-        [TestMethod]  [Timeout(60000)]        
+        [TestMethod]
+        [Timeout(60000)]
         public void CheckObjDirty()
         {
             //Arrange
             MyComplextRepositoryItem item = new MyComplextRepositoryItem();
-            item.Name = "aaa";            
+            item.Name = "aaa";
             item.StartDirtyTracking();
 
             //Act            
             item.Name = "bbb";
 
             //Assert  
-            Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus,  "item is dirty");            
+            Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus, "item is dirty");
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void PropertyNotSerializedNochangetoDirty()
         {
             //Arrange
             MyComplextRepositoryItem item = new MyComplextRepositoryItem();
-            item.Name = "aaa";            
+            item.Name = "aaa";
 
             item.StartDirtyTracking();
 
@@ -104,11 +107,12 @@ namespace GingerCoreCommonTest.Repository
             item.DontSaveMe = "create at run time do not save do not track";
 
             //Assert  
-            Assert.AreEqual(eDirtyStatus.NoChange, item.DirtyStatus,  "item is dirty");
+            Assert.AreEqual(eDirtyStatus.NoChange, item.DirtyStatus, "item is dirty");
         }
 
         bool DirtyStatusChangedTriggered = false;
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ObjWitChildsTracking()
         {
             //Arrange
@@ -125,8 +129,8 @@ namespace GingerCoreCommonTest.Repository
             child1.Name = "def";
 
             //Assert  
-            Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus,  "item dirty status changed to modified");
-            Assert.AreEqual(eDirtyStatus.Modified, child1.DirtyStatus,  "child item dirty status changed to modified");
+            Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus, "item dirty status changed to modified");
+            Assert.AreEqual(eDirtyStatus.Modified, child1.DirtyStatus, "child item dirty status changed to modified");
             Assert.IsTrue(DirtyStatusChangedTriggered, "DirtyStatusChangedTriggered=true");
         }
 
@@ -135,30 +139,32 @@ namespace GingerCoreCommonTest.Repository
             DirtyStatusChangedTriggered = true;
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void AddChildToList()
         {
             //Arrange
-            MyComplextRepositoryItem item = new MyComplextRepositoryItem();            
+            MyComplextRepositoryItem item = new MyComplextRepositoryItem();
             item.Name = "abc";
-            item.childs = new ObservableList<MyComplextRepositoryItemChild>();                        
+            item.childs = new ObservableList<MyComplextRepositoryItemChild>();
             item.StartDirtyTracking();
 
             //Act                        
             item.childs.Add(new MyComplextRepositoryItemChild() { Name = "Child 1" });
 
             //Assert  
-            Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus,  "item dirty status changedt to modified since one child was added");
+            Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus, "item dirty status changedt to modified since one child was added");
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RemoveChildFromList()
         {
             //Arrange
             MyComplextRepositoryItem item = new MyComplextRepositoryItem();
             item.Name = "abc";
-            item.childs = new ObservableList<MyComplextRepositoryItemChild>();            
+            item.childs = new ObservableList<MyComplextRepositoryItemChild>();
             item.childs.Add(new MyComplextRepositoryItemChild() { Name = "Child 1" });
             item.childs.Add(new MyComplextRepositoryItemChild() { Name = "Child 2" });
             item.childs.Add(new MyComplextRepositoryItemChild() { Name = "Child 3" });
@@ -167,12 +173,12 @@ namespace GingerCoreCommonTest.Repository
 
             //Act                        
             item.childs.RemoveAt(1);
-            
+
             //Assert  
-            Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus, "item dirty status changed to modified since one child was removed");            
+            Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus, "item dirty status changed to modified since one child was removed");
         }
 
-        
+
         [TestMethod]
         [Timeout(60000)]
         public void CopyItemIsDirty()
@@ -183,14 +189,15 @@ namespace GingerCoreCommonTest.Repository
             item.StartDirtyTracking();
 
             //Act                        
-            MyComplextRepositoryItem item2 = (MyComplextRepositoryItem)item.CreateCopy();            
+            MyComplextRepositoryItem item2 = (MyComplextRepositoryItem)item.CreateCopy();
 
             //Assert  
             Assert.AreEqual(eDirtyStatus.Modified, item2.DirtyStatus, "item dirty status changed to modified since it is a copy");
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void UpdateChildPropertyWhichisNotSerialzied()
         {
             //Arrange
@@ -207,7 +214,7 @@ namespace GingerCoreCommonTest.Repository
 
             //Assert  
             Assert.AreEqual(eDirtyStatus.NoChange, item.DirtyStatus, "item dirty status is not modified");
-            Assert.AreEqual(eDirtyStatus.NoChange, child1.DirtyStatus, "child item dirty status is not modified");            
+            Assert.AreEqual(eDirtyStatus.NoChange, child1.DirtyStatus, "child item dirty status is not modified");
         }
 
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -88,22 +88,28 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                         if (mModelItem is ApplicationAPIModel)
                         {
                             foreach (Activity activity in BF.Activities)
+                            {
                                 foreach (Act act in activity.Acts)
                                 {
                                     if (act is ActWebAPIModel && ((ActWebAPIModel)act).APImodelGUID == mModelItem.Guid)
                                     {
-                                        ModelItemUsage itemUsage = new ModelItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder,BF.Name), HostActivityName = activity.ActivityName, HostActivity = activity, Action = act, UsageItem = act, UsageItemName = act.Description, Selected = true/*, UsageExtraDetails = "Number of " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ": " + act.ActivitiesIdentifiers.Count().ToString()*/, Status = ModelItemUsage.eStatus.NotUpdated };
+                                        ModelItemUsage itemUsage = new ModelItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, BF.Name), HostActivityName = activity.ActivityName, HostActivity = activity, Action = act, UsageItem = act, UsageItemName = act.Description, Selected = true/*, UsageExtraDetails = "Number of " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ": " + act.ActivitiesIdentifiers.Count().ToString()*/, Status = ModelItemUsage.eStatus.NotUpdated };
                                         if (mUsageUpdateType == ApplicationModelBase.eModelUsageUpdateType.SinglePart)
                                         {
                                             if (mModelPart == ApplicationModelBase.eModelParts.ReturnValues)
+                                            {
                                                 itemUsage.SetItemPartesFromEnum(typeof(ActReturnValue.eItemParts));
+                                            }
                                         }
                                         else if (mUsageUpdateType == ApplicationModelBase.eModelUsageUpdateType.MultiParts)
+                                        {
                                             itemUsage.SetItemPartesFromEnum(typeof(ApplicationModelBase.eModelParts));
+                                        }
 
                                         ModelItemUsages.Add(itemUsage);
                                     }
                                 }
+                            }
                         }
                     }
                 });
@@ -125,7 +131,9 @@ namespace Ginger.ApplicationsModels.ModelsUsages
             {
                 selectValue = !ModelItemUsages[0].Selected;//decide if to take or not
                 foreach (ModelItemUsage usage in ModelItemUsages)
+                {
                     usage.Selected = selectValue;
+                }
             }
         }
 
@@ -135,7 +143,9 @@ namespace Ginger.ApplicationsModels.ModelsUsages
             {
                 ModelItemUsage a = (ModelItemUsage)usageGrid.CurrentItem;
                 foreach (ModelItemUsage usage in ModelItemUsages)
+                {
                     usage.SelectedItemPart = a.SelectedItemPart;
+                }
             }
             else
             {
@@ -171,7 +181,9 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                     foreach (ModelItemUsage usage in ModelItemUsages)
                     {
                         if (usage.Selected && usage.Status == ModelItemUsage.eStatus.NotUpdated || usage.Status == ModelItemUsage.eStatus.UpdateFailed)
+                        {
                             usage.Status = ModelItemUsage.eStatus.Pending;
+                        }
                     }
 
                     //do the update
@@ -212,19 +224,33 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                     actARV.Status = ActReturnValue.eStatus.Pending;
 
                     if (ePartToUpdate == ActReturnValue.eItemParts.ExpectedValue || ePartToUpdate == ActReturnValue.eItemParts.All)
+                    {
                         actARV.Expected = apiARV.Expected;
+                    }
+
                     if (ePartToUpdate == ActReturnValue.eItemParts.Parameter || ePartToUpdate == ActReturnValue.eItemParts.All)
+                    {
                         actARV.ItemName = apiARV.ItemName;
+                    }
+
                     if (ePartToUpdate == ActReturnValue.eItemParts.Path || ePartToUpdate == ActReturnValue.eItemParts.All)
+                    {
                         actARV.Path = apiARV.Path;
+                    }
+
                     if (ePartToUpdate == ActReturnValue.eItemParts.SimulatedActual || ePartToUpdate == ActReturnValue.eItemParts.All)
+                    {
                         actARV.SimulatedActual = apiARV.SimulatedActual;
+                    }
+
                     if (ePartToUpdate == ActReturnValue.eItemParts.StoreTo || ePartToUpdate == ActReturnValue.eItemParts.All)
+                    {
                         if (!string.IsNullOrEmpty(apiARV.StoreToValue))
                         {
                             actARV.StoreTo = ActReturnValue.eStoreTo.ApplicationModelParameter;
                             actARV.StoreToValue = apiARV.StoreToValue;
                         }
+                    }
 
                     usage.Status = ModelItemUsage.eStatus.Updated;
 
@@ -232,7 +258,10 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                 else //Not exist in the action - add it
                 {
                     if (!string.IsNullOrEmpty(apiARV.StoreToValue))
+                    {
                         apiARV.StoreTo = ActReturnValue.eStoreTo.ApplicationModelParameter;
+                    }
+
                     AddNewActReturnValue(act, apiARV);
                 }
             }
@@ -283,7 +312,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                         if (usage.Status == ModelItemUsage.eStatus.Updated || usage.Status == ModelItemUsage.eStatus.SaveFailed)
                         {
                             try
-                            {                                
+                            {
                                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(usage.HostBusinessFlow);
                                 usage.Status = ModelItemUsage.eStatus.UpdatedAndSaved;
                             }

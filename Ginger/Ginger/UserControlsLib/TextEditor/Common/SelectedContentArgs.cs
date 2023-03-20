@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ namespace Ginger.UserControlsLib.TextEditor.Common
         private FoldingManager mFoldingManager;
         public FoldingManager FoldingManager { get { return mFoldingManager; } set { mFoldingManager = value; } }
 
-        public int CaretPosition 
+        public int CaretPosition
         {
             get
             {
@@ -54,7 +54,7 @@ namespace Ginger.UserControlsLib.TextEditor.Common
 
         public int StartPos { get; set; }
         public int EndPos { get; set; }
-        public int Length { get { return EndPos - StartPos + 1; }  }
+        public int Length { get { return EndPos - StartPos + 1; } }
 
         internal string GetFoldingTitle()
         {
@@ -71,7 +71,11 @@ namespace Ginger.UserControlsLib.TextEditor.Common
         internal ReadOnlyCollection<FoldingSection> GetFoldingsAtCaretPosition()
         {
             ReadOnlyCollection<FoldingSection> list = null;
-            if (mFoldingManager!=null) list = mFoldingManager.GetFoldingsContaining(mTextEditor.CaretOffset);
+            if (mFoldingManager != null)
+            {
+                list = mFoldingManager.GetFoldingsContaining(mTextEditor.CaretOffset);
+            }
+
             return list;
         }
 
@@ -81,22 +85,34 @@ namespace Ginger.UserControlsLib.TextEditor.Common
         }
 
         public string CaretLineText()
-        {            
+        {
             string txt = mTextEditor.Document.GetText(mTextEditor.Document.GetLineByOffset(mTextEditor.CaretOffset));
             return txt;
         }
 
         internal bool IsAtStartOfLine()
         {
-            int i = mTextEditor.CaretOffset -1;
-            
-            while (i>0)
+            int i = mTextEditor.CaretOffset - 1;
+
+            while (i > 0)
             {
                 i--;
                 char c = mTextEditor.Document.GetCharAt(i);
-                if (c == ' ') continue;
-                if (c == '\r') return true;
-                if (c == '\n') return true;
+                if (c == ' ')
+                {
+                    continue;
+                }
+
+                if (c == '\r')
+                {
+                    return true;
+                }
+
+                if (c == '\n')
+                {
+                    return true;
+                }
+
                 return false;
             }
 

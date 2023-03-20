@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,21 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Run;
-using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
-using GingerCore.DataSource;
 using GingerCore.Drivers;
-using GingerCore.Environments;
 using GingerCoreNET.RunLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -60,18 +53,28 @@ namespace GingerCore
         {
             get
             {
-                if (Driver != null) return Driver.IsWindowExplorerSupportReady();
-
-                else return false;
+                if (Driver != null)
+                {
+                    return Driver.IsWindowExplorerSupportReady();
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
         public bool IsShowWindowExplorerOnStart
         {
             get
             {
-                if (Driver != null) return Driver.IsShowWindowExplorerOnStart();
-
-                else return false;
+                if (Driver != null)
+                {
+                    return Driver.IsShowWindowExplorerOnStart();
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
@@ -205,7 +208,7 @@ namespace GingerCore
                         }
                         else
                         {
-                                Driver.StartDriver();
+                            Driver.StartDriver();
                         }
                         if (VirtualDriver != null)
                         {
@@ -275,7 +278,11 @@ namespace GingerCore
                 while (gingerNodeInfo == null && st.ElapsedMilliseconds < 30000) // max 30 seconds to wait
                 {
                     gingerNodeInfo = FindFreeNode(Agent.ServiceId);
-                    if (gingerNodeInfo != null) break;
+                    if (gingerNodeInfo != null)
+                    {
+                        break;
+                    }
+
                     Thread.Sleep(100);
                 }
 
@@ -579,7 +586,10 @@ namespace GingerCore
                 token = Attribute.GetCustomAttribute(mi, typeof(UserConfiguredAttribute), false) as UserConfiguredAttribute;
 
                 if (token == null)
+                {
                     continue;
+                }
+
                 DriverConfigParam configParam = GetDriverConfigParam(mi);
 
                 Agent.DriverConfiguration.Add(configParam);
@@ -600,7 +610,10 @@ namespace GingerCore
                 token = Attribute.GetCustomAttribute(mi, typeof(UserConfiguredAttribute), false) as UserConfiguredAttribute;
 
                 if (token == null)
+                {
                     continue;
+                }
+
                 DriverConfigParam configParam = GetDriverConfigParam(mi);
 
                 if (Agent.DriverConfiguration.Where(x => x.Parameter == configParam.Parameter).FirstOrDefault() == null)
@@ -713,7 +726,10 @@ namespace GingerCore
                         }
                     }
                 }
-                if (Driver == null) return;
+                if (Driver == null)
+                {
+                    return;
+                }
 
                 Driver.IsDriverRunning = false;
                 if (Driver is IDriverWindow && ((IDriverWindow)Driver).ShowWindow)
@@ -787,7 +803,7 @@ namespace GingerCore
 
 
         public void WaitForAgentToBeReady()
-        {            
+        {
             int Counter = 0;
             while (Status != Agent.eStatus.Running && String.IsNullOrEmpty(Driver.ErrorMessageFromDriver))
             {
@@ -798,7 +814,10 @@ namespace GingerCore
 
                 int waitingTime = 30;// 30 seconds
                 if (Driver.DriverLoadWaitingTime > 0)
+                {
                     waitingTime = Driver.DriverLoadWaitingTime;
+                }
+
                 Double waitingTimeInMilliseconds = waitingTime * 10;
                 if (Counter > waitingTimeInMilliseconds)
                 {
@@ -833,7 +852,7 @@ namespace GingerCore
                 {
                     Reporter.ToUser(eUserMsgKey.TestagentSucceed);
                 }
-                else if (Driver.ErrorMessageFromDriver.Contains("Chrome driver version mismatch"))
+                else if (Driver.ErrorMessageFromDriver != null && Driver.ErrorMessageFromDriver.Contains("Chrome driver version mismatch"))
                 {
                     Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Agent.Name, "Chrome driver version mismatch. Please run Ginger as Admin to Auto update the chrome driver.");
                 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,17 +17,12 @@ limitations under the License.
 #endregion
 
 using GingerCore;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Ginger.Agents
 {
-    class AgentControlValidationRule: ValidationRule
+    class AgentControlValidationRule : ValidationRule
     {
         public enum eAgentControlValidationRuleType
         {
@@ -48,12 +43,18 @@ namespace Ginger.Agents
             {
                 case eAgentControlValidationRuleType.AgentIsMapped:
                     if (value == null)
+                    {
                         return new ValidationResult(false, "Agent must be mapped");
+                    }
+
                     break;
 
                 case eAgentControlValidationRuleType.AgentIsMappedAndRunning:
                     if (value == null || ((AgentOperations)((Agent)value).AgentOperations).Status != Agent.eStatus.Running)
+                    {
                         return new ValidationResult(false, "Agent must be mapped and running");
+                    }
+
                     break;
             }
 

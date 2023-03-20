@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,18 +17,15 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.CoreNET;
 using GingerCore.Actions.Common;
-using GingerCore.Helpers;
-using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions
 {
@@ -40,7 +37,7 @@ namespace GingerCore.Actions
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-        }        
+        }
 
         public override string ActionEditPage { get { return "ActASCFControlEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
@@ -143,8 +140,10 @@ namespace GingerCore.Actions
                                 newAct.ElementAction = x;
                             }
                             else
+                            {
                                 // if old action is not supported by ACTUIElement, for example, GetControlProperty
                                 newAct.ElementAction = ActUIElement.eElementAction.Unknown;
+                            }
                         }
                         return true;
                     }
@@ -184,8 +183,8 @@ namespace GingerCore.Actions
                     newAct.Active = false;
                     newAct.Description = "Please remove this action - " + this.Description;
                     return;
-                }                
-               
+                }
+
                 int slash = locateValue.IndexOf("/");
                 int colon = locateValue.IndexOf(":");
                 if (slash == -1)
@@ -197,7 +196,9 @@ namespace GingerCore.Actions
                         locateValue = locateValue.Substring(locateValue.LastIndexOf(':') + 1);
                     }
                     else
+                    {
                         locateValue = locateValue.Substring(colon + 1);
+                    }
 
                     newAct.ElementLocateValue = locateValue;
 
@@ -211,8 +212,10 @@ namespace GingerCore.Actions
                             return;
                         }
                         else
+                        {
                             // if old action is not supported by ACTUIElement, for example, GetControlProperty
                             newAct.ElementAction = ActUIElement.eElementAction.Unknown;
+                        }
                     }
                 }
                 else
@@ -272,11 +275,11 @@ namespace GingerCore.Actions
                         {
                             string row = rowSelector.Split('\"')[1];
                             if ("random".Equals(row))
-                            {                                
+                            {
                                 newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Any Row");
                             }
                             else
-                            {                                
+                            {
                                 newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Row Number");
                                 newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, row);
                             }
@@ -284,7 +287,7 @@ namespace GingerCore.Actions
                         else if (rowSelector.All(char.IsDigit))
                         {
                             int rowNum = Convert.ToInt32(rowSelector);
-                            newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Row Number");                            
+                            newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Row Number");
                             newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, rowNum.ToString());
                         }
                         else if (rowSelector.Equals("random"))
@@ -343,7 +346,11 @@ namespace GingerCore.Actions
                                         }
                                         string p = new string(properties[i].Split('\"')[0].Where(c => char.IsLetter(c)).ToArray());
                                         string pv = properties[i].Split('\"')[1];
-                                        if (pv.Equals("<empty>")) pv = "";
+                                        if (pv.Equals("<empty>"))
+                                        {
+                                            pv = "";
+                                        }
+
                                         string o = properties[i].Split('\"')[0].Substring(p.Length + 1);
 
                                         newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.WhereProperty, p);
@@ -418,23 +425,23 @@ namespace GingerCore.Actions
             [EnumValueDescription("Get Control Property")]
             GetControlProperty = 16,
             [EnumValueDescription("Invoke Script")]
-            InvokeScript  = 17,
+            InvokeScript = 17,
             [EnumValueDescription("Send Keystrokes")]
-            KeyType  = 18  
+            KeyType = 18
         }
 
         public enum eControlProperty
         {
-            NA =0,
-            Value =1,
-            Text =2,
-            Type=3,
-            Enabled=4,
-            Visible=5,
-            List =6,
-            HTML=7,
-            DateTimeValue=8,
-            ToolTip=9
+            NA = 0,
+            Value = 1,
+            Text = 2,
+            Type = 3,
+            Enabled = 4,
+            Visible = 5,
+            List = 6,
+            HTML = 7,
+            DateTimeValue = 8,
+            ToolTip = 9
         }
 
         public eControlAction ControlAction
@@ -462,7 +469,7 @@ namespace GingerCore.Actions
         }
 
         public bool WaitForIdle { get; set; }
-        
+
 
         public override String ToString()
         {
@@ -477,6 +484,6 @@ namespace GingerCore.Actions
             }
         }
 
-        public override eImageType Image { get { return eImageType.Java; } }        
+        public override eImageType Image { get { return eImageType.Java; } }
     }
 }

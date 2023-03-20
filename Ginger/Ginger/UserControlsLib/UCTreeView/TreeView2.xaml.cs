@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,16 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using GingerWPF.DragDropLib;
-using GingerCoreNET.GeneralLib;
-using GingerWPF.GeneralLib;
-using GingerWPF.UserControlsLib.UCTreeView;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.UserControls;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using Amdocs.Ginger.UserControls;
-using Amdocs.Ginger.Common.Enums;
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
@@ -58,7 +54,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             get { return treeViewTitle.Style; }
             set { treeViewTitle.Style = value; }
-        }       
+        }
 
         public TreeView2()
         {
@@ -70,8 +66,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         private void TreeViewTree_ItemSelected(object sender, EventArgs e)
         {
             ClearCustomeTools();
-            if(TreeViewTree.CurrentSelectedTreeViewItem != null)
+            if (TreeViewTree.CurrentSelectedTreeViewItem != null)
+            {
                 TreeViewTree.CurrentSelectedTreeViewItem.SetTools(this);
+            }
         }
 
         private void treeViewClearSearchBtn_Click(object sender, RoutedEventArgs e)

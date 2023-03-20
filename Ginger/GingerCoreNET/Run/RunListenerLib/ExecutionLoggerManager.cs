@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -176,7 +176,9 @@ namespace Ginger.Run
             object AGR = mExecutionLogger.SetReportActivityGroup(activityGroup, mContext.BusinessFlow, offlineMode);
 
             if (!offlineMode)
+            {
                 ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), string.Format("{0} (ID:{1}, ParentID:{2})", activityGroup.Name, activityGroup.Guid, activityGroup.ExecutionParentGuid), AGR);
+            }
         }
 
         public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
@@ -480,7 +482,9 @@ namespace Ginger.Run
                 string executionLogFolder = string.Empty;
                 //if offline mode then execution logger path exists in action object so making executionLogFolder empty to avoid duplication of path.
                 if (!offlineMode)
+                {
                     executionLogFolder = mExecutionLogger.ExecutionLogfolder;
+                }
                 //ActionReport AR = new ActionReport(action, mContext);  
 
                 //if action call the Shared actvity then mContext.Activity and mCurrentActivity will be different,so keeping the shared activity in temp variable
@@ -506,7 +510,9 @@ namespace Ginger.Run
                         ActivitiesGroup currrentGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == mCurrentActivity.ActivitiesGroupID).FirstOrDefault();
                         string currrentGroupName = string.Empty;
                         if (currrentGroup != null)
+                        {
                             currrentGroupName = currrentGroup.Name;
+                        }
 
                         //
                         List<string> screenShotsPathes = new List<string>();
@@ -519,7 +525,9 @@ namespace Ginger.Run
                         // 
                         bool automatedOpeningFlag = false;
                         if (action.FlowControls.Where(x => x.FlowControlAction == eFlowControlAction.FailureIsAutoOpenedDefect && action.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList().Count > 0)
+                        {
                             automatedOpeningFlag = true;
+                        }
 
                         // OMG !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -773,9 +781,14 @@ namespace Ginger.Run
             {
                 //handle root directory
                 if (Directory.Exists(logFolderPath))
+                {
                     executionLoggerHelper.CleanDirectory(logFolderPath);
+                }
                 else
+                {
                     Directory.CreateDirectory(logFolderPath);
+                }
+
                 GingerExecutionEngine Gr = new GingerExecutionEngine(new GingerRunner());
                 mCurrentBusinessFlow = businessFlow;
                 businessFlow.OffilinePropertiesPrep(logFolderPath);

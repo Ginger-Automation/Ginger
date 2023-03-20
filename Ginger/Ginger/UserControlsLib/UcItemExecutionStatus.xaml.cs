@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ namespace Ginger.UserControlsLib.UCListView
     /// </summary>
     public partial class UcItemExecutionStatus : UserControl
     {
-        public enum eStatusViewMode { Polygon, Image, Label}
+        public enum eStatusViewMode { Polygon, Image, Label }
 
         public static readonly DependencyProperty StatusViewModeProperty = DependencyProperty.Register("StatusViewMode", typeof(eStatusViewMode), typeof(UcItemExecutionStatus),
                              new FrameworkPropertyMetadata(OnStatusViewModePropertyChanged));
@@ -48,7 +48,7 @@ namespace Ginger.UserControlsLib.UCListView
             UcItemExecutionStatus uc = (UcItemExecutionStatus)d;
             uc.StatusViewMode = (eStatusViewMode)e.NewValue;
         }
-        
+
         public double StatusSize
         {
             get
@@ -67,7 +67,7 @@ namespace Ginger.UserControlsLib.UCListView
                 }
             }
             set
-            {                
+            {
                 if (StatusViewMode == eStatusViewMode.Polygon)
                 {
                     xPolygonStatusImagePnl.Height = value;
@@ -103,7 +103,7 @@ namespace Ginger.UserControlsLib.UCListView
         private static void OnStatusPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             UcItemExecutionStatus itemExecutionStatus = (UcItemExecutionStatus)d;
-            itemExecutionStatus.Status = (eRunStatus)e.NewValue;            
+            itemExecutionStatus.Status = (eRunStatus)e.NewValue;
         }
 
         public UcItemExecutionStatus()
@@ -121,7 +121,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void SetViewModeControls()
         {
-            switch(StatusViewMode)
+            switch (StatusViewMode)
             {
                 case eStatusViewMode.Polygon:
                     xPolygonStatusPnl.Visibility = Visibility.Visible;
@@ -201,11 +201,11 @@ namespace Ginger.UserControlsLib.UCListView
                     xPolygonStatusImagePnl.Children.Clear();
                     Amdocs.Ginger.UserControls.ImageMakerControl xPolygonStatusImage = new Amdocs.Ginger.UserControls.ImageMakerControl();
                     xPolygonStatusImage.ImageType = mStatusImage;
-                    xPolygonStatusImage.Foreground = Brushes.White;                                        
+                    xPolygonStatusImage.Foreground = Brushes.White;
                     xPolygonStatusImage.SetAsFontImageWithSize = StatusSize;
                     xPolygonStatusImage.Width = StatusSize;
                     xPolygonStatusImage.Height = StatusSize;
-                    xPolygonStatusImage.ImageToolTip= statusLbl;
+                    xPolygonStatusImage.ImageToolTip = statusLbl;
                     xPolygonStatusImage.ToolTip = statusLbl;
                     xPolygonStatusImagePnl.Children.Add(xPolygonStatusImage);
                     break;

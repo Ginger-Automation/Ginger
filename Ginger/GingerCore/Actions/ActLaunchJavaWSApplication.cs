@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ limitations under the License.
 
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
@@ -33,6 +32,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace GingerCore.Actions
 {
@@ -141,7 +141,9 @@ namespace GingerCore.Actions
                 if (mURL == string.Empty)//backward support
                 {
                     if (InputValues.Where(x => x.Param == "URL" && x.Value != string.Empty).FirstOrDefault() != null)
+                    {
                         mURL = GetInputParamValue("URL");
+                    }
                 }
                 return mURL;
             }
@@ -207,9 +209,13 @@ namespace GingerCore.Actions
                 if (mPort == string.Empty)//backward support
                 {
                     if (InputValues.Where(x => x.Param == "Port" && x.Value != string.Empty).FirstOrDefault() != null)
+                    {
                         mPort = GetInputParamValue("Port");
+                    }
                     else
+                    {
                         mPort = "8888";
+                    }
                 }
                 return mPort;
             }
@@ -335,14 +341,23 @@ namespace GingerCore.Actions
             mJavaApplicationProcessID = -1;
 
             //calculate the arguments
-            if (!CalculateArguments()) return;
+            if (!CalculateArguments())
+            {
+                return;
+            }
 
             //validate the arguments
-            if (!ValidateArguments()) return;
+            if (!ValidateArguments())
+            {
+                return;
+            }
 
             if (mLaunchJavaApplication)
             {
-                if (!PerformLaunchJavaApplication()) return;
+                if (!PerformLaunchJavaApplication())
+                {
+                    return;
+                }
             }
 
             if (mLaunchWithAgent)
@@ -373,7 +388,10 @@ namespace GingerCore.Actions
                     mAttachAgentTask = Task.Run(() =>
                     {
                         mProcessIDForAttach = -1;
-                        if (!PerformAttachGingerAgent()) return;
+                        if (!PerformAttachGingerAgent())
+                        {
+                            return;
+                        }
 
                         if (mPort_Calc.Equals(Fields.DynamicPortPlaceHolder) &&
                             mPortValueAutoResetEvent != null)
@@ -468,7 +486,9 @@ namespace GingerCore.Actions
 
                 mJavaAgentPath_Calc = CalculateValue(mJavaAgentPath);
                 if (string.IsNullOrEmpty(mJavaAgentPath_Calc))
+                {
                     mJavaAgentPath_Calc = GetGingerAgentsDefaultFolder();
+                }
 
                 CalculatePortValue();
 
@@ -628,8 +648,12 @@ namespace GingerCore.Actions
                 //arrange java application command params
                 List<string> commandParams = new List<string>();
                 foreach (ActInputValue AIV in this.InputValues)
+                {
                     if (!string.IsNullOrEmpty(AIV.Param) && !string.IsNullOrEmpty(AIV.ValueForDriver) && string.Compare(AIV.Param, "URL", true) != 0 && string.Compare(AIV.Param, "Port", true) != 0 && string.Compare(AIV.Param, "PortConfigParam", true) != 0)
+                    {
                         commandParams.Add(AIV.Param + "=" + AIV.ValueForDriver);
+                    }
+                }
 
                 string commandParams_OneLine = string.Empty;
                 if (commandParams.Count > 0)
@@ -639,39 +663,56 @@ namespace GingerCore.Actions
                         if (commandParams_OneLine == string.Empty)
                         {
                             if (isJNLP)
+                            {
                                 commandParams_OneLine += "?" + param;
+                            }
                             else
+                            {
                                 commandParams_OneLine += " " + "\"" + param + "\"";
+                            }
                         }
                         else
                         {
                             if (isJNLP)
+                            {
                                 commandParams_OneLine += "&" + param;
+                            }
                             else
+                            {
                                 commandParams_OneLine += " " + "\"" + param + "\"";
+                            }
                         }
                     }
                 }
 
                 //command
                 if (URLExtensionType.JNLP == mURLExtension)
+                {
                     command = "\"" + mURL_Calc + "\"";
-
+                }
                 else if (URLExtensionType.JAR == mURLExtension)
+                {
                     command = "-jar \"" + mURL_Calc + "\"";
+                }
 
                 // If it java exe then directly use the exe path as java executor
                 else
+                {
                     javaExecuter = mURL_Calc;
+                }
 
                 if (commandParams_OneLine != string.Empty)
+                {
                     command += commandParams_OneLine;
+                }
 
                 //run commnad
                 ExecuteCommandAsync(new List<string> { javaExecuter, command });
 
                 if (String.IsNullOrEmpty(Error) != true)
+                {
                     return false;
+                }
 
                 if (mWaitForWindowWhenDoingLaunch && !mLaunchWithAgent) // If wait for window is true and attach agent is false we wait for window to load. Else wait will be done when doing attach
                 {
@@ -729,7 +770,9 @@ namespace GingerCore.Actions
                 ExecuteCommandAsync(new List<string> { javaExecuter, command });
 
                 if (String.IsNullOrEmpty(Error) != true)
+                {
                     return false;
+                }
 
                 return true;
             }
@@ -823,7 +866,9 @@ namespace GingerCore.Actions
                     }
                     // Go out after max seconds
                     if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
+                    {
                         break;
+                    }
 
                     Thread.Sleep(1000);
                 }

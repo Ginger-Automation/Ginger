@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -55,7 +55,8 @@ namespace GingerCoreCommonTest.VariableTests
         }
         #endregion
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ListVar_TestVariableType()
         {
             //Arrange
@@ -68,7 +69,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("List", varType, "List Variable Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ListVar_TestVariableUIType()
         {
             //Arrange
@@ -81,7 +83,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(varType.Contains("List"), "List Variable UI Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ListVar_TestImageType()
         {
             //Arrange
@@ -96,7 +99,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(eImageType.VariableList, eImageType, "Image Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ListVar_TestGenerateAutoValue()
         {
             //Arrange
@@ -117,7 +121,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("Apple", strValue, "GenerateAutoValue");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ListVar_TestGenerateAutoValuesSequence()
         {
             //Arrange
@@ -129,7 +134,7 @@ namespace GingerCoreCommonTest.VariableTests
             VariableList variableList = new VariableList("TestList", lstTemp);
             variableList.RandomOrder = false;
 
-            for (int iVar=0; iVar<lstTemp.Count; iVar++)
+            for (int iVar = 0; iVar < lstTemp.Count; iVar++)
             {
                 //Act
                 string errorMsg = string.Empty;
@@ -141,7 +146,8 @@ namespace GingerCoreCommonTest.VariableTests
             }
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ListVar_TestRandomGenerateAutoValue()
         {
             //Arrange
@@ -160,7 +166,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(lstTemp.Contains(strValue), "Random GenerateAutoValue");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ListVar_TestRandomGenerateAutoValueNotExists()
         {
             //Arrange
@@ -176,7 +183,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsFalse(lstTemp.Contains("Dummy"), "Random GenerateAutoValue");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ListVar_TestFormula()
         {
             //Arrange
@@ -193,7 +201,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(formulaExpectedResult, formulaResult, "List Formula");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ListVar_TestFormulaForEmptyList()
         {
             //Arrange
@@ -208,7 +217,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(formulaExpectedResult, formulaResult, "List Formula");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ListVar_TestFormulaNoList()
         {
             //Arrange
@@ -221,7 +231,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(string.Empty, formulaResult, "List Formula");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ListVar_TestResetIndexValue()
         {
             //Arrange
@@ -238,7 +249,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(lstTemp[0], variableList.Value, "Reset Index Value");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ListVar_TestResetIndexValueForEmptyList()
         {
             //Arrange

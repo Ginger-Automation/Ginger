@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ using GingerCore.ALM.QC;
 using GingerCore.ALM.ZephyrEnt.Bll;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -599,24 +598,24 @@ namespace Ginger.ALM.Repository
                 if (almTestSet.TestSetID != almTestSet.TestSetInternalID2)
                 {
                     TreeNode treeNode = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetTestRepositoryFolderById(Convert.ToInt32(almTestSet.TestSetID));
-                    if(treeNode != null)
+                    if (treeNode != null)
                     {
                         almTestSet.TestSetName = treeNode.name;
                     }
                 }
                 else
                 {
-                    List<BaseResponseItem>  testSetResponseItems = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetZephyrEntPhaseById(Convert.ToInt32(almTestSet.TestSetID));
+                    List<BaseResponseItem> testSetResponseItems = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetZephyrEntPhaseById(Convert.ToInt32(almTestSet.TestSetID));
                     if (testSetResponseItems is not null && testSetResponseItems.Count > 0)
                     {
                         almTestSet.TestSetName = testSetResponseItems[0].TryGetItem("name").ToString();
                     }
                 }
-                
+
                 // Add test cases
                 almTestSet = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).ImportTestSetData(almTestSet);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Failed to get Test Set data, {System.Reflection.MethodBase.GetCurrentMethod().Name}: Error - {ex.Message} ");
             }

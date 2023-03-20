@@ -4231,7 +4231,8 @@ private PayLoad SetComponentFocus(Component c)
 			if (c.getName()!=null && c.getName().contains("canvas") || 
 					c.getClass().toString().contains("com.jniwrapper.win32.ie.aw")||
 					(c.getName()!=null && c.getName().contains("LightWeightWidget"))|| //  added to support live spy in JxBrowserBrowserComponent
-					c.getClass().toString().contains("LightWeightWidget"))
+					c.getClass().toString().contains("LightWeightWidget") ||
+					c.getClass().toString().contains("jxbrowser"))
 			{
 				Component browserComponent=mSwingHelper.GetParentBrowser(c);
 				String cXpath=mSwingHelper.GetComponentXPath(browserComponent);

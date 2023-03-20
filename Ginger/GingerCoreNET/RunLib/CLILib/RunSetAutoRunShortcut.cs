@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public bool CreateShortcut;
 
         public bool StartExecution;
-        public string ShortcutFileName{ get; set; }
+        public string ShortcutFileName { get; set; }
 
 
         string mShortcutFolderPath = null;
@@ -136,8 +136,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     command = "\"" + ExecuterFullPath + "\" " + args;
                 }
-                    return command;
-                
+                return command;
+
             }
         }
     }

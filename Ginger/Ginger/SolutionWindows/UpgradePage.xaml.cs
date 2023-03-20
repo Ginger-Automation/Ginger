@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,9 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
-using GingerCore.Repository;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,7 +29,7 @@ using System.Windows.Media;
 
 namespace Ginger.SolutionWindows
 {
-    
+
 
     /// <summary>
     /// Interaction logic for SolutionUpgradePage.xaml
@@ -53,7 +51,7 @@ namespace Ginger.SolutionWindows
 
             mViewMode = viewMode;
             mSolutionFolder = solutionFolder;
-            mSolutionName = solutionName;           
+            mSolutionName = solutionName;
             mFilesToShow = filesToShow;
 
             SetControls();
@@ -69,7 +67,7 @@ namespace Ginger.SolutionWindows
                     string BackupFolder = Path.Combine(mSolutionFolder, @"Backups\Backup_" + DateTime.Now.ToString("MM_dd_yyyy_HH_mm"));
                     BackupFolderTextBox.Text = BackupFolder;
                     FilesListBox.ItemsSource = mFilesToShow;
-                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DoNotAskAgainChkbox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DoNotAskAgainChkbox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
                     break;
 
                 case SolutionUpgradePageViewMode.FailedUpgradeSolution:
@@ -78,7 +76,7 @@ namespace Ginger.SolutionWindows
                     BackupFolderTextBox.Visibility = Visibility.Collapsed;
                     BackupFolderPanel.Visibility = Visibility.Collapsed;
                     FilesListLable.Content = "Items which Failed to be Upgraded:";
-                    FilesListBox.ItemsSource = mFailedFiles;                   
+                    FilesListBox.ItemsSource = mFailedFiles;
                     break;
 
                 case SolutionUpgradePageViewMode.UpgradeGinger:
@@ -165,7 +163,7 @@ namespace Ginger.SolutionWindows
         private void DoUpgrade(string backupFolder)
         {
             NewRepositorySerializer newSerilizer = new NewRepositorySerializer();
-            mFailedFiles = new List<string>();          
+            mFailedFiles = new List<string>();
 
             // now do the upgrade file by file
             foreach (string filePathToConvert in mFilesToShow)
@@ -183,8 +181,8 @@ namespace Ginger.SolutionWindows
                     //first copy to backup folder
                     string BakFile = filePath.Replace(mSolutionFolder, backupFolder);
                     MakeSurePathExistforBakFile(BakFile);
-                        System.IO.File.Copy(filePath, BakFile, true);
-                    
+                    System.IO.File.Copy(filePath, BakFile, true);
+
                     //make sure backup was created
                     if (File.Exists(BakFile) == true)
                     {
@@ -199,12 +197,12 @@ namespace Ginger.SolutionWindows
                     else
                     {
                         mFailedFiles.Add(filePathToConvert);
-                    }                    
+                    }
                 }
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to upgrade the solution file '{0}'", filePath), ex);
-                    mFailedFiles.Add(filePathToConvert);                    
+                    mFailedFiles.Add(filePathToConvert);
                 }
             }
         }
@@ -213,11 +211,16 @@ namespace Ginger.SolutionWindows
         {
             string fileFolderPath = string.Empty;
             if (System.IO.Path.GetFileName(BakFile) != string.Empty)
+            {
                 fileFolderPath = BakFile.Replace(System.IO.Path.GetFileName(BakFile), string.Empty);
+            }
             else
+            {
                 fileFolderPath = BakFile;
+            }
+
             fileFolderPath = fileFolderPath.TrimEnd('\\');
-            string path = string.Empty;            
+            string path = string.Empty;
             if (fileFolderPath[0] == '\\')//for supporting shared folders paths
             {
                 fileFolderPath = fileFolderPath.TrimStart('\\');
@@ -226,11 +229,13 @@ namespace Ginger.SolutionWindows
             string[] PathFolders = fileFolderPath.Split('\\');
             path += PathFolders[0] + "\\";//driver or machine name
             //process all paths folders
-            for (int i=1; i<PathFolders.Length; i++)
-            {                
+            for (int i = 1; i < PathFolders.Length; i++)
+            {
                 path += PathFolders[i] + "\\";
-                if (!Directory.Exists(path))                
-                    Directory.CreateDirectory(path);                
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
             }
         }
 
@@ -240,7 +245,10 @@ namespace Ginger.SolutionWindows
             dlg.Description = "Select Backup Folder";
             dlg.RootFolder = Environment.SpecialFolder.MyComputer;
             if (mSolutionFolder != string.Empty)
+            {
                 dlg.SelectedPath = mSolutionFolder;
+            }
+
             dlg.ShowNewFolderButton = true;
             System.Windows.Forms.DialogResult result = dlg.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)

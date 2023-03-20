@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
@@ -30,7 +29,6 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
 
 namespace UnitTests.NonUITests
 {
@@ -44,14 +42,14 @@ namespace UnitTests.NonUITests
         static WebServicesDriver mDriver = new WebServicesDriver(mBF);
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {            
+        {
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "Output Simulation";
             mBF.Active = true;
 
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.WebServices;            
+            p.PlatformType = ePlatformType.WebServices;
 
             wsAgent = new Agent();
             AgentOperations agentOperations = new AgentOperations(wsAgent);
@@ -93,7 +91,8 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SimulatedOuputGingerRunnerFlagOn()
         {
 
@@ -134,15 +133,20 @@ namespace UnitTests.NonUITests
                     if ((val.SimulatedActual != null) && (val.Actual != val.SimulatedActual))
                     {
                         if (val.Actual.ToString() == "OK")
+                        {
                             Assert.AreEqual(val.Actual, "OK");
+                        }
                     }
                     if ((val.SimulatedActual != null) && (val.Actual == val.SimulatedActual))
+                    {
                         Assert.Fail();
+                    }
                 }
             }
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SimulatedOuputActionFlagOn()
         {
             Activity Activity2 = new Activity();
@@ -170,7 +174,7 @@ namespace UnitTests.NonUITests
             simulateOutput.SimulatedActual = "TestSimulation";
 
             mBF.Activities[0].Acts.Add(restAct);
-            
+
 
             mDriver.StartDriver();
             mGR.RunInSimulationMode = true;
@@ -184,15 +188,20 @@ namespace UnitTests.NonUITests
                     if ((val.SimulatedActual != null) && (val.Actual != val.SimulatedActual))
                     {
                         if (val.Actual.ToString() == "OK")
+                        {
                             Assert.AreEqual(val.Actual, "OK");
+                        }
                     }
                     if ((val.SimulatedActual != null) && (val.Actual == val.SimulatedActual))
+                    {
                         Assert.Fail();
+                    }
                 }
             }
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SimulatedOutputWithVETest()
         {
             Activity Activity2 = new Activity();
@@ -235,16 +244,21 @@ namespace UnitTests.NonUITests
                     if ((val.SimulatedActual != null) && (val.Actual != val.SimulatedActual))
                     {
                         if (val.Actual.ToString() == "simulated VE")
+                        {
                             Assert.AreEqual(val.Actual, "simulated VE");
+                        }
                     }
                     if ((val.SimulatedActual != null) && (val.Actual == val.SimulatedActual))
+                    {
                         Assert.Fail();
+                    }
                 }
             }
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SimulatedOutputTest()
         {
             Activity Activity3 = new Activity();
@@ -275,7 +289,7 @@ namespace UnitTests.NonUITests
             simulateOutput.Expected = "simulated ok";
 
             restAct.ReturnValues.Add(simulateOutput);
-            
+
             mBF.Activities[0].Acts.Add(restAct);
             mGR.RunInSimulationMode = true;
 
@@ -283,8 +297,9 @@ namespace UnitTests.NonUITests
             mGR.Executor.RunRunner();
 
             if (restAct.ReturnValues[0].SimulatedActual == restAct.ReturnValues[0].Actual)
+            {
                 Assert.AreEqual(restAct.ReturnValues[0].Actual, restAct.ReturnValues[0].ExpectedCalculated);
-
+            }
         }
     }
 }

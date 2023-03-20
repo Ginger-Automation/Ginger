@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,13 +17,10 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
-using Amdocs.Ginger.Common;
-using GingerCore.Actions;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.Drivers.PowerBuilder;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 
 namespace Ginger.WindowExplorer.PowerBuilder
@@ -44,18 +41,21 @@ namespace Ginger.WindowExplorer.PowerBuilder
         }
 
         private void ShowGridData()
-        {             
+        {
             DataTable tempTable = new DataTable("table");
             UIAuto.AutomationElement AEHeader = UIAuto.TreeWalker.RawViewWalker.GetFirstChild(AEControl);
-            
+
             //Calculate total cells of Grid
-            while (AEHeader != null) 
+            while (AEHeader != null)
             {
                 string ColName = AEHeader.GetCurrentPropertyValue(UIAuto.ValuePatternIdentifiers.ValueProperty).ToString();
                 ColName += " (" + AEHeader.Current.Name + ")";
                 tempTable.Columns.Add(ColName);
                 AEHeader = UIAuto.TreeWalker.RawViewWalker.GetNextSibling(AEHeader);
-                if (AEHeader.Current.ControlType != UIAuto.ControlType.Text) break;
+                if (AEHeader.Current.ControlType != UIAuto.ControlType.Text)
+                {
+                    break;
+                }
             }
 
             UIAuto.AutomationElement AECell = AEHeader;
@@ -67,20 +67,23 @@ namespace Ginger.WindowExplorer.PowerBuilder
                     //TODO: based on cell type get the value for check box get is checked
                     dr[j] = AECell.GetCurrentPropertyValue(UIAuto.ValuePatternIdentifiers.ValueProperty).ToString();
                     AECell = UIAuto.TreeWalker.RawViewWalker.GetNextSibling(AECell);
-                    if (AECell == null) break;
+                    if (AECell == null)
+                    {
+                        break;
+                    }
                 }
                 tempTable.Rows.Add(dr);
             }
             GridData.AutoGenerateColumns = true;
             GridData.ItemsSource = tempTable.DefaultView;
         }
-        
+
         public void ShowDetails()
         {
             grdCondition.Visibility = Visibility.Collapsed;
             grdIndex.Visibility = Visibility.Collapsed;
         }
-      /// <summary>
+        /// <summary>
         /// Action on selecting a value from the drop down
         /// </summary>
         /// <param name="sender"></param>
@@ -112,7 +115,7 @@ namespace Ginger.WindowExplorer.PowerBuilder
                 grdRandom.Visibility = Visibility.Visible;
             }
         }
-              
+
         /// <summary>
         /// Filtering the grid based on condition button action
         /// </summary>

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,8 +35,8 @@ namespace GingerCore.Drivers
     {
         public WebBrowserPage()
         {
-            InitializeComponent();            
-            
+            InitializeComponent();
+
             SetBrowserFeatures();
         }
 
@@ -57,13 +57,16 @@ namespace GingerCore.Drivers
 
         public WebBrowser GetBrowser()
         {
-            return browser;            
+            return browser;
         }
 
         public string GetElementXPath(mshtml.IHTMLElement element)
         {
             if (element == null)
+            {
                 return "";
+            }
+
             mshtml.IHTMLElement currentNode = element;
             ArrayList path = new ArrayList();
 
@@ -74,7 +77,9 @@ namespace GingerCore.Drivers
                 {
                     path.Add(pe);
                     if (pe.IndexOf("@id") != -1)
+                    {
                         break;  // Found an ID, no need to go upper, absolute path is OK
+                    }
                 }
                 currentNode = currentNode.parentElement;
             }
@@ -86,7 +91,10 @@ namespace GingerCore.Drivers
         {
             string nodeExpr = node.tagName;
             if (nodeExpr == null)  // Eg. node = #text
+            {
                 return null;
+            }
+
             if (node.id != "" && node.id != null)
             {
                 nodeExpr += "[@id='" + node.id + "']";
@@ -97,7 +105,7 @@ namespace GingerCore.Drivers
 
             // Find rank of node among its type in the parent
             int rank = 1;
-            mshtml.IHTMLDOMNode nodeDom = node as mshtml.IHTMLDOMNode;            
+            mshtml.IHTMLDOMNode nodeDom = node as mshtml.IHTMLDOMNode;
             mshtml.IHTMLDOMNode psDom = nodeDom.previousSibling;
 
             mshtml.IHTMLElement ps = psDom as mshtml.IHTMLElement;
@@ -107,8 +115,8 @@ namespace GingerCore.Drivers
                 {
                     rank++;
                 }
-                
-                    psDom = psDom.previousSibling;
+
+                psDom = psDom.previousSibling;
                 ps = psDom as mshtml.IHTMLElement;
             }
             if (rank > 1)
@@ -139,25 +147,27 @@ namespace GingerCore.Drivers
             foreach (object item in items)
             {
                 if (item == null)
+                {
                     continue;
+                }
 
                 sb.Append(delimiter);
                 sb.Append(item);
             }
             return sb.ToString();
         }
-        
+
         // -----------------------------------------------------------------------------------------------------------------------
         // Get Element by XPath - using JS injection and wgxpath code
         // -----------------------------------------------------------------------------------------------------------------------
 
         public mshtml.IHTMLElement GetElementByXPath(string Xpath)
-        { 
+        {
             mshtml.HTMLDocument doc = (mshtml.HTMLDocument)browser.Document;
-            
+
             //Check if it is better to create temp js file instead of pushing the whole code to the html doc
             //TODO: inject only once            
-            var v= doc.body.getAttribute("data-GingerXpath");
+            var v = doc.body.getAttribute("data-GingerXpath");
             if (v is System.DBNull)
             {
                 injectScriptCode(doc, JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.wgxpath_install));
@@ -176,7 +186,7 @@ namespace GingerCore.Drivers
 
             script.text = JSCode;
 
-            InjectJSScript(doc, script);            
+            InjectJSScript(doc, script);
         }
 
         public void InjectJSScript(mshtml.HTMLDocument doc, IHTMLScriptElement JavaSCript)
@@ -211,13 +221,13 @@ namespace GingerCore.Drivers
         public mshtml.IHTMLElement GetHtmlElement(string xPathQuery)
         {
             try
-            {                
-                string code = string.Format("getXPath(\"{0}\")", xPathQuery);                              
-                dynamic el = InvokeJS(code); 
+            {
+                string code = string.Format("getXPath(\"{0}\")", xPathQuery);
+                dynamic el = InvokeJS(code);
                 return (mshtml.IHTMLElement)el;
             }
-            catch(Exception ex)
-            {                
+            catch (Exception ex)
+            {
                 Reporter.ToUser(eUserMsgKey.JSExecutionFailed, ex.Message);
                 return null;
             }

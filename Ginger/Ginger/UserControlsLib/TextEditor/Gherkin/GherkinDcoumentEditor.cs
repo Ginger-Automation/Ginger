@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,10 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Plugin.Core;
+using Amdocs.Ginger.Repository;
 using Ginger.GherkinLib;
 using Ginger.UserControlsLib.TextEditor.Common;
-using GingerCore;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
@@ -28,13 +30,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using GingerPlugIns.TextEditorLib;
-using Ginger.TagsLib;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Plugin.Core;
 
 namespace Ginger.UserControlsLib.TextEditor.Gherkin
 {
@@ -55,15 +51,19 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             }
         }
 
-        public override ITextEditorPage EditorPage { get {
-                return new GherkinPage();                
-            } }
+        public override ITextEditorPage EditorPage
+        {
+            get
+            {
+                return new GherkinPage();
+            }
+        }
 
         public override IHighlightingDefinition HighlightingDefinition
         {
             get
             {
-                return GetHighlightingDefinitionFromResource(Properties.Resources.GherkinHighlighting);                
+                return GetHighlightingDefinitionFromResource(Properties.Resources.GherkinHighlighting);
             }
         }
 
@@ -85,20 +85,37 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         public override List<ICompletionData> GetCompletionData(string txt, SelectedContentArgs SelectedContentArgs)
         {
             List<ICompletionData> list = new List<ICompletionData>();
-            
-                //TODO: fix me - only when in the beginning of line - allow lower case too
+
+            //TODO: fix me - only when in the beginning of line - allow lower case too
             string CurrentLine = SelectedContentArgs.CaretLineText();
             while (CurrentLine.StartsWith(" ") || CurrentLine.StartsWith("\t"))
+            {
                 CurrentLine = CurrentLine.Substring(1);
+            }
 
             bool IsAtStartOfLine = CurrentLine.Length == 1;
             bool IsAfterKeyWord = CurrentLine.StartsWith("Given") || CurrentLine.StartsWith("When") || CurrentLine.StartsWith("Then") || CurrentLine.StartsWith("And");
             if (SelectedContentArgs.IsAtStartOfLine() || IsAtStartOfLine)
             {
-                if (txt.ToUpper() == "G") list.Add(new GherkinTextCompletionData("Given"));
-                if (txt.ToUpper() == "W") list.Add(new GherkinTextCompletionData("When"));
-                if (txt.ToUpper() == "T") list.Add(new GherkinTextCompletionData("Then"));
-                if (txt.ToUpper() == "A") list.Add(new GherkinTextCompletionData("And"));
+                if (txt.ToUpper() == "G")
+                {
+                    list.Add(new GherkinTextCompletionData("Given"));
+                }
+
+                if (txt.ToUpper() == "W")
+                {
+                    list.Add(new GherkinTextCompletionData("When"));
+                }
+
+                if (txt.ToUpper() == "T")
+                {
+                    list.Add(new GherkinTextCompletionData("Then"));
+                }
+
+                if (txt.ToUpper() == "A")
+                {
+                    list.Add(new GherkinTextCompletionData("And"));
+                }
 
                 if (txt == " ")
                 {
@@ -119,35 +136,53 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                 if (txt == " ")
                 {
                     if (OptimizedSteps != null)
-                    foreach (GherkinStep GH in OptimizedSteps)
                     {
-
-                        if (CompletionWindowSize < GH.Text.Length)
+                        foreach (GherkinStep GH in OptimizedSteps)
                         {
-                            CompletionWindowSize = GH.Text.Length;
+
+                            if (CompletionWindowSize < GH.Text.Length)
+                            {
+                                CompletionWindowSize = GH.Text.Length;
+                            }
+                            list.Add(GETVTDM(GH));
                         }
-                        list.Add(GETVTDM(GH));
                     }
 
                     return list;
                 }
 
                 while (CurrentLine.StartsWith(" ") || CurrentLine.StartsWith("\t"))
+                {
                     CurrentLine = CurrentLine.Substring(1);
+                }
 
                 if (CurrentLine.StartsWith("Given"))
+                {
                     CurrentLine = CurrentLine.Substring(5);
+                }
+
                 if (CurrentLine.StartsWith("When"))
+                {
                     CurrentLine = CurrentLine.Substring(4);
+                }
+
                 if (CurrentLine.StartsWith("Then"))
+                {
                     CurrentLine = CurrentLine.Substring(4);
+                }
+
                 if (CurrentLine.StartsWith("And"))
+                {
                     CurrentLine = CurrentLine.Substring(3);
+                }
 
                 while (CurrentLine.StartsWith(" ") || CurrentLine.StartsWith("\t"))
+                {
                     CurrentLine = CurrentLine.Substring(1);
+                }
 
                 if (CurrentLine != string.Empty && OptimizedSteps != null)
+                {
                     foreach (GherkinStep GH in OptimizedSteps)
                     {
                         if (GH.Text.ToUpper().Contains(CurrentLine.ToUpper()))
@@ -159,6 +194,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                             list.Add(GETVTDM(GH));
                         }
                     }
+                }
             }
             //TODO:: Need to check usage
             /*if (CurrentLine.Contains("@") && CurrentLine.LastIndexOf(" ") != -1)
@@ -179,11 +215,13 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
                         ICompletionData TCD = list.Where(x => x.Text == GT.Name).FirstOrDefault();
                         if (TCD == null)
+                        {
                             list.Add(GetTagName(GT));
+                        }
                     }
 
-                }                
-                foreach (RepositoryItemTag tag in  WorkSpace.Instance.Solution.Tags )
+                }
+                foreach (RepositoryItemTag tag in WorkSpace.Instance.Solution.Tags)
                 {
                     string tagname = "@" + tag.Name;
                     if (!CurrentLine.ToUpper().Contains(tagname.ToUpper()))
@@ -195,7 +233,9 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
                         ICompletionData TCD = list.Where(x => x.Text == tagname).FirstOrDefault();
                         if (TCD == null)
+                        {
                             list.Add(GetTagName(tag));
+                        }
                     }
                 }
             }
@@ -216,10 +256,10 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         {
             GherkinTextCompletionData TCD = new GherkinTextCompletionData(GS.Text);
             TCD.Description = "Step: " + GS.Text + " - " + GS.AutomationStatus;
-            
+
             BitmapImage b = new BitmapImage();
             b.BeginInit();
-            b.UriSource = new Uri(@"/Images/@AddActivity_16x16.png", UriKind.RelativeOrAbsolute); 
+            b.UriSource = new Uri(@"/Images/@AddActivity_16x16.png", UriKind.RelativeOrAbsolute);
             b.EndInit();
             TCD.Image = b;
 
@@ -256,11 +296,15 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
         public override Page GetSelectedContentPageEditor(SelectedContentArgs SelectedContentArgs)
         {
-            ReadOnlyCollection<FoldingSection> list = SelectedContentArgs.GetFoldingsAtCaretPosition();  
-            if (list == null) return null;
+            ReadOnlyCollection<FoldingSection> list = SelectedContentArgs.GetFoldingsAtCaretPosition();
+            if (list == null)
+            {
+                return null;
+            }
+
             if (list.Count > 0)
             {
-                string txt = list[0].TextContent;         
+                string txt = list[0].TextContent;
                 if (txt.Contains("Examples:"))
                 {
                     //TODO: check if 0 or something else
@@ -268,7 +312,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                     return p;
                 }
             }
-            
+
             return null;
         }
 

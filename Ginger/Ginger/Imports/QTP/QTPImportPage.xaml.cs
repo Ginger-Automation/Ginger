@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ namespace Ginger.Imports.QTP
 
         //Objects
         public ObservableList<ConvertedCodeLine> mCCL = new ObservableList<ConvertedCodeLine>();
-        public BusinessFlow mBusinessFlow = new BusinessFlow(); 
+        public BusinessFlow mBusinessFlow = new BusinessFlow();
         public CommonFunctionConvertor mCommonFunctionConvertor = new CommonFunctionConvertor();
 
         public QTPImportPage()
@@ -83,13 +83,13 @@ namespace Ginger.Imports.QTP
 
             eFilter mFilter = eFilter.AllLines;
             GingerCore.General.FillComboFromEnumObj(FilterComboBox, mFilter);
-            
+
             InitCommonFunctionMappingUCGrid();
 
             TargetApplication sTarget = new TargetApplication();
-            if ( WorkSpace.Instance.Solution != null)
+            if (WorkSpace.Instance.Solution != null)
             {
-                sTarget.AppName =  WorkSpace.Instance.Solution.MainApplication.ToString();
+                sTarget.AppName = WorkSpace.Instance.Solution.MainApplication.ToString();
                 sTarget.Selected = true;
                 TargetApplicationsList.Add(sTarget);
                 mBusinessFlow.TargetApplications = TargetApplicationsList;
@@ -111,7 +111,7 @@ namespace Ginger.Imports.QTP
             defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = CommonFunctionMapping.Fields.Function_Name, Header = "Function_Name", WidthWeight = 10, });
             defView.GridColsView.Add(new GridColView() { Field = CommonFunctionMapping.Fields.Action_Description, Header = "Action_Description", WidthWeight = 10, BindingMode = BindingMode.OneWay });
-            
+
             CommonFunctionMappingUCGrid.SetAllColumnsDefaultView(defView);
             CommonFunctionMappingUCGrid.InitViewItems();
         }
@@ -120,7 +120,7 @@ namespace Ginger.Imports.QTP
         {
             Act a = ((CommonFunctionMapping)CommonFunctionMappingUCGrid.CurrentItem).TargetAction;
 
-            ActionEditPage actedit = new ActionEditPage(a);            
+            ActionEditPage actedit = new ActionEditPage(a);
             actedit.ShowAsWindow();
         }
 
@@ -135,7 +135,7 @@ namespace Ginger.Imports.QTP
             Button SaveBusinessFlowButton = new Button();
             SaveBusinessFlowButton.Content = "Save to " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
             SaveBusinessFlowButton.Click += new RoutedEventHandler(SaveBusinessFlowButton_Button_Click);
-            
+
             // for "Clear" Button in dialog
             Button ClearGrid = new Button();
             ClearGrid.Content = "Clear Grid";
@@ -152,7 +152,7 @@ namespace Ginger.Imports.QTP
         private void ProcessUFTObjectRepository()
         {
             if (UFTObjectRepositoryTextBox.Text.Trim().Length == 0)
-            {                
+            {
                 Reporter.ToUser(eUserMsgKey.RepositoryNameCantEmpty);
                 return;
             }
@@ -242,12 +242,12 @@ namespace Ginger.Imports.QTP
         {
             if (BusinessFlowNameTextBox.Text.Trim().Length == 0)
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, (GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) +" name cannot be empty", "QTP to Ginger Converter", Amdocs.Ginger.Common.eUserMsgOption.OK));
-                return; 
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, (GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " name cannot be empty", "QTP to Ginger Converter", Amdocs.Ginger.Common.eUserMsgOption.OK));
+                return;
             }
             mBusinessFlow.Name = BusinessFlowNameTextBox.Text;
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(mBusinessFlow);
-            
+
 
             //TODO: open the new BF in Automate tab + make sure it is added to the tree
             Reporter.ToStatus(eStatusMsgKey.ScriptImported_RefreshSolution);
@@ -345,7 +345,7 @@ namespace Ginger.Imports.QTP
         public void LoadCommonFunctionMapping(object sender, RoutedEventArgs e)
         {
             //TODO: remove when save/load is working temp for testing only
-            
+
             CommonFunctionMapping CFM1 = new CommonFunctionMapping();
             ActGenElement a = new ActGenElement() { Description = "Click Web Element - {Param0}" };
             CFM1.Function_Name = "ClickWebElement";
@@ -398,26 +398,26 @@ namespace Ginger.Imports.QTP
             at.ActivityName = "Activity1";
             mBusinessFlow.Activities.Add(at);
             mBusinessFlow.CurrentActivity = at;
-            mBusinessFlow.CurrentActivity.TargetApplication =  WorkSpace.Instance.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
-            //App.BusinessFlow = mBusinessFlow;
-           
+            mBusinessFlow.CurrentActivity.TargetApplication = WorkSpace.Instance.Solution.MainApplication.ToString(); //"Google"; //TargetApplication.SelectedItem.ToString();
+                                                                                                                      //App.BusinessFlow = mBusinessFlow;
+
             //AddActionPage addAction = new AddActionPage();
             //addAction.ShowAsWindow(ActionsList);
 
             // We will get only one action currently
-            Act a =(Act) ActionsList[0];
+            Act a = (Act)ActionsList[0];
 
-            CommonFunctionMapping CFM = new CommonFunctionMapping();                        
+            CommonFunctionMapping CFM = new CommonFunctionMapping();
             CFM.TargetAction = a;
 
             mCommonFunctionConvertor.CommonFunctionMappingList.Add(CFM);
         }
 
         private void SetActivitiesGridView()
-        {            
+        {
             //# Default View for Import from UFT Dialog
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            defView.GridColsView = new ObservableList<GridColView>();            
+            defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = ConvertedCodeLine.Fields.Checked, WidthWeight = 5, StyleType = Ginger.UserControls.GridColView.eGridColStyleType.CheckBox, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = ConvertedCodeLine.Fields.CodeLine, Header = "Code Line", WidthWeight = 10 });
             defView.GridColsView.Add(new GridColView() { Field = ConvertedCodeLine.Fields.Converted, WidthWeight = 10 });
@@ -437,7 +437,7 @@ namespace Ginger.Imports.QTP
 
             if (result == System.Windows.Forms.DialogResult.OK)
             {
-                ScriptFileTextBox.Text = dlg.FileName;                
+                ScriptFileTextBox.Text = dlg.FileName;
                 path = ScriptFileTextBox.Text;
             }
         }
@@ -479,7 +479,7 @@ namespace Ginger.Imports.QTP
                         string midString = fName.Substring(pos);
                         fName = fName.Replace(midString, "");
                     }
-            
+
                     if (ListOfSelectedGuis.Contains(fName))
                     {
                         ConvertedCodeLine CL = new ConvertedCodeLine();
@@ -530,7 +530,7 @@ namespace Ginger.Imports.QTP
         }
 
         public void ProcessCodeLine(string CodeLine)
-        {            
+        {
             ConvertedCodeLine CCL = new ConvertedCodeLine();
             CCL.CodeLine = CodeLine;
             CCL.Status = ConvertedCodeLine.eStatus.Unknown;
@@ -573,7 +573,7 @@ namespace Ginger.Imports.QTP
             }
             else if (b.Contains("Public") && b.Contains("Sub"))
             {
-                  b = b.Replace("Public", "").Replace("Sub", "");
+                b = b.Replace("Public", "").Replace("Sub", "");
             }
             else if (b.Contains("Private") && b.Contains("Function"))
             {
@@ -585,25 +585,32 @@ namespace Ginger.Imports.QTP
             }
             else if (b.Contains("Function"))
             {
-                 b = b.Replace("Function", "");
+                b = b.Replace("Function", "");
             }
             else if (b.Contains("Sub"))
             {
                 b = b.Replace("Sub", "");
             }
-           
+
             FuncName = b.Trim();
             return FuncName;
         }
 
         //Create Activity for each function/Sub identified in script
         void CreateActivity(string ActivityName, ConvertedCodeLine CCL)
-        { 
+        {
             //Create a New Activity with the Function/Sub Name
             Activity a = new Activity();
-            a.Description = GingerDicser.GetTermResValue(eTermResKey.Activity)+" Created for " +  ActivityName + " function ";
-            if (ActivityName.Contains("fGui")) ActivityName = ActivityName.Replace("fGui", "");
-            if (ActivityName.Contains("_")) ActivityName = ActivityName.Replace("_", " ");
+            a.Description = GingerDicser.GetTermResValue(eTermResKey.Activity) + " Created for " + ActivityName + " function ";
+            if (ActivityName.Contains("fGui"))
+            {
+                ActivityName = ActivityName.Replace("fGui", "");
+            }
+
+            if (ActivityName.Contains("_"))
+            {
+                ActivityName = ActivityName.Replace("_", " ");
+            }
 
             ActivityName = Regex.Replace(ActivityName, "([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))", "$1 ");
 
@@ -636,12 +643,12 @@ namespace Ginger.Imports.QTP
             return xpath;
         }
 
-        private void ProcessActions(ConvertedCodeLine CCL) 
+        private void ProcessActions(ConvertedCodeLine CCL)
         {
             string CodeLine = CCL.CodeLine;
-            string value="";
+            string value = "";
             string SetValueinObject = "";
-            string varName="";
+            string varName = "";
             string xpath = "";
             string type = "";
             if (CodeLine.Contains("WebEdit"))
@@ -670,7 +677,7 @@ namespace Ginger.Imports.QTP
                 CCL.Converted = "New Action - ActGenElement.SetValue : LocateValue=" + act.LocateValue + ", Value=" + act.Value;
                 CCL.Status = ConvertedCodeLine.eStatus.ConvertedToScript;
             }
-            
+
             // Extract the WebEdit/WebCheckBox
             else if (CodeLine.Contains(".Set") || CodeLine.Contains(".set"))
             {
@@ -694,7 +701,7 @@ namespace Ginger.Imports.QTP
                 // for Values to Set
                 if (CodeLine.Contains("Set \""))  // For hard coded values
                 {
-                    value = GetStringBetween(CodeLine, "Set \"", CodeLine[CodeLine.Length-1].ToString());
+                    value = GetStringBetween(CodeLine, "Set \"", CodeLine[CodeLine.Length - 1].ToString());
                 }
                 else if (CodeLine.Contains("GlobalDictionary"))
                 {
@@ -733,7 +740,7 @@ namespace Ginger.Imports.QTP
 
             // Extract the WebButton/Link/Image/WebELemnt
             else if (CodeLine.Contains(".Click") || CodeLine.Contains(".click"))
-                {
+            {
 
                 if (CodeLine.Contains("WebButton"))
                 {
@@ -789,7 +796,7 @@ namespace Ginger.Imports.QTP
                 {
                     type = "List";
                     SetValueinObject = GetStringBetween(CodeLine, ".WebList(\"", "\")");
-                    
+
                     //Calling function to identify Locate By and Locate Value
                     xpath = ProcessLocateBy_Value(SetValueinObject);
                 }
@@ -819,7 +826,7 @@ namespace Ginger.Imports.QTP
                     varName = varName.Replace("(", "").Replace(")", "");
                     value = "{Var Name=" + varName + "}";
                 }
-                else 
+                else
                 {
                     varName = CodeLine.Substring(CodeLine.IndexOf("Select ")).Replace("Select ", "").Trim();
                     value = "{Var Name=" + varName + "}";
@@ -857,7 +864,7 @@ namespace Ginger.Imports.QTP
                 CCL.Status = ConvertedCodeLine.eStatus.ConvertedToScript;
             }
 
-             // Extract the URL launched using SystemUtil.Run
+            // Extract the URL launched using SystemUtil.Run
             else if (CodeLine.Contains("SystemUtil.Run") && CodeLine.Contains("iexplore.exe"))
             {
                 // Extract the URL
@@ -897,10 +904,10 @@ namespace Ginger.Imports.QTP
                 Pos2 = STR.Length;
             }
 
-            if ((Pos2 - Pos1)>0)
+            if ((Pos2 - Pos1) > 0)
             {
-                 str = STR.Substring(Pos1, Pos2 - Pos1);
-                 return str;
+                str = STR.Substring(Pos1, Pos2 - Pos1);
+                return str;
             }
             else
             {

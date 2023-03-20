@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,16 +25,17 @@ namespace GingerCoreNET.SourceControl
         public string LocalFolder { get; set; }
         public string SourceControlLocation { get; set; }
         private bool mExistInLocaly;
-        public bool ExistInLocaly {
-            get 
+        public bool ExistInLocaly
+        {
+            get
             {
                 return mExistInLocaly;
-            } 
-            set 
+            }
+            set
             {
                 mExistInLocaly = value;
                 OnPropertyChanged(nameof(ExistInLocaly));
-            } 
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

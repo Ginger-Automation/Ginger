@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,14 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
-using GingerCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -42,7 +35,7 @@ namespace Ginger.ValidationRules
             this.ValidatesOnTargetUpdated = true; // Trigger the validation on init binding (load/init form)
             this.ValidationStep = ValidationStep.UpdatedValue; // force the rule to run after the new value is converted and written back (fix for issue: property not updated/binded on empty value)
         }
-    
+
         private object GetBoundValue(object value)
         {
             if (value is BindingExpression)
@@ -69,7 +62,7 @@ namespace Ginger.ValidationRules
 
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
-            value = GetBoundValue(value);    
+            value = GetBoundValue(value);
 
             if (value == null || string.IsNullOrEmpty(value.ToString()))
             {
@@ -81,5 +74,5 @@ namespace Ginger.ValidationRules
             }
         }
     }
-    
+
 }

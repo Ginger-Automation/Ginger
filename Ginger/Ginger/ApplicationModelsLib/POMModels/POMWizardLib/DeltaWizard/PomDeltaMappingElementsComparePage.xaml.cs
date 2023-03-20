@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         public PomDeltaMappingElementsComparePage(DeltaElementInfo deletedElement, DeltaElementInfo newAddedElement)
         {
             InitializeComponent();
-            
+
             // set delement gridview
             SetElementLocatorsGridView(new GridViewDef(GridViewDef.DefaultViewName));
             xDeletedElementDetails.xLocatorsGrid.DataSourceList = deletedElement.ElementInfo.Locators;
@@ -72,12 +72,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             }
         }
 
-        private void SetElementLocatorsGridView(GridViewDef gridViewDef,bool isDeletedElement=true)
+        private void SetElementLocatorsGridView(GridViewDef gridViewDef, bool isDeletedElement = true)
         {
             gridViewDef.GridColsView = new ObservableList<GridColView>();
-            gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25,ReadOnly=true});
-            gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65,ReadOnly=true });
-            gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 20, ReadOnly=true });
+            gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, ReadOnly = true });
+            gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65, ReadOnly = true });
+            gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 20, ReadOnly = true });
 
             if (isDeletedElement)
             {
@@ -86,7 +86,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 xDeletedElementDetails.xLocatorsGrid.InitViewItems();
                 xDeletedElementDetails.xLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
             }
-           else
+            else
             {
                 xAddedElementDetails.xLocatorsGrid.toolbar.Visibility = Visibility.Collapsed;
                 xAddedElementDetails.xLocatorsGrid.SetAllColumnsDefaultView(gridViewDef);
@@ -96,12 +96,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         }
 
-        private void SetElementPropertiesGridView(GridViewDef gridViewDef,bool isDeletedElement=true)
+        private void SetElementPropertiesGridView(GridViewDef gridViewDef, bool isDeletedElement = true)
         {
             gridViewDef.GridColsView = new ObservableList<GridColView>();
 
-            gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Name), WidthWeight = 25 ,ReadOnly=true});
-            gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Value), WidthWeight = 75 ,ReadOnly=true});
+            gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Name), WidthWeight = 25, ReadOnly = true });
+            gridViewDef.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Value), WidthWeight = 75, ReadOnly = true });
 
             if (isDeletedElement)
             {
@@ -119,7 +119,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         }
 
         internal void ShowAsWindow(string windowTitle)
-        {         
+        {
             this.Height = 600;
             this.Width = 950;
             GenericWindow.LoadGenericWindow(ref genericWindow, null, eWindowShowStyle.Dialog, windowTitle, this, null, true, "Close", CloseBtn_Click);

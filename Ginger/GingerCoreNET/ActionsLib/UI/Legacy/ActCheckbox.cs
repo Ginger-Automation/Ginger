@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -32,11 +31,11 @@ namespace GingerCore.Actions
     {
         public override string ActionDescription { get { return "Check Box Action"; } }
         public override string ActionUserDescription { get { return "Check/Un-Check a checkbox object"; } }
-        
+
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to automate a check/Un-check an object from type Checkbox." + Environment.NewLine + Environment.NewLine + "For Mobile use this action only in case running the flow on the native browser.");
-        }        
+        }
 
         public override string ActionEditPage { get { return "ActCheckboxEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
@@ -52,7 +51,7 @@ namespace GingerCore.Actions
                     mPlatforms.Add(ePlatformType.ASCF);
                     mPlatforms.Add(ePlatformType.Web);
                     // Since, the action isn't supported by Windows Platform hence, it's commented
-                    
+
                     mPlatforms.Add(ePlatformType.Mobile);
                 }
                 return mPlatforms;
@@ -61,18 +60,18 @@ namespace GingerCore.Actions
 
         public new static partial class Fields
         {
-            public static string CheckboxAction = "CheckboxAction";         
+            public static string CheckboxAction = "CheckboxAction";
         }
-        
+
         public enum eCheckboxAction
         {
             Check = 0,
             Uncheck = 2,
             SetFocus = 3,
-            GetValue=4,
+            GetValue = 4,
             IsDisplayed = 5,
-            Click=6,
-            IsDisabled=7,
+            Click = 6,
+            IsDisabled = 7,
             GetWidth = 22,
             GetHeight = 23,
             GetStyle = 24,
@@ -162,10 +161,16 @@ namespace GingerCore.Actions
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
-            if(!string.IsNullOrEmpty(this.LocateValue))
+            if (!string.IsNullOrEmpty(this.LocateValue))
+            {
                 newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            }
+
             if (!uIElementTypeAssigned)
+            {
                 newAct.ElementType = eElementType.CheckBox;
+            }
+
             newAct.Active = true;
 
             return newAct;

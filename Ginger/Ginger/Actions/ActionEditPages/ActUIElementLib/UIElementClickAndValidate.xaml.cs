@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
     /// </summary>
     public partial class UIElementClickAndValidateEditPage : Page
     {
-        public ActUIElement mAct;        
+        public ActUIElement mAct;
         public enum eClickType
         {
             [EnumValueDescription("Click")]
@@ -112,7 +112,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             switch (SelectedLocType)
             {
                 case eLocateBy.POMElement:
-                    xValidationElementTypeComboBox.IsEnabled = false;                    
+                    xValidationElementTypeComboBox.IsEnabled = false;
                     LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(Context.GetAsContext(mAct.Context), objValidationElementType, nameof(ActInputValue.Value), objValidationElementLocatorValue, nameof(ActInputValue.Value));
                     return locateByPOMElementPage;
                 case eLocateBy.ByXY:
@@ -143,7 +143,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     {
                         return platformPage;
                     }
-                } 
+                }
             }
             return null;
         }
@@ -151,7 +151,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private ePlatformType GetActionPlatform()
         {
             string targetapp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
-            ePlatformType platform = (from x in  WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            ePlatformType platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
             return platform;
         }
     }

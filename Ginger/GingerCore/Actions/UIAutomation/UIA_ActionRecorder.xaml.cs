@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common.UIElement;
 using System;
 using System.Windows;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 
 namespace GingerCore.Actions
@@ -37,21 +37,21 @@ namespace GingerCore.Actions
             InitializeComponent();
             mBusinessFlow = BizFlow;
         }
-        
+
         private void HighLightButton_Click(object sender, RoutedEventArgs e)
         {
-           // mPBDriver.SetHighLightMode(true);                
+            // mPBDriver.SetHighLightMode(true);                
         }
 
         private void GetRecordingButton_Click(object sender, RoutedEventArgs e)
         {
-           // GetRecording();  
+            // GetRecording();  
         }
 
-        
+
         private void btnStartRecord_Click(object sender, RoutedEventArgs e)
         {
-            
+
         }
 
         private void LoadButton_Click(object sender, RoutedEventArgs e)
@@ -60,7 +60,11 @@ namespace GingerCore.Actions
 
         internal UIAuto.AutomationElement TryGetActElementByLocator(Act act)
         {
-            if (act == null) return null;
+            if (act == null)
+            {
+                return null;
+            }
+
             try
             {
                 UIAuto.AutomationElement e = TryGetActElementByLocator(act, act.LocateBy, act.LocateValue);
@@ -88,7 +92,7 @@ namespace GingerCore.Actions
                     break;
 
                 case eLocateBy.ByName:
-      
+
                     break;
 
                 case eLocateBy.ByLinkText:
@@ -104,7 +108,7 @@ namespace GingerCore.Actions
                     return null;
                 //TODO:
                 case eLocateBy.ByXPath:
-                     break;
+                    break;
                 case eLocateBy.NA:
                 case eLocateBy.Unknown:
                     //Do nothing

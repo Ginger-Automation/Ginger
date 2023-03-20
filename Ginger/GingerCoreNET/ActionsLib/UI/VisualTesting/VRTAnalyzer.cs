@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,10 +20,8 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCoreNET.GeneralLib;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using VisualRegressionTracker;
 
 namespace GingerCore.Actions.VisualTesting
@@ -206,9 +204,9 @@ namespace GingerCore.Actions.VisualTesting
                     mAct.Error = string.Format("The configured tolerance Precentage value '{0}' is not valid", toleranceValue);
                     return;
                 }
-                else 
+                else
                 {
-                    if (diffTolerancePercent <= 0.0 || diffTolerancePercent >= 0.0)// Noncompliant indirect equality test
+                    if (diffTolerancePercent <= 0.0)// Noncompliant indirect equality test
                     {
                         toleranceValue = WorkSpace.Instance.Solution.VRTConfiguration.DifferenceTolerance;
                         if (!Double.TryParse(toleranceValue, out diffTolerancePercent))
@@ -247,7 +245,7 @@ namespace GingerCore.Actions.VisualTesting
                         tags += ", Environment:" + mDriver.GetEnvironment();
                     }
                 }
-                
+
                 //Browser/agent/app name 
                 string browser = string.Empty;
                 if (WorkSpace.Instance.Solution.VRTConfiguration.Agent)
@@ -327,7 +325,7 @@ namespace GingerCore.Actions.VisualTesting
                 var tagNames = WorkSpace.Instance.Solution.Tags.Where(f => Context.GetAsContext(mAct.Context).Activity.Tags.Contains(f.Guid)).Select(f => f.Name);
                 return string.Join(",", tagNames);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception occured when getting Tags from activity", ex);
                 return null;
@@ -382,7 +380,7 @@ namespace GingerCore.Actions.VisualTesting
             {
             }
         }
-        
+
         private eVRTAction GetSelectedVRTActionEnum()
         {
             eVRTAction vrtAction = eVRTAction.Track;

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -38,9 +37,9 @@ namespace GingerCore.Actions
             TBH.AddText("Use this action in case you want to perform any drop down actions.");
             TBH.AddLineBreak();
             TBH.AddLineBreak();
-            TBH.AddText("To perform a drop down action, Select Locate By type, e.g- ByID,ByCSS,ByXPath etc.Then enter the value of property"+ 
+            TBH.AddText("To perform a drop down action, Select Locate By type, e.g- ByID,ByCSS,ByXPath etc.Then enter the value of property" +
             " that you set in Locate By type.Then select Action Type, e.g- ClearSelectedValue,getFocus,getCSS etc and then enter the page url in value textbox and run the action.");
-        }        
+        }
 
         public override string ActionEditPage { get { return "ActDropDownListEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
@@ -76,7 +75,7 @@ namespace GingerCore.Actions
             ClearSelectedValue = 4,
             SetFocus = 5,
             GetValidValues = 6,
-            GetSelectedValue=7,
+            GetSelectedValue = 7,
             IsPrepopulated = 8,
             GetFont = 9,
             GetWidth = 22,
@@ -172,8 +171,11 @@ namespace GingerCore.Actions
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
             if (!string.IsNullOrEmpty(this.LocateValue))
+            {
                 newAct.ElementLocateValue = String.Copy(this.LocateValue);
-            newAct.ElementType = eElementType.ComboBox;          
+            }
+
+            newAct.ElementType = eElementType.ComboBox;
             newAct.Active = true;
             newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, this.GetInputParamValue("Value"));
 
@@ -198,8 +200,8 @@ namespace GingerCore.Actions
                 case eActDropDownListAction.GetStyle:
                     currentType = typeof(ActUIElement);
                     break;
-                //default:
-                //    throw new Exception("Converter error, missing Action translator for - " + dropDownElementAction);
+                    //default:
+                    //    throw new Exception("Converter error, missing Action translator for - " + dropDownElementAction);
             }
             return currentType;
         }

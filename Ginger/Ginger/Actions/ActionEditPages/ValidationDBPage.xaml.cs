@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,27 +16,26 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using GingerCore.Environments;
-using GingerCore.Actions;
-using GingerCore.NoSqlBase;
 using amdocs.ginger.GingerCoreNET;
-using System.IO;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
-using Amdocs.Ginger.Common;
-using System.Windows.Data;
+using GingerCore.Actions;
+using GingerCore.Environments;
+using GingerCore.GeneralLib;
+using GingerCore.NoSqlBase;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
-using GingerWPF.BusinessFlowsLib;
-using static GingerCore.Environments.Database;
 using static GingerCore.Actions.ActDBValidation;
-using GingerCore.GeneralLib;
+using static GingerCore.Environments.Database;
 
 namespace Ginger.Actions
 {
@@ -127,7 +126,10 @@ namespace Ginger.Actions
                     await Task.Delay(2000);
                     return txt != QueryFile.ValueTextBox.Text;
                 }
-                if (await UserKeepsTyping() || QueryFile.ValueTextBox.Text == null) return;
+                if (await UserKeepsTyping() || QueryFile.ValueTextBox.Text == null)
+                {
+                    return;
+                }
             }
             string FileName = QueryFile.ValueTextBox.Text;
             if (FileName != "" && File.Exists(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(FileName)))
@@ -162,9 +164,14 @@ namespace Ginger.Actions
             }
 
             if (mAct.QueryParams.Count > 0)
+            {
                 QueryParamsPanel.Visibility = Visibility.Visible;
+            }
             else
+            {
                 QueryParamsPanel.Visibility = Visibility.Collapsed;
+            }
+
             QueryParamsGrid.DataSourceList = mAct.QueryParams;
         }
         private void SetQueryParamsGrid()
@@ -230,7 +237,10 @@ namespace Ginger.Actions
             TablesComboBox.Items.Clear();
             ColumnComboBox.Items.Clear();
 
-            if ((((ComboBox)sender).SelectedItem) == null) return;
+            if ((((ComboBox)sender).SelectedItem) == null)
+            {
+                return;
+            }
 
             string app = ((ComboBox)sender).SelectedItem.ToString();
             EA = (from a in pe.Applications where a.Name == app select a).FirstOrDefault();
@@ -325,7 +335,11 @@ namespace Ginger.Actions
             KeySpaceComboBox.Items.Clear();
             string DBName = DBNameComboBox.Text;
             db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
-            if (db == null) return;
+            if (db == null)
+            {
+                return;
+            }
+
             if (db.DBType == Database.eDBTypes.Cassandra)
             {
                 NoSqlBase NoSqlDriver = null;
@@ -359,7 +373,11 @@ namespace Ginger.Actions
                 TablesComboBox.Items.Clear();
                 string DBName = DBNameComboBox.Text;
                 db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
-                if (db == null) return;
+                if (db == null)
+                {
+                    return;
+                }
+
                 string KeySpace = KeySpaceComboBox.Text;
                 if (db.DatabaseOperations == null)
                 {
@@ -387,7 +405,11 @@ namespace Ginger.Actions
             ColumnComboBox.Items.Clear();
             string DBName = DBNameComboBox.Text;
             db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
-            if (db == null) return;
+            if (db == null)
+            {
+                return;
+            }
+
             string table;
             if (db.DBType == Database.eDBTypes.Cassandra)
             {
@@ -510,9 +532,14 @@ namespace Ginger.Actions
                         if (mAct.QueryParams != null)
                         {
                             if (mAct.QueryParams.Count > 0)
+                            {
                                 QueryParamsPanel.Visibility = Visibility.Visible;
+                            }
                             else
+                            {
                                 QueryParamsPanel.Visibility = Visibility.Collapsed;
+                            }
+
                             QueryParamsGrid.DataSourceList = mAct.QueryParams;
                         }
                     }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ namespace GingerTest.POMs
             AgentsTree.SelectItem(folderName);
             mTreeView.SelectedItem.ContextMenu["Add New Agent"].Click();
 
-            return CreateAgentOnWizard(name, platform, driverType);            
+            return CreateAgentOnWizard(name, platform, driverType);
         }
 
 
@@ -74,7 +74,10 @@ namespace GingerTest.POMs
 
             // Verify agent appear on tree, might take some time
             bool b = mTreeView.IsItemExist(name);
-            if (!b) throw new Exception("Cannot find new agent in tree: " + name);
+            if (!b)
+            {
+                throw new Exception("Cannot find new agent in tree: " + name);
+            }
 
             Agent agent = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == name select x).SingleOrDefault();
             return agent;
@@ -89,7 +92,7 @@ namespace GingerTest.POMs
 
         public void SelectItem(string header)
         {
-            mTreeView.SelectItem(header);            
+            mTreeView.SelectItem(header);
         }
 
         public AgentEditPage GetSelectedAgentEditPage()
@@ -101,8 +104,8 @@ namespace GingerTest.POMs
         {
             mTreeView.SelectItem(name);
             Page p = mTreeView.GetSelectedItemEditPage();
-            Execute(() => 
-            {                
+            Execute(() =>
+            {
                 TextBox txt = (TextBox)FindElementByAutomationID<TextBox>(p, "AgentNameTextBox");
                 txt.Text = NewName;
             });
@@ -124,12 +127,12 @@ namespace GingerTest.POMs
 
         internal void AddSubFolder(string name)
         {
-            mTreeView.SelectedItem.ContextMenu["Add Sub Folder"].Click();            
+            mTreeView.SelectedItem.ContextMenu["Add Sub Folder"].Click();
             CurrentInputBoxWindow.SetText(name);
             CurrentInputBoxWindow.ClickOK();
             SleepWithDoEvents(500);
         }
 
-        
+
     }
 }

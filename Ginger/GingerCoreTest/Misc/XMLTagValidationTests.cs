@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,16 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Text;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GingerCore.Actions;
-using GingerCore.Actions.XML;
-using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using GingerCore.Actions.XML;
 using GingerTestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 namespace UnitTests.NonUITests
 {
@@ -39,8 +35,8 @@ namespace UnitTests.NonUITests
         static string jsonFileName = string.Empty;
         static string xmlFileName = string.Empty;
         static string xmlWithPrefixFileName = string.Empty;
-        static ObservableList<ActInputValue> DynamicElements ;
-   
+        static ObservableList<ActInputValue> DynamicElements;
+
 
         private TestContext testContextInstance;
 
@@ -65,10 +61,10 @@ namespace UnitTests.NonUITests
         // You can use the following additional attributes as you write your tests:
         //
 
-         [ClassInitialize()]
+        [ClassInitialize()]
         public static void MyClassInitialize(TestContext testContext)
         {
-            jsonFileName= TestResources.GetTestResourcesFile (@"JSON\sample2.json");
+            jsonFileName = TestResources.GetTestResourcesFile(@"JSON\sample2.json");
             xmlFileName = TestResources.GetTestResourcesFile(@"XML\book.xml");
             xmlWithPrefixFileName = TestResources.GetTestResourcesFile(@"XML\book_with_prefix.xml");
             DynamicElements = new ObservableList<ActInputValue>();
@@ -77,7 +73,7 @@ namespace UnitTests.NonUITests
         private static ObservableList<ActInputValue> SetJSONDynamicParameters()
         {
             ObservableList<ActInputValue> temp = new ObservableList<ActInputValue>();
-            ActInputValue inp=new ActInputValue();
+            ActInputValue inp = new ActInputValue();
             inp.Param = ".info.description";
             temp.Add(inp);
             inp = null;
@@ -88,13 +84,14 @@ namespace UnitTests.NonUITests
             return temp;
         }
 
-        
+
         #endregion
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void JSonTests()
         {
-            
+
             ActXMLTagValidation XTA = new ActXMLTagValidation();
 
             XTA.DocumentType = ActXMLTagValidation.eDocumentType.JSON;
@@ -105,15 +102,16 @@ namespace UnitTests.NonUITests
             XTA.AddNewReturnParams = true;
             XTA.Execute();
 
-            Assert.AreEqual(2 , XTA.ActReturnValues.Count);
-            Assert.AreEqual("Sales Channel\n", XTA.ActReturnValues.Where(x=>x.Param== "InnerText" && x.Path== ".parameters.query-salesChannel.description").FirstOrDefault().Actual);
+            Assert.AreEqual(2, XTA.ActReturnValues.Count);
+            Assert.AreEqual("Sales Channel\n", XTA.ActReturnValues.Where(x => x.Param == "InnerText" && x.Path == ".parameters.query-salesChannel.description").FirstOrDefault().Actual);
             //
 
             // TODO: Add test logic here
             //
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void XMLTests()
         {
             ActXMLTagValidation XTA = new ActXMLTagValidation();

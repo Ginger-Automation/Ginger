@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using GingerCore.Actions;
 using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.Actions;
 
 namespace Ginger.Actions
 {
@@ -35,7 +35,7 @@ namespace Ginger.Actions
         public ActionEditPage actp;
         private ActScript f;
 
-        string SHFilesPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\Scripts\");
+        string SHFilesPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\Scripts\");
 
 
         public ActScriptEditPage(GingerCore.Actions.ActScript Act)
@@ -78,8 +78,8 @@ namespace Ginger.Actions
                     f.RemoveInputParam("Free Command");
                     break;
             }
-        } 
-          
+        }
+
         private void ScriptNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
@@ -102,7 +102,7 @@ namespace Ginger.Actions
             {
                 f.AddInputValueParam("Value");
             }
-        }      
+        }
 
         private void parseScriptHeader(string[] script)
         {
@@ -112,12 +112,12 @@ namespace Ginger.Actions
                 {
                     ScriptDescriptionContent.Content = replaceStartWithInput(line);
                 }
-                if(line.Contains("GINGER_$"))
+                if (line.Contains("GINGER_$"))
                 {
                     f.AddOrUpdateInputParamValue(replaceStartWithInput(line), "");
                 }
             }
-            if(String.IsNullOrEmpty(ScriptDescriptionContent.Content.ToString()))
+            if (String.IsNullOrEmpty(ScriptDescriptionContent.Content.ToString()))
             {
                 ScriptDescriptionPanel.Visibility = Visibility.Collapsed;
             }
@@ -145,13 +145,13 @@ namespace Ginger.Actions
             {
                 Directory.CreateDirectory(SHFilesPath);
             }
-            
+
             if (interpreterType == ActScript.eScriptInterpreterType.Other)
             {
                 InterpreterPathPanel.Visibility = Visibility.Visible;
                 fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
-               .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd") 
-               || s.ToLower().EndsWith(".py") || s.ToLower().EndsWith(".ps1") || s.ToLower().EndsWith(".sh")).ToArray() ;
+               .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd")
+               || s.ToLower().EndsWith(".py") || s.ToLower().EndsWith(".ps1") || s.ToLower().EndsWith(".sh")).ToArray();
             }
             else
             {

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ namespace Amdocs.Ginger.Repository
             string fileContent = System.IO.File.ReadAllText(FilePath);
             if (IsValidJson(fileContent))
             {
-                return JSONTemplateParser.ParseJSONResponseSampleIntoReturnValues(fileContent); 
+                return JSONTemplateParser.ParseJSONResponseSampleIntoReturnValues(fileContent);
             }
             else if (IsValidXML(fileContent))
             {
@@ -55,7 +55,9 @@ namespace Amdocs.Ginger.Repository
                 {
                     OptionalValue OptionalValue = new OptionalValue() { Value = Value };
                     if (!string.IsNullOrEmpty(Value))
-                        OptionalValue.IsDefault = true; 
+                    {
+                        OptionalValue.IsDefault = true;
+                    }
 
                     AMP.OptionalValuesList.Add(OptionalValue);
                     ParameterValuesUpdated = true;
@@ -92,7 +94,7 @@ namespace Amdocs.Ginger.Repository
                 {
                     return false;
                 }
-                catch (Exception) 
+                catch (Exception)
                 {
                     return false;
                 }
@@ -111,10 +113,10 @@ namespace Amdocs.Ginger.Repository
             {
                 return false;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
-            }            
+            }
         }
     }
 }

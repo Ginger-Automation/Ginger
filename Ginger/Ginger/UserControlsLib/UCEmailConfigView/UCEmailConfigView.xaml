@@ -1,0 +1,516 @@
+﻿<UserControl x:Class="Ginger.UserControlsLib.UCEmailConfigView.UCEmailConfigView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:window="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+             xmlns:local="clr-namespace:Ginger.UserControlsLib.UCEmailConfigView"
+             xmlns:Actions="clr-namespace:Ginger.BusinessFlowWindows" 
+             xmlns:Ginger="clr-namespace:Ginger"
+             mc:Ignorable="d" 
+             d:DesignHeight="556.717" d:DesignWidth="728.358">
+    <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
+        <StackPanel.Resources>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+            <GridLength x:Key="LabelColumnWidth">180</GridLength>
+            <GridLength x:Key="ValueColumnWidth">550</GridLength>
+            <Thickness x:Key="RowMargin">0 2 0 2</Thickness>
+            <Style x:Key="RadioButtonStyle" TargetType="RadioButton">
+                <Setter Property="Margin" Value="0 0 8 0"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+            </Style>
+        </StackPanel.Resources>
+        <Grid x:Name="xActionTypeRadioButtonContainer" Margin="{StaticResource RowMargin}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="11.6"/>
+                <window:ColumnDefinition Width="168.4"/>
+                <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Action Type:" window:Grid.ColumnSpan="2"/>
+            <StackPanel window:Grid.Column="2" Orientation="Horizontal">
+                <RadioButton GroupName="ActionTypeRadioButtonGroup" x:Name="xActionTypeSendRadioButton" Content="Send" Style="{StaticResource RadioButtonStyle}" Checked="xActionType_Changed" Unchecked="xBodyContentType_Changed"/>
+                <RadioButton GroupName="ActionTypeRadioButtonGroup" x:Name="xActionTypeReadRadioButton" Content="Read" Style="{StaticResource RadioButtonStyle}" Checked="xActionType_Changed" Unchecked="xBodyContentType_Changed"/>
+            </StackPanel>
+        </Grid>
+        <TabControl x:Name="xSendDetailContainer" Background="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem x:Name="xMessageTab" IsSelected="True" Background="{StaticResource $BackgroundColor_LightGray}">
+                <TabItem.Header>
+                    <Label Content="Message"/>
+                </TabItem.Header>
+                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="From:"/>
+                        <Actions:UCValueExpression x:Name="xFromVE" Grid.Column="1"/>
+                    </Grid>
+                    <Grid x:Name="xFromDisplayContainer" Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="From Display:"/>
+                        <Actions:UCValueExpression x:Name="xFromDisplayNameVE" Grid.Column="1"/>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="To:"/>
+                        <Actions:UCValueExpression x:Name="xToVE" Grid.Column="1"/>
+                    </Grid>
+                    <Grid x:Name="xCCContainer" Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="CC:"/>
+                        <Actions:UCValueExpression x:Name="xCCVE" Grid.Column="1"/>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Subject:"/>
+                        <Actions:UCValueExpression x:Name="xSubjectVE" Grid.Column="1"/>
+                    </Grid>
+                    <Grid x:Name="xBodyContentTypeRadioButtonsContainer" Margin="{StaticResource RowMargin}" Visibility="Collapsed">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Body Content Type:"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <StackPanel.Resources>
+                                <Style x:Key="RadioButtonStyle" TargetType="RadioButton">
+                                    <Setter Property="Margin" Value="0 0 8 0"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                </Style>
+                            </StackPanel.Resources>
+                            <RadioButton GroupName="BodyContentTypeRadioButtonGroup" x:Name="xBodyContentTypeFreeTextRadioButton" Content="Free Text" IsChecked="False" Style="{StaticResource RadioButtonStyle}" Checked="xBodyContentType_Changed" Unchecked="xBodyContentType_Changed" Visibility="Collapsed"/>
+                            <RadioButton GroupName="BodyContentTypeRadioButtonGroup" x:Name="xBodyContentTypeHTMLReportRadioButton" Content="HTML Report" IsChecked="False" Style="{StaticResource RadioButtonStyle}" Checked="xBodyContentType_Changed" Unchecked="xBodyContentType_Changed" Visibility="Collapsed"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid x:Name="xBodyContentTypeFreeTextContainer" Margin="{StaticResource RowMargin}" Visibility="Collapsed">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Body:"/>
+                        <Actions:UCValueExpression x:Name="xBodyFreeTextVE" Grid.Column="1" Grid.Row="0"/>
+                        <Label x:Name="xMaxBodyLengthLabel" Grid.Column="1" Grid.Row="1" Style="{StaticResource $LabelStyle}" FontSize="10" Visibility="Collapsed"/>
+                    </Grid>
+                    <StackPanel x:Name="xBodyContentTypeHTMLReportContainer" Visibility="Collapsed">
+                        <Grid Margin="{StaticResource RowMargin}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Grid.Row="1" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Email Body Report Template:"/>
+                            <ComboBox x:Name="xBodyReportTemplate" Grid.Column="1"/>
+                        </Grid>
+                        <Grid Margin="{StaticResource RowMargin}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Comment:"/>
+                            <Actions:UCValueExpression x:Name="xBodyCommentVE" Grid.Column="1"/>
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+            <TabItem x:Name="xAttachmentsTab" Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Collapsed" >
+                <TabItem.Header>
+                    <Label Content="Attachments"/>
+                </TabItem.Header>
+                <TabItem.Resources>
+                    <DataTemplate x:Key="ZippedCellTemplate">
+                        <CheckBox x:Name="xAttachmentZippedCheckBox" Style="{StaticResource @CheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                    </DataTemplate>
+                    <DataTemplate x:Key="NameVEButtonCellTemplate" >
+                        <Button x:Name="xAttachmentNameVEButton" Content="..." Click="xAttachmentNameVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+                    </DataTemplate>
+                </TabItem.Resources>
+                <Ginger:ucGrid x:Name="xAttachmentsGrid" Title="Attachments" ShowAdd="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>
+            </TabItem>
+            <TabItem x:Name="xDeliveryTab" Background="{StaticResource $BackgroundColor_LightGray}">
+                <TabItem.Header>
+                    <Label Content="Configuration"/>
+                </TabItem.Header>
+                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Grid.Row="1" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Email Method:"/>
+                        <ComboBox x:Name="xEmailMethod" SelectionChanged="xEmailMethod_SelectionChanged" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}">
+                            <ComboBoxItem x:Name="xEmailMethodSMTP" Content="SMTP" Tag="SMTP"/>
+                            <ComboBoxItem x:Name="xEmailMethodOutlook" Content="Outlook" Tag="OUTLOOK"/>
+                        </ComboBox>
+                    </Grid>
+                    <StackPanel>
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=xEmailMethodSMTP, Path=IsSelected}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <Grid Margin="{StaticResource RowMargin}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="SMTP Host:"/>
+                            <Actions:UCValueExpression x:Name="xSMTPHostVE" Grid.Column="1"/>
+                        </Grid>
+                        <Grid Margin="{StaticResource RowMargin}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="SMTP Port:"/>
+                            <Actions:UCValueExpression x:Name="xSMTPPortVE" Grid.Column="1"/>
+                        </Grid>
+                        <CheckBox x:Name="xEnableSSLOrTLS" Margin="{StaticResource RowMargin}" Content="Enable SSL/TLS" Style="{StaticResource @CheckBoxStyle}"/>
+                        <CheckBox x:Name="xConfigureCredentials" Margin="{StaticResource RowMargin}" Content="Configure Credentials" Style="{StaticResource @CheckBoxStyle}"/>
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=xConfigureCredentials, Path=IsChecked}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <Grid Margin="{StaticResource RowMargin}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                    <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="SMTP User:"/>
+                                <Actions:UCValueExpression x:Name="xSMTPUserVE" Grid.Column="1"/>
+                            </Grid>
+                            <Grid Margin="{StaticResource RowMargin}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                    <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="SMTP Password:"/>
+                                <TextBox x:Name="xSMTPPasswordTextBox" Grid.Column="1" Style="{StaticResource @TextBoxStyle}"/>
+                            </Grid>
+                        </StackPanel>
+                        <CheckBox x:Name="xAddCustomCertificate" Margin="{StaticResource RowMargin}" Content="Add Custom Certificate" Style="{StaticResource @CheckBoxStyle}"/>
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=xAddCustomCertificate, Path=IsChecked}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <Grid Margin="{StaticResource RowMargin}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                    <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Certificate Path:"/>
+                                <Grid Grid.Column="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="60"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="xCertificatePathTextBox" Grid.Column="0" Style="{StaticResource @TextBoxStyle}"/>
+                                    <Button x:Name="xBrowseCertificateButton" Grid.Column="1" Click="xBrowseCertificateButton_Click" Content="Upload" Style="{StaticResource  $InputButtonStyle}"/>
+                                </Grid>
+                            </Grid>
+                            <Grid Margin="{StaticResource RowMargin}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                    <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Certificate Password:"/>
+                                <TextBox x:Name="xCertificatePasswordTextBox" Grid.Column="1" Style="{StaticResource @TextBoxStyle}"/>
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+        <TabControl x:Name="xReadDetailContainer" Visibility="Collapsed">
+            <TabItem Background="{StaticResource $BackgroundColor_LightGray}">
+                <TabItem.Header>
+                    <Label Content="Filters"/>
+                </TabItem.Header>
+                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Folder:"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderAllRadioButton" Content="All" Style="{StaticResource RadioButtonStyle}"/>
+                            <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderSpecificRadioButton" Content="Specific" Style="{StaticResource RadioButtonStyle}"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=xFilterFolderSpecificRadioButton, Path=IsChecked}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Folder Names:"/>
+                        <Actions:UCValueExpression x:Name="xFilterFolderNameVE" Grid.Column="1" Grid.Row="0" ToolTip="Separate multiple folder names using semi-colon(;)"/>
+                        <Label Grid.Column="1" Grid.Row="1" Style="{StaticResource $LabelStyle}" FontSize="10" Content="To specify multiple folder names separate them using semi-colon(;) (e.g. Inbox;Sent Items;Archives)"/>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="From:"/>
+                        <Actions:UCValueExpression x:Name="xFilterFromVE" Grid.Column="1"/>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="To:"/>
+                        <Actions:UCValueExpression x:Name="xFilterToVE" Grid.Column="1"/>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Subject:"/>
+                        <Actions:UCValueExpression x:Name="xFilterSubjectVE" Grid.Column="1"/>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Body:"/>
+                        <Actions:UCValueExpression x:Name="xFilterBodyVE" Grid.Column="1"/>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Received Date:"/>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Start:" Margin="-5 0 0 0"/>
+                            <Grid Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="xFilterReceivedStartDateTextBox" Grid.Column="0" Style="{StaticResource @TextBoxStyle}"/>
+                                <DatePicker x:Name="xReceivedStartDateDatePicker" Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" SelectedDateChanged="xReceivedStartDateDatePicker_SelectedDateChanged"  Margin="2 0 0 0">
+                                    <DatePicker.Resources>
+                                        <Style TargetType="DatePickerTextBox">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </Style>
+                                    </DatePicker.Resources>
+                                </DatePicker>
+                                <Button x:Name="xFilterReceivedStartDateVEEditorButton" Grid.Column="2" Click="xFilterReceivedStartDateVEEditorButton_Click" Content="..." VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="2,0,0,0" />
+                            </Grid>
+                            <Label Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" Content="End:"/>
+                            <Grid Grid.Column="3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="xFilterReceivedEndDateTextBox" Grid.Column="0" Style="{StaticResource @TextBoxStyle}"/>
+                                <DatePicker x:Name="xReceivedEndDateDatePicker" Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalAlignment="Stretch" VerticalContentAlignment="Center" SelectedDateChanged="xReceivedEndDateDatePicker_SelectedDateChanged"  Margin="2 0 0 0">
+                                    <DatePicker.Resources>
+                                        <Style TargetType="DatePickerTextBox">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </Style>
+                                    </DatePicker.Resources>
+                                </DatePicker>
+                                <Button x:Name="xFilterReceivedEndDateVEEditorButton" Grid.Column="2" Click="xFilterReceivedEndDateVEEditorButton_Click" Content="..." VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="2,0,0,0" />
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Has Attachments:"/>
+                        <ComboBox x:Name="xHasAttachmentsComboBox" Style="{StaticResource @InputComboBoxStyle}" Grid.Column="1"/>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=xHasAttachmentsComboBox, Path=SelectedValue}" Value="Yes">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Attachment Content Type:"/>
+                        <Actions:UCValueExpression x:Name="xFilterAttachmentContentTypeVE" Grid.Column="1" Grid.Row="0" ToolTip="MIME type for the attachment."/>
+                        <Label Grid.Column="1" Grid.Row="1" Style="{StaticResource $LabelStyle}" FontSize="10" Content="Attachment MIME type (e.g. use application/pdf to filter for pdf attachments)"/>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=xHasAttachmentsComboBox, Path=SelectedValue}" Value="Yes">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Download Attachments:"/>
+                        <StackPanel Orientation="Horizontal" Grid.Column="1">
+                            <RadioButton GroupName="DownloadAttachmentsRadioButtonGroup" x:Name="xDownloadAttachmentYesRadioButton" Content="Yes" Style="{StaticResource RadioButtonStyle}"/>
+                            <RadioButton GroupName="DownloadAttachmentsRadioButtonGroup" x:Name="xDownloadAttachmentNoRadioButton" Content="No" Style="{StaticResource RadioButtonStyle}"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding ElementName=xHasAttachmentsComboBox, Path=SelectedValue}" Value="Yes"/>
+                                            <Condition Binding="{Binding ElementName=xDownloadAttachmentYesRadioButton, Path=IsChecked}" Value="True"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Attachment Download Path:"/>
+                        <Actions:UCValueExpression x:Name="xAttachmentDownloadPathVE" Grid.Column="1"/>
+                    </Grid>
+                </StackPanel>
+            </TabItem>
+            <TabItem Background="{StaticResource $BackgroundColor_LightGray}">
+                <TabItem.Header>
+                    <Label Content="Configuration"/>
+                </TabItem.Header>
+                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Email Method:"/>
+                        <ComboBox x:Name="xEmailReadMethod" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}">
+                            <ComboBoxItem x:Name="xEmailReadMethodMSGraph" Content="MS Graph API" Tag="MSGraphAPI" IsSelected="True" />
+                        </ComboBox>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="User Email:"/>
+                        <Actions:UCValueExpression x:Name="xUserEmailVE" Grid.Column="1"/>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="User Password:"/>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="30"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="xUserPasswordTextBox" Grid.Column="0" Style="{StaticResource @TextBoxStyle}"/>
+                            <Button x:Name="xUserPasswordVEEditorButton" Grid.Column="1" Click="xUserPasswordVEEditorButton_Click" Content="..." VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="2,0,0,0" />
+                        </Grid>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Client Id:"/>
+                        <Actions:UCValueExpression x:Name="xClientIdVE" Grid.Column="1"/>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Tenant Id:"/>
+                        <Actions:UCValueExpression x:Name="xTenantIdVE" Grid.Column="1"/>
+                    </Grid>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+    </StackPanel>
+</UserControl>

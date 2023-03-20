@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -107,16 +106,19 @@ namespace Ginger.Repository
                     foreach (TabItem tab in tabRepository.Items)
                     {
                         foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
-
+                        {
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (tabRepository.SelectedItem == tab)
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                }
                                 else
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
-
-                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                                } ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
+                        }
                     }
                 }
             }
@@ -162,7 +164,7 @@ namespace Ginger.Repository
             if (tabRepository.SelectedItem == tbiVariables)
             {
                 if (((string)tbiVariables.Tag) != "Done")
-                {                    
+                {
                     VariablesRepoPage = new VariablesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>(), mBusinessFlow);
                     frmVariables.Content = VariablesRepoPage;
                     // Mark that this tab is loaded with info

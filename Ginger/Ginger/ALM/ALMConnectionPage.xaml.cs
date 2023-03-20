@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -102,7 +102,7 @@ namespace Ginger.ALM
                  e.PropertyName == nameof(GingerCoreNET.ALMLib.ALMConfig.ALMPassword) ||
                  e.PropertyName == nameof(GingerCoreNET.ALMLib.ALMConfig.ALMServerURL))
             {
-                if(ALMIntegration.Instance.AlmCore != null)
+                if (ALMIntegration.Instance.AlmCore != null)
                 {
                     ALMIntegration.Instance.AlmCore.IsConnectValidationDone = false;
                 }
@@ -112,7 +112,7 @@ namespace Ginger.ALM
 
         private GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations { get; set; }
         private GingerCoreNET.ALMLib.ALMUserConfig CurrentAlmUserConfigurations { get; set; }
-        
+
         private void SetControls()
         {
             if (!string.IsNullOrEmpty(ServerURLTextBox.Text) && !string.IsNullOrEmpty(UserNameTextBox.Text) && !(string.IsNullOrEmpty(PasswordTextBox.Password) && xPasswordPanel.Visibility == Visibility.Visible))
@@ -128,7 +128,8 @@ namespace Ginger.ALM
             ConfigPackageTextBox.IsEnabled = true;
             if (CurrentAlmConfigurations.AlmType == eALMType.RQM)
             {
-                ServerURLTextBox.IsEnabled = false;
+                ServerURLTextBox.IsEnabled = true;
+                ServerURLTextBox.IsReadOnly = false;
             }
             else
             {
@@ -256,7 +257,7 @@ namespace Ginger.ALM
                     JiraTestingALMComboBox.Items.Clear();
                 }
             }
-     
+
             isServerDetailsCorrect = almConn;
             if (isServerDetailsCorrect)
             {
@@ -286,7 +287,9 @@ namespace Ginger.ALM
             string currDomain = CurrentAlmConfigurations.ALMDomain;
             DomainComboBox.Items.Clear();
             foreach (string domain in Domains)
+            {
                 DomainComboBox.Items.Add(domain);
+            }
 
             if (DomainComboBox.Items.Count > 0)
             {
@@ -311,7 +314,9 @@ namespace Ginger.ALM
         private void DomainComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (sender == null || ALMSettingsPannel == null || DomainComboBox.SelectedItem == null)
+            {
                 return;
+            }
 
             RefreshProjectsList();
         }
@@ -392,7 +397,7 @@ namespace Ginger.ALM
 
         private void ConnectProjectButton_Click(object sender, RoutedEventArgs e)
         {
-            if(ConnectProjectButton.Content.ToString() == "Save Project Mapping")
+            if (ConnectProjectButton.Content.ToString() == "Save Project Mapping")
             {
                 SaveConnectionDetails();
                 return;
@@ -457,7 +462,7 @@ namespace Ginger.ALM
             Grid.SetColumnSpan(ServerURLTextBox, 2);
             ExampleURLHint.Content = "Example: http://server:port ";
             ServerURLTextBox.Cursor = null;
-            
+
             RestAPICheckBox.Visibility = Visibility.Collapsed;
             RestAPICheckBox.IsChecked = true;
             RestAPICheckBox.IsEnabled = false;
@@ -494,7 +499,7 @@ namespace Ginger.ALM
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     ExampleURLHint.Content = "Example: http://server:8080/";
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
-                    ServerURLTextBox.Cursor = null;                 
+                    ServerURLTextBox.Cursor = null;
                     RestAPICheckBox.Visibility = Visibility.Visible;
                     RestAPICheckBox.IsEnabled = false;
                     break;
@@ -527,7 +532,7 @@ namespace Ginger.ALM
                     PackageHint.Visibility = Visibility.Collapsed;
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
-                    ExampleURLHint.Content = "Example: http://server:8080/almbin";                    
+                    ExampleURLHint.Content = "Example: http://server:8080/almbin";
                     ServerURLTextBox.Cursor = null;
                     break;
 
@@ -542,7 +547,7 @@ namespace Ginger.ALM
                     PackageHint.Visibility = Visibility.Visible;
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Visible;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
-                    SetLoadPackageButtonContent();                 
+                    SetLoadPackageButtonContent();
                     ServerURLTextBox.Cursor = null;
                     break;
 
@@ -558,7 +563,7 @@ namespace Ginger.ALM
                     PackageHint.Visibility = Visibility.Visible;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     SetLoadPackageButtonContent();
-                    ExampleURLHint.Content = "Example: https://qtest-url.com/ ";                    
+                    ExampleURLHint.Content = "Example: https://qtest-url.com/ ";
                     ServerURLTextBox.Cursor = null;
                     RestAPICheckBox.IsChecked = true;
                     RestAPICheckBox.IsEnabled = false;
@@ -634,21 +639,21 @@ namespace Ginger.ALM
                 switch (rBtn.Name)
                 {
                     case "QCRadioButton":
-                            almType = GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.QC;
-                            RestAPICheckBox.IsEnabled = false;
+                        almType = GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.QC;
+                        RestAPICheckBox.IsEnabled = false;
                         break;
                     case "RQMRadioButton":
-                            almType = GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.RQM;                           
-                            SetLoadPackageButtonContent();
+                        almType = GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.RQM;
+                        SetLoadPackageButtonContent();
                         break;
                     case "RallyRadioButton":
-                            almType = GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.RALLY;
+                        almType = GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.RALLY;
                         break;
                     case "JiraRadioButton":
-                            almType = GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira;
+                        almType = GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira;
                         break;
                     case "qTestRadioButton":
-                            almType = GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest;
+                        almType = GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest;
                         break;
 
                     case "OctaneRadioButton":
@@ -673,7 +678,7 @@ namespace Ginger.ALM
                 BindingOperations.ClearAllBindings(DomainComboBox);
                 BindingOperations.ClearAllBindings(ProjectComboBox);
                 BindingOperations.ClearAllBindings(JiraTestingALMComboBox);
-               
+
                 ALMIntegration.Instance.SetDefaultAlmConfig(almType);
                 ALMIntegration.Instance.UpdateALMType(almType);
                 CurrentAlmConfigurations = ALMCore.GetCurrentAlmConfig(almType);
@@ -720,7 +725,7 @@ namespace Ginger.ALM
             if (ServerURLTextBox.Text.ToLower().Contains("qcbin"))
             {
                 //remove rest of URL
-                ServerURLTextBox.Text = ServerURLTextBox.Text.Substring(0,ServerURLTextBox.Text.ToLower().IndexOf("qcbin") + 5);
+                ServerURLTextBox.Text = ServerURLTextBox.Text.Substring(0, ServerURLTextBox.Text.ToLower().IndexOf("qcbin") + 5);
             }
 
             SetControls();
@@ -755,16 +760,23 @@ namespace Ginger.ALM
             catch (Exception) { }
 
             if (connectionSucc)
+            {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Passed! ALM connection test passed successfully");
+            }
             else
+            {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Failed! ALM connection test failed, Please check ALM connection details");
+            }
+
             Mouse.OverrideCursor = null;
         }
 
         private void LoadRQMConfigPackageButton_Click(object sender, RoutedEventArgs e)
         {
             if (ALMIntegration.Instance.LoadALMConfigurations())
+            {
                 SetLoadPackageButtonContent();
+            }
         }
 
         private void HandleLinkClick(object sender, RequestNavigateEventArgs e)

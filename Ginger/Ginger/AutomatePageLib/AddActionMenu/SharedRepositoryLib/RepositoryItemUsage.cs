@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,13 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using GingerCore;
 using System;
 using System.ComponentModel;
-using GingerCore;
-using Amdocs.Ginger.Repository;
-using System.Collections.Generic;
-using System.Collections;
-using GingerCore.GeneralLib;
 
 namespace Ginger.Repository
 {
@@ -32,8 +29,8 @@ namespace Ginger.Repository
         public enum eStatus
         {
             NotUpdated,
-            Pending,            
-            Updated, 
+            Pending,
+            Updated,
             UpdateFailed,
             UpdatedAndSaved,
             SaveFailed,
@@ -104,15 +101,15 @@ namespace Ginger.Repository
         }
 
         bool mSelected;
-        public bool Selected 
-        { 
+        public bool Selected
+        {
             get
             {
                 return mSelected;
             }
             set
             {
-                mSelected=value;
+                mSelected = value;
                 OnPropertyChanged(Fields.Selected);
             }
         }
@@ -128,7 +125,7 @@ namespace Ginger.Repository
 
         public eUsageTypes UsageItemType { get; set; }
         public string UsageExtraDetails { get; set; }
-        
+
         private eStatus mStatus;
         public eStatus Status
         {
@@ -171,8 +168,8 @@ namespace Ginger.Repository
             }
         }
 
-        private  ObservableList<string> mActivityList = new ObservableList<string>();
-       public  ObservableList<string> ActivityNameList
+        private ObservableList<string> mActivityList = new ObservableList<string>();
+        public ObservableList<string> ActivityNameList
         {
             get
             {
@@ -257,7 +254,9 @@ namespace Ginger.Repository
                 }
             }
             if (ItemParts.Count > 0)
+            {
                 SelectedItemPart = ItemParts[0];
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

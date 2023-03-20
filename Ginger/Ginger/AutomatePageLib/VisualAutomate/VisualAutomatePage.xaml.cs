@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,14 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.UserControls;
-using Ginger.UserControlsLib.VisualFlow;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
-using GingerCore.Drivers.Common;
 using System;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -36,7 +33,7 @@ namespace Ginger.VisualAutomate
     /// </summary>
     public partial class VisualAutomatePage : Page
     {
-        BusinessFlow mBusinessFlow;        
+        BusinessFlow mBusinessFlow;
 
         public VisualAutomatePage(BusinessFlow BF)
         {
@@ -48,7 +45,7 @@ namespace Ginger.VisualAutomate
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(lblTitle, ContentProperty, BF, nameof(BusinessFlow.Name), BindingMode.OneWay);
 
             //TODO: if big flow takes time to load then show loading message
-            if (mBusinessFlow.CurrentActivity ==null && mBusinessFlow.Activities.Count>0)
+            if (mBusinessFlow.CurrentActivity == null && mBusinessFlow.Activities.Count > 0)
             {
                 mBusinessFlow.CurrentActivity = mBusinessFlow.Activities[0];
             }
@@ -58,7 +55,7 @@ namespace Ginger.VisualAutomate
 
             CreateActivityDiagram((Activity)mBusinessFlow.CurrentActivity);
 
-            SetActionsGridView();            
+            SetActionsGridView();
         }
 
 
@@ -72,7 +69,7 @@ namespace Ginger.VisualAutomate
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = Act.Fields.Description, WidthWeight = 100 });            
+            view.GridColsView.Add(new GridColView() { Field = Act.Fields.Description, WidthWeight = 100 });
 
             AvailableActionsGrid.SetAllColumnsDefaultView(view);
             AvailableActionsGrid.InitViewItems();
@@ -82,20 +79,20 @@ namespace Ginger.VisualAutomate
         private void CreateActivityDiagram(Activity activity)
         {
         }
-                
+
         public void ShowAsWindow()
         {
             GenericWindow genWin = null;
             GingerCore.General.LoadGenericWindow(ref genWin, null, eWindowShowStyle.Free, this.Title, this);
         }
-        
+
         private void AvailableActionsGrid_RowDoubleClick(object sender, EventArgs e)
         {
             // we can decide based on the action added if we need to open the ActionEdit Page to get more info
             bool bOpenActionEditPage = true;
             // User want to add action to flow
 
-            Act act = (Act)AvailableActionsGrid.CurrentItem;            
+            Act act = (Act)AvailableActionsGrid.CurrentItem;
 
             //TODO: If this is set value action open VE
             //TODO: if it is validate - then do all and no show?

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -26,15 +26,16 @@ namespace UnitTests.NonUITests
 
     [TestClass]
     [Level1]
-    public class ExpectedWithActual 
+    public class ExpectedWithActual
     {
         [TestInitialize]
         public void TestInitialize()
         {
-            
+
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ExpectedIsSimpleNumber()
         {
             //Arrange
@@ -44,10 +45,10 @@ namespace UnitTests.NonUITests
 
             //Act
             CalculateARC(ARC);
-            
+
             //Assert
-           Assert.AreEqual(ARC.ExpectedCalculated, "123");
-           Assert.AreEqual(ARC.Status , ActReturnValue.eStatus.Passed);
+            Assert.AreEqual(ARC.ExpectedCalculated, "123");
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
         }
 
         private void CalculateARC(ActReturnValue ARC)
@@ -58,7 +59,8 @@ namespace UnitTests.NonUITests
             GingerExecutionEngine.CalculateARCStatus(ARC);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ExpectedIsSimpleString()
         {
             //Arrange
@@ -70,11 +72,12 @@ namespace UnitTests.NonUITests
             CalculateARC(ARC);
 
             //Assert            
-           Assert.AreEqual(ARC.ExpectedCalculated, "ABC");
-           Assert.AreEqual(ARC.Status,ActReturnValue.eStatus.Passed);
+            Assert.AreEqual(ARC.ExpectedCalculated, "ABC");
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ExpectedActualGreaterThanNumber()
         {
             //Arrange
@@ -86,12 +89,13 @@ namespace UnitTests.NonUITests
             CalculateARC(ARC);
 
             //Assert
-           Assert.AreEqual(ARC.ExpectedCalculated , "'5 > 0' is True");
-           Assert.AreEqual(ARC.Status , ActReturnValue.eStatus.Passed);            
+            Assert.AreEqual(ARC.ExpectedCalculated, "'5 > 0' is True");
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void CheckforStartingwithNot()
         {
             //Arrange
@@ -103,11 +107,12 @@ namespace UnitTests.NonUITests
             CalculateARC(ARC);
 
             //Assert
-           
+
             Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ExpectedActualLowerThanNumber()
         {
             //Arrange
@@ -119,11 +124,12 @@ namespace UnitTests.NonUITests
             CalculateARC(ARC);
 
             //Assert
-           Assert.AreEqual(ARC.ExpectedCalculated , "'5 < 10' is True");
-           Assert.AreEqual(ARC.Status , ActReturnValue.eStatus.Passed);            
+            Assert.AreEqual(ARC.ExpectedCalculated, "'5 < 10' is True");
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ExpectedActualLowerThanNumberIsFalse()
         {
             //Arrange
@@ -135,12 +141,13 @@ namespace UnitTests.NonUITests
             CalculateARC(ARC);
 
             //Assert
-           Assert.AreEqual(ARC.ExpectedCalculated , "'11 < 10' is False");
-           Assert.AreEqual(ARC.Status , ActReturnValue.eStatus.Failed);            
+            Assert.AreEqual(ARC.ExpectedCalculated, "'11 < 10' is False");
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Failed);
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ExpectedActulContainsString()
         {
             //Arrange
@@ -152,11 +159,12 @@ namespace UnitTests.NonUITests
             CalculateARC(ARC);
 
             //Assert
-           Assert.AreEqual(ARC.ExpectedCalculated, "'InStr(\"Hello World!\",\"Hello\")>0' is True");
-           Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);            
+            Assert.AreEqual(ARC.ExpectedCalculated, "'InStr(\"Hello World!\",\"Hello\")>0' is True");
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ExpectedActulContainsStringIsFalse()
         {
             //Arrange
@@ -168,12 +176,13 @@ namespace UnitTests.NonUITests
             CalculateARC(ARC);
 
             //Assert
-           Assert.AreEqual(ARC.ExpectedCalculated , "'InStr(\"ABCDE\",\"ZZZ\") > 0' is False");
-           Assert.AreEqual(ARC.Status , ActReturnValue.eStatus.Failed);            
+            Assert.AreEqual(ARC.ExpectedCalculated, "'InStr(\"ABCDE\",\"ZZZ\") > 0' is False");
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Failed);
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ExpectedActulWithOrNumbers()
         {
             //Arrange
@@ -185,11 +194,12 @@ namespace UnitTests.NonUITests
             CalculateARC(ARC);
 
             //Assert
-           Assert.AreEqual(ARC.ExpectedCalculated , "'7=3 or 7=7' is True");
-           Assert.AreEqual(ARC.Status , ActReturnValue.eStatus.Passed);    
+            Assert.AreEqual(ARC.ExpectedCalculated, "'7=3 or 7=7' is True");
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ExpectedActulWithOrNumbersANDCond()
         {
             //Arrange
@@ -203,8 +213,8 @@ namespace UnitTests.NonUITests
             string Exp = ARC.Expected.Replace("{Actual}", ARC.Actual);
 
             //Assert
-           Assert.AreEqual(ARC.ExpectedCalculated, "'" + Exp + "' is True");
-           Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
+            Assert.AreEqual(ARC.ExpectedCalculated, "'" + Exp + "' is True");
+            Assert.AreEqual(ARC.Status, ActReturnValue.eStatus.Passed);
         }
 
     }

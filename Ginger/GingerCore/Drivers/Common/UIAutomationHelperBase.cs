@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,21 +17,20 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerCore.Actions.UIAutomation;
+using GingerCore.Drivers.PBDriver;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Windows;
-using GingerCore.Actions;
-using GingerCore.Actions.UIAutomation;
-using GingerCore.Drivers.PBDriver;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
 using System.Threading.Tasks;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace GingerCore.Drivers.Common
 {

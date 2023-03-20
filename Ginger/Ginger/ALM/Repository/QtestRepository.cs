@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ namespace Ginger.ALM.Repository
                 {
                     return true;
                 }
-                else 
+                else
                 {
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, "Bad credentials");
                     return false;
@@ -148,7 +148,7 @@ namespace Ginger.ALM.Repository
         {
             if (selectedTestSuites != null && selectedTestSuites.Count() > 0)
             {
-                ObservableList<QtestSuiteTreeItem> testSuitesItemsToImport = new ObservableList<QtestSuiteTreeItem>();                
+                ObservableList<QtestSuiteTreeItem> testSuitesItemsToImport = new ObservableList<QtestSuiteTreeItem>();
                 foreach (QtestSuiteTreeItem testSuiteItem in selectedTestSuites)
                 {
                     //check if some of the Test Set was already imported                
@@ -189,7 +189,7 @@ namespace Ginger.ALM.Repository
                         //convert test set into BF
                         BusinessFlow tsBusFlow = ((QtestCore)ALMIntegration.Instance.AlmCore).ConvertQCTestSetToBF(TS);
 
-                        if ( WorkSpace.Instance.Solution.MainApplication != null)
+                        if (WorkSpace.Instance.Solution.MainApplication != null)
                         {
                             //add the applications mapped to the Activities
                             foreach (Activity activ in tsBusFlow.Activities)
@@ -238,7 +238,7 @@ namespace Ginger.ALM.Repository
                         Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC", ex);
                     }
                 }
-                
+
                 Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
 
                 Reporter.ToLog(eLogLevel.DEBUG, "Imported from QC successfully");
@@ -296,9 +296,9 @@ namespace Ginger.ALM.Repository
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, activtiesGroup.Name);
             string res = string.Empty;
             //TODO: retireve test case fields -->DONE
-            ObservableList<ExternalItemFieldBase> testCaseFields =  WorkSpace.Instance.Solution.ExternalItemsFields;
+            ObservableList<ExternalItemFieldBase> testCaseFields = WorkSpace.Instance.Solution.ExternalItemsFields;
             var filterTestCaseFields = testCaseFields.Where(tc => tc.ItemType == eQCItemType.TestCase.ToString()).ToList();
-            for(var i = 0; i < activtiesGroup.ActivitiesIdentifiers.Where(ai => ai.IdentifiedActivity == null).ToList().Count; i++)
+            for (var i = 0; i < activtiesGroup.ActivitiesIdentifiers.Where(ai => ai.IdentifiedActivity == null).ToList().Count; i++)
             {
                 if (activtiesGroup.ActivitiesIdentifiers[i].IdentifiedActivity == null)
                 {
@@ -321,7 +321,7 @@ namespace Ginger.ALM.Repository
             {
                 Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), activtiesGroup.Name, res);
             }
- 
+
             return false;
         }
 
@@ -373,12 +373,12 @@ namespace Ginger.ALM.Repository
                         //ask user if want to continue
                         eUserMsgSelection userSelect = Reporter.ToUser(eUserMsgKey.ActivitiesGroupAlreadyMappedToTC, ag.Name, matchingTC.TestName);
                         if (userSelect == eUserMsgSelection.Cancel)
-                        { 
-                            return false; 
+                        {
+                            return false;
                         }
                         else if (userSelect == eUserMsgSelection.No)
-                        { 
-                            matchingTC = null; 
+                        {
+                            matchingTC = null;
                         }
                         else
                         {
@@ -428,10 +428,10 @@ namespace Ginger.ALM.Repository
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
             string res = string.Empty;
             //TODO : need to update to retrieve only Test Set Item Fields -->DONE
-            ObservableList<ExternalItemFieldBase> testSetFields =  WorkSpace.Instance.Solution.ExternalItemsFields;
+            ObservableList<ExternalItemFieldBase> testSetFields = WorkSpace.Instance.Solution.ExternalItemsFields;
             // ALMIntegration.Instance.RefreshALMItemFields(testSetFields, true, null);    // Arvind to merge it from here
             var filterTestSetFields = testSetFields.Where(tc => tc.ItemType == eQCItemType.TestSet.ToString()).ToList();
-            bool exportRes = ((QtestCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToALM(businessFlow, matchingTS, parentObjectId, new ObservableList<ExternalItemFieldBase> (filterTestSetFields), ref res);
+            bool exportRes = ((QtestCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToALM(businessFlow, matchingTS, parentObjectId, new ObservableList<ExternalItemFieldBase>(filterTestSetFields), ref res);
             Reporter.HideStatusMessage();
             if (exportRes)
             {
@@ -486,6 +486,6 @@ namespace Ginger.ALM.Repository
         {
             return eUserMsgKey.AskIfToDownloadPossibleValuesShortProcesss;
         }
-         
+
     }
 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ namespace Ginger.ALM.MapToALMWizard
         private void SetInitialGridsData()
         {
             mWizard.mappedTestCasesStepPageList.Clear();
-            foreach(ALMTestCaseManualMappingConfig mtc in mWizard.testCasesMappingList)
+            foreach (ALMTestCaseManualMappingConfig mtc in mWizard.testCasesMappingList)
             {
                 if (mtc.aLMTSTest is not null)
                 {
@@ -85,7 +85,7 @@ namespace Ginger.ALM.MapToALMWizard
                 xUnMapTestStepsGrid.Title = $"ALM ‘{mWizard.mappedTestCasesStepPageList[0].TestCaseName}’ Steps";
             }
         }
-        
+
         private void Bind()
         {
             BindMapTestCasesGrid();
@@ -100,7 +100,7 @@ namespace Ginger.ALM.MapToALMWizard
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(ALMTSTestStep.StepName), Header = "ALM Step", WidthWeight = 25, AllowSorting = true });
             GridViewDef mRegularView2 = new GridViewDef(eGridView.RegularView.ToString());
-            xUnMapTestStepsGrid.AddToolbarTool(eImageType.MapSigns, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "Map selected test case to selected ginger") , new RoutedEventHandler(MapTestStepToolbarHandler));
+            xUnMapTestStepsGrid.AddToolbarTool(eImageType.MapSigns, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "Map selected test case to selected ginger"), new RoutedEventHandler(MapTestStepToolbarHandler));
             xUnMapTestStepsGrid.SetAllColumnsDefaultView(view);
             xUnMapTestStepsGrid.InitViewItems();
         }
@@ -167,16 +167,16 @@ namespace Ginger.ALM.MapToALMWizard
         {
             RegularView,
         }
-        
 
-       
+
+
 
         #region Functions
         // TODO add to helper functions
         private void MapTestStepHandler(ALMTSTestStep source, ALMTestStepManualMappingConfig target)
         {
             ALMTestCaseManualMappingConfig selectedTCConfig = (xMapTestCasesGrid.Grid.SelectedItem as ALMTestCaseManualMappingConfig);
-            if(selectedTCConfig is null)
+            if (selectedTCConfig is null)
             {
                 return;
             }
@@ -213,7 +213,7 @@ namespace Ginger.ALM.MapToALMWizard
         }
         private void ReplaceMappedTestCaseHandler(ALMTestStepManualMappingConfig source, ALMTestStepManualMappingConfig target)
         {
-            if(target is null)
+            if (target is null)
             {
                 return;
             }
@@ -277,7 +277,7 @@ namespace Ginger.ALM.MapToALMWizard
                 DragDrop2.SetDragIcon(false);
             }
         }
-        private void  TestStepsMapping_ItemDropped(object sender, EventArgs e)
+        private void TestStepsMapping_ItemDropped(object sender, EventArgs e)
         {
             object draggedItem = ((DragInfo)sender).Data as object;
             if (draggedItem == null)

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,24 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.UIElement;
 using Ginger.Drivers.Windows;
 using GingerCore.Actions.UIAutomation;
-using GingerCore.Drivers.Common;
 using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore.Drivers;
-using GingerCore.Drivers.WindowsLib;
-using GingerCore.Platforms;
-using Ginger.Drivers.WindowsAutomation;
-using GingerCore;
-using GingerCore.Actions;
-using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.WindowExplorer.Windows
 {
     public class WindowsElementConverter
     {
         internal static ITreeViewItem GetWindowsElementTreeItem(ElementInfo EI)
-        {          
+        {
             if (EI.ElementTypeEnum == eElementType.Button)
             {
                 WindowsButtonTreeItem BTI = new WindowsButtonTreeItem();
@@ -131,7 +124,7 @@ namespace Ginger.WindowExplorer.Windows
                 DBTI.UIAElementInfo.ElementObject = EI.ElementObject;
                 DBTI.UIAElementInfo = (UIAElementInfo)EI;
                 return DBTI;
-            }          
+            }
             else
             {
                 WindowsControlTreeItem TVIChild = new WindowsControlTreeItem();

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,26 +20,13 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GlobalSolutionLib;
 using Amdocs.Ginger.CoreNET.GlobalSolutionLib;
-using Ginger.Actions;
 using Ginger.SolutionGeneral;
 using Ginger.SourceControl;
-using Ginger.UserControls;
 using GingerCoreNET.SourceControl;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 {
@@ -66,20 +53,20 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     ((WizardWindow)wiz.mWizardWindow).ShowFinishButton(false);
                     sourceControlProjectsPage = new SourceControlProjectsPage(true);
                     xImportFromSourceControlFrame.Content = sourceControlProjectsPage;
-                    sourceControlProjectsPage.Width = 1200; 
+                    sourceControlProjectsPage.Width = 1200;
                     break;
                 case EventType.LeavingForNextPage:
 
                     if (wiz.ImportFromType == GlobalSolution.eImportFromType.SourceControl)
                     {
-                        SolutionInfo solutionInfo = (SolutionInfo) sourceControlProjectsPage.SolutionsGrid.grdMain.SelectedItem;
+                        SolutionInfo solutionInfo = (SolutionInfo)sourceControlProjectsPage.SolutionsGrid.grdMain.SelectedItem;
                         if (solutionInfo != null)
                         {
                             if (solutionInfo.ExistInLocaly)
                             {
                                 wiz.SolutionFolder = solutionInfo.LocalFolder;
                             }
-                            else 
+                            else
                             {
                                 Reporter.ToUser(eUserMsgKey.AskToSelectSolution);
                                 WizardEventArgs.CancelEvent = true;
@@ -99,7 +86,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }
-                    else 
+                    else
                     {
                         if (!wiz.SolutionFolder.EndsWith("\\"))
                         {

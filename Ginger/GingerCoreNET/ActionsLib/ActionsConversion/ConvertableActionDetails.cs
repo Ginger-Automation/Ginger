@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using System.Collections.Generic;
-using System.Linq;
-using System;
-using GingerCore.Actions.Common;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Actions;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Amdocs.Ginger.CoreNET
 {
@@ -59,7 +58,7 @@ namespace Amdocs.Ginger.CoreNET
         }
 
         public string SourceActionTypeName { get; set; }
-        public string TargetActionTypeName { get; set;}
+        public string TargetActionTypeName { get; set; }
 
         // holds occurrences/count of convertible action types in the list
         public int ActionCount { get; set; }
@@ -116,6 +115,6 @@ namespace Amdocs.Ginger.CoreNET
         {
             ActivityList = new List<string>();
             Actions = new List<Act>();
-        }      
+        }
     }
 }

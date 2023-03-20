@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -32,13 +32,13 @@ namespace GingerCore.Drivers.MainFrame
 {
     public class Terminal : INotifyPropertyChanged
     {
-        public  Open3270.TNEmulator emu = null;
-        public  string screenText;
+        public Open3270.TNEmulator emu = null;
+        public string screenText;
         bool isConnected;
         bool isConnecting;
         MainFrameDriver MFDriver;
 
-        public Terminal(string Host, int Port, string TermType, bool RequireSSl, int RowsCount, int ColumnsCount ,MainFrameDriver mdriver)
+        public Terminal(string Host, int Port, string TermType, bool RequireSSl, int RowsCount, int ColumnsCount, MainFrameDriver mdriver)
         {
             this.emu = new TNEmulator();
             this.emu.Disconnected += emu_Disconnected;
@@ -61,10 +61,10 @@ namespace GingerCore.Drivers.MainFrame
         public XMLScreen GetScreenAsXML()
         {
             Refresh();
-            XMLScreen XmlS = (XMLScreen)emu.GetScreenAsXML ();
-            XmlS.Render (emu.Config.ColumnsCount,emu.Config.RowsCount);
+            XMLScreen XmlS = (XMLScreen)emu.GetScreenAsXML();
+            XmlS.Render(emu.Config.ColumnsCount, emu.Config.RowsCount);
             return XmlS;
-        }   
+        }
 
         public bool IsConnecting
         {
@@ -138,7 +138,7 @@ namespace GingerCore.Drivers.MainFrame
         }
 
         #endregion INotifyPropertyChanged
-        
+
         /// <summary>
         /// Sends text to the terminal.
         /// This is used for typical alphanumeric text entry.
@@ -146,12 +146,12 @@ namespace GingerCore.Drivers.MainFrame
         /// <param name="text">The text to send</param>
         internal void SendText(string text)
         {
-             text = Regex.Replace(text, @"\r\n?|\n", String.Empty);
+            text = Regex.Replace(text, @"\r\n?|\n", String.Empty);
             try
             {
-                this.emu.SendText (text);
-                this.ScreenText = this.emu.CurrentScreenXML.Dump ();
-                this.UpdateCaretIndex ();
+                this.emu.SendText(text);
+                this.ScreenText = this.emu.CurrentScreenXML.Dump();
+                this.UpdateCaretIndex();
             }
             catch
             {
@@ -168,13 +168,13 @@ namespace GingerCore.Drivers.MainFrame
         {
             try
             {
-                this.emu.SendKey (true, key, 2000);
-                this.UpdateCaretIndex ();
+                this.emu.SendKey(true, key, 2000);
+                this.UpdateCaretIndex();
                 if (key != TnKey.Tab && key != TnKey.BackTab)
                 {
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
@@ -209,30 +209,30 @@ namespace GingerCore.Drivers.MainFrame
             this.CaretIndex = this.emu.CursorY * 81 + this.emu.CursorX;
         }
 
-        public void  SetCaretIndex(int Caret)
+        public void SetCaretIndex(int Caret)
         {
             try
             {
                 int PosY = Caret / 81;
                 int PosX = Caret - (81 * PosY);
 
-                this.emu.SetCursor (PosX, PosY);
+                this.emu.SetCursor(PosX, PosY);
             }
             catch
             {
             }
         }
-        public void SetCaretIndex(int locX,int locY)
+        public void SetCaretIndex(int locX, int locY)
         {
             try
             {
-                this.emu.SetCursor (locX, locY);
+                this.emu.SetCursor(locX, locY);
             }
             catch
             {
             }
         }
-        public List<int>  GetXYfromCaretIndex(int Caret)
+        public List<int> GetXYfromCaretIndex(int Caret)
         {
             int PosY = Caret / 81;
             int PosX = Caret - (81 * PosY);
@@ -262,10 +262,10 @@ namespace GingerCore.Drivers.MainFrame
             }
         }
 
-        public bool  Connect()
+        public bool Connect()
         {
-            emu.Config.FastScreenMode = true;          
-            return Check();         
+            emu.Config.FastScreenMode = true;
+            return Check();
         }
 
         public void Disconnect()
@@ -273,26 +273,26 @@ namespace GingerCore.Drivers.MainFrame
             emu.Dispose();
         }
         private bool ConnectToHost()
-        {            
+        {
             try
             {
                 emu.Connect();
                 emu.Refresh(true, 1000);
-                return  true;
+                return true;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog (eLogLevel.ERROR, "Failed to connect to Mainframe source : Terminal.cs->ConnectToHost() ",ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to Mainframe source : Terminal.cs->ConnectToHost() ", ex);
                 return false;
-            }           
+            }
         }
 
         bool Check()
         {
-            bool status = false; 
+            bool status = false;
             try
             {
-                status=ConnectToHost();
+                status = ConnectToHost();
                 IsConnecting = true;
 
                 Stopwatch SW = new Stopwatch();
@@ -303,7 +303,7 @@ namespace GingerCore.Drivers.MainFrame
                 }
                 IsConnected = emu.IsConnected;
 
-                IsConnecting = false;              
+                IsConnecting = false;
             }
             catch (Exception e)
             {
@@ -312,17 +312,17 @@ namespace GingerCore.Drivers.MainFrame
             }
             return status;
         }
-    
-        public string GetTextatPosition(int CaretPosition,int length =10)
+
+        public string GetTextatPosition(int CaretPosition, int length = 10)
         {
-            List<int> xy= GetXYfromCaretIndex(CaretPosition);
-            string a=  this.emu.GetText(xy.ElementAt(0), xy.ElementAt(1),length);
+            List<int> xy = GetXYfromCaretIndex(CaretPosition);
+            string a = this.emu.GetText(xy.ElementAt(0), xy.ElementAt(1), length);
             Console.WriteLine(a);
             return a;
         }
         public string GetTextatPosition(int x, int y, int length = 10)
-        {           
-            string a = this.emu.GetText(x,y, length);
+        {
+            string a = this.emu.GetText(x, y, length);
             return a;
         }
     }

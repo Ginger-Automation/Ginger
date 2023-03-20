@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -29,12 +29,12 @@ limitations under the License.
 //    {
 //        [IsSerializedForLocalRepository]
 //        public RepositoryItemKey ApplicationLink { get; set; }
-        
+
 //        [IsSerializedForLocalRepository]
 //        public RepositoryItemKey AgentLink { get; set; }
 
 //        public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        
+
 //        public UserProfileApplicationAgentMap(ApplicationPlatform applicationPlatform, NewAgent agent)
 //        {
 //            ApplicationLink.ItemName = applicationPlatform.AppName;

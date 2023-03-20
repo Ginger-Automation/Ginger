@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ namespace Amdocs.Ginger.GingerRuntime
             BusinessFlowsCountMenuItem = new MenuItem(ConsoleKey.B, GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " Count", BusinessFlowsCount, false);
             BusinessFlowsListMenuItem = new MenuItem(ConsoleKey.L, GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " List", BusinessFlowsList, false);
             EnvironmentsListMenuItem = new MenuItem(ConsoleKey.E, "Environments List", EnvironmentsList, false);
-            RunBusinessFlowMenuItem = new MenuItem(ConsoleKey.R, "Run " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) , RunBusinessFlow, false);
+            RunBusinessFlowMenuItem = new MenuItem(ConsoleKey.R, "Run " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), RunBusinessFlow, false);
             RunSetMenuItem = new MenuItem(ConsoleKey.S, GingerDicser.GetTermResValue(eTermResKey.RunSet), RunSet, false);
 
             MenuItem SolutionMenu = new MenuItem(ConsoleKey.S, "Solution");
@@ -78,9 +78,9 @@ namespace Amdocs.Ginger.GingerRuntime
             Console.WriteLine("starting RunSetConfig execution");
             RunsetExecutor runsetExecuto = new RunsetExecutor();
             runsetExecuto.RunSetConfig = runSetConfig;
-           await runsetExecuto.RunRunset();            
+            await runsetExecuto.RunRunset();
 
-            Console.WriteLine("Execution completed");            
+            Console.WriteLine("Execution completed");
         }
 
         private void RunBusinessFlow()
@@ -93,7 +93,7 @@ namespace Amdocs.Ginger.GingerRuntime
                 Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " not found");
                 return;
             }
-            GingerExecutionEngine gingerRunner = new GingerExecutionEngine(new GingerRunner());            
+            GingerExecutionEngine gingerRunner = new GingerExecutionEngine(new GingerRunner());
             gingerRunner.RunBusinessFlow(businessFlow, true);
 
             Console.WriteLine("Execution Completed");
@@ -108,14 +108,14 @@ namespace Amdocs.Ginger.GingerRuntime
                 Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.Activity) + ": " + activity.ActivityName + " Status: " + activity.Status);
 
                 Console.WriteLine("Actions Found:" + activity.Acts.Count);
-                foreach (Act act in activity.Acts )
+                foreach (Act act in activity.Acts)
                 {
                     Console.WriteLine("------");
                     Console.WriteLine("Action:" + act.Description);
                     Console.WriteLine("Description:" + act.ActionDescription);
                     Console.WriteLine("Type:" + act.ActionType);
-                    Console.WriteLine("Class:" + act.ActClass );
-                    Console.WriteLine("Status:" + act.Status );
+                    Console.WriteLine("Class:" + act.ActClass);
+                    Console.WriteLine("Status:" + act.Status);
                     Console.WriteLine("Error:" + act.Error);
                     Console.WriteLine("ExInfo:" + act.ExInfo);
                 }
@@ -125,7 +125,7 @@ namespace Amdocs.Ginger.GingerRuntime
 
 
         private void OpenSolution()
-        {            
+        {
             Console.WriteLine("Solution Folder?");
             string sFolder = Console.ReadLine();
             if (Directory.Exists(sFolder))
@@ -133,7 +133,7 @@ namespace Amdocs.Ginger.GingerRuntime
 
                 Console.WriteLine("Opening Solution at folder: " + sFolder);
 
-                SR = GingerSolutionRepository.CreateGingerSolutionRepository();                
+                SR = GingerSolutionRepository.CreateGingerSolutionRepository();
 
                 WorkSpace.Instance.SolutionRepository = SR;
                 SR.Open(sFolder);
@@ -184,7 +184,7 @@ namespace Amdocs.Ginger.GingerRuntime
                 count++;
                 Console.WriteLine("# " + count + " - " + BF.Name);
                 foreach (Activity activity in BF.Activities)
-                {                    
+                {
                     Console.WriteLine("Activity: " + activity.ActivityName);
                     foreach (Act action in activity.Acts)
                     {
@@ -195,7 +195,7 @@ namespace Amdocs.Ginger.GingerRuntime
         }
 
         void EnvironmentsList()
-        {            
+        {
             //ObservableList<ProjEnvironment> v = SR.GetAllRepositoryItems<ProjEnvironment>();
             //foreach (ProjEnvironment e in v)
             //{

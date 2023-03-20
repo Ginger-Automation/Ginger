@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,17 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Ginger.Repository;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Activities;
+using GingerCore.Variables;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.Variables;
-using GingerCore.Activities;
-using GingerCore.Actions;
-using Amdocs.Ginger.Common;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -34,7 +33,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     {
         private SharedRepositorySummaryPage mSharedRepositoryPage;
 
-        string Path = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"SharedRepository\");
+        string Path = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"SharedRepository\");
 
         Object ITreeViewItem.NodeObject()
         {
@@ -43,7 +42,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            
+
             return TreeViewUtils.CreateItemHeader("Shared Repository", "@SharedRepository_16x16.png", Ginger.SourceControl.SourceControlUI.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
         }
         override public string NodePath()
@@ -92,14 +91,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
         ContextMenu ITreeViewItem.Menu()
         {
             return mContextMenu;
-           
+
         }
 
         void ITreeViewItem.SetTools(ITreeView TV)
         {
             mTreeView = TV;
             mContextMenu = new ContextMenu();
-            AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName:null,allowAddNew:false,allowPaste:false,allowCutItems:false,allowCopyItems:false,allowRenameFolder:false,allowAddSubFolder:false,allowDeleteFolder:false);
+            AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: null, allowAddNew: false, allowPaste: false, allowCutItems: false, allowCopyItems: false, allowRenameFolder: false, allowAddSubFolder: false, allowDeleteFolder: false);
             AddSourceControlOptions(mContextMenu, false, false);
         }
     }

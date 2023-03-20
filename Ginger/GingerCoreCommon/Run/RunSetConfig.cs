@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
@@ -26,12 +30,6 @@ using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
-using GingerCore;
-using GingerCore.GeneralLib;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace Ginger.Run
 {
@@ -86,7 +84,7 @@ namespace Ginger.Run
             }
         }
 
-        
+
         private string mSealightsTestStage;
         [IsSerializedForLocalRepository]
         public string SealightsTestStage

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,22 +16,22 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using GingerWPF.DragDropLib;
+using Amdocs.Ginger.Repository;
+using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.UserControls;
 using Ginger.Variables;
 using GingerCore;
 using GingerCore.Variables;
+using GingerWPF.DragDropLib;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
-using GingerWPF.WizardLib;
-using Ginger.Repository.AddItemToRepositoryWizard;
 
 namespace Ginger.Repository
 {
@@ -68,35 +68,35 @@ namespace Ginger.Repository
             if (mVariablesFolder.IsRootFolder)
             {
                 xVariablesGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
-            }                
+            }
             else
             {
                 xVariablesGrid.DataSourceList = mVariablesFolder.GetFolderItems();
             }
-            
+
         }
 
 
         private void SetVariablesGridView()
-        {                        
+        {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;
             viewCols.Add(new GridColView() { Field = nameof(VariableBase.Name), WidthWeight = 50, AllowSorting = true });
             viewCols.Add(new GridColView() { Field = nameof(VariableBase.Description), WidthWeight = 35, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = "Inst.", WidthWeight = 15, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ViewInstancesButton"] });           
+            view.GridColsView.Add(new GridColView() { Field = "Inst.", WidthWeight = 15, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ViewInstancesButton"] });
             xVariablesGrid.SetAllColumnsDefaultView(view);
             xVariablesGrid.InitViewItems();
-            if (mContext != null && mContext.BusinessFlow!=null)
+            if (mContext != null && mContext.BusinessFlow != null)
             {
                 xVariablesGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to " + GingerDicser.GetTermResValue(eTermResKey.Variables), new RoutedEventHandler(AddFromRepository));
             }
             xVariablesGrid.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditVar));
             xVariablesGrid.ShowTagsFilter = Visibility.Visible;
-            
+
             xVariablesGrid.RowDoubleClick += grdVariables_grdMain_MouseDoubleClick;
             xVariablesGrid.ItemDropped += grdVariables_ItemDropped;
-            xVariablesGrid.PreviewDragItem += grdVariables_PreviewDragItem;           
+            xVariablesGrid.PreviewDragItem += grdVariables_PreviewDragItem;
         }
 
         private void AddFromRepository(object sender, RoutedEventArgs e)
@@ -106,8 +106,8 @@ namespace Ginger.Repository
                 foreach (VariableBase selectedItem in xVariablesGrid.Grid.SelectedItems)
                 {
                     mBusinessFlow.AddVariable((VariableBase)selectedItem.CreateInstance(true));
-                }                    
-                
+                }
+
                 int selectedActIndex = -1;
                 ObservableList<VariableBase> varList = mBusinessFlow.Variables;
                 if (varList.CurrentItem != null)
@@ -120,7 +120,9 @@ namespace Ginger.Repository
                 }
             }
             else
+            {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
         }
 
         private void EditVar(object sender, RoutedEventArgs e)
@@ -148,7 +150,9 @@ namespace Ginger.Repository
                 usagePage.ShowAsWindow();
             }
             else
+            {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
         }
 
         private void grdVariables_PreviewDragItem(object sender, EventArgs e)
@@ -169,7 +173,7 @@ namespace Ginger.Repository
         {
             VariableBase dragedItem = (VariableBase)((DragInfo)sender).Data;
             if (dragedItem != null)
-            {              
+            {
                 WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, dragedItem));
 
                 //refresh and select the item
@@ -177,7 +181,9 @@ namespace Ginger.Repository
                 {
                     VariableBase dragedItemInGrid = ((IEnumerable<VariableBase>)xVariablesGrid.DataSourceList).Where(x => x.Guid == dragedItem.Guid).FirstOrDefault();
                     if (dragedItemInGrid != null)
+                    {
                         xVariablesGrid.Grid.SelectedItem = dragedItemInGrid;
+                    }
                 }
                 catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             }

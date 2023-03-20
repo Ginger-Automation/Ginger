@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -54,7 +54,8 @@ namespace GingerCoreCommonTest.VariableTests
         }
         #endregion
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SequenceVar_TestVariableType()
         {
             //Arrange
@@ -67,7 +68,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("Sequence", varType, "Sequence Variable Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SequenceVar_TestVariableUIType()
         {
             //Arrange
@@ -80,7 +82,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(varType.Contains("Sequence"), "Sequence Variable UI Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SequenceVar_TestImageType()
         {
             //Arrange
@@ -93,7 +96,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(eImageType.SequentialExecution, eImageType, "Image Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SequenceVar_TestDefaultAutoValue()
         {
             //Arrange
@@ -108,7 +112,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(curSeqVal >= 1 && curSeqVal <= 999, "num1 >= 0 && num1 <= 999");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SequenceVar_Min5_Max10_Interval_2()
         {
             //Arrange
@@ -129,7 +134,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(num2 <= 10, "vs.Value<=10");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SequenceVar_Digit_13()
         {
             // same number as minimum and maximum and it should return the same number when we autogenerate
@@ -152,7 +158,8 @@ namespace GingerCoreCommonTest.VariableTests
             }
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SequenceVar_Range_99_999_interval_9()
         {
             //Arrange
@@ -171,11 +178,12 @@ namespace GingerCoreCommonTest.VariableTests
                 decimal num1 = decimal.Parse(variableSequence.Value);
 
                 //Assert            
-                Assert.IsTrue(num1 >= minNum && num1 <= maxNum, "num1 >= " + minNum  + " && num1 <= " + maxNum);
+                Assert.IsTrue(num1 >= minNum && num1 <= maxNum, "num1 >= " + minNum + " && num1 <= " + maxNum);
             }
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SequenceVar_TestSequence()
         {
             //Arrange
@@ -205,7 +213,8 @@ namespace GingerCoreCommonTest.VariableTests
             }
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SequenceVar_TestFormula()
         {
             //Arrange
@@ -217,7 +226,7 @@ namespace GingerCoreCommonTest.VariableTests
             VariableSequence variableSequence = new VariableSequence();
             variableSequence.Min = minNum;
             variableSequence.Max = maxNum;
-            variableSequence.Interval = interval;            
+            variableSequence.Interval = interval;
 
             //Act
             string formulaVal = variableSequence.GetFormula();

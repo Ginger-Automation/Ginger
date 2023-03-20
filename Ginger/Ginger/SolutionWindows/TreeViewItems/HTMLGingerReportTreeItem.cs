@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,27 +16,22 @@ limitations under the License.
 */
 #endregion
 
-using Ginger.Environments;
-using Ginger.Reports;
-using Ginger.Repository;
-using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore;
-using GingerCore.SourceControl;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using GingerWPF.TreeViewItemsLib;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
+using Ginger.Reports;
+using GingerWPF.TreeViewItemsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
+using System;
+using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
     class HTMLGingerReportTreeItem : NewTreeViewItemBase, ITreeViewItem
-    {       
+    {
         public HTMLReportConfiguration HTMLReportConfiguration { get; set; }
         HTMLReportTemplatePage mHTMLReportTemplatePage;
 
@@ -59,17 +54,17 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {            
+        {
             return NewTVItemHeaderStyle(HTMLReportConfiguration);
         }
-        
+
         bool ITreeViewItem.IsExpandable()
         {
             return false;
         }
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
-        {   
+        {
             //TODO: to load page only once            
             mHTMLReportTemplatePage = new HTMLReportTemplatePage(HTMLReportConfiguration);
             return mHTMLReportTemplatePage;
@@ -89,15 +84,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             mTreeView = TV;
             mContextMenu = new ContextMenu();
-                    
-            TreeViewUtils.AddMenuItem(mContextMenu, "Set as Default Template", SetTemplateAsDefault, null, eImageType.Check);            
-            AddItemNodeBasicManipulationsOptions(mContextMenu, allowCopy:false,allowCut:false);
-            AddSourceControlOptions(mContextMenu);           
+
+            TreeViewUtils.AddMenuItem(mContextMenu, "Set as Default Template", SetTemplateAsDefault, null, eImageType.Check);
+            AddItemNodeBasicManipulationsOptions(mContextMenu, allowCopy: false, allowCut: false);
+            AddSourceControlOptions(mContextMenu);
         }
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
-            if(HTMLReportConfiguration.IsDefault==true)
+            if (HTMLReportConfiguration.IsDefault == true)
             {
                 Reporter.ToUser(eUserMsgKey.DefaultTemplateCantBeDeleted);
                 return false;

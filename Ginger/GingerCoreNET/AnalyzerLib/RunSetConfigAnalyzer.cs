@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Platforms;
 using GingerCore.Variables;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Ginger.AnalyzerLib
 {
@@ -64,11 +64,16 @@ namespace Ginger.AnalyzerLib
                                 AA.Agent.AgentOperations = new AgentOperations(AA.Agent);
                             }
                         }
-                        if (AA.Agent == null) continue;//no Agent so skip it
+                        if (AA.Agent == null)
+                        {
+                            continue;//no Agent so skip it
+                        }
 
                         Guid agnetGuide = (from x in Agents where x == AA.Agent.Guid select x).FirstOrDefault();
                         if (agnetGuide == Guid.Empty)
+                        {
                             Agents.Add(AA.Agent.Guid);
+                        }
                         else
                         {
                             if (!AA.Agent.SupportVirtualAgent())
@@ -115,10 +120,10 @@ namespace Ginger.AnalyzerLib
                                 if (optionalOutputVariables == null)
                                 {
                                     optionalOutputVariables = ((GingerExecutionEngine)GR.Executor).GetPossibleOutputVariables(RSC, bf, includeGlobalVars: false, includePrevRunnersVars: true);
-                                }                              
+                                }
                                 issueExist = optionalOutputVariables.Where(x => x.VariableInstanceInfo == inputVar.MappedOutputValue).FirstOrDefault() == null;
                                 break;
-                            case VariableBase.eOutputType.GlobalVariable:                                
+                            case VariableBase.eOutputType.GlobalVariable:
                                 Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);
                                 issueExist = WorkSpace.Instance.Solution.Variables.Where(x => x.Guid == mappedGuid).FirstOrDefault() == null;
                                 break;
@@ -150,12 +155,12 @@ namespace Ginger.AnalyzerLib
             }
 
             return IssuesList;
-        }        
+        }
 
         static RunSetConfigAnalyzer CreateNewIssue(List<AnalyzerItemBase> IssuesList, RunSetConfig RSC)
         {
             RunSetConfigAnalyzer RSCA = new RunSetConfigAnalyzer();
-            RSCA.Status = AnalyzerItemBase.eStatus.NeedFix;            
+            RSCA.Status = AnalyzerItemBase.eStatus.NeedFix;
             RSCA.ItemName = RSC.Name;
             RSCA.ItemClass = "Run Set";
             IssuesList.Add(RSCA);

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
     {
         public ExecutionLoggerHelper()
         {
-                
+
         }
         public void CleanDirectory(string folderName, bool isCleanFile = true)
         {
@@ -54,7 +54,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     Directory.Delete(folderName, false);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to Clean Execution Logger Folder '{0}', Issue:'{1}'", folderName, ex.Message));
             }
@@ -70,7 +70,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 }
                 else
                 {
-                   // CleanDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
+                    // CleanDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
                 }
             }
             catch (Exception ex)

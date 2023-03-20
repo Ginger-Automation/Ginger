@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ namespace Ginger.ALM.Repository
                 {
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, "Bad credentials");
                     return false;
-                }   
+                }
             }
             catch (Exception e)
             {
@@ -114,8 +114,8 @@ namespace Ginger.ALM.Repository
             string res = string.Empty;
 
             ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
-            
-            ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);        
+
+            ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
 
             ObservableList<ExternalItemFieldBase> testCaseFields = CleanUnrelvantFields(allFields, "Test Case");
 
@@ -175,7 +175,7 @@ namespace Ginger.ALM.Repository
                     }
                     else if (userSelec == eUserMsgSelection.No)
                     {
-                        matchingTS = null;                 
+                        matchingTS = null;
                     }
                     else
                     {
@@ -187,13 +187,13 @@ namespace Ginger.ALM.Repository
                 }
             }
 
-            
+
             bool performSave = false;
 
             //just to check if new TC needs to be created or update has to be done
             if (matchingTS == null)
             {
-                if(almConectStyle != eALMConnectType.Silence)
+                if (almConectStyle != eALMConnectType.Silence)
                 {
                     testPlanUploadPath = SelectALMTestPlanPath();
                 }
@@ -219,7 +219,7 @@ namespace Ginger.ALM.Repository
             else
             {
                 matchingTC = new ALMTestCase();
-            } 
+            }
             //check if all of the business flow activities groups already exported to Octane and export the ones which not
             foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
             {
@@ -298,7 +298,7 @@ namespace Ginger.ALM.Repository
             QCTestLabExplorerPage win = new QCTestLabExplorerPage(QCTestLabExplorerPage.eExplorerTestLabPageUsageType.Import, importDestinationFolderPath);
             win.ShowAsWindow(eWindowShowStyle.Dialog);
         }
-          
+
 
         public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<object> selectedTestSets)
         {

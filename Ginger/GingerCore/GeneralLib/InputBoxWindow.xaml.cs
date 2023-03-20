@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -44,23 +44,23 @@ namespace GingerCore.GeneralLib
             InputBoxWindow IBW = new InputBoxWindow();
             IBW.Init(title, message, ref Value, isMultiline);
             CurrentInputBoxWindow = IBW;
-            IBW.ShowDialog();            
+            IBW.ShowDialog();
             if (IBW.OK)
             {
-                Value = IBW.value;                
+                Value = IBW.value;
                 return true;
             }
             else
             {
                 return false;
             }
-            
+
         }
 
         public static bool OpenDialog(string title, string message, Object obj, string Property)
-        {            
+        {
             InputBoxWindow IBW = new InputBoxWindow();
-         
+
             IBW.Init(title, message, obj, Property);
 
             IBW.ShowDialog();
@@ -97,7 +97,7 @@ namespace GingerCore.GeneralLib
         }
 
         void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property)
-        {            
+        {
             Binding b = new Binding();
             b.Source = obj;
             b.Path = new PropertyPath(property);
@@ -128,7 +128,7 @@ namespace GingerCore.GeneralLib
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {                        
+        {
             this.Close();
         }
 

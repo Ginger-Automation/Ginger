@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -53,7 +53,9 @@ using System.Windows.Input;
 
 namespace Ginger.Actions
 {
-    enum eGridView { All, NonSimulation,
+    enum eGridView
+    {
+        All, NonSimulation,
         RegularView
     }
 
@@ -189,7 +191,7 @@ namespace Ginger.Actions
             {
                 SetViewMode();
             }
-            else if(EditMode == General.eRIPageViewMode.Explorer)
+            else if (EditMode == General.eRIPageViewMode.Explorer)
             {
                 SetExplorerMode();
             }
@@ -313,7 +315,7 @@ namespace Ginger.Actions
 
             xDataSourceConfigGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All", new RoutedEventHandler(CheckUnCheckGridRow));
 
- 
+
             BindingHandler.ObjFieldBinding(xAddOutToDSCheckbox, CheckBox.IsCheckedProperty, mAction, nameof(Act.ConfigOutputDS));
             BindingHandler.ObjFieldBinding(xDataSourceNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceName));
             BindingHandler.ObjFieldBinding(xDataSourceTableNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceTableName));
@@ -333,9 +335,13 @@ namespace Ginger.Actions
                 mAction.OutDataSourceName = mAction.DSOutputConfigParams[0].DSName;
                 mAction.OutDataSourceTableName = mAction.DSOutputConfigParams[0].DSTable;
                 if (mAction.DSOutputConfigParams[0].OutParamMap == null)
+                {
                     mAction.OutDSParamMapType = Act.eOutputDSParamMapType.ParamToRow.ToString();
+                }
                 else
+                {
                     mAction.OutDSParamMapType = mAction.DSOutputConfigParams[0].OutParamMap;
+                }
             }
             mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             if (mDSList.Count == 0)
@@ -483,9 +489,13 @@ namespace Ginger.Actions
         private void RefreshOutputColumns(object sender, RoutedEventArgs e)
         {
             if (mAction.SupportSimulation)
+            {
                 xOutputValuesGrid.ChangeGridView(eGridView.All.ToString());
+            }
             else
+            {
                 xOutputValuesGrid.ChangeGridView(eGridView.NonSimulation.ToString());
+            }
         }
 
 
@@ -501,8 +511,11 @@ namespace Ginger.Actions
         // This way we will remove all below ugly else if conditions
         private void SwitchingInputValueBoxAndGrid(Act a)
         {
-            if (IsPageClosing) return; // no need to update the UI since we are closing, when done in Undo changes/Cancel 
-                                       // we do restore and don't want to raise events which will cause exception  (a.Value = ""  - is the messer)
+            if (IsPageClosing)
+            {
+                return; // no need to update the UI since we are closing, when done in Undo changes/Cancel 
+            }
+            // we do restore and don't want to raise events which will cause exception  (a.Value = ""  - is the messer)
 
             if (mAction.ValueConfigsNeeded == false)
             {
@@ -636,9 +649,9 @@ namespace Ginger.Actions
                     xValueBoxPnl.Visibility = Visibility.Collapsed;
                 }
             }
-            else if (a.GetType() == typeof(ActSetVariableValue) || a.GetType() == typeof(ActCreatePDFChart) 
+            else if (a.GetType() == typeof(ActSetVariableValue) || a.GetType() == typeof(ActCreatePDFChart)
                         || a.GetType() == typeof(ActCompareImgs) || a.GetType() == typeof(ActGenerateFileFromTemplate)
-                        || a.GetType() == typeof(ActPBControl) || a.GetType() == typeof(ActWindowsControl) 
+                        || a.GetType() == typeof(ActPBControl) || a.GetType() == typeof(ActWindowsControl)
                         || a.GetType() == typeof(ActMenuItem) || a.GetType() == typeof(ActJavaElement))
             {
                 xInputValuesGrid.Visibility = Visibility.Collapsed;
@@ -684,9 +697,14 @@ namespace Ginger.Actions
             viewCols.Add(new GridColView() { Field = ActOutDataSourceConfig.Fields.OutputType, Header = "Output Type", WidthWeight = 150, ReadOnly = true });
             viewCols.Add(new GridColView() { Field = ActOutDataSourceConfig.Fields.TableColumn, Header = "Table Column", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ActOutDataSourceConfig.Fields.PossibleValues, ActOutDataSourceConfig.Fields.TableColumn) });
             if (xDataSourceConfigGrid.SelectedViewName != null && xDataSourceConfigGrid.SelectedViewName != "")
+            {
                 xDataSourceConfigGrid.updateAndSelectCustomView(view);
+            }
             else
+            {
                 xDataSourceConfigGrid.SetAllColumnsDefaultView(view);
+            }
+
             xDataSourceConfigGrid.InitViewItems();
             xDataSourceConfigGrid.SetTitleLightStyle = true;
         }
@@ -742,9 +760,13 @@ namespace Ginger.Actions
             xOutputValuesGrid.InitViewItems();
 
             if (mAction.SupportSimulation == true)
+            {
                 xOutputValuesGrid.ChangeGridView(eGridView.All.ToString());
+            }
             else
+            {
                 xOutputValuesGrid.ChangeGridView(eGridView.NonSimulation.ToString());
+            }
 
             xOutputValuesGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshOutputValuesGridElements));
             xOutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
@@ -755,7 +777,7 @@ namespace Ginger.Actions
             BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mAction, nameof(Act.SupportSimulation));
 
 
-            
+
 
             xOutputValuesGrid.ShowViewCombo = Visibility.Collapsed;
             xOutputValuesGrid.ShowEdit = Visibility.Collapsed;
@@ -1175,9 +1197,13 @@ namespace Ginger.Actions
                 || (mActParentActivity != null && Reporter.ToUser(eUserMsgKey.SaveItemParentWarning, GingerDicser.GetTermResValue(eTermResKey.Activity), mActParentActivity.ActivityName) == Amdocs.Ginger.Common.eUserMsgSelection.Yes))
             {
                 if (mActParentBusinessFlow != null)
+                {
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActParentBusinessFlow);
+                }
                 else
+                {
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActParentActivity);
+                }
 
                 saveWasDone = true;
             }
@@ -1393,10 +1419,25 @@ namespace Ginger.Actions
                     System.Globalization.CultureInfo culture)
             {
                 string status = value.ToString();
-                if (status.Equals(ActReturnValue.eStatus.Passed.ToString())) return System.Windows.Media.Brushes.Green;//System.Drawing.Brushes.Green;
-                if (status.Equals(ActReturnValue.eStatus.Failed.ToString())) return System.Windows.Media.Brushes.Red;
-                if (status.Equals(ActReturnValue.eStatus.Pending.ToString())) return System.Windows.Media.Brushes.Orange;
-                if (status.Equals(ActReturnValue.eStatus.Skipped.ToString())) return System.Windows.Media.Brushes.Black;
+                if (status.Equals(ActReturnValue.eStatus.Passed.ToString()))
+                {
+                    return System.Windows.Media.Brushes.Green;//System.Drawing.Brushes.Green;
+                }
+
+                if (status.Equals(ActReturnValue.eStatus.Failed.ToString()))
+                {
+                    return System.Windows.Media.Brushes.Red;
+                }
+
+                if (status.Equals(ActReturnValue.eStatus.Pending.ToString()))
+                {
+                    return System.Windows.Media.Brushes.Orange;
+                }
+
+                if (status.Equals(ActReturnValue.eStatus.Skipped.ToString()))
+                {
+                    return System.Windows.Media.Brushes.Black;
+                }
 
                 return System.Drawing.Brushes.Gray;
             }
@@ -1439,10 +1480,16 @@ namespace Ginger.Actions
         {
             mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             if (mDSList.Count == 0)
+            {
                 return;
+            }
+
             mDSNames.Clear();
             foreach (DataSourceBase ds in mDSList)
+            {
                 mDSNames.Add(ds.Name);
+            }
+
             GingerCore.General.FillComboFromList(xDataSourceNameCombo, mDSNames);
             // Added Check to get already saved ActOutDataSourceConfig params
             if (mAction.DSOutputConfigParams.Count > 0)
@@ -1478,7 +1525,7 @@ namespace Ginger.Actions
                 Enum.TryParse(mAction.OutDSParamMapType, out Act.eOutputDSParamMapType selecedEnumVal);
                 xdsOutputParamMapType.SelectedValue = selecedEnumVal;
             }
-               
+
 
             SetDataSourceConfigTabView();
 
@@ -1506,7 +1553,9 @@ namespace Ginger.Actions
         private void updateDSOutGrid()
         {
             if (xDataSourceTableNameCombo == null || xDataSourceTableNameCombo.Items.Count == 0 || xDataSourceTableNameCombo.SelectedValue == null)
+            {
                 return;
+            }
 
             List<ActOutDataSourceConfig> DSConfigParam = mAction.DSOutputConfigParams.Where(x => x.DSName == mDataSourceName && x.DSTable == mDSTable.Name && x.OutParamMap == mAction.OutDSParamMapType).ToList();
             SetDataSourceConfigTabView();
@@ -1516,11 +1565,19 @@ namespace Ginger.Actions
                 xdsOutputParamMapType.IsEnabled = true;
                 mColNames.Remove("GINGER_ID");
                 if (mColNames.Contains("GINGER_LAST_UPDATED_BY"))
+                {
                     mColNames.Remove("GINGER_LAST_UPDATED_BY");
+                }
+
                 if (mColNames.Contains("GINGER_LAST_UPDATE_DATETIME"))
+                {
                     mColNames.Remove("GINGER_LAST_UPDATE_DATETIME");
+                }
+
                 if (mColNames.Contains("GINGER_USED"))
+                {
                     mColNames.Remove("GINGER_USED");
+                }
 
                 if (mAction.OutDSParamMapType == Act.eOutputDSParamMapType.ParamToRow.ToString())
                 {
@@ -1553,7 +1610,7 @@ namespace Ginger.Actions
             {
                 aOutDSConfigParam.Add(aOutDSConfig);
             }
-                
+
 
             xDataSourceConfigGrid.Visibility = Visibility.Visible;
 
@@ -1565,7 +1622,10 @@ namespace Ginger.Actions
         private void cmbDataSourceTableName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (xDataSourceTableNameCombo == null || xDataSourceTableNameCombo.Items.Count == 0 || xDataSourceTableNameCombo.SelectedValue == null)
+            {
                 return;
+            }
+
             foreach (DataSourceTable dst in mDSTableList)
             {
                 if (dst.Name == xDataSourceTableNameCombo.SelectedValue.ToString())
@@ -1574,7 +1634,10 @@ namespace Ginger.Actions
 
                     mColNames = mDSTable.DSC.GetColumnList(mDSTable.Name);
                     if (mAction.OutDSParamMapType == null)
+                    {
                         mAction.OutDSParamMapType = Act.eOutputDSParamMapType.ParamToRow.ToString();
+                    }
+
                     xdsOutputParamMapType.SelectedValue = mAction.OutDSParamMapType;
                     updateDSOutGrid();
                     SetDSGridVisibility();
@@ -1592,11 +1655,18 @@ namespace Ginger.Actions
                     DataGridCell cell = (DataGridCell)((CheckBox)e.OriginalSource).Parent;
                     ActOutDataSourceConfig currRow = (ActOutDataSourceConfig)cell.DataContext;
                     if (currRow.OutputType == "Actual")
+                    {
                         mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Actual.ToString(), "GINGER_KEY_VALUE", "true");
+                    }
                     else if (currRow.OutputType == "Parameter")
+                    {
                         mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Parameter_Path.ToString(), "GINGER_KEY_NAME", (!currRow.Active).ToString());
+                    }
                     else
+                    {
                         mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Parameter.ToString(), "GINGER_KEY_NAME", (!currRow.Active).ToString());
+                    }
+
                     xDataSourceConfigGrid.DataSourceList = mAction.DSOutputConfigParams;
                 }
             }
@@ -1605,7 +1675,10 @@ namespace Ginger.Actions
         private void cmbDataSourceName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (xDataSourceNameCombo == null || xDataSourceNameCombo.Items.Count == 0 || xDataSourceNameCombo.SelectedValue == null)
+            {
                 return;
+            }
+
             foreach (DataSourceBase ds in mDSList)
             {
                 if (ds.Name == xDataSourceNameCombo.SelectedValue.ToString())
@@ -1625,11 +1698,16 @@ namespace Ginger.Actions
                     {
                         dsTableNames.Add(dst.Name);
                         if (xDataSourceTableNameCombo.SelectedValue != null && xDataSourceTableNameCombo.SelectedValue.ToString() == dst.Name)
+                        {
                             mDSTable = dst;
+                        }
                     }
 
                     if (mDSTableList.Count == 0)
+                    {
                         return;
+                    }
+
                     GingerCore.General.FillComboFromList(xDataSourceTableNameCombo, dsTableNames);
                     if (xDataSourceTableNameCombo.SelectedValue == null)
                     {
@@ -1655,7 +1733,7 @@ namespace Ginger.Actions
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    if (mAction.Status== Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)
+                    if (mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)
                     {
                         mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
                         xOutputValuesGrid.DataSourceList = null;

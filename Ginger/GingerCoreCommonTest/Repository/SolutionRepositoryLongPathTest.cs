@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ namespace GingerCoreCommonTest.Repository
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     [Ignore] // Fail on Linux with File watcher when moving to .net core 3 hopefully will be resolved
-    [TestClass]    
+    [TestClass]
     public class SolutionRepositoryLongPathTest
     {
         static SolutionRepository mSolutionRepository;
@@ -51,7 +51,7 @@ namespace GingerCoreCommonTest.Repository
         public static void ClassInitialize(TestContext TC)
         {
 
-            TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions" +Path.DirectorySeparatorChar + "SRTestTempLongPath");
+            TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions" + Path.DirectorySeparatorChar + "SRTestTempLongPath");
 
             int i = 1;
             while (TempRepositoryFolder.Length < 300)
@@ -74,13 +74,13 @@ namespace GingerCoreCommonTest.Repository
                                                                PropertyNameForFileName: nameof(MyRepositoryItem.Name)
                                                                );
 
-          
+
             NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommonTest);
 
 
 
             mSolutionRepository.Open(TempRepositoryFolder);
-            
+
         }
 
         private static void CreateTestSolution()
@@ -390,7 +390,7 @@ namespace GingerCoreCommonTest.Repository
         //    Assert.AreEqual((mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(MRI3.Guid)), null, "make sure all deleted folder sub folder items were removed from cache");
         //}
 
-        
+
         //[TestMethod]
         //public void DeleteBfsSubFolderWithAllItemsLoaded()
         //{
@@ -417,7 +417,7 @@ namespace GingerCoreCommonTest.Repository
         //    Assert.AreEqual((mSolutionRepository.GetRepositoryItemByGuid<MyRepositoryItem>(MRI3.Guid)), null, "make sure all deleted folder sub folder items were removed from cache");
         //}
 
-        
+
         //[TestMethod]
         //public void RenameBfsSubFolder()
         //{

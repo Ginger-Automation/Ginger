@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,13 +25,17 @@ namespace Ginger.Utils
     public static class BitmapManager
     {
         public static void SaveBitmapToPng(Bitmap bmp, string fileName)
-        {                        
-            bmp.Save(fileName, System.Drawing.Imaging.ImageFormat.Png);            
+        {
+            bmp.Save(fileName, System.Drawing.Imaging.ImageFormat.Png);
         }
-        
+
         public static Bitmap FileToBitmapImage(String path)
         {
-            if (string.IsNullOrEmpty(path)) return null;
+            if (string.IsNullOrEmpty(path))
+            {
+                return null;
+            }
+
             Bitmap bmp = (Bitmap)Bitmap.FromFile(path);
             return (bmp);
         }

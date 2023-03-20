@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using GingerCore.Variables;
 using System;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Ginger.Variables
@@ -33,7 +32,7 @@ namespace Ginger.Variables
         {
             variableDateTime = varDateTime;
             InitializeComponent();
-            
+
             BindControlValue();
 
         }
@@ -48,7 +47,7 @@ namespace Ginger.Variables
             dtpInitialDate.CustomFormat = variableDateTime.DateTimeFormat;
             dtpInitialDate.MinDate = Convert.ToDateTime(variableDateTime.MinDateTime);
             dtpInitialDate.MaxDate = Convert.ToDateTime(variableDateTime.MaxDateTime);
-            
+
             dpMinDate.Value = Convert.ToDateTime(variableDateTime.MinDateTime);
             dpMinDate.CustomFormat = variableDateTime.DateTimeFormat;
 
@@ -57,7 +56,7 @@ namespace Ginger.Variables
 
             txtDateFormat.Text = variableDateTime.DateTimeFormat;
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDateFormat, ComboBox.TextProperty,variableDateTime,nameof(VariableDateTime.DateTimeFormat), System.Windows.Data.BindingMode.TwoWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDateFormat, ComboBox.TextProperty, variableDateTime, nameof(VariableDateTime.DateTimeFormat), System.Windows.Data.BindingMode.TwoWay);
             txtDateFormat.AddValidationRule(new DateTimeFormatValidationRule(variableDateTime));
         }
 
@@ -71,7 +70,7 @@ namespace Ginger.Variables
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR,$"Minimum date :[{dpMinDate.Value}], should be <= Maximum Date:[{dtpInitialDate.MaxDate}]");
+                Reporter.ToLog(eLogLevel.ERROR, $"Minimum date :[{dpMinDate.Value}], should be <= Maximum Date:[{dtpInitialDate.MaxDate}]");
                 dpMinDate.Focus();
                 return;
             }
@@ -79,7 +78,7 @@ namespace Ginger.Variables
 
         private void dpMaxDate_TextChanged(object sender, EventArgs e)
         {
-            if(dpMaxDate.Value >= dtpInitialDate.MinDate)
+            if (dpMaxDate.Value >= dtpInitialDate.MinDate)
             {
                 dtpInitialDate.MaxDate = dpMaxDate.Value;
                 variableDateTime.MaxDateTime = dpMaxDate.Value.ToString();
@@ -90,7 +89,7 @@ namespace Ginger.Variables
                 dpMaxDate.Focus();
                 return;
             }
-                
+
         }
 
         private void dtpInitialDate_TextChanged(object sender, EventArgs e)
@@ -118,7 +117,7 @@ namespace Ginger.Variables
                     dpMaxDate.CustomFormat = ((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedValue).Content.ToString();
                 }
             }
-            
+
         }
 
         private void txtDateFormat_TextChanged(object sender, SelectionChangedEventArgs e)

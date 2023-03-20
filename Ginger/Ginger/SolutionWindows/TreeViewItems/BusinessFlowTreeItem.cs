@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ using System.Windows.Controls;
 namespace Ginger.SolutionWindows.TreeViewItems
 {
     public class BusinessFlowTreeItem : NewTreeViewItemBase, ITreeViewItem
-    {        
+    {
         private BusinessFlowViewPage mBusinessFlowViewPage;
 
         private BusinessFlow mBusinessFlow { get; set; }
@@ -68,7 +68,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {         
+        {
             return NewTVItemHeaderStyle(mBusinessFlow);
         }
 
@@ -94,7 +94,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         ContextMenu ITreeViewItem.Menu()
         {
             return mContextMenu;
-        }     
+        }
 
         void ITreeViewItem.SetTools(ITreeView TV)
         {
@@ -102,11 +102,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mContextMenu = new ContextMenu();
             if (mViewMode == eBusinessFlowsTreeViewMode.ReadWrite)
             {
-                if ( WorkSpace.Instance.UserProfile.UserTypeHelper.IsSupportAutomate)
-                {   
+                if (WorkSpace.Instance.UserProfile.UserTypeHelper.IsSupportAutomate)
+                {
                     TreeViewUtils.AddMenuItem(mContextMenu, "Automate", Automate, null, eImageType.Automate);
                 }
-                
+
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
                 MenuItem actConversionMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Conversion", eImageType.Convert);
                 TreeViewUtils.AddSubMenuItem(actConversionMenu, "Legacy Actions Conversion", ActionsConversionHandler, null, eImageType.Convert);
@@ -121,7 +121,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ExportMenu, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
 
                 if (WorkSpace.Instance.BetaFeatures.BFExportToJava)
+                {
                     TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to Java", ExportToJava, null, "");
+                }
             }
 
             AddGherkinOptions(mContextMenu);
@@ -181,14 +183,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void GoToGherkinFeatureFile(object sender, RoutedEventArgs e)
         {
-            DocumentEditorPage documentEditorPage = new DocumentEditorPage(mBusinessFlow.ExternalID.Replace("~",  WorkSpace.Instance.Solution.Folder), true);
+            DocumentEditorPage documentEditorPage = new DocumentEditorPage(mBusinessFlow.ExternalID.Replace("~", WorkSpace.Instance.Solution.Folder), true);
             documentEditorPage.Title = "Gherkin Page";
             documentEditorPage.Height = 700;
             documentEditorPage.Width = 1000;
             documentEditorPage.ShowAsWindow();
 
         }
-        
+
         //public override void PostDeleteTreeItemHandler()
         //{
         //    if (App.BusinessFlow == mBusinessFlow)

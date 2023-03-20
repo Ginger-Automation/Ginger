@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                                 RepositoryItemKey ta = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.ItemName == activity.TargetApplication).FirstOrDefault().Key;
                                 if (activity != null && activity.Active && WorkSpace.Instance.Solution.GetApplicationPlatformForTargetApp(ta.ItemName) == ePlatformType.WebServices)
                                 {
-                                  bf.ConvertedActionsCount +=  ConvertActivity(parameterizeRequestBody, pullValidations, activity, ta, apiModelFolder);
+                                    bf.ConvertedActionsCount += ConvertActivity(parameterizeRequestBody, pullValidations, activity, ta, apiModelFolder);
                                 }
                             }
                         }
@@ -134,7 +134,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                         }
 
                         convertionConter++;
-                    }                    
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -173,7 +173,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                     EnhancedActInputValue actAPIModelParam = new EnhancedActInputValue();
                     actAPIModelParam.ParamGuid = apiModelParam.Guid;
                     actAPIModelParam.Param = apiModelParam.PlaceHolder;
-                    actAPIModelParam.Description = apiModelParam.Description;                    
+                    actAPIModelParam.Description = apiModelParam.Description;
                     foreach (OptionalValue optionalValue in apiModelParam.OptionalValuesList)
                     {
                         actAPIModelParam.OptionalValues.Add(optionalValue.Value);
@@ -257,7 +257,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                 }
 
                 if (requestBody != null)
-                {                   
+                {
                     ImportParametersOptionalValues ImportOptionalValues = new ImportParametersOptionalValues();
                     if (!string.IsNullOrEmpty(requestBody) && requestBody.StartsWith("{"))
                     {
@@ -305,7 +305,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                 {
                     requestBody = aPIModel.RequestBody;
                 }
-                
+
                 if (!string.IsNullOrEmpty(requestBody))
                 {
                     ObservableList<ApplicationAPIModel> applicationAPIModels = new ObservableList<ApplicationAPIModel>();
@@ -469,7 +469,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                     foreach (var exitingRV in actionToConvert.ReturnValues)
                     {
                         ActReturnValue actR = new ActReturnValue();
-                                              
+
                         if (string.IsNullOrEmpty(exitingRV.Expected) == false)
                         {
                             actR.Expected = exitingRV.Expected;
@@ -479,7 +479,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                             actR.StoreTo = exitingRV.StoreTo;
                             actR.StoreToValue = exitingRV.StoreToValue;
                         }
-                        if (actR.Expected != null || actR.StoreTo != ActReturnValue.eStoreTo.None )
+                        if (actR.Expected != null || actR.StoreTo != ActReturnValue.eStoreTo.None)
                         {
                             actR.Active = true;
                             actR.Param = exitingRV.Param;

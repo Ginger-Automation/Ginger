@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -102,7 +102,7 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 TreeViewUtils.AddMenuItem(CM, "Open Containing Folder", OpenTreeItemFolderHandler, null, "@Folder_16x16.png");
                 mTreeView.AddToolbarTool("@Folder_16x16.png", "Open Containing Folder", OpenTreeItemFolderHandler);
-            }            
+            }
         }
 
         public abstract bool SaveTreeItem(object item, bool saveOnlyIfDirty = false);
@@ -114,7 +114,7 @@ namespace GingerWPF.TreeViewItemsLib
         public void PrepareItemForEdit()
         {
             object treeObject = ((ITreeViewItem)this).NodeObject();
-            if (treeObject!=null && treeObject is RepositoryItemBase)
+            if (treeObject != null && treeObject is RepositoryItemBase)
             {
                 ((RepositoryItemBase)treeObject).StartDirtyTracking();
             }
@@ -123,9 +123,11 @@ namespace GingerWPF.TreeViewItemsLib
         private void SaveTreeItemHandler(object sender, RoutedEventArgs e)
         {
             if (SaveTreeItem(((ITreeViewItem)this).NodeObject()))
+            {
                 PostSaveTreeItemHandler();
+            }
         }
-        
+
         private void CopyTreeItemHandler(object sender, RoutedEventArgs e)
         {
             mCurrentFolderNodePastOperations = eFolderNodePastOperations.Copy;
@@ -162,14 +164,16 @@ namespace GingerWPF.TreeViewItemsLib
         public virtual void PreDeleteTreeItemHandler()
         {
             //do in Folder node if needed
-        }        
+        }
 
         private void DeleteTreeItemHandler(object sender, RoutedEventArgs e)
         {
             if (DeleteTreeItem(((ITreeViewItem)this).NodeObject(), false, true))
+            {
                 PostDeleteTreeItemHandler();
-        }        
-        
+            }
+        }
+
         private void ViewTreeItemXMLHandler(object sender, RoutedEventArgs e)
         {
             object item = ((ITreeViewItem)this).NodeObject();
@@ -197,7 +201,7 @@ namespace GingerWPF.TreeViewItemsLib
             ViewFolderFiles(ContainingFolderFullPath);
         }
 
-        
+
         public void AddFolderNodeBasicManipulationsOptions(ContextMenu CM, string nodeItemTypeName, bool allowRefresh = true, bool allowAddNew = true, bool allowPaste = true, bool allowSaveAll = true, bool allowCutItems = true, bool allowCopyItems = true, bool allowRenameFolder = true, bool allowAddSubFolder = true, bool allowDeleteFolder = true, bool allowOpenFolder = true, bool allowDeleteAllItems = false)
         {
             if (allowRefresh)
@@ -265,14 +269,14 @@ namespace GingerWPF.TreeViewItemsLib
         {
             if (mNodeManipulationsSource == null || mCurrentFolderNodePastOperations == eFolderNodePastOperations.None)
             {
-                
+
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select Copy/Cut operation first.");
                 return;
             }
 
             //make sure the source item and dest folder are from same item type
             if (this.NodeObjectType() != ((TreeViewItemGenericBase)mNodeManipulationsSource).NodeObjectType())
-            {                
+            {
                 Reporter.ToUser(eUserMsgKey.DifferentItemType);
                 return;
             }
@@ -293,11 +297,11 @@ namespace GingerWPF.TreeViewItemsLib
                     PasteCutTreeItems();
                     mCurrentFolderNodePastOperations = eFolderNodePastOperations.None;
                     break;
-                default:                    
+                default:
                     Reporter.ToUser(eUserMsgKey.CopyCutOperation);
                     break;
             }
-            
+
         }
 
         private void CopyTreeFolderItemsHandler(object sender, System.Windows.RoutedEventArgs e)
@@ -314,8 +318,8 @@ namespace GingerWPF.TreeViewItemsLib
 
         public abstract void SaveAllTreeFolderItems();
         public void SaveAllTreeFolderItemsHandler(object sender, System.Windows.RoutedEventArgs e)
-        {            
-            SaveAllTreeFolderItems();            
+        {
+            SaveAllTreeFolderItems();
         }
 
         public abstract void DeleteTreeFolder();
@@ -335,7 +339,7 @@ namespace GingerWPF.TreeViewItemsLib
         public abstract void RefreshTreeFolder(Type itemType, string path);
         private void RefreshTreeFolderHandler(object sender, System.Windows.RoutedEventArgs e)
         {
-                RefreshTreeFolder(this.NodeObjectType(), Path.GetDirectoryName(this.NodePath()));    
+            RefreshTreeFolder(this.NodeObjectType(), Path.GetDirectoryName(this.NodePath()));
         }
 
         public abstract void AddTreeItem();
@@ -354,19 +358,19 @@ namespace GingerWPF.TreeViewItemsLib
                 {
                     string path = Path.Combine(this.NodePath(), folderName);
                     if (System.IO.Directory.Exists(path) == true)
-                    {                        
+                    {
                         Reporter.ToUser(eUserMsgKey.FolderExistsWithName);
                         mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
                     }
                     else
                     {
-                        object folderItem = AddSubFolder(this.GetType(), folderName, path);                       
+                        object folderItem = AddSubFolder(this.GetType(), folderName, path);
                     }
                 }
             }
         }
 
-        
+
 
         public abstract bool RenameTreeFolder(string originalName, string newFolderName, string newPath);
         private void RenameTreeFolderHandler(object sender, System.Windows.RoutedEventArgs e)
@@ -379,7 +383,7 @@ namespace GingerWPF.TreeViewItemsLib
                 {
                     string path = Path.Combine(Path.GetDirectoryName(this.NodePath().TrimEnd('\\', '/')), newFolderName);
                     if (System.IO.Directory.Exists(path) == true && originalName.ToUpper() != newFolderName.ToUpper())
-                    {                        
+                    {
                         Reporter.ToUser(eUserMsgKey.FolderExistsWithName);
                         return;
                     }
@@ -388,13 +392,13 @@ namespace GingerWPF.TreeViewItemsLib
                         try
                         {
                             if (RenameTreeFolder(originalName, newFolderName, path) == false)
-                            {                                
+                            {
                                 Reporter.ToUser(eUserMsgKey.RenameItemError, path);
                                 return;
                             }
                         }
                         catch (Exception ex)
-                        {                            
+                        {
                             Reporter.ToUser(eUserMsgKey.RenameItemError, ex.Message);
                             Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                             return;
@@ -407,9 +411,15 @@ namespace GingerWPF.TreeViewItemsLib
         public void OpenTreeFolderHandler(object sender, System.Windows.RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(this.NodePath()))
+            {
                 return;
+            }
+
             if (!Directory.Exists(this.NodePath()))
+            {
                 Directory.CreateDirectory(this.NodePath());
+            }
+
             Process.Start(new ProcessStartInfo() { FileName = this.NodePath(), UseShellExecute = true });
         }
 
@@ -436,7 +446,11 @@ namespace GingerWPF.TreeViewItemsLib
 
         private void SetNodeItemManipulationsSourceNodeFromMenu(object sender)
         {
-            if (sender == null) return;
+            if (sender == null)
+            {
+                return;
+            }
+
             MenuItem MI = (MenuItem)sender;
             ITreeViewItem treeItem = (ITreeViewItem)MI.CommandParameter;
             mNodeManipulationsSource = treeItem;
@@ -466,7 +480,9 @@ namespace GingerWPF.TreeViewItemsLib
         public void ViewFolderFiles(string path)
         {
             if (string.IsNullOrEmpty(path))
+            {
                 return;
+            }
 
             if (!Directory.Exists(path))
             {

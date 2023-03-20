@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,20 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Plugin.Core;
 using Ginger.UserControlsLib.TextEditor.Common;
 using ICSharpCode.AvalonEdit.CodeCompletion;
-using GingerPlugIns.TextEditorLib;
 using ICSharpCode.AvalonEdit.Highlighting;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using Amdocs.Ginger.Plugin.Core;
 
 namespace Ginger.UserControlsLib.TextEditor.XML
 {
     public class XMLTextEditor : TextEditorBase
     {
-        public override string Descritpion { get { throw new NotImplementedException();}}
+        public override string Descritpion { get { throw new NotImplementedException(); } }
         public override Image Icon { get { throw new NotImplementedException(); } }
 
         public override List<string> Extensions
@@ -41,7 +40,7 @@ namespace Ginger.UserControlsLib.TextEditor.XML
                 return list;
             }
         }
-        
+
         public override IHighlightingDefinition HighlightingDefinition
         {
             get
@@ -53,7 +52,7 @@ namespace Ginger.UserControlsLib.TextEditor.XML
         public override IFoldingStrategy FoldingStrategy
         {
             get
-            {                
+            {
                 return new XMLFoldingStrategy();
             }
         }

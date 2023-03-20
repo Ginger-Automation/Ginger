@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,17 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCoreNET.Application_Models
 {
-    public class DeltaElementInfo: DeltaItemBase
+    public class DeltaElementInfo : DeltaItemBase
     {
         public ElementInfo ElementInfo = null;
 
@@ -79,13 +75,13 @@ namespace GingerCoreNET.Application_Models
         /// </summary>
         /// 
         private string mMappedElementInfo;
-        public string MappedElementInfo 
+        public string MappedElementInfo
         {
-            get 
+            get
             {
                 return mMappedElementInfo;
-            } 
-            set 
+            }
+            set
             {
                 mMappedElementInfo = value;
                 OnPropertyChanged(nameof(MappedElementInfo));

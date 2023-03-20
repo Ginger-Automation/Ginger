@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -59,14 +59,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 POMSelectionEvent?.Invoke(this, guid);
             }
         }
-        
+
         /// <summary>
         /// Ctor for default settings
         /// </summary>
         public POMsSelectionPage()
         {
             InitializeComponent();
-            SetPOMGridView();            
+            SetPOMGridView();
         }
 
         /// <summary>
@@ -154,9 +154,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     else
                     {
                         Reporter.ToUser(eUserMsgKey.StaticInfoMessage, @"""" + pom.ItemName + @""" POM is already added!");
-                    }                    
+                    }
                 }
-                xGridPOMListItems.DataSourceList = PomModels;                
+                xGridPOMListItems.DataSourceList = PomModels;
             }
         }
 
@@ -167,13 +167,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
         /// <returns></returns>
         private bool IsPOMAlreadyAdded(string itemName)
         {
-            bool isPresent = false;            
+            bool isPresent = false;
             if (PomModels != null && PomModels.Count > 0)
             {
                 var obj = PomModels.Where(x => x.ItemName == itemName).FirstOrDefault();
                 if (obj != null)
                 {
-                    isPresent = !string.IsNullOrEmpty(Convert.ToString(obj.ItemName)); 
+                    isPresent = !string.IsNullOrEmpty(Convert.ToString(obj.ItemName));
                 }
             }
             return isPresent;

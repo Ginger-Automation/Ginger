@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -180,7 +180,7 @@ namespace GingerCore.Variables
             }
         }
 
-        public override List<string> GetExtraParamsList() 
+        public override List<string> GetExtraParamsList()
         {
             List<string> extraParamsDescription = new List<string>();
             extraParamsDescription.Add("Index=1");
@@ -211,7 +211,7 @@ namespace GingerCore.Variables
                             }
                             else
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, "Error!! variable " + Name +": index is out of bounds");
+                                Reporter.ToLog(eLogLevel.ERROR, "Error!! variable " + Name + ": index is out of bounds");
                                 return "Error!! variable index is out of bounds";
                             }
                         }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,22 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET;
+using GingerCore.Actions.Common;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using GingerCore.Helpers;
-using GingerCore.Platforms;
-using GingerCore.Repository;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET;
 
 namespace GingerCore.Actions
 {
-    public class ActWindow  : Act, IObsoleteAction
+    public class ActWindow : Act, IObsoleteAction
     {
         public override string ActionDescription { get { return "Window Action"; } }
 
@@ -51,7 +46,8 @@ namespace GingerCore.Actions
 
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
-        {   get
+        {
+            get
             {
                 if (mPlatforms.Count == 0)
                 {
@@ -61,21 +57,21 @@ namespace GingerCore.Actions
                     mPlatforms.Add(ePlatformType.PowerBuilder);
                     mPlatforms.Add(ePlatformType.Java);
                 }
-                return mPlatforms;               
+                return mPlatforms;
             }
         }
 
         public override List<eLocateBy> AvailableLocateBy()
         {
             List<eLocateBy> l = new List<eLocateBy>();
-            
+
             l.Add(eLocateBy.ByName);
             l.Add(eLocateBy.ByTitle);
             l.Add(eLocateBy.ByXPath);
-   
+
             return l;
         }
-        
+
         //Available window actions
         public enum eWindowActionType
         {
@@ -99,7 +95,8 @@ namespace GingerCore.Actions
             }
         }
 
-        public override String ActionType {
+        public override String ActionType
+        {
             get
             {
                 return "Window";

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,10 +34,10 @@ using System;
 namespace UnitTests.UITests.PBDriverTest
 {
     [Ignore]  // Fail on Windows, too heavy and need imrpovemnets
-        // TODO: add AAA, class init should not have assert and make it samller - check timings
+              // TODO: add AAA, class init should not have assert and make it samller - check timings
     [TestClass]
     public class PBDriverWidgetTest
-    {        
+    {
         public static BusinessFlow mBF;
         static System.Diagnostics.Process proc;
         // make it static for reuse so no need to init every time when running test by click test button
@@ -48,7 +48,7 @@ namespace UnitTests.UITests.PBDriverTest
         public static void ClassInit(TestContext context)
         {
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);            
+            WorkSpace.Init(WSEH);
 
 
             // launch PB Test App
@@ -71,7 +71,7 @@ namespace UnitTests.UITests.PBDriverTest
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test PB Driver";
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.PowerBuilder;            
+            p.PlatformType = ePlatformType.PowerBuilder;
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "PBTestAPP" });
             Activity activity = new Activity();
             activity.TargetApplication = "PBTestApp";
@@ -137,7 +137,7 @@ namespace UnitTests.UITests.PBDriverTest
 
             c = new ActSwitchWindow();
             c.LocateBy = eLocateBy.ByTitle;
-            c.LocateValueCalculated = "CSM Widgets Test Applicaiton";            
+            c.LocateValueCalculated = "CSM Widgets Test Applicaiton";
             c.WaitTime = 10;
             mDriver.RunAction(c);
 
@@ -167,7 +167,7 @@ namespace UnitTests.UITests.PBDriverTest
                     PbAct.LocateBy = eLocateBy.ByXPath;
                     PbAct.ControlAction = ActPBControl.eControlAction.Click;
                     PbAct.LocateValueCalculated = @"/Script Error/[LocalizedControlType:title bar]/Close";
-                    PbAct.Active = true;                    
+                    PbAct.Active = true;
                     mBF.CurrentActivity.Acts.Add(PbAct);
                     mBF.CurrentActivity.Acts.CurrentItem = PbAct;
                     mGR.Executor.RunAction(PbAct, false);
@@ -188,22 +188,22 @@ namespace UnitTests.UITests.PBDriverTest
 
                 actBrowser.LocateBy = eLocateBy.ByXPath;
                 actBrowser.LocateValue = @"/[AutomationId:1000]/[LocalizedControlType:pane]/[LocalizedControlType:pane]/[LocalizedControlType:pane]";
-                                                                                                                                                                                                                                                 
+
                 actBrowser.ControlAction = ActBrowserElement.eControlAction.InitializeBrowser;
                 actBrowser.Wait = 2;
                 actBrowser.Timeout = 10;
                 actBrowser.Active = true;
                 mBF.CurrentActivity.Acts.Add(actBrowser);
                 mBF.CurrentActivity.Acts.CurrentItem = actBrowser;
-                mGR.Executor.RunAction(actBrowser, false);                
+                mGR.Executor.RunAction(actBrowser, false);
                 count--;
             } while (actBrowser.Status.Equals(eRunStatus.Failed) && count > 0);
-            if(actBrowser.Status.Equals(eRunStatus.Failed))
+            if (actBrowser.Status.Equals(eRunStatus.Failed))
             {
-                
+
                 Assert.AreEqual(actBrowser.Status, eRunStatus.Passed, "actBrowser.Status");
                 Assert.AreEqual(actBrowser.Error, null, "actBrowser.Error");
-            }            
+            }
         }
 
         [ClassCleanup()]
@@ -221,12 +221,13 @@ namespace UnitTests.UITests.PBDriverTest
 
             }
 
-            
+
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SetValue_textbox()
-        {            
+        {
             ActGenElement act = new ActGenElement();
             act.LocateBy = eLocateBy.ByName;
             act.GenElementAction = ActGenElement.eGenElementAction.SetValue;
@@ -236,7 +237,7 @@ namespace UnitTests.UITests.PBDriverTest
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
-            
+
             act = new ActGenElement();
             act.LocateBy = eLocateBy.ByName;
             act.GenElementAction = ActGenElement.eGenElementAction.GetValue;
@@ -255,7 +256,8 @@ namespace UnitTests.UITests.PBDriverTest
 
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetValue_Textbox()
         {
             ActGenElement act = new ActGenElement();
@@ -292,7 +294,7 @@ namespace UnitTests.UITests.PBDriverTest
             ActGenElement act = new ActGenElement();
             act.LocateBy = eLocateBy.ByName;
             act.GenElementAction = ActGenElement.eGenElementAction.Click;
-            act.LocateValueCalculated = "ssnNumber";            
+            act.LocateValueCalculated = "ssnNumber";
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
@@ -328,7 +330,8 @@ namespace UnitTests.UITests.PBDriverTest
 
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SelectFromDropdown()
         {
             ActGenElement act = new ActGenElement();
@@ -357,7 +360,8 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void IsEnabled_Textbox()
         {
             ActGenElement act = new ActGenElement();
@@ -370,14 +374,15 @@ namespace UnitTests.UITests.PBDriverTest
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
-            
+
             Assert.AreEqual(act.Status, eRunStatus.Passed, "Action Status");
             string actual = act.GetReturnParam("Actual");
             Assert.AreEqual(actual, "true", "True");
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void IsVisible_Textbox()
         {
             ActGenElement act = new ActGenElement();
@@ -397,7 +402,8 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetInnerText_Dropdown()
         {
             ActGenElement act = new ActGenElement();
@@ -417,7 +423,8 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetStyle_Dropdown()
         {
             ActGenElement act = new ActGenElement();
@@ -457,7 +464,8 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ClickTest()
         {
             ActGenElement act = new ActGenElement();
@@ -484,8 +492,8 @@ namespace UnitTests.UITests.PBDriverTest
             //Assert
 
             Assert.AreEqual(c.Status, eRunStatus.Passed, "Action Status");
-            string actual = c.GetReturnParam("Actual");            
-            if(actual.Equals("True"))
+            string actual = c.GetReturnParam("Actual");
+            if (actual.Equals("True"))
             {
                 c = new ActPBControl();
                 c.LocateBy = eLocateBy.ByXPath;
@@ -502,7 +510,7 @@ namespace UnitTests.UITests.PBDriverTest
             {
                 Assert.AreEqual(actual, "true", "True");
                 Assert.AreEqual(act.Error, null, "Act.Error");
-            }            
+            }
         }
 
         [Ignore]
@@ -576,7 +584,7 @@ namespace UnitTests.UITests.PBDriverTest
             mBF.CurrentActivity.Acts.CurrentItem = act;
             mGR.Executor.RunAction(act, false);
 
-             act = new ActGenElement();
+            act = new ActGenElement();
             act.LocateBy = eLocateBy.ByName;
             act.GenElementAction = ActGenElement.eGenElementAction.SetValue;
             act.LocateValueCalculated = "lastName";
@@ -589,7 +597,7 @@ namespace UnitTests.UITests.PBDriverTest
             act = new ActGenElement();
             act.LocateBy = eLocateBy.ByName;
             act.GenElementAction = ActGenElement.eGenElementAction.RightClick;
-            act.LocateValueCalculated = "lastName";            
+            act.LocateValueCalculated = "lastName";
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
@@ -624,7 +632,8 @@ namespace UnitTests.UITests.PBDriverTest
 
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetAttributeValue_Size()
         {
             ActGenElement act = new ActGenElement();
@@ -779,7 +788,8 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SwitchToDefaultFrame_Testing()
         {
             ActBrowserElement act = new ActBrowserElement();
@@ -795,7 +805,8 @@ namespace UnitTests.UITests.PBDriverTest
             Assert.AreEqual(act.Error, null, "Act.Error");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetElementAttribute_Dropdown()
         {
             ActGenElement act = new ActGenElement();
@@ -816,7 +827,7 @@ namespace UnitTests.UITests.PBDriverTest
         }
 
 
-      
+
 
 
     }

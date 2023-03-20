@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,13 +20,10 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.Repository;
-using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Run;
-using Ginger.UserControls;
 using GingerCore;
-using GingerCore.Activities;
 using GingerWPF.DragDropLib;
 using GingerWPF.WizardLib;
 using System;
@@ -43,7 +40,7 @@ namespace Ginger.Repository
     /// </summary>
     public partial class ActivitiesRepositoryPage : Page
     {
-        readonly RepositoryFolder<Activity> mActivitiesFolder;        
+        readonly RepositoryFolder<Activity> mActivitiesFolder;
         bool mInTreeModeView = false;
         ObservableList<Guid> mTags = new ObservableList<Guid>();
         RoutedEventHandler mAddActivityHandler;
@@ -53,7 +50,7 @@ namespace Ginger.Repository
         bool mAddPOMActivity = false;
         public enum ePageViewMode { Default, Selection }
 
-        public enum eActivityType 
+        public enum eActivityType
         {
             [EnumValueDescription("Regular Activity")]
             Regular,
@@ -65,7 +62,7 @@ namespace Ginger.Repository
 
         ePageViewMode mViewMode;
 
-        public ActivitiesRepositoryPage(RepositoryFolder<Activity> activitiesFolder, Context context, ObservableList<Guid> Tags=null, RoutedEventHandler AddActivityHandler = null, ePageViewMode viewMode = ePageViewMode.Default)
+        public ActivitiesRepositoryPage(RepositoryFolder<Activity> activitiesFolder, Context context, ObservableList<Guid> Tags = null, RoutedEventHandler AddActivityHandler = null, ePageViewMode viewMode = ePageViewMode.Default)
         {
             InitializeComponent();
 
@@ -89,7 +86,7 @@ namespace Ginger.Repository
 
             mAddActivityHandler = AddActivityHandler;
 
-            SetActivitiesRepositoryListView();            
+            SetActivitiesRepositoryListView();
             SetGridAndTreeData();
         }
         public ActivitiesRepositoryPage(ObservableList<Activity> activities, Context context, bool AddPOMActivity = false)
@@ -177,7 +174,7 @@ namespace Ginger.Repository
                 {
                     activities.Add(item);
                 }
- 
+
             }
 
             xActivitiesRepositoryListView.DataSourceList = activities;
@@ -270,9 +267,11 @@ namespace Ginger.Repository
                 {
                     Activity dragedItemInGrid = ((IEnumerable<Activity>)xActivitiesRepositoryListView.DataSourceList).Where(x => x.Guid == dragedItem.Guid).FirstOrDefault();
                     if (dragedItemInGrid != null)
+                    {
                         xActivitiesRepositoryListView.List.SelectedItem = dragedItemInGrid;
+                    }
                 }
-                catch(Exception ex){ Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             }
         }
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,14 +25,13 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 {
     public class AccountReportExecutionLogger : RunListenerBase
     {
-        public Context mContext; 
+        public Context mContext;
 
         private AccountReportApiHandler mAccountReportApiHandler;
         public AccountReportApiHandler AccountReportApiHandler
@@ -116,7 +115,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         #region BusinessFlow
         public override async void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false)
         {
-           await BusinessFlowStartTask(businessFlow);
+            await BusinessFlowStartTask(businessFlow);
         }
 
         private async Task BusinessFlowStartTask(BusinessFlow businessFlow)
@@ -131,7 +130,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             {
                 return;
             }
-           await BusinessFlowEndTask(businessFlow);
+            await BusinessFlowEndTask(businessFlow);
         }
 
         private async Task BusinessFlowEndTask(BusinessFlow businessFlow)

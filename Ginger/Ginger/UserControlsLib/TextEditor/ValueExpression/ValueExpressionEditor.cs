@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,16 +21,15 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Plugin.Core;
 using Ginger.Actions;
 using Ginger.UserControlsLib.TextEditor.Common;
-using GingerCore;
 using GingerCore.Variables;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Highlighting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using System.Text.RegularExpressions;
 
 namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 {
@@ -39,7 +38,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
         public override string Descritpion { get { return ""; } }
         public override Image Icon { get { throw new NotImplementedException(); } }
 
-        private Page p=null;
+        private Page p = null;
 
         public static readonly Regex rxVarFormulaParams = new Regex(@"[A-Za-z]*=[ A-Za-z0-9!@#$%^&*_+?/><-]*", RegexOptions.Compiled);
 
@@ -50,12 +49,12 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                 return null;
             }
         }
-        
+
         public override IHighlightingDefinition HighlightingDefinition
         {
             get
             {
-                return GetHighlightingDefinitionFromResource(Properties.Resources.ValueExpressionHighlighting);                
+                return GetHighlightingDefinitionFromResource(Properties.Resources.ValueExpressionHighlighting);
             }
         }
 
@@ -79,9 +78,9 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             //TODO: use SelectedContentArgs.TextEditor.Document  - documents function is better
 
             //start by searching the closest { to the caret offset
-            int i1 = SelectedContentArgs.TextEditor.CaretOffset;            
+            int i1 = SelectedContentArgs.TextEditor.CaretOffset;
             int closestpos = -1;
-            while (i1 >= 0 && i1< SelectedContentArgs.TextEditor.Text.Length)
+            while (i1 >= 0 && i1 < SelectedContentArgs.TextEditor.Text.Length)
             {
                 string c = SelectedContentArgs.TextEditor.Text.Substring(i1, 1);
                 if (c == "{")
@@ -90,40 +89,43 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                     break;
                 }
                 if (c == "}" && i1 != SelectedContentArgs.TextEditor.CaretOffset)  // we stop if we found } - except for the first char - in case the user click on the closing } of exp
-                {                    
+                {
                     break;
                 }
                 i1--;
             }
 
-            if (closestpos == -1) return null;
+            if (closestpos == -1)
+            {
+                return null;
+            }
 
             // find the = after the closest { pos
-            
+
             int i0 = SelectedContentArgs.TextEditor.Text.IndexOf("}", closestpos);
 
             // Verify caret are in between { }
             if (closestpos < SelectedContentArgs.TextEditor.CaretOffset && i0 >= SelectedContentArgs.TextEditor.CaretOffset)
             {
-                int i2= SelectedContentArgs.TextEditor.Text.IndexOf("=", closestpos);
-                if (i2>=0)
-                {                    
+                int i2 = SelectedContentArgs.TextEditor.Text.IndexOf("=", closestpos);
+                if (i2 >= 0)
+                {
                     SelectedContentArgs.StartPos = closestpos;
                     SelectedContentArgs.EndPos = i0;
                     Page p = GetPageFor(SelectedContentArgs);
                     return p;
-                }                
+                }
             }
-            return null;              
-        }    
-        
+            return null;
+        }
+
         public override List<ICompletionData> GetCompletionData(string txt, SelectedContentArgs SelectedContentArgs)
         {
             List<ICompletionData> list = new List<ICompletionData>();
-            if(txt == "{")
+            if (txt == "{")
             {
-                list.Add(new TextCompletionData("{Var Name=}" , "Variable"));
-                list.Add(new TextCompletionData("{VBS Eval=}" , "VB Script Evaluate"));
+                list.Add(new TextCompletionData("{Var Name=}", "Variable"));
+                list.Add(new TextCompletionData("{VBS Eval=}", "VB Script Evaluate"));
 
                 AddVars(list);
             }
@@ -131,8 +133,8 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
         }
 
         void AddVars(List<ICompletionData> list)
-        {            
-            foreach (VariableBase v in  WorkSpace.Instance.Solution.Variables)
+        {
+            foreach (VariableBase v in WorkSpace.Instance.Solution.Variables)
             {
                 list.Add(GETVariableTCD(v));
             }
@@ -161,25 +163,25 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             //TODO: replace with General.GetImage("@Variable_32x32.png")
             BitmapImage b = new BitmapImage();
             b.BeginInit();
-            b.UriSource = new Uri(@"/Images/@Variable_32x32.png", UriKind.RelativeOrAbsolute); 
-            b.EndInit();                             
+            b.UriSource = new Uri(@"/Images/@Variable_32x32.png", UriKind.RelativeOrAbsolute);
+            b.EndInit();
 
             TCD.Image = b;
             return TCD;
         }
 
         private Page GetPageFor(SelectedContentArgs SelectedContentArgs)
-        {            
+        {
             string txt = SelectedContentArgs.TextEditor.Text.Substring(SelectedContentArgs.StartPos, SelectedContentArgs.Length);
             p = null;
             if (txt.StartsWith("{Var Name="))
             {
-                p= new ValueExpressionVariableEditorPage(mContext, SelectedContentArgs, GetVariableFromText(txt));
+                p = new ValueExpressionVariableEditorPage(mContext, SelectedContentArgs, GetVariableFromText(txt));
             }
-            
+
             if (txt.StartsWith("{DS Name="))
             {
-               p= new ActDataSourcePage(SelectedContentArgs);
+                p = new ActDataSourcePage(SelectedContentArgs);
             }
 
             if (txt.StartsWith("{FD Object="))
@@ -188,13 +190,13 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                 if (expParams != null)
                 {
                     p = new ValueExpressionFlowDetailsEditorPage(mContext, SelectedContentArgs, expParams.Item1, expParams.Item2);
-                }               
+                }
             }
 
             if (txt.StartsWith("{EnvURL App="))
             {
                 //TODO: impl get page for Env
-                
+
             }
             // TODO: if we are on {Actual}  - show help to explain...
 
@@ -219,11 +221,11 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
         public override void UpdateSelectedContent()
         {
-            if(p.GetType() == typeof(ValueExpressionVariableEditorPage))
+            if (p.GetType() == typeof(ValueExpressionVariableEditorPage))
             {
                 ((ValueExpressionVariableEditorPage)p).UpdateContent();
             }
-            else if(p.GetType() == typeof(ActDataSourcePage))
+            else if (p.GetType() == typeof(ActDataSourcePage))
             {
                 ((ActDataSourcePage)p).UpdateContent();
             }

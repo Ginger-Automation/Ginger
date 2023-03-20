@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -62,13 +62,13 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     GingerCore.General.FillComboFromEnumType(xSourceTypeComboBox, typeof(eSourceType), new List<object>() { eSourceType.Excel, eSourceType.DB });
                     break;
             }
-            
+
             xSourceTypeComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             xSheetNameComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
             SetFieldsGrid(); //XML & JSON
             SetDefaultPresentation();
         }
-        
+
         private void SetFieldsGrid()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -79,10 +79,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             xImportOptionalValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddOptioanlValueFile));
             xImportOptionalValuesGrid.btnClearAll.AddHandler(Button.ClickEvent, new RoutedEventHandler(ClearAllOptionalValuesFiles));
             xImportOptionalValuesGrid.btnDelete.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteOptionalValueFile));
-            
+
             xImportOptionalValuesGrid.SetTitleLightStyle = true;
             xImportOptionalValuesGrid.Title = "Sample Request Files";
-            xImportOptionalValuesGrid.ShowRefresh = Visibility.Collapsed ;
+            xImportOptionalValuesGrid.ShowRefresh = Visibility.Collapsed;
             xImportOptionalValuesGrid.ShowEdit = Visibility.Collapsed;
             xImportOptionalValuesGrid.ShowAdd = Visibility.Visible;
             xImportOptionalValuesGrid.ShowDelete = Visibility.Visible;
@@ -132,17 +132,20 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     {
                         WizardEventArgs.CancelEvent = true;
                     }
-                } 
+                }
             }
             else if (WizardEventArgs.EventType == EventType.Cancel)
             {
                 if (mAddModelOptionalValuesWizard.ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Local)
                 {
-                    if(mAddModelOptionalValuesWizard.mAAMB is ApplicationAPIModel)
+                    if (mAddModelOptionalValuesWizard.mAAMB is ApplicationAPIModel)
+                    {
                         ((ApplicationAPIModel)mAddModelOptionalValuesWizard.mAAMB).OptionalValuesTemplates.Clear();//XML & JSON
+                    }
+
                     mAddModelOptionalValuesWizard.ParameterValues.Clear();//Excel & DB
-                } 
-                else if(mAddModelOptionalValuesWizard.ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Global)
+                }
+                else if (mAddModelOptionalValuesWizard.ImportOptionalValues.ParameterType == ImportOptionalValuesForParameters.eParameterType.Global)
                 {
                     mAddModelOptionalValuesWizard.ParameterValues.Clear();//Excel & DB
                 }
@@ -200,19 +203,21 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         if (xSheetNameComboBox.Items.Count >= 1)
                         {
                             xSheetNameComboBox.SelectedIndex = 0;
-                        }                        
+                        }
                     }
                     else if ((xSourceTypeComboBox.SelectedValue.ToString() == eSourceType.DB.ToString()))
                     {
                         xBDHostTextBox.Text = dlg.FileName;
                     }
-                    else 
+                    else
                     {
                         foreach (String file in dlg.FileNames)
                         {
                             mAddModelOptionalValuesWizard.OVFList.Add(new TemplateFile() { FilePath = file });
                             if (mAddModelOptionalValuesWizard.mAAMB is ApplicationAPIModel)
+                            {
                                 ((ApplicationAPIModel)mAddModelOptionalValuesWizard.mAAMB).OptionalValuesTemplates.Add(new TemplateFile() { FilePath = file });
+                            }
                         }
                         xImportOptionalValuesGrid.DataSourceList = mAddModelOptionalValuesWizard.OVFList;
                     }
@@ -241,16 +246,17 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 try
                 {
                     mAddModelOptionalValuesWizard.ImportOptionalValues.ExecuteFreeSQL(xSQLTextBox.Text.Trim());
-                    mAddModelOptionalValuesWizard.ParameterValues = mAddModelOptionalValuesWizard.ImportOptionalValues.UpdateParametersOptionalValuesFromDB();   
+                    mAddModelOptionalValuesWizard.ParameterValues = mAddModelOptionalValuesWizard.ImportOptionalValues.UpdateParametersOptionalValuesFromDB();
                 }
                 catch (Exception ex)
                 {
                     isSuccess = false;
                     Reporter.ToUser(eUserMsgKey.DbQueryError, ex.Message);
                 }
-                finally {
+                finally
+                {
                     mAddModelOptionalValuesWizard.ProcessEnded();
-                }    
+                }
             }
             return isSuccess;
         }
@@ -309,7 +315,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 xDBStackPanel.Visibility = Visibility.Visible;
                 xImportOptionalValuesGrid.Visibility = Visibility.Collapsed;
                 xDBBrowseButton.Visibility = Visibility.Hidden;
-                FillDBTypeComboBox();                
+                FillDBTypeComboBox();
             }
             xSaveExcelLable.Visibility = Visibility.Collapsed;
         }
@@ -385,7 +391,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         {
             BrowseFiles(false);
         }
-        
+
         private void FillSheetCombo()
         {
             mAddModelOptionalValuesWizard.ProcessStarted();
@@ -431,7 +437,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             bool overrideFile = true;
             if (File.Exists(fileName))
             {
-                if(Reporter.ToUser(eUserMsgKey.FileAlreadyExistWarn) == eUserMsgSelection.Cancel)
+                if (Reporter.ToUser(eUserMsgKey.FileAlreadyExistWarn) == eUserMsgSelection.Cancel)
                 {
                     overrideFile = false;
                 }
@@ -467,7 +473,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
             }
             mAddModelOptionalValuesWizard.ProcessEnded();
-        }       
+        }
 
         #endregion
 
@@ -478,7 +484,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             mAddModelOptionalValuesWizard.ProcessStarted();
             List<string> DBTypeList = mAddModelOptionalValuesWizard.ImportOptionalValues.GetDBTypeList().Where(x => x == eDBTypes.Oracle.ToString() || x == eDBTypes.MSAccess.ToString()).ToList();
             GingerCore.General.FillComboFromList(xDBTypeComboBox, DBTypeList);
-           
+
             mAddModelOptionalValuesWizard.ProcessEnded();
         }
         private void xSQLTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -525,7 +531,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                         xDBUserTextBox.Text = scSB.UserID;
                         xDBPasswordTextBox.Text = scSB.Password;
                     }
-                    else if(xDBTypeComboBox.SelectedValue.ToString() == GingerCore.Environments.Database.eDBTypes.Oracle.ToString() )
+                    else if (xDBTypeComboBox.SelectedValue.ToString() == GingerCore.Environments.Database.eDBTypes.Oracle.ToString())
                     {
                         scSB.DataSource = xBDHostTextBox.Text;
                         scSB.UserID = xDBUserTextBox.Text;
@@ -551,12 +557,14 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     {
                         if (Reporter.ToUser(eUserMsgKey.OracleDllIsMissing, AppDomain.CurrentDomain.BaseDirectory) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                         {
-                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "https://docs.oracle.com/database/121/ODPNT/installODPmd.htm#ODPNT8149", UseShellExecute = true }); 
+                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "https://docs.oracle.com/database/121/ODPNT/installODPmd.htm#ODPNT8149", UseShellExecute = true });
                             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "http://www.oracle.com/technetwork/topics/dotnet/downloads/odacdeploy-4242173.html", UseShellExecute = true });
                         }
                     }
                     else
+                    {
                         Reporter.ToUser(eUserMsgKey.ErrorConnectingToDataBase, ex.Message);
+                    }
                 }
             }
         }

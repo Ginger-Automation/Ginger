@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore;
-using GingerCore.Actions;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -40,7 +39,7 @@ namespace UnitTests.NonUITests
 
         string Separator = Path.DirectorySeparatorChar.ToString();
 
-        [ClassInitialize]        
+        [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
             //TODO::
@@ -56,7 +55,8 @@ namespace UnitTests.NonUITests
             mTestHelper.TestInitialize(TestContext);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void NewRepositorySerializer_ReadOldXMLwithOldRS()
         {
             //read old xml using old RS
@@ -146,10 +146,10 @@ namespace UnitTests.NonUITests
 
         private void CompareRepoItem(RepositoryItemBase a, RepositoryItemBase b)
         {
-            
-            var props = a.GetType().GetProperties();   
-            foreach(PropertyInfo PI in props)
-            {                
+
+            var props = a.GetType().GetProperties();
+            foreach (PropertyInfo PI in props)
+            {
                 var token = PI.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
                 if (token != null)
                 {
@@ -158,10 +158,12 @@ namespace UnitTests.NonUITests
                     object aProp = PI.GetValue(a);
                     object bProp = b.GetType().GetProperty(PI.Name).GetValue(b);
 
-                    if (aProp == null && bProp == null) continue;
+                    if (aProp == null && bProp == null)
+                    {
+                        continue;
+                    }
 
-
-                    if(aProp.ToString() != bProp.ToString())
+                    if (aProp.ToString() != bProp.ToString())
                     {
                         throw new Exception("Items no match tostring: " + a.ItemName + " attr: " + PI.Name + " a=" + aProp.ToString() + " b=" + bProp.ToString());
                     }
@@ -171,7 +173,7 @@ namespace UnitTests.NonUITests
                     //    throw new Exception("Items no match: " + a.ItemName + " attr: " + PI.Name + " a=" + aProp.ToString() + " b=" + bProp.ToString());
                     //}
 
-                 
+
 
                 }
             }
@@ -187,7 +189,10 @@ namespace UnitTests.NonUITests
                     object aFiled = FI.GetValue(a);
                     object bField = b.GetType().GetField(FI.Name).GetValue(b);
 
-                    if (aFiled == null && bField == null) continue;
+                    if (aFiled == null && bField == null)
+                    {
+                        continue;
+                    }
 
                     if (aFiled.ToString() != bField.ToString())
                     {
@@ -208,7 +213,7 @@ namespace UnitTests.NonUITests
                         var aList = ((IObservableList)aFiled).GetEnumerator();
                         var bList = ((IObservableList)bField).GetEnumerator();
 
-                        
+
 
                         while (aList.MoveNext())
                         {
@@ -216,16 +221,16 @@ namespace UnitTests.NonUITests
                             RepositoryItemBase o1 = (RepositoryItemBase)aList.Current;
                             RepositoryItemBase o2 = (RepositoryItemBase)bList.Current;
                             CompareRepoItem(o1, o2);
-                        } 
-
-
-                            
                         }
+
+
+
                     }
-
                 }
-            }
 
+            }
         }
+
     }
+}
 

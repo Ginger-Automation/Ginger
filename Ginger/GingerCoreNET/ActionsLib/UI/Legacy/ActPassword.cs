@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -40,7 +39,7 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddText("To perform a Password action, Select Locate By type, e.g- ByID,ByCSS,ByXPath etc.Then enter the value of property" +
             " that you set in Locate By type then enter the page url in value textbox and run the action.");
-        }        
+        }
 
         public override string ActionEditPage { get { return null; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
@@ -67,8 +66,8 @@ namespace GingerCore.Actions
             SetValue = 0,
             SetFocus = 2,
             Clear = 3,
-            GetSize=4,
-            IsDisabled=5,
+            GetSize = 4,
+            IsDisabled = 5,
             GetWidth = 22,
             GetHeight = 23,
             GetStyle = 24,
@@ -154,9 +153,15 @@ namespace GingerCore.Actions
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
             if (!string.IsNullOrEmpty(this.LocateValue))
+            {
                 newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            }
+
             if (!uIElementTypeAssigned)
+            {
                 newAct.ElementType = eElementType.TextBox;
+            }
+
             newAct.Active = true;
 
             return newAct;

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions;
 using Ginger.UserControls;
 using GingerCore.Actions;
+using Interop.UIAutomationClient;
 using System;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using Interop.UIAutomationClient;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace Ginger.WindowExplorer.Common
 {

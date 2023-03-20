@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
@@ -25,7 +24,7 @@ using System.Windows.Controls;
 namespace GingerWPF.UserControlsLib.UCTreeView
 {
     public interface ITreeViewItem
-    { 
+    {
         StackPanel Header();
         List<ITreeViewItem> Childrens();
         bool IsExpandable();
@@ -33,7 +32,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         ContextMenu Menu();
         void SetTools(ITreeView TV);
         Object NodeObject();
-        
+
         ITreeView TreeView
         {
             get;

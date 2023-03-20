@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,15 +20,14 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RosLynLib;
 using Amdocs.Ginger.Repository;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using System;
 using System.Diagnostics;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
 using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace GingerCoreNET.RosLynLib
 {
@@ -185,7 +184,9 @@ namespace GingerCoreNET.RosLynLib
 
             scriptState = scriptState == null ? CSharpScript.RunAsync(code, options, globals).Result : scriptState.ContinueWithAsync(code).Result;
             if (scriptState.ReturnValue != null && !string.IsNullOrEmpty(scriptState.ReturnValue.ToString()))
+            {
                 return scriptState.ReturnValue;
+            }
 
             Console.WriteLine("Executing script code complete");
 

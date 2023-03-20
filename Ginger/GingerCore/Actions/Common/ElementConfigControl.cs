@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,18 +23,18 @@ using System.Windows;
 namespace GingerCore.Actions.Common
 {
     public class ElementConfigControl
-    {       
+    {
         public string Title { get; set; }
-       
+
         public string BindedString { get; set; }
-      
-        public eElementType ControlType {get; set;}
+
+        public eElementType ControlType { get; set; }
 
         public List<string> PossibleValues = new List<string>();
 
         public string DefaultValue { get; set; }
 
-        public RoutedEventHandler ElementEvent { get;set; }
+        public RoutedEventHandler ElementEvent { get; set; }
 
         public string ToolTip { get; set; }
     }

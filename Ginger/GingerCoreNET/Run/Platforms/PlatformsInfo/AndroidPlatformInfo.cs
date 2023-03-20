@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ using System.Collections.Generic;
 namespace GingerCore.Platforms.PlatformsInfo
 {
     public class AndroidPlatform : PlatformInfoBase
-    {        
+    {
         public override ePlatformType PlatformType()
         {
             //return ePlatformType.AndroidDevice;
@@ -68,7 +68,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementsTypeList.Add(eElementType.Image);
                 mElementsTypeList.Add(eElementType.Label);
                 mElementsTypeList.Add(eElementType.List);
-                mElementsTypeList.Add(eElementType.Table);                
+                mElementsTypeList.Add(eElementType.Table);
             }
             return mElementsTypeList;
         }
@@ -108,13 +108,13 @@ namespace GingerCore.Platforms.PlatformsInfo
             // add attr which exist for all android elements from PageSource
             list.Add("index");
             list.Add("text");
-            list.Add("resource-id");            
+            list.Add("resource-id");
             list.Add("class");
             list.Add("package");
             list.Add("content-desc");
             list.Add("checkable");
             list.Add("checked");
-            list.Add("clickable"); 
+            list.Add("clickable");
             list.Add("enabled");
             list.Add("focusable");
             list.Add("scrollable");

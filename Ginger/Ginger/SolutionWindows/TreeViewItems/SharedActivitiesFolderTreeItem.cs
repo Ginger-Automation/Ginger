@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
 using GingerCore;
@@ -35,9 +34,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public enum eActivitiesItemsShowMode { ReadWrite, ReadOnly }
 
         private RepositoryFolder<Activity> mActivitiesFolder;
-        private ActivitiesRepositoryPage mActivitiesRepositoryPage;               
+        private ActivitiesRepositoryPage mActivitiesRepositoryPage;
         private eActivitiesItemsShowMode mShowMode;
-        
+
         public SharedActivitiesFolderTreeItem(RepositoryFolder<Activity> activitiesFolder, eActivitiesItemsShowMode showMode = eActivitiesItemsShowMode.ReadWrite)
         {
             mActivitiesFolder = activitiesFolder;
@@ -65,7 +64,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            return GetChildrentGeneric<Activity>(mActivitiesFolder);            
+            return GetChildrentGeneric<Activity>(mActivitiesFolder);
         }
 
         public override ITreeViewItem GetTreeItem(object item)
@@ -125,13 +124,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 {
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.Activity), allowAddNew: false, allowRefresh: false);
                 }
-                
+
                 AddSourceControlOptions(mContextMenu, false, false);
             }
             else
             {
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.Activity), false, false, false, false, false, false, false, false, false,false);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.Activity), false, false, false, false, false, false, false, false, false, false);
             }
-        }               
+        }
     }
 }

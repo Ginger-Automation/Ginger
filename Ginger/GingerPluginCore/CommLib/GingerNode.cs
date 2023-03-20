@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -116,7 +116,7 @@ namespace GingerCoreNET.DriversLib
             }
         }
 
-        
+
 
         public static NewPayLoad CreateActionResult(string exInfo, string error, List<NodeActionOutputValue> aOVs)
         {
@@ -166,7 +166,7 @@ namespace GingerCoreNET.DriversLib
                     break;
                 case "RunPlatformAction":
                     gingerSocketInfo.Response = RunPlatformAction(pl);
-                    break;                
+                    break;
                 case "StartDriver":
                     gingerSocketInfo.Response = StartDriver(pl);
                     break;
@@ -323,7 +323,7 @@ namespace GingerCoreNET.DriversLib
             if (mServiceActions == null)
             {
                 ScanServiceAndCache();
-            }            
+            }
 
             Console.WriteLine(">>> Payload - Run Ginger Action");
             string ActionID = pl.GetValueString();
@@ -539,7 +539,7 @@ namespace GingerCoreNET.DriversLib
                 PLRC.ClosePackage();
                 return PLRC;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return NewPayLoad.Error(ex.Message);
             }
@@ -566,15 +566,15 @@ namespace GingerCoreNET.DriversLib
 
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Failure when setting value in Service {0} ", ex.Message);
                 throw ex;
             }
 
         }
-         
-        
+
+
 
         public static List<NewPayLoad> GetOutpuValuesPayLoad(List<NodeActionOutputValue> AOVs)
         {

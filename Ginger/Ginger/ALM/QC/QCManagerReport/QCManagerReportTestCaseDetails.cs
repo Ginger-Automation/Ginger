@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -55,9 +55,9 @@ namespace Ginger.ALM.QC
         {
             get
             {
-                if (NumberOfPassedExecutions != 0 && NumberOfExecutions!= 0)
+                if (NumberOfPassedExecutions != 0 && NumberOfExecutions != 0)
                 {
-                    return (Math.Floor(((double)NumberOfPassedExecutions / (double)NumberOfExecutions) * 100)).ToString() + "%";                    
+                    return (Math.Floor(((double)NumberOfPassedExecutions / (double)NumberOfExecutions) * 100)).ToString() + "%";
                 }
                 else
                 {

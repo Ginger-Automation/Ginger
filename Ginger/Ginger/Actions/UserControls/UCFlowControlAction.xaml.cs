@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,11 +19,9 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
-using Amdocs.Ginger.CoreNET.GeneralLib;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Activities;
 using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using System;
@@ -40,8 +38,8 @@ namespace Ginger.Actions.UserControls
     public partial class UCFlowControlAction : UserControl
     {
         FlowControl FC;
-        BusinessFlow mActParentBusinessFlow=null;
-        Activity mActParentActivity=null;
+        BusinessFlow mActParentBusinessFlow = null;
+        Activity mActParentActivity = null;
         Act mAction = null;
         GingerRunner mBfParentRunner = null;
         General.eRIPageViewMode mEditMode;
@@ -58,7 +56,9 @@ namespace Ginger.Actions.UserControls
         {
             var control = sender as UCFlowControlAction;
             if (control != null)
-                control.OnActParentBusinessFlowChanged((BusinessFlow)args.NewValue);            
+            {
+                control.OnActParentBusinessFlowChanged((BusinessFlow)args.NewValue);
+            }
         }
 
         private void OnActParentBusinessFlowChanged(BusinessFlow bf)
@@ -72,7 +72,9 @@ namespace Ginger.Actions.UserControls
         {
             var control = sender as UCFlowControlAction;
             if (control != null)
+            {
                 control.OnActParentActivityChanged((Activity)args.NewValue);
+            }
         }
 
         private void OnActParentActivityChanged(Activity activity)
@@ -86,12 +88,14 @@ namespace Ginger.Actions.UserControls
         {
             var control = sender as UCFlowControlAction;
             if (control != null)
+            {
                 control.OnRepositoryItemModeChanged((General.eRIPageViewMode)args.NewValue);
+            }
         }
 
         private void OnRepositoryItemModeChanged(General.eRIPageViewMode editMode)
         {
-            mEditMode= editMode;
+            mEditMode = editMode;
         }
 
 
@@ -102,7 +106,9 @@ namespace Ginger.Actions.UserControls
         {
             var control = sender as UCFlowControlAction;
             if (control != null)
+            {
                 control.OnBfParentRunnerChanged((GingerRunner)args.NewValue);
+            }
         }
 
         private void OnBfParentRunnerChanged(GingerRunner mRunner)
@@ -120,7 +126,9 @@ namespace Ginger.Actions.UserControls
         {
             var control = sender as UCFlowControlAction;
             if (control != null)
+            {
                 control.OnActionChanged((Act)args.NewValue);
+            }
         }
 
         private void OnActionChanged(Act action)
@@ -145,7 +153,7 @@ namespace Ginger.Actions.UserControls
             }
             else
             {
-                if (mActParentActivity != null && (mActParentActivity.GetType() == typeof(ErrorHandler) 
+                if (mActParentActivity != null && (mActParentActivity.GetType() == typeof(ErrorHandler)
                     || mActParentActivity.GetType() == typeof(CleanUpActivity)))
                 {
                     List<eFlowControlAction> ErrorFlowControlActions = FC.GetFlowControlActionsForErrorAndPopupHandler();
@@ -158,7 +166,7 @@ namespace Ginger.Actions.UserControls
                     GingerCore.General.FillComboFromEnumObj(ActionComboBox, FC.FlowControlAction);
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionComboBox, ComboBox.SelectedValueProperty, FC, FlowControl.Fields.FlowControlAction);
                 }
-            }                               
+            }
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionValueTextBox, TextBox.TextProperty, FC, FlowControl.Fields.Value);
             ActionValueTextBox.Init(new Context() { BusinessFlow = mActParentBusinessFlow }, FC, FlowControl.Fields.Value);
@@ -192,7 +200,7 @@ namespace Ginger.Actions.UserControls
                 FC.Value = null;
             }
         }
-      
+
 
         private void SetActionValueComboData()
         {
@@ -210,8 +218,10 @@ namespace Ginger.Actions.UserControls
                             foreach (BusinessFlow bf in mBfParentRunner.Executor.BusinessFlows)
                             {
                                 if (App.MainWindow.SelectedSolutionTab == MainWindow.eSolutionTabType.Run && mActParentBusinessFlow == bf)//TODO: do better condition 
+                                {
                                     continue;
-                                
+                                }
+
                                 ComboEnumItem CEI = new ComboEnumItem();
                                 CEI.Value = bf.InstanceGuid + FC.GUID_NAME_SEPERATOR + bf.Name;//adding also name as second option search to be used when pulling the activity from Shared Repository
                                 CEI.text = bf.Name;
@@ -382,6 +392,6 @@ namespace Ginger.Actions.UserControls
                         }
                 }
             }
-        }      
+        }
     }
 }

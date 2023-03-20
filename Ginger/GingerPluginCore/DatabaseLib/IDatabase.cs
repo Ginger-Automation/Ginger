@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ namespace Amdocs.Ginger.Plugin.Core.DatabaseLib
     // Mark it as plugin interface so will be written to the services json
     [GingerInterface("IDatabase", "Database Interface")]
     public interface IDatabase
-    {        
+    {
         Boolean OpenConnection();
         void CloseConnection();
 

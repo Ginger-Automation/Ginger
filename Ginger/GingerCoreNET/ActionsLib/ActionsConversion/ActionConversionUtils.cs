@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using static Amdocs.Ginger.CoreNET.BusinessFlowToConvert;
 
 namespace Amdocs.Ginger.CoreNET
 {
@@ -66,7 +65,7 @@ namespace Amdocs.Ginger.CoreNET
             get;
             set;
         }
-        
+
         bool mStopConversion = false;
 
         public ObservableList<BusinessFlowToConvert> ListOfBusinessFlowsToConvert = new ObservableList<BusinessFlowToConvert>();
@@ -104,7 +103,7 @@ namespace Amdocs.Ginger.CoreNET
             try
             {
                 Reporter.ToStatus(eStatusMsgKey.CleaningLegacyActions);
-               
+
                 Parallel.ForEach(lst, businessFlowToConvert =>
                 {
                     cleanedBfsCounter++;
@@ -235,7 +234,7 @@ namespace Amdocs.Ginger.CoreNET
                                 ConvertSelectedActionsFromActivity(businessFlowToConvert, actionsToBeConverted, addNewActivity, convertToPOMAction, selectedPOMObjectName, currentActivity);
 
                                 currentActivity.TargetApplication = convertableTargetApplications.Where(x => x.SourceTargetApplicationName == activity.TargetApplication).Select(x => x.TargetTargetApplicationName).FirstOrDefault();
-                            } 
+                            }
                         }
                     }
                     else
@@ -276,8 +275,8 @@ namespace Amdocs.Ginger.CoreNET
                     try
                     {
                         ePlatformType activityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == currentActivity.TargetApplication select x.Platform).FirstOrDefault();
-                        if (act.Active && act is IObsoleteAction 
-                                       && (((IObsoleteAction)act).IsObsoleteForPlatform(activityPlatform)) 
+                        if (act.Active && act is IObsoleteAction
+                                       && (((IObsoleteAction)act).IsObsoleteForPlatform(activityPlatform))
                                        && actionsToBeConverted.Where(a => a.SourceActionType == act.GetType() &&
                                                                           a.Selected &&
                                                                           a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
@@ -329,7 +328,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
             }
         }
-        
+
         /// <summary>
         /// This method will get the activity by checking the flag whether to create new or use existing activity
         /// </summary>
@@ -456,7 +455,10 @@ namespace Amdocs.Ginger.CoreNET
                                     newConvertibleActionType.SourceActionType = act.GetType();
                                     newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();
                                     if (newConvertibleActionType.TargetActionType == null)
+                                    {
                                         continue;
+                                    }
+
                                     newConvertibleActionType.TargetActionTypeName = ((IObsoleteAction)act).TargetActionTypeName();
                                     newConvertibleActionType.ActionCount = 1;
                                     newConvertibleActionType.Actions.Add(act);

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,14 +17,14 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
-using GingerCore.Actions;
-using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore.Actions.Common;
-using Ginger.Actions._Common.ActUIElementLib;
-using Ginger.WindowExplorer.HTMLCommon;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
+using Ginger.Actions._Common.ActUIElementLib;
+using Ginger.WindowExplorer.HTMLCommon;
+using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerWPF.UserControlsLib.UCTreeView;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.Java
 {
@@ -44,7 +44,7 @@ namespace Ginger.WindowExplorer.Java
             ActUIElement act = new ActUIElement();
 
             act.AddNewReturnParams = true;
-            act.Description= "Get " + ElementInfo.ElementTitle + " Table RowCount";
+            act.Description = "Get " + ElementInfo.ElementTitle + " Table RowCount";
 
             act.ElementType = eElementType.EditorPane;
             act.ElementAction = ActUIElement.eElementAction.JEditorPaneElementAction;
@@ -104,12 +104,12 @@ namespace Ginger.WindowExplorer.Java
         }
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
-            
+
             if (mHTMLTablePage == null)
             {
-                mHTMLTablePage = new UIElementTableConfigPage(ElementInfo, mAvailableActions,mContext);
+                mHTMLTablePage = new UIElementTableConfigPage(ElementInfo, mAvailableActions, mContext);
             }
             return mHTMLTablePage;
-        }      
+        }
     }
 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,21 +17,21 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.RunLib;
 using GingerCore.Actions;
 using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using System.Threading;
-using Amdocs.Ginger.CoreNET.RunLib;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
-    public abstract class ConsoleDriverBase : DriverBase,IVirtualDriver
+    public abstract class ConsoleDriverBase : DriverBase, IVirtualDriver
     {
         [UserConfigured]
         [UserConfiguredDefault("30")]
@@ -61,7 +61,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         // Get the action command to be send to the specific derived driver
         public abstract string GetCommandText(ActConsoleCommand act);
-        
+
         public override void StartDriver()
         {
             CreateSTA(ShowDriverWindow);
@@ -79,7 +79,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             {
                 Dispatcher = new DriverWindowDispatcher(mConsoleDriverWindow.Dispatcher);
                 Dispatcher.Invoke(new Action(() => OnDriverMessage(eDriverMessageType.DriverStatusChanged)));
-                System.Windows.Threading.Dispatcher.Run();                
+                System.Windows.Threading.Dispatcher.Run();
             }
             else
             {
@@ -141,7 +141,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     if (command.StartsWith("GINGER_RC="))
                     {
                         //This is FTP command and we already have the result
-                        act.AddOrUpdateReturnParamActual("GINGER_RC",command.Replace("GINGER_RC=", ""));
+                        act.AddOrUpdateReturnParamActual("GINGER_RC", command.Replace("GINGER_RC=", ""));
                     }
                     else
                     {
@@ -165,7 +165,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
                         act.AddOrUpdateReturnParamActual("Result", sRC);
 
-                        sRC =sRC.Replace("\r", "");
+                        sRC = sRC.Replace("\r", "");
                         sRC = sRC.Replace("\t", "");
                         string[] RCValues = sRC.Split('\n');
                         foreach (string RCValue in RCValues)
@@ -183,13 +183,13 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                                 {
                                     i = RCValue.IndexOf('=');
                                 }
-                                
-                                if ((i > 0) && ( i != RCValue.IndexOf("==")) && (i != RCValue.IndexOf("!=") +1))
+
+                                if ((i > 0) && (i != RCValue.IndexOf("==")) && (i != RCValue.IndexOf("!=") + 1))
                                 {
                                     Param = (RCValue.Substring(0, i)).Trim();
                                     //the rest is the value
                                     Value = RCValue.Substring(Param.Length + 1);
-                                    
+
                                     Value = new string(Value.Where(ch => !char.IsControl(ch)).ToArray());
                                     act.AddOrUpdateReturnParamActual(Param, Value);
                                 }
@@ -215,7 +215,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 int height = (int)mConsoleDriverWindow.Height;
                 RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
                 renderTargetBitmap.Render(mConsoleDriverWindow);
-                
+
                 //no need to create file (will be created later by the action) so creating only Bitmap
                 using (MemoryStream stream = new MemoryStream())
                 {
@@ -229,7 +229,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 act.Error = "Failed to create console window screenshot. Error= " + ex.Message;
                 Reporter.ToLog(eLogLevel.ERROR, act.Error, ex);
@@ -241,12 +241,12 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             return "TBD";
         }
 
-        
+
 
         public override void HighlightActElement(Act act)
         {
         }
-        
+
         public override bool IsRunning()
         {
             return IsDriverConnected;

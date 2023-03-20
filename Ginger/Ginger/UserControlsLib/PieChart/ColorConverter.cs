@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ limitations under the License.
 
 using System;
 using System.Globalization;
-using System.Windows.Data;
-using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Media;
 
 namespace Ginger.UserControlsLib.PieChart
 {
@@ -54,9 +54,13 @@ namespace Ginger.UserControlsLib.PieChart
             int index = collectionView.IndexOf(item);
 
             if (legend.ColorSelector != null)
+            {
                 return legend.ColorSelector.SelectBrush(item, index);
+            }
             else
+            {
                 return Brushes.Black;
+            }
         }
 
         public object ConvertBack(object value, Type targetType,

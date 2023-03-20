@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,13 +25,12 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
-       public class ExecutionProgressReporterListener :  RunListenerBase
+    public class ExecutionProgressReporterListener : RunListenerBase
     {
         public enum eExecutionPhase
         {
@@ -43,7 +42,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         ///  udpate in BF start !!!!!!!!!!!!!!!!!!!!!!!
         /// </summary>
         BusinessFlow mBusinessFlow;
-       
+
         public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
         {
             AddExecutionDetailsToLog(eExecutionPhase.Start, "Runner", string.Format("{0} (ID:{1})", gingerRunner.Name, gingerRunner.Guid), null);
@@ -67,7 +66,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override void ActivityGroupStart(uint eventTime, ActivitiesGroup activityGroup)
         {
-            AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), string.Format("{0} (ID:{1}, ParentID:{2})", activityGroup.Name, activityGroup.Guid, activityGroup.ExecutionParentGuid), new ActivityGroupReport(activityGroup, mBusinessFlow));            
+            AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), string.Format("{0} (ID:{1}, ParentID:{2})", activityGroup.Name, activityGroup.Guid, activityGroup.ExecutionParentGuid), new ActivityGroupReport(activityGroup, mBusinessFlow));
         }
 
         public override void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
@@ -76,11 +75,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
 
         public override void ActivityStart(uint eventTime, Activity activity, bool continuerun = false)
-        {                        
+        {
             AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.Activity), string.Format("{0} (ID:{1}, ParentID:{2})", activity.ActivityName, activity.Guid, activity.ExecutionParentGuid), new ActivityReport(activity));
         }
 
-        public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode= false)
+        public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
         {
             AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.Activity), string.Format("{0} (ID:{1}, ParentID:{2})", activity.ActivityName, activity.Guid, activity.ExecutionParentGuid), new ActivityReport(activity));
         }
@@ -90,7 +89,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             AddExecutionDetailsToLog(eExecutionPhase.Start, "Action", string.Format("{0} (ID:{1}, ParentID:{2})", action.Description, action.Guid, action.ExecutionParentGuid), new ActionReport(action, null));
         }
 
-        public override void ActionEnd(uint eventTime, Act action, bool offlineMode=false)
+        public override void ActionEnd(uint eventTime, Act action, bool offlineMode = false)
         {
             AddExecutionDetailsToLog(eExecutionPhase.End, "Action", string.Format("{0} (ID:{1}, ParentID:{2})", action.Description, action.Guid, action.ExecutionParentGuid), new ActionReport(action, null));
         }
@@ -101,13 +100,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 string prefix = string.Empty;
 
-                StringBuilder stringBuilder = new StringBuilder();                
+                StringBuilder stringBuilder = new StringBuilder();
                 switch (objExecutionPhase)
                 {
                     case eExecutionPhase.Start:
-                        stringBuilder.Append("--> ").Append(objType + " Execution Started");                        
+                        stringBuilder.Append("--> ").Append(objType + " Execution Started");
                         break;
-                    case eExecutionPhase.End:                        
+                    case eExecutionPhase.End:
                         stringBuilder.Append("<-- ").Append(objType + " Execution Ended");
                         break;
                 }
@@ -155,16 +154,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                                             propValueStr = propValueobj.ToString();
                                         }
                                     }
-                                    
+
                                     stringBuilder.Append(propFullName).Append("= ").Append(propValueStr).AppendLine();
                                 }
                             }
-                            catch (Exception ex) 
+                            catch (Exception ex)
                             {
                             }
                         }
                     }
-                    catch (Exception) { }                  
+                    catch (Exception) { }
                 }
 
                 if (WorkSpace.Instance.RunningInExecutionMode || Reporter.ReportAllAlsoToConsole == true)

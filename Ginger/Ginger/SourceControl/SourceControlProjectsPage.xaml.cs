@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,22 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.UserControls;
 using Ginger.UserControls;
-using GingerCore;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.ComponentModel;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Threading;
-using amdocs.ginger.GingerCoreNET;
-using System.Collections.Generic;
-using Amdocs.Ginger.UserControls;
 
 namespace Ginger.SourceControl
 {
@@ -278,13 +274,18 @@ namespace Ginger.SourceControl
         private string CheckForSolutionFileName(string path)
         {
             if (System.IO.File.Exists(path + @"\Ginger.Solution.xml"))
+            {
                 return path + @"\Ginger.Solution.xml";
+            }
+
             string[] childrens = System.IO.Directory.GetDirectories(path);
             foreach (string child in childrens)
             {
                 string SolutionPath = CheckForSolutionFileName(child);
                 if (!string.IsNullOrEmpty(SolutionPath))
+                {
                     return SolutionPath;
+                }
             }
             return string.Empty;
         }
@@ -341,11 +342,17 @@ namespace Ginger.SourceControl
         public static void SourceControlInit()
         {
             if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
+            {
                 mSourceControl = new GITSourceControl();
+            }
             else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
+            {
                 mSourceControl = new SVNSourceControl();
+            }
             else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.None)
+            {
                 mSourceControl = new SVNSourceControl();
+            }
 
             if (mSourceControl != null)
             {

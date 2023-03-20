@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,11 +18,6 @@ limitations under the License.
 
 using Ginger;
 using GingerWPFUnitTest.POMs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace GingerTest.POMs.Common
@@ -38,7 +33,8 @@ namespace GingerTest.POMs.Common
         public Page LoadedPage()
         {
             Page page = null;
-            Execute(() => { 
+            Execute(() =>
+            {
                 Frame f = (Frame)FindElementByAutomationID<Frame>(mGenericWindow, "PageFrame AID");
                 page = (Page)f.Content;
             });
@@ -55,8 +51,8 @@ namespace GingerTest.POMs.Common
         }
 
 
-            
 
-        
+
+
     }
 }

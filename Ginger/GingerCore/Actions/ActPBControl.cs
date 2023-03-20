@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,20 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using System;
-using System.Collections.Generic;
-using GingerCore.Helpers;
-using GingerCore.Properties;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
+using System;
+using System.Collections.Generic;
 
 namespace GingerCore.Actions
 {
     // Action class for PB control
-    public class ActPBControl : Act 
+    public class ActPBControl : Act
     {
         public new static class Fields
         {
@@ -70,19 +67,19 @@ namespace GingerCore.Actions
             IsEnabled = 6,
             GetControlProperty = 16,
             Select = 17,
-            GetSelected=18,
-            GetTitle=19,
-            ScrollUp=20,
-            Scrolldown=21,
-            IsSelected=22,
-            Highlight=23,
-            Toggle=25,
-            RightClick=26,
-            ClickXY=27,
-            DoubleClick=28,
-            GetFieldValue=29,
+            GetSelected = 18,
+            GetTitle = 19,
+            ScrollUp = 20,
+            Scrolldown = 21,
+            IsSelected = 22,
+            Highlight = 23,
+            Toggle = 25,
+            RightClick = 26,
+            ClickXY = 27,
+            DoubleClick = 28,
+            GetFieldValue = 29,
             AsyncClick = 30,
-            IsExist=31,
+            IsExist = 31,
             Repaint,
             SendKeys,
             SelectByIndex,
@@ -95,13 +92,13 @@ namespace GingerCore.Actions
 
         public enum eControlProperty
         {
-            NA =0,
-            Value =1,
-            Text =2,
-            Type=3,
-            Enabled=4,
-            Visible=5,
-            List =6
+            NA = 0,
+            Value = 1,
+            Text = 2,
+            Type = 3,
+            Enabled = 4,
+            Visible = 5,
+            List = 6
         }
 
         public eControlAction ControlAction

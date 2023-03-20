@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -36,7 +35,7 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddText("To perform a Radio button action, Select Locate By type, e.g- ByID,ByCSS,ByXPath etc.Then enter the value of property" +
             " that you set in Locate By type.Then select Action Type and then enter the page url in value textbox and run the action.");
-        }        
+        }
 
         public override string ActionEditPage { get { return null; } }
         public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
@@ -61,12 +60,12 @@ namespace GingerCore.Actions
         {
             SelectByIndex = 1,
             // SelectByText = 2, //TODO: Re-enable SelectByText action for Radio Button once logic for it is in SeleniumDriver.cs, assuming it's worth effort.
-            SelectByValue=3,
+            SelectByValue = 3,
             Clear = 4,
             SetFocus = 5,
-            GetValue=6,
+            GetValue = 6,
             IsDisabled = 7,
-            GetAvailableValues=8,
+            GetAvailableValues = 8,
             IsDisplayed = 9,
             GetWidth = 22,
             GetHeight = 23,

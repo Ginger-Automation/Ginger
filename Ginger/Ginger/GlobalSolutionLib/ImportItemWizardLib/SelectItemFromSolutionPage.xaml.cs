@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,30 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GlobalSolutionLib;
 using Amdocs.Ginger.CoreNET.GlobalSolutionLib;
-using Ginger.Actions;
-using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControls;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 
 namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 {
@@ -65,7 +52,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     ((WizardWindow)wiz.mWizardWindow).ShowFinishButton(false);
 
                     SetItemsListToImportGridView();
-                    
+
                     xItemsToImportGrid.DataSourceList = wiz.ItemsListToImport;
                     await GetItemsListToImport();
 
@@ -81,7 +68,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     //Nothing to do
                     break;
             }
-            
+
         }
 
         private void SetItemsListToImportGridView()

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,18 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
-using GingerCore.Helpers;
+using GingerCore.Platforms;
+using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCoreNET.GeneralLib;
-using Amdocs.Ginger.CoreNET.Run;
-using GingerCore.Platforms;
-using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Actions.WebServices.WebAPI
 {
@@ -79,9 +78,13 @@ namespace GingerCore.Actions.WebServices.WebAPI
             get
             {
                 if (string.IsNullOrEmpty(GetOrCreateInputParam(nameof(APImodelGUID)).Value))
+                {
                     return new Guid();
+                }
                 else
+                {
                     return Guid.Parse(GetOrCreateInputParam(nameof(APImodelGUID)).Value);
+                }
             }
             set
             {
@@ -203,6 +206,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
             ObservableList<ActInputValue> GingerCoreHttpHeaders = new ObservableList<ActInputValue>();
 
             if (GingerCoreNETHttpHeaders != null)
+            {
                 foreach (APIModelKeyValue AMKV in GingerCoreNETHttpHeaders)
                 {
                     ActInputValue AIV = new ActInputValue();
@@ -210,6 +214,8 @@ namespace GingerCore.Actions.WebServices.WebAPI
                     AIV.ValueForDriver = ReplacePlaceHolderParameneterWithActual(AMKV.Value, actWebAPIModel.APIModelParamsValue);
                     GingerCoreHttpHeaders.Add(AIV);
                 }
+            }
+
             return GingerCoreHttpHeaders;
         }
 
@@ -221,10 +227,14 @@ namespace GingerCore.Actions.WebServices.WebAPI
 
             //Set model params with actual execution value
             foreach (AppModelParameter modelParam in AAMBDuplicate.AppModelParameters)
+            {
                 SetExecutionValue(modelParam, actWebAPIModel);
+            }
 
             foreach (GlobalAppModelParameter globalParam in AAMBDuplicate.GlobalAppModelParameters)
+            {
                 SetExecutionValue(globalParam, actWebAPIModel);
+            }
 
             actWebAPIModel.ActAppModelParameters = AAMBDuplicate.MergedParamsList;
 
@@ -236,10 +246,14 @@ namespace GingerCore.Actions.WebServices.WebAPI
         private string ReplacePlaceHolderParameneterWithActual(string ValueBeforeReplacing, ObservableList<EnhancedActInputValue> APIModelDynamicParamsValue)
         {
             if (string.IsNullOrEmpty(ValueBeforeReplacing))
+            {
                 return string.Empty;
+            }
 
             foreach (EnhancedActInputValue EAIV in APIModelDynamicParamsValue)
+            {
                 ValueBeforeReplacing = ValueBeforeReplacing.Replace(EAIV.Param, EAIV.ValueForDriver);
+            }
 
             return ValueBeforeReplacing;
         }
@@ -249,12 +263,18 @@ namespace GingerCore.Actions.WebServices.WebAPI
             AppModelParameter p = param as AppModelParameter;
             EnhancedActInputValue enhanceInput = actWebAPIModel.APIModelParamsValue.Where(x => x.ParamGuid == p.Guid).FirstOrDefault();
             if (enhanceInput != null)
+            {
                 p.ExecutionValue = enhanceInput.ValueForDriver;
+            }
             else
+            {
                 p.ExecutionValue = p.GetDefaultValue();
+            }
 
             if (p is GlobalAppModelParameter && p.ExecutionValue.Equals(GlobalAppModelParameter.CURRENT_VALUE))
+            {
                 p.ExecutionValue = ((GlobalAppModelParameter)p).CurrentValue;
+            }
         }
 
         public void ParseOutput()

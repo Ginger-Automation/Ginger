@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,22 +16,21 @@ limitations under the License.
 */
 #endregion
 
-using System.Collections.Generic;
-using System.Linq;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCoreNET.GeneralLib;
-using amdocs.ginger.GingerCoreNET;
 using System;
-using Amdocs.Ginger.Common;
-using Ginger.Run.RunSetActions;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.CoreNET.Execution;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Ginger.Reports
 {
     class TestNGResultReport : XMLReportBase
     {
-        public override string CreateReport(ReportInfo RI, bool statusByGroupActivity,ObservableList<ActInputValue> DynamicParameters)
+        public override string CreateReport(ReportInfo RI, bool statusByGroupActivity, ObservableList<ActInputValue> DynamicParameters)
         {
 
             base.RI = RI;
@@ -57,17 +56,21 @@ namespace Ginger.Reports
             foreach (BusinessFlowReport BFR in BizFlows)
             {
                 string BFResults = "";
-                BusinessFlow BF =(BusinessFlow)BFR.GetBusinessFlow();
+                BusinessFlow BF = (BusinessFlow)BFR.GetBusinessFlow();
                 totalCount = totalCount + BF.Activities.Count;
                 reportClasses = reportClasses + @"
             <class name=""" + BF.Name + @".Ginger Business Flow"">";
-                if(!statusByGroupActivity)
+                if (!statusByGroupActivity)
+                {
                     BFResults = CraeteActivitiesStatusXml(BF, ref passCount, ref failedCount, ref blockedCount);
+                }
                 else
+                {
                     BFResults = CraeteGroupActivitiesStatusXml(BF, ref passCount, ref failedCount, ref blockedCount);
+                }
 
                 reportClasses = reportClasses + BFResults + @"
-            </class>";             
+            </class>";
 
                 BFNames = BFNames + @"
                 <method signature=""" + General.ConvertInvalidXMLCharacters(BF.Name) + @""" name=""" + General.ConvertInvalidXMLCharacters(BF.Name) + @""" class=""" + General.ConvertInvalidXMLCharacters(BF.Name) + ".Ginger Business Flow" + @"""/>";
@@ -81,7 +84,7 @@ namespace Ginger.Reports
     <dynamic-parameters>";
                 foreach (ActInputValue actInput in DynamicParameters)
                 {
-                      reportHeader = reportHeader +  @"
+                    reportHeader = reportHeader + @"
         <paramter name =""" + actInput.Param + @""" value=""" + actInput.ValueForDriver + @"""/>";
                 }
                 reportHeader = reportHeader + @"
@@ -91,15 +94,15 @@ namespace Ginger.Reports
 
             reportHeader = reportHeader + @"
         <suite name=""" + General.ConvertInvalidXMLCharacters(runSetName) + @""">";
-                reportGroups = reportGroups + BFNames + @"
+            reportGroups = reportGroups + BFNames + @"
                 </group>
             </groups>";
-                string xml = "";
+            string xml = "";
 
-                xml = xml + reportHeader + reportGroups + @"
+            xml = xml + reportHeader + reportGroups + @"
             <test name=""GingerTest"">" + reportClasses;
-      
-                xml = xml + @"
+
+            xml = xml + @"
             </test>
         </suite>
 </testng-results>
@@ -122,7 +125,7 @@ namespace Ginger.Reports
                     {
                         List<Activity> acts = item.ActivitiesIdentifiers.Select(a => a.IdentifiedActivity).ToList();
                         eRunStatus status = getGroupActivityStatus(acts, ref elapsed, ref startedAt, ref finishedAt);
-                        BFResults += buildXml(status, ref passCount, ref failedCount, ref blockedCount, General.ConvertInvalidXMLCharacters(BF.Name), General.ConvertInvalidXMLCharacters(item.Name), General.ConvertInvalidXMLCharacters(item.Description), elapsed,startedAt,finishedAt);
+                        BFResults += buildXml(status, ref passCount, ref failedCount, ref blockedCount, General.ConvertInvalidXMLCharacters(BF.Name), General.ConvertInvalidXMLCharacters(item.Name), General.ConvertInvalidXMLCharacters(item.Description), elapsed, startedAt, finishedAt);
                     }
                 }
 
@@ -145,7 +148,7 @@ namespace Ginger.Reports
             {
                 eRunStatus status = getGroupActivityStatus(BF.Activities.ToList(), ref elapsed, ref startedAt, ref finishedAt);
                 BFResults += buildXml(status, ref passCount, ref failedCount, ref blockedCount, General.ConvertInvalidXMLCharacters(BF.Name), "Ungrouped", "Ungrouped", elapsed, startedAt, finishedAt);
-            }          
+            }
 
             return BFResults;
         }
@@ -156,7 +159,9 @@ namespace Ginger.Reports
 
             //if there is one fail then Activity status is fail
             if (activityList.Where(x => x.Status == eRunStatus.Failed).FirstOrDefault() != null)
+            {
                 status = eRunStatus.Failed;
+            }
             else
             {
                 // If we have at least 1 pass then it passed, otherwise will remain Skipped
@@ -181,7 +186,7 @@ namespace Ginger.Reports
 
 
         private string CraeteActivitiesStatusXml(BusinessFlow BF, ref int passCount, ref int failedCount, ref int blockedCount)
-        {            
+        {
             string BFResults = string.Empty;
             foreach (Activity activity in BF.Activities)
             {

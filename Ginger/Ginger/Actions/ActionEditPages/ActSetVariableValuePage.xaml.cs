@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using System.Linq;
-using System.Windows.Controls;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 using GingerCore.Variables;
-using Amdocs.Ginger.Common;
-using amdocs.ginger.GingerCoreNET;
+using System.Linq;
+using System.Windows.Controls;
 
 namespace Ginger.Actions
 {
@@ -43,42 +43,42 @@ namespace Ginger.Actions
             {
                 mContext = Context.GetAsContext(mAct.Context);
             }
-            SetComboListsValues(); 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(VariableNameComboBox, ComboBox.TextProperty, mAct, "VariableName");                  
+            SetComboListsValues();
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(VariableNameComboBox, ComboBox.TextProperty, mAct, "VariableName");
         }
 
         private void SetComboListsValues()
         {
             if (mContext != null && mContext.BusinessFlow != null)
-            {                
+            {
                 mVars = mContext.BusinessFlow.GetAllVariables(mContext.Activity);
             }
             else
             {
                 mVars = WorkSpace.Instance.Solution.Variables;
             }
-         
+
             foreach (VariableBase v in mVars.OrderBy(nameof(VariableBase.Name)))
             {
-                if ((v.GetType() != typeof(VariablePasswordString))&& (v.GetType() != typeof(VariableDynamic)))
+                if ((v.GetType() != typeof(VariablePasswordString)) && (v.GetType() != typeof(VariableDynamic)))
                 {
                     VariableNameComboBox.Items.Add(v.Name);
                 }
-            }            
+            }
         }
 
         private void VariableNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             VariableBase var = mVars.Where(x => x.Name == VariableNameComboBox.SelectedItem.ToString()).FirstOrDefault();
-            
+
             //Clear fields
             VariableTypeTextBox.Text = string.Empty;
             if (OperationTypeComboBox.Items != null)
             {
                 OperationTypeComboBox.Items.Clear();
             }
-           
-            if (var!=null)
+
+            if (var != null)
             {
                 //## Set type
                 VariableTypeTextBox.Text = var.GetType().Name;
@@ -87,6 +87,6 @@ namespace Ginger.Actions
                 OperationTypeComboBox.BindControl(mAct, nameof(ActSetVariableValue.SetVariableValueOption), var.GetSupportedOperations());
             }
         }
- 
+
     }
 }

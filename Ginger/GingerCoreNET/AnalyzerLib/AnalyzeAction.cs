@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,22 +16,22 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerCore.DataSource;
+using GingerCore.FlowControlLib;
+using GingerCore.Variables;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Variables;
-using GingerCore.FlowControlLib;
-using GingerCore.DataSource;
 using System.Text.RegularExpressions;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.AnalyzerLib
 {
@@ -113,7 +113,9 @@ namespace Ginger.AnalyzerLib
                                     AA.FixItHandler = FixFlowControlWrongActionMapping;
                                 }
                                 else
+                                {
                                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                                }
 
                                 AA.IssueType = eType.Error;
                                 AA.Impact = "Flow Control will fail on run time";
@@ -142,7 +144,9 @@ namespace Ginger.AnalyzerLib
                                     AA.FixItHandler = FixFlowControlWrongActivityMapping;
                                 }
                                 else
+                                {
                                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                                }
 
                                 AA.IssueType = eType.Error;
                                 AA.Impact = "Flow Control will fail on run time";

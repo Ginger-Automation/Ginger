@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Plugin.Core;
 using Ginger.UserControlsLib.TextEditor.Common;
-using GingerCore;
 using GingerPlugIns.TextEditorLib;
 using GingerWPF.DragDropLib;
 using ICSharpCode.AvalonEdit.CodeCompletion;
@@ -35,7 +35,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using amdocs.ginger.GingerCoreNET;
 using System.Windows.Threading;
 
 namespace Ginger.UserControlsLib.TextEditor
@@ -43,11 +42,11 @@ namespace Ginger.UserControlsLib.TextEditor
     /// <summary>
     /// Interaction logic for UCTextEditor.xaml
     /// </summary>
-    public partial class UCTextEditor : UserControl , IDragDrop, ITextHandler
+    public partial class UCTextEditor : UserControl, IDragDrop, ITextHandler
     {
-        TextEditorBase mTextEditor = null;        
+        TextEditorBase mTextEditor = null;
         GridLength mLastEditPageRowHeight = new GridLength(150);
-        CompletionWindow completionWindow;      
+        CompletionWindow completionWindow;
 
         public bool AllowWordWrapping
         {
@@ -68,13 +67,15 @@ namespace Ginger.UserControlsLib.TextEditor
             new FrameworkPropertyMetadata()
             {
                 BindsTwoWayByDefault = true
-                , DefaultUpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged, PropertyChangedCallback = TextChanged
+                ,
+                DefaultUpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                PropertyChangedCallback = TextChanged
             }
         );
 
         private static void TextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((UCTextEditor)d).textEditor.Text = (string)e.NewValue;            
+            ((UCTextEditor)d).textEditor.Text = (string)e.NewValue;
         }
 
         public string FileName { get; set; }
@@ -84,14 +85,14 @@ namespace Ginger.UserControlsLib.TextEditor
         public UCTextEditor()
         {
             InitializeComponent();
-            
+
             EditPageRow.Height = new GridLength(0);
             textEditor.TextArea.TextEntered += TextArea_TextEntered;
-            textEditor.TextArea.TextEntering += TextArea_TextEntering;            
+            textEditor.TextArea.TextEntering += TextArea_TextEntering;
             BackgroundRenderer = new BackgroundRenderer(textEditor);
-            textEditor.TextArea.TextView.BackgroundRenderers.Add(BackgroundRenderer);   
+            textEditor.TextArea.TextView.BackgroundRenderers.Add(BackgroundRenderer);
         }
-                
+
         private void UCTextEditor_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.F && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
@@ -99,7 +100,7 @@ namespace Ginger.UserControlsLib.TextEditor
                 e.Handled = true;
                 FindReplacePage FRP = new FindReplacePage(this.textEditor);
                 FRP.ShowAsWindow();
-            }            
+            }
         }
 
         private void TextArea_TextEntering(object sender, System.Windows.Input.TextCompositionEventArgs e)
@@ -114,7 +115,7 @@ namespace Ginger.UserControlsLib.TextEditor
                 }
             }
         }
-        
+
         private void TextArea_TextEntered(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
             completionWindow = new CompletionWindow(textEditor.TextArea);
@@ -123,15 +124,15 @@ namespace Ginger.UserControlsLib.TextEditor
             //TODO: fill the rest of the args
 
             List<ICompletionData> data = mTextEditor.GetCompletionData(e.Text, args);
-            if (data !=null && data.Count() > 0)
+            if (data != null && data.Count() > 0)
             {
                 IList<ICompletionData> cdata = completionWindow.CompletionList.CompletionData;
-                
+
                 foreach (ICompletionData TCD in data)
                 {
                     cdata.Add(TCD);
                 }
-                
+
                 completionWindow.Width = completionWindow.Width + (Gherkin.GherkinDcoumentEditor.CompletionWindowSize * 2.5);
                 completionWindow.CloseAutomatically = true;
                 completionWindow.Show();
@@ -151,11 +152,11 @@ namespace Ginger.UserControlsLib.TextEditor
 
         internal void Bind(object obj, string attrName)
         {
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(this, EditorTextProperty, obj, attrName);                        
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(this, EditorTextProperty, obj, attrName);
         }
 
         public void Save()
-        {            
+        {
             Reporter.ToStatus(eStatusMsgKey.SaveItem, null, Path.GetFileName(FileName), "file");
             textEditor.Save(FileName);
             Reporter.HideStatusMessage();
@@ -167,7 +168,7 @@ namespace Ginger.UserControlsLib.TextEditor
         /// <param name="FileName">The full path of the file to edit/view</param>
         /// <param name="EnableEdit">enable changing the document, if disable some toolbar buttons will not be visible</param>
         /// <param name="TextEditor">Text Editor to use, if null then text editor will be selected based on the extension of the file</param>
-        public void Init(string FileName, TextEditorBase TextEditor, bool EnableEdit=true,bool RemoveToolBar = false)
+        public void Init(string FileName, TextEditorBase TextEditor, bool EnableEdit = true, bool RemoveToolBar = false)
         {
             mTextEditor = TextEditor;
 
@@ -177,7 +178,7 @@ namespace Ginger.UserControlsLib.TextEditor
             }
 
             //TODO: put it in general func
-            string SolutionPath = FileName.Replace( WorkSpace.Instance.Solution.Folder, "~");
+            string SolutionPath = FileName.Replace(WorkSpace.Instance.Solution.Folder, "~");
             lblTitle.Content = SolutionPath;
 
             toolbar.IsEnabled = true;
@@ -201,7 +202,7 @@ namespace Ginger.UserControlsLib.TextEditor
                 textEditor.Load(this.FileName);
             }
             else
-            { 
+            {
                 textEditor.Clear();
             }
 
@@ -211,9 +212,11 @@ namespace Ginger.UserControlsLib.TextEditor
 
             SetDocumentEditor(TextEditor);
             if (RemoveToolBar)
+            {
                 HideToolBar();
-        }       
-        
+            }
+        }
+
         public void SetDocumentEditor(TextEditorBase TE)
         {
             mTextEditor = TE;
@@ -225,8 +228,8 @@ namespace Ginger.UserControlsLib.TextEditor
             else
             {
                 // try to use Avalon highlighting built in to find the correct highlight by file extension
-                string ext = Path.GetExtension(FileName).ToLower();                
-                textEditor.SyntaxHighlighting =  ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(ext);
+                string ext = Path.GetExtension(FileName).ToLower();
+                textEditor.SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(ext);
             }
 
             IFoldingStrategy FG = TE.FoldingStrategy;
@@ -261,19 +264,19 @@ namespace Ginger.UserControlsLib.TextEditor
                         // Plugin text editor
                         AddPluginToolbarTool(t);
                     }
-                    
+
                 }
             }
         }
 
         public void AddPluginToolbarTool(ITextEditorToolBarItem t)
         {
-            Button tool = new Button();            
+            Button tool = new Button();
             tool.ToolTip = t.ToolTip;
             tool.Content = t.ToolText;
-            tool.Tag = t;            
+            tool.Tag = t;
             tool.Click += ToolBarItemClick;
-            
+
 
             //To keep the tools before the search control we do remove and then add
             //DO NOT Delete
@@ -292,20 +295,24 @@ namespace Ginger.UserControlsLib.TextEditor
 
         private void ToolBarItemClick(object sender, RoutedEventArgs e)
         {
-            ITextEditorToolBarItem tool = (ITextEditorToolBarItem)((Button)sender).Tag;              
+            ITextEditorToolBarItem tool = (ITextEditorToolBarItem)((Button)sender).Tag;
             tool.Execute((ITextEditor)mTextEditor);
         }
 
         //TODO: looks liek too many calls, even the the caret didn't move, can first check if pos changed otherwise return - keep last
         private void Caret_PositionChanged(object sender, EventArgs e)
-        {                                       
+        {
             SelectedContentArgs args = new SelectedContentArgs();
             args.TextEditor = this.textEditor;
             args.FoldingManager = mFoldingManager;
-            if (mTextEditor == null) return;
+            if (mTextEditor == null)
+            {
+                return;
+            }
+
             Page p = mTextEditor.GetSelectedContentPageEditor(args);
-            if (p!=null)
-            {                
+            if (p != null)
+            {
                 SelectionEditorFrame.Content = p;
                 SelectionEditorFrame.Visibility = Visibility.Visible;
 
@@ -324,14 +331,14 @@ namespace Ginger.UserControlsLib.TextEditor
                         mLastEditPageRowHeight = new GridLength(EditPageRow.ActualHeight);
                         SelectionEditorFrameSplitter.Visibility = Visibility.Visible;
                     }
-                    
+
                     SelectionEditorFrame.Visibility = Visibility.Collapsed;
                     SelectionEditorFrameSplitter.Visibility = Visibility.Collapsed;
                     EditPageRow.Height = new GridLength(0);
                 }
             }
         }
-        
+
         private void InitFoldings()
         {
             // start a timer to set folding every 2 sec
@@ -343,14 +350,14 @@ namespace Ginger.UserControlsLib.TextEditor
 
         void UpdateFoldings()
         {
-            mFoldingStrategy.UpdateFolding(mFoldingManager, textEditor.Document);            
+            mFoldingStrategy.UpdateFolding(mFoldingManager, textEditor.Document);
         }
 
         public string GetText()
-        {        
+        {
             return textEditor.Text;
         }
-        
+
         //TODO: see how we can reuse with AvalonEdit
         // function to return all words in doc which match the regex pattern, then we send it to the formater
         public static IEnumerable<TextRange> GetAllWordRanges(FlowDocument document, string pattern)
@@ -386,22 +393,22 @@ namespace Ginger.UserControlsLib.TextEditor
         {
             Button tool = new Button();
             tool.Visibility = toolVisibility;
-            tool.ToolTip = toolTip;            
+            tool.ToolTip = toolTip;
             tool.Content = CreateCopyImage(image);
             tool.Click += ToolBarButtonClick;
             tool.Tag = clickHandler;
 
             //To keep the tools before the search control we do remove and then add
             //DO NOT Delete
-           // toolbar.Items.Remove(lblSearch);
-          //  toolbar.Items.Remove(txtSearch);
-          //  toolbar.Items.Remove(btnClearSearch);
+            // toolbar.Items.Remove(lblSearch);
+            //  toolbar.Items.Remove(txtSearch);
+            //  toolbar.Items.Remove(btnClearSearch);
             toolbar.Items.Remove(lblView);
             toolbar.Items.Remove(comboView);
             toolbar.Items.Add(tool);
-         //   toolbar.Items.Add(lblSearch);
-         //   toolbar.Items.Add(txtSearch);
-         //   toolbar.Items.Add(btnClearSearch);
+            //   toolbar.Items.Add(lblSearch);
+            //   toolbar.Items.Add(txtSearch);
+            //   toolbar.Items.Add(btnClearSearch);
             toolbar.Items.Add(lblView);
             toolbar.Items.Add(comboView);
         }
@@ -416,7 +423,7 @@ namespace Ginger.UserControlsLib.TextEditor
 
             args.CaretLocation = textEditor.CaretOffset;
             args.txt = textEditor.Text;
-            clickHandler.Invoke(args);            
+            clickHandler.Invoke(args);
 
             BackgroundRenderer.Segments.Clear();
             if (!string.IsNullOrEmpty(args.ErrorMessage))
@@ -424,9 +431,11 @@ namespace Ginger.UserControlsLib.TextEditor
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, args.ErrorMessage);
 
                 if (args.ErrorLines != null)
-                    AddSegments(args.ErrorLines);               
+                {
+                    AddSegments(args.ErrorLines);
+                }
             }
-           else if (!string.IsNullOrEmpty(args.SuccessMessage))//succ
+            else if (!string.IsNullOrEmpty(args.SuccessMessage))//succ
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, args.SuccessMessage);
             }
@@ -469,7 +478,7 @@ namespace Ginger.UserControlsLib.TextEditor
         }
 
         void IDragDrop.DragEnter(DragInfo Info)
-        {            
+        {
             Info.DragTarget = this;
             Info.DragIcon = DragInfo.eDragIcon.Add;
         }
@@ -480,15 +489,15 @@ namespace Ginger.UserControlsLib.TextEditor
 
         void IDragDrop.DragOver(DragInfo Info)
         {
-        }       
+        }
 
         public void HighlightLine(int LineNumber)
         {
             if (LineNumber > textEditor.Document.LineCount)
             {
                 return;
-            }                
-            var line = textEditor.Document.GetLineByNumber(LineNumber); 
+            }
+            var line = textEditor.Document.GetLineByNumber(LineNumber);
             BackgroundRenderer.HighLightLine = line;
             textEditor.Focus();  // need to focus to get the redraw to happen, //TODO: find alternative so user can stay in grid or wherever
             textEditor.ScrollToLine(LineNumber);
@@ -508,13 +517,17 @@ namespace Ginger.UserControlsLib.TextEditor
             get { return UpdateButton.Content.ToString(); }
             set { UpdateButton.Content = value; }
         }
-        
+
         private void UpdateButton_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if(UpdateButton.Visibility == Visibility.Visible)
+            if (UpdateButton.Visibility == Visibility.Visible)
+            {
                 UpdateRow.Height = new GridLength(27);
+            }
             else
+            {
                 UpdateRow.Height = new GridLength(0);
+            }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -528,7 +541,7 @@ namespace Ginger.UserControlsLib.TextEditor
 
         public void AppendText(string text)
         {
-            textEditor.AppendText(text);            
+            textEditor.AppendText(text);
         }
 
         public void InsertText(string text)
@@ -541,7 +554,7 @@ namespace Ginger.UserControlsLib.TextEditor
             throw new NotImplementedException();
         }
 
-        public void SetContentEditorTitleLabel(string titleContent, Style titleStyle=null)
+        public void SetContentEditorTitleLabel(string titleContent, Style titleStyle = null)
         {
             lblTitle.Visibility = Visibility.Collapsed;
             ContentEditorTitleLabel.Visibility = Visibility.Visible;
@@ -550,7 +563,7 @@ namespace Ginger.UserControlsLib.TextEditor
             {
                 xFirstGrid.RowDefinitions[0].Height = new GridLength(0);
             }
-                if (titleStyle != null)
+            if (titleStyle != null)
             {
                 ContentEditorTitleLabel.Style = titleStyle;
             }

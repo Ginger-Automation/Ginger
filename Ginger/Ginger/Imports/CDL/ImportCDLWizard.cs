@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ namespace Ginger.Imports.CDL
 {
     public class ImportCDLWizard : WizardBase
     {
-        public ImportCDL ImportCDL { get; set;}
+        public ImportCDL ImportCDL { get; set; }
 
         public override string Title { get { return "Import CDL Wizard"; } }
 

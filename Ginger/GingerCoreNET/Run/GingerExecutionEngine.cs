@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -26,10 +26,8 @@ using Amdocs.Ginger.Common.Repository.TargetLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger;
-using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
 using Ginger.Reports;
@@ -39,7 +37,6 @@ using GingerCore.Actions.PlugIns;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.DataSource;
-using GingerCore.Drivers;
 using GingerCore.Environments;
 using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
@@ -53,7 +50,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -282,7 +278,7 @@ namespace Ginger.Run
             {
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
-            
+
             //if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
             //{
             //    RunListeners.Add(new TelemetryRunListener());
@@ -310,7 +306,7 @@ namespace Ginger.Run
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
 
-          
+
             //if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
             //{
             //    RunListeners.Add(new TelemetryRunListener());
@@ -534,7 +530,9 @@ namespace Ginger.Run
                     {
                         mErrorPostExecutionActionFlowBreaker = false;
                         if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ContinueFromNextBusinessFlow)
+                        {
                             flowControlIndx = null;
+                        }
                         else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopRun)
                         {
                             SetPendingBusinessFlowsSkippedStatus();
@@ -1114,7 +1112,9 @@ namespace Ginger.Run
                         ProcessIntervaleRetry(act);
 
                         if (mStopRun)
+                        {
                             break;
+                        }
 
                         //Run Again
                         RunActionWithRetryMechanism(act, checkIfActionAllowedToRun, moveToNextAction);
@@ -1244,13 +1244,19 @@ namespace Ginger.Run
                         return;
                     }
                     if (act.CheckIfVaribalesDependenciesAllowsToRun((Activity)(CurrentBusinessFlow.CurrentActivity), true) == false)
+                    {
                         return;
+                    }
                 }
                 if (act.BreakPoint)
                 {
                     StopRun();
                 }
-                if (mStopRun) return;
+                if (mStopRun)
+                {
+                    return;
+                }
+
                 GingerRunner.eActionExecutorType ActionExecutorType = GingerRunner.eActionExecutorType.RunWithoutDriver;
                 // !!!!!!!!!!!! Remove SW use eventtime
                 Stopwatch st = new Stopwatch();
@@ -1291,7 +1297,9 @@ namespace Ginger.Run
                         ObservableList<ErrorHandler> lstMappedErrorHandlers = GetErrorHandlersForCurrentActivity();
 
                         if (lstMappedErrorHandlers.Count <= 0)
+                        {
                             break;
+                        }
 
                         //for value expression calculations
                         CurrentBusinessFlow.ErrorHandlerOriginActivity = CurrentBusinessFlow.CurrentActivity;
@@ -1359,11 +1367,15 @@ namespace Ginger.Run
                 if (!mErrorPostExecutionActionFlowBreaker)
                 {
                     if (handlerPostExecutionAction != eErrorHandlerPostExecutionAction.ContinueFromNextAction)
+                    {
                         DoFlowControl(act, moveToNextAction);
+                    }
                     else
+                    {
                         MoveToNextAction(act);
+                    }
                 }
-                
+
                 DoStatusConversion(act);   //does it need to be here or earlier?
             }
             finally
@@ -1437,27 +1449,41 @@ namespace Ginger.Run
             try
             {
                 if (act.ConfigOutputDS == false)
+                {
                     return;
+                }
 
                 if (act.ReturnValues.Count == 0)
+                {
                     return;
+                }
+
                 List<ActReturnValue> mReturnValues = (from arc in act.ReturnValues where arc.Active == true select arc).ToList();
                 if (mReturnValues.Count == 0)
+                {
                     return;
+                }
 
                 if (act.DSOutputConfigParams.Count > 0 && (act.OutDataSourceName == null || act.OutDataSourceTableName == null))
                 {
                     act.OutDataSourceName = act.DSOutputConfigParams[0].DSName;
                     act.OutDataSourceTableName = act.DSOutputConfigParams[0].DSTable;
                     if (act.DSOutputConfigParams[0].OutParamMap != null)
+                    {
                         act.OutDSParamMapType = act.DSOutputConfigParams[0].OutParamMap;
+                    }
                     else
+                    {
                         act.OutDSParamMapType = Act.eOutputDSParamMapType.ParamToRow.ToString();
+                    }
                 }
 
                 List<ActOutDataSourceConfig> mADCS = (from arc in act.DSOutputConfigParams where arc.DSName == act.OutDataSourceName && arc.DSTable == act.OutDataSourceTableName && arc.Active == true select arc).ToList();
                 if (mADCS.Count == 0 && act.OutDSParamMapType == Act.eOutputDSParamMapType.ParamToRow.ToString())
+                {
                     return;
+                }
+
                 DataSourceBase DataSource = null;
                 DataSourceTable DataSourceTable = null;
                 foreach (DataSourceBase ds in mGingerRunner.DSList)
@@ -1469,7 +1495,9 @@ namespace Ginger.Run
                     }
                 }
                 if (DataSource == null)
+                {
                     return;
+                }
 
                 DataSource.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DataSource.FilePath);
 
@@ -1483,11 +1511,15 @@ namespace Ginger.Run
                     }
                 }
                 if (DataSourceTable == null)
+                {
                     return;
+                }
 
                 List<string> mColList = DataSourceTable.DSC.GetColumnList(DataSourceTable.Name);
                 if (act.OutDSParamMapType == null)
+                {
                     act.OutDSParamMapType = act.DSOutputConfigParams[0].OutParamMap;
+                }
 
                 //Adding OutDataSurce Param at run time if not exist - Param to Col
                 if (act.OutDSParamMapType == Act.eOutputDSParamMapType.ParamToCol.ToString())
@@ -1508,11 +1540,20 @@ namespace Ginger.Run
                     {
                         mColList.Remove("GINGER_ID");
                         if (mColList.Contains("GINGER_LAST_UPDATED_BY"))
+                        {
                             mColList.Remove("GINGER_LAST_UPDATED_BY");
+                        }
+
                         if (mColList.Contains("GINGER_LAST_UPDATE_DATETIME"))
+                        {
                             mColList.Remove("GINGER_LAST_UPDATE_DATETIME");
+                        }
+
                         if (mColList.Contains("GINGER_USED"))
+                        {
                             mColList.Remove("GINGER_USED");
+                        }
+
                         act.AddOrUpdateOutDataSourceParam(act.OutDataSourceName, act.OutDataSourceTableName, item.Param, item.Param, "", mColList, act.OutDSParamMapType);
                     }
 
@@ -1529,19 +1570,25 @@ namespace Ginger.Run
 
 
                     if (mADCS.Count == 0)
+                    {
                         return;
+                    }
                 }
 
                 foreach (ActOutDataSourceConfig ADSC in mADCS)
                 {
                     if (mColList.Contains(ADSC.TableColumn) == false)
+                    {
                         DataSource.AddColumn(DataSourceTable.Name, ADSC.TableColumn, "Text");
+                    }
                 }
                 if (act.OutDSParamMapType == Act.eOutputDSParamMapType.ParamToCol.ToString())
                 {
                     string sQuery = "";
                     if (DataSourceTable.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue)
+                    {
                         return;
+                    }
 
                     int iPathCount = 0;
                     List<ActReturnValue> mOutRVs = (from arc in act.ReturnValues where arc.Path == "" select arc).ToList();
@@ -1572,7 +1619,10 @@ namespace Ginger.Run
                             }
                         }
                         if (sColList == "")
+                        {
                             break;
+                        }
+
                         sColList = sColList + "GINGER_ID,GINGER_USED,";
                         int rowCount = DataSource.GetRowCount(DataSourceTable.Name);
                         sColVals = sColVals + (rowCount + 1) + ", 'False',";
@@ -1599,14 +1649,22 @@ namespace Ginger.Run
                                     if (ADSC.OutputType == "Parameter_Path")
                                     {
                                         if (item.Path != null && item.Path != "")
+                                        {
                                             sKeyName = item.Param + "_" + item.Path;
+                                        }
                                         else
+                                        {
                                             sKeyName = item.Param;
+                                        }
                                     }
                                     else if (ADSC.OutputType == "Parameter")
+                                    {
                                         sKeyName = item.Param;
+                                    }
                                     else
+                                    {
                                         sKeyValue = item.Actual;
+                                    }
 
                                     sKeyName = sKeyName.Replace("'", "''");
                                     sKeyValue = sKeyValue == null ? "" : sKeyValue.ToString();
@@ -1626,9 +1684,13 @@ namespace Ginger.Run
                                 {
                                     sColList = sColList + ADSC.TableColumn + ",";
                                     if (ADSC.OutputType == "Parameter")
+                                    {
                                         sColVals = sColVals + "'" + item.Param.Replace("'", "''") + "',";
+                                    }
                                     else if (ADSC.OutputType == "Path")
+                                    {
                                         sColVals = sColVals + "'" + item.Path + "',";
+                                    }
                                     else if (ADSC.OutputType == "Actual")
                                     {
                                         string strActual = item.Actual == null ? "" : item.Actual.ToString();
@@ -1828,7 +1890,9 @@ namespace Ginger.Run
                         {
                             CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
                             if (errActivity.HandlerType == eHandlerType.Popup_Handler)
+                            {
                                 act.Timeout = 1;
+                            }
 
                             PrepAction(act, ref ActionExecutorType, st);
                             NotifyActionStart(act);
@@ -1848,8 +1912,8 @@ namespace Ginger.Run
                     errActivity.Elapsed = stE.ElapsedMilliseconds;
                 }
 
-                if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow || 
-                    handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginActivity || 
+                if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow ||
+                    handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginActivity ||
                     handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ContinueFromNextActivity ||
                     handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ContinueFromNextBusinessFlow ||
                     handlerPostExecutionAction == eErrorHandlerPostExecutionAction.StopRun)
@@ -1987,7 +2051,10 @@ namespace Ginger.Run
         {
             string msg = string.Empty;
 
-            if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped) return;//user stopped it so no need screen shot
+            if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
+            {
+                return;//user stopped it so no need screen shot
+            }
 
             if (ActionExecutorType == GingerRunner.eActionExecutorType.RunOnDriver)
             {
@@ -2006,7 +2073,10 @@ namespace Ginger.Run
                             screenShotAction.WindowsToCapture = act.WindowsToCapture;
 
                             if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                            {
                                 screenShotAction.WindowsToCapture = ActScreenShot.eWindowsToCapture.AllAvailableWindows;
+                            }
+
                             Agent a = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
                             if (a == null)
                             {
@@ -2163,7 +2233,10 @@ namespace Ginger.Run
                                 if (currentAgent == null)
                                 {
                                     if (string.IsNullOrEmpty(act.Error))
+                                    {
                                         act.Error = "No Agent was found for the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Application.";
+                                    }
+
                                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                                 }
                                 else
@@ -2335,13 +2408,17 @@ namespace Ginger.Run
             if (SolutionApplications != null)
             {
                 if (SolutionApplications.Where(x => x.AppName == AppName && x.Platform == ePlatformType.NA).FirstOrDefault() != null)
+                {
                     return;
+                }
             }
             if (string.IsNullOrEmpty(AppName))
             {
                 // If we don't have Target App on activity then take first App from BF
                 if (CurrentBusinessFlow.TargetApplications.Count() > 0)
+                {
                     AppName = CurrentBusinessFlow.TargetApplications[0].Name;
+                }
             }
 
             if (string.IsNullOrEmpty(AppName))
@@ -2483,7 +2560,9 @@ namespace Ginger.Run
             {
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 if (string.IsNullOrEmpty(act.Error))
+                {
                     act.Error = ex.Message;
+                }
             }
         }
 
@@ -2533,28 +2612,48 @@ namespace Ginger.Run
                                 break;
                             case eFlowControlAction.GoToAction:
                                 if (GotoAction(FC, act))
+                                {
                                     isFlowChange = true;
+                                }
                                 else
+                                {
                                     FC.Status = eStatus.Action_Execution_Failed;
+                                }
+
                                 break;
                             case eFlowControlAction.GoToNextAction:
                                 if (FlowControlGotoNextAction(act))
+                                {
                                     isFlowChange = true;
+                                }
                                 else
+                                {
                                     FC.Status = eStatus.Action_Execution_Failed;
+                                }
+
                                 break;
                             case eFlowControlAction.GoToActivity:
                             case eFlowControlAction.GoToActivityByName:
                                 if (GotoActivity(FC, act))
+                                {
                                     isFlowChange = true;
+                                }
                                 else
+                                {
                                     FC.Status = eStatus.Action_Execution_Failed;
+                                }
+
                                 break;
                             case eFlowControlAction.GoToNextActivity:
                                 if (FlowControlGotoNextActivity(act))
+                                {
                                     isFlowChange = true;
+                                }
                                 else
+                                {
                                     FC.Status = eStatus.Action_Execution_Failed;
+                                }
+
                                 break;
                             case eFlowControlAction.RerunAction:
                                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
@@ -2616,9 +2715,13 @@ namespace Ginger.Run
                                 try
                                 {
                                     if (RunSharedRepositoryActivity(FC))
+                                    {
                                         isFlowChange = true;
+                                    }
                                     else
+                                    {
                                         FC.Status = eStatus.Action_Execution_Failed;
+                                    }
                                 }
                                 catch (Exception ex)
                                 {
@@ -2643,13 +2746,18 @@ namespace Ginger.Run
                     }
 
                     // Go out the foreach in case we have a goto so no need to process the rest of FCs
-                    if (isFlowChange) break;
+                    if (isFlowChange)
+                    {
+                        break;
+                    }
                 }
 
 
                 // If all above completed and no change on flow then move to next in the activity unless it is the last one
                 if (!isFlowChange && moveToNextAction)
+                {
                     MoveToNextAction(act);
+                }
             }
             catch (Exception ex)
             {
@@ -2824,11 +2932,17 @@ namespace Ginger.Run
 
             //if there is one fail then Activity status is fail
             if (a.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped).FirstOrDefault() != null)   //
+            {
                 a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
+            }
             else if (a.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).FirstOrDefault() != null)
+            {
                 a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+            }
             else if (a.Acts.Count > 0 && a.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked).ToList().Count == a.Acts.Count)
+            {
                 a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
+            }
             else
             {
                 // If we have at least 1 pass then it passed, otherwise will remain Skipped
@@ -2907,7 +3021,10 @@ namespace Ginger.Run
                 }
 
                 if (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
+                {
                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                }
+
                 return;
             }
 
@@ -2963,7 +3080,7 @@ namespace Ginger.Run
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             }
 
-            if(act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
+            if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
             {
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
             }
@@ -3024,7 +3141,9 @@ namespace Ginger.Run
 
                 string formatedExpectedCalculated = ARC.ExpectedCalculated;
                 if (ARC.ExpectedCalculated.Length >= 9 && (ARC.ExpectedCalculated.Substring(ARC.ExpectedCalculated.Length - 9, 9)).Contains("is False"))
+                {
                     formatedExpectedCalculated = ARC.ExpectedCalculated.ToString().Substring(0, ARC.ExpectedCalculated.Length - 9);
+                }
 
                 ErrorInfo = "Output Value validation failed for the Parameter '" + ARC.Param + "' , Expected value is " + formatedExpectedCalculated + " while Actual value is '" + ARC.Actual + "'";
             }
@@ -3308,7 +3427,7 @@ namespace Ginger.Run
                     // handling ActivityGroup execution
                     currentActivityGroup = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
                     if (currentActivityGroup != null)
-                    {                       
+                    {
                         currentActivityGroup.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
                         switch (currentActivityGroup.ExecutionLoggerStatus)
                         {
@@ -3328,7 +3447,10 @@ namespace Ginger.Run
                     //add validation for Ginger runner tags
                     if (mGingerRunner.FilterExecutionByTags)
                     {
-                        if (CheckIfActivityTagsMatch() == false) return;
+                        if (CheckIfActivityTagsMatch() == false)
+                        {
+                            return;
+                        }
                     }
 
                     if (!doContinueRun)
@@ -3561,7 +3683,7 @@ namespace Ginger.Run
                                 break;
                         }
                     }
-                }                
+                }
 
                 if (standaloneExecution)
                 {
@@ -3569,7 +3691,9 @@ namespace Ginger.Run
                 }
 
                 if (mErrorPostExecutionActionFlowBreaker && handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunOriginActivity)
+                {
                     CheckAndExecutePostErrorHandlerAction();
+                }
 
                 if (mRunSource == eRunSource.Activity)
                 {
@@ -3625,7 +3749,9 @@ namespace Ginger.Run
         private void ContinueTimerVariables(ObservableList<VariableBase> variableList)
         {
             if (variableList == null || variableList.Count == 0)
+            {
                 return;
+            }
 
             foreach (VariableBase variable in variableList)
             {
@@ -3640,7 +3766,9 @@ namespace Ginger.Run
             try
             {
                 if (variableList == null || variableList.Count == 0)
+                {
                     return;
+                }
 
                 foreach (VariableBase variable in variableList)
                 {
@@ -3742,7 +3870,9 @@ namespace Ginger.Run
                                     resetFromAction = true;
                                 }
                                 if (resetFromAction)
+                                {
                                     act.Reset();
+                                }
                             }
                             activity.Elapsed = null;
                             activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
@@ -3764,20 +3894,33 @@ namespace Ginger.Run
             {
                 case eContinueFrom.LastStoppedAction:
                     if (mExecutedBusinessFlowWhenStopped != null && BusinessFlows.Contains(mExecutedBusinessFlowWhenStopped))
+                    {
                         CurrentBusinessFlow = mExecutedBusinessFlowWhenStopped;
+                    }
                     else
+                    {
                         return false;//can't do continue
+                    }
+
                     if (mExecutedActivityWhenStopped != null && mExecutedBusinessFlowWhenStopped.Activities.Contains(mExecutedActivityWhenStopped))
                     {
                         CurrentBusinessFlow.CurrentActivity = mExecutedActivityWhenStopped;
                         CurrentBusinessFlow.ExecutionLogActivityCounter--;
                     }
                     else
+                    {
                         return false;//can't do continue
+                    }
+
                     if (mExecutedActionWhenStopped != null && mExecutedActivityWhenStopped.Acts.Contains(mExecutedActionWhenStopped))
+                    {
                         CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = mExecutedActionWhenStopped;
+                    }
                     else
+                    {
                         return false;//can't do continue
+                    }
+
                     break;
 
                 case eContinueFrom.SpecificBusinessFlow:
@@ -3977,9 +4120,13 @@ namespace Ginger.Run
                         if (mErrorPostExecutionActionFlowBreaker)
                         {
                             if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ContinueFromNextActivity)
+                            {
                                 mErrorPostExecutionActionFlowBreaker = false;
+                            }
                             else
+                            {
                                 break;
+                            }
                         }
 
                         if ((Activity)CurrentBusinessFlow.Activities.CurrentItem != ExecutingActivity)
@@ -4038,7 +4185,9 @@ namespace Ginger.Run
                 }
 
                 if (mErrorPostExecutionActionFlowBreaker && handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow)
+                {
                     CheckAndExecutePostErrorHandlerAction();
+                }
 
                 if (mRunSource == eRunSource.BusinessFlow)
                 {
@@ -4201,20 +4350,28 @@ namespace Ginger.Run
             try
             {
                 if (businessFlow == null)
+                {
                     businessFlow = CurrentBusinessFlow;
+                }
 
                 foreach (Activity a in businessFlow.Activities)
                 {
                     if (mStopRun)
+                    {
                         break;
+                    }
 
                     foreach (Act act in a.Acts)
                     {
                         if (mStopRun)
+                        {
                             break;
+                        }
 
                         if (avoidCurrentStatus || act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
+                        {
                             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                        }
                     }
 
                     if (avoidCurrentStatus || a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
@@ -4223,9 +4380,9 @@ namespace Ginger.Run
                     }
                 }
 
-                foreach (ActivitiesGroup group in  businessFlow.ActivitiesGroups)
+                foreach (ActivitiesGroup group in businessFlow.ActivitiesGroups)
                 {
-                    if (avoidCurrentStatus || group.ActivitiesIdentifiers.Where(x=>x.IdentifiedActivity.Status == eRunStatus.Skipped).ToList().Count == group.ActivitiesIdentifiers.Count)
+                    if (avoidCurrentStatus || group.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == eRunStatus.Skipped).ToList().Count == group.ActivitiesIdentifiers.Count)
                     {
                         group.RunStatus = eActivitiesGroupRunStatus.Skipped;
                     }
@@ -4296,7 +4453,9 @@ namespace Ginger.Run
             foreach (BusinessFlow bf in BusinessFlows.Where(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending))
             {
                 if (mStopRun)
+                {
                     break;
+                }
 
                 bf.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
 
@@ -4313,7 +4472,9 @@ namespace Ginger.Run
             foreach (BusinessFlow bf in BusinessFlows.Where(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending))
             {
                 if (mStopRun)
+                {
                     break;
+                }
 
                 if (bf.Active)
                 {
@@ -4333,7 +4494,9 @@ namespace Ginger.Run
             while (true)
             {
                 if (mStopRun)
+                {
                     break;
+                }
 
                 if (a.Active & a.Acts.Count > 0)
                 {
@@ -4341,7 +4504,9 @@ namespace Ginger.Run
                     foreach (Act act in a.Acts)
                     {
                         if (act.Active)
+                        {
                             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
+                        }
                     }
 
                 }
@@ -4352,11 +4517,15 @@ namespace Ginger.Run
                     foreach (Act act in a.Acts)
                     {
                         if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
+                        {
                             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                        }
                     }
                 }
                 if (CurrentBusinessFlow.Activities.IsLastItem())
+                {
                     break;
+                }
                 else
                 {
                     GotoNextActivity();
@@ -4371,7 +4540,9 @@ namespace Ginger.Run
             while (true)
             {
                 if (mStopRun)
+                {
                     break;
+                }
 
                 if (act.Active && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
                 {
@@ -4435,8 +4606,8 @@ namespace Ginger.Run
             {
                 return;
             }
-            else 
-            { 
+            else
+            {
                 foreach (ApplicationAgent p in mGingerRunner.ApplicationAgents)
                 {
                     if (p.Agent != null)
@@ -4452,9 +4623,13 @@ namespace Ginger.Run
                         catch (Exception ex)
                         {
                             if (p.Agent.Name != null)
+                            {
                                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Close the '{0}' Agent", p.Agent.Name), ex);
+                            }
                             else
+                            {
                                 Reporter.ToLog(eLogLevel.ERROR, "Failed to Close the Agent", ex);
+                            }
                         }
                         ((AgentOperations)((Agent)p.Agent).AgentOperations).IsFailedToStart = false;
                     }
@@ -4483,7 +4658,9 @@ namespace Ginger.Run
                     SetCurrentActivityAgent();
                     Agent a = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
                     if (a != null)
+                    {
                         a.AgentOperations.HighLightElement(act);
+                    }
                 }
             }
         }
@@ -4515,7 +4692,10 @@ namespace Ginger.Run
                 {
                     foreach (TargetBase TA in BF.TargetApplications)
                     {
-                        if (TA is TargetPlugin) continue;//FIX ME: workaround to avoid adding Plugin mapping till dev of it will be completed
+                        if (TA is TargetPlugin)
+                        {
+                            continue;//FIX ME: workaround to avoid adding Plugin mapping till dev of it will be completed
+                        }
 
                         if (bfsTargetApplications.Where(x => x.Name == TA.Name).FirstOrDefault() == null)
                         {
@@ -4531,7 +4711,9 @@ namespace Ginger.Run
                 foreach (TargetBase TA in CurrentBusinessFlow.TargetApplications)
                 {
                     if (bfsTargetApplications.Where(x => x.Name == TA.Name).FirstOrDefault() == null)
+                    {
                         bfsTargetApplications.Add(TA);
+                    }
                 }
             }
 
@@ -4545,7 +4727,9 @@ namespace Ginger.Run
                 }
 
                 else
+                {
                     indx++;
+                }
             }
 
             if (SolutionAgents != null)
@@ -4554,21 +4738,27 @@ namespace Ginger.Run
                 for (int indx = 0; indx < mGingerRunner.ApplicationAgents.Count; indx++)
                 {
                     if (mGingerRunner.ApplicationAgents[indx].Agent != null)
+                    {
                         if (SolutionAgents.Where(x => ((RepositoryItemBase)x).Guid == ((RepositoryItemBase)mGingerRunner.ApplicationAgents[indx].Agent).Guid).FirstOrDefault() == null)
                         {
                             bTargetAppListModified = true;
                             mGingerRunner.ApplicationAgents.RemoveAt(indx);
                             indx--;
                         }
+                    }
                 }
 
                 //mark the already used Agents
                 foreach (Agent solAgent in SolutionAgents)
                 {
                     if (mGingerRunner.ApplicationAgents.Where(x => x.Agent == solAgent).FirstOrDefault() != null)
+                    {
                         solAgent.UsedForAutoMapping = true;
+                    }
                     else
+                    {
                         solAgent.UsedForAutoMapping = false;
+                    }
                 }
             }
 
@@ -4609,13 +4799,19 @@ namespace Ginger.Run
                             if (platformAgents.Count > 0)
                             {
                                 if (ap.Platform == ePlatformType.Web)
+                                {
                                     ag.Agent = platformAgents.Where(x => x.DriverType == Agent.eDriverType.SeleniumIE).FirstOrDefault();
+                                }
 
                                 if (ag.Agent == null)
+                                {
                                     ag.Agent = platformAgents[0];
+                                }
 
                                 if (ag.Agent != null)
+                                {
                                     ag.Agent.UsedForAutoMapping = true;
+                                }
                             }
                         }
                     }
@@ -4704,17 +4900,27 @@ namespace Ginger.Run
             //check if Activity or The parent Activities Group has at least 1 tag from filter tags
             //first check Activity
             foreach (Guid tagGuid in CurrentBusinessFlow.CurrentActivity.Tags)
+            {
                 if (mGingerRunner.FilterExecutionTags.Where(x => Guid.Equals(x, tagGuid) == true).FirstOrDefault() != Guid.Empty)
+                {
                     return true;
+                }
+            }
 
             //check in Activity Group
             if (string.IsNullOrEmpty(CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID) == false)
             {
                 ActivitiesGroup group = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.Where(x => x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID).FirstOrDefault();
                 if (group != null)
+                {
                     foreach (Guid tagGuid in group.Tags)
+                    {
                         if (mGingerRunner.FilterExecutionTags.Where(x => Guid.Equals(x, tagGuid) == true).FirstOrDefault() != Guid.Empty)
+                        {
                             return true;
+                        }
+                    }
+                }
             }
 
             return false;
@@ -4723,7 +4929,9 @@ namespace Ginger.Run
         private void SetDriverPreviousRunStoppedFlag(bool flagValue)
         {
             if (CurrentBusinessFlow.CurrentActivity.CurrentAgent != null && ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Driver != null)
+            {
                 ((AgentOperations)((Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Driver.PreviousRunStopped = flagValue;
+            }
         }
 
         //Function to Do Flow Control on Business Flow in RunSet
@@ -4820,7 +5028,10 @@ namespace Ginger.Run
                 }
 
                 // Go out the foreach in case we have a goto so no need to process the rest of FCs
-                if (IsStopLoop) break;
+                if (IsStopLoop)
+                {
+                    break;
+                }
             }
 
 
@@ -5124,7 +5335,7 @@ namespace Ginger.Run
             activityGroup.EndTimeStamp = DateTime.UtcNow;
 
             foreach (RunListenerBase runnerListener in mRunListeners)
-            {                
+            {
                 runnerListener.ActivityGroupSkipped(eventTime, activityGroup, offlineMode);
             }
         }
@@ -5151,9 +5362,14 @@ namespace Ginger.Run
             try
             {
                 if (System.IO.Directory.Exists(logFolderPath))
+                {
                     Ginger.Reports.GingerExecutionReport.ExtensionMethods.CleanDirectory(logFolderPath);
+                }
                 else
+                {
                     System.IO.Directory.CreateDirectory(logFolderPath);
+                }
+
                 BF.OffilinePropertiesPrep(logFolderPath);
                 foreach (Activity activity in BF.Activities)
                 {

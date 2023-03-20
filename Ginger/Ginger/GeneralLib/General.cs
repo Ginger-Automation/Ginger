@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,11 +28,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using System.Windows.Input;
 
 namespace Ginger
 {
@@ -82,7 +82,7 @@ namespace Ginger
 
             /// <summary>
             /// Item opened from Windows Explorer in the Side Panel
-           /// </summary>
+            /// </summary>
             Explorer = 8,
 
             /// <summary>
@@ -154,7 +154,11 @@ namespace Ginger
         }
         internal static ImageSource ToBitmapSource(System.Drawing.Bitmap source)
         {
-            if (source == null) return null;
+            if (source == null)
+            {
+                return null;
+            }
+
             BitmapSource bitSrc = null;
             var hBitmap = source.GetHbitmap();
             try
@@ -193,13 +197,18 @@ namespace Ginger
             {
                 nameUnique = true;
                 foreach (string t in itemList)
+                {
                     if (t == item)
                     {
                         nameUnique = false;
                         break;
                     }
+                }
+
                 if (nameUnique)
+                {
                     break;
+                }
                 else
                 {
                     if (counter == 0)
@@ -253,7 +262,10 @@ namespace Ginger
         public static bool CompareStringsIgnoreCase(string strOne, string strTwo)
         {
             if (strOne == null || strTwo == null)
+            {
                 return false;
+            }
+
             return strOne.Equals(strTwo, StringComparison.OrdinalIgnoreCase);
         }
 
@@ -423,9 +435,15 @@ namespace Ginger
             System.Windows.Controls.Image img = new System.Windows.Controls.Image();
             img.Source = new BitmapImage(new Uri(@"/Images/" + imageName, UriKind.RelativeOrAbsolute));
             if (width > 0)
+            {
                 img.Width = width;
+            }
+
             if (height > 0)
+            {
                 img.Height = height;
+            }
+
             return img;
         }
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.CoreNET.RunLib;
 using Ginger.Plugin.Platform.Web.Elements;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 
@@ -64,20 +63,20 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
         readonly IWebPlatform PlatformService;
 
-        public Dictionary<string, object> InputParams {get;set ;}
+        public Dictionary<string, object> InputParams { get; set; }
 
         public BrowserActionhandler(IWebPlatform mPlatformService)
         {
-            PlatformService = mPlatformService;            
+            PlatformService = mPlatformService;
             BrowserService = PlatformService.BrowserActions;
         }
 
         public void ExecuteAction(ref NodePlatformAction platformAction)
         {
-        
-                InputParams = platformAction.InputParams;
-       
-        
+
+            InputParams = platformAction.InputParams;
+
+
 
             string Value = (string)InputParams["Value"];
             List<NodeActionOutputValue> AOVs = new List<NodeActionOutputValue>();
@@ -88,8 +87,8 @@ namespace Ginger.Plugin.Platform.Web.Execution
                 eControlAction ElementAction = (eControlAction)Enum.Parse(typeof(eControlAction), InputParams["ControlAction"].ToString());
                 switch (ElementAction)
                 {
-                    case eControlAction.GotoURL:                    
-                        string GotoURLType=String.Empty;
+                    case eControlAction.GotoURL:
+                        string GotoURLType = String.Empty;
 
                         if (InputParams.ContainsKey("GotoURLType"))
                         {
@@ -104,11 +103,11 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
                         BrowserService.Navigate(Value, GotoURLType);
 
-                  
 
-                  
-                        platformAction.exInfo +=  "Navigated to: " + Value;
-            
+
+
+                        platformAction.exInfo += "Navigated to: " + Value;
+
                         break;
 
                     case eControlAction.GetPageURL:
@@ -142,17 +141,17 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     case eControlAction.GetWindowTitle:
 
                         string Title = BrowserService.GetTitle();
-                     
+
                         AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = Title });
                         break;
                     case eControlAction.GetMessageBoxText:
 
-                       string AlertText= BrowserService.GetAlertText();
+                        string AlertText = BrowserService.GetAlertText();
                         AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = AlertText });
                         break;
                     case eControlAction.SetAlertBoxText:
 
-             
+
                         string value = (string)InputParams["Value"];
                         BrowserService.SendAlertText(value);
                         break;
@@ -163,20 +162,20 @@ namespace Ginger.Plugin.Platform.Web.Execution
                         Locatevalue = (string)InputParams["LocateValue"];
 
                         object elb;
-                        InputParams.TryGetValue("ElementLocateBy",out elb);
+                        InputParams.TryGetValue("ElementLocateBy", out elb);
 
-                        ElementLocateBy= elb!=null? elb.ToString():"";
-   
+                        ElementLocateBy = elb != null ? elb.ToString() : "";
+
                         if (string.IsNullOrEmpty(ElementLocateBy))
                         {
                             ElementLocateBy = (string)InputParams["LocateBy"];
-        
+
                         }
 
                         if (string.IsNullOrEmpty(Locatevalue))
                         {
                             Locatevalue = (string)InputParams["Value"];
-                  
+
                         }
 
 
@@ -203,20 +202,20 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
                     case eControlAction.InjectJS:
 
-                       
+
 
                         break;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 platformAction.addError(ex.Message);
-              
+
             }
 
             finally
             {
-                platformAction.Output.OutputValues.AddRange( AOVs);
+                platformAction.Output.OutputValues.AddRange(AOVs);
             }
         }
         private IGingerWebElement LocateElement(eElementType ElementType, string ElementLocateBy, string LocateByValue)

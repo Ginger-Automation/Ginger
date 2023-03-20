@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Windows.Media;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
+using System;
+using System.Windows.Media;
 
 namespace Ginger.UserControlsLib.TextEditor.Gherkin
 {
@@ -30,7 +30,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         {
             this.Text = text;
         }
-        
+
         public ImageSource Image { get; set; }
 
         public string Text { get; private set; }
@@ -53,15 +53,25 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             string lineNoSpace = RemoveAllLineStartSpaces(line);
             string lineAfterHeader = string.Empty;
             if (lineNoSpace.StartsWith("Given"))
+            {
                 lineAfterHeader = lineNoSpace.Substring(5);
+            }
             else if (lineNoSpace.StartsWith("And"))
+            {
                 lineAfterHeader = lineNoSpace.Substring(3);
+            }
             else if (lineNoSpace.StartsWith("When"))
+            {
                 lineAfterHeader = lineNoSpace.Substring(4);
+            }
             else if (lineNoSpace.StartsWith("Then"))
+            {
                 lineAfterHeader = lineNoSpace.Substring(4);
+            }
             else
+            {
                 lineAfterHeader = lineNoSpace;
+            }
 
             if (lineAfterHeader == " ")
             {
@@ -73,15 +83,22 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             lineAfterHeader = RemoveAllLineStartSpaces(lineAfterHeader);
 
             if (lineAfterHeader.Length == 0)
-                  textArea.Document.Replace(completionSegment.Offset - 1, 1, this.Text);
+            {
+                textArea.Document.Replace(completionSegment.Offset - 1, 1, this.Text);
+            }
             else
+            {
                 textArea.Document.Replace(completionSegment.Offset - lineAfterHeader.Length, lineAfterHeader.Length, this.Text);
+            }
         }
 
         private string RemoveAllLineStartSpaces(string line)
         {
-            while (line.StartsWith(" ")|| line.StartsWith("\t"))
+            while (line.StartsWith(" ") || line.StartsWith("\t"))
+            {
                 line = line.Substring(1);
+            }
+
             return line;
         }
     }

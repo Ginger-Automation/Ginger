@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,11 +21,9 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
-using Applitools.Selenium;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -34,13 +32,15 @@ using System.Reflection;
 
 namespace GingerCore.Actions
 {
-    public class ActVisualTesting : Act {
+    public class ActVisualTesting : Act
+    {
         public override string ActionDescription { get { return "Visual Testing"; } }
         public override string ActionUserDescription { get { return "Add visual testing checkpoint"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return false; } }
 
-        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH) {
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
+        {
             TBH.AddText("Use this action to add Visual Testing which can compare bitmap or screen shots");
             TBH.AddLineBreak();
             TBH.AddLineBreak();
@@ -49,7 +49,8 @@ namespace GingerCore.Actions
 
         public override eImageType Image { get { return eImageType.Visible; } }         //eImageType.Visible => FontAwesomeIcon.Eye
 
-        public enum eVisualTestingAnalyzer {
+        public enum eVisualTestingAnalyzer
+        {
             [EnumValueDescription("ImageMagick Analyzer")]
             BitmapPixelsComparison,
             [EnumValueDescription("UI Elements Analyzer")]
@@ -91,7 +92,8 @@ namespace GingerCore.Actions
         }
 
         //TODO: is needed here? - add to all? or get from visual driver?
-        public enum eApplitoolsParamBrowser {
+        public enum eApplitoolsParamBrowser
+        {
             [EnumValueDescription("Chrome")]
             Chrome = 0,
             [EnumValueDescription("Firefox")]
@@ -138,9 +140,13 @@ namespace GingerCore.Actions
             {
                 eVisualTestingAnalyzer eVal = eVisualTestingAnalyzer.BitmapPixelsComparison;
                 if (Enum.TryParse<eVisualTestingAnalyzer>(GetInputParamValue(Fields.VisualAnalyzer), out eVal))
+                {
                     return eVal;
+                }
                 else
+                {
                     return eVisualTestingAnalyzer.BitmapPixelsComparison; //Default value
+                }
             }
 
             set
@@ -155,9 +161,13 @@ namespace GingerCore.Actions
             {
                 eChangeAppWindowSize eVal = eChangeAppWindowSize.None;
                 if (Enum.TryParse<eChangeAppWindowSize>(GetInputParamValue(Fields.ChangeAppWindowSize), out eVal))
+                {
                     return eVal;
+                }
                 else
+                {
                     return eChangeAppWindowSize.None;
+                }
             }
 
             set
@@ -222,7 +232,8 @@ namespace GingerCore.Actions
         }
 
         //TODO: clean unused fields
-        public new static partial class Fields {
+        public new static partial class Fields
+        {
             //used
             public static string SavedBaseImageFilenameString = "SavedBaseImageFilenameString";
             public static string SavedTargetImageFilenameString = "SavedTargetImageFilenameString";
@@ -230,7 +241,7 @@ namespace GingerCore.Actions
             //check
             public static string BaselineInfoFile = "BaselineInfoFile";
             public static string SavedApplitoolsBaseFilenameString = "SavedApplitoolsBaseFilenameString";
-            
+
             public static string VisualAnalyzer = "VisualAnalyzer";
             public static string SavedBaselineImageManager = "SavedBaselineImageManager";
             public static string ApplitoolsKey = "ApplitoolsKey";
@@ -249,20 +260,23 @@ namespace GingerCore.Actions
             public static string ChangeAppWindowSize = "ChangeAppWindowSize";
             public static string SetAppWindowWidth = "SetAppWindowWidth";
             public static string SetAppWindowHeight = "SetAppWindowHeight";
-            public static string BaseLineVisualElementsInfoFileName = "BaseLineVisualElementsInfoFileName";            
+            public static string BaseLineVisualElementsInfoFileName = "BaseLineVisualElementsInfoFileName";
             public static string CreateBaselineAction = "CreateBaselineAction";
             public static string ErrorMetric = "ErrorMetric";
             public static readonly string ActionBy = "ActionBy";
             public static readonly string LocateBy = "LocateBy";
-            public static readonly string LocateValue ="LocateValue";
+            public static readonly string LocateValue = "LocateValue";
         }
-        
+
         public override string ActionEditPage { get { return "VisualTesting.ActVisualTestingEditPage"; } }
 
         // return the list of platforms this action is supported on
-        public override List<ePlatformType> Platforms {
-            get {
-                if (mPlatforms.Count == 0) {
+        public override List<ePlatformType> Platforms
+        {
+            get
+            {
+                if (mPlatforms.Count == 0)
+                {
                     mPlatforms.Add(ePlatformType.Web);
                     mPlatforms.Add(ePlatformType.Mobile);
                     mPlatforms.Add(ePlatformType.Java);
@@ -282,9 +296,11 @@ namespace GingerCore.Actions
         //TODO: better convert to enum - maybe support other targets??
         // Screen shot, file, url
 
-        public override String ActionType {
-            get {
-                return "Visual Testing Element: "; 
+        public override String ActionType
+        {
+            get
+            {
+                return "Visual Testing Element: ";
             }
         }
 
@@ -316,7 +332,7 @@ namespace GingerCore.Actions
 
             if (mDriver is SeleniumDriver)
             {
-                if(!CheckSetAppWindowSize())
+                if (!CheckSetAppWindowSize())
                 {
                     return;
                 }
@@ -351,12 +367,12 @@ namespace GingerCore.Actions
                 case eChangeAppWindowSize.None:
                     break;
                 case eChangeAppWindowSize.Maximized:
-                    mDriver.ChangeAppWindowSize(0,0);
+                    mDriver.ChangeAppWindowSize(0, 0);
                     break;
                 case eChangeAppWindowSize.Custom:
                     mDriver.ChangeAppWindowSize(Convert.ToInt32(GetInputParamCalculatedValue(nameof(SetAppWindowWidth))), Convert.ToInt32(GetInputParamCalculatedValue(nameof(SetAppWindowHeight))));
                     Size size = mDriver.GetWebDriver().Manage().Window.Size;
-                    if (Convert.ToInt32(GetInputParamCalculatedValue(nameof(SetAppWindowWidth))) + 5  < size.Width)//+5 added to check with actual viewport/size of the browser which can be different by 2 0r 3 points
+                    if (Convert.ToInt32(GetInputParamCalculatedValue(nameof(SetAppWindowWidth))) + 5 < size.Width)//+5 added to check with actual viewport/size of the browser which can be different by 2 0r 3 points
                     {
                         this.Error = string.Format("Unable to set custom width of web page to {0}, min supported width is {1}.", GetInputParamCalculatedValue(nameof(SetAppWindowWidth)), size.Width.ToString());
                         mDriver.ChangeAppWindowSize(0, 0);
@@ -485,9 +501,9 @@ namespace GingerCore.Actions
             // ----------------------------------------------------------------
 
             // if the target file name is empty then we take screen shot, else we take the file
-            if (string.IsNullOrEmpty(TargetFileName) )
-            {                
-                targetImage = mDriver.GetScreenShot(null, IsFullPageScreenshot);                
+            if (string.IsNullOrEmpty(TargetFileName))
+            {
+                targetImage = mDriver.GetScreenShot(null, IsFullPageScreenshot);
             }
             else
             {
@@ -539,12 +555,12 @@ namespace GingerCore.Actions
             //TODO: verify we have driver            
             // get updated screen shot
             baseImage = mDriver.GetScreenShot(null, IsFullPageScreenshot);
-            
+
             //Verify we have screenshots folder
             string SAVING_PATH = System.IO.Path.Combine(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.Folder, @"Documents\ScreenShots\");
-            if (!Directory.Exists(SAVING_PATH)) 
+            if (!Directory.Exists(SAVING_PATH))
             {
-                Directory.CreateDirectory(SAVING_PATH); 
+                Directory.CreateDirectory(SAVING_PATH);
             }
 
             // Create default file name if not exist

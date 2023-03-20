@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -121,7 +121,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             public List<Enum> ElementOperationsList = new List<Enum>();
             private bool mIsCommonElementType;
 
-            public bool IsCommonElementType { get { return mIsCommonElementType;} set { mIsCommonElementType = value; } }
+            public bool IsCommonElementType { get { return mIsCommonElementType; } set { mIsCommonElementType = value; } }
         }
 
         internal static List<eLocateBy> GetPlatformUIElementLocatorsList(ePlatformType Platform)
@@ -157,7 +157,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             elementPropertyList.Add(ActUIElement.eElementProperty.Type);
             elementPropertyList.Add(ActUIElement.eElementProperty.Value);
             elementPropertyList.Add(ActUIElement.eElementProperty.Visible);
-            return elementPropertyList;          
+            return elementPropertyList;
         }
 
         public virtual List<eElementType> GetPlatformUIElementsType()
@@ -200,7 +200,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         }
 
         public virtual Act GetPlatformActionByElementInfo(ElementInfo elementInfo, ElementActionCongifuration actConfig)
-        {           
+        {
             return null;
         }
 
@@ -208,7 +208,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             return GetPlatformActionByElementInfo(eInfo, actConfig);
         }
-        
+
         public virtual List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
         {
             List<ActUIElement.eElementAction> list = new List<ActUIElement.eElementAction>();
@@ -264,7 +264,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         }
 
         public abstract Dictionary<string, ObservableList<UIElementFilter>> GetUIElementFilterList();
-      
+
 
         public virtual List<ActUIElement.eTableAction> GetTableControlActions(ActUIElement.eElementAction tableAction)
         {

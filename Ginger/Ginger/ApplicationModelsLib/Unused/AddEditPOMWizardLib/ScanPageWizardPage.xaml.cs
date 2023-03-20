@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,15 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using amdocs.ginger.GingerCoreNET;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.ActionsLib.Common;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
 using GingerWPF.WizardLib;
 using System.Windows;
 using System.Windows.Controls;
-using Amdocs.Ginger.CoreNET.Execution;
 
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
@@ -33,7 +27,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
     /// Interaction logic for ScanPageWizardPage.xaml
     /// </summary>
     public partial class ScanPageWizardPage : Page, IWizardPage
-    {        
+    {
         AddPOMWizard mWizard;
 
         public ScanPageWizardPage()
@@ -49,8 +43,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            mWizard = (AddPOMWizard)WizardEventArgs.Wizard;            
-            
+            mWizard = (AddPOMWizard)WizardEventArgs.Wizard;
+
         }
 
         private void ScanCurrentPageButton_Click(object sender, RoutedEventArgs e)

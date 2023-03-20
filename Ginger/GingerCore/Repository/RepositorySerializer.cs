@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,15 +17,8 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.Repository;
-using Ginger.Reports;
-using GingerCore.Actions;
-using GingerCore.Activities;
-using GingerCore.DataSource;
 using GingerCore.GeneralLib;
-using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -92,7 +85,9 @@ namespace GingerCore.Repository
                 }
             }
             else
+            {
                 return string.Empty;
+            }
         }
 
 
@@ -116,7 +111,10 @@ namespace GingerCore.Repository
             {
                 dynamic v = null;
                 IsSerializedForLocalRepositoryAttribute token = Attribute.GetCustomAttribute(mi, typeof(IsSerializedForLocalRepositoryAttribute), false) as IsSerializedForLocalRepositoryAttribute;
-                if (token == null) continue;
+                if (token == null)
+                {
+                    continue;
+                }
 
                 //Get tha attr value
                 v = ri.GetType().GetProperty(mi.Name).GetValue(ri);
@@ -148,8 +146,10 @@ namespace GingerCore.Repository
             {
                 dynamic v = null;
                 IsSerializedForLocalRepositoryAttribute token = Attribute.GetCustomAttribute(fi, typeof(IsSerializedForLocalRepositoryAttribute), false) as IsSerializedForLocalRepositoryAttribute;
-                if (token == null) continue;
-
+                if (token == null)
+                {
+                    continue;
+                }
 
                 if (IsObseravbleListLazyLoad(fi.Name))
                 {
@@ -250,9 +250,14 @@ namespace GingerCore.Repository
 
             //TODO: it is big waste to check for string for all writes... perf issue FIXME
             if (string.Compare(Name, "GUID", true) == 0 && isCopy)
+            {
                 xml.WriteString(Guid.NewGuid().ToString());
+            }
             else
+            {
                 xml.WriteString(Value);
+            }
+
             xml.WriteEndAttribute();
         }
 
@@ -446,7 +451,11 @@ namespace GingerCore.Repository
 
                 if (obj == null) //Ginger assembly
                 {
-                    if (ClassName == "Ginger.Environments.Solution") ClassName = "Ginger.SolutionGeneral.Solution";
+                    if (ClassName == "Ginger.Environments.Solution")
+                    {
+                        ClassName = "Ginger.SolutionGeneral.Solution";
+                    }
+
                     obj = GingerAssembly.CreateInstance(ClassName);
                     obj = System.Reflection.Assembly.Load("Ginger").CreateInstance(ClassName);
                 }
@@ -458,12 +467,30 @@ namespace GingerCore.Repository
 
                 if (obj == null) //GingerCoreCommon assembly
                 {
-                    if (ClassName == "GingerCore.Actions.ActInputValue" || ClassName == "GingerCore.Common.Actions.ActInputValue") ClassName = typeof(ActInputValue).FullName;
-                    if (ClassName == "GingerCore.Actions.ActReturnValue") ClassName = typeof(ActReturnValue).FullName;
-                    if (ClassName == "GingerCore.Environments.GeneralParam") ClassName = typeof(GeneralParam).FullName;
-                    if (ClassName == "Ginger.TagsLib.RepositoryItemTag") ClassName = typeof(RepositoryItemTag).FullName;
-                    if (ClassName == "GingerCore.Platforms.ApplicationPlatform") ClassName = typeof(ApplicationPlatform).FullName;
+                    if (ClassName == "GingerCore.Actions.ActInputValue" || ClassName == "GingerCore.Common.Actions.ActInputValue")
+                    {
+                        ClassName = typeof(ActInputValue).FullName;
+                    }
 
+                    if (ClassName == "GingerCore.Actions.ActReturnValue")
+                    {
+                        ClassName = typeof(ActReturnValue).FullName;
+                    }
+
+                    if (ClassName == "GingerCore.Environments.GeneralParam")
+                    {
+                        ClassName = typeof(GeneralParam).FullName;
+                    }
+
+                    if (ClassName == "Ginger.TagsLib.RepositoryItemTag")
+                    {
+                        ClassName = typeof(RepositoryItemTag).FullName;
+                    }
+
+                    if (ClassName == "GingerCore.Platforms.ApplicationPlatform")
+                    {
+                        ClassName = typeof(ApplicationPlatform).FullName;
+                    }
 
                     obj = GingerCoreCommon.CreateInstance(ClassName);
                 }
@@ -513,7 +540,9 @@ namespace GingerCore.Repository
                             FI.SetValue(obj, item);
 
                             if (item is Email)//If should be removed- placing if for solving Run Set operation release issue with minimum risk
+                            {
                                 xdr.ReadEndElement();
+                            }
                         }
                     }
                     else
@@ -538,7 +567,9 @@ namespace GingerCore.Repository
                             PI.SetValue(obj, item);
 
                             if (item is Email)//If should be removed- placing if for solving Run Set operation release issue with minimum risk
+                            {
                                 xdr.ReadEndElement();
+                            }
                         }
                     }
 
@@ -859,7 +890,11 @@ namespace GingerCore.Repository
 
         public static bool IsLegacyXmlType(string xml)
         {
-            if (xml.Contains("<!--Ginger Repository Item ")) return true;
+            if (xml.Contains("<!--Ginger Repository Item "))
+            {
+                return true;
+            }
+
             return false;
         }
 
@@ -891,11 +926,18 @@ namespace GingerCore.Repository
                     for (int indx = 0; indx < match.Value.Length; indx++)
                     {
                         if (match.Value[indx] == '.')
+                        {
                             counter++;
+                        }
+
                         if (counter == 2)
+                        {
                             return ver + ".0.0";
+                        }
                         else
+                        {
                             ver += match.Value[indx];
+                        }
                     }
                     return ver;//something wrong
                 }

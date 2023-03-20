@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using GingerCore.Variables;
+using System.Windows.Controls;
 
 namespace Ginger.Variables
 {
@@ -32,7 +32,7 @@ namespace Ginger.Variables
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtMinValue, TextBox.TextProperty, var, nameof(VariableRandomString.Min));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtMaxValue, TextBox.TextProperty, var, nameof(VariableRandomString.Max));
-            
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbDigit, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsDigit));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbLower, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsLowerCase));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbUpper, CheckBox.IsCheckedProperty, var, nameof(VariableRandomString.IsUpperCase));

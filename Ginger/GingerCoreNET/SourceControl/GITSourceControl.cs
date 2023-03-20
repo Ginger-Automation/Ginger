@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,18 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using GingerCoreNET.SourceControl;
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
+using System;
+using System.Collections.Generic;
 using System.IO;
-using GingerCoreNET.SourceControl;
-using amdocs.ginger.GingerCoreNET;
-using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace GingerCore.SourceControl
@@ -190,20 +187,28 @@ namespace GingerCore.SourceControl
                 int RepositoryFolderCount = RepositoryRootFolder.Count();
                 string localFilePath = string.Empty;
                 if (Path.Count() > (RepositoryFolderCount))
+                {
                     localFilePath = Path.Substring(RepositoryFolderCount);
+                }
 
                 if (localFilePath.StartsWith("\\"))
+                {
                     localFilePath = localFilePath.Substring(1);
+                }
 
                 using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
                 {
                     if (Path == SolutionFolder && repo.RetrieveStatus().Count() != 0)
+                    {
                         return SourceControlFileInfo.eRepositoryItemStatus.Modified;
+                    }
 
                     foreach (var item in repo.RetrieveStatus())
                     {
                         if (NormalizePath(item.FilePath).StartsWith(NormalizePath(localFilePath)) && item.State != FileStatus.NewInWorkdir)
+                        {
                             return SourceControlFileInfo.eRepositoryItemStatus.Modified;
+                        }
 
                         if (NormalizePath(localFilePath) == NormalizePath(item.FilePath))
                         {
@@ -283,19 +288,25 @@ namespace GingerCore.SourceControl
                         using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
                         {
                             if (supressMessage == true)
-
+                            {
                                 Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully, Update status: " + result.Status + ", to Revision :" + repo.Head.Tip.Sha);
-
+                            }
                             else
+                            {
                                 Reporter.ToUser(eUserMsgKey.GitUpdateState, result.Status, repo.Head.Tip.Sha);
+                            }
                         }
                     }
                     else
                     {
                         if (supressMessage == true)
+                        {
                             Reporter.ToLog(eLogLevel.ERROR, "Failed to update the solution from source control. Error Details: 'The files are not connected to source control'");
+                        }
                         else
+                        {
                             Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "The files are not connected to source control");
+                        }
                     }
 
                 }
@@ -325,7 +336,9 @@ namespace GingerCore.SourceControl
                 relativePath = relativePath.Substring(RepositoryRootFolder.Count());
 
                 if (relativePath.StartsWith(@"\"))
+                {
                     relativePath = relativePath.Substring(1);
+                }
 
                 using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
                 {
@@ -337,7 +350,9 @@ namespace GingerCore.SourceControl
                         }
 
                         if (System.IO.Path.GetExtension(item.FilePath) == ".ldb" || System.IO.Path.GetExtension(item.FilePath) == ".ignore" || System.IO.Path.GetExtension(item.FilePath) == ".db")
+                        {
                             continue;
+                        }
 
 
                         //sometimes remote file path uses / otherwise \  our code should be path independent 
@@ -386,7 +401,10 @@ namespace GingerCore.SourceControl
         public override bool GetProject(string Path, string URI, ref string error)
         {
             if (!System.IO.Directory.Exists(Path))
+            {
                 System.IO.Directory.CreateDirectory(Path);
+            }
+
             try
             {
                 var co = new CloneOptions();
@@ -409,9 +427,14 @@ namespace GingerCore.SourceControl
 
             sol.LocalFolder = LocalFolder;
             if (System.IO.Directory.Exists(sol.LocalFolder))
+            {
                 sol.ExistInLocaly = true;
+            }
             else
+            {
                 sol.ExistInLocaly = false;
+            }
+
             sol.SourceControlLocation = SourceControlLocation;
             SourceControlSolutions.Add(sol);
         }
@@ -472,7 +495,10 @@ namespace GingerCore.SourceControl
 
                     int startIndex = fileContent.IndexOf("<<<<<<< HEAD");
                     if (startIndex != 0)
+                    {
                         firstCommonResultText = fileContent.Substring(0, startIndex);
+                    }
+
                     int endIndex = fileContent.IndexOf("=======");
                     int RequestLeanth = (endIndex - startIndex);
                     middleResultText = fileContent.Substring(startIndex + 14, RequestLeanth - 14);
@@ -490,7 +516,9 @@ namespace GingerCore.SourceControl
                     fileContent = File.ReadAllText(path);
                     int startIndex = fileContent.IndexOf("<<<<<<< HEAD");
                     if (startIndex != 0)
+                    {
                         firstCommonResultText = fileContent.Substring(0, startIndex);
+                    }
 
                     startIndex = fileContent.IndexOf("=======");
                     int endIndex = fileContent.IndexOf(">>>>>>>");
@@ -506,7 +534,9 @@ namespace GingerCore.SourceControl
                 }
 
                 if (File.ReadAllText(path).Contains("<<<<<<< HEAD"))
+                {
                     return ResolveConflict(path, side, ref error);
+                }
             }
             catch (Exception ex)
             {
@@ -530,7 +560,10 @@ namespace GingerCore.SourceControl
                     {
                         result = ResolveConflict(cp, side, ref ResolveConflictError);
                         if (!result)
+                        {
                             error = error + ConflictsPathsError;
+                        }
+
                         Stage(cp);
                     }
                 }
@@ -538,7 +571,10 @@ namespace GingerCore.SourceControl
                 {
                     result = ResolveConflict(path, side, ref ResolveConflictError);
                     if (!result)
+                    {
                         error = error + ConflictsPathsError;
+                    }
+
                     Stage(path);
                 }
             }
@@ -749,7 +785,10 @@ namespace GingerCore.SourceControl
                         if (Path.GetFullPath(path) == Path.GetFullPath(Path.Combine(RepositoryRootFolder, item.FilePath)))
                         {
                             if (item.State != FileStatus.Ignored)
+                            {
                                 SCIID.HasUncommittedChanges = "true";
+                            }
+
                             SCIID.FileState = " " + item.State;
                         }
                     }

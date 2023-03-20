@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,17 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using GingerCore;
 using GingerCore.GeneralLib;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
-using Amdocs.Ginger.Common;
-using amdocs.ginger.GingerCoreNET;
 using CheckBox = System.Windows.Controls.CheckBox;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
-using GingerCore.Actions.WebServices;
-using System.IO;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -133,7 +129,7 @@ namespace Ginger.Run.RunSetActions
         {
             if (!EncryptionHandler.IsStringEncrypted(xSMTPPassTextBox.Text))
             {
-                xSMTPPassTextBox.Text = EncryptionHandler.EncryptwithKey(xSMTPPassTextBox.Text);                
+                xSMTPPassTextBox.Text = EncryptionHandler.EncryptwithKey(xSMTPPassTextBox.Text);
             }
         }
     }

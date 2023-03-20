@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -43,15 +43,15 @@ namespace GingerCore.Variables
 
         private decimal mMax;
         [IsSerializedForLocalRepository]
-        public decimal Max { set { mMax = value; OnPropertyChanged(nameof(this.Max));  OnPropertyChanged("Formula"); } get { return mMax; } }
+        public decimal Max { set { mMax = value; OnPropertyChanged(nameof(this.Max)); OnPropertyChanged("Formula"); } get { return mMax; } }
 
         private decimal mInterval;
         [IsSerializedForLocalRepository]
-        public decimal Interval { set { mInterval = value; OnPropertyChanged(nameof(this.Interval));  OnPropertyChanged("Formula"); } get { return mInterval; } }
+        public decimal Interval { set { mInterval = value; OnPropertyChanged(nameof(this.Interval)); OnPropertyChanged("Formula"); } get { return mInterval; } }
 
         private bool mIsInteger;
         [IsSerializedForLocalRepository]
-        public bool IsInteger { set { mIsInteger = value; OnPropertyChanged(nameof(this.IsInteger));  OnPropertyChanged("Formula"); } get { return mIsInteger; } }        
+        public bool IsInteger { set { mIsInteger = value; OnPropertyChanged(nameof(this.IsInteger)); OnPropertyChanged("Formula"); } get { return mIsInteger; } }
 
         public override string GetFormula()
         {
@@ -60,7 +60,7 @@ namespace GingerCore.Variables
                 return "Error: Min>Max";
             }
             string s = mMin + "-" + mMax + " Interval " + mInterval;
-            if (mIsInteger) s+= ", Integer";
+            if (mIsInteger) s += ", Integer";
             return s;
         }
 
@@ -79,26 +79,26 @@ namespace GingerCore.Variables
                 return false;
             }
 
-            if(mMax - mMin < Interval)
+            if (mMax - mMin < Interval)
             {
                 Value = "Error: Max-Min should be greater than Interval";
                 return false;
             }
 
             decimal d = mDecimalRandom.NextDecimal(mMin, mMax, IsInteger);
-            
+
             if (Interval != 0)
             {
                 // make sure we remove the modulo, so we get nice round numbers per interval request 
                 if ((d - d % Interval) < mMin)
-                    d = d + (Interval - d%Interval);
+                    d = d + (Interval - d % Interval);
                 else if ((d - d % Interval) > mMax)
                     d = d - (Interval + d % Interval);
                 else
                     d = d - d % Interval;
             }
-            
-            Value = d.ToString();    
+
+            Value = d.ToString();
             return true;
         }
 
@@ -111,7 +111,7 @@ namespace GingerCore.Variables
 
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
-            List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();  
+            List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
             supportedOperations.Add(VariableBase.eSetValueOptions.AutoGenerateValue);
             return supportedOperations;
         }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ namespace Ginger.BusinessFlowWindows
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
             return IsBusinessFlowNameValid(value.ToString()) ?
-                new ValidationResult(false, "Business Flow Name cannot be empty"):
+                new ValidationResult(false, "Business Flow Name cannot be empty") :
                 IsBusinessFlowNameExists(value.ToString()) ?
                 new ValidationResult(false, "Business Flow Name already exists")
                 : new ValidationResult(true, null);

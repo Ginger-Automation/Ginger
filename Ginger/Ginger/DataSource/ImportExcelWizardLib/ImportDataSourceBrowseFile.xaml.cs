@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,20 +17,13 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.ValidationRules;
+using Ginger.ApplicationModelsLib.ModelOptionalValue;
+using GingerWPF.WizardLib;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
-using GingerCore.DataSource;
-using System.Reflection;
-using Ginger.ApplicationModelsLib.ModelOptionalValue;
-using System.Data;
-using System.Collections.Generic;
-using System;
-using System.Text;
-using Ginger.SolutionWindows.TreeViewItems;
-using Amdocs.Ginger.ValidationRules;
-using GingerWPF;
-using GingerWPF.WizardLib;
 
 namespace Ginger.DataSource.ImportExcelWizardLib
 {

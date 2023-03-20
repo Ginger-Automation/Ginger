@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ namespace Amdocs.Ginger.Repository
             return GetParameters(doc, AAMSList, avoidDuplicatesNodes);
         }
 
-        public ObservableList<ApplicationAPIModel> ParseDocumentWithXMLContent(string fileContent, ObservableList<ApplicationAPIModel> AAMSList,bool avoidDuplicatesNodes = false)
+        public ObservableList<ApplicationAPIModel> ParseDocumentWithXMLContent(string fileContent, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
         {
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(fileContent);
@@ -48,7 +48,9 @@ namespace Amdocs.Ginger.Repository
             XMLDocExtended XDE = new XMLDocExtended(doc);
 
             if (avoidDuplicatesNodes)
+            {
                 XDE.RemoveDuplicatesNodes();
+            }
 
             IEnumerable<XMLDocExtended> NodeList = XDE.GetEndingNodes(false);
             ObservableList<AppModelParameter> AMPList = GetParamList(NodeList);
@@ -59,7 +61,7 @@ namespace Amdocs.Ginger.Repository
             AllPlaceHolders.Clear();
             return AAMSList;
         }
-               
+
         private ObservableList<AppModelParameter> GetParamList(IEnumerable<XMLDocExtended> NodeList)
         {
             ObservableList<AppModelParameter> AMPList = new ObservableList<AppModelParameter>();
@@ -100,7 +102,7 @@ namespace Amdocs.Ginger.Repository
 
                 foreach (XMLDocExtended XDN in NodeListResponseBody)
                 {
-                    ReturnValues.Add(new ActReturnValue() { Param = XDN.LocalName, Path = XDN.XPathWithoutNamspaces, Active = true, DoNotConsiderAsTemp=true });
+                    ReturnValues.Add(new ActReturnValue() { Param = XDN.LocalName, Path = XDN.XPathWithoutNamspaces, Active = true, DoNotConsiderAsTemp = true });
                 }
             }
 
@@ -118,7 +120,7 @@ namespace Amdocs.Ginger.Repository
                 GetAllOptionalValuesFromExamples(placeHolderName, Node, ref optionalValuesList);
             }
         }
-        
+
         public string GetPlaceHolderName(string ElementName)
         {
             string PlaceHolderName = ElementName.ToUpper();

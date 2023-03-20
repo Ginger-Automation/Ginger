@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using Amdocs.Ginger.Repository;
 
 namespace Amdocs.Ginger.Common.Functionalities
 {
@@ -116,9 +115,9 @@ namespace Amdocs.Ginger.Common.Functionalities
         {
             get
             {
-                return ParentItemToSave.GetType().ToString(); 
+                return ParentItemToSave.GetType().ToString();
             }
-                
+
         }
 
         public static string SolutionFolder { get; set; }
@@ -128,10 +127,10 @@ namespace Amdocs.Ginger.Common.Functionalities
             get
             {
                 string path = Path.GetDirectoryName(ParentItemToSave.FileName);
-                string s = path.Replace(SolutionFolder.TrimEnd(new char[] { '\\','/'}), string.Empty);
+                string s = path.Replace(SolutionFolder.TrimEnd(new char[] { '\\', '/' }), string.Empty);
                 return s;
             }
-            
+
         }
 
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,16 +17,12 @@ limitations under the License.
 #endregion
 
 using Ginger.Agents;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore;
+using GingerWPF.TreeViewItemsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Controls;
-using GingerWPF.TreeViewItemsLib;
-using Amdocs.Ginger.UserControls;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common.Enums;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -34,7 +30,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     {
         private readonly Agent mAgent;
         private AgentEditPage mAgentEditPage;
-                
+
         public AgentTreeItem(Agent agent)
         {
             mAgent = agent;
@@ -58,10 +54,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {                        
+        {
             return NewTVItemHeaderStyle(mAgent);
         }
-       
+
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
             return null;
@@ -85,7 +81,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             return mContextMenu;
         }
-        
+
         void ITreeViewItem.SetTools(ITreeView TV)
         {
             mTreeView = TV;
@@ -96,12 +92,12 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         public override void PostSaveTreeItemHandler()
-        {            
+        {
             App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
         }
 
         public override void PostDeleteTreeItemHandler()
-        {            
+        {
             App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
         }
     }

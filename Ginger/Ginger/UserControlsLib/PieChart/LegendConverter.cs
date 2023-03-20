@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Globalization;
-using System.Windows.Data;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows;
 using System.ComponentModel;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Media;
 
 namespace Ginger.UserControlsLib.PieChart
 {
@@ -47,7 +47,7 @@ namespace Ginger.UserControlsLib.PieChart
 
             // locate the legend
             Legend legend = (Legend)Helpers.FindElementOfTypeUp(owner, typeof(Legend));
-            
+
             PropertyDescriptorCollection filterPropDesc = TypeDescriptor.GetProperties(item);
             object itemValue = filterPropDesc[legend.PlottedProperty].GetValue(item);
             return itemValue;

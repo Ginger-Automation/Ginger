@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -48,7 +47,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         }
 
         public override List<ActUIElement.eElementAction> GetPlatformUIClickTypeList()
-        {           
+        {
             List<ActUIElement.eElementAction> list = base.GetPlatformUIClickTypeList();//taken from WebPlatform
 
             list.Remove(ActUIElement.eElementAction.MouseClick);
@@ -97,7 +96,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override ObservableList<Act> GetPlatformElementActions(ElementInfo elementInfo)
         {
             ObservableList<Act> UIElementsActionsList = base.GetPlatformElementActions(elementInfo);//taken from WebPlatform
-           
+
             return UIElementsActionsList;
         }
 
@@ -150,9 +149,9 @@ namespace GingerCore.Platforms.PlatformsInfo
         }
 
         public override List<string> GetPlatformUIElementPropertiesList(eElementType ElementType)
-        {            
+        {
             List<string> list = base.GetPlatformUIElementPropertiesList(ElementType);//taken from WebPlatform
-          
+
             return list;
         }
 

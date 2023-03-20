@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
 
         public StatusItem()
         {
-            InitializeComponent();          
+            InitializeComponent();
         }
 
         private void SetStatus()
@@ -74,21 +74,21 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
             else
             {
                 xStatusTri.Visibility = Visibility.Visible;
-                xStatusIcon.Visibility = Visibility.Collapsed;               
+                xStatusIcon.Visibility = Visibility.Collapsed;
             }
             switch (Status)
             {
 
                 case eRunStatus.Passed:
-                    if(SetStatusIcon)
+                    if (SetStatusIcon)
                     {
-                      xStatusIcon.Foreground = FindResource("$PassedStatusColor") as Brush;
-                      xStatusIcon.ImageType = eImageType.Passed;
+                        xStatusIcon.Foreground = FindResource("$PassedStatusColor") as Brush;
+                        xStatusIcon.ImageType = eImageType.Passed;
                     }
                     else
-                    {                        
+                    {
                         xStatusTri.Fill = xStatusTri.Stroke = FindResource("$PassedStatusColor") as Brush;
-                    }                    
+                    }
                     break;
                 case eRunStatus.Failed:
                     if (SetStatusIcon)

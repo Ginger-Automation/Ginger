@@ -73,7 +73,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     else
                     {
                         xTakeScreenShotLoadButton.Visibility = Visibility.Visible;
-                    }                                   
+                    }
                     break;
             }
         }
@@ -92,7 +92,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 xPageUrlRadioBtn.Content = platformInfoBase.GetPageUrlRadioLabelText();
             }
         }
-        
+
         public void ShowScreenShot()
         {
             mScreenshotPage = new ScreenShotViewPage(mWizard.mPomLearnUtils.POM.Name, mWizard.mPomLearnUtils.ScreenShot);
@@ -134,14 +134,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 }
             }
         }
-        
+
         private void xRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
             if (Convert.ToBoolean(xPageUrlRadioBtn.IsChecked))
             {
                 mWizard.mPomLearnUtils.POM.PageLoadFlow = ApplicationPOMModel.ePageLoadFlowType.PageURL;
                 xURLTextBox.Visibility = Visibility.Visible;
-                xFrameBusinessFlowControl.Visibility = Visibility.Collapsed; 
+                xFrameBusinessFlowControl.Visibility = Visibility.Collapsed;
             }
             else
             {

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,26 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using GingerCore.Environments;
-using GingerCore.Actions;
-using GingerCore.NoSqlBase;
 using amdocs.ginger.GingerCoreNET;
-using System.IO;
-using Amdocs.Ginger.Repository;
-using Ginger.UserControls;
 using Amdocs.Ginger.Common;
-using System.Windows.Data;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using GingerWPF.BusinessFlowsLib;
 using GingerCore;
 using GingerCore.GeneralLib;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using static GingerCore.ActOcr;
 
 namespace Ginger.Actions

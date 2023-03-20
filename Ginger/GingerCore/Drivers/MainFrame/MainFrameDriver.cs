@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ namespace GingerCore.Drivers.MainFrame
         [UserConfiguredDescription("Number of Columns in target Mainframe application")]
         public int MFColumns { get; set; }
 
-        
+
         public int Rows = 24;
         public int Coloumn = 80;
 
@@ -163,13 +163,13 @@ namespace GingerCore.Drivers.MainFrame
                 Dispatcher.Invoke(new Action(() => OnDriverMessage(eDriverMessageType.DriverStatusChanged)));
                 System.Windows.Threading.Dispatcher.Run();
 
-                
+
             }
             else
             {
-               
-                   mDriverWindow = null;
-                
+
+                mDriverWindow = null;
+
             }
         }
 
@@ -193,7 +193,7 @@ namespace GingerCore.Drivers.MainFrame
                 }
                 OnDriverMessage(eDriverMessageType.DriverStatusChanged);
             }
-           
+
         }
 
         public override void RunAction(Act act)
@@ -210,11 +210,11 @@ namespace GingerCore.Drivers.MainFrame
                 {
                     case "GingerCore.Actions.MainFrame.ActMainframeGetDetails":
 
-                      
-                     
+
+
 
                         PerformActMainframeGetDetails(act);
-                        
+
                         break;
 
                     case "GingerCore.Actions.MainFrame.ActMainframeSendKey":
@@ -223,10 +223,10 @@ namespace GingerCore.Drivers.MainFrame
                         break;
 
                     case "GingerCore.Actions.MainFrame.ActMainframeSetText":
-               
+
 
                         PerformActMainframeSetText(act);
-                       
+
                         break;
 
                     default:
@@ -247,7 +247,7 @@ namespace GingerCore.Drivers.MainFrame
             ActMainframeGetDetails MFGD = (ActMainframeGetDetails)act;
             //todo Implement get Type and others
 
-          
+
             switch (MFGD.DetailsToFetch)
             {
                 case ActMainframeGetDetails.eDetailsToFetch.GetText:
@@ -307,7 +307,7 @@ namespace GingerCore.Drivers.MainFrame
                     break;
                 default:
                     throw new NotSupportedException("The action is not supporte yet");
-             
+
 
             }
 
@@ -484,7 +484,7 @@ namespace GingerCore.Drivers.MainFrame
 
         }
 
-    
+
 
         public override Actions.Act GetCurrentElement()
         {
@@ -497,7 +497,7 @@ namespace GingerCore.Drivers.MainFrame
             throw new NotImplementedException();
         }
 
-        
+
 
         public override void HighlightActElement(Actions.Act act)
         {
@@ -530,7 +530,7 @@ namespace GingerCore.Drivers.MainFrame
 
             Bitmap bmp = (Bitmap)Image.FromFile(FileName);
             //TODO: Remove the temporary File created
-            
+
             act.AddScreenShot(bmp);
         }
 
@@ -547,13 +547,13 @@ namespace GingerCore.Drivers.MainFrame
             AppWinList.Add(AppWin);
             return AppWinList;
         }
-       
+
         public void SwitchWindow(string Title)
         {
-            
+
         }
 
-       
+
         public string GetFocusedControl()
         {
             mDriverWindow.Show();
@@ -566,7 +566,7 @@ namespace GingerCore.Drivers.MainFrame
             throw new NotImplementedException();
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting=null)
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting = null)
         {
             return EI;
         }
@@ -583,7 +583,7 @@ namespace GingerCore.Drivers.MainFrame
         #endregion windowexplorerfunctions
 
         #region terminalfuntions
-        
+
         public XMLScreen GetRenderedScreen()
         {
             return MFE.GetScreenAsXML();
@@ -607,7 +607,7 @@ namespace GingerCore.Drivers.MainFrame
                 return false;
             }
             //window object will be created after successful connection
-          
+
             int i = 0;
             while (!MFE.IsConnected && i < this.DriverLoadWaitingTime * 1000)
             {
@@ -618,7 +618,7 @@ namespace GingerCore.Drivers.MainFrame
             if (i >= this.DriverLoadWaitingTime * 1000)
             {
                 MFE.Disconnect();
-                return false;                
+                return false;
             }
             if (ForceRefreshonBlankScreenLoad)
             {
@@ -628,11 +628,11 @@ namespace GingerCore.Drivers.MainFrame
                     MFE.SendKey(TnKey.Reset);
                 }
             }
-       
+
             return status;
         }
 
-        
+
         public bool SetTextAtPosition(String CommandText, bool SendEnter = true, int? caret = null)
         {
             if (caret.HasValue)
@@ -748,7 +748,7 @@ namespace GingerCore.Drivers.MainFrame
             throw new System.NotImplementedException();
         }
 
-        public ObservableList<ElementLocator> GetElementLocators(ElementInfo ElementInfo,PomSetting pomSetting = null)
+        public ObservableList<ElementLocator> GetElementLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
             throw new System.NotImplementedException();
         }

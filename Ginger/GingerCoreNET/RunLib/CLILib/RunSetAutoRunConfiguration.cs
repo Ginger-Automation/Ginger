@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         DynamicFile,
         Remote
     }
-    public class RunSetAutoRunConfiguration: INotifyPropertyChanged
+    public class RunSetAutoRunConfiguration : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string name)
@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         Solution mSolution;
         RunsetExecutor mRunsetExecutor;
         CLIHelper mCLIHelper;
-        
+
         public int ParallelExecutionCount;
         public eAutoRunEexecutorType AutoRunEexecutorType { get; set; }
 
@@ -113,7 +113,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 if (mArtifactsPath == null)
                 {
-                    mArtifactsPath = WorkSpace.Instance.TestArtifactsFolder;                         
+                    mArtifactsPath = WorkSpace.Instance.TestArtifactsFolder;
                 }
                 return mArtifactsPath;
             }
@@ -177,7 +177,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             get
             {
-               return Path.Combine(ConfigFileFolderPath, ConfigFileName);
+                return Path.Combine(ConfigFileFolderPath, ConfigFileName);
             }
         }
 
@@ -195,7 +195,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 if (SelectedCLI.IsFileBasedConfig)
                 {
-                    return SelectedCLI.Verb +  " --" + CLIOptionClassHelper.FILENAME + " \"" + ConfigFileFullPath + "\"";
+                    return SelectedCLI.Verb + " --" + CLIOptionClassHelper.FILENAME + " \"" + ConfigFileFullPath + "\"";
                 }
                 else
                 {

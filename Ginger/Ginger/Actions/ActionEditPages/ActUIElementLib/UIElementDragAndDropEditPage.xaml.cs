@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows;
-using System.Windows.Controls;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions.Common;
 using GingerCore.Platforms.PlatformsInfo;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -32,7 +32,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
     {
         ActUIElement mAction;
 
-        public UIElementDragAndDropEditPage(ActUIElement Action, PlatformInfoBase mPlatform) 
+        public UIElementDragAndDropEditPage(ActUIElement Action, PlatformInfoBase mPlatform)
         {
             mAction = Action;
             InitializeComponent();
@@ -49,8 +49,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private void DragDropType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (DragDropType == null || DragDropType.ComboBoxSelectedValue == null)
+            {
                 return;
-            if(DragDropType.ComboBoxSelectedValue.ToString() == ActUIElement.eElementDragDropType.MouseDragDrop.ToString())
+            }
+
+            if (DragDropType.ComboBoxSelectedValue.ToString() == ActUIElement.eElementDragDropType.MouseDragDrop.ToString())
             {
                 DragXY.Visibility = Visibility.Visible;
                 DropXY.Visibility = Visibility.Visible;
@@ -63,7 +66,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         }
         private void ElementSpecificControl()
         {
-            if(TargetLocateByComboBox.SelectedValue.ToString() == eLocateBy.ByXY.ToString())
+            if (TargetLocateByComboBox.SelectedValue.ToString() == eLocateBy.ByXY.ToString())
             {
                 TargetXYGrid.Visibility = Visibility.Visible;
                 TargetLocatorValue.Visibility = Visibility.Collapsed;
@@ -78,7 +81,10 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private void TargetLocateByComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (TargetLocateByComboBox.SelectedValue == null)
+            {
                 return;
+            }
+
             ElementSpecificControl();
         }
 

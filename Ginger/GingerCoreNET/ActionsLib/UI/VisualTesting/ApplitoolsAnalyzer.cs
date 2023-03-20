@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,28 +16,22 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Applitools;
 using Applitools.Selenium;
-using Applitools.Utils.Geometry;
-using Applitools.VisualGrid;
 using GingerCore.Drivers;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
 using System;
 using System.Collections.Generic;
-using System.Net;
-using static GingerCore.Agent;
-using static GingerCore.Drivers.SeleniumDriver;
-using System.Linq;
-using amdocs.ginger.GingerCoreNET;
-using System.Text.RegularExpressions;
-using System.Net.Http;
-using System.Threading;
 using System.IO;
-using Amdocs.Ginger.Common.UIElement;
-using Ginger.Run;
-using OpenQA.Selenium.Appium.Windows;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Threading;
+using static GingerCore.Drivers.SeleniumDriver;
 
 namespace GingerCore.Actions.VisualTesting
 {
@@ -45,7 +39,7 @@ namespace GingerCore.Actions.VisualTesting
     {
         ActVisualTesting mAct;
         IVisualTestingDriver mDriver;
-      
+
 
         public static string ApplitoolsAction = "ApplitoolsAction";
         public static string ApplitoolsEyesClose = "ApplitoolsEyesClose";
@@ -301,7 +295,7 @@ namespace GingerCore.Actions.VisualTesting
             {
                 mAct.Error += "Eyes Close operation failed, Error: " + ex.Message;
             }
-            
+
         }
 
         void WebEyesOpen()
@@ -310,14 +304,14 @@ namespace GingerCore.Actions.VisualTesting
             try
             {
                 runner = new ClassicRunner();
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any(x=>x.Executor.IsRunning == true))
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any(x => x.Executor.IsRunning == true))
                 {
                     runner.DontCloseBatches = true;
                 }
                 WebEyes = new Eyes(runner);
                 mAppName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamApplicationName);
                 mTestName = mAct.GetInputParamCalculatedValue(ActVisualTesting.Fields.ApplitoolsParamTestName);
-                
+
                 SetUp(WebEyes, mDriver.GetApplitoolServerURL(), mDriver.GetApplitoolKey(), ((SeleniumDriver)mDriver).GetBrowserType(), mDriver.GetEnvironment());
                 mAct.CheckSetAppWindowSize();
                 mResolution = mAct.GetWindowResolution();
@@ -335,7 +329,7 @@ namespace GingerCore.Actions.VisualTesting
                 }
             }
 
-            
+
         }
 
         private void WebCheckpoint()
@@ -354,21 +348,21 @@ namespace GingerCore.Actions.VisualTesting
                 if (ActionTakenBy == "Window")
                 {
                     WebEyes.Check(Target.Window().Fully().WithName(mAct.ItemName));
-                } 
+                }
                 else
                 {
                     ElementLocator locator = new ElementLocator();
                     locator.LocateBy = GetLocateBy();
                     locator.LocateValue = GetLocateValue();
-                    IWebElement webElement = ((SeleniumDriver)mDriver).LocateElement(mAct, false,null,null);
+                    IWebElement webElement = ((SeleniumDriver)mDriver).LocateElement(mAct, false, null, null);
                     WebEyes.Check(Target.Region(webElement).Fully().WithName(mAct.ItemName));
                 }
-                    
-                
+
+
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                if (ActionTakenBy == "Region") 
+                if (ActionTakenBy == "Region")
                 {
                     mAct.Error += "Not Able to locate XPath, Error: " + ex.Message;
                 }
@@ -376,16 +370,16 @@ namespace GingerCore.Actions.VisualTesting
                 {
                     mAct.Error += ex.Message;
                 }
-                    
+
             }
             finally
             {
                 mAct.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
             }
-             
 
-            
-            
+
+
+
         }
         private void WebCloseEyes()
         {
@@ -415,13 +409,13 @@ namespace GingerCore.Actions.VisualTesting
                 mAct.AddOrUpdateReturnParamActual("LayoutMatches", TR.LayoutMatches + "");
                 mAct.AddOrUpdateReturnParamActual("Missing", TR.Missing + "");
 
-                
-                
+
+
                 if (!TR.IsNew)
                 {
                     foreach (StepInfo step in TR.StepsInfo)
                     {
-                       if (!step.HasCurrentImage)
+                        if (!step.HasCurrentImage)
                         {
                             mAct.AddOrUpdateReturnParamActual(step.Name, "Failed with Missing Image" + "");
                         }
@@ -463,7 +457,7 @@ namespace GingerCore.Actions.VisualTesting
                 mAct.Error += "Eyes Close operation failed, Error: " + ex.Message;
             }
         }
-        private void SetUp(Eyes eyes,string AppilToolServerUrl,string AppilToolsApiKey, eBrowserType BrowserType,string Environment)
+        private void SetUp(Eyes eyes, string AppilToolServerUrl, string AppilToolsApiKey, eBrowserType BrowserType, string Environment)
         {
             Applitools.Selenium.Configuration config = new Applitools.Selenium.Configuration();
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners.Any(x => x.Executor.IsRunning == true))
@@ -483,7 +477,7 @@ namespace GingerCore.Actions.VisualTesting
             eyes.SetConfiguration(config);
 
         }
-        
+
 
         private eApplitoolsAction GetSelectedApplitoolsActionEnum()
         {
@@ -496,7 +490,7 @@ namespace GingerCore.Actions.VisualTesting
         {
             return mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ApplitoolsKey).ValueForDriver;
         }
-        
+
         //TODO: mEyes.Proxy - so it will work in dox
 
         //--------------------------------------Old Methods--------------------------------------------------------
@@ -547,15 +541,15 @@ namespace GingerCore.Actions.VisualTesting
                         });
                         mAct.ScreenShotsNames.Add(Path.GetFileName(currImagePath));
                         mAct.ScreenShots.Add(currImagePath);
-                        
+
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     mAct.Error = mAct.Error + ex.Message;
                 }
-                
-                
+
+
             }
         }
 
@@ -572,9 +566,13 @@ namespace GingerCore.Actions.VisualTesting
         {
             eLocateBy eVal = eLocateBy.ByXPath;
             if (Enum.TryParse<eLocateBy>(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.LocateBy).Value, out eVal))
+            {
                 return eVal;
+            }
             else
+            {
                 return eLocateBy.ByXPath;
+            }
         }
 
         private string GetLocateValue()
@@ -600,7 +598,7 @@ namespace GingerCore.Actions.VisualTesting
             Match match = Regex.Match(URL, "^" + this.ServerURL + @"/app/batches/(?<batchId>\d+).*$");
             this.batchID = match.Groups[1].Value;
         }
-      
+
         private void setsessionID(TestResults testresult)
         {
             string URL = testresult.Url;
@@ -629,7 +627,7 @@ namespace GingerCore.Actions.VisualTesting
             catch (Exception e)
             {
                 String errorMessage = "error message: " + e.Message;
-                
+
                 if (retry > 0)
                 {
                     if (delayBeforeRetry)
@@ -677,7 +675,7 @@ namespace GingerCore.Actions.VisualTesting
 
                 default:
                     throw new ThreadInterruptedException("Unknown error during long request: " + status);
-                    
+
             }
         }
 

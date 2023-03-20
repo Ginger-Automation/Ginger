@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,17 +17,13 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Amdocs.Ginger.ValidationRules
 {
     public class MaxValueValidationRule : ValidationRule
-    {        
+    {
         string mMessage;
         string Message
         {
@@ -48,12 +44,12 @@ namespace Amdocs.Ginger.ValidationRules
             }
         }
 
-        int mMaxValue;        
-       
+        int mMaxValue;
+
         public MaxValueValidationRule(int maxValue, string message = "")
-        {           
+        {
             mMaxValue = maxValue;
-            Message = message;                            
+            Message = message;
         }
 
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
@@ -68,8 +64,8 @@ namespace Amdocs.Ginger.ValidationRules
                 {
                     return new ValidationResult(true, null);
                 }
-            }    
-            catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return new ValidationResult(false, "Enter valid data");
             }

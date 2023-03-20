@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using GingerCore.Helpers;
+using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
     // This class is for Running functions    
@@ -31,8 +30,8 @@ namespace GingerCore.Actions
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("This action is used to test any function. Function Action (Obsolete - Do Not Use)");            
-        }        
+            TBH.AddText("This action is used to test any function. Function Action (Obsolete - Do Not Use)");
+        }
 
         public override string ActionEditPage { get { return null; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
@@ -50,14 +49,17 @@ namespace GingerCore.Actions
                 return mPlatforms;
             }
         }
-        
+
         public object returnValue;
-        public object ReturnValue { get{return returnValue; } 
-            set{                
+        public object ReturnValue
+        {
+            get { return returnValue; }
+            set
+            {
                 returnValue = value;
-            } 
+            }
         }
-        
+
         public override String ActionType
         {
             get
@@ -69,11 +71,19 @@ namespace GingerCore.Actions
 
         private string getParamsAsString()
         {
-            if (InputValues == null) return "";
+            if (InputValues == null)
+            {
+                return "";
+            }
+
             string s = "";
             foreach (var fp in InputValues)
             {
-                if (s.Length > 0) s = s + ",";
+                if (s.Length > 0)
+                {
+                    s = s + ",";
+                }
+
                 s = s + fp.Param + "=" + fp.Value;
             }
             return s;
@@ -85,10 +95,13 @@ namespace GingerCore.Actions
         {
 
             List<object> funcparams = new List<object>();
-            if (InputValues == null) return funcparams.ToArray();
+            if (InputValues == null)
+            {
+                return funcparams.ToArray();
+            }
 
             foreach (var fp in InputValues)
-            {               
+            {
                 //TODO: assume string...
                 funcparams.Add(fp.Value);
             }

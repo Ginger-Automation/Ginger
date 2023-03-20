@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ namespace GingerWPFUnitTest.POMs
             WizardPOM wizard = WizardPOM.CurrentWizard;
             //skip intro page
             wizard.NextButton.Click();
-            
+
             // set env name
             wizard.CurrentPage["Name AID"].SetText(name);
 
@@ -59,7 +59,7 @@ namespace GingerWPFUnitTest.POMs
 
         internal IEnumerable<TreeViewItem> GetRootItems()
         {
-            return mTreeView.GetRootItems();            
+            return mTreeView.GetRootItems();
         }
 
     }

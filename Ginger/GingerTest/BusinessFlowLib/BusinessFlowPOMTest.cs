@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,13 +17,10 @@ limitations under the License.
 #endregion
 
 
-using Ginger;
-using Ginger.BusinessFlowWindows;
 using GingerCore;
 using GingerTest.POMs;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.IO;
 
 namespace GingerTest.BusinessFlowLib
@@ -33,11 +30,11 @@ namespace GingerTest.BusinessFlowLib
     [Level3]
     public class BusinessFlowPOMTest
     {
-       static GingerAutomator mGingerAutomator;
+        static GingerAutomator mGingerAutomator;
         [ClassInitialize]
         public static void ClassInit(TestContext testContext)
         {
-            string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions"+ Path.DirectorySeparatorChar +"TestUndoBusinessFlow");
+            string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "TestUndoBusinessFlow");
             mGingerAutomator = GingerAutomator.StartSession();
             mGingerAutomator.OpenSolution(sampleSolutionFolder);
 
@@ -53,7 +50,7 @@ namespace GingerTest.BusinessFlowLib
         [Timeout(60000)]
         public void UndoForSwitchBFTest()
         {
-           //Arrange
+            //Arrange
             BusinessFlowPOM businessflow = mGingerAutomator.MainWindowPOM.SelectBusinessFlow();
             BusinessFlow selectedBusinessFlow = businessflow.selectBusinessFlow("Flow 1");
 

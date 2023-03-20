@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.Extensions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System.Linq;
@@ -44,13 +43,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             //get key object 
             if (AddAPIModelWizard.TargetApplicationKey != null)
             {
-                RepositoryItemKey key =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Guid == AddAPIModelWizard.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
+                RepositoryItemKey key = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Guid == AddAPIModelWizard.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
                 if (key != null)
                 {
                     AddAPIModelWizard.TargetApplicationKey = key;
                 }
                 else
-                {                    
+                {
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + AddAPIModelWizard.TargetApplicationKey.Key + " Target Application was not found, please select new Target Application");
                 }
             }
@@ -78,6 +77,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             //    AddAPIModelWizard.FinishEnabled = true;
             //    AddAPIModelWizard.NextEnabled = false;
             //}
-        }        
+        }
     }
 }

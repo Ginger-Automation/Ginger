@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Run;
 using GingerCore;
 using GingerCore.Activities;
 using Newtonsoft.Json;
@@ -133,10 +132,12 @@ namespace Ginger.Reports
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
         [UsingUTCTimeFormat]
-        public DateTime StartTimeStamp { get { return mActivitiesGroup.StartTimeStamp; }
-             // !!!!!!!!!!!!!!!!!!!!!!!!!!FIXME for load
+        public DateTime StartTimeStamp
+        {
+            get { return mActivitiesGroup.StartTimeStamp; }
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!FIXME for load
             // set { mActivitiesGroup.StartTimeStamp = value; }
-             }
+        }
 
         [JsonProperty]
         [FieldParams]
@@ -145,7 +146,9 @@ namespace Ginger.Reports
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
         [UsingUTCTimeFormat]
-        public DateTime EndTimeStamp { get { return mActivitiesGroup.EndTimeStamp; }
+        public DateTime EndTimeStamp
+        {
+            get { return mActivitiesGroup.EndTimeStamp; }
             // !!!!!!!!!!!!!!!!!!!!!!!!!!FIXME for load
             //    set { mActivitiesGroup.EndTimeStamp = value; }
         }
@@ -169,7 +172,7 @@ namespace Ginger.Reports
             get { return mActivitiesGroup.RunStatus.ToString(); }
             set { mActivitiesGroup.RunStatus = (eActivitiesGroupRunStatus)Enum.Parse(typeof(eActivitiesGroupRunStatus), value); }
         }
-       
+
         [FieldParams]
         [FieldParamsNameCaption("Activities Details")]
         [FieldParamsFieldType(FieldsType.Section)]

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ namespace Ginger.MenusLib
                 if (mMenusPage == null)
                 {
                     mMenusPage = new TwoLevelMenuPage(GetMenu());
-                     WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+                    WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
                 }
                 return mMenusPage;
             }
@@ -60,7 +60,7 @@ namespace Ginger.MenusLib
             TopMenuItem runSetMenu = new TopMenuItem(eImageType.RunSet, GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.RunSets), ConsoleKey.R, "Run Set AID", GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.RunSet, "Create, Design and Execute "));
             runSetMenu.Add(eImageType.RunSet, "", GetRunSetPage, ConsoleKey.R, "", "AID");
             twoLevelMenuGet.Add(runSetMenu);
-            
+
             TopMenuItem executionsHistoryMenu = new TopMenuItem(eImageType.History, "Executions History", ConsoleKey.E, "Executions History AID", "View executions history of all Run Sets");
             executionsHistoryMenu.Add(eImageType.History, "", GetExecutionsHistoryPage, ConsoleKey.E, "", "AID");
             twoLevelMenuGet.Add(executionsHistoryMenu);

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.WizardLib;
 using System.Windows.Controls;
-using Ginger.SolutionWindows.TreeViewItems;
 
 namespace Ginger.UserControlsLib.TextEditor.Gherkin
 {
@@ -37,9 +37,9 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Active:
-                    ImportGherkinFeatureWizard wiz = (ImportGherkinFeatureWizard)WizardEventArgs.Wizard; 
-                    if(wiz.featureTargetFolder != null)
-                    { 
+                    ImportGherkinFeatureWizard wiz = (ImportGherkinFeatureWizard)WizardEventArgs.Wizard;
+                    if (wiz.featureTargetFolder != null)
+                    {
                         TargetFeatureFolderLabel.Content = ((DocumentsFolderTreeItem)wiz.featureTargetFolder).NodePath();
                     }
                     if (wiz.bizFlowTargetFolder != null)

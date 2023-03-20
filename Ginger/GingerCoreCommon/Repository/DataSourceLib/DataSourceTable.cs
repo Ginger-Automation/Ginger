@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using System.Data;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using System.Data;
 
 namespace GingerCore.DataSource
-{    
+{
 
     public class DataSourceTable : RepositoryItemBase
-    {        
+    {
 
         public enum eDSTableType
         {
@@ -35,7 +35,7 @@ namespace GingerCore.DataSource
             Customized,
         }
 
-        public  static class Fields
+        public static class Fields
         {
             public static string DSTableType = "DSTableType";
             public static string Name = "Name";
@@ -90,6 +90,6 @@ namespace GingerCore.DataSource
         public override string GetNameForFileName()
         {
             return Name;
-        }        
+        }
     }
 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public string Environment { get; set; }
 
-        public string RunMode{ get; set; }        
+        public string RunMode { get; set; }
 
         public List<SetAgent> SetAgents { get; set; } = new List<SetAgent>();
 

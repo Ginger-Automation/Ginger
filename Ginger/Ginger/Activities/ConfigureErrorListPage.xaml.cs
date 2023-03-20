@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -46,8 +46,8 @@ namespace Ginger.Activities
 
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ErrorDetails.IsSelected),StyleType= GridColView.eGridColStyleType.CheckBox, MaxWidth = 20, Header = " " });
-            defView.GridColsView.Add(new GridColView() { Field =nameof(ErrorDetails.ErrorString), WidthWeight = 15, Header = "Error String" });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ErrorDetails.IsSelected), StyleType = GridColView.eGridColStyleType.CheckBox, MaxWidth = 20, Header = " " });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ErrorDetails.ErrorString), WidthWeight = 15, Header = "Error String" });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ErrorDetails.ErrorDescription), WidthWeight = 15, Header = "Description" });
             xErrorListConfigurationGrd.SetAllColumnsDefaultView(defView);
             xErrorListConfigurationGrd.InitViewItems();
@@ -55,8 +55,8 @@ namespace Ginger.Activities
 
             xErrorListConfigurationGrd.MarkUnMarkAllActive += XErrorListConfigurationGrd_MarkUnMarkAllActive; ;
             xErrorListConfigurationGrd.btnAdd.Click += BtnAdd_Click;
-            
-            xErrorListConfigurationGrd.DataSourceList =  new ObservableList<ErrorDetails>(mErrorList);
+
+            xErrorListConfigurationGrd.DataSourceList = new ObservableList<ErrorDetails>(mErrorList);
         }
 
         private void XErrorListConfigurationGrd_MarkUnMarkAllActive(bool Status)
@@ -73,7 +73,7 @@ namespace Ginger.Activities
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
-            mErrorList.Add(new ErrorDetails() { ErrorString=string.Empty,ErrorDescription = string.Empty,IsSelected=true });
+            mErrorList.Add(new ErrorDetails() { ErrorString = string.Empty, ErrorDescription = string.Empty, IsSelected = true });
             xErrorListConfigurationGrd.DataSourceList = new ObservableList<ErrorDetails>(mErrorList);
         }
 
@@ -91,7 +91,7 @@ namespace Ginger.Activities
 
             winButtons.Add(closeBtn); winButtons.Add(okBtn);
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle,"Error String Configuration", this, winButtons, false, string.Empty, CloseWinClicked);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Error String Configuration", this, winButtons, false, string.Empty, CloseWinClicked);
         }
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
@@ -118,7 +118,7 @@ namespace Ginger.Activities
 
         private void CloseWinClicked(object sender, RoutedEventArgs e)
         {
-            if(ValidateErrorStringList())
+            if (ValidateErrorStringList())
             {
                 _pageGenericWin.Close();
             }

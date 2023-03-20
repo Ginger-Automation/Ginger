@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using GingerWPF.WizardLib;
+using System.Windows.Controls;
 
 namespace Ginger.DataSource
 {
@@ -25,7 +25,7 @@ namespace Ginger.DataSource
     /// Interaction logic for ImportDataSourceIntroductionPage.xaml
     /// </summary>
     public partial class ImportDataSourceIntroductionPage : Page, IWizardPage
-    {                
+    {
         /// <summary>
         /// This method is default wizard action event
         /// </summary>
@@ -45,7 +45,7 @@ namespace Ginger.DataSource
         /// Constrtuctor for ImportDataSourceBrowseFile class
         /// </summary>
         public ImportDataSourceIntroductionPage()
-        {           
+        {
             InitializeComponent();
         }
 

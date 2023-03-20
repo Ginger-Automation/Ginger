@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using GingerCore.Actions;
+using System.Windows.Controls;
 
 namespace Ginger.Actions
 {
@@ -33,7 +33,7 @@ namespace Ginger.Actions
             InitializeComponent();
             currentAct = Act;
             GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.UIASwitchWindowAction);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "UIASwitchWindowAction"); 
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "UIASwitchWindowAction");
         }
 
         private void ActionNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

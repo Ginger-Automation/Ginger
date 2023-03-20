@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,22 +16,22 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.ALM.QC.TreeViewItems;
-using GingerWPF.UserControlsLib.UCTreeView;
+using Ginger.ALM.ZephyrEnt.TreeViewItems;
 using GingerCore;
+using GingerCore.ALM;
+using GingerCore.ALM.ZephyrEnt.Bll;
+using GingerWPF.UserControlsLib.UCTreeView;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using GingerCore.ALM;
-using amdocs.ginger.GingerCoreNET;
 using ZephyrEntStdSDK.Models.Base;
-using Ginger.ALM.ZephyrEnt.TreeViewItems;
-using Newtonsoft.Json.Linq;
-using GingerCore.ALM.ZephyrEnt.Bll;
-using System.IO;
 
 namespace Ginger.ALM.ZephyrEnt
 {
@@ -87,8 +87,17 @@ namespace Ginger.ALM.ZephyrEnt
                 {
                     dynamic d = JObject.Parse(item.ToString());
                     tvv.CurrentChildrens.Add(new TestPlanningFolderTreeItem()
-                    { Id = d.id.ToString(), CycleId = d.id,  Name = d.name.ToString(), entityType = EntityFolderType.Phase
-                    , Folder = d.name.ToString(), Path = tvv.Path +  @"\" + d.name.ToString(), FolderOnly = tvv.FolderOnly, RevisionId = Convert.ToInt32(folder.TryGetItem("revision")) });
+                    {
+                        Id = d.id.ToString(),
+                        CycleId = d.id,
+                        Name = d.name.ToString(),
+                        entityType = EntityFolderType.Phase
+                    ,
+                        Folder = d.name.ToString(),
+                        Path = tvv.Path + @"\" + d.name.ToString(),
+                        FolderOnly = tvv.FolderOnly,
+                        RevisionId = Convert.ToInt32(folder.TryGetItem("revision"))
+                    });
                 }
                 TestPlanningExplorerTreeView.Tree.AddItem(tvv);
             });
@@ -140,7 +149,7 @@ namespace Ginger.ALM.ZephyrEnt
         private void LoadDataBizFlows()
         {
             mBizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            if(mBizFlows != null)
+            if (mBizFlows != null)
             {
                 mBizFlows.ToList().ForEach(bf =>
                 {
@@ -181,7 +190,7 @@ namespace Ginger.ALM.ZephyrEnt
                     ((TestPlanningFolderTreeItem)mCurrentSelectedTreeItem).Id,
                     ((TestPlanningFolderTreeItem)mCurrentSelectedTreeItem).ParentId.ToString(),
                     ((TestPlanningFolderTreeItem)mCurrentSelectedTreeItem).CycleId.ToString()};
-                CurrentSelectedPath = String.Join("#", returnedValues); 
+                CurrentSelectedPath = String.Join("#", returnedValues);
                 ShowTestSetDetailsPanel(false);
             }
         }
@@ -316,7 +325,7 @@ namespace Ginger.ALM.ZephyrEnt
                     GetFolderChildTestSets(mCurrentSelectedTreeItem);
                     Mouse.OverrideCursor = null;
                 }
-                if(CurrentSelectedTestSets.Count == 0)
+                if (CurrentSelectedTestSets.Count == 0)
                 {
                     Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please select Test Set or Folder contains Test Set");
                     return;

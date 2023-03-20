@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
 using System.Reflection;
-using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
-using GingerCoreNET.Drivers.CommunicationProtocol;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 {
@@ -36,7 +35,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         private void MessageHandler(GingerSocketInfo obj)
         {
             //TODO: handle request from server
-           throw new NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public T GetObject<T>(string id)
@@ -44,7 +43,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             NewPayLoad PL = new NewPayLoad("GetObject", id);
             NewPayLoad PLRC = mGingerSocketClient2.SendRequestPayLoad(PL);
             Guid guid = Guid.Parse(PLRC.GetValueString());   //TODO: add Guid in Payload
-            T obj  = RemoteObjectProxy<T>.Create(this, guid);
+            T obj = RemoteObjectProxy<T>.Create(this, guid);
             return obj;
         }
 
@@ -56,10 +55,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             pl.AddValue(args.Length); // count of params
             foreach (object o in args)
             {
-                pl.AddValueByObjectType(o);                
+                pl.AddValueByObjectType(o);
             }
             pl.ClosePackage();
-            NewPayLoad PLRC =  mGingerSocketClient2.SendRequestPayLoad(pl);
+            NewPayLoad PLRC = mGingerSocketClient2.SendRequestPayLoad(pl);
 
             object rc = PLRC.GetValueByObjectType();
             return rc;

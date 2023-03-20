@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -74,9 +74,9 @@ namespace Ginger.Actions.ActionConversion
                 SetButtonsVisibility(false);
                 xContinue.Visibility = Visibility.Collapsed;
                 mConversionProcess.BusinessFlowsActionsConversion(ListOfBusinessFlow);
-            });           
+            });
         }
-        
+
         /// <summary>
         /// This method is used to set the columns for BusinessFlow Conversion Status GridView
         /// </summary>
@@ -92,8 +92,8 @@ namespace Ginger.Actions.ActionConversion
                 view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.IsSelected), WidthWeight = 5, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select" });
                 view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.BusinessFlowName), WidthWeight = 23, ReadOnly = true, Header = "Name" });
                 view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.TotalProcessingActionsCount), WidthWeight = 13, ReadOnly = true, HorizontalAlignment = HorizontalAlignment.Center, Header = "Convertible Actions" });
-                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.ConvertedActionsCount), WidthWeight = 13, ReadOnly = true, HorizontalAlignment= HorizontalAlignment.Center, Header = "Converted Actions" });
-                
+                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.ConvertedActionsCount), WidthWeight = 13, ReadOnly = true, HorizontalAlignment = HorizontalAlignment.Center, Header = "Converted Actions" });
+
                 view.GridColsView.Add(new GridColView()
                 {
                     Field = nameof(BusinessFlowToConvert.StatusIcon),
@@ -116,7 +116,7 @@ namespace Ginger.Actions.ActionConversion
                         ReadOnly = true,
                         Header = "Save Status",
                         BindingMode = System.Windows.Data.BindingMode.OneWayToSource
-                    }); 
+                    });
                 }
 
                 xBusinessFlowGrid.SetAllColumnsDefaultView(view);
@@ -266,7 +266,7 @@ namespace Ginger.Actions.ActionConversion
 
         public void SetButtonsVisibility(bool saveVisible)
         {
-            if(mConversionProcess.ModelConversionType == eModelConversionType.ApiActionConversion)
+            if (mConversionProcess.ModelConversionType == eModelConversionType.ApiActionConversion)
             {
                 xSaveButton.Visibility = Visibility.Collapsed;
                 xStopButton.Visibility = Visibility.Collapsed;

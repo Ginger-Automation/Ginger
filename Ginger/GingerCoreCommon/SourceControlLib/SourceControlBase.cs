@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.Repository;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static GingerCoreNET.SourceControl.SourceControlFileInfo;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
+using static GingerCoreNET.SourceControl.SourceControlFileInfo;
 
 namespace GingerCoreNET.SourceControl
 {
@@ -69,12 +69,12 @@ namespace GingerCoreNET.SourceControl
         public string SourceControlProxyPort { get { return mSourceControlProxyPort; } set { mSourceControlProxyPort = value; OnPropertyChanged(nameof(SourceControlProxyPort)); } }
 
 
-        int mSourceControlTimeout=80;
+        int mSourceControlTimeout = 80;
         public int SourceControlTimeout { get { return mSourceControlTimeout; } set { mSourceControlTimeout = value; OnPropertyChanged(nameof(SourceControlTimeout)); } }
 
         bool mSourceControlConfigureProxy;
         public bool SourceControlConfigureProxy { get { return mSourceControlConfigureProxy; } set { mSourceControlConfigureProxy = value; OnPropertyChanged(nameof(SourceControlConfigureProxy)); } }
-      
+
         bool mIgnoreCertificate;
         public bool IgnoreCertificate { get { return mIgnoreCertificate; } set { mIgnoreCertificate = value; } }
 

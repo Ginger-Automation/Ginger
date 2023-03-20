@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,17 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using GingerCore.ALM.RQM;
 using Ginger.UserControls;
-using GingerCore;
+using GingerCore.ALM;
+using GingerCore.ALM.RQM;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.ALM;
 
 namespace Ginger.ALM.RQM
 {
@@ -69,10 +68,10 @@ namespace Ginger.ALM.RQM
         {
             Mouse.OverrideCursor = Cursors.Wait;
             ObservableList<RQMTestPlan> mRQMTestPlansListSortedByDate = new ObservableList<RQMTestPlan>();
-            //foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectKey, System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
-            //{
-            //    mRQMTestPlansListSortedByDate.Add(testPlan);
-            //}
+            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectKey, System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
+            {
+                mRQMTestPlansListSortedByDate.Add(testPlan);
+            }
             grdRQMTestPlanes.DataSourceList = mRQMTestPlansListSortedByDate;
             Mouse.OverrideCursor = null;
         }

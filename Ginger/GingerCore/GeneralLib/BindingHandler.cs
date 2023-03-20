@@ -1,6 +1,5 @@
 ﻿using Amdocs.Ginger.Repository;
 using System;
-using System.Drawing;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -122,7 +121,10 @@ namespace GingerCore.GeneralLib
                 b.Path = new PropertyPath(property);
                 b.Mode = BindingMode;
                 if (bindingConvertor != null)
+                {
                     b.Converter = bindingConvertor;
+                }
+
                 b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                 panelControl.SetBinding(dependencyProperty, b);
             }

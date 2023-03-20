@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger.UserControlsLib.VisualFlow;
 using GingerCore;
 using GingerCore.Actions;
@@ -43,10 +42,10 @@ namespace Ginger.BusinessFlowLib
             mBusinessFlow = BF;
             InitializeComponent();
             int i = BF.Activities.Count;   //temp code remove later !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            
+
             //TODO: if big flow takes time to load then show loading message
 
-            CreateBFFlowDiagram();            
+            CreateBFFlowDiagram();
         }
 
         private void CreateBFFlowDiagram()
@@ -100,7 +99,7 @@ namespace Ginger.BusinessFlowLib
 
             MainFrame.Content = mFlowDiagram;
         }
-        
+
         void AddFlowControls()
         {
             foreach (Activity a in mBusinessFlow.Activities)
@@ -108,15 +107,15 @@ namespace Ginger.BusinessFlowLib
                 foreach (Act act in a.Acts)
                 {
                     foreach (FlowControl FC in act.FlowControls)
-                    {   
-                        
+                    {
+
                         FlowElement FlowControlFE = new FlowElement(FlowElement.eElementType.FlowControl, act.Description + Environment.NewLine + FC.Condition + "?", 200, 300);
 
                         //TODO: fix me cause problem when status = 0 !!!!!!!!!!!!!!!!
                         // FlowControlFE.BindStatusLabel(FC, FlowControl.Fields.Status);
-                        
+
                         mFlowDiagram.AddFlowElem(FlowControlFE);
-                        
+
                         // Create Line connector to the activity this FC is in
                         FlowLink FL2 = new FlowLink(GetFlowElemOfActivity(a), FlowControlFE);
                         FL2.LinkStyle = FlowLink.eLinkStyle.Line;
@@ -125,14 +124,14 @@ namespace Ginger.BusinessFlowLib
                         mFlowDiagram.AddConnector(FL2);
 
                         //TODO: update the FlowControlFE to be on same y of the Activity and x + 150
-                        
+
                         if (FC.FlowControlAction == eFlowControlAction.GoToActivity)
                         {
                             // Add Link from FC to target Activity if condition met
-                            
+
                             FlowElement TargetActivityFE = (from x in mFlowDiagram.GetAllFlowElem() where x.Object is Activity && ((Activity)x.Object).Guid == FC.GetGuidFromValue() select x).FirstOrDefault();
-                            
-                            FlowLink FL3 = new FlowLink(FlowControlFE, TargetActivityFE);                            
+
+                            FlowLink FL3 = new FlowLink(FlowControlFE, TargetActivityFE);
                             FL3.LinkStyle = FlowLink.eLinkStyle.DottedArrow;
                             FL3.SourcePosition = FlowLink.eFlowElementPosition.Top;  // TODO: find best connector - if we go up or down
                             FL3.DestinationPosition = FlowLink.eFlowElementPosition.Right; // TODO: find best connector- if we go up or down
@@ -140,8 +139,8 @@ namespace Ginger.BusinessFlowLib
                         }
 
                         if (FC.FlowControlAction == eFlowControlAction.StopBusinessFlow || FC.FlowControlAction == eFlowControlAction.StopRun)
-                        {                        
-                            FlowLink FL3 = new FlowLink(FlowControlFE, EndFlowElement);                         
+                        {
+                            FlowLink FL3 = new FlowLink(FlowControlFE, EndFlowElement);
                             FL3.LinkStyle = FlowLink.eLinkStyle.DottedArrow;
                             FL3.SourcePosition = FlowLink.eFlowElementPosition.Top;  // TODO: find best connector
                             FL3.DestinationPosition = FlowLink.eFlowElementPosition.Right; // TODO: find best connector
@@ -164,8 +163,8 @@ namespace Ginger.BusinessFlowLib
 
         private FlowElement GetFlowElemOfActivity(Activity a)
         {
-            IEnumerable<FlowElement> list =  mFlowDiagram.GetAllFlowElem();
-            foreach(FlowElement FE in list)
+            IEnumerable<FlowElement> list = mFlowDiagram.GetAllFlowElem();
+            foreach (FlowElement FE in list)
             {
                 if (FE.Object is Activity)
                 {

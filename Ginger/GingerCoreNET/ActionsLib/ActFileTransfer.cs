@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Renci.SshNet;
 using System;
@@ -66,7 +65,7 @@ namespace GingerCore.Actions
         }
         private SftpClient UnixFTPClient;
         private string workdir;
-        public eFileTransferAction FileTransferAction 
+        public eFileTransferAction FileTransferAction
         {
             get
             {
@@ -177,18 +176,18 @@ namespace GingerCore.Actions
             }
         }
 
-        public bool KeyboardIntractiveAuthentication 
+        public bool KeyboardIntractiveAuthentication
         {
-            get 
+            get
             {
                 return Convert.ToBoolean(GetInputParamValue("KeyboardIntractiveAuthentication"));
             }
-            set 
+            set
             {
-                AddOrUpdateInputParamValue("KeyboardIntractiveAuthentication",Convert.ToString(value));
+                AddOrUpdateInputParamValue("KeyboardIntractiveAuthentication", Convert.ToString(value));
             }
         }
-        private string mPCPathCalculated=string.Empty;
+        private string mPCPathCalculated = string.Empty;
 
         private string PCPathCalculated
         {
@@ -290,8 +289,9 @@ namespace GingerCore.Actions
             }
 
             if (!string.IsNullOrEmpty(drvPrivateKeyPassPhrase))
+            {
                 passPhrase = drvPrivateKeyPassPhrase;
-
+            }
 
             if (File.Exists(drvPrivateKey))
             {
@@ -313,7 +313,7 @@ namespace GingerCore.Actions
             PasswordAuthenticationMethod pauth = new PasswordAuthenticationMethod(UserName, Password);
             keyboardIntractiveAuth.AuthenticationPrompt += HandleIntractiveKeyBoardEvent;
 
-            connectionInfo = new ConnectionInfo(Host, drvPort, drvUserName,pauth, keyboardIntractiveAuth);
+            connectionInfo = new ConnectionInfo(Host, drvPort, drvUserName, pauth, keyboardIntractiveAuth);
             return connectionInfo;
         }
 
@@ -485,9 +485,13 @@ namespace GingerCore.Actions
 
                 //detect whether its a directory or file
                 if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                {
                     return true;
+                }
                 else
+                {
                     return false;
+                }
             }
             catch
             {

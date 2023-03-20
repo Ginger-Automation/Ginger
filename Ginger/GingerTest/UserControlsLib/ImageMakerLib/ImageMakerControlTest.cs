@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,16 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Ginger.GeneralLib;
-using GingerTestHelper;
-using GingerWPF.GeneralLib;
-using GingerWPF.UserControlsLib.ImageMakerLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
 
 namespace GingerTest
 {
@@ -44,21 +35,21 @@ namespace GingerTest
 
         [ClassCleanup]
         public static void ClassCleanup()
-        {            
-            
+        {
+
         }
 
 
         [TestInitialize]
         public void TestInitialize()
         {
-          
+
         }
 
         [TestCleanup]
         public void TestCleanUp()
         {
-          
+
         }
 
         //private static Action EmptyDelegate = delegate () { };
@@ -76,10 +67,10 @@ namespace GingerTest
         //    //// Act            
         //    //TestWindow TW = new TestWindow(p1);
         //    //TW.Show();
-            
+
         //    //TW.Activate();            
         //    ////mGingerWPFAutomator.SleepWithDoEvents(200);
-            
+
         //    //IsEquel2 = VisualCompare.IsVisualEquel(p1, "ImageMakerControlsVisualTest1_50");
 
         //    //TW.Close();
@@ -112,7 +103,7 @@ namespace GingerTest
         //}
 
 
-       
+
 
     }
 }

@@ -17,27 +17,24 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System;
-using System.Collections.Generic;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.WindowExplorer;
 using Ginger.WindowExplorer.ASCF;
-using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.ASCF;
-using GingerCore.Drivers;
 using GingerCore.Drivers.ASCF;
 using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
+using System;
+using System.Collections.Generic;
+using System.Windows.Controls;
 
 namespace Ginger.Actions.Locators.ASCF
 {
     class ASCFBrowserTreeItem : TreeViewItemBase, ITreeViewItem, IWindowExplorerTreeItem
     {
-        public ASCFControlInfo ASCFControlInfo {get; set;}
+        public ASCFControlInfo ASCFControlInfo { get; set; }
 
         public string Name { get; set; }
         public string Path { get; set; }
@@ -45,7 +42,7 @@ namespace Ginger.Actions.Locators.ASCF
         private ASCFBrowserInfoPage mASCFBrowserInfoPage;
 
         Object ITreeViewItem.NodeObject()
-        {            
+        {
             return ASCFControlInfo;
         }
 
@@ -68,32 +65,32 @@ namespace Ginger.Actions.Locators.ASCF
             }
 
             List<ITreeViewItem> list = new List<ITreeViewItem>();
-            foreach(ASCFBrowserElementInfo c in lst)
+            foreach (ASCFBrowserElementInfo c in lst)
             {
                 //TODO: add more handlers
                 switch (c.ControlType)
                 {
                     case ASCFBrowserElementInfo.eControlType.TextBox:
-                        list.Add(new ASCFBrowserTextBoxTreeItem() { ASCFBrowserElementInfo = c });                    
+                        list.Add(new ASCFBrowserTextBoxTreeItem() { ASCFBrowserElementInfo = c });
                         break;
                     case ASCFBrowserElementInfo.eControlType.Link:
-                        list.Add(new ASCFBrowserLinkTreeItem() { ASCFBrowserElementInfo = c});
+                        list.Add(new ASCFBrowserLinkTreeItem() { ASCFBrowserElementInfo = c });
                         break;
                     case ASCFBrowserElementInfo.eControlType.Button:
-                        list.Add(new ASCFBrowserButtonTreeItem() { ASCFBrowserElementInfo = c});
+                        list.Add(new ASCFBrowserButtonTreeItem() { ASCFBrowserElementInfo = c });
                         break;
                     case ASCFBrowserElementInfo.eControlType.Label:
-                        list.Add(new ASCFBrowserLabelTreeItem() { ASCFBrowserElementInfo = c});
+                        list.Add(new ASCFBrowserLabelTreeItem() { ASCFBrowserElementInfo = c });
                         break;
                     case ASCFBrowserElementInfo.eControlType.DropDown:
-                        list.Add(new ASCFBrowserDropDownTreeItem() { ASCFBrowserElementInfo = c});
+                        list.Add(new ASCFBrowserDropDownTreeItem() { ASCFBrowserElementInfo = c });
                         break;
                     case ASCFBrowserElementInfo.eControlType.CheckBox:
-                        list.Add(new ASCFBrowserCheckBoxTreeItem() { ASCFBrowserElementInfo = c});
+                        list.Add(new ASCFBrowserCheckBoxTreeItem() { ASCFBrowserElementInfo = c });
                         break;
                     default:
                         // Add generic element - unknown type...
-                        list.Add(new ASCFBrowserElementTreeItem() { ASCFBrowserElementInfo = c});
+                        list.Add(new ASCFBrowserElementTreeItem() { ASCFBrowserElementInfo = c });
                         break;
                 }
             }
@@ -111,7 +108,7 @@ namespace Ginger.Actions.Locators.ASCF
             {
                 mASCFBrowserInfoPage = new ASCFBrowserInfoPage(Path);
             }
-            return mASCFBrowserInfoPage;            
+            return mASCFBrowserInfoPage;
         }
 
         ContextMenu ITreeViewItem.Menu()
@@ -140,8 +137,8 @@ namespace Ginger.Actions.Locators.ASCF
         ObservableList<ControlProperty> IWindowExplorerTreeItem.GetElementProperties()
         {
             //TODO: temp solution fix me hard coded [0[]
-                ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
-                return list;
+            ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
+            return list;
         }
 
         public ObservableList<ActInputValue> GetItemSpecificActionInputValues()

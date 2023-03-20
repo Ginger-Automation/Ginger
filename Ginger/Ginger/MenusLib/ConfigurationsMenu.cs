@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -43,8 +43,8 @@ namespace Ginger.ConfigurationsLib
                 if (mMenusPage == null)
                 {
                     mMenusPage = new TwoLevelMenuPage(GetMenu());
-                     WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
-                     WorkSpace.Instance.UserProfile.PropertyChanged += WorkSpacePropertyChanged;
+                    WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+                    WorkSpace.Instance.UserProfile.PropertyChanged += WorkSpacePropertyChanged;
                 }
                 return mMenusPage;
             }
@@ -101,7 +101,7 @@ namespace Ginger.ConfigurationsLib
 
         private static Page ReportsConfig()
         {
-            return new HTMLReportsConfigurationPage();            
+            return new HTMLReportsConfigurationPage();
         }
 
         private static Page ExecutionLoggerConfig()
@@ -111,21 +111,21 @@ namespace Ginger.ConfigurationsLib
         }
 
         private static Page AgentsList()
-        {            
+        {
             AgentsFolderTreeItem AgentsRoot = new AgentsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<GingerCore.Agent>());
             AgentsRoot.IsGingerDefualtFolder = true;
-            SingleItemTreeViewExplorerPage agentsPage = new SingleItemTreeViewExplorerPage("Agents", eImageType.Agent, AgentsRoot, AgentsRoot.SaveAllTreeFolderItemsHandler, AgentsRoot.AddItemHandler, isSaveButtonHidden: true);                        
+            SingleItemTreeViewExplorerPage agentsPage = new SingleItemTreeViewExplorerPage("Agents", eImageType.Agent, AgentsRoot, AgentsRoot.SaveAllTreeFolderItemsHandler, AgentsRoot.AddItemHandler, isSaveButtonHidden: true);
             return agentsPage;
         }
 
 
         private static Page GetTagsPage()
         {
-             return new TagsPage(TagsPage.eViewMode.Solution);            
+            return new TagsPage(TagsPage.eViewMode.Solution);
         }
 
         private static Page ReportsList()
-        {          
+        {
             HTMLGingerReportsTreeItem reportsRoot = new HTMLGingerReportsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<HTMLReportConfiguration>());
             reportsRoot.IsGingerDefualtFolder = true;
             SingleItemTreeViewExplorerPage reportsPage = new SingleItemTreeViewExplorerPage("Reports Templates", eImageType.Report, reportsRoot, reportsRoot.SaveAllTreeFolderItemsHandler, reportsRoot.AddItemHandler, isSaveButtonHidden: true);

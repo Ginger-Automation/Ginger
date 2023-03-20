@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,22 +36,22 @@ namespace Ginger.Agents
     /// Interaction logic for AgentEditPage.xaml
     /// </summary>
     public partial class AgentEditPage : GingerUIPage
-    {        
+    {
         Agent mAgent;
         ePlatformType mOriginalPlatformType;
         string mOriginalDriverType;
         bool IsReadOnly, IsEnabledCheckBox;
-        
+
         public AgentEditPage(Agent agent, bool isReadOnly = false)
         {
             InitializeComponent();
             //xAgentNameTextBox.IsReadOnly
-            
+
             this.IsReadOnly = isReadOnly;
             ChangeContorlsReadOnly(IsReadOnly);
 
             if (agent != null)
-            {               
+            {
                 mAgent = agent;
                 CurrentItemToSave = mAgent;
                 xShowIDUC.Init(mAgent);
@@ -88,8 +88,8 @@ namespace Ginger.Agents
                 }
                 else
                 {
-                   // xAgentConfigFrame.SetContent(new NewAgentDriverConfigPage(mAgent));
-                   xAgentConfigFrame.SetContent(new AgentDriverConfigPage(mAgent));
+                    // xAgentConfigFrame.SetContent(new NewAgentDriverConfigPage(mAgent));
+                    xAgentConfigFrame.SetContent(new AgentDriverConfigPage(mAgent));
                 }
             }
         }
@@ -123,7 +123,7 @@ namespace Ginger.Agents
         }
 
         private void SetDriverInformation()
-        {            
+        {
             List<object> lst = new List<object>();
             foreach (eDriverType item in Enum.GetValues(typeof(eDriverType)))
             {
@@ -133,9 +133,9 @@ namespace Ginger.Agents
                     lst.Add(item);
                 }
             }
-            
-            GingerCore.General.FillComboFromEnumObj(xDriverTypeComboBox, mAgent.DriverType, lst);   
-            if(mAgent.SupportVirtualAgent())
+
+            GingerCore.General.FillComboFromEnumObj(xDriverTypeComboBox, mAgent.DriverType, lst);
+            if (mAgent.SupportVirtualAgent())
             {
                 xVirtualAgentsPanel.Visibility = Visibility.Visible;
                 xAgentVirtualSupported.Content = "Yes";
@@ -151,9 +151,15 @@ namespace Ginger.Agents
 
         private void driverTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (xDriverTypeComboBox.SelectedItem == null) return;
+            if (xDriverTypeComboBox.SelectedItem == null)
+            {
+                return;
+            }
 
-            if ((Agent.eDriverType)xDriverTypeComboBox.SelectedValue == mAgent.DriverType) return;
+            if ((Agent.eDriverType)xDriverTypeComboBox.SelectedValue == mAgent.DriverType)
+            {
+                return;
+            }
 
             //notify user that all driver configurations will be reset
             if (xDriverTypeComboBox.SelectedItem.ToString() != mOriginalDriverType)
@@ -161,17 +167,19 @@ namespace Ginger.Agents
                 if (Reporter.ToUser(eUserMsgKey.ChangingAgentDriverAlert) == Amdocs.Ginger.Common.eUserMsgSelection.No)
                 {
                     foreach (object item in xDriverTypeComboBox.Items)
+                    {
                         if (item.ToString() == mOriginalDriverType)
                         {
                             xDriverTypeComboBox.SelectedItem = item;
                             break;
-                        }                    
+                        }
+                    }
                 }
                 else
                 {
-                    mOriginalDriverType = xDriverTypeComboBox.SelectedItem.ToString();                    
-                    mAgent.AgentOperations.InitDriverConfigs(); 
-                }                
+                    mOriginalDriverType = xDriverTypeComboBox.SelectedItem.ToString();
+                    mAgent.AgentOperations.InitDriverConfigs();
+                }
             }
         }
 

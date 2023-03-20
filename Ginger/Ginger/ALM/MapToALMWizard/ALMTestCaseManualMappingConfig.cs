@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ namespace Ginger.ALM.MapToALMWizard
         {
             get
             {
-                if(aLMTSTest == null)
+                if (aLMTSTest == null)
                 {
                     return "";
                 }
@@ -82,10 +82,10 @@ namespace Ginger.ALM.MapToALMWizard
         }
         public void UpdateTestCaseMapStatus(int unmappedTestStepsListCount)
         {
-            if (testStepsMappingList.Count == 0 || 
+            if (testStepsMappingList.Count == 0 ||
                 testStepsMappingList.All(ts => ts.almTestStep is null || ts.almTestStep.StepName is null))
             {
-                MappingStatus = eMappingStatus.UnMapped; 
+                MappingStatus = eMappingStatus.UnMapped;
                 return;
             }
             if (testStepsMappingList.All(ts => ts.almTestStep is not null && ts.almTestStep.StepName is not null)

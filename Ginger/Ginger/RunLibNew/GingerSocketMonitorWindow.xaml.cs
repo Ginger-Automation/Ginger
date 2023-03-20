@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -38,17 +38,17 @@ namespace Ginger.Drivers.CommunicationProtocol
         {
             InitializeComponent();
             MessageLabel.Visibility = Visibility.Collapsed;
-            mGingerNodeProxy = gingerNodeProxy;            
+            mGingerNodeProxy = gingerNodeProxy;
         }
 
         private void StartRecording()
         {
-            mGingerNodeProxy.StartRecordingSocketTraffic();                        
+            mGingerNodeProxy.StartRecordingSocketTraffic();
         }
-      
+
 
         private void SendButton_Click(object sender, RoutedEventArgs e)
-        {             
+        {
             NewPayLoad PL = new NewPayLoad(PayLoadNameTextBox.Text);
             PL.ClosePackage();
             mGingerNodeProxy.SendRequestPayLoad(PL);
@@ -68,7 +68,7 @@ namespace Ginger.Drivers.CommunicationProtocol
         public void ShowMessage(string txt)
         {
             MessageLabel.Content = txt;
-            MessageLabel.Visibility = Visibility.Visible;            
+            MessageLabel.Visibility = Visibility.Visible;
         }
 
         internal void DelayedClose()
@@ -84,25 +84,26 @@ namespace Ginger.Drivers.CommunicationProtocol
             }
             this.Close();
         }
-        
+
 
         public void ShowMonitor(GingerNodeProxy gingerNodeProxy)
         {
             GingerSocketLogs = new ObservableList<GingerSocketLog>();
-            MainListView.ItemsSource = GingerSocketLogs;            
+            MainListView.ItemsSource = GingerSocketLogs;
             this.Show();
         }
 
         public void Add(GingerSocketLog gingerSocketLog)
         {
-            Dispatcher.Invoke(() => {
+            Dispatcher.Invoke(() =>
+            {
                 GingerSocketLogs.Add(gingerSocketLog);
             });
         }
 
         public void CloseMonitor()
         {
-            DelayedClose();            
+            DelayedClose();
         }
 
         private void MainListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,24 +17,21 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
+using Ginger.SolutionWindows.TreeViewItems;
+using GingerCore.Actions;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using Ginger.SolutionWindows.TreeViewItems;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Drivers;
-using GingerCore.Drivers.Common;
-using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
 
 namespace Ginger.WindowExplorer.HTMLCommon
 {
     public class HTMLElementTreeItemBase : TreeViewItemBase, ITreeViewItem, IWindowExplorerTreeItem
-    {        
-        public ElementInfo ElementInfo { get; set; }     
-        
+    {
+        public ElementInfo ElementInfo { get; set; }
+
         Object ITreeViewItem.NodeObject()
         {
             return ElementInfo;
@@ -52,7 +49,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
             List<ITreeViewItem> list = new List<ITreeViewItem>();
 
             List<ElementInfo> ChildrenList = ElementInfo.WindowExplorer.GetElementChildren(this.ElementInfo);
-            if(ChildrenList != null)
+            if (ChildrenList != null)
             {
                 foreach (ElementInfo EI in ChildrenList)
                 {
@@ -61,10 +58,10 @@ namespace Ginger.WindowExplorer.HTMLCommon
                     list.Add(TVI);
                 }
             }
-            
-            return list;          
+
+            return list;
         }
-        
+
         bool ITreeViewItem.IsExpandable()
         {
             return true;
@@ -102,7 +99,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
                 GenElementAction = ActGenElement.eGenElementAction.Click,
                 Value = ""
             });
-            
+
             list.Add(new ActGenElement()
             {
                 Description = "Check item is visible '" + this.ElementInfo.ElementTitle + "' ",

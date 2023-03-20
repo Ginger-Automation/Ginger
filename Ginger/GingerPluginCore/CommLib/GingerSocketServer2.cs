@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,7 +25,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using GingerCoreNET.Drivers.CommunicationProtocol;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 {
@@ -45,9 +45,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         public void StartServer(int port)
         {
             // Run the server on its own thread
-            mTask = new Task(() => {
+            mTask = new Task(() =>
+            {
                 DoStartServer(port);
-            }) ;            
+            });
             mTask.Start();
             Stopwatch st = Stopwatch.StartNew();
             while (!isReady && st.ElapsedMilliseconds < 3000)  // shouldn't take more than 3 seconds to bind a port
@@ -61,8 +62,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         void DoStartServer(int port)
         {
             mPort = port;
-                        
-            IPAddress ipAddress = IPAddress.Parse(SocketHelper.GetLocalHostIP());  
+
+            IPAddress ipAddress = IPAddress.Parse(SocketHelper.GetLocalHostIP());
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, mPort);
 
             IPInfo = ipAddress.ToString() + ":" + port;
@@ -83,13 +84,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
                     // Start an asynchronous socket to listen for connections.                      
                     mServerSocketlistener.BeginAccept(new AsyncCallback(AcceptCallback), mServerSocketlistener);
-                    
+
                     // Wait until a connection is made before continuing.  
                     allDone.WaitOne();
                     Thread.Sleep(250);
                 }
             }
-            catch(ObjectDisposedException ex)
+            catch (ObjectDisposedException ex)
             {
                 // ignore 
                 Console.WriteLine("DoStartServer ObjectDisposedException exception ignored " + ex.Message);
@@ -97,7 +98,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             catch (Exception ex)
             {
                 throw ex;
-            }            
+            }
         }
 
         public void Shutdown()
@@ -105,18 +106,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             isClosing = true;
             allDone.Reset();
             if (mServerSocketlistener != null)
-            {                
+            {
                 mServerSocketlistener.Close();
             }
-             
+
             //TODO: send message to all clients of shut down
         }
-        
+
         // New incoming Ginger Client
         public void AcceptCallback(IAsyncResult ar)
         {
             try
-            {                
+            {
                 // Signal the main thread to continue.  
                 allDone.Set();
 
@@ -131,9 +132,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 gingerSocketInfo.MessageHandler = MessageHandler;
                 gingerSocketInfo.Receive();
                 Clients.Add(gingerSocketInfo);
-            }                        
-            catch(Exception ex)
-            {                
+            }
+            catch (Exception ex)
+            {
                 if (isClosing)
                 {
                     return;
@@ -150,20 +151,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             {
                 throw new InvalidOperationException("SendPayLoad, SessionId not found: " + sessionID);
             }
-            pL.PaylodType = NewPayLoad.ePaylodType.RequestPayload;            
-            return c.SendRequest(pL);            
+            pL.PaylodType = NewPayLoad.ePaylodType.RequestPayload;
+            return c.SendRequest(pL);
         }
 
         // Send Message to all clients, answer??
         public void Broadcast(NewPayLoad payLoad)
-        {            
+        {
             // we can do Parallel for each..- speed
             foreach (GingerSocketInfo client in Clients)
             {
                 if (client.Socket.Connected)
-                {                                         
+                {
                     NewPayLoad rc = client.SendRequest(payLoad); // TODO: return message? or? or make it one way send 
-                    
+
                 }
                 // TODO: else remove client
             }

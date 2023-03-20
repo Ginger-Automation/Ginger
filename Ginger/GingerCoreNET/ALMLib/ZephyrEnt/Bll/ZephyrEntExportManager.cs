@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -73,7 +73,8 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         public dynamic UpdateTestPlanningFolder(long cycleId, long parenttreeid, BusinessFlow businessFlow)
         {
             List<TestCaseResource> testCaseResources = zephyrEntRepository.GetTestCasesByAssignmentTree(Convert.ToInt32(parenttreeid));
-            testCaseResources.ForEach(tcr => {
+            testCaseResources.ForEach(tcr =>
+            {
                 if (!businessFlow.ActivitiesGroups.Any(ag => ag.ExternalID2.Equals(tcr.testcase.id.ToString())))
                 {
                     bool isDeleted = zephyrEntRepository.DeleteTestFromPhaseByTestId(Convert.ToInt32(tcr.testcase.testcaseId), Convert.ToInt32(tcr.tct.tcrCatalogTreeId), Convert.ToInt32(cycleId));
@@ -150,7 +151,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     executions = zephyrEntRepository.GetModuleExecutionData(Convert.ToInt32(bizFlow.ExternalID));
                 }
                 // Create new Executions Ids for selected Activities Groups
-                if(executions == null || executions.Count == 0)
+                if (executions == null || executions.Count == 0)
                 {
 
                 }
@@ -214,7 +215,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                             System.IO.Directory.Delete(activGroup.TempReportFolder, true);
                                             //Creating the Zip file - finish
 
-                                            Execution attachmentExecution = zephyrEntRepository.UpdateTestCaseAttachment(scheduleId.ToString() , zipFileName);
+                                            Execution attachmentExecution = zephyrEntRepository.UpdateTestCaseAttachment(scheduleId.ToString(), zipFileName);
 
                                             if (attachmentExecution == null)
                                             {
@@ -265,11 +266,11 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
 
         private JObject findPhaseToExportDetails(JObject exportedCategories, string id)
         {
-            if(exportedCategories.GetValue("id").ToString().Equals(id))
+            if (exportedCategories.GetValue("id").ToString().Equals(id))
             {
                 return exportedCategories;
             }
-            if(exportedCategories.GetValue("categories").Count() > 0)
+            if (exportedCategories.GetValue("categories").Count() > 0)
             {
                 return findPhaseToExportDetails((JObject)exportedCategories.GetValue("categories").First, id);
             }

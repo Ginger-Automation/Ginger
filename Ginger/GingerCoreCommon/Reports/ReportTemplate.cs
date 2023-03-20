@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,25 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using Ginger.Run;
-using GingerCore;
-using GingerCore.Environments;
-
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
 
 
 namespace Ginger.Reports
 {
     public class ReportTemplate : RepositoryItemBase, IReportTemplate
-    {        
+    {
 
         public override string GetNameForFileName() { return Name; }
 
@@ -46,11 +37,11 @@ namespace Ginger.Reports
         }
 
         public static partial class Fields
-        {            
+        {
             public static string Name = "Name";
-            public static string Description = "Description";         
+            public static string Description = "Description";
             public static string Status = "Status";
-            public static string Xaml = "Xaml";            
+            public static string Xaml = "Xaml";
         }
 
         private string mName;
@@ -68,11 +59,11 @@ namespace Ginger.Reports
                 }
             }
         }
-       
+
         private string mDescription;
         [IsSerializedForLocalRepository]
         public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(Fields.Description); } } }
-        
+
         eReportStatus mStatus;
         [IsSerializedForLocalRepository]
         public eReportStatus Status

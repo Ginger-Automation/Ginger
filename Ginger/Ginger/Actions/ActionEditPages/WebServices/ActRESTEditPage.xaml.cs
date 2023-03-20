@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,14 +17,13 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
+using GingerCore.Actions.REST;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using GingerCore.Actions.REST;
-using Ginger.UserControls;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Actions.WebServices
 {
@@ -47,9 +46,9 @@ namespace Ginger.Actions.WebServices
             RequestBodyUCValueExpression.Init(Context.GetAsContext(mActREST.Context), mActREST.RequestBody);
             RequestRespondXmlSaveTextBox.Init(Context.GetAsContext(mActREST.Context), mActREST.SaveRequestResponseFolderPath);
 
-            TemplateFileNameFileBrowser.Init(Context.GetAsContext(mActREST.Context), mActREST.TemplateFile); 
+            TemplateFileNameFileBrowser.Init(Context.GetAsContext(mActREST.Context), mActREST.TemplateFile);
             GingerCore.General.FillComboFromEnumObj(RequestTypeComboBox, mActREST.RequestType);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RequestTypeComboBox, ComboBox.TextProperty, mActREST,  ActREST.Fields.RequestType);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RequestTypeComboBox, ComboBox.TextProperty, mActREST, ActREST.Fields.RequestType);
 
             //httpversion content type
             GingerCore.General.FillComboFromEnumObj(HttpVersioncombobox, mActREST.ReqHttpVersion);
@@ -58,7 +57,7 @@ namespace Ginger.Actions.WebServices
             //Request content type
             GingerCore.General.FillComboFromEnumObj(ContentTypeComboBox, mActREST.ContentType);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ContentTypeComboBox, ComboBox.SelectedValueProperty, mActREST, ActREST.Fields.ContentType);
-            
+
             //Response Content Type
             GingerCore.General.FillComboFromEnumObj(ResponseTypeComboBox, mActREST.ResponseContentType);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ResponseTypeComboBox, ComboBox.SelectedValueProperty, mActREST, ActREST.Fields.ResponseContentType);
@@ -71,8 +70,8 @@ namespace Ginger.Actions.WebServices
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CookieMode, ComboBox.SelectedValueProperty, mActREST, ActREST.Fields.CookieMode);
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(restRequest, CheckBox.IsCheckedProperty, mActREST, ActREST.Fields.RestRequestSave);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(restResponse, CheckBox.IsCheckedProperty, mActREST, ActREST.Fields.RestResponseSave);            
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(templateFileRadioBtn, RadioButton.IsCheckedProperty, mActREST,ActREST.Fields.UseRequestBody);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(restResponse, CheckBox.IsCheckedProperty, mActREST, ActREST.Fields.RestResponseSave);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(templateFileRadioBtn, RadioButton.IsCheckedProperty, mActREST, ActREST.Fields.UseRequestBody);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(freeBodyRadioBtn, RadioButton.IsCheckedProperty, mActREST, ActREST.Fields.UseTemplateFile);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RestFailActionOnBadRespose, CheckBox.IsCheckedProperty, mActREST, ActREST.Fields.DoNotFailActionOnBadRespose);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AcceptAllSSLCertificate, CheckBox.IsCheckedProperty, mActREST, ActREST.Fields.AcceptAllSSLCertificate);
@@ -109,8 +108,8 @@ namespace Ginger.Actions.WebServices
         private void HttpHeadersInputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)HttpHeadersGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage (AIV, nameof(ActInputValue.Value), Context.GetAsContext(mActREST.Context));
-            VEEW.ShowAsWindow ();
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), Context.GetAsContext(mActREST.Context));
+            VEEW.ShowAsWindow();
         }
 
         private void SetDynamicGrid()
@@ -136,7 +135,7 @@ namespace Ginger.Actions.WebServices
 
             view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Header", WidthWeight = 150 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Value", WidthWeight = 150 });
-            view.GridColsView.Add (new GridColView () { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["HttpHeadersValueExpressionButton"] });
+            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["HttpHeadersValueExpressionButton"] });
             view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Replace With Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
 
             HttpHeadersGrid.SetAllColumnsDefaultView(view);
@@ -148,7 +147,11 @@ namespace Ginger.Actions.WebServices
         private void CustomNetworkCreds_Checked(object sender, RoutedEventArgs e)
         {
             CheckBox cb = sender as CheckBox;
-            if (CustomNetworkCreds == null || DefaultNetworkCreds == null) return;
+            if (CustomNetworkCreds == null || DefaultNetworkCreds == null)
+            {
+                return;
+            }
+
             if (cb.IsChecked == true)
             {
                 DefaultNetworkCreds.IsChecked = false;
@@ -172,7 +175,11 @@ namespace Ginger.Actions.WebServices
         private void DefaultNetworkCreds_Checked(object sender, RoutedEventArgs e)
         {
             CheckBox cb = sender as CheckBox;
-            if (CustomNetworkCreds == null || DefaultNetworkCreds == null) return;
+            if (CustomNetworkCreds == null || DefaultNetworkCreds == null)
+            {
+                return;
+            }
+
             if (cb.IsChecked == true)
             {
                 CustomNetworkCreds.IsChecked = false;
@@ -195,26 +202,40 @@ namespace Ginger.Actions.WebServices
 
         private void RequestBodyType_SelectionChanged(object sender, RoutedEventArgs e)
         {
-            if (freeBodyRadioBtn == null || templateFileRadioBtn == null) return;
+            if (freeBodyRadioBtn == null || templateFileRadioBtn == null)
+            {
+                return;
+            }
+
             if (freeBodyRadioBtn.IsChecked == true)
             {
                 FreeStackPanel.Visibility = System.Windows.Visibility.Visible;
                 if (mActREST.TemplateFile.Value != null)
+                {
                     TemplateFileNameFileBrowser.ValueTextBox.Text = string.Empty;
+                }
+
                 TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
             }
             else
             {
                 TemplateStackPanel.Visibility = System.Windows.Visibility.Visible;
                 if (mActREST.RequestBody.Value != null)
+                {
                     RequestBodyUCValueExpression.ValueTextBox.Text = string.Empty;
+                }
+
                 FreeStackPanel.Visibility = System.Windows.Visibility.Collapsed;
             }
         }
 
         private void ResetPanelVisibility()
         {
-            if (restRequest == null || restResponse == null) return;
+            if (restRequest == null || restResponse == null)
+            {
+                return;
+            }
+
             if (restRequest.IsChecked == true || restResponse.IsChecked == true)
             {
                 requestResponseStackPanel.Visibility = System.Windows.Visibility.Visible;
@@ -228,15 +249,15 @@ namespace Ginger.Actions.WebServices
 
         private void SaveXml_CheckedUnchecked(object sender, RoutedEventArgs e)
         {
-            ResetPanelVisibility();        
-        }              
+            ResetPanelVisibility();
+        }
 
         private void BrowseTemplateFileButton_Click(object sender, RoutedEventArgs e)
         {
             if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()) is string fileName)
             {
                 TemplateFileNameFileBrowser.ValueTextBox.Text = fileName;
-            }                   
+            }
         }
 
         private void BrowseRequestResponseFolderButton_Click(object sender, RoutedEventArgs e)
@@ -250,6 +271,6 @@ namespace Ginger.Actions.WebServices
                 RequestRespondXmlSaveTextBox.ValueTextBox.Text = folderDlg.SelectedPath;
                 Environment.SpecialFolder root = folderDlg.RootFolder;
             }
-        } 
+        }
     }
 }

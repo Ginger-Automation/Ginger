@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,18 +17,14 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
+using GingerCore.Actions.Common;
 using GingerCore.Drivers.CommunicationProtocol;
-using GingerCore.Helpers;
-using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
-
-using Amdocs.Ginger.CoreNET;
-using GingerCore.Actions.Common;
 
 namespace GingerCore.Actions.Java
 {
@@ -115,9 +111,9 @@ namespace GingerCore.Actions.Java
             [EnumValueDescription("Get Dialog Text")]
             GetDialogText,
             [EnumValueDescription("Accept Dialog")]
-            AcceptDialog  ,
+            AcceptDialog,
             [EnumValueDescription("Dismiss Dialog")]
-            DismissDialog  ,
+            DismissDialog,
             [EnumValueDescription("Set Date")]
             SelectDate,
             ScrollUp,
@@ -132,7 +128,7 @@ namespace GingerCore.Actions.Java
             GetItemCount,
             [EnumValueDescription("Send Keys")]
             SendKeys,
-             
+
             SendKeyPressRelease,
             [EnumValueDescription("Double Click")]
             DoubleClick,
@@ -143,7 +139,7 @@ namespace GingerCore.Actions.Java
             [EnumValueDescription("Set Focus")]
             SetFocus
         }
-        
+
         public eControlAction ControlAction
         {
             get
@@ -209,7 +205,7 @@ namespace GingerCore.Actions.Java
 
         //TODO: Change icon to Java
         public override eImageType Image { get { return eImageType.Java; } }
-        
+
         public PayLoad Pack()
         {
             //TODO: not used!? remove as in java driver there is special pack per action type
@@ -220,7 +216,7 @@ namespace GingerCore.Actions.Java
             pl.AddValue(Value);
             pl.AddEnumValue(ControlAction);
             pl.ClosePackage();
-            return pl;            
+            return pl;
         }
 
         public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Java }; } }
@@ -242,7 +238,7 @@ namespace GingerCore.Actions.Java
             AutoMapper.MapperConfiguration mapperConfiguration = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
             ActUIElement convertedActUIElement = mapperConfiguration.CreateMapper().Map<Act, ActUIElement>(this);
 
-            return  MapActJavaToActUIFields(convertedActUIElement);
+            return MapActJavaToActUIFields(convertedActUIElement);
         }
 
         private ActUIElement MapActJavaToActUIFields(ActUIElement convertedActUIElement)
@@ -252,9 +248,9 @@ namespace GingerCore.Actions.Java
 
             ActUIElement.eElementAction elmentActionType = GetElementActionType(this.ControlAction);
             convertedActUIElement.ElementAction = elmentActionType;
-            
+
             convertedActUIElement.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, this.WaitforIdle.ToString());
-            
+
             if (elmentActionType.Equals(ActUIElement.eElementAction.GetControlProperty))
             {
                 string propertyName = GetPropertyName(this.ControlAction);
@@ -277,7 +273,7 @@ namespace GingerCore.Actions.Java
 
         private string GetPropertyName(eControlAction controlAction)
         {
-            if(controlAction == eControlAction.GetState)
+            if (controlAction == eControlAction.GetState)
             {
                 return ActUIElement.eElementProperty.ToggleState.ToString();
             }
@@ -292,7 +288,7 @@ namespace GingerCore.Actions.Java
             ActUIElement.eElementAction type;
             switch (controlAction)
             {
-                case  eControlAction.SetValue:
+                case eControlAction.SetValue:
                     type = ActUIElement.eElementAction.SetValue;
                     break;
 

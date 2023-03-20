@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ limitations under the License.
 
 //#region License
 ///*
-//Copyright © 2014-2022 European Support Limited
+//Copyright © 2014-2023 European Support Limited
 
 //Licensed under the Apache License, Version 2.0 (the "License")
 //you may not use this file except in compliance with the License.
@@ -447,8 +447,8 @@ limitations under the License.
 
 //                            string getIDlink = string.Empty;
 //                            getIDlink = linkNode.Attributes["href"].Value.ToString(); // retrived CategoryType link
-                            
-                            
+
+
 //                            RqmResponseData categoryTypeDetail = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(getIDlink));
 //                            //System.Diagnostics.Debug.WriteLine("entered loop 2");
 
@@ -531,7 +531,7 @@ limitations under the License.
 //                        {
 //                            categoryTypeListing.LoadXml(categoryTypeDetail.responseText);
 //                        }
-                        
+
 //                        string categoryTypeName = string.Empty; // -->itemfield.Name
 //                        string categoryTypeItemType = string.Empty; //-->itemfield.ItemType
 //                        string categoryTypeMandatory = string.Empty; // --> itemfield.Mandatory & initial value for : --> itemfield.ToUpdate
@@ -566,7 +566,7 @@ limitations under the License.
 //                        bw.ReportProgress(catTypeRsult.Count, populatedValue);
 //                    });
 //                }
-                
+
 //                foreach (ExternalItemFieldBase field in catTypeRsult)
 //                {
 //                    fields.Add(field);
@@ -671,7 +671,7 @@ limitations under the License.
 //                                      //categoryValueXML.LoadXml(categoryValueDetails.responseText.ToString());
 //                                      XmlNode categoryTypeNode;
 //                                      string catTypeLink = string.Empty;
-                                    
+
 //                                    if (!string.IsNullOrEmpty(categoryValueXML.InnerText.ToString()))
 //                                    {
 //                                        categoryTypeNode = categoryValueXML.GetElementsByTagName("ns2:categoryType").Item(0); //need to consider changes in tag i.e. ns3/ns4...

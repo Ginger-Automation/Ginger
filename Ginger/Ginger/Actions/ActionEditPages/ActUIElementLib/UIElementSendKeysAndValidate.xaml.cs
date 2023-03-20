@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions.Common;
+using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore.Actions.Common;
-using GingerCore.Platforms.PlatformsInfo;
-using System.Reflection;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -37,7 +37,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
     public partial class UIElementSendKeysAndValidate : Page
     {
         public ActUIElement mAct;
-        PlatformInfoBase mPlatform;      
+        PlatformInfoBase mPlatform;
 
         public enum eValidationType
         {
@@ -60,7 +60,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             //TODO: Binding of all UI elements            
             Value.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.Value), true, false, UCValueExpression.eBrowserType.Folder);
-            HandleElementType.BindControl(mAct,ActUIElement.Fields.HandleElementType, Platform.GetPlatformUIElementsType());
+            HandleElementType.BindControl(mAct, ActUIElement.Fields.HandleElementType, Platform.GetPlatformUIElementsType());
             HandleLocateByComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.HandleElementLocateBy), Platform.GetPlatformUIElementLocatorsList(), false, null);
             HandleLocatorValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.HandleElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
 
@@ -69,9 +69,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
             LocateByComboBox.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocateBy), Platform.GetPlatformUIElementLocatorsList(), false, null);
             LocatorValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementLocatorValue), true, false, UCValueExpression.eBrowserType.Folder);
             ValidationElementValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActUIElement.Fields.ValidationElementValue), true, false, UCValueExpression.eBrowserType.Folder);
-            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DefineHandleAction, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.DefineHandleAction, "False"));         
-        }        
-        
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DefineHandleAction, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActUIElement.Fields.DefineHandleAction, "False"));
+        }
+
         public Page GetPlatformEditPage()
         {
             string pageName = mPlatform.GetPlatformGenericElementEditControls();
@@ -96,12 +96,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private ePlatformType GetActionPlatform()
         {
             string targetapp = (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.TargetApplication;
-            ePlatformType platform = (from x in  WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+            ePlatformType platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
             return platform;
         }
 
         private void DefineHandleAction_Checked(object sender, RoutedEventArgs e)
-        {            
+        {
             HandleActionPanel.Visibility = Visibility.Visible;
         }
 
@@ -111,13 +111,13 @@ namespace Ginger.Actions._Common.ActUIElementLib
         }
 
         private void HandleElement_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {            
+        {
             HandleActionType.Items.Clear();
             HandleLocatorValue.IsEnabled = true;
-            
-            List<ActUIElement.eElementAction>  list = mPlatform.GetPlatformUIElementActionsList((eElementType)HandleElementType.SelectedValue);
+
+            List<ActUIElement.eElementAction> list = mPlatform.GetPlatformUIElementActionsList((eElementType)HandleElementType.SelectedValue);
             mAct.HandleElementType = (eElementType)HandleElementType.SelectedValue;
             HandleActionType.BindControl(mAct, ActUIElement.Fields.HandleActionType, list);
-        }        
+        }
     }
 }

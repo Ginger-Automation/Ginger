@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -223,7 +222,9 @@ namespace GingerCore.Drivers
                 return SpyingElementEvent();
             }
             else
+            {
                 return null;
+            }
         }
 
         public virtual void ActionCompleted(Act act)
@@ -287,7 +288,7 @@ namespace GingerCore.Drivers
             return pointOnAppScreen;
         }
 
-        public virtual bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, Amdocs.Ginger.Common.UIElement.ElementInfo clickedElementInfo, bool AutoCorrectRectPropRequired)
+        public virtual bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, Amdocs.Ginger.Common.UIElement.ElementInfo clickedElementInfo)
         {
             return false;
         }
@@ -326,7 +327,7 @@ namespace GingerCore.Drivers
                             {
                                 item.Value = "1";
                             }
-                            else if(item.Value == "false")
+                            else if (item.Value == "false")
                             {
                                 item.Value = "0";
                             }
@@ -365,7 +366,9 @@ namespace GingerCore.Drivers
                     return elementLocator;
                 }
                 else
+                {
                     return null;
+                }
             }
             catch (Exception ex)
             {

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,15 +22,14 @@ using Ginger.Run;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCoreNET.GeneralLib;
+using LiveCharts;
+using LiveCharts.Defaults;
+using LiveCharts.Wpf;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using FontAwesome5;
-using LiveCharts;
-using LiveCharts.Wpf;
-using LiveCharts.Defaults;
 using System.Windows.Media;
 
 namespace Ginger.BusinessFlowWindows
@@ -60,11 +59,11 @@ namespace Ginger.BusinessFlowWindows
 
             lblElapsed.Content = "Elapsed (Seconds): " + mContext.BusinessFlow.ElapsedSecs;
             ShowPie();
-            
+
         }
 
-       
-        
+
+
         private void ShowPie()
         {
             int totalActivity = 0;
@@ -82,22 +81,22 @@ namespace Ginger.BusinessFlowWindows
             List<StatItem> st = mContext.BusinessFlow.GetActivitiesStats();
             foreach (var v in st)
             {
-                if (v.Description != "Running" &&  v.Description != "Pending" && v.Description != "Passed" && v.Description != "Failed" && v.Description != "Stopped" && !string.IsNullOrEmpty(v.Description))
+                if (v.Description != "Running" && v.Description != "Pending" && v.Description != "Passed" && v.Description != "Failed" && v.Description != "Stopped" && !string.IsNullOrEmpty(v.Description))
                 {
                     continue;
                 }
-                SeriesActivityCollection.Add(new PieSeries() { Title = v.Description,  LabelPosition = PieLabelPosition.OutsideSlice, Foreground= new SolidColorBrush(Colors.Gray), FontSize = 12, FontFamily = new FontFamily("MS Arial"),  Fill = GingerCore.General.SelectColorByCollection(v.Description), Values = new ChartValues<ObservableValue> { new ObservableValue(v.Count) }, DataLabels = true });
+                SeriesActivityCollection.Add(new PieSeries() { Title = v.Description, LabelPosition = PieLabelPosition.OutsideSlice, Foreground = new SolidColorBrush(Colors.Gray), FontSize = 12, FontFamily = new FontFamily("MS Arial"), Fill = GingerCore.General.SelectColorByCollection(v.Description), Values = new ChartValues<ObservableValue> { new ObservableValue(v.Count) }, DataLabels = true });
                 totalActivity += (int)v.Count;
             }
             Activities.Content = GingerDicser.GetTermResValue(eTermResKey.Activities);
-            
+
             //Action
             //if (ActionChart.Palette == null)
             //    ActionChart.Palette = new ResourceDictionaryCollection();
             //else
             //    ActionChart.Palette.Clear();
             //List<StatItems> actionStatList = new List<StatItems>();
-            List<StatItem> act = mContext.BusinessFlow.GetActionsStat();           
+            List<StatItem> act = mContext.BusinessFlow.GetActionsStat();
             foreach (var v in act)
             {
                 if (v.Description != "Running" && v.Description != "Pending" && v.Description != "Passed" && v.Description != "Failed" && v.Description != "Stopped" && v.Description != "FailIgnored" && !string.IsNullOrEmpty(v.Description))
@@ -110,14 +109,14 @@ namespace Ginger.BusinessFlowWindows
             status = SeriesActionCollection.Select(b => b.Title).Concat(SeriesActionCollection.Select(c => c.Title)).Distinct().ToList();
             HideAllLegend();
             foreach (string s in status)
-            {                
+            {
                 SwitchLegend(s);
             }
             {
                 stck.Children.Add(Ginger.General.makeImgFromControl(ActivityChart, totalActivity.ToString(), 1));
                 stck.Children.Add(Ginger.General.makeImgFromControl(ActionChart, totalAction.ToString(), 2));
             }
-            {                
+            {
                 //App.RunsetActivityTextbox.Text = totalActivity.ToString();
                 //App.RunsetActionTextbox.Text = totalAction.ToString();
             }
@@ -134,7 +133,10 @@ namespace Ginger.BusinessFlowWindows
         public void SwitchLegend(string status)
         {
             if (string.IsNullOrEmpty(status))
+            {
                 status = "Pending";
+            }
+
             switch (status)
             {
                 case "Passed":
@@ -164,14 +166,14 @@ namespace Ginger.BusinessFlowWindows
         private void ShowStatus()
         {
             // Why we create new GR? !!!
-            GingerExecutionEngine Gr = new GingerExecutionEngine(new GingerRunner());           
+            GingerExecutionEngine Gr = new GingerExecutionEngine(new GingerRunner());
             foreach (Activity activity in mContext.BusinessFlow.Activities)
             {
                 Gr.CalculateActivityFinalStatus(activity);
             }
             Gr.CalculateBusinessFlowFinalStatus(mContext.BusinessFlow);
             StatusLabel.Content = mContext.BusinessFlow.RunStatus;
-            StatusLabel.Foreground = General.GetStatusBrush(mContext.BusinessFlow.RunStatus);            
+            StatusLabel.Foreground = General.GetStatusBrush(mContext.BusinessFlow.RunStatus);
         }
 
         internal void ShowAsWindow()
@@ -179,11 +181,11 @@ namespace Ginger.BusinessFlowWindows
             Button ReportButton = new Button();
             ReportButton.Content = "Generate Report";
             ReportButton.Click += ReportButton_Click;
-            
+
             Button ExportBtn = new Button();
             ExportBtn.Content = "Export Execution Details";
             ExportBtn.Click += new RoutedEventHandler(ExportExecutionDetails);
-            
+
             GenericWindow genWin = null;
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Dialog, this.Title, this, new ObservableList<Button> { ExportBtn, ReportButton });
         }
@@ -199,13 +201,15 @@ namespace Ginger.BusinessFlowWindows
         }
 
         private void ExportExecutionDetails(object sender, RoutedEventArgs e)
-        {            
+        {
             ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
-            bfs.Add(mContext.BusinessFlow);           
-            if(!ExportResultsToALMConfigPage.Instance.IsProcessing)
+            bfs.Add(mContext.BusinessFlow);
+            if (!ExportResultsToALMConfigPage.Instance.IsProcessing)
             {
-                ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(mContext.Environment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
-                ExportResultsToALMConfigPage.Instance.ShowAsWindow();
+                if (ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(mContext.Environment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false)))
+                {
+                    ExportResultsToALMConfigPage.Instance.ShowAsWindow();
+                }
             }
             else
             {

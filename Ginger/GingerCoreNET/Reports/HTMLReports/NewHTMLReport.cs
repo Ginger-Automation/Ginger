@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using GingerCore;
 
 namespace Ginger.Reports.HTMLReports
 {
@@ -45,14 +44,14 @@ namespace Ginger.Reports.HTMLReports
 
                     // TODO: all the rest
             }
-            
+
 
             return mStringBuilder.ToString();
 
         }
 
         private void CreateBusinessFlowReport(BusinessFlowReport businessFlowReport)
-        {            
+        {
             //TODO: use the new cool style and create in parallel
 
             List<string> headers = new List<string>();
@@ -88,7 +87,7 @@ namespace Ginger.Reports.HTMLReports
             //headers.Add(nameof(activityReport.ActivityName));
             //headers.Add(nameof(activityReport.RunStatus));
             //headers.Add(nameof(activityReport.ElapsedSecs));
-            
+
             //XNode m = CreateHTMLTable(ll, headers, BizFlowHTMLColumns);
             //mStringBuilder.Append(m.ToString());
         }
@@ -123,7 +122,7 @@ namespace Ginger.Reports.HTMLReports
             XElement xFail = new XElement("h5", "Failed: 2222");
             //if (Failcount == 0)
             //{
-                xFail.SetAttributeValue("style", "color:green");
+            xFail.SetAttributeValue("style", "color:green");
             //}
             //else
             //{
@@ -131,7 +130,7 @@ namespace Ginger.Reports.HTMLReports
             //}
             s += xFail.ToString();
 
-            
+
             mStringBuilder.Append(s);
         }
     }

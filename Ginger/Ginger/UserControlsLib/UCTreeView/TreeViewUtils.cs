@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,7 +39,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             while (parent != null)
             {
                 if (type.IsInstanceOfType(parent))
+                {
                     break;
+                }
+
                 parent = VisualTreeHelper.GetParent(parent);
             }
             return parent;
@@ -55,7 +58,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         /// <param name="addItemModifiedIndication">Define is to show Change/Modified/Dirty indication or not</param>
         /// <param name="objItemModifiedIndicationBoolPropertyName">The obj Bool field name which reflect if the obj is Dirty/Changed or not- to be used for binding</param>
         /// <returns></returns>
-        public static StackPanel NewRepositoryItemTreeHeader(Object itemObj, string itemObjTitleProperty, eImageType itemIcon, eImageType itemSourceControlStateIcon, bool addItemModifiedIndication = false, string objItemModifiedIndicationBoolPropertyName="")
+        public static StackPanel NewRepositoryItemTreeHeader(Object itemObj, string itemObjTitleProperty, eImageType itemIcon, eImageType itemSourceControlStateIcon, bool addItemModifiedIndication = false, string objItemModifiedIndicationBoolPropertyName = "")
         {
             StackPanel headerStack = new StackPanel();
             headerStack.Orientation = Orientation.Horizontal;
@@ -71,7 +74,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     icon.Width = 16;
                     headerStack.Children.Add(icon);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, e.StackTrace);
                 }
@@ -86,10 +89,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     sourceControlIcon.BindControl((RepositoryFolderBase)itemObj, nameof(RepositoryFolderBase.SourceControlStatus));
                     ((RepositoryFolderBase)itemObj).RefreshFolderSourceControlStatus();
                     sourceControlIcon.Height = 10;
-                    sourceControlIcon.Width = 10;                   
+                    sourceControlIcon.Width = 10;
                     headerStack.Children.Add(sourceControlIcon);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     // TODO: write to log
                     Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
@@ -101,9 +104,14 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             {
                 Label itemTitleLbl = new Label();
                 if (itemObj != null)
+                {
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(itemTitleLbl, Label.ContentProperty, itemObj, itemObjTitleProperty);
+                }
                 else
+                {
                     itemTitleLbl.Content = itemObjTitleProperty;
+                }
+
                 headerStack.Children.Add(itemTitleLbl);
             }
             catch
@@ -125,20 +133,23 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     modifiedIcon.Margin = new Thickness(0, 10, 10, 0);
                     modifiedIcon.ToolTip = "This item was modified";
                     if (string.IsNullOrEmpty(objItemModifiedIndicationBoolPropertyName) == false)
-                        GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(modifiedIcon, ImageMakerControl.VisibilityProperty, itemObj, objItemModifiedIndicationBoolPropertyName, BindingMode:BindingMode.OneWay, bindingConvertor: new System.Windows.Controls.BooleanToVisibilityConverter());
+                    {
+                        GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(modifiedIcon, ImageMakerControl.VisibilityProperty, itemObj, objItemModifiedIndicationBoolPropertyName, BindingMode: BindingMode.OneWay, bindingConvertor: new System.Windows.Controls.BooleanToVisibilityConverter());
+                    }
+
                     headerStack.Children.Add(modifiedIcon);
                 }
                 catch
                 {
                 }
             }
-            
+
             return headerStack;
         }
 
-        
 
-        public static void AddSubMenuItem(MenuItem subMenu, string Header, RoutedEventHandler RoutedEventHandler, object CommandParameter = null, eImageType icon = eImageType.Null )
+
+        public static void AddSubMenuItem(MenuItem subMenu, string Header, RoutedEventHandler RoutedEventHandler, object CommandParameter = null, eImageType icon = eImageType.Null)
         {
             MenuItem mnuItem = CreateMenuItem(Header, RoutedEventHandler, CommandParameter, icon);
             subMenu.Items.Add(mnuItem);
@@ -179,7 +190,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 image.Source = new BitmapImage(new Uri(@"/Images/" + ImageFile, UriKind.RelativeOrAbsolute));
             }
             catch
-            {               
+            {
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Missing Header Image");
             }
 
@@ -193,7 +204,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 // It is not must that this is SC image
                 // SCimage.ToolTip = "Source Control Status";
             }
-           
+
             // Label
             Label lbl = new Label();
 
@@ -277,7 +288,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     modifiedIcon.Margin = new Thickness(0, 10, 10, 0);
                     modifiedIcon.ToolTip = "This item was modified";
                     if (string.IsNullOrEmpty(objItemModifiedIndicationBoolPropertyName) == false)
+                    {
                         GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(modifiedIcon, ImageMakerControl.VisibilityProperty, obj, objItemModifiedIndicationBoolPropertyName, BindingMode: BindingMode.OneWay, bindingConvertor: new BooleanToVisibilityConverter());
+                    }
+
                     headerStack.Children.Add(modifiedIcon);
                 }
                 catch

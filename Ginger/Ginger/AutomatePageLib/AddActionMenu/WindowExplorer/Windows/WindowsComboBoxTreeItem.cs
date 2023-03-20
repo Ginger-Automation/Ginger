@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,14 +17,14 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Collections.Generic;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
 using Ginger.WindowExplorer;
 using GingerCore.Actions;
 using GingerCore.Actions.Windows;
 using GingerCore.Drivers.Common;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
+using System.Collections.Generic;
+using System.Windows.Controls;
 
 namespace Ginger.Drivers.Windows
 {
@@ -39,30 +39,30 @@ namespace Ginger.Drivers.Windows
         {
             ObservableList<Act> list = new ObservableList<Act>();
 
+            list.Add(new ActWindowsControl()
+            {
+                Description = "Set " + UIAElementInfo.ElementTitle + " Value",
+                Value = "Sample Value",
+                ControlAction = ActWindowsControl.eControlAction.SetValue
+            });
+
+            list.Add(new ActWindowsControl()
+            {
+                Description = "Get " + UIAElementInfo.ElementTitle + " Value",
+                ControlAction = ActWindowsControl.eControlAction.SetValue
+            });
+
+            //Add option to select the valid values
+            List<ComboBoxElementItem> ComboValues = (List<ComboBoxElementItem>)UIAElementInfo.GetElementData();
+            foreach (ComboBoxElementItem CBEI in ComboValues)
+            {
                 list.Add(new ActWindowsControl()
                 {
-                    Description = "Set " + UIAElementInfo.ElementTitle + " Value",
-                    Value = "Sample Value",
-                    ControlAction = ActWindowsControl.eControlAction.SetValue
+                    Description = "Set ComboBox Text of '" + this.UIAElementInfo.ElementTitle + "' to '" + CBEI.Text + "'",
+                    ControlAction = ActWindowsControl.eControlAction.SetValue,
+                    Value = CBEI.Text
                 });
-
-                list.Add(new ActWindowsControl()
-                {
-                    Description = "Get " + UIAElementInfo.ElementTitle + " Value",
-                    ControlAction = ActWindowsControl.eControlAction.SetValue
-                });
-
-                //Add option to select the valid values
-                List<ComboBoxElementItem> ComboValues = (List<ComboBoxElementItem>)UIAElementInfo.GetElementData();
-                foreach (ComboBoxElementItem CBEI in ComboValues)
-                {
-                    list.Add(new ActWindowsControl()
-                    {
-                        Description = "Set ComboBox Text of '" + this.UIAElementInfo.ElementTitle + "' to '" + CBEI.Text + "'",
-                        ControlAction = ActWindowsControl.eControlAction.SetValue,
-                        Value = CBEI.Text
-                    });
-                }
+            }
             return list;
         }
     }

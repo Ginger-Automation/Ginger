@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,10 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCore.DataSource;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
-using GingerCore.DataSource;
 
 namespace Ginger.DataSource
 {
@@ -64,7 +63,7 @@ namespace Ginger.DataSource
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, true, "Cancel");
         }
-       
+
         public DataSourceTableColumn DSTableCol
         {
             get

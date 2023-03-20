@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -56,7 +56,6 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using LiteDB;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -189,7 +188,7 @@ namespace GingerWPF.BusinessFlowsLib
         #endregion LiteDB
 
         private void SetUIControls()
-        {            
+        {
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xALMMenuItem, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
 
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Activities));
@@ -200,7 +199,7 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xAutoAnalyzeConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoRunAutomatePageAnalyzer), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
             BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoGenerateAutomatePageReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
             mApplicationAgentsMapPage = new ApplicationAgentsMapPage(mExecutionEngine, mContext);
-            mApplicationAgentsMapPage.MappingList.Height = 60; 
+            mApplicationAgentsMapPage.MappingList.Height = 60;
             xAppsAgentsMappingFrame.SetContent(mApplicationAgentsMapPage);
             SetEnvsCombo();
         }
@@ -301,7 +300,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void XAddActionsBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             if (xAddActionsBtn.ButtonImageType == Amdocs.Ginger.Common.Enums.eImageType.Add)
             {
@@ -583,7 +585,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     if (mActivityPage == null)
                     {
-                        var pageViewMode= mContext.Activity.Type==Amdocs.Ginger.Repository.eSharedItemType.Regular ? Ginger.General.eRIPageViewMode.Automation:  Ginger.General.eRIPageViewMode.ViewAndExecute;
+                        var pageViewMode = mContext.Activity.Type == Amdocs.Ginger.Repository.eSharedItemType.Regular ? Ginger.General.eRIPageViewMode.Automation : Ginger.General.eRIPageViewMode.ViewAndExecute;
                         mActivityPage = new ActivityPage(mContext.Activity, mContext, pageViewMode);
                     }
                     else
@@ -865,7 +867,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private async Task RunAutomateTabFlow()
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             try
             {
@@ -934,7 +939,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         public async Task RunAutomatePageActivity(Activity activity)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             try
             {
@@ -971,7 +979,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         public async Task RunAutomatePageAction(Tuple<Activity, Act, bool> actionToExecuteInfo, bool moveToNextAction = true, bool checkIfActionAllowedToRun = true)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             bool skipInternalValidations = actionToExecuteInfo.Item3;
 
@@ -1054,7 +1065,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private async Task ContinueRunFromAutomatePage(eContinueFrom continueFrom, object executedItem = null)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             try
             {
@@ -1099,7 +1113,9 @@ namespace GingerWPF.BusinessFlowsLib
                     DoCleanUp();
 
                     if (mAddActionMainPage != null)
+                    {
                         mAddActionMainPage.ResetAddActionPages();
+                    }
 
                     return;
                 }
@@ -1211,10 +1227,10 @@ namespace GingerWPF.BusinessFlowsLib
             var dirtyLinkedActivities = mBusinessFlow.Activities.Where(x => x.IsLinkedItem && x.EnableEdit);
             if (dirtyLinkedActivities.Count() > 0)
             {
-                foreach(Activity dirtyLinkedActivity in dirtyLinkedActivities)
+                foreach (Activity dirtyLinkedActivity in dirtyLinkedActivities)
                 {
                     Reporter.ToStatus(eStatusMsgKey.SaveItem, null, dirtyLinkedActivity.ActivityName,
-                                    "Linked "+GingerDicser.GetTermResValue(eTermResKey.Activity));
+                                    "Linked " + GingerDicser.GetTermResValue(eTermResKey.Activity));
                     SwapLoadingPrefixText("Saving", false);
 
                     await SharedRepositoryOperations.SaveLinkedActivity(dirtyLinkedActivity, mBusinessFlow.Guid.ToString());
@@ -1268,7 +1284,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private async void xUndoChangesBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             if (mBusinessFlow.IsLocalBackupExist == false)
             {
@@ -1303,7 +1322,7 @@ namespace GingerWPF.BusinessFlowsLib
         FindAndReplacePage mfindAndReplacePageAutomate = null;
         private void xSearchBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (mfindAndReplacePageAutomate == null)
+            if (mfindAndReplacePageAutomate == null || mfindAndReplacePageAutomate.ItemToSearchOn != mBusinessFlow)
             {
                 mfindAndReplacePageAutomate = new FindAndReplacePage(FindAndReplacePage.eContext.AutomatePage, mBusinessFlow);
             }
@@ -1312,7 +1331,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xAnalyzeBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             AnalyzerPage AP = new AnalyzerPage();
             AP.Init(WorkSpace.Instance.Solution, mBusinessFlow);
@@ -1321,7 +1343,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xAutomationRunnerConfigBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             GingerRunnerConfigurationsPage runnerConfigurationsPage = new GingerRunnerConfigurationsPage(mExecutionEngine, GingerRunnerConfigurationsPage.ePageViewMode.AutomatePage, mContext);
             runnerConfigurationsPage.ShowAsWindow();
@@ -1329,7 +1354,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xResetFlowBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             mExecutionEngine.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.Reset;
             mBusinessFlow.Reset();
@@ -1367,7 +1395,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xLegacyActionsMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             ObservableList<BusinessFlow> lst = new ObservableList<BusinessFlow>() { mBusinessFlow };
             WizardWindow.ShowWizard(new ActionsConversionWizard(ActionsConversionWizard.eActionConversionType.SingleBusinessFlow, mContext, lst), 900, 700, true);
@@ -1375,7 +1406,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private async void xLegacyActionsRemoveMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             ObservableList<BusinessFlowToConvert> lstBFToConvert = new ObservableList<BusinessFlowToConvert>();
 
@@ -1390,7 +1424,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xRefreshFromAlmMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             if (string.IsNullOrEmpty(mBusinessFlow.ExternalID))
             {
@@ -1406,7 +1443,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xExportToAlmMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             if (ALMIntegration.Instance.ExportBusinessFlowToALM(mBusinessFlow))
             {
@@ -1421,7 +1461,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xExportResultsToAlmMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             if (string.IsNullOrEmpty(mBusinessFlow.ExternalID))
             {
@@ -1431,13 +1474,18 @@ namespace GingerWPF.BusinessFlowsLib
 
             ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
             bfs.Add(mBusinessFlow);
-            ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(mEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
-            ExportResultsToALMConfigPage.Instance.ShowAsWindow();
+            if (ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(mEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false)))
+            {
+                ExportResultsToALMConfigPage.Instance.ShowAsWindow();
+            }
         }
 
         private void xReportMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             GenerateReport();
         }
@@ -1522,7 +1570,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xSummaryPageMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             ShowExecutionSummaryPage();
         }
@@ -1544,7 +1595,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xBDDGenerateScenarioMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             if (mBusinessFlow != null)
             {
@@ -1570,7 +1624,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xBDDCleanScenariosMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             ScenariosGenerator SG = new ScenariosGenerator();
             SG.ClearOptimizedScenariosVariables(mBusinessFlow);
@@ -1579,7 +1636,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xBDDOpenFeatureFileMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             DocumentEditorPage documentEditorPage = new DocumentEditorPage(mExecutionEngine.CurrentBusinessFlow.ExternalID.Replace("~", WorkSpace.Instance.Solution.Folder), true);
             documentEditorPage.Title = "Gherkin Page";
@@ -1590,7 +1650,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xLastItemReportMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             GenerateLastExecutedItemReport();
         }
@@ -1633,7 +1696,10 @@ namespace GingerWPF.BusinessFlowsLib
         }
         private void xTimelineReportMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             GingerRunnerTimeLine gingerRunnerTimeLine = (GingerRunnerTimeLine)(from x in mExecutionEngine.RunListeners where x.GetType() == typeof(GingerRunnerTimeLine) select x).SingleOrDefault();
             TimeLinePage timeLinePage = new TimeLinePage(gingerRunnerTimeLine.timeLineEvents);
@@ -1697,7 +1763,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xSelfHealingConfigBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             GingerSelfHealingConfiguration selfHealingConfiguration = new GingerSelfHealingConfiguration();
             selfHealingConfiguration.ShowAsWindow();
@@ -1705,7 +1774,10 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xMapToAlmMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckIfExecutionIsInProgress()) return;
+            if (CheckIfExecutionIsInProgress())
+            {
+                return;
+            }
 
             if (ALMIntegration.Instance.MapBusinessFlowToALM(mBusinessFlow).Result)
             {

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,18 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
+using Ginger.SolutionWindows.TreeViewItems;
+using GingerCore;
+using GingerWPF.UserControlsLib.UCTreeView;
+using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore;
-using Amdocs.Ginger.Common.Enums;
-using System.Collections.Generic;
-using Ginger.SolutionWindows.TreeViewItems;
-using System;
-using Amdocs.Ginger.Common;
-using System.Text;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -50,11 +49,11 @@ namespace Ginger.BusinessFlowWindows
             }
             set
             {
-                mBusinessFlow = value;                                
+                mBusinessFlow = value;
                 xBFTextBox.Text = GetBusinessFlowDisplayPath();
                 if (GoToAutomateButtonVisible)
                 {
-                    xGoToAutomateBtn.Visibility = Visibility.Visible; 
+                    xGoToAutomateBtn.Visibility = Visibility.Visible;
                 }
                 mBusinessFlowRepositoryKey = new RepositoryItemKey();
                 mBusinessFlowRepositoryKey.Guid = mBusinessFlow.Guid;
@@ -136,17 +135,17 @@ namespace Ginger.BusinessFlowWindows
             SingleItemTreeViewSelectionPage selectPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Elements", eImageType.BusinessFlow, bFsRoot,
                                                                                 SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true,
                                                                                 new Tuple<string, string>(nameof(BusinessFlow.Applications), TargetApplication), UCTreeView.eFilteroperationType.Contains);
-          
+
             List<object> selectedBF = selectPage.ShowAsWindow();
             if (selectedBF != null && selectedBF.Count > 0)
             {
-                BusinessFlow = (BusinessFlow)selectedBF[0];             
+                BusinessFlow = (BusinessFlow)selectedBF[0];
             }
             else
             {
                 if (mBusinessFlow == null)
                 {
-                    xGoToAutomateBtn.Visibility = Visibility.Hidden; 
+                    xGoToAutomateBtn.Visibility = Visibility.Hidden;
                 }
             }
             ElementChangedEvent();
@@ -156,7 +155,7 @@ namespace Ginger.BusinessFlowWindows
         {
             if (mBusinessFlow != null)
             {
-                App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, mBusinessFlow); 
+                App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.Automate, mBusinessFlow);
             }
         }
     }

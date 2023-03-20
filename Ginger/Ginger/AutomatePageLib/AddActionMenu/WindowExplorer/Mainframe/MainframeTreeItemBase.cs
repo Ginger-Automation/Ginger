@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,14 +39,14 @@ namespace Ginger.WindowExplorer.Mainframe
         public string Path { get; set; }
 
         public ObservableList<GingerCore.Actions.Act> GetElementActions()
-        {   
+        {
             ObservableList<GingerCore.Actions.Act> ACL = new ObservableList<GingerCore.Actions.Act>();
             return ACL;
         }
 
         public ObservableList<ControlProperty> GetElementProperties()
         {
-            throw new NotImplementedException ();
+            throw new NotImplementedException();
         }
 
         public List<ITreeViewItem> Childrens()
@@ -87,7 +87,7 @@ namespace Ginger.WindowExplorer.Mainframe
 
         public System.Windows.Controls.ContextMenu Menu()
         {
-            throw new NotImplementedException ();
+            throw new NotImplementedException();
         }
 
         public object NodeObject()

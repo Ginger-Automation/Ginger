@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,19 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.Reports;
+using Ginger.UserControls;
+using GingerCore.GeneralLib;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Ginger.UserControls;
-using GingerCore;
-using GingerCore.GeneralLib;
-using Ginger.Reports;
-using GingerCore.Actions;
-using Ginger.Actions;
-using amdocs.ginger.GingerCoreNET;
 
 
 namespace Ginger.Run.RunSetActions
@@ -39,12 +36,12 @@ namespace Ginger.Run.RunSetActions
     public partial class RunSetActionHTMLReportSendEmailEditPage : Page
     {
         private RunSetActionHTMLReportSendEmail runSetActionHTMLReportSendEmail;
-       public enum eAttachmentType
+        public enum eAttachmentType
         {
             [EnumValueDescription("Report")]
             Report,
             [EnumValueDescription("File")]
-            File           
+            File
         }
         public RunSetActionHTMLReportSendEmailEditPage(RunSetActionHTMLReportSendEmail runSetActionHTMLReportSendEmail)
         {
@@ -63,14 +60,14 @@ namespace Ginger.Run.RunSetActions
             SubjectTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Subject));
             BodyTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Bodytext));
             CommentTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Comments));
-           
-            xMailFromDisplayNameTextBox.Init(context, runSetActionHTMLReportSendEmail,nameof(RunSetActionHTMLReportSendEmail.MailFromDisplayName));
-            
+
+            xMailFromDisplayNameTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailFromDisplayName));
+
             BodyTextBox.AdjustHight(100);
 
             if (string.IsNullOrEmpty(runSetActionHTMLReportSendEmail.MailTo))
             {
-                runSetActionHTMLReportSendEmail.MailFrom =  WorkSpace.Instance.UserProfile.UserEmail;
+                runSetActionHTMLReportSendEmail.MailFrom = WorkSpace.Instance.UserProfile.UserEmail;
             }
             if (string.IsNullOrEmpty(runSetActionHTMLReportSendEmail.MailFromDisplayName))
             {
@@ -83,7 +80,7 @@ namespace Ginger.Run.RunSetActions
 
         private void ShowDisplayNameOption()
         {
-            if(runSetActionHTMLReportSendEmail.Email.EmailMethod == Email.eEmailMethod.SMTP)
+            if (runSetActionHTMLReportSendEmail.Email.EmailMethod == Email.eEmailMethod.SMTP)
             {
                 xLabelMailFromDisplayName.Visibility = Visibility.Visible;
                 xMailFromDisplayNameTextBox.Visibility = Visibility.Visible;
@@ -98,19 +95,25 @@ namespace Ginger.Run.RunSetActions
         {
             string currentValue = runSetActionHTMLReportSendEmail.HTMLReportTemplate.ToString();
             foreach (RadioButton rdb in Panel.Children)
+            {
                 if (rdb.Tag.ToString() == currentValue)
                 {
                     rdb.IsChecked = true;
                     break;
                 }
+            }
         }
         private void InitAttachmentsGrid()
         {
             SetGridView();
-            AttachmentsGrid.AddToolbarTool("@AddHTMLReport_16x16.png", "Add Report", HTMLReportsConfigurationConfigWindow);           
+            AttachmentsGrid.AddToolbarTool("@AddHTMLReport_16x16.png", "Add Report", HTMLReportsConfigurationConfigWindow);
             AttachmentsGrid.AddToolbarTool("@AddScript_16x16.png", "Add File", new RoutedEventHandler(AddFile));
-            
-            if (runSetActionHTMLReportSendEmail.EmailAttachments == null) runSetActionHTMLReportSendEmail.EmailAttachments = new ObservableList<EmailAttachment>();
+
+            if (runSetActionHTMLReportSendEmail.EmailAttachments == null)
+            {
+                runSetActionHTMLReportSendEmail.EmailAttachments = new ObservableList<EmailAttachment>();
+            }
+
             AttachmentsGrid.RowDoubleClick += HTMLReportsConfigurationConfigWindow;
             AttachmentsGrid.DataSourceList = runSetActionHTMLReportSendEmail.EmailAttachments;
             DefaultTemplatePickerCbx_Binding();
@@ -123,7 +126,7 @@ namespace Ginger.Run.RunSetActions
                 DefaultExt = ".*",
                 Filter = "All Files (*.*)|*.*"
             }) is string fileName)
-            {                
+            {
                 runSetActionHTMLReportSendEmail.EmailAttachments.Add(new EmailAttachment() { Name = fileName, AttachmentType = EmailAttachment.eAttachmentType.File });
             }
         }
@@ -147,10 +150,10 @@ namespace Ginger.Run.RunSetActions
 
             viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.AttachmentType), WidthWeight = 100, BindingMode = BindingMode.OneTime });
             viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.Name), WidthWeight = 200 });
-            viewCols.Add(new GridColView() { Field = "...", Header = "...", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.GridAttachment.Resources["ParamValueExpressionButton"]});
-            viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.ExtraInformation), WidthWeight = 250 });            
-            viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.ZipIt), WidthWeight = 50, Header = "Zip It", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.GridAttachment.Resources["ReportAttachment"]});
-            
+            viewCols.Add(new GridColView() { Field = "...", Header = "...", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.GridAttachment.Resources["ParamValueExpressionButton"] });
+            viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.ExtraInformation), WidthWeight = 250 });
+            viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.ZipIt), WidthWeight = 50, Header = "Zip It", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.GridAttachment.Resources["ReportAttachment"] });
+
             AttachmentsGrid.SetAllColumnsDefaultView(view);
             AttachmentsGrid.InitViewItems();
         }
@@ -159,13 +162,13 @@ namespace Ginger.Run.RunSetActions
         {
             EmailHtmlReportAttachment emailAttachment;
             if (runSetActionHTMLReportSendEmail.EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report).ToList().Count < 1)
-            {                           
-                    emailAttachment = new EmailHtmlReportAttachment { ZipIt = true, SelectedHTMLReportTemplateID = 1 };
-                    runSetActionHTMLReportSendEmail.EmailAttachments.Add(emailAttachment);
-                    HTMLReportAttachmentConfigurationPage pg = new HTMLReportAttachmentConfigurationPage(emailAttachment);
-                    pg.ShowAsWindow();                           
+            {
+                emailAttachment = new EmailHtmlReportAttachment { ZipIt = true, SelectedHTMLReportTemplateID = 1 };
+                runSetActionHTMLReportSendEmail.EmailAttachments.Add(emailAttachment);
+                HTMLReportAttachmentConfigurationPage pg = new HTMLReportAttachmentConfigurationPage(emailAttachment);
+                pg.ShowAsWindow();
             }
-            else if(AttachmentsGrid.CurrentItem!=null)
+            else if (AttachmentsGrid.CurrentItem != null)
             {
                 if (AttachmentsGrid.CurrentItem.GetType() == typeof(EmailHtmlReportAttachment))
                 {
@@ -183,13 +186,13 @@ namespace Ginger.Run.RunSetActions
             }
         }
         private void HTMLReportsConfigurationConfigWindow(object sender, EventArgs e)
-        {            
+        {
             HTMLReportsConfigurationConfigWindow();
         }
         private void HTMLReportsConfigurationConfigWindow(object sender, System.Windows.RoutedEventArgs e)
         {
             HTMLReportsConfigurationConfigWindow();
-        }       
+        }
         private void RadioFreeTextOption_Checked(object sender, RoutedEventArgs e)
         {
             try
@@ -225,7 +228,7 @@ namespace Ginger.Run.RunSetActions
             DefaultTemplatePickerCbx.ItemsSource = null;
 
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            if (( WorkSpace.Instance.Solution != null) &&  (HTMLReportConfigurations.Count > 0))
+            if ((WorkSpace.Instance.Solution != null) && (HTMLReportConfigurations.Count > 0))
             {
                 DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 DefaultTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;
@@ -239,9 +242,9 @@ namespace Ginger.Run.RunSetActions
         }
         private void GridParamVEButton_Click(object sender, RoutedEventArgs e)
         {
-            EmailAttachment item =(EmailAttachment) AttachmentsGrid.CurrentItem;
-            
-            if(item.AttachmentType == EmailAttachment.eAttachmentType.File)
+            EmailAttachment item = (EmailAttachment)AttachmentsGrid.CurrentItem;
+
+            if (item.AttachmentType == EmailAttachment.eAttachmentType.File)
             {
                 ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AttachmentsGrid.CurrentItem, nameof(EmailAttachment.Name), null);
 

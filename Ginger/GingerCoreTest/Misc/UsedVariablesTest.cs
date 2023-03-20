@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,12 +22,10 @@ using GingerCore.Actions;
 using GingerCore.FlowControlLib;
 using GingerCore.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace GingerCoreCommonTest.VariablesTest
-{    
+{
     [TestClass]
     public class UsedVariablesTest
     {
@@ -55,11 +53,12 @@ namespace GingerCoreCommonTest.VariablesTest
             //after every test
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ActionUsedVar()
         {
             //Arrange            
-            ActDummy act1 = new ActDummy();                        
+            ActDummy act1 = new ActDummy();
             act1.Value = "{Var Name=v1}";
 
             //Act
@@ -72,7 +71,8 @@ namespace GingerCoreCommonTest.VariablesTest
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ActivityUsedVar()
         {
             //Arrange
@@ -93,15 +93,16 @@ namespace GingerCoreCommonTest.VariablesTest
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void UsedVarInFlowControlCondition()
         {
             //Arrange
             Activity a1 = new Activity() { ActivityName = "a1" };
             ActDummy act1 = new ActDummy();
-            a1.Acts.Add(act1);         
+            a1.Acts.Add(act1);
             FlowControl flowControl = new FlowControl() { Condition = "{Var Name=v1}=123" };
-            act1.FlowControls.Add(flowControl);            
+            act1.FlowControls.Add(flowControl);
 
             //Act
             List<string> usedVars = new List<string>();
@@ -112,7 +113,8 @@ namespace GingerCoreCommonTest.VariablesTest
             Assert.AreEqual("v1", usedVars[0], "usedVars[0]=v1");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void UsedVarInActionOutputExpected()
         {
             //Arrange
@@ -120,7 +122,7 @@ namespace GingerCoreCommonTest.VariablesTest
             ActDummy act1 = new ActDummy();
             ActReturnValue actReturnValue = new ActReturnValue() { Param = "out1", Expected = "{Var Name=v1}" };
             act1.ReturnValues.Add(actReturnValue);
-            a1.Acts.Add(act1);            
+            a1.Acts.Add(act1);
 
             //Act
             List<string> usedVars = new List<string>();
@@ -132,7 +134,8 @@ namespace GingerCoreCommonTest.VariablesTest
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void UsedVarInActionOutoutStoreToVar()
         {
             //Arrange
@@ -152,12 +155,13 @@ namespace GingerCoreCommonTest.VariablesTest
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SameVarUsedInSeveralPlaces()
         {
             //Arrange
             Activity a1 = new Activity() { ActivityName = "a1" };
-            ActDummy act1 = new ActDummy();            
+            ActDummy act1 = new ActDummy();
             ActReturnValue actReturnValue = new ActReturnValue() { Param = "out1", StoreToValue = "v1" };
             act1.ReturnValues.Add(actReturnValue);
             FlowControl flowControl = new FlowControl() { Condition = "{Var Name=v1}=123" };
@@ -173,7 +177,8 @@ namespace GingerCoreCommonTest.VariablesTest
             Assert.AreEqual("v1", usedVars[0], "usedVars[0]=v1");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void DifferenVarsUsedInSeveralPlaces()
         {
             //Arrange
@@ -199,6 +204,6 @@ namespace GingerCoreCommonTest.VariablesTest
 
     }
 
-    
+
 
 }

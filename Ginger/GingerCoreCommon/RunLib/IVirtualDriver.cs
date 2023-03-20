@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,16 +17,13 @@ limitations under the License.
 #endregion
 
 //using GingerCore.Drivers;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
     public interface IVirtualDriver
     {
-     
-        bool CanStartAnotherInstance(out string errorMessage); 
+
+        bool CanStartAnotherInstance(out string errorMessage);
         void DriverStarted(string AgentGuid);
         void DriverClosed();
     }

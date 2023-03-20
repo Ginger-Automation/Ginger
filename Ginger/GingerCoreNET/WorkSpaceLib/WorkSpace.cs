@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,21 +19,25 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.OS;
+using Amdocs.Ginger.Common.SelfHealingLib;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
-using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.CoreNET.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using Ginger;
+using Ginger.Configurations;
 using Ginger.Functionalties;
+using Ginger.Reports;
+using Ginger.Repository;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Platforms;
-
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
@@ -45,14 +49,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Amdocs.Ginger.Common.OS;
-using Amdocs.Ginger.CoreNET.RunLib.CLILib;
-using Ginger.Run.RunSetActions;
-using Amdocs.Ginger.Common.SelfHealingLib;
-using Amdocs.Ginger.Common.WorkSpaceLib;
-using Ginger.Reports;
-using Ginger.Configurations;
-using Ginger.Repository;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -277,7 +273,11 @@ namespace amdocs.ginger.GingerCoreNET
         /// </summary>
         void InitClassTypesDictionary()
         {
-            if (bDone) return;
+            if (bDone)
+            {
+                return;
+            }
+
             bDone = true;
 
             // Add all RI classes from GingerCoreCommon
@@ -640,9 +640,13 @@ namespace amdocs.ginger.GingerCoreNET
                         catch (Exception ex)
                         {
                             if (agent.Name != null)
+                            {
                                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Close the '{0}' Agent", agent.Name), ex);
+                            }
                             else
+                            {
                                 Reporter.ToLog(eLogLevel.ERROR, "Failed to Close the Agent", ex);
+                            }
                         }
                         ((AgentOperations)agent.AgentOperations).IsFailedToStart = false;
                     }
@@ -828,7 +832,10 @@ namespace amdocs.ginger.GingerCoreNET
                             newOV.Guid = ov.Guid;
                             newOV.Value = ov.Value;
                             if (ov.IsDefault)
+                            {
                                 newDefaultOV = ov.Guid.ToString();
+                            }
+
                             apiGlobalParamInstance.OptionalValuesList.Add(newOV);
                         }
 
@@ -836,13 +843,18 @@ namespace amdocs.ginger.GingerCoreNET
                         {
                             OptionalValue savedOV = apiGlobalParamInstance.OptionalValuesList.Where(x => x.Guid == currentDefaultOVGuid).FirstOrDefault();
                             if (savedOV != null)
+                            {
                                 savedOV.IsDefault = true;
+                            }
                             else
+                            {
                                 apiGlobalParamInstance.OptionalValuesList.Where(x => x.Guid.ToString() == newDefaultOV).FirstOrDefault().IsDefault = true;
+                            }
                         }
                         else
+                        {
                             apiGlobalParamInstance.OptionalValuesList.Where(x => x.Guid.ToString() == newDefaultOV).FirstOrDefault().IsDefault = true;
-
+                        }
 
                         apiGlobalParamInstance.OnPropertyChanged(nameof(AppModelParameter.OptionalValuesString));
                     }

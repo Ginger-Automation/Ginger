@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.HTMLCommon
 {
@@ -38,7 +38,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
 
             list.Add(new ActGenElement()
             {
-                Description = "Switch Frame " +  this.ElementInfo.ElementTitle,
+                Description = "Switch Frame " + this.ElementInfo.ElementTitle,
                 GenElementAction = ActGenElement.eGenElementAction.SwitchFrame
             });
             return list;

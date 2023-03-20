@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
@@ -35,7 +34,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         public string Verb
         {
             get
-            {                
+            {
                 return ConfigFileOptions.Verb;
             }
         }
@@ -49,8 +48,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         }
 
         public async Task Execute(RunsetExecutor runsetExecutor)
-        {            
-            await runsetExecutor.RunRunset();            
+        {
+            await runsetExecutor.RunRunset();
         }
 
 
@@ -58,7 +57,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             string sConfig = null;
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
-            {               
+            {
                 sConfig = "SourceControlType=" + solution.SourceControl.GetSourceControlType.ToString() + Environment.NewLine;
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.SVN)//added for supporting Jenkins way of config creation- need to improve it
                 {
@@ -99,7 +98,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             {
                 sConfig += "artifacts-path=" + cliHelper.TestArtifactsFolder + Environment.NewLine;
             }
-            
+
             //OLD sConfig += "ShowAutoRunWindow=" + cliHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
             sConfig += CLIOptionClassHelper.GetAttrLongName<RunOptions>(nameof(RunOptions.ShowUI)) + "=" + cliHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
 
@@ -124,40 +123,40 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             cliHelper.SetSourceControlType(value);
                             break;
                         case "SourceControlUrl":
-                            cliHelper.SetSourceControlURL(value);                            
+                            cliHelper.SetSourceControlURL(value);
                             break;
                         case "SourceControlUser":
-                            cliHelper.SetSourceControlUser(value);                            
+                            cliHelper.SetSourceControlUser(value);
                             break;
                         case "SourceControlPassword":
-                            cliHelper.SetSourceControlPassword(value);                            
+                            cliHelper.SetSourceControlPassword(value);
                             break;
                         case "PasswordEncrypted":
-                            cliHelper.PasswordEncrypted(value);                            
+                            cliHelper.PasswordEncrypted(value);
                             break;
                         case "SourceControlProxyServer":
-                            cliHelper.SourceControlProxyServer(value);                            
+                            cliHelper.SourceControlProxyServer(value);
                             break;
                         case "SourceControlProxyPort":
-                            cliHelper.SourceControlProxyPort(value);                            
+                            cliHelper.SourceControlProxyPort(value);
                             break;
                         case "Solution":
                         case "solution":
-                            cliHelper.Solution = value;                            
-                            break;                                              
+                            cliHelper.Solution = value;
+                            break;
                         case "ShowAutoRunWindow": // Support old style
                         case "showui": // TODO: use CLIOptionClassHelper.GetAttrLongName<RunOptions>(nameof(RunOptions.ShowUI)):
                             cliHelper.ShowAutoRunWindow = bool.Parse(value);
-                            break;                       
+                            break;
                         case "artifacts-path":
                             cliHelper.TestArtifactsFolder = value;
                             break;
-                        //default:
-                        //    Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + param + "'");
-                        //    throw new ArgumentException("Unknown argument", param);
+                            //default:
+                            //    Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + param + "'");
+                            //    throw new ArgumentException("Unknown argument", param);
                     }
-                }                
-            }            
+                }
+            }
         }
 
         public void LoadRunsetConfigurations(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
@@ -185,9 +184,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                         case "analyze":
                             cliHelper.RunAnalyzer = bool.Parse(value);
                             break;
-                        //default:
-                        //    Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + param + "'");
-                        //    throw new ArgumentException("Unknown argument", param);
+                            //default:
+                            //    Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + param + "'");
+                            //    throw new ArgumentException("Unknown argument", param);
                     }
                 }
             }

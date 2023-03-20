@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -223,7 +223,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             LiteDbBusinessFlow BFR = new LiteDbBusinessFlow();
             if (executedFrom == eExecutedFrom.Automation)
+            {
                 ClearSeq();
+            }
 
             if (liteDbBFList.Count > context.Runner.BusinessFlows.Count)
             {
@@ -306,7 +308,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     SaveObjToReporsitory(BFR, liteDbManager.NameInDb<LiteDbBusinessFlow>());
                     this.lastBfObjId = BFR._id;
                     if (liteDbBFList.Exists(bf => bf._id == this.lastBfObjId))
+                    {
                         liteDbBFList.RemoveAll(bf => bf._id == this.lastBfObjId);
+                    }
+
                     liteDbBFList.Add(BFR);
                     liteDbActivityList.Clear();
                     liteDbAGList.Clear();
@@ -406,12 +411,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 businessFlow.ChildPassedItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString(), out count);
                 ChildPassedItemsCountAction = ChildPassedItemsCountAction + count;
             }
-            foreach(BusinessFlow BF in businessFlows)
+            foreach (BusinessFlow BF in businessFlows)
             {
-                if(BF.RunStatus == eRunStatus.Blocked)
+                if (BF.RunStatus == eRunStatus.Blocked)
                 {
                     ChildExecutableItemsCountActivity = ChildExecutableItemsCountActivity + BF.Activities.Count;
-                    foreach(Activity activity in BF.Activities)
+                    foreach (Activity activity in BF.Activities)
                     {
                         ChildExecutableItemsCountAction = ChildExecutableItemsCountActivity + activity.Acts.Count;
                     }
@@ -480,14 +485,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 runner.ChildPassedItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString(), out count);
                 ChildPassedItemsCountAction = ChildPassedItemsCountAction + count;
             }
-            foreach(GingerRunner runner in runners)
+            foreach (GingerRunner runner in runners)
             {
                 if (runner.Status == eRunStatus.Blocked)
                 {
-                    foreach(BusinessFlow BF in runner.Executor.BusinessFlows)
+                    foreach (BusinessFlow BF in runner.Executor.BusinessFlows)
                     {
                         ChildExecutableItemsCountActivity = ChildExecutableItemsCountActivity + BF.Activities.Count;
-                        foreach(Activity activity in BF.Activities)
+                        foreach (Activity activity in BF.Activities)
                         {
                             ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.Acts.Count;
                         }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -267,7 +267,9 @@ namespace GingerWPF.TreeViewItemsLib
                     //refresh cache
                     RepositoryFolderBase repoFolder = (RepositoryFolderBase)(((ITreeViewItem)this).NodeObject());
                     if (repoFolder != null)
+                    {
                         repoFolder.ReloadItems(); // .RefreshFolderCache();
+                    }
 
                     //refresh tree
                     mTreeView.Tree.RefresTreeNodeChildrens((ITreeViewItem)this);
@@ -346,9 +348,15 @@ namespace GingerWPF.TreeViewItemsLib
 
         public void TreeFolderItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if (mTreeView == null || e == null) return;
+            if (mTreeView == null || e == null)
+            {
+                return;
+            }
 
-            if (mBulkOperationIsInProcess) return;
+            if (mBulkOperationIsInProcess)
+            {
+                return;
+            }
 
             // Since refresh of tree items can be triggered from FileWatcher running on separate thread, all TV handling is done on the TV.Dispatcher
             switch (e.Action)
@@ -387,10 +395,16 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 MenuItem sourceControlMenu = TreeViewUtils.CreateSubMenu(CM, "Source Control");
                 if (addDetailsOption)
+                {
                     TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Get Info", SourceControlGetInfo, null, "@Info_16x16.png");
+                }
+
                 TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Check-In Changes", SourceControlCheckIn, null, "@CheckIn2_16x16.png");
                 if (WorkSpace.Instance.Solution.SourceControl.IsSupportingGetLatestForIndividualFiles)
+                {
                     TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Get Latest Version", SourceControlGetLatestVersion, null, "@GetLatest2_16x16.png");
+                }
+
                 if (WorkSpace.Instance.Solution.ShowIndicationkForLockedItems && WorkSpace.Instance.Solution.SourceControl.IsSupportingLocks && addLocksOption)
                 {
                     TreeViewUtils.AddSubMenuItem(sourceControlMenu, "Lock Item", SourceControlLock, null, "@Lock_16x16.png");
@@ -458,13 +472,21 @@ namespace GingerWPF.TreeViewItemsLib
 
         public void SourceControlGetLatestVersion(object sender, System.Windows.RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) return;
+            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+            {
+                return;
+            }
 
             Reporter.ToStatus(eStatusMsgKey.GetLatestFromSourceControl);
             if (string.IsNullOrEmpty(this.NodePath()))
+            {
                 Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
+            }
             else
+            {
                 SourceControlUI.GetLatest(this.NodePath(), WorkSpace.Instance.Solution.SourceControl);
+            }
+
             Reporter.HideStatusMessage();
         }
 
@@ -651,7 +673,11 @@ namespace GingerWPF.TreeViewItemsLib
                 childNodes.Reverse();
                 foreach (ITreeViewItem node in childNodes)
                 {
-                    if (node == null) continue;
+                    if (node == null)
+                    {
+                        continue;
+                    }
+
                     if (node.NodeObject() != null)
                     {
                         if (node.NodeObject() is RepositoryFolderBase)

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -49,9 +49,13 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             get
             {
                 if (ErrorType == eErrorType.Error)
+                {
                     return Resources._ErrorRed_16x16;
+                }
                 else
+                {
                     return Resources._ErrorYellow_16x16;
+                }
             }
         }
 
@@ -65,7 +69,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
             Column = mParserException.Location.Column;
             Error = mParserException.Message;
         }
- 
+
         public GherkinParserException(int Line, int Column, string WarningMessage)
         {
             ErrorType = eErrorType.Warning;

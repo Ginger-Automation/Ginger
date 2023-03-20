@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common.UIElement;
 using System;
 using System.Collections.Generic;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 
 namespace GingerCore.Drivers.Common
@@ -36,7 +36,7 @@ namespace GingerCore.Drivers.Common
             public static string ColumnNames = "ColumnNames";
             public static string MainDict = "MainDict";
         }
-       
+
         // ---------------------------------------------------------------------------------------------------------------------
         //  Value
         // ---------------------------------------------------------------------------------------------------------------------
@@ -45,7 +45,11 @@ namespace GingerCore.Drivers.Common
         {
             get
             {
-                if (mMainDict == null) mMainDict = GetMainDict();
+                if (mMainDict == null)
+                {
+                    mMainDict = GetMainDict();
+                }
+
                 return mMainDict;
             }
             set
@@ -53,29 +57,37 @@ namespace GingerCore.Drivers.Common
                 mMainDict = value;
             }
         }
-        
+
         private int mRowCount = 0;
         public int RowCount
         {
             get
             {
                 //TODO: fix me value cannot be null then why if?
-                if (mRowCount >= 0) mRowCount = GetRowCount();
+                if (mRowCount >= 0)
+                {
+                    mRowCount = GetRowCount();
+                }
+
                 return mRowCount;
             }
             set { mRowCount = value; }
-        } 
+        }
 
         private List<String> mColumnNames = null;
         public List<String> ColumnNames
         {
             get
             {
-                if (mColumnNames == null) mColumnNames = GetColumnNames();
+                if (mColumnNames == null)
+                {
+                    mColumnNames = GetColumnNames();
+                }
+
                 return mColumnNames;
             }
             set { mColumnNames = value; }
-        } 
+        }
 
         // Used for Lazy loading when possible
         public virtual int GetRowCount()

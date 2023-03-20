@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,12 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System.Collections.Generic;
-using System.Linq;
-using System;
-using GingerCore.Actions.Common;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCore.Actions;
 using System.ComponentModel;
 
 namespace Amdocs.Ginger.CoreNET
@@ -54,6 +48,6 @@ namespace Amdocs.Ginger.CoreNET
 
         public string SourceTargetApplicationName { get; set; }
 
-        public string TargetTargetApplicationName { get; set;}
+        public string TargetTargetApplicationName { get; set; }
     }
 }

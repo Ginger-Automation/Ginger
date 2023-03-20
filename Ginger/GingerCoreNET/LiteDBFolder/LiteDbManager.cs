@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,16 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
-using GingerCore;
-using GingerCore.Actions;
-using LiteDB;
 
 namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 {
@@ -87,7 +82,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 
         public bool DeleteDocumentByLiteDbRunSet(LiteDbRunSet liteDbRunSet)
         {
-            return dbConnector.DeleteDocumentByLiteDbRunSet(liteDbRunSet);            
+            return dbConnector.DeleteDocumentByLiteDbRunSet(liteDbRunSet);
         }
 
         public LiteCollection<LiteDbReportBase> GetObjectLiteData(string reportLevelName)
@@ -131,7 +126,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             var actionsColl = this.GetGingerActions();
             var activitiesColl = this.GetGingerActivities(actionsColl);
             var acgColl = this.GetGingerActvityGroup(activitiesColl);
-            var bfsColl = this.GetGingerBf(acgColl,activitiesColl);
+            var bfsColl = this.GetGingerBf(acgColl, activitiesColl);
             var runnersColl = this.GetGingerRunner(bfsColl);
             var runSet = this.GetGingerRunSet(runnersColl);
 
@@ -221,7 +216,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             }
             return data;
         }
-        private List<LiteDbActivity> GetGingerActivities(List<LiteDbAction>actionsColl)
+        private List<LiteDbActivity> GetGingerActivities(List<LiteDbAction> actionsColl)
         {
             List<LiteDbActivity> data = new List<LiteDbActivity>();
             for (var a = 0; a < 3; a++)

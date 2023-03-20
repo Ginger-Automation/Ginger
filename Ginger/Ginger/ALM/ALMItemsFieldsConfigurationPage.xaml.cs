@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,20 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
-using Ginger.UserControls;
-using System.ComponentModel;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
-using Ginger.Run;
-using Ginger.Run.RunSetActions;
-using GingerCore.ALM;
 
 namespace Ginger.ALM
 {
@@ -88,7 +84,9 @@ namespace Ginger.ALM
         private void Refresh(object sender, RoutedEventArgs e)
         {
             if (Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            {
                 RunWorker(true);
+            }
         }
 
         public void ShowAsWindow(bool refreshFields = true, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
@@ -143,16 +141,16 @@ namespace Ginger.ALM
 
             ALMIntegration.Instance.RefreshALMItemFields(mItemsFields, true, fieldsWorker);
 
-            //fieldsWorker.ReportProgress(GingerCore.ALM.RQM.ImportFromRQM.totalValues);
-            //e.Result = GingerCore.ALM.RQM.ImportFromRQM.totalValues;
-            //System.Diagnostics.Debug.WriteLine("values = " + e.Result);
+            fieldsWorker.ReportProgress(GingerCore.ALM.RQM.ImportFromRQM.totalValues);
+            e.Result = GingerCore.ALM.RQM.ImportFromRQM.totalValues;
+            System.Diagnostics.Debug.WriteLine("values = " + e.Result);
         }
 
         private void FieldsWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             LoadFieldsStatusLbl.Dispatcher.Invoke(() =>
             {
-                //LoadFieldsStatusLbl.Content = GingerCore.ALM.RQM.ImportFromRQM.populatedValue;
+                LoadFieldsStatusLbl.Content = GingerCore.ALM.RQM.ImportFromRQM.populatedValue;
 
             });
 

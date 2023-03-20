@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,14 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Ginger.UserControls;
-using GingerCore;
-using System.Windows;
-using System.Windows.Controls;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using System.Threading.Tasks;
 using Ginger.BusinessFlowsLibNew.AddActionMenu;
+using Ginger.UserControls;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.Common
 {
@@ -51,6 +49,7 @@ namespace Ginger.WindowExplorer.Common
         private void SetCheckedValues()
         {
             if (CheckedFilteringCreteriaList.Count != 0)
+            {
                 foreach (UIElementFilter Filter in CheckedFilteringCreteriaList)
                 {
                     int counter = 0;
@@ -64,6 +63,7 @@ namespace Ginger.WindowExplorer.Common
                         counter++;
                     }
                 }
+            }
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
@@ -120,7 +120,7 @@ namespace Ginger.WindowExplorer.Common
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.Selected), Header= "Selected", WidthWeight = 10, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.Selected), Header = "Selected", WidthWeight = 10, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
             view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.ElementType), Header = "Element Type", WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.ElementExtraInfo), Header = "Element Extra Info", WidthWeight = 100 });
 
@@ -135,11 +135,19 @@ namespace Ginger.WindowExplorer.Common
 
             int selectedItems = CountSelectedItems();
             if (selectedItems < FilterElementsGridView.DataSourceList.Count)
+            {
                 foreach (UIElementFilter UIEFActual in filteringCriteriaList)
+                {
                     UIEFActual.Selected = true;
+                }
+            }
             else if (selectedItems == FilterElementsGridView.DataSourceList.Count)
+            {
                 foreach (UIElementFilter UIEFActual in filteringCriteriaList)
+                {
                     UIEFActual.Selected = false;
+                }
+            }
 
             FilterElementsGridView.DataSourceList = filteringCriteriaList;
         }
@@ -150,7 +158,9 @@ namespace Ginger.WindowExplorer.Common
             foreach (UIElementFilter UIEFActual in FilterElementsGridView.DataSourceList)
             {
                 if (UIEFActual.Selected)
+                {
                     counter++;
+                }
             }
             return counter;
         }

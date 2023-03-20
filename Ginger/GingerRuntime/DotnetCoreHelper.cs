@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,8 +31,6 @@ using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Drivers;
-using GingerCore.Drivers.Appium;
-using GingerCore.Drivers.Mobile.Perfecto;
 using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
@@ -151,10 +149,10 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
             switch (zAgent.DriverType)
             {
-                case Agent.eDriverType.SeleniumFireFox:                
-                case Agent.eDriverType.SeleniumChrome:                    
-                case Agent.eDriverType.SeleniumIE:                   
-                case Agent.eDriverType.SeleniumRemoteWebDriver:                    
+                case Agent.eDriverType.SeleniumFireFox:
+                case Agent.eDriverType.SeleniumChrome:
+                case Agent.eDriverType.SeleniumIE:
+                case Agent.eDriverType.SeleniumRemoteWebDriver:
                 case Agent.eDriverType.SeleniumEdge:
                     return (typeof(SeleniumDriver));
 
@@ -194,7 +192,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                     {
                         throw new Exception("Matching Driver was not found.");
                     }
-            }        
+            }
         }
 
         public bool GetLatest(string path, SourceControlBase SourceControl)

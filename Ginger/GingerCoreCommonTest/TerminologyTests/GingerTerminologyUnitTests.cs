@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -49,7 +49,8 @@ namespace GingerCoreCommonTest.TerminologyTests
 
         #region Business Flows
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerDefaultTerm_TestBusinessFlows()
         {
             //Arrange
@@ -63,7 +64,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Business Flows", termValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerGherkinTerm_TestBusinessFlows()
         {
             //Arrange
@@ -77,7 +79,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Business Flow Features", termValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerTestingTerm_TestBusinessFlows()
         {
             //Arrange
@@ -95,7 +98,8 @@ namespace GingerCoreCommonTest.TerminologyTests
 
         #region ActivitiesGroup
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerDefaultTerm_TestActivitiesGroup()
         {
             //Arrange
@@ -109,7 +113,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Activities Group", termValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerGherkinTerm_TestActivitiesGroup()
         {
             //Arrange
@@ -123,7 +128,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Scenario", termValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerTestingTerm_TestActivitiesGroup()
         {
             //Arrange
@@ -140,13 +146,14 @@ namespace GingerCoreCommonTest.TerminologyTests
 
         #region Activities
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerDefaultTerm_TestActivities()
         {
             //Arrange
             GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Default;
             eTermResKey termResourceKey = eTermResKey.Activities;
-            
+
             //Act
             string termValue = GingerTerminology.GetTerminologyValue(termResourceKey);
 
@@ -154,7 +161,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Activities", termValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerGherkinTerm_TestActivities()
         {
             //Arrange
@@ -168,7 +176,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Steps", termValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerTestingTerm_TestActivities()
         {
             //Arrange
@@ -185,7 +194,8 @@ namespace GingerCoreCommonTest.TerminologyTests
 
         #region Variable
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerDefaultTerm_TestVariable()
         {
             //Arrange
@@ -199,7 +209,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Variable", termValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerGherkinTerm_TestVariable()
         {
             //Arrange
@@ -213,7 +224,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Parameter", termValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerTestingTerm_TestVariable()
         {
             //Arrange
@@ -227,10 +239,11 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Parameter", termValue);
         }
         #endregion
-        
+
         #region Runset
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerDefaultTerm_TestRunset()
         {
             //Arrange
@@ -244,7 +257,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Run Set", termValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerGherkinTerm_TestRunset()
         {
             //Arrange
@@ -258,7 +272,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Run Set", termValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerTestingTerm_TestRunset()
         {
             //Arrange
@@ -272,10 +287,11 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Calendar", termValue);
         }
         #endregion
-                
+
         #region Prefix and Suffix Tests for Business Flow - Gherkin Terminology
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerGherkinTerm_TestBusinessFlowPrefix()
         {
             //Arrange
@@ -288,7 +304,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("TestPre Business Flow Feature", termResValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerGherkinTerm_TestBusinessFlowSuffix()
         {
             //Arrange
@@ -301,7 +318,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Business Flow Feature TestSuffix", termResValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerGherkinTerm_TestBusinessFlowCase()
         {
             //Arrange
@@ -314,7 +332,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Business Flow Feature".ToUpper(), termResValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerGherkinTerm_TestBusinessFlowPrefixSuffix()
         {
             //Arrange
@@ -327,7 +346,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("TestPre Business Flow Feature TestSuffix", termResValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerGherkinTerm_TestBusinessFlowPrefixSuffixCase()
         {
             //Arrange
@@ -343,7 +363,8 @@ namespace GingerCoreCommonTest.TerminologyTests
 
         #region Prefix and Suffix Tests for Business Flow - Testing Terminology
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerTestingTerm_TestBusinessFlowPrefix()
         {
             //Arrange
@@ -357,7 +378,8 @@ namespace GingerCoreCommonTest.TerminologyTests
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerTestingTerm_TestBusinessFlowSuffix()
         {
             //Arrange
@@ -370,7 +392,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Test Set TestSuffix", termResValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerTestingTerm_TestBusinessFlowCase()
         {
             //Arrange
@@ -383,7 +406,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Test Set".ToUpper(), termResValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerTestingTerm_TestBusinessFlowPrefixSuffix()
         {
             //Arrange
@@ -396,7 +420,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("TestPre Test Set TestSuffix", termResValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerTestingTerm_TestBusinessFlowPrefixSuffixCase()
         {
             //Arrange
@@ -412,7 +437,8 @@ namespace GingerCoreCommonTest.TerminologyTests
 
         #region Prefix and Suffix Tests for Activity - Gherkin Terminology
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerGherkinTerm_TestActivityPrefix()
         {
             //Arrange
@@ -426,7 +452,8 @@ namespace GingerCoreCommonTest.TerminologyTests
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerGherkinTerm_TestActivitySuffix()
         {
             //Arrange
@@ -439,7 +466,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Step TestSuffix", termResValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerGherkinTerm_TestActivityCase()
         {
             //Arrange
@@ -452,7 +480,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("Step".ToUpper(), termResValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerGherkinTerm_TestActivityPrefixSuffix()
         {
             //Arrange
@@ -465,7 +494,8 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("TestPre Step TestSuffix", termResValue);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerGherkinTerm_TestActivityPrefixSuffixCase()
         {
             //Arrange
@@ -478,7 +508,7 @@ namespace GingerCoreCommonTest.TerminologyTests
             Assert.AreEqual("TestPre Step TestSuffix".ToUpper(), termResValue);
         }
         #endregion
-        
+
     }
 
 } //namespace

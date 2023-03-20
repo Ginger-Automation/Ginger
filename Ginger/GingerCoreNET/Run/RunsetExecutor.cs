@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,10 +19,13 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.CoreNET.Run.ExecutionSummary;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using Amdocs.Ginger.CoreNET.Run.ExecutionSummary;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
+using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.Repository;
+using Ginger.Configurations;
 using Ginger.Reports;
 using Ginger.Run.RunSetActions;
 using GingerCore;
@@ -34,15 +37,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.IO;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
-using Amdocs.Ginger.CoreNET.Run.RunSetActions;
-using Ginger.Configurations;
-using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Ginger.Run
 {
@@ -596,7 +595,7 @@ namespace Ginger.Run
 
                 if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes && Runners.Count > 0)
                 {
-                    if(deactivatedBF != null && deactivatedBF.Count > 0)
+                    if (deactivatedBF != null && deactivatedBF.Count > 0)
                     {
                         ReactivateBF(deactivatedBF);
                         deactivatedBF.Clear();
@@ -748,7 +747,10 @@ namespace Ginger.Run
                     {
                         case RunSetActionBase.eRunAt.DuringExecution:
                             if (RSA is RunSetActions.RunSetActionPublishToQC)
+                            {
                                 RSA.PrepareDuringExecAction(Runners);
+                            }
+
                             break;
 
                         case RunSetActionBase.eRunAt.ExecutionStart:
@@ -968,10 +970,10 @@ namespace Ginger.Run
         }
         private void ReactivateBF(List<BusinessFlow> deactivatedBF)
         {
-                foreach (BusinessFlow BF in deactivatedBF)
-                {
-                    BF.Active = true;
-                }
+            foreach (BusinessFlow BF in deactivatedBF)
+            {
+                BF.Active = true;
+            }
         }
     }
 }

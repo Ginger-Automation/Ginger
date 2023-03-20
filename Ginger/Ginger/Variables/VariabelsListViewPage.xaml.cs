@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -98,7 +98,7 @@ namespace Ginger.BusinessFlowPages
             }
             else
             {
-                return null; 
+                return null;
             }
         }
 
@@ -118,7 +118,7 @@ namespace Ginger.BusinessFlowPages
             }
             else
             {
-                return eVariablesLevel.Activity; 
+                return eVariablesLevel.Activity;
             }
         }
 
@@ -130,7 +130,7 @@ namespace Ginger.BusinessFlowPages
                 mVarBeenEdit = variabelToEdit;
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.TextProperty, mVarBeenEdit, nameof(VariableBase.Name));
                 BindingHandler.ObjFieldBinding(xSelectedItemTitleText, TextBlock.ToolTipProperty, mVarBeenEdit, nameof(VariableBase.Name));
-                                
+
                 bool showAsReadOnly = false;
                 if (mPageViewMode == General.eRIPageViewMode.View || mPageViewMode == General.eRIPageViewMode.ViewAndExecute)
                 {
@@ -141,7 +141,7 @@ namespace Ginger.BusinessFlowPages
                 {
                     xEditAndValueChangeOperationsPnl.Visibility = Visibility.Visible;
                     BindingHandler.ObjFieldBinding(xResetValueBtn, ucButton.VisibilityProperty, mVarBeenEdit, nameof(VariableBase.SupportResetValue), bindingConvertor: new BooleanToVisibilityConverter(), BindingMode.OneWay);
-                    BindingHandler.ObjFieldBinding(xAutoValueBtn, ucButton.VisibilityProperty, mVarBeenEdit, nameof(VariableBase.SupportAutoValue), bindingConvertor: new BooleanToVisibilityConverter(), BindingMode.OneWay);                    
+                    BindingHandler.ObjFieldBinding(xAutoValueBtn, ucButton.VisibilityProperty, mVarBeenEdit, nameof(VariableBase.SupportAutoValue), bindingConvertor: new BooleanToVisibilityConverter(), BindingMode.OneWay);
                     mVarBeenEdit.SaveBackup();
                 }
 
@@ -155,19 +155,19 @@ namespace Ginger.BusinessFlowPages
                 }
                 else if (mVariabelsParent is Activity)
                 {
-                    if(mPageViewMode== General.eRIPageViewMode.View || mPageViewMode == General.eRIPageViewMode.ViewAndExecute)
+                    if (mPageViewMode == General.eRIPageViewMode.View || mPageViewMode == General.eRIPageViewMode.ViewAndExecute)
                     {
                         mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.View, parent: mVariabelsParent);
-                    }                   
+                    }
                     else if (mPageViewMode == General.eRIPageViewMode.SharedReposiotry)
                     {
-                        mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.SharedRepository,parent: mVariabelsParent);
+                        mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.SharedRepository, parent: mVariabelsParent);
                     }
                     else
                     {
                         mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Default, parent: mVariabelsParent);
                     }
-                }                
+                }
                 xMainFrame.SetContent(mVariabelEditPage);
             }
             else
@@ -223,7 +223,7 @@ namespace Ginger.BusinessFlowPages
                 mVariabelsListView.SetDefaultListDataTemplate(mVariabelListHelper);
 
                 mVariabelsListView.ListSelectionMode = SelectionMode.Extended;
-                
+
                 mVariabelsListView.PreviewDragItem += ListVars_PreviewDragItem;
                 mVariabelsListView.ItemDropped += ListVars_ItemDropped;
 
@@ -237,7 +237,7 @@ namespace Ginger.BusinessFlowPages
                 }
             }
             else
-            {            
+            {
                 mVariabelListHelper.UpdatePageViewMode(mPageViewMode);
                 mVariabelsListView.SetDefaultListDataTemplate(mVariabelListHelper);
             }
@@ -284,8 +284,8 @@ namespace Ginger.BusinessFlowPages
             if (mVariabelsParent != parent)
             {
                 mVariabelsParent = parent;
-                mVariablesLevel = GetVariablesLevel();                
-                SetListView();                
+                mVariablesLevel = GetVariablesLevel();
+                SetListView();
                 ShowHideEditPage(null);
             }
         }
@@ -295,7 +295,7 @@ namespace Ginger.BusinessFlowPages
         {
             if (DragDrop2.DrgInfo.DataIsAssignableToType(typeof(VariableBase), true))
             {
-                if(DragDrop2.DrgInfo.Data is ObservableList<RepositoryItemBase>)
+                if (DragDrop2.DrgInfo.Data is ObservableList<RepositoryItemBase>)
                 {
                     DragDrop2.SetDragIcon(true, true);
                 }
@@ -351,7 +351,7 @@ namespace Ginger.BusinessFlowPages
         private void xGoToList_Click(object sender, RoutedEventArgs e)
         {
             ShowHideEditPage(null);
-        }        
+        }
 
         private void xPreviousBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -362,7 +362,7 @@ namespace Ginger.BusinessFlowPages
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, string.Format( "No {0} to move to.", GingerDicser.GetTermResValue(eTermResKey.Variable)));
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, string.Format("No {0} to move to.", GingerDicser.GetTermResValue(eTermResKey.Variable)));
             }
         }
 
@@ -390,7 +390,7 @@ namespace Ginger.BusinessFlowPages
 
             if (mVarBeenEdit.NameBeforeEdit != mVarBeenEdit.Name)
             {
-                await Task.Run(() =>  mVariabelEditPage.UpdateVariableNameChange());
+                await Task.Run(() => mVariabelEditPage.UpdateVariableNameChange());
             }
         }
 

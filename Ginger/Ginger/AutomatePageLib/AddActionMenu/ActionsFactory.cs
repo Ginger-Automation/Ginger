@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,13 +24,11 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.ApiModelsFolder;
-using Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
 using GingerCore.Activities;
-using GingerCore.Drivers.Common;
 using GingerCore.Environments;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -335,7 +333,7 @@ namespace Ginger.BusinessFlowPages
                     //map activities target application to BF if missing in BF
                     userSelection = businessFlow.MapTAToBF(userSelection, activityIns, WorkSpace.Instance.Solution.ApplicationPlatforms);
                     businessFlow.SetActivityTargetApplication(activityIns);
-                    if(insertIndex >= 0)
+                    if (insertIndex >= 0)
                     {
                         businessFlow.ActivitiesGroups.Move(businessFlow.ActivitiesGroups.IndexOf(parentGroup), insertIndex);
                     }

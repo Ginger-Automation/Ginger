@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -44,14 +44,14 @@ namespace GingerCore.Drivers.Common
         ElementInfo GetRootElement();
 
         ElementInfo UseRootElement();
-        
+
         ElementInfo GetElementParent(ElementInfo ElementInfo, PomSetting pomSetting = null);
 
-        string GetElementProperty(ElementInfo ElementInfo, string PropertyName);        
+        string GetElementProperty(ElementInfo ElementInfo, string PropertyName);
 
         List<ElementInfo> GetElementChildren(ElementInfo ElementInfo);
 
-        ElementInfo FindFirst(ElementInfo ElementInfo, List<XpathPropertyCondition> conditions) ;
+        ElementInfo FindFirst(ElementInfo ElementInfo, List<XpathPropertyCondition> conditions);
 
         List<ElementInfo> FindAll(ElementInfo ElementInfo, List<XpathPropertyCondition> conditions);
 

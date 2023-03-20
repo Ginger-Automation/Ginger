@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -76,8 +76,8 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
             WorkSpace.Instance.RunsetExecutor = runsetExecutor;
             runsetExecutor.RunSetConfig = runSetConfig;
             runsetExecutor.RunsetExecutionEnvironment = projEnvironment;
-            runsetExecutor.InitRunners();            
-            await runsetExecutor.RunRunset();            
+            runsetExecutor.InitRunners();
+            await runsetExecutor.RunRunset();
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
         /// </summary>
         /// <param name="fileName"></param>
         public void CreateExecutionSummaryJSON(string fileName)
-        {            
+        {
             string s = WorkSpace.Instance.RunsetExecutor.CreateSummary();
             System.IO.File.WriteAllText(fileName, s);
         }
@@ -101,7 +101,7 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
 
 
             HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            HTMLReportConfiguration htmlRep = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems< HTMLReportConfiguration>().Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportConfiguration htmlRep = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Where(x => (x.IsSelected == true)).FirstOrDefault();
             //if (grdExecutionsHistory.CurrentItem == null)
             //{
             //    Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
@@ -135,7 +135,7 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
 
 
         public void RunBusinessFlow(string name)
-        {                        
+        {
             BusinessFlow BF = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where x.Name == name select x).SingleOrDefault();
             if (BF == null)
             {

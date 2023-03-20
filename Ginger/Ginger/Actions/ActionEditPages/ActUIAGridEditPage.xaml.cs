@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows;
-using System.Windows.Controls;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Actions
 {
@@ -37,7 +36,7 @@ namespace Ginger.Actions
 
             currentAct = Act;
             GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.GridAction);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "GridAction"); 
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "GridAction");
         }
 
         private void ActionNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

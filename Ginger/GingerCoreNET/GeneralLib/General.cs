@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,22 +22,21 @@ using Amdocs.Ginger.Common.Repository.SolutionCategories;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Reflection;
 using System.Security;
 using System.Xml;
-using System.Net.Http;
-using System.Net;
-using GingerCore.Actions;
-using System.Reflection;
 
 namespace GingerCoreNET.GeneralLib
 {
@@ -161,9 +160,14 @@ namespace GingerCoreNET.GeneralLib
                 {
                     Elm = rdr.Name;
                     if (ls.Count <= rdr.Depth)
+                    {
                         ls.Add(Elm);
+                    }
                     else
+                    {
                         ls[rdr.Depth] = Elm;
+                    }
+
                     foreach (var p in DeParams)
                     {
                         if (p == rdr.Name)
@@ -270,12 +274,15 @@ namespace GingerCoreNET.GeneralLib
         {
             ObservableList<T> ObservableList = new ObservableList<T>();
             foreach (T o in List)
+            {
                 ObservableList.Add(o);
+            }
+
             return ObservableList;
         }
 
         public static string CheckDataSource(string DataSourceVE, ObservableList<DataSourceBase> DSList)
-        {            
+        {
             string DSVE = DataSourceVE;
             DataSourceBase DataSource = null;
             DataSourceTable DSTable = null;
@@ -475,7 +482,7 @@ namespace GingerCoreNET.GeneralLib
                 File.WriteAllBytes(filePath, bytes);
                 return filePath;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to create temp text file", ex);
                 return null;

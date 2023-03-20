@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
     public class ApplicationInfo
     {
         private static System.Diagnostics.FileVersionInfo mFileVersionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location);
-                       
+
         public ApplicationInfo()
         {
         }
@@ -79,12 +79,12 @@ namespace Amdocs.Ginger.Common.GeneralLib
                     if (mFileVersionInfo.FilePrivatePart != 0)//Alpha
                     {
                         mApplicationVersionWithInfo = string.Format("{0}.{1}.{2}.{3}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart, mFileVersionInfo.FilePrivatePart);
-                        mApplicationVersionWithInfo += "(Alpha, Build Time: " + ApplicationBuildTime.ToString("dd-MMM-yyyy hh:mm tt") + ")";                       
+                        mApplicationVersionWithInfo += "(Alpha, Build Time: " + ApplicationBuildTime.ToString("dd-MMM-yyyy hh:mm tt") + ")";
                     }
                     else if (mFileVersionInfo.FileBuildPart != 0)//Beta
                     {
                         mApplicationVersionWithInfo = string.Format("{0}.{1}.{2}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart);
-                        mApplicationVersionWithInfo += "(Beta, Build Date: " + ApplicationBuildTime.ToString("dd-MMM-yyyy") + ")";                       
+                        mApplicationVersionWithInfo += "(Beta, Build Date: " + ApplicationBuildTime.ToString("dd-MMM-yyyy") + ")";
                     }
                     else//Official Release
                     {
@@ -114,7 +114,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 return mApplicationBuildTime;
             }
         }
-        
+
         public static long ConvertApplicationVersionToLong(string appVersion)
         {
             try

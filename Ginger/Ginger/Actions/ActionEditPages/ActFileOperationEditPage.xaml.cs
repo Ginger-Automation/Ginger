@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,18 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Windows;
-using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
+using System.Windows;
+using System.Windows.Controls;
 namespace Ginger.Actions
 {
     /// <summary>
     /// Interaction logic for ActReadTextFile.xaml
     /// </summary>
-    public partial class ActFileOperationEditPage 
+    public partial class ActFileOperationEditPage
     {
         private ActFileOperations mAct;
 
@@ -36,10 +35,10 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = act;
             TextFileNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileOperations.Fields.SourceFilePath), true, true, UCValueExpression.eBrowserType.File);
-            DestinationFolderTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileOperations.Fields.DestinationFolder),true,true,UCValueExpression.eBrowserType.File);
+            DestinationFolderTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileOperations.Fields.DestinationFolder), true, true, UCValueExpression.eBrowserType.File);
             xRunArgumentsTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActFileOperations.Arguments)), true, false);
 
-            mAct.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+            mAct.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
             GingerCore.General.FillComboFromEnumObj(FileActionMode, mAct.FileOperationMode);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FileActionMode, ComboBox.SelectedValueProperty, mAct, "FileOperationMode");
@@ -48,19 +47,19 @@ namespace Ginger.Actions
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()) is string fileName)
-            { 
+            {
                 TextFileNameTextBox.ValueTextBox.Text = fileName;
             }
         }
-        
+
         private void FileActionMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (FileActionMode.SelectedValue != null)
             {
                 if ((ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.Copy
-                    ||(ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.ForceCopy
-                   || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.Move 
-                   || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.UnZip )
+                    || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.ForceCopy
+                   || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.Move
+                   || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.UnZip)
                 {
                     PanelToWrite.Visibility = Visibility.Visible;
                 }
@@ -72,9 +71,13 @@ namespace Ginger.Actions
 
                 if ((ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.RunCommand
                     || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.Execute)
+                {
                     xPanelRunArguments.Visibility = Visibility.Visible;
+                }
                 else
+                {
                     xPanelRunArguments.Visibility = Visibility.Collapsed;
+                }
             }
 
 

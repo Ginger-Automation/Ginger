@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,11 +19,10 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
 
 namespace Ginger.Actions
 {
-    public partial class UIAutomation 
+    public partial class UIAutomation
     {
         public ObservableList<Act> ElementLocators = new ObservableList<Act>();
         public ObservableList<Act> ParentLocators = new ObservableList<Act>();
@@ -33,12 +32,12 @@ namespace Ginger.Actions
         public void CreateLocatorList(ucGrid LocatorsGrid, ObservableList<Act> Locators)
         {
             string[] lstMultiLocVals;
-                lstMultiLocVals = Ginger.BusinessFlowWindows.EditLocatorsWindow.sMultiLocatorVals.Split('|'); 
-            
+            lstMultiLocVals = Ginger.BusinessFlowWindows.EditLocatorsWindow.sMultiLocatorVals.Split('|');
+
             if (lstMultiLocVals.Length >= 1)
             {
                 if (lstMultiLocVals.Length == 1 && lstMultiLocVals[0].ToString() == "") { Locators.Add(new ActDummy() { LocateBy = eLocateBy.ByLocalizedControlType, LocateValue = "edit" }); }
-                else 
+                else
                 {
                     foreach (string s in lstMultiLocVals)
                     {
@@ -47,11 +46,15 @@ namespace Ginger.Actions
                         {
                             Locators.Add(new ActDummy() { LocateBy = getLocatorTypeByString(ls[0].ToString()), LocateValue = ls[1].ToString() });
                         }
-                    } 
+                    }
                 }
-                
+
             }
-            if (Locators.Count == 0) Locators.Add(new ActDummy() { LocateBy = eLocateBy.ByLocalizedControlType, LocateValue = "edit" });
+            if (Locators.Count == 0)
+            {
+                Locators.Add(new ActDummy() { LocateBy = eLocateBy.ByLocalizedControlType, LocateValue = "edit" });
+            }
+
             LocatorsGrid.DataSourceList = Locators;
         }
         public string getSelectedLocators(ObservableList<Act> Locators)
@@ -62,9 +65,9 @@ namespace Ginger.Actions
                 if (strLoc == "") { strLoc = strLoc + a.LocateBy.ToString() + ":" + a.LocateValue.ToString(); }
                 else { strLoc = strLoc + "|" + a.LocateBy.ToString() + ":" + a.LocateValue.ToString(); }
             }
-            return strLoc;       
+            return strLoc;
         }
-        
+
         public ObservableList<Act> CreateParentLocators(Act a)
         {
             ObservableList<Act> olParLoc = new ObservableList<Act>();
@@ -99,9 +102,19 @@ namespace Ginger.Actions
 
         public bool getActParentLevel(Act a)
         {
-            if (a.LocateValue == null) return false;
-            if (a.LocateValue.ToString().IndexOf("#RootWindow") >= 0) return true;
-            else return false;
+            if (a.LocateValue == null)
+            {
+                return false;
+            }
+
+            if (a.LocateValue.ToString().IndexOf("#RootWindow") >= 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public eLocateBy getLocatorTypeByString(string sLocType)

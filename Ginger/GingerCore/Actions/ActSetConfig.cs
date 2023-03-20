@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,16 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using GingerCore.Helpers;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
-    public class ActSetConfig : Act,  INotifyPropertyChanged
+    public class ActSetConfig : Act, INotifyPropertyChanged
     {
         public override string ActionDescription { get { return "Set Config Action"; } }
         public override string ActionUserDescription { get { return "Set config"; } }
@@ -36,7 +34,7 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddText("To use this action, select property type from Locate By drop down and then enter property value in Locate Value textbox and then the url and run the action.");
-        }        
+        }
 
         public override string ActionEditPage { get { return null; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }

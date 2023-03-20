@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib;
-using Ginger.SourceControl;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -86,28 +85,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-
-            ObservableList<RepositoryFolder<ApplicationPOMModel>> subFolders = mPOMModelFolder.GetSubFolders();
-            foreach (RepositoryFolder<ApplicationPOMModel> pomFolder in subFolders)
-            {
-                ApplicationPOMsTreeItem pomFTVI = new ApplicationPOMsTreeItem(pomFolder);
-                Childrens.Add(pomFTVI);
-            }
-            subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // untrack sub folders
-            subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
-
-            //Add direct children's        
-            mChildPoms = mPOMModelFolder.GetFolderItems();
-            mChildPoms.CollectionChanged -= TreeFolderItems_CollectionChanged;
-            mChildPoms.CollectionChanged += TreeFolderItems_CollectionChanged;//adding event handler to add/remove tree items automatically based on folder items collection changes
-            foreach (ApplicationPOMModel pom in mChildPoms.OrderBy(nameof(ApplicationPOMModel.Name)))
-            {
-                ApplicationPOMTreeItem pomTI = new ApplicationPOMTreeItem(pom);
-                Childrens.Add(pomTI);
-            }
-
-            return Childrens;
+            return GetChildrentGeneric<ApplicationPOMModel>(mPOMModelFolder);
         }
 
         bool ITreeViewItem.IsExpandable()
@@ -139,9 +117,13 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             TreeViewUtils.AddSubMenuItem(addMenu, "Learn POM from live page", AddPOM, null, eImageType.Screen);
             TreeViewUtils.AddSubMenuItem(addMenu, "Empty POM", AddEmptyPOM, null, eImageType.ApplicationPOMModel);
             if (mPOMModelFolder.IsRootFolder)
+            {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true);
+            }
             else
+            {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowRefresh: false);
+            }
 
             AddSourceControlOptions(mContextMenu);
         }

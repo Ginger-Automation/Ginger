@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -173,7 +173,10 @@ namespace Ginger.GingerGridLib
         private void BuildUIGrid()
         {
             int total = mGingerGrid.NodeList.Count;
-            if (total == 0) return;
+            if (total == 0)
+            {
+                return;
+            }
             //TODO: verify the display UI per below algorithm, if good use it also in RunSet
 
             //First we decide how many rows columns
@@ -317,7 +320,7 @@ namespace Ginger.GingerGridLib
             RemoteServiceGrid remoteServiceGrid = new RemoteServiceGrid() { Name = "Remote Grid " + remoteGridCount, Host = SocketHelper.GetLocalHostIP(), HostPort = 15555, Active = true };
             StartTrackingRemoteServiceGrid(remoteServiceGrid);
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(remoteServiceGrid);
-            xRemoteServiceGrid.Grid.SelectedIndex = xRemoteServiceGrid.Grid.Items.Count-1;
+            xRemoteServiceGrid.Grid.SelectedIndex = xRemoteServiceGrid.Grid.Items.Count - 1;
         }
 
         private void SetRemoteGridView()

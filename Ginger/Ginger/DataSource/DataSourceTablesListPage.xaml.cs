@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using System.Windows;
-using System.Windows.Controls;
-using GingerCore;
 using GingerCore.DataSource;
 using System.Collections.Generic;
-using amdocs.ginger.GingerCoreNET;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.DataSource
 {
@@ -47,20 +46,20 @@ namespace Ginger.DataSource
 
             mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             if (mDSList.Count == 0)
-            { 
+            {
                 return;
             }
 
             List<string> mDSNames = new List<string>();
             foreach (DataSourceBase ds in mDSList)
-            { 
+            {
                 mDSNames.Add(ds.Name);
             }
 
             GingerCore.General.FillComboFromList(cmbDataSourceName, mDSNames);
             cmbDataSourceName.SelectedIndex = 0;
-            mDataSourceName = mDSNames[0];            
-        }       
+            mDataSourceName = mDSNames[0];
+        }
 
         private void DSTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -70,7 +69,7 @@ namespace Ginger.DataSource
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             //validate details
-            if (cmbDataSourceName.Text.Trim() == string.Empty || cmbDataSourceTableName.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKey.InvalidDataSourceDetails); return; }            
+            if (cmbDataSourceName.Text.Trim() == string.Empty || cmbDataSourceTableName.Text.Trim() == string.Empty) { Reporter.ToUser(eUserMsgKey.InvalidDataSourceDetails); return; }
 
             okClicked = true;
             _pageGenericWin.Close();
@@ -86,7 +85,7 @@ namespace Ginger.DataSource
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, true, "Cancel");
         }
-       
+
         public string DSName
         {
             get
@@ -140,7 +139,7 @@ namespace Ginger.DataSource
                         foreach (DataSourceTable dst in mDSTableList)
                         {
                             if (dst.DSTableType == mDSTableType)
-                            { 
+                            {
                                 dsTableNames.Add(dst.Name);
                                 custTableList.Add(dst);
                             }
@@ -150,7 +149,7 @@ namespace Ginger.DataSource
                     GingerCore.General.FillComboFromList(cmbDataSourceTableName, dsTableNames);
                     cmbDataSourceTableName.SelectedIndex = 0;
                     if (mDSTableList != null && mDSTableList.Count > 0)
-                    { 
+                    {
                         mDataSourceTableName = mDSTableList[0].Name;
                     }
                     else
@@ -165,7 +164,7 @@ namespace Ginger.DataSource
         private void cmbDataSourceTableName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (cmbDataSourceTableName == null || cmbDataSourceTableName.Items.Count == 0)
-            { 
+            {
                 return;
             }
 

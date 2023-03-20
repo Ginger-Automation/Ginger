@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using GingerCore.Drivers.ASCF;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.ASCF.ASCFBrowserElements
 {

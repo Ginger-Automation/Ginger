@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at 
@@ -13,27 +13,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
-using GingerCore.Actions.Android;
-using GingerCore.Actions.Common;
-using GingerCore.Actions.VisualTesting;
-using GingerCore.Drivers.CommunicationProtocol;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using SharpAdbClient;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 //using System.Windows.Media.Imaging;
-using System.Xml;
 
 namespace GingerCore.Drivers.AndroidADB
 {

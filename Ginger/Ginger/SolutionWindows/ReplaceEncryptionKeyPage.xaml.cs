@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using GingerCore;
-using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Variables;
 using System;

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ namespace Ginger.Imports.CDL
         //TODO: return list of errors
         public void CheckSyntax()
         {
-            
+
         }
 
         public void Run()
@@ -40,13 +40,13 @@ namespace Ginger.Imports.CDL
 
             List<Activity> activities = new List<Activity>();
 
-            foreach(BusinessFlow BF in BFs)
+            foreach (BusinessFlow BF in BFs)
             {
-                foreach(Activity a in BF.Activities)
+                foreach (Activity a in BF.Activities)
                 {
-                    foreach(Act act in a.Acts)
+                    foreach (Act act in a.Acts)
                     {
-                        if(act.LocateValue == "ID123")
+                        if (act.LocateValue == "ID123")
                         {
                             act.LocateValue = "ID123New";
                             activities.Add(a);
@@ -55,13 +55,13 @@ namespace Ginger.Imports.CDL
                 }
             }
 
-            foreach(Activity a in activities)
+            foreach (Activity a in activities)
             {
                 ActGenElement a1 = new ActGenElement();
                 a1.Active = true;
                 a1.Description = "Validate new label exist";
                 a1.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
-                a1.LocateValue = "ID123New";                                
+                a1.LocateValue = "ID123New";
                 a.Acts.Add(a1);
             }
         }

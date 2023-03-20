@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ namespace GingerCore
     {
         static Dictionary<string, eTermResKey> mTermResKeyList = null;
 
-        private string mText=string.Empty;
+        private string mText = string.Empty;
         public string Text
         {
             get
@@ -46,7 +46,7 @@ namespace GingerCore
 
         public ucTextDicResource()
         {
-            InitializeComponent();           
+            InitializeComponent();
         }
 
         private void TranslateText()
@@ -74,8 +74,8 @@ namespace GingerCore
                 txtBlock.Inlines.Add(newText);
             }
             else
-            {                
-                txtBlock.Inlines.Add(mText);                
+            {
+                txtBlock.Inlines.Add(mText);
             }
         }
     }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,12 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 
 namespace GingerCoreCommonTest.Repository
 {
-    public class MyComplextRepositoryItem : RepositoryItemBase 
+    public class MyComplextRepositoryItem : RepositoryItemBase
     {
         public enum etatus
         {
@@ -37,7 +36,9 @@ namespace GingerCoreCommonTest.Repository
         private string mName;
 
         [IsSerializedForLocalRepository]
-        public string Name  {get { return mName; }
+        public string Name
+        {
+            get { return mName; }
             set
             {
                 if (mName != value)
@@ -48,10 +49,10 @@ namespace GingerCoreCommonTest.Repository
             }
         }
         [IsSerializedForLocalRepository]
-        public string Description { get; set; }      
+        public string Description { get; set; }
 
         [IsSerializedForLocalRepository]
-        public etatus Status{ get; set; }
+        public etatus Status { get; set; }
 
         public string DontSaveMe { get; set; }
 
@@ -62,7 +63,7 @@ namespace GingerCoreCommonTest.Repository
 
         //TODO: remove - we use property
         public override string ItemName { get { return Name; } set { Name = value; } }
-        
+
         public MyComplextRepositoryItem()
         {
             //DirtyHelper.StartDirtyTracking(this);
@@ -73,6 +74,6 @@ namespace GingerCoreCommonTest.Repository
             this.Name = Name;
         }
 
-      
+
     }
 }

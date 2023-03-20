@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ namespace Amdocs.Ginger.Repository
         protected ConcurrentDictionary<string, object> mBackupDic;
         protected bool mBackupInProgress = false;
 
-        public bool IsBackupExist 
+        public bool IsBackupExist
         {
             get
             {
@@ -1070,7 +1070,7 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        internal void RaiseDirtyChanged(object sender, EventArgs e)
+        public void RaiseDirtyChanged(object sender, EventArgs e)
         {
             if (DirtyTracking != eDirtyTracking.Paused)
             {

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ namespace Ginger.BusinessFlowPages
         }
         private void SetUI()
         {
-            if (mPageViewMode == General.eRIPageViewMode.View || mPageViewMode== General.eRIPageViewMode.ViewAndExecute)
+            if (mPageViewMode == General.eRIPageViewMode.View || mPageViewMode == General.eRIPageViewMode.ViewAndExecute)
             {
                 xActivityNameTxtBox.IsEnabled = false;
                 xActivityDescriptionTxt.IsEnabled = false;
@@ -116,7 +116,7 @@ namespace Ginger.BusinessFlowPages
         }
 
         public void ClearBindings()
-        {            
+        {
             BindingOperations.ClearAllBindings(xRunOptionCombo);
             BindingOperations.ClearAllBindings(xActivityNameTxtBox);
             BindingOperations.ClearAllBindings(xActivityDescriptionTxt);
@@ -128,7 +128,7 @@ namespace Ginger.BusinessFlowPages
             BindingOperations.ClearAllBindings(xMandatoryActivityCB);
             BindingOperations.ClearAllBindings(xPublishcheckbox);
             BindingOperations.ClearAllBindings(xHandlerTypeCombo);
-            BindingOperations.ClearAllBindings(xErrorHandlerMappingCmb);            
+            BindingOperations.ClearAllBindings(xErrorHandlerMappingCmb);
         }
 
         private void BindControls()
@@ -172,7 +172,7 @@ namespace Ginger.BusinessFlowPages
                 xHandlerMappingStack.Visibility = Visibility.Collapsed;
                 xHandlerTypeCombo.BindControl(mActivity, nameof(ErrorHandler.HandlerType));
             }
-            else if(mActivity.GetType() == typeof(CleanUpActivity))
+            else if (mActivity.GetType() == typeof(CleanUpActivity))
             {
                 xHandlerTypeStack.Visibility = Visibility.Collapsed;
                 xHandlerMappingStack.Visibility = Visibility.Collapsed;

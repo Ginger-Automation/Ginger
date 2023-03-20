@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions._Common.ActUIElementLib;
-using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.GeneralLib;
@@ -43,7 +42,7 @@ namespace Ginger.Actions.VisualTesting
         private GingerCore.Actions.ActVisualTesting mAct;
         public VisualCompareAnalyzerIntegration visualCompareAnalyzerIntegration = new VisualCompareAnalyzerIntegration();
 
-        
+
         public ApplitoolsComparePage(GingerCore.Actions.ActVisualTesting mAct)
         {
             InitializeComponent();
@@ -57,7 +56,7 @@ namespace Ginger.Actions.VisualTesting
             InitLayout();
 
             ApplicationNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ApplitoolsParamApplicationName, (Context.GetAsContext(mAct.Context)).BusinessFlow.MainApplication), true, false);
-            
+
             TestNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ApplitoolsParamTestName, (Context.GetAsContext(mAct.Context)).BusinessFlow.CurrentActivity.ActivityName), true, false);
 
 
@@ -70,7 +69,7 @@ namespace Ginger.Actions.VisualTesting
             }
             PlatformInfoBase mPlatform = PlatformInfoBase.GetPlatformImpl(mAct.Platform);
             List<eLocateBy> LocateByList = mPlatform.GetPlatformUIElementLocatorsList();
-            xElementLocateByComboBox.BindControl(mAct,Act.Fields.LocateBy, LocateByList);
+            xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy, LocateByList);
             xLocateValueVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(Act.Fields.LocateValue));
             mAct.PropertyChanged += mAct_PropertyChanged;
             SetLocateValueControls();
@@ -80,7 +79,7 @@ namespace Ginger.Actions.VisualTesting
         {
             ApplitoolsAnalyzer.eApplitoolsAction applitoolsAction = (ApplitoolsAnalyzer.eApplitoolsAction)Enum.Parse(typeof(ApplitoolsAnalyzer.eApplitoolsAction), xApplitoolsActionComboBox.ComboBox.SelectedValue.ToString(), true);
             ApplitoolsAnalyzer.eActionBy actionBy = (ApplitoolsAnalyzer.eActionBy)Enum.Parse(typeof(ApplitoolsAnalyzer.eActionBy), xActionByComboBox.ComboBox.SelectedValue.ToString(), true);
-            
+
             switch (applitoolsAction)
             {
                 case ApplitoolsAnalyzer.eApplitoolsAction.OpenEyes:
@@ -91,7 +90,7 @@ namespace Ginger.Actions.VisualTesting
                     xDoNotFailActionOnMismatchPanel.Visibility = Visibility.Collapsed;
                     xLocateByAndValuePanel.Visibility = Visibility.Collapsed;
                     xActionByPanel.Visibility = Visibility.Collapsed;
-                    if(mAct.Platform == ePlatformType.Web)
+                    if (mAct.Platform == ePlatformType.Web)
                     {
                         visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetScreenSizeSelectionVisibility, eVisualTestingVisibility.Visible);
                     }
@@ -166,7 +165,7 @@ namespace Ginger.Actions.VisualTesting
                     {
                         mAct.AddOrUpdateReturnParamActual("ResultsURL", (string)mAct.CompareResult + "");
                     });
-                    
+
                 }
             }
         }
@@ -175,13 +174,15 @@ namespace Ginger.Actions.VisualTesting
         {
             string url = mAct.GetReturnParam("ResultsURL");
             if (string.IsNullOrEmpty(url))
+            {
                 Reporter.ToUser(eUserMsgKey.ApplitoolsLastExecutionResultsNotExists);
+            }
             else
             {
                 try
                 {
                     //First try open with Chrome
-                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "chrome.exe", Arguments = url , UseShellExecute = true });
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "chrome.exe", Arguments = url, UseShellExecute = true });
                 }
                 catch (Exception ex)
                 {
@@ -240,7 +241,7 @@ namespace Ginger.Actions.VisualTesting
             }
 
             eLocateBy SelectedLocType = (eLocateBy)((ComboEnumItem)xElementLocateByComboBox.SelectedItem).Value;
-            
+
             switch (SelectedLocType)
             {
                 case eLocateBy.POMElement:

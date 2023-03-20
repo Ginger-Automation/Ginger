@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,28 +16,21 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using GingerCore.NoSqlBase;
+using Microsoft.Win32;
+using MySql.Data.MySqlClient;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
-using System.Linq;
-using System.ComponentModel;
-using Microsoft.Win32;
-using System.Reflection;
-using Npgsql;
-using GingerCore.DataSource;
-using GingerCore.NoSqlBase;
-using MySql.Data.MySqlClient;
-using Amdocs.Ginger.Common.InterfacesLib;
-
-using GingerCore.Actions;
-using System.Runtime.InteropServices;
-using amdocs.ginger.GingerCoreNET;
-using static GingerCore.Environments.Database;
 using System.Data.OleDb;
+using System.Data.SqlClient;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using static GingerCore.Environments.Database;
 
 namespace GingerCore.Environments
 {
@@ -214,7 +207,9 @@ namespace GingerCore.Environments
             Boolean isCoonected = true;
 
             if ((oConn == null) || (oConn.State != ConnectionState.Open))
+            {
                 isCoonected = Connect();
+            }
 
             //make sure that the connection was not refused by the server               
             TimeSpan timeDiff = DateTime.Now - LastConnectionUsedTime;
@@ -710,14 +705,19 @@ namespace GingerCore.Environments
             try
             {
                 if (oConn == null)
+                {
                     IsConnected = Connect();
+                }
+
                 if (IsConnected || oConn != null)
                 {
                     DbCommand command = oConn.CreateCommand();
                     command.CommandText = SQL;
                     command.CommandType = CommandType.Text;
                     if ((timeout != null) && (timeout > 0))
+                    {
                         command.CommandTimeout = (int)timeout;
+                    }
 
 
                     // Retrieve the data.
@@ -751,7 +751,9 @@ namespace GingerCore.Environments
             finally
             {
                 if (reader != null)
+                {
                     reader.Close();
+                }
             }
             return ReturnList;
         }

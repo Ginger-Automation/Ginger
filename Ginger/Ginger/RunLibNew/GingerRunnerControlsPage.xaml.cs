@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ namespace GingerWPF.RunLib
         }
 
         private void DisbleRunButtons()
-        {            
+        {
             StopButton.IsEnabled = true;
             StopButton.Refresh();
             RunActionButton.IsEnabled = false;
@@ -68,7 +68,11 @@ namespace GingerWPF.RunLib
 
             StatusImageControl.ImageType = eImageType.Processing;
 
-            if (mStopwatch == null) mStopwatch = new System.Diagnostics.Stopwatch();
+            if (mStopwatch == null)
+            {
+                mStopwatch = new System.Diagnostics.Stopwatch();
+            }
+
             mStopwatch.Reset();
             mStopwatch.Start();
         }
@@ -78,12 +82,12 @@ namespace GingerWPF.RunLib
             mStopwatch.Stop();
             StatusLabel.Content = "Elapsed: " + mStopwatch.ElapsedMilliseconds;
 
-            StatusImageControl.ImageType = eImageType.Ready;                        
+            StatusImageControl.ImageType = eImageType.Ready;
 
             StopButton.IsEnabled = false;
             RunActionButton.IsEnabled = true;
             RunActivityButton.IsEnabled = true;
-            RunButton.IsEnabled = true;                        
+            RunButton.IsEnabled = true;
         }
 
         // temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -103,7 +107,7 @@ namespace GingerWPF.RunLib
         // Run Activity
         private async void RunActivityButton_Click(object sender, RoutedEventArgs e)
         {
-            DisbleRunButtons();            
+            DisbleRunButtons();
             int result = await mGingerRunner.Executor.RunActivityAsync((Activity)mGingerRunner.Executor.CurrentBusinessFlow.CurrentActivity);
             EnableRunButtons();
         }
@@ -139,10 +143,10 @@ namespace GingerWPF.RunLib
         private void MiniButton_Click(object sender, RoutedEventArgs e)
         {
             SetMiniView(true);
-            Grid g = MainGrid;            
+            Grid g = MainGrid;
             MainContent.Content = null;
             GingerRunnerControlsMiniWindow w2 = new GingerRunnerControlsMiniWindow(g, MainContent, SetMiniView);
-            w2.Show();                               
+            w2.Show();
         }
 
         public void SetMiniView(bool b)

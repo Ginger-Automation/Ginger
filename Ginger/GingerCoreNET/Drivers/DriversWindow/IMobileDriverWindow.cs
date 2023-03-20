@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
@@ -33,7 +31,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
 
         eDevicePlatformType GetDevicePlatformType();
 
-        eAppType GetAppType();        
+        eAppType GetAppType();
 
         void PerformBackButtonPress();
 
@@ -74,6 +72,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
         Dictionary<string, string> GetDeviceBatteryInfo();
 
         Dictionary<string, object> GetDeviceGeneralInfo();
+        Dictionary<string, string> GetDeviceActivityAndPackage();
 
         Task<bool> IsRealDeviceAsync();
         string GetDeviceUDID();

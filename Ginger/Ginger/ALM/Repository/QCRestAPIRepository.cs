@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -143,7 +143,7 @@ namespace Ginger.ALM.Repository
         {
             if (selectedTestSets != null && selectedTestSets.Count() > 0)
             {
-                ObservableList<QCTestSetTreeItem> testSetsItemsToImport = new ObservableList<QCTestSetTreeItem>();                
+                ObservableList<QCTestSetTreeItem> testSetsItemsToImport = new ObservableList<QCTestSetTreeItem>();
                 foreach (QCTestSetTreeItem testSetItem in selectedTestSets)
                 {
                     //check if some of the Test Set was already imported                
@@ -153,7 +153,7 @@ namespace Ginger.ALM.Repository
                         if (userSelection == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                         {
                             //Delete the mapped BF
-                            File.Delete(testSetItem.MappedBusinessFlow.FileName);                            
+                            File.Delete(testSetItem.MappedBusinessFlow.FileName);
                             testSetsItemsToImport.Add(testSetItem);
                         }
                     }
@@ -185,19 +185,23 @@ namespace Ginger.ALM.Repository
                         //convert test set into BF
                         BusinessFlow tsBusFlow = ((QCRestAPICore)ALMIntegration.Instance.AlmCore).ConvertQCTestSetToBF(TS);
 
-                        if ( WorkSpace.Instance.Solution.MainApplication != null)
+                        if (WorkSpace.Instance.Solution.MainApplication != null)
                         {
                             //add the applications mapped to the Activities
                             foreach (Activity activ in tsBusFlow.Activities)
+                            {
                                 if (string.IsNullOrEmpty(activ.TargetApplication) == false)
                                 {
                                     if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
                                     {
                                         ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
                                         if (appAgent != null)
+                                        {
                                             tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
+                                        }
                                     }
                                 }
+                            }
                             //handle non mapped Activities
                             if (tsBusFlow.TargetApplications.Count == 0)
                             {
@@ -220,7 +224,7 @@ namespace Ginger.ALM.Repository
                         }
 
                         AddTestSetFlowToFolder(tsBusFlow, importDestinationPath);
-                                             
+
                         Reporter.HideStatusMessage();
                     }
                     catch (Exception ex)
@@ -248,7 +252,7 @@ namespace Ginger.ALM.Repository
         {
             throw new NotImplementedException();
         }
-            
+
         #endregion Import From QC
 
         #region Export To QC
@@ -269,7 +273,7 @@ namespace Ginger.ALM.Repository
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, activtiesGroup.Name);
             string res = string.Empty;
 
-            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>( WorkSpace.Instance.Solution.ExternalItemsFields);
+            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
             ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
 
             ObservableList<ExternalItemFieldBase> testCaseFields = CleanUnrelvantFields(allFields, AlmDataContractsStd.Enums.ResourceType.TEST_CASE);
@@ -335,7 +339,7 @@ namespace Ginger.ALM.Repository
                 }
             }
 
-            
+
             //check if all of the business flow activities groups already exported to QC and export the ones which not
             foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
             {
@@ -435,7 +439,7 @@ namespace Ginger.ALM.Repository
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
             string res = string.Empty;
 
-            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>( WorkSpace.Instance.Solution.ExternalItemsFields);
+            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
             ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
 
             ObservableList<ExternalItemFieldBase> testSetFieldsFields = CleanUnrelvantFields(allFields, AlmDataContractsStd.Enums.ResourceType.TEST_SET);

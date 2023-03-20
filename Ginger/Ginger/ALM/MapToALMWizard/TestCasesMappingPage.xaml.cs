@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ namespace Ginger.ALM.MapToALMWizard
                     BindTestcasesData();
                     break;
                 case EventType.LeavingForNextPage:
-                    if(mWizard.testCasesMappingList.All(tc => tc.aLMTSTest == null))
+                    if (mWizard.testCasesMappingList.All(tc => tc.aLMTSTest == null))
                     {
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please Map At least one Test Case.");
                         WizardEventArgs.CancelEvent = true;
@@ -75,7 +75,7 @@ namespace Ginger.ALM.MapToALMWizard
             xMapActivityGroupToTestCaseGrid.DataSourceList = mWizard.testCasesMappingList;
             xUnMapTestCaseGrid.DataSourceList = mWizard.testCasesUnMappedList;
             xMapActivityGroupToTestCaseGrid.Title = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, $"Ginger ‘{mWizard.mapBusinessFlow.Name}’ ", "– ALM Test Cases Mapping");
-            if(mWizard.AlmTestSetData.TestSetName is not null)
+            if (mWizard.AlmTestSetData.TestSetName is not null)
             {
                 xUnMapTestCaseGrid.Title = $"ALM '{mWizard.AlmTestSetData.TestSetName}' Test Cases";
             }

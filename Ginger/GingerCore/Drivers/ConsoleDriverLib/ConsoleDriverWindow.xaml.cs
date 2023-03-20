@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
 using System;
 using System.Text;
 using System.Windows;
@@ -45,7 +44,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         BusinessFlow mBusinessFlow;
 
         public ConsoleDriverBase mConsoleDriver;
-        
+
         public ConsoleDriverWindow(BusinessFlow BF)
         {
             InitializeComponent();
@@ -61,7 +60,9 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         private void RunCommand()
         {
             if (string.IsNullOrEmpty(CommandTextBox.Text))
+            {
                 CommandTextBox.Text = string.Empty;
+            }
 
             if (mRecording)
             {
@@ -69,7 +70,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 ACC.Description = "Command: " + CommandTextBox.Text;
 
                 ACC.LocateBy = eLocateBy.NA;
-                ACC.AddOrUpdateInputParamValue("Free Command",CommandTextBox.Text);
+                ACC.AddOrUpdateInputParamValue("Free Command", CommandTextBox.Text);
                 ACC.ConsoleCommand = ActConsoleCommand.eConsoleCommand.FreeCommand;
                 mBusinessFlow.AddAct(ACC);
             }
@@ -89,8 +90,8 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 mConsoleDriver.SendCommand(CommandTextBox.Text + Environment.NewLine);
             }
             CommandTextBox.Text = "";
-        }     
-        
+        }
+
         public void ConsoleWriteCommand(string command)
         {
             Paragraph p = new Paragraph();
@@ -101,14 +102,16 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
             ConsoleTextBox.Document.Blocks.Add(p);
             ConsoleTextBox.ScrollToEnd();
-        }        
-        public void ConsoleWriteText(string txt,bool applyFormat=false)
+        }
+        public void ConsoleWriteText(string txt, bool applyFormat = false)
         {
             mConsoleBuffer.Append(txt + Environment.NewLine);
             Paragraph p = new Paragraph();
             p.LineHeight = 10;
             if (applyFormat == true)
-                ApplyStyleToText(txt,ref p);
+            {
+                ApplyStyleToText(txt, ref p);
+            }
             else
             {
                 p.Inlines.Add(new Bold(new Run(txt))
@@ -122,7 +125,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         public void ConsoleWriteError(string txt)
         {
-            mConsoleBuffer.Append( "ERROR:" + txt);
+            mConsoleBuffer.Append("ERROR:" + txt);
 
             Paragraph p = new Paragraph();
             p.Inlines.Add(new Bold(new Run("ERROR: " + txt))
@@ -168,12 +171,12 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             string GingerRCEnd = "~~~GINGER_RC_END~~~";
 
             int i = rc.IndexOf(GingerRCStart);
-            if (i>0)
+            if (i > 0)
             {
-                int i2 = rc.IndexOf(GingerRCEnd,i);
-                if (i2 >0)
+                int i2 = rc.IndexOf(GingerRCEnd, i);
+                if (i2 > 0)
                 {
-                    rc = rc.Substring(i + GingerRCStart.Length +1, i2 - i - GingerRCEnd.Length - 4);
+                    rc = rc.Substring(i + GingerRCStart.Length + 1, i2 - i - GingerRCEnd.Length - 4);
                 }
             }
             mConsoleBuffer.Clear();
@@ -230,12 +233,16 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Console Driver - " + ex.Message);
             }
         }
-        private void ApplyStyleToText(string result,ref Paragraph p)
+        private void ApplyStyleToText(string result, ref Paragraph p)
         {
             try
             {
-                if (result == null) result = string.Empty;
-                string[] splitResult = result.Split(new string[] { "\u001b[" }, StringSplitOptions.None);                                
+                if (result == null)
+                {
+                    result = string.Empty;
+                }
+
+                string[] splitResult = result.Split(new string[] { "\u001b[" }, StringSplitOptions.None);
                 foreach (string splitLine in splitResult)
                 {
                     if (splitLine.IndexOf("m") != -1)
@@ -248,7 +255,9 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                         }
                     }
                     else
+                    {
                         p.Inlines.Add(new Bold(new Run(splitLine)));
+                    }
                 }
             }
             catch (Exception e)
@@ -352,7 +361,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 p.Inlines.Add(txtElem);
                 return true;
             }
-            catch 
+            catch
             {
                 return false;
             }

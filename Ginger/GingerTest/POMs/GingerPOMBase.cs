@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -46,13 +46,13 @@ namespace GingerWPFUnitTest.POMs
         /// <param name="automationID"></param>
         /// <returns></returns>
         public DependencyObject FindElementByAutomationID<T>(DependencyObject context, string automationID)
-        {            
+        {
             foreach (object o in LogicalTreeHelper.GetChildren(context))
-            {                
+            {
                 if (o is DependencyObject)
                 {
                     DependencyObject dependencyObject = (DependencyObject)o;
-                   
+
                     if (dependencyObject is T)  // the type we are searching
                     {
                         if (AutomationProperties.GetAutomationId(dependencyObject) == automationID)
@@ -74,17 +74,22 @@ namespace GingerWPFUnitTest.POMs
 
 
         internal DependencyObject FindElementByName(DependencyObject context, string name)
-        {            
+        {
             DependencyObject d = null;
-            Execute(() => {                
+            Execute(() =>
+            {
                 // try up to 10 seconds
                 Stopwatch st = Stopwatch.StartNew();
                 while (d == null && st.ElapsedMilliseconds < 10000)
                 {
                     d = (DependencyObject)LogicalTreeHelper.FindLogicalNode(context, name);
-                    if (d != null) break;                    
-                    SleepWithDoEvents(100);                        
-                }                
+                    if (d != null)
+                    {
+                        break;
+                    }
+
+                    SleepWithDoEvents(100);
+                }
             });
             if (d != null)
             {
@@ -106,12 +111,12 @@ namespace GingerWPFUnitTest.POMs
                     DependencyObject dependencyObject = (DependencyObject)o;
 
                     if (dependencyObject is T)  // the type we are searching
-                    {                        
+                    {
                         ContentControl cc = (ContentControl)dependencyObject;
                         if (cc.Content.ToString() == text)
                         {
                             return dependencyObject;
-                        }                        
+                        }
                     }
 
                     //Drill down the tree
@@ -164,20 +169,22 @@ namespace GingerWPFUnitTest.POMs
             });
         }
 
-      
+
 
         public bool IsWindowBitmapEquel(Page page, string ID)
         {
             bool b = false;
-            Execute(() => {
-                        b = VisualCompare.IsVisualEquel(page, ID);
-                    });
+            Execute(() =>
+            {
+                b = VisualCompare.IsVisualEquel(page, ID);
+            });
             return b;
         }
 
         public InputBoxWindowPOM CurrentInputBoxWindow
         {
-            get {
+            get
+            {
                 int i = 0;
                 while (InputBoxWindow.CurrentInputBoxWindow == null && i < 100)
                 {
@@ -197,39 +204,44 @@ namespace GingerWPFUnitTest.POMs
 
         //TODO: add Check by title - so know what to expect
         public GenericWindowPOM CurrentGenericWindow
-        {            
+        {
             get
             {
-                if (GenericWindow.CurrentWindow != null)  return new GenericWindowPOM(GenericWindow.CurrentWindow);
+                if (GenericWindow.CurrentWindow != null)
+                {
+                    return new GenericWindowPOM(GenericWindow.CurrentWindow);
+                }
 
                 GenericWindowPOM w = null;
-                Task.Factory.StartNew(()=> { 
-                
-                 Execute(() => { 
-                    int i = 0;
-                    while (GenericWindow.CurrentWindow == null && i < 100)
+                Task.Factory.StartNew(() =>
+                {
+
+                    Execute(() =>
                     {
-                        SleepWithDoEvents(100);
-                        Thread.Sleep(100);
-                        i++;
-                    }
-                    if (GenericWindow.CurrentWindow != null)
-                    {
-                        w = new GenericWindowPOM(GenericWindow.CurrentWindow);                        
-                    }
-                    else
-                    {
-                        throw new Exception("Generic window box not found");
-                    }
-                 });
-                
+                        int i = 0;
+                        while (GenericWindow.CurrentWindow == null && i < 100)
+                        {
+                            SleepWithDoEvents(100);
+                            Thread.Sleep(100);
+                            i++;
+                        }
+                        if (GenericWindow.CurrentWindow != null)
+                        {
+                            w = new GenericWindowPOM(GenericWindow.CurrentWindow);
+                        }
+                        else
+                        {
+                            throw new Exception("Generic window box not found");
+                        }
+                    });
+
                 });
-                
+
                 Stopwatch st = Stopwatch.StartNew();
                 while (w == null && st.ElapsedMilliseconds < 10000)
                 {
                     Thread.Sleep(100);
-                }                
+                }
 
                 return w;
             }

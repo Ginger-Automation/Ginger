@@ -22,8 +22,12 @@ import java.util.List;
 
 public class BrowserHelper
 {
+	 private final String JxBrowserVersion6x = "JxBrowser_6x";
+	 private final String JxBrowserVersion7x = "JxBrowser_7x";
+	 
 	 private Component mBrowser = null;
 	 private String mBrowserType = null;
+	 private String mJxBrowserVersion = null;
 	 private String mBrowserXPath = null;	 
 
 	 public BrowserHelper(Component browser) 
@@ -124,45 +128,26 @@ public class BrowserHelper
 		{	
 		     if (mBrowser.isValid() == false)
 					return "ERROR - Browser not Valid";
-			  Class DumpME = mBrowser.getClass();
-			  Object o = mBrowser; 				  
+			  			  
 			  GingerAgent.WriteLog("mBrowserType : " + mBrowserType);			  
 			  Object objRC = null;
 			  
 			  if (mBrowserType.contains("JxBrowser"))
 			  {
 				  GingerAgent.WriteLog("Inside JxBrowserBrowserComponent");
-				  
-			      Method getBrowser = DumpME.getSuperclass().getMethod("getBrowser", null);
-				
-			      Object getBrowserObj = getBrowser.invoke(o);		      			     
-			  
-				  Class getBrowserClass = getBrowserObj.getClass();	
-				
-				  Method executeJS = getBrowserClass.getMethod("executeJavaScriptAndReturnValue", String.class);
-				 
-				  executeJS.setAccessible(true);	
-				 
-				  Object getObj = executeJS.invoke(getBrowserObj, JavaScript);	
-				  Class returnValueClass= getObj.getClass();
-				  Method isNullMethod = returnValueClass.getMethod("isNull");
-				  isNullMethod.setAccessible(true);
-				  Object objNull = isNullMethod.invoke(getObj);
-				  if ((Boolean)objNull == false)
-				  {
-						   Method stringObj = returnValueClass.getMethod("getValue");
-						   stringObj.setAccessible(true);
-						   objRC = stringObj.invoke(getObj);
-				  }
+			      objRC = ExecuteScriptInJxBrowser(JavaScript);
+			      GingerAgent.WriteLog("Executed Script in JxBrowser Version: "+mJxBrowserVersion);
 			  }
 			  else if (mBrowserType.contains("JExplorer"))
 			  {
+				  Class DumpME = mBrowser.getClass();
+				  Object o = mBrowser; 	
 				  GingerAgent.WriteLog("Inside JExplorerBrowserComponent");
 				  Method method = DumpME.getMethod("executeScript", String.class);
 				  
 				  method.setAccessible(true);	
 				  objRC = method.invoke(o, JavaScript);			
-				 
+
 			  }			  
 			  return objRC;	 
 		}		
@@ -173,6 +158,109 @@ public class BrowserHelper
 		}
 		
 	}	
+	
+	private Object ExecuteScriptInJxBrowser(String javascript)
+	{
+		Object[] result = new Object[1];
+		
+		boolean isJxBrowserVersion6x = mJxBrowserVersion != null && mJxBrowserVersion.equals(JxBrowserVersion6x);
+		boolean isJxBrowserVersion7x = mJxBrowserVersion != null && mJxBrowserVersion.equals(JxBrowserVersion7x);
+		
+		if(isJxBrowserVersion6x)
+		{
+			TryExecuteScriptInJxBrowserVersion6x(javascript, result);
+			return result[0];
+		}
+		else if(isJxBrowserVersion7x)
+		{
+			TryExecuteScriptInJxBrowserVersion7x(javascript, result);
+			return result[0];
+		}
+		else
+		{
+			if(TryExecuteScriptInJxBrowserVersion6x(javascript, result))
+			{
+				mJxBrowserVersion = JxBrowserVersion6x;
+				return result[0];
+			}
+			else if(TryExecuteScriptInJxBrowserVersion7x(javascript, result))
+			{
+				mJxBrowserVersion = JxBrowserVersion7x;
+				return result[0];
+			}
+		}
+		throw new RuntimeException("Failed to execute script in JxBrowser version 6 and 7");
+	}
+	
+	private boolean TryExecuteScriptInJxBrowserVersion6x(String javascript, Object[] result)
+	{
+		try
+		{
+			Class DumpME = mBrowser.getClass();
+			Object o = mBrowser; 	
+			Method getBrowser = DumpME.getSuperclass().getMethod("getBrowser", null);
+				
+			Object getBrowserObj = getBrowser.invoke(o);		      			     
+			  
+			Class getBrowserClass = getBrowserObj.getClass();	
+				
+			Method executeJS = getBrowserClass.getMethod("executeJavaScriptAndReturnValue", String.class);
+			 
+			executeJS.setAccessible(true);	
+			
+			Object getObj = executeJS.invoke(getBrowserObj, javascript);	
+			Class returnValueClass= getObj.getClass();
+			Method isNullMethod = returnValueClass.getMethod("isNull");
+			isNullMethod.setAccessible(true);
+			Object objNull = isNullMethod.invoke(getObj);
+			if ((Boolean)objNull == false)
+			{
+				Method stringObj = returnValueClass.getMethod("getValue");
+				stringObj.setAccessible(true);
+				result[0] = stringObj.invoke(getObj);
+			}
+			return true;
+		}
+		catch(Exception e)
+		{
+			GingerAgent.WriteLog("Exception while executing script in JxBrowser version 6.x: "+e.getMessage());
+			return false;
+		}
+	}
+	
+	private boolean TryExecuteScriptInJxBrowserVersion7x(String javascript, Object[] result)
+	{
+		try
+		{
+			Class DumpME = mBrowser.getClass();
+			Object o = mBrowser; 
+			Method getBrowserMethod = DumpME.getMethod("getBrowser", null);
+			Object browserObj = getBrowserMethod.invoke(o);
+			  
+			Class browserObjClass = getBrowserMethod.getReturnType();	
+			Method mainFrameMethod = browserObjClass.getMethod("mainFrame", null);
+			Object optionalFrameObj = mainFrameMethod.invoke(browserObj);
+			
+			Class optionalFrameObjClass = mainFrameMethod.getReturnType();
+			Method getMethod = optionalFrameObjClass.getMethod("get", null);
+			Object frameObj = getMethod.invoke(optionalFrameObj);
+			  
+			Class frameObjClass = frameObj.getClass();
+			Method executeJS = frameObjClass.getMethod("executeJavaScript", String.class);
+			 
+			executeJS.setAccessible(true);	
+			
+			Object getObj = executeJS.invoke(frameObj, javascript);	
+			result[0] = getObj;
+			return true;
+		}
+		catch(Exception e)
+		{
+			GingerAgent.WriteLog("Exception while executing script in JxBrowser version 7.x: "+e.getMessage());
+			return false;
+		}
+	}
+	
 	public PayLoad getScreenShot(){
 		
 		if(CheckIfScriptExist())

@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,22 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Repository;
-using Ginger.UserConfig;
-using GingerCore;
-using GingerCore.GeneralLib;
-using GingerCoreNET.ALMLib;
-using GingerCoreNET.GeneralLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNET.SourceControl;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Repository;
+using Ginger.UserConfig;
+using GingerCoreNET.ALMLib;
+using GingerCoreNET.SourceControl;
+using Newtonsoft.Json.Linq;
 
 namespace Ginger
 {
@@ -197,7 +193,7 @@ namespace Ginger
             }
             set
             {
-                if (mAutoRunAutomatePageAnalyzer)
+                if (mAutoRunAutomatePageAnalyzer || value)
                 {
                     mAutoRunAutomatePageAnalyzer = value;
                     OnPropertyChanged(nameof(AutoRunAutomatePageAnalyzer));
@@ -499,6 +495,7 @@ namespace Ginger
                 }
             }
         }
+
 
         public string UserName
         {

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Cassandra;
+using GingerCore.Actions;
+using GingerCore.NoSqlBase.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Cassandra;
-using GingerCore.Actions;
-using GingerCore.NoSqlBase.DataAccess;
 using System.Text.RegularExpressions;
-using Amdocs.Ginger.Common;
 
 namespace GingerCore.NoSqlBase
 {
@@ -35,8 +35,8 @@ namespace GingerCore.NoSqlBase
         ActDBValidation Act = null;
         dynamic myclass = null;
         string mUDTName = null;
-       
-      
+
+
 
         public override bool Connect()
         {
@@ -56,9 +56,13 @@ namespace GingerCore.NoSqlBase
                 if (HostPort.Length == 2)
                 {
                     if (string.IsNullOrEmpty(Db.Pass) && string.IsNullOrEmpty(Db.User))
+                    {
                         cluster = Cluster.Builder().AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
+                    }
                     else
+                    {
                         cluster = Cluster.Builder().WithCredentials(Db.User.ToString(), Db.Pass.ToString()).AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
+                    }
                 }
                 else
                 {

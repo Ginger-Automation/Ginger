@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using System;
 
 namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
 {
@@ -135,7 +134,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
         {
             get
             {
-                return GetPlatformImage( mPlatform);
+                return GetPlatformImage(mPlatform);
             }
         }
 

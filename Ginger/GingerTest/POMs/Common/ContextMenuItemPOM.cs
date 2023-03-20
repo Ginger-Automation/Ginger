@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,10 +17,6 @@ limitations under the License.
 #endregion
 
 using GingerWPFUnitTest.POMs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -40,14 +36,16 @@ namespace GingerTest.POMs.Common
         public void Click()
         {
             // TODO: run on thread as modal dialog might pop up
-            Task.Factory.StartNew(() => {
-                Execute(() => {
+            Task.Factory.StartNew(() =>
+            {
+                Execute(() =>
+                {
                     //open the menu
                     ((ContextMenu)mMenuItem.Parent).IsOpen = true;
                     SleepWithDoEvents(100);
                     // Highlight the element
                     mMenuItem.RaiseEvent(new MouseEventArgs(Mouse.PrimaryDevice, 0) { RoutedEvent = Mouse.MouseEnterEvent });
-                    SleepWithDoEvents(100);                    
+                    SleepWithDoEvents(100);
                     mMenuItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
                     SleepWithDoEvents(100);
                 });

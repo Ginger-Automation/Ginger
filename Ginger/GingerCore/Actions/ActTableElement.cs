@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,18 +17,14 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
-using GingerCore.Helpers;
-using GingerCore.Properties;
+using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
-
-using Amdocs.Ginger.CoreNET;
-using GingerCore.Actions.Common;
-using System.Linq;
 
 namespace GingerCore.Actions
 {
@@ -72,7 +68,7 @@ namespace GingerCore.Actions
             public static string LocateY = "LocateColTitle";
         }
 
-        public override string ActionEditPage { get { return "ActTableEditPage"; } }        
+        public override string ActionEditPage { get { return "ActTableEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
         public override bool ValueConfigsNeeded { get { return true; } }
 
@@ -112,7 +108,7 @@ namespace GingerCore.Actions
             IsCellEnabled,
             [EnumValueDescription("Is Cell Visible")]
             IsVisible,
-            DoubleClick,     
+            DoubleClick,
             SetFocus,
             ActivateRow,
             ActivateCell,
@@ -182,7 +178,7 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public eRunColSelectorValue ColSelectorValue { get; set; }
-        
+
         [IsSerializedForLocalRepository]
         public eRunColPropertyValue WhereProperty { get; set; }
 
@@ -212,20 +208,20 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public string WhereColumnTitle { get; set; }
-        
+
 
         public string WhereColumnValue
         {
-             get
+            get
             {
                 return GetInputParamValue("WhereColumnValue");
             }
             set
             {
                 AddOrUpdateInputParamValue("WhereColumnValue", value);
-            }    
-                
-        }            
+            }
+
+        }
         public string LocateY
         {
             get
@@ -240,7 +236,7 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public string LocateColTitle { get; set; }
-        
+
         public string LocateRowType
         {
             get
@@ -253,8 +249,8 @@ namespace GingerCore.Actions
             }
         }
 
-     
-        public string LocateRowValue 
+
+        public string LocateRowValue
         {
             get
             {
@@ -265,8 +261,8 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue("LocateRowValue", value);
             }
 
-        }       
-        
+        }
+
         public string LocateX
         {
             get
@@ -278,7 +274,7 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue("LocateRowValue1", value);
             }
         }
-      
+
 
         public override String ToString()
         {
@@ -289,7 +285,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return  ControlAction.ToString();
+                return ControlAction.ToString();
             }
         }
 
@@ -310,7 +306,7 @@ namespace GingerCore.Actions
         {
             AutoMapper.MapperConfiguration mapConfigUIElement = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
             ActUIElement newActUIElement = mapConfigUIElement.CreateMapper().Map<Act, ActUIElement>(this);
-            
+
             //TODO: Call below method for Java Platform only
             newActUIElement = ConvertJavaTableToActUITable(newActUIElement);
 
@@ -334,7 +330,7 @@ namespace GingerCore.Actions
             newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ByRowNum, this.ByRowNum.ToString());
             newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ByRandRow, this.ByRandRow.ToString());
             newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.BySelectedRow, this.BySelectedRow.ToString());
-                        
+
 
             newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle, this.LocateColTitle);
             newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ColSelectorValue, Convert.ToString(this.ColSelectorValue));

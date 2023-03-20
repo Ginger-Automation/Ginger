@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,19 +23,11 @@ using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.Agents
 {
@@ -110,9 +102,13 @@ namespace Ginger.Agents
             get
             {
                 if (SelectedAgent != null)
+                {
                     return ((IWindowExplorer)(((AgentOperations)SelectedAgent.AgentOperations).Driver));
+                }
                 else
+                {
                     return null;
+                }
             }
         }
 
@@ -121,9 +117,13 @@ namespace Ginger.Agents
             get
             {
                 if (SelectedAgent != null && ((AgentOperations)SelectedAgent.AgentOperations).Status == Agent.eStatus.Running)
+                {
                     return true;
+                }
                 else
+                {
                     return false;
+                }
             }
         }
 
@@ -153,7 +153,10 @@ namespace Ginger.Agents
 
         private void xAgentsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (SelectedAgent == null) return;
+            if (SelectedAgent == null)
+            {
+                return;
+            }
 
             SelectedAgent.PropertyChanged -= SelectedAgent_PropertyChanged;
             SelectedAgent.PropertyChanged += SelectedAgent_PropertyChanged;
@@ -232,7 +235,10 @@ namespace Ginger.Agents
 
         private async void xAgentStatusBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (SelectedAgent == null) return;
+            if (SelectedAgent == null)
+            {
+                return;
+            }
 
             switch (((AgentOperations)SelectedAgent.AgentOperations).Status)
             {
@@ -259,7 +265,10 @@ namespace Ginger.Agents
                     {
                         string errorMessage = ((AgentOperations)SelectedAgent.AgentOperations).Driver.ErrorMessageFromDriver;
                         if (String.IsNullOrEmpty(errorMessage))
+                        {
                             errorMessage = "Failed to Connect the agent";
+                        }
+
                         Reporter.ToStatus(eStatusMsgKey.StartAgentFailed, null, errorMessage);
                     }
                     SelectedAgent.Tag = "Started with Agent Control";
@@ -290,7 +299,9 @@ namespace Ginger.Agents
             BindingExpression bindingExpression = null;
             bindingExpression = this.GetBindingExpression(Ginger.Agents.ucAgentControl.SelectedAgentProperty);
             if (bindingExpression != null)
+            {
                 bindingExpression.UpdateSource();
+            }
         }
 
         private void xAgentWindowsRefreshBtn_Click(object sender, RoutedEventArgs e)
@@ -337,10 +348,17 @@ namespace Ginger.Agents
 
         private void xAgentWindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (IWindowExplorerDriver == null) return;
+            if (IWindowExplorerDriver == null)
+            {
+                return;
+            }
 
             AppWindow page = (AppWindow)xAgentWindowsComboBox.SelectedItem;
-            if (page == null) return;
+            if (page == null)
+            {
+                return;
+            }
+
             IWindowExplorerDriver.SwitchWindow(page.Title);
         }
     }

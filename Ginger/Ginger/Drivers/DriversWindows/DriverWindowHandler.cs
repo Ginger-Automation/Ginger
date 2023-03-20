@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,11 +22,8 @@ using GingerCore;
 using GingerCore.Drivers;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Ginger.Drivers.DriversWindows
@@ -52,7 +49,7 @@ namespace Ginger.Drivers.DriversWindows
                             try
                             {
                                 DriverBase driver = args.Driver;
-                                AgentOperations agentOperations = (AgentOperations)args.DataObject;                                
+                                AgentOperations agentOperations = (AgentOperations)args.DataObject;
                                 string classname = "Ginger.Drivers.DriversWindows." + ((IDriverWindow)driver).GetDriverWindowName(agentOperations.Agent.DriverType);
                                 Type t = Assembly.GetExecutingAssembly().GetType(classname);
                                 if (t == null)

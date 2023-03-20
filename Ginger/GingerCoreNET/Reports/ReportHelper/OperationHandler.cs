@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,17 +20,16 @@ using Ginger.Reports;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 {
-   public class OperationHandler
+    public class OperationHandler
     {
         public void CreateCustomerLogo(object a, string tempFolder)
         {
             HTMLReportConfiguration currentTemplate = (HTMLReportConfiguration)a;
             System.Drawing.Image CustomerLogo = this.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
-            CustomerLogo.Save(Path.Combine(tempFolder,"CustomerLogo.png"));
+            CustomerLogo.Save(Path.Combine(tempFolder, "CustomerLogo.png"));
             HTMLReportConfigurationOperations.EnchancingLoadedFieldsWithDataAndValidating(currentTemplate);
         }
 

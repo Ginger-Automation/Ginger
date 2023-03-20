@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,11 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
-using GingerCore.Helpers;
-using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json.Linq;
 using System;
@@ -28,10 +29,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
-using System.IO;
-using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Actions.XML
 {
@@ -176,9 +173,13 @@ namespace GingerCore.Actions.XML
             }
 
             if (DocumentType == eDocumentType.XML)
+            {
                 XMLValidation(docTxt);
+            }
             else if (DocumentType == eDocumentType.JSON)
+            {
                 JSONValidation(docTxt);
+            }
         }
         private void JSONValidation(string json)
         {
@@ -247,9 +248,13 @@ namespace GingerCore.Actions.XML
                         {
                             ActReturnValue rv = ReturnValues.Where(x => x.Path == XA.Name).FirstOrDefault();
                             if (rv == null)
+                            {
                                 AddOrUpdateReturnParamActualWithPath(aiv.Param, XA.Value.ToString(), XA.Name);
+                            }
                             else
+                            {
                                 rv.Actual = XA.Value.ToString();
+                            }
                         }
                     }
                     else
@@ -259,9 +264,13 @@ namespace GingerCore.Actions.XML
                             var nameAttribute = node.Attributes[@aiv.Value];
                             ActReturnValue rv = ReturnValues.Where(x => x.Path == aiv.Value).FirstOrDefault();
                             if (rv == null)
+                            {
                                 AddOrUpdateReturnParamActualWithPath(aiv.Param, nameAttribute.Value.ToString(), aiv.Value);
+                            }
                             else
+                            {
                                 rv.Actual = nameAttribute.Value.ToString();
+                            }
                         }
                     }
                 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
@@ -23,8 +24,6 @@ using GingerCore.Actions;
 using GingerCore.Actions.WebServices.WebAPI;
 using GingerWPF.WizardLib;
 using System.Linq;
-using amdocs.ginger.GingerCoreNET;
-using System;
 
 namespace Ginger.ApiModelsFolder
 {
@@ -41,7 +40,9 @@ namespace Ginger.ApiModelsFolder
             mActions = mContext.BusinessFlow.CurrentActivity.Acts;
 
             if (APIModelsList != null)
+            {
                 mAAMList = APIModelsList;
+            }
 
             AddPage(Name: "API Models", Title: "Select API Model", SubTitle: "Choose one or more API's Models to create actions", Page: new APIModelSelectionWizardPage(context));
             AddPage(Name: "API Parameters", Title: "Set API Model Parameters", SubTitle: "set API Model Parameters", Page: new APIModelParamsWizardPage());
@@ -63,7 +64,7 @@ namespace Ginger.ApiModelsFolder
             get { return mAAMList; }
             set
             {
-                if(mAAMList != value)
+                if (mAAMList != value)
                 {
                     mAAMList = value;
                 }
@@ -96,13 +97,13 @@ namespace Ginger.ApiModelsFolder
                 aNew.APIModelParamsValue = GetEnhancedUpdatedParams(aamb.MergedParamsList);
                 aNew.ReturnValues = ConvertTemplateReturnValues(aamb.ReturnValues);
                 aNew.AddNewReturnParams = true;
-                aNew.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+                aNew.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
 
                 mActions.Add(aNew);
 
                 //adding the new act after the selected action in the grid  
-                
+
                 int selectedActIndex = -1;
                 if (mActions.CurrentItem != null)
                 {
@@ -130,7 +131,7 @@ namespace Ginger.ApiModelsFolder
                 rv.Path = modelRV.Path;
                 rv.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
                 rv.Expected = modelRV.Expected;
-                
+
                 if (!string.IsNullOrEmpty(modelRV.StoreToValue))
                 {
                     rv.StoreTo = ActReturnValue.eStoreTo.ApplicationModelParameter;
@@ -153,7 +154,9 @@ namespace Ginger.ApiModelsFolder
                     AIV.Param = ADP.PlaceHolder;
                     AIV.Description = ADP.Description;
                     foreach (OptionalValue optionalValue in ADP.OptionalValuesList)
+                    {
                         AIV.OptionalValues.Add(optionalValue.Value);
+                    }
 
                     EnhancedActInputValue EAIV = null;
                     EAIV = EnhancedInputValueList.Where(x => x.Param == ADP.PlaceHolder).FirstOrDefault();
@@ -166,7 +169,9 @@ namespace Ginger.ApiModelsFolder
                         OptionalValue ov = null;
                         ov = ADP.OptionalValuesList.Where(x => x.IsDefault == true).FirstOrDefault();
                         if (ov != null)
+                        {
                             AIV.Value = ov.Value;
+                        }
                         //No Default, and no value selected - what to put
                     }
 

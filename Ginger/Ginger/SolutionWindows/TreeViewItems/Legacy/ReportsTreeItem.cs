@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     {
         private ReportTemplatesPage mReportTemplatesPage;
 
-        string Path =  WorkSpace.Instance.Solution.Folder;
+        string Path = WorkSpace.Instance.Solution.Folder;
 
         Object ITreeViewItem.NodeObject()
         {
@@ -51,10 +51,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             return TreeViewUtils.CreateItemHeader("Report Templates", "@Report2_16x16.png", Ginger.SourceControl.SourceControlUI.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
         }
-        
+
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            throw new NotImplementedException();            
+            throw new NotImplementedException();
         }
 
         bool ITreeViewItem.IsExpandable()

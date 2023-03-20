@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,14 +22,14 @@ using System.Windows.Controls;
 
 namespace Ginger.TwoLevelMenuLib
 {
-    public class SubMenuItem: MenuItemBase
-    {       
+    public class SubMenuItem : MenuItemBase
+    {
         Page mItemPage = null;
         public Page ItemPage
         {
             get
             {
-                if (mItemPage==null)
+                if (mItemPage == null)
                 {
                     mItemPage = GetMenuItemPage();
                 }
@@ -57,7 +57,7 @@ namespace Ginger.TwoLevelMenuLib
             mItemPage = null;
         }
 
-        public Func<Page> GetMenuItemPage { get; }               
+        public Func<Page> GetMenuItemPage { get; }
 
         public SubMenuItem(eImageType iconType, string name, Func<Page> action, ConsoleKey key, string toolTip, string automationID)
         {
@@ -68,6 +68,6 @@ namespace Ginger.TwoLevelMenuLib
             ToolTip = toolTip;
             AutomationID = automationID;
             Active = true;
-        }       
+        }
     }
 }

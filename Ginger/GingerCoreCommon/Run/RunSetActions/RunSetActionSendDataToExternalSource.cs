@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,13 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.Reports;
-using GingerCore;
-using GingerCore.DataSource;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -66,7 +64,7 @@ namespace Ginger.Run.RunSetActions
             RunSetActionSendDataToExternalSourceOperations.Execute(RI);
         }
 
-       
+
         public override string GetEditPage()
         {
             return "RunSetActionSendDataToExternalSourceEditPage";

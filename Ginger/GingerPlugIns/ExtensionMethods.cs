@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -44,9 +44,9 @@ namespace GingerPlugIns
             ComboBox.DisplayMemberPath = nameof(ComboBoxListItem.Text);
             ComboBox.SelectedValuePath = nameof(ComboBoxListItem.Value);
             // simple bind to combo which have only text 
-            ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty , AP, "Value", BindingMode.TwoWay);
+            ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, AP, "Value", BindingMode.TwoWay);
         }
-        
+
         private static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay)
         {
             //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
@@ -66,7 +66,7 @@ namespace GingerPlugIns
                 // Can happen also if the bind field name is incorrect
                 // mark the control in red, instead of not openning the Page
                 // Set a tool tip with the error
-                
+
                 control.Style = null; // remove style so red will show
                 control.Background = System.Windows.Media.Brushes.LightPink;
                 control.BorderThickness = new Thickness(2);

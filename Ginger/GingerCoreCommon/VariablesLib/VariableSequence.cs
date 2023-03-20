@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -45,18 +45,18 @@ namespace GingerCore.Variables
 
         private int mMax;
         [IsSerializedForLocalRepository]
-        public int Max { set { mMax = value; OnPropertyChanged(nameof(this.Max));  OnPropertyChanged("Formula"); } get { return mMax; } }
+        public int Max { set { mMax = value; OnPropertyChanged(nameof(this.Max)); OnPropertyChanged("Formula"); } get { return mMax; } }
 
         private int mInterval;
         [IsSerializedForLocalRepository]
-        public int Interval { set { mInterval = value; OnPropertyChanged(nameof(this.Interval));  OnPropertyChanged("Formula"); } get { return mInterval; } }
+        public int Interval { set { mInterval = value; OnPropertyChanged(nameof(this.Interval)); OnPropertyChanged("Formula"); } get { return mInterval; } }
 
         [IsSerializedForLocalRepository]
         public bool IsInteger { set; get; }
 
         [IsSerializedForLocalRepository]
         public int CurrentValueIndex { set; get; }
-       
+
         public override string GetFormula()
         {
             return Min + "-" + Max + " Interval " + Interval;
@@ -81,7 +81,7 @@ namespace GingerCore.Variables
             Value = val.ToString();
             return true;
         }
-    
+
         public override eImageType Image { get { return eImageType.SequentialExecution; } }
         public override string VariableType
         {

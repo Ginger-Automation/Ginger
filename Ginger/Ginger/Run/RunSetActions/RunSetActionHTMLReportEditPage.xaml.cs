@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.Actions;
 using Ginger.Reports;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -55,7 +55,7 @@ namespace Ginger.Run.RunSetActions
             CurrentTemplatePickerCbx.ItemsSource = null;
 
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            if (( WorkSpace.Instance.Solution != null) && (HTMLReportConfigurations.Count > 0))
+            if ((WorkSpace.Instance.Solution != null) && (HTMLReportConfigurations.Count > 0))
             {
                 CurrentTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 CurrentTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;

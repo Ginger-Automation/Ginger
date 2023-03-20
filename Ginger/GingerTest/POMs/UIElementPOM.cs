@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,7 +39,8 @@ namespace GingerWPFUnitTest.POMs
         /// <param name="txt"></param>
         public void SetText(string txt)
         {
-            Execute(() => { 
+            Execute(() =>
+            {
                 ((TextBox)dependencyObject).Text = txt;
             });
         }
@@ -69,7 +70,8 @@ namespace GingerWPFUnitTest.POMs
         /// <param name="obj"></param>
         public void SelectValue(object obj)
         {
-            Execute(() => {
+            Execute(() =>
+            {
                 ComboBox combo = (ComboBox)dependencyObject;
                 foreach (var x in combo.Items)
                 {
@@ -85,7 +87,7 @@ namespace GingerWPFUnitTest.POMs
                     }
                 }
                 // TODO: fail back to find by string if not found by obj so use the .ToString in 2nd option
-                
+
             });
         }
 
@@ -95,7 +97,8 @@ namespace GingerWPFUnitTest.POMs
         /// <param name="obj"></param>
         public void SetCheckedValue(bool value)
         {
-            Execute(() => {
+            Execute(() =>
+            {
                 ((CheckBox)dependencyObject).IsChecked = value;
             });
         }
@@ -108,7 +111,8 @@ namespace GingerWPFUnitTest.POMs
         /// <param name="obj"></param>
         public void SelectedIndex(int index)
         {
-            Execute(() => {
+            Execute(() =>
+            {
                 ((ComboBox)dependencyObject).SelectedIndex = index;
             });
         }
@@ -116,7 +120,7 @@ namespace GingerWPFUnitTest.POMs
 
         public void DoMouseEnterEvent()
         {
-            UIElement b = (UIElement)dependencyObject; 
+            UIElement b = (UIElement)dependencyObject;
             MouseEventArgs e = new MouseEventArgs(Mouse.PrimaryDevice, 0);
             e.RoutedEvent = Mouse.MouseEnterEvent;
             b.RaiseEvent(e);

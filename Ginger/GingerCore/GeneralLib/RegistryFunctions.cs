@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,23 +16,23 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Linq;
 using Amdocs.Ginger.Common;
 using Microsoft.Win32;
+using System;
+using System.Linq;
 
 namespace GingerCore.GeneralFunctions
 {
     public enum eRegistryRoot
     {
-        HKEY_CLASSES_ROOT,HKEY_CURRENT_USER,HKEY_LOCAL_MACHINE,HKEY_USERS,HKEY_CURRENT_CONFIG
+        HKEY_CLASSES_ROOT, HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE, HKEY_USERS, HKEY_CURRENT_CONFIG
     }
 
     public class RegistryFunctions
     {
-        public static RegistryKey GetRegistryKey(eRegistryRoot rootType, string keyPath, bool writeAcceessNeeded=false)
+        public static RegistryKey GetRegistryKey(eRegistryRoot rootType, string keyPath, bool writeAcceessNeeded = false)
         {
-            RegistryKey regKey=null;
+            RegistryKey regKey = null;
             try
             {
                 //return the registry key                
@@ -92,9 +92,13 @@ namespace GingerCore.GeneralFunctions
                     }
 
                     if (regKey != null)
+                    {
                         return true;
+                    }
                     else
+                    {
                         return false;
+                    }
                 }
                 else
                 {
@@ -138,7 +142,7 @@ namespace GingerCore.GeneralFunctions
                     return null;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to get the registry key value for the RootType: '" + rootType +
                                       "', KeyPath: '" + keyPath + "' and ParameterName: '" + paramterName + "'", ex);
@@ -146,7 +150,7 @@ namespace GingerCore.GeneralFunctions
             }
         }
 
-        public static bool SetRegistryValue(eRegistryRoot rootType, string keyPath, string paramterName, 
+        public static bool SetRegistryValue(eRegistryRoot rootType, string keyPath, string paramterName,
                                                                         object value, RegistryValueKind valueType)
         {
             try
@@ -167,14 +171,14 @@ namespace GingerCore.GeneralFunctions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to set the registry key value: '" + value + 
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to set the registry key value: '" + value +
                     "' for the RootType: '" + rootType + "', KeyPath: '" + keyPath + "' and ParameterName: '" + paramterName + "'", ex);
                 return false;
             }
         }
 
-        public static bool CheckRegistryValueExist(eRegistryRoot rootType, string keyPath, string paramterName, 
-                                                        object expectedValue, Microsoft.Win32.RegistryValueKind expectedValueType, 
+        public static bool CheckRegistryValueExist(eRegistryRoot rootType, string keyPath, string paramterName,
+                                                        object expectedValue, Microsoft.Win32.RegistryValueKind expectedValueType,
                                                                 bool addValueIfMissing, bool silentMode)
         {
             bool addValue = false;
@@ -186,7 +190,7 @@ namespace GingerCore.GeneralFunctions
                     return true;
                 }
                 else
-                {                   
+                {
                     if (addValueIfMissing)
                     {
                         if (silentMode)
@@ -253,8 +257,8 @@ namespace GingerCore.GeneralFunctions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to complete the registry value check for the key: " + 
-                                                                                        rootType + "\\" + keyPath, ex);                
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to complete the registry value check for the key: " +
+                                                                                        rootType + "\\" + keyPath, ex);
                 if (!silentMode)
                 {
                     Reporter.ToUser(eUserMsgKey.RegistryValuesCheckFailed);

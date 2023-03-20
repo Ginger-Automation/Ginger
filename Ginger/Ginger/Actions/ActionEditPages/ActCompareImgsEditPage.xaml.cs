@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 using GingerCore.Actions.ScreenCapture;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 namespace Ginger.Actions
 {
     public partial class ActCompareImgsEditPage : Page
@@ -33,7 +33,7 @@ namespace Ginger.Actions
             InitializeComponent();
 
             this.f = Act;
-           
+
             //TODO: fix hard coded ButtonAction use Fields - changed 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScreenAreaCoordinatesTextBox, TextBox.TextProperty, Act, ActCompareImgs.Fields.Coordinates, BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ExpectedImageTextBox, TextBox.TextProperty, Act, ActCompareImgs.Fields.ExpectedImgFile, BindingMode.OneWay);

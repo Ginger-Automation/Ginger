@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,12 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCore.ALM;
 using GingerCore.ALM.RQM;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.ALM;
 
 namespace Ginger.ALM.RQM
 {
@@ -46,7 +45,7 @@ namespace Ginger.ALM.RQM
             lblStatus.Content = "";
             lblStatus.Visibility = System.Windows.Visibility.Collapsed;
         }
-        private void UpdateStatus(string msg="")
+        private void UpdateStatus(string msg = "")
         {
             if (importStatus == false)
             {
@@ -76,9 +75,9 @@ namespace Ginger.ALM.RQM
             testPlanId = txtTestPlanId.Text;
             if (testPlanId != "")
             {
-                //RQMTestPlan testPlan = RQMConnect.Instance.GetRQMTestPlanByIdByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName,
-                //     ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName, testPlanId);
-                //ImportTestPlan(testPlan);
+                RQMTestPlan testPlan = RQMConnect.Instance.GetRQMTestPlanByIdByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName,
+                     ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName, testPlanId);
+                ImportTestPlan(testPlan);
             }
             else
             {

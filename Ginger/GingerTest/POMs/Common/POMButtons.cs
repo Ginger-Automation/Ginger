@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,10 +18,6 @@ limitations under the License.
 
 using GingerWPFUnitTest.POMs;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -39,7 +35,7 @@ namespace GingerTest.POMs.Common
         public ButtonPOM this[string text]
         {
             get
-            {                
+            {
                 Button b = (Button)FindElementByText<Button>(mDependencyObject, text);
                 if (b != null)
                 {
@@ -52,7 +48,7 @@ namespace GingerTest.POMs.Common
                 }
             }
         }
-     
+
     }
 }
 

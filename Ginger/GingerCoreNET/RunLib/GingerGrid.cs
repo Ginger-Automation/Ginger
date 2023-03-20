@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,13 +25,13 @@ using System.Linq;
 
 namespace GingerCoreNET.RunLib
 {
-    public class GingerGrid 
-    {        
+    public class GingerGrid
+    {
         GingerSocketServer2 mGingerSocketServer;
 
         ObservableList<GingerNodeInfo> mGingerNodeInfo = new ObservableList<GingerNodeInfo>();
 
-        int mPort;        
+        int mPort;
 
         static Dictionary<GingerNodeInfo, GingerNodeProxy> GingerNodeProxyDictionary = new Dictionary<GingerNodeInfo, GingerNodeProxy>();
 
@@ -44,8 +44,8 @@ namespace GingerCoreNET.RunLib
         /// Create new GingerGrid and auto select free port
         /// </summary>
         public GingerGrid()
-        {           
-             mPort = SocketHelper.GetOpenPort();             
+        {
+            mPort = SocketHelper.GetOpenPort();
         }
 
         public void Start()
@@ -56,7 +56,7 @@ namespace GingerCoreNET.RunLib
                 mGingerSocketServer.StartServer(mPort);
                 mGingerSocketServer.MessageHandler = GingerSocketServerMessageHandler;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("Error - Unable to start GingerGrid:" + ex.Message);
             }
@@ -91,7 +91,7 @@ namespace GingerCoreNET.RunLib
                         gingerSocketInfo.Response = RC;
 
                         // add the info of the new node to the grid list
-                        mGingerNodeInfo.Add(new GingerNodeInfo() { Name = NodeName, ServiceId = NodeServiceID, OS = NodeOS, Host = NodeHost, IP = NodeIP, SessionID = gingerSocketInfo.SessionID , Status = GingerNodeInfo.eStatus.Ready });
+                        mGingerNodeInfo.Add(new GingerNodeInfo() { Name = NodeName, ServiceId = NodeServiceID, OS = NodeOS, Host = NodeHost, IP = NodeIP, SessionID = gingerSocketInfo.SessionID, Status = GingerNodeInfo.eStatus.Ready });
                         break;
                     }
 
@@ -101,7 +101,7 @@ namespace GingerCoreNET.RunLib
                         GingerNodeInfo GNI = (from x in mGingerNodeInfo where x.SessionID == SessionID select x).FirstOrDefault();
                         if (GNI == null)
                         {
-                            gingerSocketInfo.Response =  new NewPayLoad("Error", "Ginger node info not found for session id " + SessionID.ToString());
+                            gingerSocketInfo.Response = new NewPayLoad("Error", "Ginger node info not found for session id " + SessionID.ToString());
                         }
 
                         mGingerNodeInfo.Remove(GNI);
@@ -113,8 +113,8 @@ namespace GingerCoreNET.RunLib
                     }
 
 
-                    // Combine find and send to one - send session id or how to find
-                    // Change to reserve node
+                // Combine find and send to one - send session id or how to find
+                // Change to reserve node
                 case SocketMessages.FindNode:  // Find node which match criteria, used for remote grid
                     string ServiceID = p.GetValueString();
 
@@ -132,7 +132,7 @@ namespace GingerCoreNET.RunLib
                     GingerNodeInfo gingerNodeInfo = (from x in NodeList where x.SessionID == SessionID2 select x).SingleOrDefault();
                     NewPayLoad actionPayload = p.ReadPayload();
                     NewPayLoad remoteNodeActionResponce = SendRequestPayLoad(gingerNodeInfo.SessionID, actionPayload);
-                    remoteNodeActionResponce.Truncate();                    
+                    remoteNodeActionResponce.Truncate();
                     gingerSocketInfo.Response = remoteNodeActionResponce;
                     gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;  //TODO: in case of session to do not release
                     break;
@@ -169,7 +169,7 @@ namespace GingerCoreNET.RunLib
         public string Status
         {
             get
-            {                
+            {
                 if (HostIP == null)
                 {
                     HostIP = SocketHelper.GetLocalHostIP();
@@ -183,8 +183,8 @@ namespace GingerCoreNET.RunLib
                 {
                     st += "!!! NOT Ready !!!";
                 }
-                
-                return st; 
+
+                return st;
             }  // TODO: add status enum 
         }
 
@@ -202,7 +202,7 @@ namespace GingerCoreNET.RunLib
         {
 
         }
-        
+
 
         internal NewPayLoad SendRequestPayLoad(Guid sessionID, NewPayLoad payload)
         {
@@ -227,15 +227,15 @@ namespace GingerCoreNET.RunLib
         {
             GingerNodeProxy gingerNodeProxy = null;
             bool b = GingerNodeProxyDictionary.TryGetValue(gingerNodeInfo, out gingerNodeProxy);
-            if (!b)            
+            if (!b)
             {
                 gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo);
-                gingerNodeProxy.GingerGrid = this; 
+                gingerNodeProxy.GingerGrid = this;
                 GingerNodeProxyDictionary.Add(gingerNodeInfo, gingerNodeProxy);
             }
             return gingerNodeProxy;
         }
 
-       
+
     }
 }

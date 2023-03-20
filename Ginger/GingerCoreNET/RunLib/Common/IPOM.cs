@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -32,15 +32,15 @@ namespace GingerCore.Drivers.Common
     public class POMEventArgs : EventArgs
     {
         string mWindowTitle;
-        Act mAct;        
+        Act mAct;
 
         public POMEventArgs(string WindowTitle, Act act)
         {
             mAct = act;
-            mWindowTitle = WindowTitle;            
+            mWindowTitle = WindowTitle;
         }
 
-        
+
         public string WindowTitle { get { return mWindowTitle; } }
         public Act Act { get { return mAct; } }
     }

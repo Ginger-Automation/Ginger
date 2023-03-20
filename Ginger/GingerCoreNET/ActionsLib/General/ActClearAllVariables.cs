@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,12 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using System.Collections.Generic;
-using GingerCore.Helpers;
+using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
+using System.Collections.Generic;
 namespace GingerCore.Actions
 {
     public class ActClearAllVariables : ActWithoutDriver
@@ -35,7 +33,7 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddText("To reset " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " values click on run action button.");
-        }        
+        }
 
         public override string ActionEditPage { get { return "ActClearAllVariablesEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
@@ -59,7 +57,7 @@ namespace GingerCore.Actions
             get { return "Clear All " + GingerDicser.GetTermResValue(eTermResKey.Variables); }
         }
 
-        public string VariableName 
+        public string VariableName
         {
             get
             {
@@ -76,11 +74,15 @@ namespace GingerCore.Actions
             foreach (VariableBase vb in RunOnBusinessFlow.GetBFandCurrentActivityVariabeles())
             {
                 if (vb.GetType() == typeof(VariableString) && SetEmptyValue)
+                {
                     vb.Value = "";
+                }
                 else
+                {
                     vb.ResetValue();
+                }
             }
-        }        
+        }
 
         public bool SetEmptyValue
         {
@@ -88,9 +90,13 @@ namespace GingerCore.Actions
             {
                 bool value = false;
                 if (bool.TryParse(GetInputParamValue(nameof(SetEmptyValue)), out value) == true)
+                {
                     return value;
+                }
                 else
+                {
                     return true;
+                }
             }
             set
             {

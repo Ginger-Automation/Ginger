@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,27 +16,21 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using GingerCore.GeneralLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions.WebServices;
-using System.Net.Http;
-using System.Net.Security;
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using System.IO;
-using Org.BouncyCastle.X509;
 using Ginger.Run;
-using System.Reflection;
-using OpenQA.Selenium.DevTools.V99.DOM;
-using static System.Net.WebRequestMethods;
+using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using MongoDB.Driver;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using File = System.IO.File;
-using DocumentFormat.OpenXml.EMMA;
 
 namespace GingerCore.Actions.Communication
 {
@@ -72,6 +66,7 @@ namespace GingerCore.Actions.Communication
         public enum eEmailActionType
         {
             SendEmail = 1,
+            ReadEmail = 2
         }
 
         public new static partial class Fields
@@ -114,7 +109,245 @@ namespace GingerCore.Actions.Communication
             get { return "Email" + eMailActionType.ToString(); }
         }
 
-        public eEmailActionType eMailActionType { get; set; }
+        public eEmailActionType eMailActionType
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(eMailActionType), eEmailActionType.SendEmail);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(eMailActionType), value.ToString());
+                OnPropertyChanged(nameof(eMailActionType));
+            }
+        }
+
+        public enum eReadAuthenticationType
+        {
+            OAuth,
+            Credentials
+        }
+
+        public string ReadAuthenticationType
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ReadAuthenticationType), default(eReadAuthenticationType).ToString()).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ReadAuthenticationType), value);
+                OnPropertyChanged(nameof(ReadAuthenticationType));
+            }
+        }
+
+        public string ReadUserEmail
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ReadUserEmail), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ReadUserEmail), value);
+                OnPropertyChanged(nameof(ReadUserEmail));
+            }
+        }
+
+        public string ReadUserPassword
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ReadUserPassword), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ReadUserPassword), value);
+                OnPropertyChanged(nameof(ReadUserPassword));
+            }
+        }
+
+        public string MSGraphClientId
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(MSGraphClientId), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(MSGraphClientId), value);
+                OnPropertyChanged(nameof(MSGraphClientId));
+            }
+        }
+
+        public string MSGraphTenantId
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(MSGraphTenantId), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(MSGraphTenantId), value);
+                OnPropertyChanged(nameof(MSGraphTenantId));
+            }
+        }
+
+        public EmailReadFilters.eFolderFilter FilterFolder
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterFolder), EmailReadFilters.eFolderFilter.All);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterFolder), value.ToString());
+                OnPropertyChanged(nameof(FilterFolder));
+            }
+        }
+
+        public string FilterFolderNames
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterFolderNames), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterFolderNames), value);
+                OnPropertyChanged(nameof(FilterFolderNames));
+            }
+        }
+
+        public string FilterFrom
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterFrom), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterFrom), value);
+                OnPropertyChanged(nameof(FilterFrom));
+            }
+        }
+
+        public string FilterTo
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterTo), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterTo), value);
+                OnPropertyChanged(nameof(FilterTo));
+            }
+        }
+
+        public string FilterSubject
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterSubject), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterSubject), value);
+                OnPropertyChanged(nameof(FilterSubject));
+            }
+        }
+
+        public string FilterBody
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterBody), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterBody), value);
+                OnPropertyChanged(nameof(FilterBody));
+            }
+        }
+
+        public EmailReadFilters.eHasAttachmentsFilter FilterHasAttachments
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterHasAttachments), EmailReadFilters.eHasAttachmentsFilter.Either);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterHasAttachments), value.ToString());
+                OnPropertyChanged(nameof(FilterHasAttachments));
+            }
+        }
+
+        public string FilterAttachmentContentType
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterAttachmentContentType), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterAttachmentContentType), value);
+                OnPropertyChanged(nameof(FilterAttachmentContentType));
+            }
+        }
+
+        public bool DownloadAttachments
+        {
+            get
+            {
+                return bool.Parse(GetOrCreateInputParam(nameof(DownloadAttachments), false.ToString()).Value);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(DownloadAttachments), value.ToString());
+                OnPropertyChanged(nameof(DownloadAttachments));
+            }
+        }
+
+        public string AttachmentDownloadPath
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(AttachmentDownloadPath)).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(AttachmentDownloadPath), value);
+                OnPropertyChanged(nameof(AttachmentDownloadPath));
+            }
+        }
+
+        public string FilterReceivedStartDate
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterReceivedStartDate), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterReceivedStartDate), value);
+                OnPropertyChanged(nameof(FilterReceivedStartDate));
+            }
+        }
+
+        public string FilterReceivedEndDate
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(FilterReceivedEndDate), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(FilterReceivedEndDate), value);
+                OnPropertyChanged(nameof(FilterReceivedEndDate));
+            }
+        }
 
         public string Host
         {
@@ -258,12 +491,26 @@ namespace GingerCore.Actions.Communication
                     return returnValue;
                 }
                 else
+                {
                     return false;
+                }
             }
         }
         #endregion  
 
         public override void Execute()
+        {
+            if (eMailActionType == eEmailActionType.SendEmail)
+            {
+                SendEmail();
+            }
+            else if (eMailActionType == eEmailActionType.ReadEmail)
+            {
+                ReadEmails();
+            }
+        }
+
+        private void SendEmail()
         {
             Email email = new Email();
             EmailOperations emailOperations = new EmailOperations(email);
@@ -271,7 +518,10 @@ namespace GingerCore.Actions.Communication
 
             bool isSuccess;
             if (!string.IsNullOrEmpty(Host))
+            {
                 email.SMTPMailHost = Host;
+            }
+
             try { email.SMTPPort = Convert.ToInt32(this.GetInputParamCalculatedValue(nameof(Port))); }
             catch { email.SMTPPort = 25; }
 
@@ -374,6 +624,153 @@ namespace GingerCore.Actions.Communication
             {
                 Error = email.Event;
             }
+        }
+
+        private void ReadEmails()
+        {
+            IEmailReadOperations emailReadOperations = new EmailReadOperations();
+            EmailReadFilters filters = CreateEmailReadFilters();
+            MSGraphConfig config = CreateMSGraphConfig();
+            int index = 1;
+            emailReadOperations.ReadEmails(filters, config, email =>
+            {
+                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.From), email.From, index.ToString());
+                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Subject), email.Subject, index.ToString());
+                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Body), email.Body, index.ToString());
+                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.HasAttachments), email.HasAttachments.ToString(), index.ToString());
+                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.ReceivedDateTime), email.ReceivedDateTime.ToString(), index.ToString());
+                if (DownloadAttachments && FilterHasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes)
+                {
+                    IEnumerable<(string filename, string filepath)> fileNamesAndPaths = DownloadAttachmentFiles(email);
+                    foreach ((string filename, string filepath) in fileNamesAndPaths)
+                    {
+                        AddOrUpdateReturnParamActualWithPath(filename, filepath, index.ToString());
+                    }
+                }
+                index++;
+            }).Wait();
+        }
+
+        private EmailReadFilters CreateEmailReadFilters()
+        {
+            string calculatedFolderName = GetInputParamCalculatedValue(nameof(FilterFolderNames));
+            string calculatedFrom = GetInputParamCalculatedValue(nameof(FilterFrom));
+            string calculatedTo = GetInputParamCalculatedValue(nameof(FilterTo));
+            string calculatedSubject = GetInputParamCalculatedValue(nameof(FilterSubject));
+            string calculatedBody = GetInputParamCalculatedValue(nameof(FilterBody));
+            string calculatedAttachmentContentType = GetInputParamCalculatedValue(nameof(FilterAttachmentContentType));
+            string calculatedAttachmentDownloadPath = GetInputParamCalculatedValue(nameof(AttachmentDownloadPath));
+            string calculatedReceivedStartDate = GetInputParamCalculatedValue(nameof(FilterReceivedStartDate));
+            DateTime receivedStartDate = DateTime.MinValue;
+            if (!string.IsNullOrEmpty(calculatedReceivedStartDate))
+            {
+                receivedStartDate = DateTime.Parse(calculatedReceivedStartDate);
+            }
+            string calculatedReceivedEndDate = GetInputParamCalculatedValue(nameof(FilterReceivedEndDate));
+            DateTime receivedEndDate = DateTime.Now;
+            if (!string.IsNullOrEmpty(calculatedReceivedEndDate))
+            {
+                receivedEndDate = DateTime.Parse(calculatedReceivedEndDate);
+            }
+
+            EmailReadFilters filters = new()
+            {
+                Folder = FilterFolder,
+                FolderNames = calculatedFolderName,
+                From = calculatedFrom,
+                To = calculatedTo,
+                Subject = calculatedSubject,
+                Body = calculatedBody,
+                HasAttachments = FilterHasAttachments,
+                AttachmentContentType = calculatedAttachmentContentType,
+                AttachmentDownloadPath = calculatedAttachmentDownloadPath,
+                ReceivedStartDate = receivedStartDate,
+                ReceivedEndDate = receivedEndDate
+            };
+
+            return filters;
+        }
+
+        private MSGraphConfig CreateMSGraphConfig()
+        {
+            string calculatedUserEmail = GetInputParamCalculatedValue(nameof(ReadUserEmail));
+            string calculatedUserPassword = GetInputParamCalculatedValue(nameof(ReadUserPassword));
+            if (EncryptionHandler.IsStringEncrypted(calculatedUserPassword))
+            {
+                calculatedUserPassword = EncryptionHandler.DecryptwithKey(calculatedUserPassword);
+            }
+            string calculatedMSGraphClientId = GetInputParamCalculatedValue(nameof(MSGraphClientId));
+            string calculatedMSGraphTenantId = GetInputParamCalculatedValue(nameof(MSGraphTenantId));
+
+            MSGraphConfig config = new()
+            {
+                UserEmail = calculatedUserEmail,
+                UserPassword = calculatedUserPassword,
+                ClientId = calculatedMSGraphClientId,
+                TenantId = calculatedMSGraphTenantId
+            };
+
+            return config;
+        }
+
+        private IEnumerable<(string filename, string filepath)> DownloadAttachmentFiles(ReadEmail email)
+        {
+            string calculatedAttachmentDownloadPath = GetInputParamCalculatedValue(nameof(AttachmentDownloadPath));
+            if (string.IsNullOrEmpty(calculatedAttachmentDownloadPath))
+            {
+                throw new InvalidOperationException("Invalid attachment download path");
+            }
+
+            IEnumerable<string> expectedContentTypes = null;
+            string calculatedAttachmentContentType = GetInputParamCalculatedValue(nameof(FilterAttachmentContentType));
+            if (!string.IsNullOrEmpty(calculatedAttachmentContentType))
+            {
+                expectedContentTypes = calculatedAttachmentContentType.Split(";", StringSplitOptions.RemoveEmptyEntries);
+            }
+
+            List<(string filename, string filepath)> fileNamesAndPaths = new();
+
+            foreach (ReadEmail.Attachment attachment in email.Attachments)
+            {
+                if (expectedContentTypes != null && expectedContentTypes.Count() > 0 &&
+                    !expectedContentTypes.Any(expectedContentType => expectedContentType.Equals(attachment.ContentType)))
+                {
+                    continue;
+                }
+                string downloadFolder = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedAttachmentDownloadPath);
+                if (!System.IO.Directory.Exists(downloadFolder))
+                {
+                    System.IO.Directory.CreateDirectory(downloadFolder);
+                }
+                string filePath = Path.Combine(downloadFolder, attachment.Name);
+                string uniqueFilePath = GetUniqueFilePath(filePath);
+                File.WriteAllBytes(uniqueFilePath, attachment.ContentBytes);
+                fileNamesAndPaths.Add((attachment.Name, uniqueFilePath));
+            }
+
+            return fileNamesAndPaths;
+        }
+
+        private string GetUniqueFilePath(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                return filePath;
+            }
+
+            string directory = Path.GetDirectoryName(filePath);
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
+            string fileExtension = Path.GetExtension(filePath);
+
+            int copyKey = 0;
+            string uniqueFilePath;
+            do
+            {
+                copyKey++;
+                uniqueFilePath = Path.Combine(directory, $"{fileNameWithoutExtension}_Copy{copyKey}{fileExtension}");
+            } while (File.Exists(uniqueFilePath));
+
+            return uniqueFilePath;
         }
     }
 }

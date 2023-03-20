@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -33,8 +33,8 @@ namespace GingerCore.ALM.Qtest
         public string LinkedTestID { get; set; }
         public string Description { get; set; }
         //Called Test Parameters
-        public List<QtestTestParameter> Parameters { get; set; }  
-        public List<QtestTestStep> Steps { get; set; } 
-        public List<QtestTestRun> Runs { get; set; } 
+        public List<QtestTestParameter> Parameters { get; set; }
+        public List<QtestTestStep> Steps { get; set; }
+        public List<QtestTestRun> Runs { get; set; }
     }
 }
