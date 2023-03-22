@@ -819,6 +819,19 @@ namespace Ginger.Functionalities
                     mItemsToSearchIn.Add(new ItemToSearchIn(AAM, AAM, AAM, "Application API Models\\", string.Empty));
                 }
             }
+            ObservableList<ApplicationPOMModel> ApplicationPomModels = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
+            foreach (ApplicationPOMModel AAM in ApplicationPomModels)
+            {
+                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                {
+                    return;
+                }
+
+                if (mSubItemType == null || AAM.GetType() == mSubItemType)
+                {
+                    mItemsToSearchIn.Add(new ItemToSearchIn(AAM, AAM, AAM, "Application Page Object Models\\", string.Empty));
+                }
+            }
         }
 
 
