@@ -37,6 +37,21 @@ namespace GingerWPF.UserControlsLib
             get { return xTreeView; }
         }
 
+        public object SelectedItemObject
+        {
+            get
+            {
+                if (TreeView.Tree.CurrentSelectedTreeViewItem != null)
+                {
+                    return TreeView.Tree.CurrentSelectedTreeViewItem.NodeObject();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
         public SingleItemTreeViewExplorerPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, EventHandler treeItemDoubleClickHandler = null, bool isSaveButtonHidden = false)
         {
             InitializeComponent();

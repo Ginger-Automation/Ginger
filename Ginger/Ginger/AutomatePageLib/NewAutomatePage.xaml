@@ -26,13 +26,13 @@
         <!--Top Row displaying Business Flow level controls-->
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
             <DockPanel x:Name="xBusinessFlowControlsPnl"  Background="{StaticResource $BackgroundColor_White}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <UserControls:ucButton x:Name="xGoToBFsTreeBtn" DockPanel.Dock="Left" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="GoBack"  Click="xGoToBFsTreeBtn_Click" Foreground="{StaticResource $SelectionColor_LightBlue}" >
+                <!--<UserControls:ucButton x:Name="xGoToBFsTreeBtn" DockPanel.Dock="Left" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="GoBack"  Click="xGoToBFsTreeBtn_Click" Foreground="{StaticResource $SelectionColor_LightBlue}" >
                     <UserControls:ucButton.ToolTip>
                         <GingerCore:ucTextDicResource Text="Back to [BusinessFlows] Tree"></GingerCore:ucTextDicResource>
                     </UserControls:ucButton.ToolTip>
-                </UserControls:ucButton>
+                </UserControls:ucButton>-->
 
-                <StackPanel x:Name="xBusinessFlowDetailsPnl" DockPanel.Dock="Left" Orientation="Horizontal">
+                <StackPanel x:Name="xBusinessFlowDetailsPnl" DockPanel.Dock="Left" Orientation="Horizontal" Margin="10,0,0,0">
                     <UserControls:ImageMakerControl ImageType="BusinessFlow" SetAsFontImageWithSize="22" Width="32" Height="32" Foreground="{StaticResource $BackgroundColor_DarkGray}">
                         <UserControls:ImageMakerControl.ToolTip>
                             <GingerCore:ucTextDicResource Text="[BusinessFlow]"/>

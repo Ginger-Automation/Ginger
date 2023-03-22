@@ -84,17 +84,7 @@ namespace Ginger.GeneralWindows
             xSelectedItemFrame.SetContent(null);
 
             xMainNavigationListView.Items.Clear();
-            foreach (TopMenuItem menu in mTwoLevelMenu.MenuList)
-            {
-                if (!WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
-                {
-                    if (menu.Name == WorkSpace.Instance.Solution.ExternalIntegrationsTabName)
-                    {
-                        continue;
-                    }
-                }
-                xMainNavigationListView.Items.Add(menu);
-            }
+            LoadMenus();
         }
 
         private void LoadMenus()
@@ -109,12 +99,22 @@ namespace Ginger.GeneralWindows
                     }
                 }
                 xMainNavigationListView.Items.Add(menu);
-            }          
+            }      
+            
+            //if (mTwoLevelMenu.AutoSelectFirstMenuOption)
+            //{
+            //    SelectFirstTopMenu();
+            //}
         }
 
-        private void SelectFirstTopMenu()
+        public void SelectFirstTopMenu()
         {
             xMainNavigationListView.SelectedItem = xMainNavigationListView.Items[0];            
+        }
+
+        public void SelectTopMenu(int menuItemID)
+        {
+            xMainNavigationListView.SelectedItem = xMainNavigationListView.Items[menuItemID];
         }
 
         private void xMainNavigationListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -256,7 +256,7 @@ namespace Ginger
                         xNoLoadedSolutionImg.Visibility = Visibility.Visible;
                         GingerCore.General.DoEvents();
                         xSolutionTabsListView.SelectedItem = null;
-                        xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
+                        SelectBusinessFlowsMenu();
                     }
                 });
             }
@@ -377,7 +377,7 @@ namespace Ginger
                 {
                     WorkSpace.Instance.OpenSolution(((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects[0].Folder);
                     xSolutionTabsListView.SelectedItem = null;
-                    xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
+                    SelectBusinessFlowsMenu();
                 }
             }
             catch (Exception ex)
@@ -405,9 +405,15 @@ namespace Ginger
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.TextProperty, WorkSpace.Instance.Solution, nameof(Solution.Name), System.Windows.Data.BindingMode.OneWay);
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSolutionNameTextBlock, TextBlock.ToolTipProperty, WorkSpace.Instance.Solution, nameof(Solution.Folder), System.Windows.Data.BindingMode.OneWay);
                     xSolutionTabsListView.SelectedItem = null;
-                    xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
+                    SelectBusinessFlowsMenu();
                 }
             }
+        }
+
+        private void SelectBusinessFlowsMenu()
+        {
+            xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
+            ((TwoLevelMenuPage)xBusinessFlowsListItem.Tag).SelectFirstTopMenu();
         }
 
         public void CloseWithoutAsking()
@@ -489,7 +495,7 @@ namespace Ginger
                 {
                     if (xBusinessFlowsListItem.Tag == null)
                     {
-                        xBusinessFlowsListItem.Tag = new BusinessFlowsAutomatePage();
+                        xBusinessFlowsListItem.Tag = BusinessFlowsMenu.MenusPage;
                     }
                     SelectedSolutionTab = eSolutionTabType.BusinessFlows;
                 }
@@ -877,6 +883,7 @@ namespace Ginger
             {
                 //TODO: load Business Flows tab
                 xSolutionTabsListView.SelectedItem = xBusinessFlowsListItem;
+                ((TwoLevelMenuPage)xBusinessFlowsListItem.Tag).SelectTopMenu(1);//selecting Automate menu option
             }
         }
 
