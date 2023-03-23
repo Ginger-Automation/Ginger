@@ -252,23 +252,36 @@ namespace Amdocs.Ginger.CoreNET
                         break;
                 }
 
-                mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
-                mSeleniumDriver.StopProcess = this.StopProcess;
-                mSeleniumDriver.BusinessFlow = this.BusinessFlow;
-
-                if (AppType == eAppType.Web && mDefaultURL != null)
+                //If Driver.SessionId is null, it means that the Mobile Agent already in use.
+                
+                if (!(Driver.Capabilities.HasCapability("message") && Driver.Capabilities.GetCapability("message").ToString() == "Could not find available device"))
                 {
-                    try
+                    mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
+                    mSeleniumDriver.StopProcess = this.StopProcess;
+                    mSeleniumDriver.BusinessFlow = this.BusinessFlow;
+
+                    if (AppType == eAppType.Web && mDefaultURL != null)
                     {
-                        Driver.Navigate().GoToUrl(mDefaultURL);
+                        try
+                        {
+                            Driver.Navigate().GoToUrl(mDefaultURL);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to load default mobile web app URL, please validate the URL is valid", ex);
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to load default mobile web app URL, please validate the URL is valid", ex);
-                    }
+
+                    return true;
+                }
+                else
+                {
+                    string error = string.Format("Failed to start Appium session.{0}Error: Mobile device is already in use. Please close all other sessions and try again.", System.Environment.NewLine);
+                    Reporter.ToLog(eLogLevel.ERROR, error);
+                    ErrorMessageFromDriver = error;
+                    return false;
                 }
 
-                return true;
             }
             catch (Exception ex)
             {
