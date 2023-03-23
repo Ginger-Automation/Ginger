@@ -350,7 +350,7 @@ namespace GingerCore
             }
         }
 
-        public eImageType TargetApplicationPlatformImage
+        public virtual eImageType TargetApplicationPlatformImage
         {
             get
             {
@@ -366,7 +366,7 @@ namespace GingerCore
             }
         }
 
-        public string TargetApplicationPlatformName
+        public virtual string TargetApplicationPlatformName
         {
             get
             {
