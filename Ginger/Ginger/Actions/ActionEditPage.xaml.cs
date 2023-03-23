@@ -378,7 +378,8 @@ namespace Ginger.Actions
             InitActionLog();
 
             //execution details section
-            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View || EditMode == General.eRIPageViewMode.ViewAndExecute || EditMode == General.eRIPageViewMode.Explorer)
+            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View ||
+                EditMode == General.eRIPageViewMode.ViewAndExecute || EditMode == General.eRIPageViewMode.Explorer || EditMode == General.eRIPageViewMode.SharedReposiotry)
             {
                 BindingHandler.ObjFieldBinding(xExecutionStatusImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
                 BindingHandler.ObjFieldBinding(xExecutionStatusLabel, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));

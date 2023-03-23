@@ -232,9 +232,9 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 repoItemToImport = newRepositorySerializer.DeserializeFromFile(sourceFile);
                 repoItemToImport.ContainingFolder = Path.GetDirectoryName(targetFile);
                 repoItemToImport.FilePath = targetFile;
-                if (!string.IsNullOrEmpty(itemToImport.ItemNewName))
+                if (!string.IsNullOrEmpty(itemToImport.ItemName))
                 {
-                    repoItemToImport.ItemName = itemToImport.ItemNewName;
+                    repoItemToImport.ItemName = itemToImport.ItemName;
                 }
                 if (itemToImport.ItemType == GlobalSolution.eImportItemType.DataSources)
                 {
@@ -257,6 +257,15 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     dataSource.FilePath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(newFile);
                     //
                     File.Copy(sourceFile, newFile);
+                }
+                else if (itemToImport.ItemType == GlobalSolution.eImportItemType.BusinessFlows)
+                {
+                    BusinessFlow businessFlow = (BusinessFlow)repoItemToImport;
+                    //Lazy load activities and actions
+                    foreach(Activity activity in businessFlow.Activities)
+                    {
+                        _ = activity.Acts;
+                    }
                 }
                 //Create repository (sub) folder before adding
                 AddRepositoryItem(itemToImport, repoItemToImport, targetFile);
