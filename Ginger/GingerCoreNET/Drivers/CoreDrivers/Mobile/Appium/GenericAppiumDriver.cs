@@ -253,7 +253,8 @@ namespace Amdocs.Ginger.CoreNET
                 }
 
                 //If Driver.SessionId is null, it means that the Mobile Agent already in use.
-                if (!string.IsNullOrEmpty(Driver.SessionId.ToString()))
+                
+                if (!(Driver.Capabilities.HasCapability("message") && Driver.Capabilities.GetCapability("message").ToString() == "Could not find available device"))
                 {
                     mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
                     mSeleniumDriver.StopProcess = this.StopProcess;
