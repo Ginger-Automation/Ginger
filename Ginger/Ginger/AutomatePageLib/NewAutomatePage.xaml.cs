@@ -1690,7 +1690,6 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             //Help Layouts            
-            App.MainWindow.AddHelpLayoutToShow("AutomatePage_GoBackToBFsHelp", xGoToBFsTreeBtn, string.Format("Click here to go back to {0} tree", GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)));
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_BusinessFlowLayerHelp", xBusinessFlowItemComboBox, string.Format("Select here which layer of {0} you want to configure: {1}, {2} or Details", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables)));
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_AppsAgentsMappingHelp", xAppsAgentsMappingFrame, "Here you should match between the Application and the Agent which will be used for communicating and automating it");
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_EnvironmentSelectionHelp", xEnvironmentComboBox, "Environments should be used for storing environment level parameters, DB connection details and more, go to “Resources-> Environments” to configure all environments you need and select here which environment data to use in execution time");
