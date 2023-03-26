@@ -16,25 +16,23 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using ACL_Data_Contract;
 using ACL_Data_Contract.Abstraction;
 using ALM_CommonStd.DataContracts;
-using AlmDataContractsStd.Enums;
-using GingerCore.Actions;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.IO;
+using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
-using System.IO.Compression;
 using System.Xml.Serialization;
-using System.Reflection;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.IO;
-using Amdocs.Ginger.Common.InterfacesLib;
 //using AlmDataContractsStd.Contracts;
 
 namespace GingerCore.ALM.RQM
@@ -42,7 +40,7 @@ namespace GingerCore.ALM.RQM
     public class ExportToRQM
     {
         ObservableList<ExternalItemFieldBase> mExternalItemsFields = new ObservableList<ExternalItemFieldBase>();
-       
+
         private ExportToRQM()
         {
         }
@@ -113,17 +111,21 @@ namespace GingerCore.ALM.RQM
 
             List<ExecutionResult> exeResultList = new List<ExecutionResult>();
             foreach (ActivitiesGroup activGroup in businessFlow.ActivitiesGroups)
-            {                 
-                if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed) 
+            {
+                if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed)
                     || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
                     || publishToALMConfig.FilterStatus == FilterByStatus.All)
                 {
                     ExecutionResult exeResult = GetExeResultforAg(businessFlow, bfExportedID, activGroup, ref result, testPlan);
                     if (exeResult != null)
+                    {
                         exeResultList.Add(exeResult);
+                    }
                     else
+                    {
                         return false;
-                }                
+                    }
+                }
             }
 
             ResultInfo resultInfo = new ResultInfo();
@@ -161,15 +163,15 @@ namespace GingerCore.ALM.RQM
             try
             {
                 // Attach ActivityGroup Report if needed
-                if ((publishToALMConfig .ToAttachActivitiesGroupReport) || (exectutedFromAutomateTab))
+                if ((publishToALMConfig.ToAttachActivitiesGroupReport) || (exectutedFromAutomateTab))
                 {
                     foreach (ActivitiesGroup activGroup in businessFlow.ActivitiesGroups)
                     {
                         try
                         {
                             ACL_Data_Contract.Activity currentActivity = GetTestCaseFromActivityGroup(activGroup);
-                            ACL_Data_Contract.Attachment reportAttachment = new ACL_Data_Contract.Attachment();                            
-                            string activityGroupName = PathHelper.CleanInValidPathChars(activGroup.Name);                           
+                            ACL_Data_Contract.Attachment reportAttachment = new ACL_Data_Contract.Attachment();
+                            string activityGroupName = PathHelper.CleanInValidPathChars(activGroup.Name);
                             if ((activGroup.TempReportFolder != null) && (activGroup.TempReportFolder != string.Empty) &&
                             (System.IO.Directory.Exists(activGroup.TempReportFolder)))
                             {
@@ -223,7 +225,10 @@ namespace GingerCore.ALM.RQM
                 result = "Export execution details to RQM performed successfully.";
                 return true;
             }
-            else result = resultInfo.ErrorDesc;
+            else
+            {
+                result = resultInfo.ErrorDesc;
+            }
 
             Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to RQM/ALM");
             return false;
@@ -241,7 +246,7 @@ namespace GingerCore.ALM.RQM
                     return null;
                 }
 
-                ExecutionResult exeResult = new ExecutionResult {TestPlanExportID = bfExportedID};
+                ExecutionResult exeResult = new ExecutionResult { TestPlanExportID = bfExportedID };
 
                 List<Activity> relevantActivities = new List<Activity>();
                 relevantActivities = businessFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.FileName).ToList();
@@ -272,7 +277,10 @@ namespace GingerCore.ALM.RQM
                                 if (resultInfo.IsSuccess)
                                 {
                                     if (testSuite.TestSuiteExecutionRecord == null)
+                                    {
                                         testSuite.TestSuiteExecutionRecord = new RQMTestSuiteExecutionRecord();
+                                    }
+
                                     testSuite.TestSuiteExecutionRecord.RQMID = testSuite.ACL_TestSuite_Copy.TestSuiteExecutionRecordExportID;
                                     testSuite.TestSuiteExecutionRecord.URLPathVersioned = testSuite.ACL_TestSuite_Copy.TestSuiteExecutionRecordExportUri;
                                 }
@@ -363,8 +371,8 @@ namespace GingerCore.ALM.RQM
                 }
                 exeResult.TestCaseExportID = txExportID;
                 exeResult.TestScriptExportID = tsExportID;
-                exeResult.ExecutionRecordExportID = erExportID;                
-                
+                exeResult.ExecutionRecordExportID = erExportID;
+
                 int i = 1;
                 foreach (Activity act in relevantActivities)
                 {
@@ -382,7 +390,11 @@ namespace GingerCore.ALM.RQM
                             exeStep.StepStatus = ACL_Data_Contract.ExecutoinStatus.Failed;
                             string errors = string.Empty;
                             List<IAct> failedActs = act.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
-                            foreach (IAct action in failedActs) errors += action.Error + Environment.NewLine;
+                            foreach (IAct action in failedActs)
+                            {
+                                errors += action.Error + Environment.NewLine;
+                            }
+
                             exeStep.StepActualResult = errors;
                             break;
                         case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed:
@@ -414,7 +426,7 @@ namespace GingerCore.ALM.RQM
                             exeStep.StepActualResult = "Stopped";
                             break;
                     }
-                    exeResult.ExecutionStep.Add(exeStep);                             
+                    exeResult.ExecutionStep.Add(exeStep);
                 }
                 return exeResult;
 
@@ -508,11 +520,11 @@ namespace GingerCore.ALM.RQM
             {
                 //Create (RQM)TestCase for each Ginger ActivityGroup and add it to RQM TestCase List
                 testPlan.Activities = new List<IActivityModel>();//3
-                
+
                 foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
                 {
                     testPlan.Activities.Add(GetTestCaseFromActivityGroup(ag));
-                    
+
                 }
 
                 RQMConnect.Instance.RQMRep.GetConection();
@@ -625,7 +637,7 @@ namespace GingerCore.ALM.RQM
             }
 
             ACL_Data_Contract.Activity testCase = new ACL_Data_Contract.Activity();
-            
+
             //Check if updating or creating new instance in RQM
             if (!string.IsNullOrEmpty(activityGroup.ExternalID))
             {
@@ -666,7 +678,7 @@ namespace GingerCore.ALM.RQM
             int orderID = 0;
 
             foreach (ActivityIdentifiers actIden in stepList)
-            {                
+            {
                 ActivityStep activityStep = new ActivityStep();
                 if (!string.IsNullOrEmpty(actIden.ExternalID))
                 {
@@ -695,7 +707,7 @@ namespace GingerCore.ALM.RQM
 
                 activityStep.EntityName = actIden.ActivityName;
                 string description = actIden.ActivityDescription == null ? string.Empty : actIden.ActivityDescription;
-                activityStep.StepExpResults =((Activity)( actIden.IdentifiedActivity)).Expected;
+                activityStep.StepExpResults = ((Activity)(actIden.IdentifiedActivity)).Expected;
                 activityStep.StepOrderId = orderID;
                 orderID++;
                 activityStep.EntityId = 0;
@@ -751,8 +763,12 @@ namespace GingerCore.ALM.RQM
                 foreach (ExternalItemFieldBase itemField in mExternalItemsFields)
                 {
                     if (itemField.ItemType == ItemType)
+                    {
                         if (itemField.Mandatory == true || itemField.ToUpdate == true)
+                        {
                             propertiesList.Add(itemField.Name, itemField.SelectedValue);
+                        }
+                    }
                 }
             }
             else

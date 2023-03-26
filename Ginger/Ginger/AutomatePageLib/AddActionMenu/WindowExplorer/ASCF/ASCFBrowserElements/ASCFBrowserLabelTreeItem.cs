@@ -17,12 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.ASCF;
 using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.ASCF
 {
@@ -37,12 +36,12 @@ namespace Ginger.WindowExplorer.ASCF
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
             ObservableList<Act> list = new ObservableList<Act>();
-            
+
             ActASCFBrowserElement a2 = new ActASCFBrowserElement();
             a2.Description = "Get Label Text " + ASCFBrowserElementInfo.Path;
             a2.LocateBy = eLocateBy.ByName;
             a2.LocateValue = ASCFBrowserElementInfo.Path;
-            a2.ControlAction = ActASCFBrowserElement.eControlAction.GetValue;            
+            a2.ControlAction = ActASCFBrowserElement.eControlAction.GetValue;
             list.Add(a2);
 
 
@@ -50,7 +49,7 @@ namespace Ginger.WindowExplorer.ASCF
             a3.Description = "Get Label Text " + ASCFBrowserElementInfo.Path;
             a3.LocateBy = eLocateBy.ByID;
             a3.LocateValue = ASCFBrowserElementInfo.Path;
-            a3.ControlAction = ActASCFBrowserElement.eControlAction.GetValue;            
+            a3.ControlAction = ActASCFBrowserElement.eControlAction.GetValue;
             list.Add(a3);
             return list;
         }

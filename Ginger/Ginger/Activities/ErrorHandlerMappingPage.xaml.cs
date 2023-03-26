@@ -17,13 +17,13 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Ginger.UserControls;
 using GingerCore;
 using System;
-using System.Linq;
-using System.Windows.Controls;
-using Ginger.UserControls;
-using System.Windows;
 using System.ComponentModel;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Activities
 {
@@ -47,7 +47,7 @@ namespace Ginger.Activities
             lstCurrentBusinessFlowErrorHandler = new ObservableList<ErrorHandler>(mBusinessFlow.Activities.Where(a => a.GetType() == typeof(ErrorHandler) && a.Active == true
                       && ((ErrorHandler)a).HandlerType == eHandlerType.Error_Handler).Cast<ErrorHandler>().ToList());
 
-            if (mActivity.MappedErrorHandlers.Count!= 0)
+            if (mActivity.MappedErrorHandlers.Count != 0)
             {
                 int counter = 0;
                 foreach (ErrorHandler _errorHandler in lstCurrentBusinessFlowErrorHandler)
@@ -58,7 +58,9 @@ namespace Ginger.Activities
                         counter++;
                     }
                     else
+                    {
                         _errorHandler.IsSelected = false;
+                    }
                 }
                 if (mActivity.MappedErrorHandlers.Count != counter)
                 {
@@ -103,10 +105,10 @@ namespace Ginger.Activities
             //}
             #endregion
             grdErrorHandler.DataSourceList = lstCurrentBusinessFlowErrorHandler;
-            grdErrorHandler.Title = "Name of Error Handlers in "+ mBusinessFlow.Name + "";
+            grdErrorHandler.Title = "Name of Error Handlers in " + mBusinessFlow.Name + "";
             grdErrorHandler.btnMarkAll.Visibility = System.Windows.Visibility.Visible;
             grdErrorHandler.MarkUnMarkAllActive += MarkUnMarkAllActivities;
-        }               
+        }
 
         private void SetGridsView()
         {
@@ -129,7 +131,7 @@ namespace Ginger.Activities
             closeBtn.Click += new RoutedEventHandler(closeBtn_Click);
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
-            
+
             winButtons.Add(closeBtn); winButtons.Add(okBtn);
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, GingerDicser.GetTermResValue(eTermResKey.Activity) + "-Error Handler Mapping", this, winButtons, false, string.Empty, CloseWinClicked);
@@ -140,12 +142,18 @@ namespace Ginger.Activities
             {
                 mBusinessFlow.CurrentActivity = (Activity)grdErrorHandler.CurrentItem;
                 if (mBusinessFlow.CurrentActivity != null)
-                   ((Activity) mBusinessFlow.CurrentActivity).PropertyChanged += CurrentActivity_PropertyChanged;
+                {
+                    ((Activity)mBusinessFlow.CurrentActivity).PropertyChanged += CurrentActivity_PropertyChanged;
+                }
             }
         }
         private void MarkUnMarkAllActivities(bool ActiveStatus)
         {
-            if (grdErrorHandler.DataSourceList.Count <= 0) return;
+            if (grdErrorHandler.DataSourceList.Count <= 0)
+            {
+                return;
+            }
+
             if (grdErrorHandler.DataSourceList.Count > 0)
             {
                 ObservableList<ErrorHandler> lstMarkUnMarkActivities = (ObservableList<ErrorHandler>)grdErrorHandler.DataSourceList;
@@ -159,7 +167,9 @@ namespace Ginger.Activities
         private void CurrentActivity_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "HandlerType")
+            {
                 grdErrorHandler.setDefaultView();
+            }
         }
         private void CloseWinClicked(object sender, EventArgs e)
         {
@@ -174,7 +184,7 @@ namespace Ginger.Activities
         {
             OKButtonClicked = true;
             mActivity.MappedErrorHandlers.Clear();
-            mActivity.MappedErrorHandlers =  new ObservableList<Guid>(lstCurrentBusinessFlowErrorHandler.Cast<ErrorHandler>().Where(x => x.IsSelected).Select(x => x.Guid));
+            mActivity.MappedErrorHandlers = new ObservableList<Guid>(lstCurrentBusinessFlowErrorHandler.Cast<ErrorHandler>().Where(x => x.IsSelected).Select(x => x.Guid));
             _pageGenericWin.Close();
         }
     }

@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.PlugInsLib;
 using Amdocs.Ginger.CoreNET.Repository;
-using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.RunLib;
 using GingerCoreNETUnitTest.WorkSpaceLib;
@@ -31,17 +30,17 @@ using System.Linq;
 using System.Threading;
 
 namespace GingerCoreNETUnitTest.PluginsLib
-{    
+{
     [TestClass]
     [Level1]
     public class SolutionRepositoryPluginTest
-    {        
+    {
         static SolutionRepository SR;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
-        {            
-            WorkspaceHelper.CreateDummyWorkSpace();            
+        {
+            WorkspaceHelper.CreateDummyWorkSpace();
 
             string folder = TestResources.GetTestTempFolder("Solutions", "PluginTest");
 
@@ -50,7 +49,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
                 Directory.Delete(folder, true);
             }
 
-            SR = GingerSolutionRepository.CreateGingerSolutionRepository();            
+            SR = GingerSolutionRepository.CreateGingerSolutionRepository();
             SR.CreateRepository(folder);
             SR.Open(folder);
             WorkSpace.Instance.SolutionRepository = SR;
@@ -70,17 +69,17 @@ namespace GingerCoreNETUnitTest.PluginsLib
         public static void ClassCleanup()
         {
             foreach (GingerNodeInfo GNI in WorkSpace.Instance.LocalGingerGrid.NodeList)
-            {            
+            {
                 ///  TODO: fixme
                 // proxy.Shutdown();
             }
 
-            
+
 
         }
 
 
-        
+
 
         [TestInitialize]
         public void TestInitialize()
@@ -94,7 +93,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetPlugins()
         {
             //Arrange            
@@ -126,7 +126,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
         //    Assert.AreEqual(1, list.Count, "There are one text editor");
         //}
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerOfficePluginTestAction()
         {
             ////Arrange            
@@ -148,7 +149,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GingerOfficePluginTestActionx3()
         {
             ////Arrange            
@@ -172,11 +174,12 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
             ////Assert                
             //Assert.AreEqual(1, WorkSpace.Instance.LocalGingerGrid.NodeList.Count, "GingerGrid nodes 1 - only one service is up - reuse");
-            
+
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetOnlinePlugins()
         {
             //Arrange       
@@ -192,7 +195,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
 
         [Ignore]  // Fail on mac with Git Forbidden
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetOnlinePluginReleases()
         {
             //Arrange       
@@ -209,7 +213,8 @@ namespace GingerCoreNETUnitTest.PluginsLib
         }
 
         [Ignore]  // Fail on mac with Git Forbidden
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void InstallSeleniumPlugin_1_0()
         {
             //Arrange       
@@ -227,7 +232,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
         }
 
 
-      
+
 
     }
 }

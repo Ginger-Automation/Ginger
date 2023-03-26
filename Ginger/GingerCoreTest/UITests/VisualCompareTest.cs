@@ -16,37 +16,26 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Run;
 using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Drivers;
 using GingerCore.Platforms;
-using GingerCore.Actions.VisualTesting;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
-using Amdocs.Ginger.Common.InterfacesLib;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.NonUITests
 {
     [Level3]
     [TestClass]
-    public class VisualCompareTest 
+    public class VisualCompareTest
     {
 
         BusinessFlow mBF;
         GingerRunner mGR;
 
-        
+
         [TestInitialize]
         public void TestInitialize()
         {
@@ -55,18 +44,18 @@ namespace UnitTests.NonUITests
             mBF.Name = "BF Visual Testing";
             mBF.Active = true;
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;            
-            mBF.TargetApplications.Add(new TargetApplication() { AppName = "VM" });            
+            p.PlatformType = ePlatformType.Web;
+            mBF.TargetApplications.Add(new TargetApplication() { AppName = "VM" });
 
             mGR = new GingerRunner();
             mGR.Executor.SolutionFolder = TestResources.GetTestTempFolder("");
 
-            Agent a = new Agent();            
+            Agent a = new Agent();
             a.DriverType = Agent.eDriverType.SeleniumChrome;
 
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
-            
+
             mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "VM", Agent = a });
             mGR.Executor.SolutionApplications = new ObservableList<ApplicationPlatform>();
             mGR.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "VM", Platform = ePlatformType.Web, Description = "VM application" });
@@ -82,10 +71,10 @@ namespace UnitTests.NonUITests
         //[TestMethod]  [Timeout(60000)]
         //public void CreateBaselineAndCompare()
         //{
-          
+
         //    //Arrange
         //    ResetBusinessFlow();
-       
+
         //    Activity a1 = new Activity();
         //    a1.Active = true;
         //    mBF.Activities.Add(a1);
@@ -101,7 +90,7 @@ namespace UnitTests.NonUITests
         //    act2.AddNewReturnParams = true;
         //    act2.ChangeAppWindowSize = ActVisualTesting.eChangeAppWindowSize.Resolution800x600;
         //    act2.CreateBaselineAction = true;
-            
+
         //    a1.Acts.Add(act2);
 
         //    // Compare
@@ -113,7 +102,7 @@ namespace UnitTests.NonUITests
         //    act3.AddNewReturnParams = true;
         //    act3.BaseLineFileName = @"~\Documents\ScreenShots\Visual Testing - Test1 - Baseline.png";   // File is created in action 2 with default filename            
         //    a1.Acts.Add(act3);
-            
+
         //    //Act            
         //    mGR.RunRunner();
 
@@ -123,7 +112,7 @@ namespace UnitTests.NonUITests
         //   Assert.AreEqual(percentdiff, "0", "percentdiff=0");
         //   Assert.AreEqual(mBF.RunStatus, eRunStatus.Passed);
         //   Assert.AreEqual(a1.Status, eRunStatus.Passed);
-                
+
         //}
 
         //TODO:

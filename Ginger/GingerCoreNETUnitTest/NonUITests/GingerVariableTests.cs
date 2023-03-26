@@ -29,7 +29,6 @@ using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNETUnitTest.RunTestslib;
-using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -57,7 +56,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBF.Name = "BF Test Fire Fox";
             mBF.Active = true;
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;            
+            p.PlatformType = ePlatformType.Web;
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
 
             VariableString busFlowV1 = new VariableString() { Name = "BFV1", InitialStringValue = "1" };
@@ -68,7 +67,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             mGR.Executor.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
-            Agent a = new Agent();            
+            Agent a = new Agent();
             a.AgentType = Agent.eAgentType.Service; // Simple agent which anyhow we don't need to start for this test and will work on Linux
 
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
@@ -98,7 +97,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [ClassCleanup()]
         public static void ClassCleanup()
         {
-            
+
         }
 
 
@@ -108,7 +107,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBF.RunStatus = eRunStatus.Pending;
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestVariable_StringSetValue()
         {
             //Arrange
@@ -123,21 +123,22 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             VariableString v1 = new VariableString() { Name = variableName, InitialStringValue = initialValue };
             activity1.AddVariable(v1);
 
-            ActSetVariableValue actSetVariableValue = new ActSetVariableValue() { VariableName = variableName, SetVariableValueOption = VariableBase.eSetValueOptions.SetValue, Value = newValue, Active=true };
+            ActSetVariableValue actSetVariableValue = new ActSetVariableValue() { VariableName = variableName, SetVariableValueOption = VariableBase.eSetValueOptions.SetValue, Value = newValue, Active = true };
             activity1.Acts.Add(actSetVariableValue);
-            
+
             //Act            
             mGR.Executor.RunRunner();
 
             //Assert
-            
+
             Assert.AreEqual(eRunStatus.Passed, actSetVariableValue.Status);
             Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
             Assert.AreEqual(eRunStatus.Passed, activity1.Status);
-            Assert.AreEqual(newValue, v1.Value );
+            Assert.AreEqual(newValue, v1.Value);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestVariable_StringResetValue()
         {
             //Arrange
@@ -158,12 +159,13 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.Executor.RunRunner();
 
             //Assert
-            Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus );
-            Assert.AreEqual(eRunStatus.Passed, activity1.Status );
-            Assert.AreEqual(initialValue, v1.Value );
+            Assert.AreEqual(eRunStatus.Passed, mBF.RunStatus);
+            Assert.AreEqual(eRunStatus.Passed, activity1.Status);
+            Assert.AreEqual(initialValue, v1.Value);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestVariable_StringClearSpecialChar()
         {
             //Arrange
@@ -197,7 +199,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             return new String(value.Except(specialCharacters).ToArray());
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestVariable_PasswordStringSetValue()
         {
             //Arrange
@@ -225,7 +228,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestVariable_RandomNumberSetValue()
         {
             //Arrange
@@ -255,7 +259,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestVariable_RandomStringSetValue()
         {
             //Arrange
@@ -267,7 +272,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBF.Activities.Add(activity1);
 
 
-            VariableRandomString v1 = new VariableRandomString() { Name = variableName, Max = maxChars, IsUpperCase = true};
+            VariableRandomString v1 = new VariableRandomString() { Name = variableName, Max = maxChars, IsUpperCase = true };
             activity1.AddVariable(v1);
 
             ActSetVariableValue actSetVariableValue = new ActSetVariableValue() { VariableName = variableName, SetVariableValueOption = VariableBase.eSetValueOptions.AutoGenerateValue, Active = true };
@@ -283,7 +288,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestVariable_SelectionListSetValue()
         {
             //Arrange
@@ -293,12 +299,12 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Activity activity1 = new Activity() { Active = true };
             mBF.Activities.Add(activity1);
 
-            VariableSelectionList v1 = new VariableSelectionList() { Name = variableName};
+            VariableSelectionList v1 = new VariableSelectionList() { Name = variableName };
             v1.OptionalValuesList.Add(new OptionalValue("Jupiter"));
             v1.OptionalValuesList.Add(new OptionalValue("Saturn"));
             activity1.AddVariable(v1);
 
-            ActSetVariableValue actSetVariableValue = new ActSetVariableValue() { VariableName = variableName, SetVariableValueOption = VariableBase.eSetValueOptions.SetValue, Active = true, Value="Jupiter" };
+            ActSetVariableValue actSetVariableValue = new ActSetVariableValue() { VariableName = variableName, SetVariableValueOption = VariableBase.eSetValueOptions.SetValue, Active = true, Value = "Jupiter" };
             activity1.Acts.Add(actSetVariableValue);
 
             //Act            

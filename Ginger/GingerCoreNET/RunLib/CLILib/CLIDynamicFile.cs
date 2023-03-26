@@ -19,8 +19,8 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
+using Ginger.Configurations;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
-using Ginger.Reports;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
@@ -30,13 +30,11 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using static Ginger.Reports.ExecutionLoggerConfiguration;
-using Ginger.Configurations;
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public class CLIDynamicFile : ICLI
     {
-        public enum eFileType { XML,JSON}
+        public enum eFileType { XML, JSON }
 
         bool ICLI.IsFileBasedConfig { get { return true; } }
 
@@ -87,7 +85,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public void LoadGeneralConfigurations(string content, CLIHelper cliHelper)
         {
-            if(FileType == eFileType.JSON)
+            if (FileType == eFileType.JSON)
             {
                 //Dynamic JSON
                 GingerExecConfig exeConfiguration = DynamicExecutionManager.DeserializeDynamicExecutionFromJSON(content);
@@ -98,9 +96,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     cliHelper.SetSourceControlURL(exeConfiguration.SolutionScmDetails.SolutionRepositoryUrl);
                     cliHelper.SetSourceControlUser(exeConfiguration.SolutionScmDetails.User);
                     cliHelper.SetSourceControlPassword(exeConfiguration.SolutionScmDetails.Password);
-                    
+
                     cliHelper.PasswordEncrypted(exeConfiguration.SolutionScmDetails.PasswordEncrypted.ToString());
-                    
+
                     if (string.IsNullOrEmpty(exeConfiguration.SolutionScmDetails.ProxyServer) == false)
                     {
                         cliHelper.SourceControlProxyServer(exeConfiguration.SolutionScmDetails.ProxyServer);
@@ -128,7 +126,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                             System.IO.Directory.CreateDirectory(exeConfiguration.SolutionLocalPath);
                             cliHelper.Solution = exeConfiguration.SolutionLocalPath;
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.ERROR, string.Format("Falied to create the Solution local path: '{0}'", exeConfiguration.SolutionLocalPath), ex);
                         }
@@ -145,7 +143,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
                 if (exeConfiguration.VerboseLevel != null)
                 {
-                   CLIProcessor.SetVerboseLevel((OptionsBase.eVerboseLevel)Enum.Parse(typeof(OptionsBase.eVerboseLevel), exeConfiguration.VerboseLevel.ToString(), true));
+                    CLIProcessor.SetVerboseLevel((OptionsBase.eVerboseLevel)Enum.Parse(typeof(OptionsBase.eVerboseLevel), exeConfiguration.VerboseLevel.ToString(), true));
                 }
                 if (exeConfiguration.SealightsDetails != null)
                 {
@@ -178,7 +176,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     }
                 }
                 cliHelper.Solution = dynamicExecution.SolutionDetails.Path;
-                cliHelper.ShowAutoRunWindow = dynamicExecution.ShowAutoRunWindow;               
+                cliHelper.ShowAutoRunWindow = dynamicExecution.ShowAutoRunWindow;
             }
         }
 
@@ -195,7 +193,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
                 if (exeConfiguration.SealightsDetails != null)
                 {
-                   LoadSealightsDetailsFromJSON(exeConfiguration);
+                    LoadSealightsDetailsFromJSON(exeConfiguration);
                 }
                 if (runset.EnvironmentName != null || runset.EnvironmentID != null)
                 {
@@ -230,7 +228,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             await runsetExecutor.RunRunset();
         }
 
-        
+
         private void LoadSealightsDetailsFromJSON(GingerExecConfig gingerExecConfig)
         {
             WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog = (bool)gingerExecConfig.SealightsDetails.SealightsEnable ? SealightsConfiguration.eSealightsLog.Yes : SealightsConfiguration.eSealightsLog.No;
@@ -262,7 +260,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         if (userProfileAlmConfig == null)
                         {
                             //ADD
-                            userProfileAlmConfig = new ALMUserConfig() { AlmType = almTypeToConfigure };                           
+                            userProfileAlmConfig = new ALMUserConfig() { AlmType = almTypeToConfigure };
                             WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(userProfileAlmConfig);
                         }
                         if (almDetails.ALMSubType != null)
@@ -320,7 +318,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                             {
                                 //clear previous default
                                 ALMConfig currentDefAlm = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm == true).FirstOrDefault();
-                                if(currentDefAlm != null)
+                                if (currentDefAlm != null)
                                 {
                                     currentDefAlm.DefaultAlm = false;
                                 }
@@ -328,7 +326,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                                 {
                                     Reporter.ToLog(eLogLevel.WARN, (string.Format("Failed to load the ALM type: '{0}' details", almDetails.ALMType)));
                                 }
-                                
+
                             }
                             solutionAlmConfig.DefaultAlm = (bool)almDetails.IsDefault;
                         }

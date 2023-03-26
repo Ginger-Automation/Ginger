@@ -16,29 +16,26 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
-using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using Newtonsoft.Json;
+using System;
 
 namespace Amdocs.Ginger.CoreNET.Run.ExecutionSummary
 {
     public class ExecutionSummary
     {
-       public string SummaryCreationTime { get; set; }
+        public string SummaryCreationTime { get; set; }
 
         //public DateTime StartTime { get; set; } //we missing that data currently- will be added later
         //public DateTime EndTime { get; set; }
         public string ExecutionElapsed { get; set; }
 
-        public Runners Runners { get;  } = new Runners();
+        public Runners Runners { get; } = new Runners();
         public BusinessFlowsSummary BusinessFlowsSummary { get; } = new BusinessFlowsSummary();
         public ActivitiesSummary ActivitiesSummary { get; } = new ActivitiesSummary();
         public ActionsSummary ActionsSummary { get; } = new ActionsSummary();
@@ -47,7 +44,7 @@ namespace Amdocs.Ginger.CoreNET.Run.ExecutionSummary
         public string Create(RunsetExecutor runsetExecutor)
         {
             SummaryCreationTime = DateTime.Now.ToString("MM-dd-yyyy HH:mm:ss");
-            ExecutionElapsed = runsetExecutor.Elapsed.ToString(@"hh\:mm\:ss");            
+            ExecutionElapsed = runsetExecutor.Elapsed.ToString(@"hh\:mm\:ss");
             mRunsetExecutor = runsetExecutor;
 
             AddRunners();
@@ -62,7 +59,7 @@ namespace Amdocs.Ginger.CoreNET.Run.ExecutionSummary
             {
                 Runners.Total++;
                 Runners.Parallel = mRunsetExecutor.RunSetConfig.RunModeParallel;
-                AddBusinessFlows(runner.Executor.BusinessFlows);                
+                AddBusinessFlows(runner.Executor.BusinessFlows);
             }
         }
 
@@ -81,7 +78,7 @@ namespace Amdocs.Ginger.CoreNET.Run.ExecutionSummary
                         break;
                     case eRunStatus.Blocked:
                         BusinessFlowsSummary.Blocked++;
-                        break;                    
+                        break;
                     default:
                         // Err !!!!!!!!!!! or Reporter
                         break;

@@ -16,16 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.UserControls;
-using GingerCore;
 using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.User
 {
@@ -42,28 +41,28 @@ namespace Ginger.User
             InitializeComponent();
 
             //profile image
-            if (string.IsNullOrEmpty( WorkSpace.Instance.UserProfile.ProfileImage))
+            if (string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.ProfileImage))
             {
                 xProfileImageImgBrush.ImageSource = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User, foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_Primary"), width: 50);
             }
             else
             {
-                xProfileImageImgBrush.ImageSource = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage( WorkSpace.Instance.UserProfile.ProfileImage));
+                xProfileImageImgBrush.ImageSource = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(WorkSpace.Instance.UserProfile.ProfileImage));
             }
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserNameTxtBox, TextBox.TextProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.UserName), BindingMode.OneWay);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserFirstNameTxtBox, TextBox.TextProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.UserFirstName));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserMiddleNameTxtBox, TextBox.TextProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.UserMiddleName));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserLastNameTxtBox, TextBox.TextProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.UserLastName));
-                      
-            mOriginalUserType =  WorkSpace.Instance.UserProfile.UserType;
-            xUserTypeComboBox.BindControl( WorkSpace.Instance.UserProfile, nameof(UserProfile.UserType));
-            xUserTypeNoteLbl.Visibility = Visibility.Collapsed;
-            xUserRoleComboBox.BindControl( WorkSpace.Instance.UserProfile, nameof(UserProfile.UserRole));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserDepartmentTxtBox, TextBox.TextProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.UserDepartment));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserNameTxtBox, TextBox.TextProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.UserName), BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserFirstNameTxtBox, TextBox.TextProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.UserFirstName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserMiddleNameTxtBox, TextBox.TextProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.UserMiddleName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserLastNameTxtBox, TextBox.TextProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.UserLastName));
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserEmailAddressTxtBox, TextBox.TextProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.UserEmail));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserPhoneTxtBox, TextBox.TextProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.UserPhone));
+            mOriginalUserType = WorkSpace.Instance.UserProfile.UserType;
+            xUserTypeComboBox.BindControl(WorkSpace.Instance.UserProfile, nameof(UserProfile.UserType));
+            xUserTypeNoteLbl.Visibility = Visibility.Collapsed;
+            xUserRoleComboBox.BindControl(WorkSpace.Instance.UserProfile, nameof(UserProfile.UserRole));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserDepartmentTxtBox, TextBox.TextProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.UserDepartment));
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserEmailAddressTxtBox, TextBox.TextProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.UserEmail));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUserPhoneTxtBox, TextBox.TextProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.UserPhone));
         }
 
         private void xProfileImageBrowseBtn_Click(object sender, RoutedEventArgs e)
@@ -92,7 +91,7 @@ namespace Ginger.User
                             bi_resized.DecodePixelWidth = sizes.Item1;
                             bi_resized.EndInit();
 
-                             WorkSpace.Instance.UserProfile.ProfileImage = Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(bi_resized));
+                            WorkSpace.Instance.UserProfile.ProfileImage = Ginger.General.BitmapToBase64(Ginger.General.BitmapImage2Bitmap(bi_resized));
                         }
                     }
                 }
@@ -106,7 +105,7 @@ namespace Ginger.User
         private void xProfileImageDeleteBtn_Click(object sender, RoutedEventArgs e)
         {
             xProfileImageImgBrush.ImageSource = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User, width: 50);
-             WorkSpace.Instance.UserProfile.ProfileImage = string.Empty;
+            WorkSpace.Instance.UserProfile.ProfileImage = string.Empty;
         }
 
         private void xUserTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -123,7 +122,7 @@ namespace Ginger.User
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
-             WorkSpace.Instance.UserProfile.SaveBackup();
+            WorkSpace.Instance.UserProfile.SaveBackup();
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button saveBtn = new Button();
@@ -134,7 +133,7 @@ namespace Ginger.User
             Button undoBtn = new Button();
             undoBtn.Content = "Undo & Close";
             undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
-            winButtons.Add(undoBtn);            
+            winButtons.Add(undoBtn);
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit User Profile", this, winButtons, false, "Undo & Close", CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
         }
@@ -146,7 +145,7 @@ namespace Ginger.User
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
-             WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
+            WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
             _pageGenericWin.Close();
         }
 
@@ -160,7 +159,7 @@ namespace Ginger.User
 
         private void UndoChangesAndClose()
         {
-             WorkSpace.Instance.UserProfile.RestoreFromBackup(true);
+            WorkSpace.Instance.UserProfile.RestoreFromBackup(true);
             _pageGenericWin.Close();
         }
     }

@@ -31,8 +31,8 @@ namespace GingerCore.Actions.Android
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("Use this action in case you need to run Shell action like: ps, ls etc.");                                        
-        }       
+            TBH.AddText("Use this action in case you need to run Shell action like: ps, ls etc.");
+        }
 
         public override string ActionEditPage { get { return null; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
@@ -50,9 +50,9 @@ namespace GingerCore.Actions.Android
                 return mPlatforms;
             }
         }
-      
-        public override String ActionType 
-        { 
+
+        public override String ActionType
+        {
             get
             {
                 return "Shell";

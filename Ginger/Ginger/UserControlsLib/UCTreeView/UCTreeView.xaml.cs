@@ -78,9 +78,13 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             get
             {
                 if (Tree.SelectedItem != null && ((TreeViewItem)Tree.SelectedItem).Tag is ITreeViewItem)
+                {
                     return (ITreeViewItem)((TreeViewItem)Tree.SelectedItem).Tag;
+                }
                 else
+                {
                     return null;
+                }
             }
         }
 
@@ -187,8 +191,9 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (Tree.SelectedItem != null)
             {
                 if (LastSelectedTVI != null)
+                {
                     LastSelectedTVI.Header = SetUnSelectedTreeNodeHeaderStyle((StackPanel)LastSelectedTVI.Header);
-                ((TreeViewItem)Tree.SelectedItem).Header = SetSelectedTreeNodeHeaderStyle((StackPanel)((TreeViewItem)Tree.SelectedItem).Header);
+                } ((TreeViewItem)Tree.SelectedItem).Header = SetSelectedTreeNodeHeaderStyle((StackPanel)((TreeViewItem)Tree.SelectedItem).Header);
 
                 //Check if there is event hooked
                 if (ItemSelected != null)
@@ -282,7 +287,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         private void SetTreeNodeItemChilds(TreeViewItem TVI)
         {
             // TODO: remove temp code after cleanup 
-            
+
             if (TVI.Tag is ITreeViewItem)
             {
                 ITreeViewItem ITVI = (ITreeViewItem)TVI.Tag;
@@ -423,9 +428,14 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             TreeViewItem TVI = null;
             if (((TreeViewItem)Tree.SelectedItem).Parent is TreeView)
+            {
                 TVI = (TreeViewItem)((TreeViewItem)Tree.SelectedItem);
+            }
             else
+            {
                 TVI = (TreeViewItem)((TreeViewItem)Tree.SelectedItem).Parent;
+            }
+
             TVI.Items.Clear();
             SetTreeNodeItemChilds(TVI);
             TVI.IsExpanded = true;
@@ -452,9 +462,13 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public ITreeViewItem GetRootItem()
         {
             if (Tree.Items.Count > 0)
+            {
                 return (ITreeViewItem)((TreeViewItem)Tree.Items[0]).Tag;
+            }
             else
+            {
                 return null;
+            }
         }
 
         public List<ITreeViewItem> GetTreeNodeChilds(ITreeViewItem treeNode)
@@ -481,16 +495,25 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         private void GetNodeChilds(TreeViewItem TVI, List<ITreeViewItem> childsList, bool isRecursive)
         {
-            if (TVI == null) return;
+            if (TVI == null)
+            {
+                return;
+            }
+
             if (TVI.Items.Count == 0 || (TVI.Items.Count == 1 && ((TreeViewItem)TVI.Items[0]).Tag == null))
+            {
                 SetTreeNodeItemChilds(TVI);
+            }
+
             foreach (TreeViewItem childTVI in TVI.Items)
             {
                 if (childTVI.Tag != null)
                 {
                     childsList.Add((ITreeViewItem)childTVI.Tag);
                     if (isRecursive)
+                    {
                         GetNodeChilds(childTVI, childsList, true);
+                    }
                 }
             }
         }
@@ -501,11 +524,19 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (TVI != null)
             {
                 foreach (object ctrl in ((StackPanel)TVI.Header).Children)
+                {
                     if (ctrl.GetType() == typeof(Label))
+                    {
                         if (ctrl != null)
+                        {
                             return ((Label)ctrl).Content.ToString();
+                        }
                         else
+                        {
                             return "";
+                        }
+                    }
+                }
             }
 
             return string.Empty;
@@ -527,6 +558,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (header != null)
             {
                 foreach (object ctrl in header.Children)
+                {
                     if (ctrl.GetType() == typeof(Label))
                     {
                         if (ctrl != null)
@@ -536,6 +568,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                             break;
                         }
                     }
+                }
             }
 
             return header;
@@ -546,6 +579,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (header != null)
             {
                 foreach (object ctrl in header.Children)
+                {
                     if (ctrl.GetType() == typeof(Label))
                     {
                         if (ctrl != null)
@@ -555,6 +589,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                             break;
                         }
                     }
+                }
             }
 
             return header;
@@ -731,7 +766,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 {
                     TVI.IsExpanded = true;
                     TreeViewItem vv = FindMatchingTreeItemByObject(searchItem, TVI);
-                    if (vv != null) return vv;
+                    if (vv != null)
+                    {
+                        return vv;
+                    }
                 }
             }
             return null;
@@ -757,7 +795,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 {
                     TVI.IsExpanded = true;
                     TreeViewItem vv = FindMatchingTreeItemByType(TVI, searchItem);
-                    if (vv != null) return vv;
+                    if (vv != null)
+                    {
+                        return vv;
+                    }
                 }
             }
             return null;
@@ -773,9 +814,9 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         public void GetChildItembyNameandSelect(string nodeName, ITreeViewItem Parent = null)
         {
-            Task.Run(() => 
+            Task.Run(() =>
             {
-                if(mSetTreeNodeItemChildsEvent != null)
+                if (mSetTreeNodeItemChildsEvent != null)
                 {
                     mSetTreeNodeItemChildsEvent.WaitOne();
                 }
@@ -827,9 +868,14 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             TreeViewItem parentTVI;
             if (parentItem != null)
+            {
                 parentTVI = SearchTVIRecursive((TreeViewItem)Tree.Items[0], parentItem);
+            }
             else
+            {
                 parentTVI = (TreeViewItem)Tree.Items[0];
+            }
+
             if (parentTVI != null)
             {
                 TreeViewItem toDeleteTVI = SearchTVIByObjectRecursive(parentTVI, itemObject);
@@ -846,6 +892,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             TreeViewItem TVI = SearchTVIRecursive((TreeViewItem)Tree.Items[0], NodeItem);
             if (TVI != null)
+            {
                 if (TVI.Equals((TreeViewItem)Tree.Items[0]) == false)
                 {
                     TreeViewItem parent = (TreeViewItem)TVI.Parent;
@@ -855,6 +902,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 {
                     TVI.Focus();
                 }
+            }
         }
 
         public void RefreshHeader(ITreeViewItem NodeItem)
@@ -865,7 +913,9 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 ITreeViewItem ITVI = (ITreeViewItem)TVI.Tag;
                 TVI.Header = ITVI.Header();
                 if (Tree.SelectedItem == TVI)
+                {
                     TVI.Header = SetSelectedTreeNodeHeaderStyle((StackPanel)TVI.Header);
+                }
             }
         }
 
@@ -876,7 +926,9 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 ITreeViewItem ITVI = (ITreeViewItem)TVI.Tag;
                 TVI.Header = ITVI.Header();
                 if (Tree.SelectedItem == TVI)
+                {
                     TVI.Header = SetSelectedTreeNodeHeaderStyle((StackPanel)TVI.Header);
+                }
             }
         }
 
@@ -886,13 +938,17 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             // can be triggered by tree change of FileWathcher which is on another thread, so running on dispatcher            
             o = (ITreeViewItem)node.Tag;
             if (o != null && o.Equals(SearchedNode))
+            {
                 return node;
+            }
 
             foreach (TreeViewItem TVI in node.Items)
             {
                 TreeViewItem vv = SearchTVIRecursive(TVI, SearchedNode);
                 if (vv != null)
+                {
                     return vv;
+                }
             }
             return null;
         }
@@ -917,14 +973,18 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 if (child.Header.ToString() != "DUMMY") //added for stability bc sometimes i was getting issues
                 {
                     if (((ITreeViewItem)child.Tag).NodeObject().Equals(treeNodeObject))
+                    {
                         return child;
+                    }
                     else
                     {
                         foreach (TreeViewItem subChild in child.Items)
                         {
                             TreeViewItem foundItem = SearchTVIByObjectRecursive(subChild, treeNodeObject);
                             if (foundItem != null)
+                            {
                                 return foundItem;
+                            }
                         }
                     }
                 }
@@ -976,7 +1036,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 {
                     TVI.IsExpanded = true;
                     TreeViewItem vv = ExpandNodeByNameTVIRecursive(TVI, NodeName, Refresh, ExpandChildren);
-                    if (vv != null) return vv;
+                    if (vv != null)
+                    {
+                        return vv;
+                    }
+
                     TVI.IsExpanded = false;
                 }
             }
@@ -1007,7 +1071,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             UIElement retVal = element;
 
-            while ((retVal != null) && !(retVal is TreeViewItem)) retVal = VisualTreeHelper.GetParent(retVal) as UIElement;
+            while ((retVal != null) && !(retVal is TreeViewItem))
+            {
+                retVal = VisualTreeHelper.GetParent(retVal) as UIElement;
+            }
 
             return retVal as TreeViewItem;
         }

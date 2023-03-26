@@ -32,15 +32,15 @@ namespace GingerCore.Drivers.Common
     public class POMEventArgs : EventArgs
     {
         string mWindowTitle;
-        Act mAct;        
+        Act mAct;
 
         public POMEventArgs(string WindowTitle, Act act)
         {
             mAct = act;
-            mWindowTitle = WindowTitle;            
+            mWindowTitle = WindowTitle;
         }
 
-        
+
         public string WindowTitle { get { return mWindowTitle; } }
         public Act Act { get { return mAct; } }
     }

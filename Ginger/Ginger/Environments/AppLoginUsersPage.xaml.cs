@@ -17,11 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows;
-using System.Windows.Controls;
 using Ginger.UserControls;
 using GingerCore.Environments;
-using GingerCore;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Environments
 {
@@ -46,7 +45,7 @@ namespace Ginger.Environments
         private void AddLogin(object sender, RoutedEventArgs e)
         {
             AppOwner.LoginUsers.Add(new LoginUser() { UserProfileName = "Profile " + AppOwner.LoginUsers.Count, Type = "", Username = "", Password = "" });
-        }    
+        }
 
         #endregion Events
 

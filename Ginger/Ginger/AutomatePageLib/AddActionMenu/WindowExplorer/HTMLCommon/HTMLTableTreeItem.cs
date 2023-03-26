@@ -17,11 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
+using Ginger.Actions;
 using GingerCore.Actions;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Ginger.Actions;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.HTMLCommon
 {

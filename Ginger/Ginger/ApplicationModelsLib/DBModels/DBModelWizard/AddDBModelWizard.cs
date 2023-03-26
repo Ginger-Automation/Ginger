@@ -30,7 +30,7 @@ namespace Ginger.ApplicationModels.DBModels.DBModelWizard
         ApplicationDBModel mApplicationDBModel;
 
         public AddDBModelWizard(string DBMFolder)
-        {            
+        {
             this.DBMFolder = DBMFolder;
             mApplicationDBModel = new ApplicationDBModel();
             mApplicationDBModel.ContainingFolder = DBMFolder;

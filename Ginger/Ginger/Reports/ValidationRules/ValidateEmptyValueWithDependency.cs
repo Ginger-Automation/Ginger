@@ -16,14 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
-using GingerCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -71,7 +65,7 @@ namespace Ginger.ValidationRules
 
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
-            value = GetBoundValue(value);    
+            value = GetBoundValue(value);
 
             if (_DependencyObj != null && !string.IsNullOrEmpty(_DependentObjField))
             {
@@ -88,8 +82,8 @@ namespace Ginger.ValidationRules
             {
                 return new ValidationResult(false, _Message);
             }
-   
+
         }
     }
-    
+
 }

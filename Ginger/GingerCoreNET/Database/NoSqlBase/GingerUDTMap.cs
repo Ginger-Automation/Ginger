@@ -17,8 +17,8 @@ limitations under the License.
 #endregion
 
 
-using System;
 using Cassandra;
+using System;
 
 namespace GingerCore.NoSqlBase
 {

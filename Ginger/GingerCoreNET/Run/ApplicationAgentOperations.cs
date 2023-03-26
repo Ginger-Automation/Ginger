@@ -18,11 +18,8 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 
 namespace GingerCore.Platforms
@@ -33,7 +30,7 @@ namespace GingerCore.Platforms
         public ApplicationAgentOperations(ApplicationAgent applicationAgent)
         {
             this.ApplicationAgent = applicationAgent;
-            this.ApplicationAgent.ApplicationAgentOperations = this;   
+            this.ApplicationAgent.ApplicationAgentOperations = this;
         }
 
         public List<IAgent> PossibleAgents
@@ -63,7 +60,7 @@ namespace GingerCore.Platforms
                     }
 
                     //adding special case for Web on which also Mobile Web Agents are allowed
-                    if(appPlatform == ePlatformType.Web)
+                    if (appPlatform == ePlatformType.Web)
                     {
                         List<Agent> mobileAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.Platform == ePlatformType.Mobile).ToList();
                         if (mobileAgents != null)

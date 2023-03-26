@@ -16,18 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
+using System.ComponentModel;
 
 namespace GingerCoreNET.Application_Models
 {
-    public class DeltaElementLocator: DeltaItemBase
-    {        
-        ElementLocator mElementLocator = null;        
+    public class DeltaElementLocator : DeltaItemBase
+    {
+        ElementLocator mElementLocator = null;
         public ElementLocator ElementLocator
         {
             get
@@ -43,11 +40,11 @@ namespace GingerCoreNET.Application_Models
         public bool Active { get { return ElementLocator.Active; } }
         public eLocateBy LocateBy { get { return ElementLocator.LocateBy; } }
         public string LocateValue { get { return ElementLocator.LocateValue; } }
-        
+
         public string ReferanceElement { get { return ElementLocator.ReferanceElement; } }
         public bool IsAutoLearned { get { return ElementLocator.IsAutoLearned; } }
         public ElementLocator.eLocateStatus LocateStatus { get { return ElementLocator.LocateStatus; } }
-        public eImageType StatusIcon { get { return ElementLocator.StatusIcon; } } 
+        public eImageType StatusIcon { get { return ElementLocator.StatusIcon; } }
 
         public ePosition Position { get { return ElementLocator.Position; } }
 

@@ -19,12 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.UserControls;
 using GingerTest.POMs.Common;
 using GingerWPF.WizardLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace GingerWPFUnitTest.POMs
@@ -51,10 +45,14 @@ namespace GingerWPFUnitTest.POMs
         {
             get
             {
-                if (WizardWindow.CurrentWizardWindow != null)                
+                if (WizardWindow.CurrentWizardWindow != null)
+                {
                     return true;
+                }
                 else
+                {
                     return false;
+                }
             }
         }
 
@@ -124,10 +122,11 @@ namespace GingerWPFUnitTest.POMs
         internal void Finish()
         {
             FinishButton.Click();
-            Execute(() => {                 
+            Execute(() =>
+            {
                 // Wait for the wizard to close properly max 10 seconds
                 int i = 0;
-                while (wiz.IsActive && i<100)
+                while (wiz.IsActive && i < 100)
                 {
                     SleepWithDoEvents(100);
                     i++;
@@ -136,11 +135,13 @@ namespace GingerWPFUnitTest.POMs
 
         }
 
-        public PagePOM CurrentPage { 
+        public PagePOM CurrentPage
+        {
             get
-            {        
+            {
                 Page p = null;
-                Execute(() => {
+                Execute(() =>
+                {
                     p = (Page)PageFrame.Content;
                 });
                 return new PagePOM(p);
@@ -149,7 +150,7 @@ namespace GingerWPFUnitTest.POMs
 
         public WindowPOM WindowPOM { get { return new WindowPOM(wiz); } }
 
-        
+
 
     }
 }

@@ -18,10 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
-using Amdocs.Ginger.Repository;
 using System;
 using System.Drawing;
 using System.IO;

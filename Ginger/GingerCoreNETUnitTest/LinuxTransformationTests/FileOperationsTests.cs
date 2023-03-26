@@ -1,8 +1,5 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET.Repository;
-using Amdocs.Ginger.Repository;
-using Ginger.Run;
-using GingerCore;
 using GingerCore.Actions;
 using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
@@ -50,7 +47,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             //Arrange 
             actFileOperation.FileOperationMode = ActFileOperations.eFileoperations.CheckFileExists;
             actFileOperation.AddOrUpdateInputParamValueAndCalculatedValue("SourceFilePath", TestResources.GetTestResourcesFile(@"TextFiles" + Path.DirectorySeparatorChar + "textFileToCopy.txt"));
-            
+
             //Act
             actFileOperation.Execute();
 

@@ -16,11 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.UserControls;
 
 namespace Ginger.ReporterLib
 {
@@ -32,7 +31,7 @@ namespace Ginger.ReporterLib
 
         public Amdocs.Ginger.Common.eUserMsgSelection messageBoxResult { get; set; }
 
-        
+
         public UserMessageBox(string txt, string caption, eUserMsgOption buttonsType,
                                             eUserMsgIcon messageImage, eUserMsgSelection defualtResualt)
         {
@@ -49,7 +48,7 @@ namespace Ginger.ReporterLib
             xCancelButton.Visibility = Visibility.Collapsed;
 
             switch (buttonsType)
-            {                
+            {
                 case Amdocs.Ginger.Common.eUserMsgOption.OKCancel:
                     xOKButton.Visibility = Visibility.Visible;
                     xCancelButton.Visibility = Visibility.Visible;
@@ -59,7 +58,7 @@ namespace Ginger.ReporterLib
                     xNoButton.Visibility = Visibility.Visible;
                     break;
                 case Amdocs.Ginger.Common.eUserMsgOption.YesNoCancel:
-                    xYesButton.Visibility = Visibility.Visible; 
+                    xYesButton.Visibility = Visibility.Visible;
                     xNoButton.Visibility = Visibility.Visible;
                     xCancelButton.Visibility = Visibility.Visible;
                     break;
@@ -111,7 +110,7 @@ namespace Ginger.ReporterLib
         //    gradientBrush.GradientStops.Add(gradientStop2);
         //    return gradientBrush;
         //}
-              
+
         private void xOKButton_Click(object sender, RoutedEventArgs e)
         {
             messageBoxResult = Amdocs.Ginger.Common.eUserMsgSelection.OK;
@@ -162,6 +161,6 @@ namespace Ginger.ReporterLib
                 }
             }
         }
-        
+
     }
 }

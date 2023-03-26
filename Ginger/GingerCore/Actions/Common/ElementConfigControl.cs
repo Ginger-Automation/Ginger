@@ -23,18 +23,18 @@ using System.Windows;
 namespace GingerCore.Actions.Common
 {
     public class ElementConfigControl
-    {       
+    {
         public string Title { get; set; }
-       
+
         public string BindedString { get; set; }
-      
-        public eElementType ControlType {get; set;}
+
+        public eElementType ControlType { get; set; }
 
         public List<string> PossibleValues = new List<string>();
 
         public string DefaultValue { get; set; }
 
-        public RoutedEventHandler ElementEvent { get;set; }
+        public RoutedEventHandler ElementEvent { get; set; }
 
         public string ToolTip { get; set; }
     }

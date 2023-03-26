@@ -1,6 +1,5 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion;
 using Amdocs.Ginger.CoreNET.Repository;
@@ -13,7 +12,6 @@ using GingerCore.Environments;
 using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.IO;
 
 namespace GingerCoreNETUnitTest
@@ -260,7 +258,7 @@ namespace GingerCoreNETUnitTest
             {
                 isValid = false;
             }
-            
+
             if (isValid && list[0].ReturnValues.Count > 0)
             {
                 isValid = false;
@@ -283,7 +281,7 @@ namespace GingerCoreNETUnitTest
                         isValid = false;
                     }
                 }
-                
+
             }
 
             return isValid;

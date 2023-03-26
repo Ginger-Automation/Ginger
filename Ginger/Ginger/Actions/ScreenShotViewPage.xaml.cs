@@ -69,12 +69,12 @@ namespace Ginger.Actions.UserControls
 
             mBitmapImage = bitmapImage;
             mName = Name;
-            
+
             ShowBitmap();
 
             xHighLighterRectangle.Visibility = Visibility.Collapsed;
         }
-        
+
         public ScreenShotViewPage(string Name, BitmapSource bitmapSource, bool IsDisplayName = true)
         {
             InitializeComponent();
@@ -106,7 +106,7 @@ namespace Ginger.Actions.UserControls
             {
                 xNameLabel.Visibility = Visibility.Collapsed;
             }
-          
+
             xHighLighterRectangle.Visibility = Visibility.Collapsed;
         }
 
@@ -136,7 +136,7 @@ namespace Ginger.Actions.UserControls
 
             if (File.Exists(FileName))
             {
-                ClearError();                
+                ClearError();
 
                 mBitmapImage = GetBimapImageFromFile(FileName);
                 ShowBitmap();
@@ -179,7 +179,7 @@ namespace Ginger.Actions.UserControls
                 image.EndInit();
                 return image;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "File extention is not supported.");
                 return null;
@@ -199,17 +199,17 @@ namespace Ginger.Actions.UserControls
             }
             if (mBitmapImage != null)
             {
-                xNameLabel.Content = string.Format("{0} ({1})", xNameLabel.Content.ToString() , mBitmapImage.PixelHeight + "x" + mBitmapImage.PixelWidth);
-                
+                xNameLabel.Content = string.Format("{0} ({1})", xNameLabel.Content.ToString(), mBitmapImage.PixelHeight + "x" + mBitmapImage.PixelWidth);
+
                 //Change the canvas to match bmp size
-                xMainCanvas.Width = mBitmapImage.PixelWidth; 
+                xMainCanvas.Width = mBitmapImage.PixelWidth;
                 xMainCanvas.Height = mBitmapImage.PixelHeight;
-                xMainImage.Source = mBitmapImage;                
+                xMainImage.Source = mBitmapImage;
             }
             else
             {
                 ShowError("No Bitmap");
-            }            
+            }
         }
 
         //TODO: move to general class
@@ -269,11 +269,14 @@ namespace Ginger.Actions.UserControls
                 p.ShowAsWindow(mName, false);
             }
         }
-       
+
         //TODO: the zoom slider is dup with FlowDiagrmaPage - create User control to use for both
         private void ZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (this.xMainCanvas == null) return;  // will happen only at page load
+            if (this.xMainCanvas == null)
+            {
+                return;  // will happen only at page load
+            }
 
             // Set the Canvas scale based on ZoomSlider value
             ScaleTransform ST = new ScaleTransform(e.NewValue, e.NewValue);
@@ -294,7 +297,7 @@ namespace Ginger.Actions.UserControls
         }
 
         private void MainImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {            
+        {
             if (MouseClickOnScreenshot != null)
             {
                 System.Windows.Point p = Mouse.GetPosition(xMainImage);
@@ -304,7 +307,7 @@ namespace Ginger.Actions.UserControls
 
         internal void HighLight(int x, int y, int width, int height)
         {
-            xHighLighterRectangle.Margin = new Thickness(x + xMainImage.Margin.Left, y + xMainImage.Margin.Top ,0,0);
+            xHighLighterRectangle.Margin = new Thickness(x + xMainImage.Margin.Left, y + xMainImage.Margin.Top, 0, 0);
             xHighLighterRectangle.Width = width;
             xHighLighterRectangle.Height = height;
             xHighLighterRectangle.Visibility = Visibility.Visible;
@@ -329,7 +332,7 @@ namespace Ginger.Actions.UserControls
 
         private void MainImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            
+
             if (MouseUpOnScreenshot != null)
             {
                 System.Windows.Point p = Mouse.GetPosition(xMainImage);

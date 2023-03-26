@@ -17,12 +17,12 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows;
-using System.Windows.Controls;
+using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
 using GingerCore.Actions;
 using GingerCore.Actions.JSON;
-using Ginger.UserControls;
-using Amdocs.Ginger.Repository;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Actions.JSON
 {

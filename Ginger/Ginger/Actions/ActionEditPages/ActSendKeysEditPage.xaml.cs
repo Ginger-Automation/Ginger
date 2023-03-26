@@ -34,10 +34,10 @@ namespace Ginger.Actions
         {
             InitializeComponent();
             this.mAct = Act;
-             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SendKeysSlowly, CheckBox.IsCheckedProperty, mAct, ActSendKeys.Fields.IsSendKeysSlowly);
-             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WindowFocusRequiredCheckBox, CheckBox.IsCheckedProperty, mAct, ActSendKeys.Fields.ISWindowFocusRequired);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SendKeysSlowly, CheckBox.IsCheckedProperty, mAct, ActSendKeys.Fields.IsSendKeysSlowly);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WindowFocusRequiredCheckBox, CheckBox.IsCheckedProperty, mAct, ActSendKeys.Fields.ISWindowFocusRequired);
             List<ComboItem> comboBoxItemsList = GeneratecomboBoxItemsListSendkeys();
-            Value.Init(mAct.GetOrCreateInputParam(ActSendKeys.Fields.Value), comboBoxItemsList, true, context:Context.GetAsContext(mAct.Context));
+            Value.Init(mAct.GetOrCreateInputParam(ActSendKeys.Fields.Value), comboBoxItemsList, true, context: Context.GetAsContext(mAct.Context));
         }
 
         public List<ComboItem> GeneratecomboBoxItemsListSendkeys()
@@ -135,7 +135,7 @@ namespace Ginger.Actions
             ComboItem CBI23 = new ComboItem();
             CBI23.text = "%";
             CBI23.Value = "%";
-            
+
             comboBoxItemsList.Add(CBI1);
             comboBoxItemsList.Add(CBI2);
             comboBoxItemsList.Add(CBI3);

@@ -21,10 +21,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Input;
 
 namespace Ginger.Help
@@ -50,7 +47,9 @@ namespace Ginger.Help
 
             FrameworkElement senderElement = sender as FrameworkElement;
             if (GingerHelpProvider.GetHelpString(senderElement) != null)
+            {
                 e.CanExecute = true;
+            }
         }
 
         static private void Executed(object sender, ExecutedRoutedEventArgs e)
@@ -70,7 +69,7 @@ namespace Ginger.Help
             obj.SetValue(HelpStringProperty, value);
         }
 
-        public static void ShowHelpLibrary(string searchText="")
+        public static void ShowHelpLibrary(string searchText = "")
         {
             if (!ShowOfflineHelpLibrary(searchText))
             {
@@ -78,7 +77,7 @@ namespace Ginger.Help
             }
         }
 
-        public static bool ShowOfflineHelpLibrary(string searchText="", bool silent=true)
+        public static bool ShowOfflineHelpLibrary(string searchText = "", bool silent = true)
         {
             try
             {
@@ -123,7 +122,7 @@ namespace Ginger.Help
             }
         }
 
-        public static void ShowOnlineHelpLibrary(string searchText="")
+        public static void ShowOnlineHelpLibrary(string searchText = "")
         {
             try
             {
@@ -136,7 +135,7 @@ namespace Ginger.Help
                 }
                 else
                 {
-                    System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = publicLibURI, UseShellExecute = true });                  
+                    System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = publicLibURI, UseShellExecute = true });
                 }
 
             }

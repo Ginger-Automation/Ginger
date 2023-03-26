@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Ginger;
 using Ginger.ReporterLib;
-using Ginger.Repository;
 using GingerWPF.WorkSpaceLib;
 using GingerWPFUnitTest.POMs;
 using System;
@@ -47,7 +46,7 @@ namespace GingerTest
 
 
         // Set to true if you want highlights when automation run and speak
-        public static bool Highlight { get { return false; }  }
+        public static bool Highlight { get { return false; } }
 
         public static GingerAutomator StartSession()
         {
@@ -67,19 +66,19 @@ namespace GingerTest
         }
 
         public static void EndSession()
-        {         
+        {
             SessionCount--;
             TestMutex.ReleaseMutex();
 
             if (SessionCount == 0)
             {
-                gingerAutomatorInstance.CloseGinger();                
-            }            
+                gingerAutomatorInstance.CloseGinger();
+            }
         }
-        
+
 
         private void StartGinger()
-        {                        
+        {
             // We start Ginger on STA thread
             mGingerThread = new Thread(() =>
             {
@@ -98,7 +97,7 @@ namespace GingerTest
                 WorkSpace.Init(new WorkSpaceEventHandler());
                 WorkSpace.Instance.RunningFromUnitTest = true;
                 WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new DotNetFrameworkHelper());
-                
+
 
                 app.HideConsoleWindow();
                 app.StartGingerUI();
@@ -122,24 +121,24 @@ namespace GingerTest
 
             //max 60 seconds for Main window to be ready
             int i = 0;
-            while (MainWindowPOM == null && i <600)
+            while (MainWindowPOM == null && i < 600)
             {
                 Thread.Sleep(100);
                 i++;
             }
 
-            
+
             // Here Ginger is live and visible
             isReady = true;
         }
 
-        
+
 
         void CloseGinger()
         {
             // app.Shutdown(0);
             MainWindowPOM.Close();
-            Thread.Sleep(5000);            
+            Thread.Sleep(5000);
         }
 
 
@@ -174,23 +173,23 @@ namespace GingerTest
 
 
 
-          //  mDispatcher.Invoke(() =>
-          //{
-          //            // a.Invoke();
-          //            //bool IsEquel2 = false;
-          //            //Page1 p1 = new Page1();
-          //            //p1.ShowIcons(51, 100);
-          //            //p1.StopSpinners();
-          //            TestWindow TW = new TestWindow(p);
-          //    TW.Show();
-              // SleepWithDoEvents(2000);
-                      // IsEquel2 = General.IsWindowBitmapEquel(p1, "ImageMakerControlsVisualTest51_100");
+            //  mDispatcher.Invoke(() =>
+            //{
+            //            // a.Invoke();
+            //            //bool IsEquel2 = false;
+            //            //Page1 p1 = new Page1();
+            //            //p1.ShowIcons(51, 100);
+            //            //p1.StopSpinners();
+            //            TestWindow TW = new TestWindow(p);
+            //    TW.Show();
+            // SleepWithDoEvents(2000);
+            // IsEquel2 = General.IsWindowBitmapEquel(p1, "ImageMakerControlsVisualTest51_100");
 
-                      //});
+            //});
 
 
-                      // TW.Close();
-               //   });
+            // TW.Close();
+            //   });
             //});
 
         }
@@ -201,7 +200,7 @@ namespace GingerTest
             GingerPOMBase.Dispatcher.Invoke(() =>
             {
                 // TODO: do it like user with open solution page
-                WorkSpace.Instance.OpenSolution(folder);                
+                WorkSpace.Instance.OpenSolution(folder);
             });
         }
 
@@ -227,7 +226,7 @@ namespace GingerTest
 
         internal void ReloadSolution()
         {
-            string path =  WorkSpace.Instance.Solution.ContainingFolderFullPath;
+            string path = WorkSpace.Instance.Solution.ContainingFolderFullPath;
             CloseSolution();
             OpenSolution(path);
         }

@@ -19,8 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
@@ -33,7 +31,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
 
         eDevicePlatformType GetDevicePlatformType();
 
-        eAppType GetAppType();        
+        eAppType GetAppType();
 
         void PerformBackButtonPress();
 

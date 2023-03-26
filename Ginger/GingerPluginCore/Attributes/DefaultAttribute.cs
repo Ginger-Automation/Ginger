@@ -17,8 +17,6 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core
 {
@@ -41,8 +39,8 @@ namespace Amdocs.Ginger.Plugin.Core
 
         public override string ToString()
         {
-          return  DefaultValue.ToString();
+            return DefaultValue.ToString();
         }
     }
-  
+
 }

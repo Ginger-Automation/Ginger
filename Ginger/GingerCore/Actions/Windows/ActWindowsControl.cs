@@ -16,14 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using GingerCore.Helpers;
-using GingerCore.Properties;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions.Windows
 {
@@ -70,20 +67,20 @@ namespace GingerCore.Actions.Windows
             IsEnabled = 6,
             GetControlProperty = 16,
             Select = 17,
-            GetSelected=18,
-            GetTitle=19,
-            ScrollUp=20,
-            Scrolldown=21,
-            IsSelected=22,
-            Highlight=23,            
-            Toggle=25,
-            RightClick=26,
-            ClickXY=27,
+            GetSelected = 18,
+            GetTitle = 19,
+            ScrollUp = 20,
+            Scrolldown = 21,
+            IsSelected = 22,
+            Highlight = 23,
+            Toggle = 25,
+            RightClick = 26,
+            ClickXY = 27,
             DoubleClick = 28,
-            SendKeys=29,
-            AsyncClick=30,
-            IsExist=31,
-            Repaint=32,
+            SendKeys = 29,
+            AsyncClick = 30,
+            IsExist = 31,
+            Repaint = 32,
             SelectContextMenuItem,
             GetText,
             Restore,
@@ -95,13 +92,13 @@ namespace GingerCore.Actions.Windows
 
         public enum eControlProperty
         {
-            NA =0,
-            Value =1,
-            Text =2,
-            Type=3,
-            Enabled=4,
-            Visible=5,
-            List =6
+            NA = 0,
+            Value = 1,
+            Text = 2,
+            Type = 3,
+            Enabled = 4,
+            Visible = 5,
+            List = 6
         }
 
         public eControlAction ControlAction

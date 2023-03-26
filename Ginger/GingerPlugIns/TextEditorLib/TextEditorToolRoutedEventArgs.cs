@@ -28,7 +28,7 @@ namespace GingerPlugIns.TextEditorLib
         /// <summary>
         /// change to editor text
         /// </summary>
-        public string txt { get; set;}
+        public string txt { get; set; }
 
         public int CaretLocation { get; set; }
 

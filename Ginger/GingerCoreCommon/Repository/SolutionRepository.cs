@@ -154,7 +154,7 @@ namespace Amdocs.Ginger.Repository
             {
                 throw new Exception("Cannot save item, there is no containing folder defined - " + repositoryItem.GetType().FullName + ", " + repositoryItem.GetNameForFileName());
             }
-            if(repositoryItem.PreSaveHandler())
+            if (repositoryItem.PreSaveHandler())
             {
                 return;
             }
@@ -222,7 +222,7 @@ namespace Amdocs.Ginger.Repository
             RepositoryItemBase repoItem = null;
             ObservableList<RepositoryItemBase> repoItemList = new ObservableList<RepositoryItemBase>();
             RepositoryFolderBase repositoryFolderBase = GetRepositoryFolderByPath(Path.GetDirectoryName(filePath));
-            if(repositoryFolderBase != null)
+            if (repositoryFolderBase != null)
             {
                 repoItemList = repositoryFolderBase.GetFolderRepositoryItems();
             }
@@ -238,7 +238,7 @@ namespace Amdocs.Ginger.Repository
         public RepositoryFolderBase GetRepositoryFolderByPath(string folderPath)
         {
             RepositoryFolderBase repoFolder = null;
-            var inputURI = new Uri(folderPath+"\\"); // path must end with slash for isBaseOf to work correctly
+            var inputURI = new Uri(folderPath + "\\"); // path must end with slash for isBaseOf to work correctly
             Parallel.ForEach(mSolutionRootFolders, folder =>
             {
                 if (repoFolder == null)
@@ -247,7 +247,7 @@ namespace Amdocs.Ginger.Repository
                     {
                         repoFolder = folder;
                     }
-                    else if (new Uri(folder.FolderFullPath+"\\").IsBaseOf(inputURI))
+                    else if (new Uri(folder.FolderFullPath + "\\").IsBaseOf(inputURI))
                     {
                         string relPath = "~" + folderPath.Replace(SolutionFolder, "");
                         repoFolder = folder.GetSubFolderByName(relPath, true);
@@ -394,7 +394,7 @@ namespace Amdocs.Ginger.Repository
             return FullPath;
         }
 
-        
+
         /// <summary>
         /// Converts path of file inside the Solution to be relative
         /// </summary>
@@ -531,7 +531,7 @@ namespace Amdocs.Ginger.Repository
 
         private void VerifyOrCreateSolutionFolders(string folder)
         {
-            foreach(RepositoryFolderBase RF in mSolutionRootFolders)
+            foreach (RepositoryFolderBase RF in mSolutionRootFolders)
             {
                 string dir = Path.Combine(mSolutionFolderPath, RF.FolderRelativePath.Replace(cSolutionRootFolderSign, ""));
                 if (!Directory.Exists(PathHelper.GetLongPath(dir)))
@@ -628,7 +628,7 @@ namespace Amdocs.Ginger.Repository
                         filefullPath = Path.Combine(fileFolderPath, newFileName);
                     }
 
-                    if (filefullPath.Length > 260 && fileName.Length > 3 )
+                    if (filefullPath.Length > 260 && fileName.Length > 3)
                     {
                         noOfCharToEscape = filefullPath.Length - 257;
                         newFileName = fileName.Substring(0, fileName.Length - noOfCharToEscape);
@@ -641,7 +641,7 @@ namespace Amdocs.Ginger.Repository
                         newFileName = repositoryItemInfoBaseType.Pattern.Replace("*", newFileName);
                         filefullPath = Path.Combine(fileFolderPath, newFileName);
                     }
-                    else if(filefullPath.Length > 260 && fileName.Length < 3)
+                    else if (filefullPath.Length > 260 && fileName.Length < 3)
                     {
                         ThrowErrorIfPathLimitExeceeded();
                     }
@@ -726,7 +726,7 @@ namespace Amdocs.Ginger.Repository
         public void MoveItem(RepositoryItemBase repositoryItem, string targetFolder)
         {
             RepositoryFolderBase RF = GetItemRepositoryFolder(repositoryItem);
-            RepositoryFolderBase targetRF= GetRepositoryFolderByPath(targetFolder);
+            RepositoryFolderBase targetRF = GetRepositoryFolderByPath(targetFolder);
 
             if (RF != null && targetRF != null)
             {
@@ -750,7 +750,7 @@ namespace Amdocs.Ginger.Repository
             {
                 RepositoryFolderBase repostitoryRootFolder = GetItemRepositoryRootFolder(repositoryItem);
 
-                string targetPath=Path.Combine(repostitoryRootFolder.FolderFullPath, "PrevVersions");
+                string targetPath = Path.Combine(repostitoryRootFolder.FolderFullPath, "PrevVersions");
                 if (!Directory.Exists(targetPath))
                 {
                     repostitoryRootFolder.PauseFileWatcher();
@@ -761,7 +761,7 @@ namespace Amdocs.Ginger.Repository
 
                 string dts = DateTime.Now.ToString("yyyyMMddHHmm");
 
-                string targetFileName = repositoryItem.ItemName +"." + dts + "." + repositoryItem.ObjFileExt+".xml";
+                string targetFileName = repositoryItem.ItemName + "." + dts + "." + repositoryItem.ObjFileExt + ".xml";
 
                 targetFileName = General.RemoveInvalidCharsCombinePath(targetPath, targetFileName);
 

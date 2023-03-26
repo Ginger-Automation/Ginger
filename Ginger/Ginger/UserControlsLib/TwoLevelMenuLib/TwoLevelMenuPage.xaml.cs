@@ -24,7 +24,6 @@ using System;
 using System.Windows;
 
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Ginger.GeneralWindows
@@ -52,7 +51,7 @@ namespace Ginger.GeneralWindows
                 }
             }
         }
-          
+
         SubMenuItem SelectedSubListItem
         {
             get
@@ -72,8 +71,8 @@ namespace Ginger.GeneralWindows
         {
             InitializeComponent();
             mTwoLevelMenu = twoLevelMenu;
-            LoadMenus();            
-        }        
+            LoadMenus();
+        }
 
         public void Reset()
         {
@@ -88,8 +87,8 @@ namespace Ginger.GeneralWindows
         }
 
         private void LoadMenus()
-        {            
-            foreach(TopMenuItem menu in mTwoLevelMenu.MenuList)
+        {
+            foreach (TopMenuItem menu in mTwoLevelMenu.MenuList)
             {
                 if (!WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
                 {
@@ -109,7 +108,7 @@ namespace Ginger.GeneralWindows
 
         public void SelectFirstTopMenu()
         {
-            xMainNavigationListView.SelectedItem = xMainNavigationListView.Items[0];            
+            xMainNavigationListView.SelectedItem = xMainNavigationListView.Items[0];
         }
 
         public void SelectTopMenu(int menuItemID)
@@ -132,7 +131,7 @@ namespace Ginger.GeneralWindows
 
             xSubNavigationListView.Items.Clear();
             foreach (SubMenuItem subItem in subItems)
-            {                               
+            {
                 xSubNavigationListView.Items.Add(subItem);
             }
 
@@ -160,13 +159,13 @@ namespace Ginger.GeneralWindows
             else
             {
                 if (subItems.Count > 1)
-                { 
+                {
                     SetSelectedListItemStyle(xSubNavigationListView, (SolidColorBrush)FindResource("$Color_Primary"));
                 }
             }
 
         }
-        
+
         private void xSubNavigationListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (SelectedSubListItem != null)
@@ -183,17 +182,17 @@ namespace Ginger.GeneralWindows
             if (!SelectedSubListItem.IsPageLoaded)
             {
                 // since the page might take time to load we show Loading, will happen with source control connected                
-                xSelectedItemFrame.SetContent(loadingPage);                
+                xSelectedItemFrame.SetContent(loadingPage);
                 GingerCore.General.DoEvents();
             }
 
             if (SelectedSubListItem != null && SelectedSubListItem.ItemPage != null)
-            { 
+            {
                 xSelectedItemFrame.SetContent(SelectedSubListItem.ItemPage);
             }
 
             if (xSubNavigationListView.Items.Count > 1)
-            { 
+            {
                 SetSelectedListItemStyle(xSubNavigationListView, (SolidColorBrush)FindResource("$Color_Primary"));
             }
         }
@@ -217,14 +216,14 @@ namespace Ginger.GeneralWindows
                         }
                         else
                         {
-                            ((ImageMakerControl)stack.Children[0]).Foreground = (Brush)Application.Current.Resources["$BackgroundColor_DarkGray"]; 
+                            ((ImageMakerControl)stack.Children[0]).Foreground = (Brush)Application.Current.Resources["$BackgroundColor_DarkGray"];
                             ((Label)stack.Children[1]).Foreground = defualtForeground;
-                        }                       
-                    }                    
+                        }
+                    }
                 }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Failed to Set Selected ListItem Style", ex);
             }
@@ -238,7 +237,7 @@ namespace Ginger.GeneralWindows
         private void xSubNavigationListView_Loaded(object sender, RoutedEventArgs e)
         {
             if (xSubNavigationListView.Items.Count > 1 && xSubNavigationListView.IsVisible)
-            { 
+            {
                 SetSelectedListItemStyle(xSubNavigationListView, (SolidColorBrush)FindResource("$Color_Primary"));
             }
         }

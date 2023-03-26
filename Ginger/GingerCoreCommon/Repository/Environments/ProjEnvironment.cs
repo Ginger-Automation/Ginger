@@ -16,20 +16,20 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common;
 using System;
-using System.Linq;
-using Amdocs.Ginger.Common.Repository;
 using System.Collections.Generic;
+using System.Linq;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Environments
 {
     public class ProjEnvironment : RepositoryItemBase
-    {        
+    {
 
-        public  static class Fields
+        public static class Fields
         {
             public static string Name = "Name";
             public static string ReleaseVersion = "ReleaseVersion";
@@ -55,7 +55,7 @@ namespace GingerCore.Environments
 
         [IsSerializedForLocalRepository]
         public ObservableList<EnvApplication> Applications = new ObservableList<EnvApplication>();
-        
+
         [IsSerializedForLocalRepository]
         public ObservableList<Guid> Tags = new ObservableList<Guid>();
 

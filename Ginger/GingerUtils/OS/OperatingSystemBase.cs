@@ -16,13 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
 using Amdocs.Ginger.Common.Helpers;
+using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Amdocs.Ginger.Common.OS
 {

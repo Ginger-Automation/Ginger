@@ -16,11 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Plugin.Core.ActionsLib;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {

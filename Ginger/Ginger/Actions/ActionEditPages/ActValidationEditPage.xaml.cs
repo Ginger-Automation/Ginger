@@ -33,7 +33,7 @@ namespace Ginger.Actions.ActionEditPages
         {
             mActValidation = actValidation;
             InitializeComponent();
-            xCalcEngineUCRadioButtons.Init(typeof(ActValidation.eCalcEngineType), xCalcEngineRBsPanel, mActValidation.GetOrCreateInputParam(nameof(ActValidation.CalcEngineType), ActValidation.eCalcEngineType.VBS.ToString()), CalcEngineType_SelectionChanged);          
+            xCalcEngineUCRadioButtons.Init(typeof(ActValidation.eCalcEngineType), xCalcEngineRBsPanel, mActValidation.GetOrCreateInputParam(nameof(ActValidation.CalcEngineType), ActValidation.eCalcEngineType.VBS.ToString()), CalcEngineType_SelectionChanged);
             xValidationUCValueExpression.Init(Context.GetAsContext(mActValidation.Context), mActValidation, nameof(ActValidation.Condition));
             SetWarnMsgView();
         }

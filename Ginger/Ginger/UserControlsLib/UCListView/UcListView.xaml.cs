@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
@@ -33,10 +32,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Automation;
 
 namespace Ginger.UserControlsLib.UCListView
 {
@@ -88,7 +87,9 @@ namespace Ginger.UserControlsLib.UCListView
             set
             {
                 if (mIsDragDropCompatible == value)
+                {
                     return;
+                }
                 else if (value == false)
                 {
                     DragDrop2.UnHookEventHandlers(this);
@@ -191,7 +192,7 @@ namespace Ginger.UserControlsLib.UCListView
                     this.Dispatcher.BeginInvoke((Action)(() =>
                     {
                         xSearchTextBox.Text = "";
-                        
+
                         // Make the first row selected
                         if (value != null && value.Count > 0)
                         {
@@ -243,7 +244,9 @@ namespace Ginger.UserControlsLib.UCListView
         bool LVItemFilter(object item)
         {
             if (string.IsNullOrWhiteSpace(mObjList.FilterStringData) && (mFilterSelectedTags == null || mFilterSelectedTags.Count == 0))
+            {
                 return true;
+            }
 
             //Filter by search text            
             if (!string.IsNullOrEmpty(mObjList.FilterStringData))
@@ -298,7 +301,7 @@ namespace Ginger.UserControlsLib.UCListView
                 }
             });
         }
-        
+
         private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
         {
             this.Dispatcher.Invoke(() =>
@@ -447,9 +450,15 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void SetSourceCurrentItemAsListSelectedItem()
         {
-            if (mObjList == null) return;
+            if (mObjList == null)
+            {
+                return;
+            }
 
-            if (mObjList.CurrentItem == xListView.SelectedItem) return;
+            if (mObjList.CurrentItem == xListView.SelectedItem)
+            {
+                return;
+            }
 
             if (mObjList != null)
             {
@@ -940,7 +949,10 @@ namespace Ginger.UserControlsLib.UCListView
                     await Task.Delay(1000);
                     return txt != xSearchTextBox.Text;
                 }
-                if (await UserKeepsTyping() || xSearchTextBox.Text == mSearchString) return;
+                if (await UserKeepsTyping() || xSearchTextBox.Text == mSearchString)
+                {
+                    return;
+                }
             }
 
             mSearchString = xSearchTextBox.Text;
@@ -1011,7 +1023,7 @@ namespace Ginger.UserControlsLib.UCListView
                     //Do Copy
                     mListViewHelper.CopySelected();
                 }
-                else if(Keyboard.IsKeyDown(Key.X))
+                else if (Keyboard.IsKeyDown(Key.X))
                 {
                     //Do Cut
                     mListViewHelper.CutSelected();
@@ -1022,7 +1034,7 @@ namespace Ginger.UserControlsLib.UCListView
                     mListViewHelper.Paste();
                 }
             }
-            else if(Keyboard.IsKeyDown(Key.Delete))
+            else if (Keyboard.IsKeyDown(Key.Delete))
             {
                 //delete selected
                 mListViewHelper.DeleteSelected();

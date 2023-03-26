@@ -65,7 +65,7 @@ namespace GingerWPF.BusinessFlowsLib
             mPageViewMode = pageViewMode;
 
             SetUIView();
-            BindControlsToBusinessFlow();            
+            BindControlsToBusinessFlow();
         }
 
         private void SetUIView()

@@ -23,7 +23,6 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
-using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowPages.AddActionMenu;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
@@ -210,7 +209,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         private void RecordingMngr_RecordingNotificationEvent(object sender, RecordingEventArgs e)
         {
             switch (e.EventType)
-            {                
+            {
                 case eRecordingEvent.StopRecording:
                     Reporter.ToUser(eUserMsgKey.RecordingStopped, mContext.Agent.Name, e.EventArgs.ToString());
                     mContext.AgentStatus = Agent.eStatus.NotStarted.ToString();

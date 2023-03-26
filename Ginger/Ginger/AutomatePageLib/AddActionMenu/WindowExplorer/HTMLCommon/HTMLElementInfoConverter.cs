@@ -16,14 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using GingerWPF.UserControlsLib.UCTreeView;
-using Ginger.WindowExplorer.Java;
 using Amdocs.Ginger.Common.UIElement;
+using Ginger.WindowExplorer.Java;
+using GingerWPF.UserControlsLib.UCTreeView;
 
 namespace Ginger.WindowExplorer.HTMLCommon
 {
-    public class HTMLElementInfoConverter 
-    {       
+    public class HTMLElementInfoConverter
+    {
         internal static ITreeViewItem GetHTMLElementTreeItem(ElementInfo EI)
         {
             if (EI.ElementTypeEnum == eElementType.TextBox)

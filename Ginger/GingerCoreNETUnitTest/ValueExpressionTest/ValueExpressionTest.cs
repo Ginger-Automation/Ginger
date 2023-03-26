@@ -16,25 +16,20 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.CoreNET.Repository;
+using Amdocs.Ginger.Repository;
+using Ginger.Run;
+using Ginger.SolutionGeneral;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Environments;
 using GingerCoreNET.RosLynLib;
+using GingerCoreNETUnitTest.RunTestslib;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
-using Ginger.Repository;
-using GingerCore;
-using GingerCore.Environments;
-using GingerCore.Variables;
-using GingerTestHelper;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
-using GingerCore.Actions;
-using Ginger.Run;
 using System.IO;
-using Amdocs.Ginger.CoreNET.Repository;
-using GingerCoreNETUnitTest.RunTestslib;
-using Ginger.SolutionGeneral;
 
 namespace GingerCoreNETUnitTests.ValueExpressionTest
 {
@@ -51,12 +46,12 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 
         [TestInitialize]
         public void TestInitialize()
-        {          
+        {
             WorkSpace.Init(new WorkSpaceEventHandler());
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
 
             // Init SR
-            mSolutionRepository = WorkSpace.Instance.SolutionRepository;           
+            mSolutionRepository = WorkSpace.Instance.SolutionRepository;
             string TempRepositoryFolder = TestResources.GetTestTempFolder(Path.Combine("Solutions", "temp"));
             mSolutionRepository.Open(TempRepositoryFolder);
             Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
@@ -69,20 +64,20 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             mSolutionRepository.StopAllRepositoryFolderWatchers();
 
             WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = Path.Combine(TempRepositoryFolder, "ExecutionResults");
-           
+
             runset = new RunSetConfig();
             runset.Name = "NewRunset1";
             WorkSpace.Instance.RunsetExecutor.RunSetConfig = runset;
             runner = new GingerExecutionEngine(new GingerRunner());
             runner.GingerRunner.Name = "Runner1";
             runner.CurrentSolution = new Ginger.SolutionGeneral.Solution();
-            WorkSpace.Instance.RunsetExecutor.Runners.Add(runner.GingerRunner);            
+            WorkSpace.Instance.RunsetExecutor.Runners.Add(runner.GingerRunner);
             mEnv = new ProjEnvironment();
             mEnv.Name = "Environment1";
             EnvApplication app1 = new EnvApplication();
             app1.Name = "App1";
             app1.Url = "URL123";
-            mEnv.Applications.Add(app1);        
+            mEnv.Applications.Add(app1);
             GeneralParam GP1 = new GeneralParam();
             GP1.Name = "GP1";
             GP1.Value = "GP1Value";
@@ -170,7 +165,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             //Assert
             Assert.AreEqual(10, rc);
         }
-        
+
         [TestMethod]
         [Timeout(60000)]
         public void Comparison()
@@ -185,7 +180,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             //Assert
             Assert.AreEqual(false, v);
         }
-        
+
         [TestMethod]
         [Timeout(60000)]
         public void LogicalOperationAND()
@@ -200,7 +195,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             //Assert
             Assert.AreEqual(true, v);
         }
-        
+
         [TestMethod]
         [Timeout(60000)]
         public void LogicalOperationOR()
@@ -215,7 +210,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             //Assert
             Assert.AreEqual(true, v);
         }
-        
+
         [TestMethod]
         [Timeout(60000)]
         public void MachineName()
@@ -392,7 +387,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             dummy.Description = "Dummy1";
             dummy.Value = "{FD Object=PreviousAction Field=Description}";
             mActivity.Acts.Add(dummy);
-           
+
             //Act                            
             runner.RunRunner();
             string v = dummy.ValueForDriver;
@@ -605,7 +600,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             //Assert
             Assert.AreEqual(v, "SGUibCJsbw==");
         }
-        
+
         [TestMethod]
         [Timeout(60000)]
         public void GetDecryptedBase64StringWithSpecialChar()

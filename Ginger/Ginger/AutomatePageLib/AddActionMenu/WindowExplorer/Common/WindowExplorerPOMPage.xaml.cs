@@ -18,15 +18,12 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Drivers.Common;
 using GingerCore.Platforms;
-using System.Collections.Generic;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -61,7 +58,7 @@ namespace Ginger.WindowExplorer.Common
             ActivityComboBox.SetBinding(ComboBox.SelectedValueProperty, b);
 
             FillPOMS();
-            
+
             ActionsDataGrid.DataSourceList = actions;
 
             SetControlsGridView();
@@ -83,8 +80,8 @@ namespace Ginger.WindowExplorer.Common
             //Set the Data Grid columns            
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            
-            view.GridColsView.Add(new GridColView() { Field = nameof(Activity.ActivityName) , WidthWeight = 100 });
+
+            view.GridColsView.Add(new GridColView() { Field = nameof(Activity.ActivityName), WidthWeight = 100 });
 
             // TODO: fix me temp input on desc - need to add input vars for activity
             view.GridColsView.Add(new GridColView() { Field = nameof(Activity.Description), Header = "Input", WidthWeight = 200 });   //!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -99,14 +96,14 @@ namespace Ginger.WindowExplorer.Common
             //Set the Tool Bar look
             ActionsDataGrid.ShowAdd = Visibility.Collapsed;
             ActionsDataGrid.ShowClearAll = Visibility.Collapsed;
-            ActionsDataGrid.ShowUpDown = Visibility.Collapsed;            
+            ActionsDataGrid.ShowUpDown = Visibility.Collapsed;
             ActionsDataGrid.ShowEdit = System.Windows.Visibility.Collapsed;
             ActionsDataGrid.ShowDelete = System.Windows.Visibility.Collapsed;
-            
+
             //Set the Data Grid columns            
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            
+
             view.GridColsView.Add(new GridColView() { Field = nameof(ActUIElement.Description), WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ActUIElement.LocateBy), WidthWeight = 50 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ActUIElement.LocateValue), WidthWeight = 50 });
@@ -131,11 +128,11 @@ namespace Ginger.WindowExplorer.Common
             //Set the Data Grid columns            
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            
+
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementType), WidthWeight = 60 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Mandatory), WidthWeight = 60 });
-            
+
             ElementsGrid.SetAllColumnsDefaultView(view);
             ElementsGrid.InitViewItems();
         }
@@ -155,7 +152,7 @@ namespace Ginger.WindowExplorer.Common
             //    ApplicationPOM pom = (ApplicationPOM)RepositoryItem.LoadFromFile(typeof(ApplicationPOM), filename);
             //    list.Add(pom);
             //}
-            
+
 
             //POMNameComboBox.DisplayMemberPath = "Name";
             //POMNameComboBox.ItemsSource = list;
@@ -165,7 +162,7 @@ namespace Ginger.WindowExplorer.Common
         {
             //// if we didn't find the EI in the model we create new one
             ////TODO: might need to add a flag if auto create/add
-            
+
 
             ////TODO: add ways to identify the page and correlate to POM
         }
@@ -182,7 +179,7 @@ namespace Ginger.WindowExplorer.Common
 
         private void RefreshPOMInfo()
         {
-            
+
         }
     }
 }

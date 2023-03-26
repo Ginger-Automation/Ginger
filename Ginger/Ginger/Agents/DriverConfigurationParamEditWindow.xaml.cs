@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows;
 using GingerCore;
+using System.Windows;
 
 namespace Ginger.Agents
 {
@@ -27,7 +27,7 @@ namespace Ginger.Agents
     public partial class DriverConfigurationParamEditWindow : Window
     {
         public DriverConfigurationParamEditWindow(DriverConfigParam DCP)
-        {            
+        {
             InitializeComponent();
             ParamValue.Init(null, DCP, DriverConfigParam.Fields.Value);
             ParamNameLabel.Content = DCP.Parameter;

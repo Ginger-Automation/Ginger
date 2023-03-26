@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Ginger.ApplicationModelsLib
 {
@@ -44,6 +43,6 @@ namespace Ginger.ApplicationModelsLib
         {
             get { return mParameterValuesByNameDic; }
             set { mParameterValuesByNameDic = value; }
-        }        
+        }
     }
 }

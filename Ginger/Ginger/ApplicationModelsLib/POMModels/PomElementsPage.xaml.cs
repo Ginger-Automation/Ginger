@@ -159,7 +159,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 SetFriendlyLocatorsGridView();
             }
-            
+
             SetControlPropertiesGridView();
 
             //xElementDetails.InitGridView(this)
@@ -195,7 +195,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void Properties_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (mSelectedElement != null)
+            {
                 UpdatePropertiesHeader();
+            }
         }
         private void UpdatePropertiesHeader()
         {
@@ -208,13 +210,17 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void Locators_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (mSelectedElement != null)
+            {
                 UpdateLocatorsHeader();
+            }
         }
 
         private void FriendlyLocators_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (mSelectedElement != null)
+            {
                 UpdateFriendlyLocatorsHeader();
+            }
         }
         private void UpdateLocatorsHeader()
         {
@@ -527,7 +533,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65 });
             defView.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xLocateValueVETemplate"] });
             defView.GridColsView.Add(new GridColView() { Field = "", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xCopyLocatorButtonTemplate"] });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.EnableFriendlyLocator),Visible= isEnableFriendlyLocator, Header = "Friendly Locator", WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.EnableFriendlyLocator), Visible = isEnableFriendlyLocator, Header = "Friendly Locator", WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = "Test", WidthWeight = 10, MaxWidth = 100, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestElementButtonTemplate"] });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.StatusIcon), Header = "Status", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestStatusIconTemplate"] });
@@ -877,7 +883,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     }
                 }
 
-                mWinExplorer.TestElementLocators(testElement,false,mPOM);
+                mWinExplorer.TestElementLocators(testElement, false, mPOM);
             }
         }
 
@@ -955,16 +961,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     foreach (TabItem tab in xElementDetails.xElementDetailsTabs.Items)
                     {
                         foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
-
+                        {
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (xElementDetails.xElementDetailsTabs.SelectedItem == tab)
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                }
                                 else
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_Primary");
-
-                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                                } ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
+                        }
                     }
                 }
             }
@@ -1023,13 +1032,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
             locateByList.Add(comboEnumItem);
 
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.ReferanceElement), Header = "Locate Value", WidthWeight = 50});
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.ReferanceElement), Header = "Locate Value", WidthWeight = 50 });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.IsAutoLearned), Header = "Auto Learned", WidthWeight = 10, MaxWidth = 100, ReadOnly = true });
             xElementDetails.xFriendlyLocatorsGrid.SetAllColumnsDefaultView(defView);
             xElementDetails.xFriendlyLocatorsGrid.InitViewItems();
-            
+
             xElementDetails.xFriendlyLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
-            
+
             xElementDetails.xFriendlyLocatorsGrid.grdMain.PreparingCellForEdit += FriendlyLocatorsGrid_PreparingCellForEdit;
             xElementDetails.xFriendlyLocatorsGrid.PasteItemEvent += PasteLocatorEvent;
         }

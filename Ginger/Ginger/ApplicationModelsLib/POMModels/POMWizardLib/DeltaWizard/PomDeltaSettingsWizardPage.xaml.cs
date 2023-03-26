@@ -26,8 +26,6 @@ using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -60,12 +58,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     {
                         isEnableFriendlyLocatorGrid = true;
                     }
-                        SetAutoMapElementTypes();                    
+                    SetAutoMapElementTypes();
                     SetAutoMapElementTypesGridView();
                     xLearnOnlyMappedElements.BindControl(mWizard.mPomDeltaUtils.PomLearnUtils, nameof(mWizard.mPomDeltaUtils.PomLearnUtils.LearnOnlyMappedElements));
                     xLearnScreenshotsOfElements.BindControl(mWizard.mPomDeltaUtils.PomLearnUtils, nameof(mWizard.mPomDeltaUtils.PomLearnUtils.LearnScreenshotsOfElements));
                     ShowLearnScreenshotsOfElements();
-                    SetElementLocatorsSettingsData();                    
+                    SetElementLocatorsSettingsData();
                     SetElementLocatorsSettingsGridView();
                     ShowSpecficFrameLearnConfigPanel();
                     ShowsCustomRelativePathTemplateConfig();
@@ -146,7 +144,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         }
 
 
-       
+
 
         private void SetElementLocatorsSettingsData()
         {
@@ -185,9 +183,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.EnableFriendlyLocator), Header = "Friendly Locator", Visible= isEnableFriendlyLocatorGrid, WidthWeight = 25, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.EnableFriendlyLocator), Header = "Friendly Locator", Visible = isEnableFriendlyLocatorGrid, WidthWeight = 25, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Help), WidthWeight = 25, ReadOnly = true });
-            
+
             xElementLocatorsSettingsGrid.SetAllColumnsDefaultView(defView);
             xElementLocatorsSettingsGrid.InitViewItems();
 

@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using HtmlAgilityPack;
@@ -64,14 +63,14 @@ namespace GingerCore.Drivers.Common
                 if (mRelXpath == null)
                 {
                     mRelXpath = GetRelXpath();
-                } 
+                }
                 return mRelXpath;
             }
             set
             {
                 mRelXpath = value;
             }
-        }  
+        }
 
         public virtual string GetRelXpath()
         {
@@ -93,8 +92,8 @@ namespace GingerCore.Drivers.Common
                 return mName;
             }
             set { mName = value; }
-        }  
-        
+        }
+
         public virtual string GetName()
         {
             return mName;

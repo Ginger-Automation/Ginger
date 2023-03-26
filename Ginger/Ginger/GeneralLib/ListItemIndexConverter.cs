@@ -30,7 +30,7 @@ namespace GingerWPF.GeneralLib
     {
         // value is a ListViewItem that contains the item - usually our ObseravleList item(s)
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {            
+        {
             ListViewItem LBI = (ListViewItem)value;
             ListView LB = GetParentOfType<ListView>((ListViewItem)LBI);
             int i = LB.ItemContainerGenerator.IndexFromContainer(LBI);
@@ -42,13 +42,26 @@ namespace GingerWPF.GeneralLib
         public T GetParentOfType<T>(DependencyObject element) where T : DependencyObject
         {
             Type type = typeof(T);
-            if (element == null) return null;
+            if (element == null)
+            {
+                return null;
+            }
+
             DependencyObject parent = VisualTreeHelper.GetParent(element);
             if (parent == null && ((FrameworkElement)element).Parent is DependencyObject)
+            {
                 parent = ((FrameworkElement)element).Parent;
-            if (parent == null) return null;
+            }
+
+            if (parent == null)
+            {
+                return null;
+            }
             else if (parent.GetType() == type || parent.GetType().IsSubclassOf(type))
+            {
                 return parent as T;
+            }
+
             return GetParentOfType<T>(parent);
         }
     }

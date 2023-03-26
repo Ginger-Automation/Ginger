@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
-using GingerCore;
 using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
@@ -42,7 +41,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
-        {            
+        {
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
@@ -68,11 +67,11 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     break;
 
                 case EventType.Prev:
-                    if (mTempCLIContent != mAutoRunWizard.AutoRunConfiguration.CLIContent && WizardEventArgs.Wizard.GetCurrentPage().Page == this  && Reporter.ToUser(eUserMsgKey.RunsetAutoConfigBackWarn, "Configurations customizations will be lost,do you want to go back?") == eUserMsgSelection.No)
+                    if (mTempCLIContent != mAutoRunWizard.AutoRunConfiguration.CLIContent && WizardEventArgs.Wizard.GetCurrentPage().Page == this && Reporter.ToUser(eUserMsgKey.RunsetAutoConfigBackWarn, "Configurations customizations will be lost,do you want to go back?") == eUserMsgSelection.No)
                     {
                         WizardEventArgs.CancelEvent = true;
                     }
-                    else if(WizardEventArgs.Wizard.GetCurrentPage().Page == this && mTempCLIContent != mAutoRunWizard.AutoRunConfiguration.CLIContent)
+                    else if (WizardEventArgs.Wizard.GetCurrentPage().Page == this && mTempCLIContent != mAutoRunWizard.AutoRunConfiguration.CLIContent)
                     {
                         WizardEventArgs.CancelEvent = false;
                         ResetCLIContent(mAutoRunWizard.ResetCLIContent = true);
@@ -101,7 +100,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
 
         private void ShowContent()
         {
-            xCLIContentTextBox.Text = mAutoRunWizard.AutoRunConfiguration.CLIContent;                    
+            xCLIContentTextBox.Text = mAutoRunWizard.AutoRunConfiguration.CLIContent;
         }
 
         private void ShowHelp()
@@ -116,7 +115,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             {
                 helpContent = "Execute existing Run set as is using simple arguments.";
             }
-           else if (xRequestRadioButton.IsChecked == true)
+            else if (xRequestRadioButton.IsChecked == true)
             {
                 helpContent = "Execute customized or virtual Run set on remote/cloud.";
             }
@@ -145,7 +144,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             }
 
             xConfigFileSettingsPnl.Visibility = Visibility.Visible;
-        }        
+        }
 
         CLIDynamicFile mCLIDynamicFile;
         private void XDynamicRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -155,7 +154,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 mCLIDynamicFile = new CLIDynamicFile(CLIDynamicFile.eFileType.JSON);
                 GingerCore.General.FillComboFromEnumObj(xDynamicFileTypeCombo, mCLIDynamicFile.FileType);
                 BindingHandler.ObjFieldBinding(xDynamicFileTypeCombo, ComboBox.TextProperty, mCLIDynamicFile, nameof(CLIDynamicFile.FileType));
-            }            
+            }
 
             if (mAutoRunWizard != null)
             {

@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public void LoadRunsetConfigurations(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
-            
+
         }
 
         public async Task Execute(RunsetExecutor runsetExecutor)
@@ -73,7 +73,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             await Task.Run(() =>
             {
                 var rc = CodeProcessor.ExecuteNew(mScriptFile);
-            });                   
+            });
         }
     }
 }

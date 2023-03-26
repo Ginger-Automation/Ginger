@@ -17,12 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.ASCF;
 using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.ASCF
 {
@@ -43,14 +42,14 @@ namespace Ginger.WindowExplorer.ASCF
             a2.Description = "Click Link " + ASCFBrowserElementInfo.Path;
             a2.LocateBy = eLocateBy.ByHref;
             a2.LocateValue = ASCFBrowserElementInfo.Path;
-            a2.ControlAction = ActASCFBrowserElement.eControlAction.Click;            
+            a2.ControlAction = ActASCFBrowserElement.eControlAction.Click;
             list.Add(a2);
 
             ActASCFBrowserElement a3 = new ActASCFBrowserElement();
             a3.Description = "Get Link HREF " + ASCFBrowserElementInfo.Path;
             a3.LocateBy = eLocateBy.ByID;
             a3.LocateValue = ASCFBrowserElementInfo.Path;
-            a3.ControlAction = ActASCFBrowserElement.eControlAction.GetValue;            
+            a3.ControlAction = ActASCFBrowserElement.eControlAction.GetValue;
             list.Add(a3);
 
             return list;

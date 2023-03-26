@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Windows;
-using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
+using System;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Actions
 {

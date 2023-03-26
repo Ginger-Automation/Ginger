@@ -16,23 +16,23 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using Ginger.Actions;
 using Ginger.Repository;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore.Actions;
+using GingerWPF.TreeViewItemsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using GingerWPF.TreeViewItemsLib;
-using Amdocs.Ginger.Common.Enums;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
     class SharedActionTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         Act mAct;
-        private ActionEditPage mActionEditPage;        
+        private ActionEditPage mActionEditPage;
         private SharedActionsFolderTreeItem.eActionsItemsShowMode mShowMode;
 
         public SharedActionTreeItem(Act act, SharedActionsFolderTreeItem.eActionsItemsShowMode showMode = SharedActionsFolderTreeItem.eActionsItemsShowMode.ReadWrite)
@@ -99,7 +99,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
             }
-        }       
+        }
 
         private void ShowUsage(object sender, RoutedEventArgs e)
         {
@@ -111,9 +111,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (SharedRepositoryOperations.CheckIfSureDoingChange(mAct, "delete") == true)
             {
-                return (base.DeleteTreeItem(mAct, deleteWithoutAsking, refreshTreeAfterDelete));                
+                return (base.DeleteTreeItem(mAct, deleteWithoutAsking, refreshTreeAfterDelete));
             }
             return false;
-        }       
+        }
     }
 }

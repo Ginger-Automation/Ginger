@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                if (!mDoneAllCache)                
+                if (!mDoneAllCache)
                 {
                     // We use lock since several threads can request AllItems at the same time when it was not initialized yet
                     // if one thread start getting all items we want other threads to wait for it to complete 
@@ -42,9 +42,9 @@ namespace Amdocs.Ginger.Repository
                         {
                             // drill down for each sub folder and get items - combine to one list and cache                        
                             mAllItemsCache = new ObservableList<T>(ItemRootReposiotryfolder.GetFolderItemsRecursive());
-                            mDoneAllCache = true;                            
-                        }                     
-                    }                    
+                            mDoneAllCache = true;
+                        }
+                    }
                 }
                 return mAllItemsCache;
             }
@@ -60,7 +60,7 @@ namespace Amdocs.Ginger.Repository
 
         public SolutionRepositoryItemInfo()
         {
-            base.ItemType = typeof(T);  
+            base.ItemType = typeof(T);
         }
 
         public RepositoryFolder<T> ItemRootReposiotryfolder { get; internal set; }
@@ -73,8 +73,8 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        
-        
+
+
 
         /// <summary>
         /// Delete the Repository Item folder and it sub folders from file system and cache
@@ -85,7 +85,7 @@ namespace Amdocs.Ginger.Repository
             RepositoryFolder<T> itemRepositoryParentFolder = GetRepositoryFolderParent(repositoryFolder);
             itemRepositoryParentFolder.DeleteSubFolder(repositoryFolder);
         }
-        
+
 
         /// <summary>
         /// Get Item By GUID- to be used by SolutionRepository class ONLY
@@ -95,7 +95,7 @@ namespace Amdocs.Ginger.Repository
         internal T GetItemByGuid(Guid guid)
         {
             //TODO: first look in items cache instead of getting all items
-            foreach(T x in AllItemsCache)
+            foreach (T x in AllItemsCache)
             {
                 RepositoryItemBase RI = (RepositoryItemBase)(object)x;
                 if (RI.Guid == guid)
@@ -103,8 +103,8 @@ namespace Amdocs.Ginger.Repository
                     return (T)(object)RI;
                 }
             }
-            object nullObject  = null;
-            return (T)nullObject;           
+            object nullObject = null;
+            return (T)nullObject;
         }
 
 
@@ -137,7 +137,7 @@ namespace Amdocs.Ginger.Repository
             }
             else
             {
-                foreach (RepositoryFolder<T>  subfolder in folder.GetSubFolders())
+                foreach (RepositoryFolder<T> subfolder in folder.GetSubFolders())
                 {
                     if (subfolder.FolderRelativePath == repositoryItem.ContainingFolder)
                     {
@@ -148,9 +148,9 @@ namespace Amdocs.Ginger.Repository
                         RepositoryFolder<T> sf = GetRepositoryFolder(repositoryItem, subfolder);
                         if (sf != null) return sf;
                     }
-                }                
+                }
             }
-            
+
             return null;
         }
 

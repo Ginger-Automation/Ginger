@@ -167,7 +167,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 
         public void RemoveObjFromLiteDB(Object o)
         {
-            if(o is Amdocs.Ginger.Repository.RepositoryItemBase && (o as Amdocs.Ginger.Repository.RepositoryItemBase).LiteDbId != null)
+            if (o is Amdocs.Ginger.Repository.RepositoryItemBase && (o as Amdocs.Ginger.Repository.RepositoryItemBase).LiteDbId != null)
             {
                 LiteDbManager liteDbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
                 if (o.GetType().FullName.Contains("Actions"))
@@ -396,7 +396,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             StartTimeStamp = bfReport.StartTimeStamp;
             EndTimeStamp = bfReport.EndTimeStamp;
             Elapsed = bfReport.Elapsed;
-            this.RunStatus = bfReport.RunStatus; 
+            this.RunStatus = bfReport.RunStatus;
             VariablesBeforeExec = bfReport.VariablesBeforeExec;
             VariablesAfterExec = bfReport.VariablesAfterExec;
             SolutionVariablesBeforeExec = bfReport.SolutionVariablesBeforeExec;
@@ -513,7 +513,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             VariablesBeforeExec = activityReport.VariablesBeforeExec;
         }
     }
-    
+
     public class LiteDbAction : LiteDbReportBase
     {
         [FieldParams]

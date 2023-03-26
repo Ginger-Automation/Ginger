@@ -55,9 +55,9 @@ namespace Ginger.ALM.QC
         {
             get
             {
-                if (NumberOfPassedExecutions != 0 && NumberOfExecutions!= 0)
+                if (NumberOfPassedExecutions != 0 && NumberOfExecutions != 0)
                 {
-                    return (Math.Floor(((double)NumberOfPassedExecutions / (double)NumberOfExecutions) * 100)).ToString() + "%";                    
+                    return (Math.Floor(((double)NumberOfPassedExecutions / (double)NumberOfExecutions) * 100)).ToString() + "%";
                 }
                 else
                 {

@@ -40,7 +40,7 @@ namespace GingerWPF.SolutionLib
         }
 
         private void InitPluginPackagesList()
-        {                        
+        {
             //list = WorkSpace.Instance.PlugInsManager.GetInstalledPluginPackages();
             PluginPackagesGrid.ItemsSource = list;
         }

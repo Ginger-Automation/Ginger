@@ -38,14 +38,14 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddText("To use this action, select property type from Locate By drop down and then enter property value.Then select the Action Type and url and run the action.");
-        }        
+        }
 
         public override string ActionEditPage { get { return "ActPWLEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
         public override bool ValueConfigsNeeded { get { return true; } }
 
 
-        public eLocateBy OLocateBy 
+        public eLocateBy OLocateBy
         {
             get
             {
@@ -58,8 +58,8 @@ namespace GingerCore.Actions
 
             }
         }
-        public string OLocateValue 
-        { 
+        public string OLocateValue
+        {
             get
             {
                 return GetOrCreateInputParam(nameof(OLocateValue)).Value;
@@ -89,10 +89,10 @@ namespace GingerCore.Actions
             public static string OLocateValue = "OLocateValue";
             public static string OLocateBy = "OLocateBy";
         }
-    
+
         public enum ePWLAction
         {
-            GetVDistanceTop2Top=0,
+            GetVDistanceTop2Top = 0,
             GetVDistanceTop2Bottom = 1,
             GetVDistanceBottom2Top = 2,
             GetVDistanceBottom2Bottom = 3,

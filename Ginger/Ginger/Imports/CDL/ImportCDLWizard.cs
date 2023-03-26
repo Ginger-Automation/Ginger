@@ -22,7 +22,7 @@ namespace Ginger.Imports.CDL
 {
     public class ImportCDLWizard : WizardBase
     {
-        public ImportCDL ImportCDL { get; set;}
+        public ImportCDL ImportCDL { get; set; }
 
         public override string Title { get { return "Import CDL Wizard"; } }
 

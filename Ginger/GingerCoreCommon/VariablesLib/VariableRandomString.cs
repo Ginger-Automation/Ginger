@@ -26,7 +26,7 @@ using Amdocs.Ginger.Repository;
 namespace GingerCore.Variables
 {
     public class VariableRandomString : VariableBase
-    {        
+    {
         public VariableRandomString()
         {
         }
@@ -37,7 +37,7 @@ namespace GingerCore.Variables
         }
 
         public override string VariableEditPage { get { return "VariableRandomStringPage"; } }
-        
+
         private int mMin;
         [IsSerializedForLocalRepository]
         public int Min { set { if (mMin != value) { mMin = value; OnPropertyChanged(nameof(this.Min)); OnPropertyChanged("Formula"); } } get { return mMin; } }
@@ -148,7 +148,7 @@ namespace GingerCore.Variables
             int v;
             for (int i = 0; i < size; i++)
             {
-                if(IsDigit)
+                if (IsDigit)
                     ch = Convert.ToChar(Convert.ToInt32(Math.Floor(10 * random.NextDouble() + 48))); // Get random between 0-9
                 else if (IsUpperCase)
                     ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * random.NextDouble() + 65))); // Get random between A-Z
@@ -156,8 +156,8 @@ namespace GingerCore.Variables
                     ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * random.NextDouble() + 97))); // Get random between a-z
                 else
                 {
-                    v=(int)Math.Floor(74* random.NextDouble() + 48);
-                    
+                    v = (int)Math.Floor(74 * random.NextDouble() + 48);
+
                     while (!(Enumerable.Range(48, 10).Contains(v) || Enumerable.Range(97, 26).Contains(v) || Enumerable.Range(65, 26).Contains(v))) //Generate random digit, lower case letter or Upper case letter
                         v = (int)Math.Floor(74 * random.NextDouble() + 48);
                     ch = Convert.ToChar(v);
@@ -171,11 +171,11 @@ namespace GingerCore.Variables
             }
             return builder.ToString();
         }
-       
+
         public override string GetFormula()
         {
             if (Min > Max)
-            {                
+            {
                 return "Error: Min > Max";
             }
 
@@ -198,7 +198,7 @@ namespace GingerCore.Variables
                 Value = "Error: Min > Max";
                 return false;
             }
-            
+
             int c = 0;
             System.Threading.Thread.Sleep(1);
             c = (int)((random.NextDouble() * (double)(Max - Min + 1)) + Min);
@@ -217,7 +217,7 @@ namespace GingerCore.Variables
         {
             List<VariableBase.eSetValueOptions> supportedOperations = new List<VariableBase.eSetValueOptions>();
             supportedOperations.Add(VariableBase.eSetValueOptions.AutoGenerateValue);
-          
+
             return supportedOperations;
         }
 

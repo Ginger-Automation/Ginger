@@ -17,13 +17,12 @@ limitations under the License.
 #endregion
 
 using Ginger.SolutionWindows.TreeViewItems;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore.ALM.QC;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Controls;
-using Amdocs.Ginger.Common;
 
 namespace Ginger.ALM.QC.TreeViewItems
 {

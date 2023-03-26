@@ -16,12 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
 using OpenQA.Selenium;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace GingerCoreNET.Drivers.CommonLib
 {

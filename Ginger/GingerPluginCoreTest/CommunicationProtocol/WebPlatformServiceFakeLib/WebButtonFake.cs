@@ -18,8 +18,6 @@ limitations under the License.
 
 using Ginger.Plugin.Platform.Web.Elements;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
 {
@@ -27,7 +25,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
     {
         public void Click()
         {
-            
+
         }
 
         public void DoubleClick()

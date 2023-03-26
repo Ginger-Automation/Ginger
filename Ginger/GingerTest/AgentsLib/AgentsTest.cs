@@ -24,9 +24,9 @@ using GingerTest.POMs;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Data;
 using System.IO;
 using System.Linq;
-using System.Data;
 namespace GingerTest
 {
     [TestClass]
@@ -42,9 +42,9 @@ namespace GingerTest
 
         [ClassInitialize]
         public static void ClassInit(TestContext TC)
-        {            
+        {
             mTC = TC;
-            
+
             string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\AgentsTest");
             SolutionFolder = TestResources.GetTestTempFolder(@"Solutions\AgentsTest");
             if (Directory.Exists(SolutionFolder))
@@ -56,30 +56,31 @@ namespace GingerTest
 
             mGingerAutomator = GingerAutomator.StartSession();
 
-            mGingerAutomator.OpenSolution(SolutionFolder);            
+            mGingerAutomator.OpenSolution(SolutionFolder);
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            GingerAutomator.EndSession(); 
+            GingerAutomator.EndSession();
         }
 
 
         [TestInitialize]
         public void TestInitialize()
         {
-            
+
         }
 
         [TestCleanup]
         public void TestCleanUp()
         {
-            
+
         }
 
         [Ignore]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void VisualCompareAgentConfig()
         {
             //Arrange
@@ -99,8 +100,9 @@ namespace GingerTest
         }
 
 
-        
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void AddAgentUsingWizard()
         {
             //Arrange       
@@ -115,7 +117,7 @@ namespace GingerTest
             //Assert
             Assert.AreEqual(name, agent.Name, "Agent.Name is same");
         }
-        
+
         [TestMethod]
         //[Timeout(60000)]
         public void RenameAgent()
@@ -139,7 +141,8 @@ namespace GingerTest
         }
 
         [Ignore] // TODO: FIXME
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void AddAgentsFolderinFilesystemShowinTree()
         {
             //Arrange
@@ -155,12 +158,13 @@ namespace GingerTest
             Assert.IsTrue(agentExist, "Agent exist in tree");
         }
 
-        
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void AddAgentsFolderUsingMenu()
         {
             //Arrange
-            string folderName = "sub folder 1";            
+            string folderName = "sub folder 1";
 
             AgentsPOM AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();
             AgentsPOM.AgentsTree.SelectRootItem();
@@ -171,12 +175,13 @@ namespace GingerTest
             string subFolder = Path.Combine(SolutionFolder, "Agents", folderName);
 
             // assert            
-            Assert.IsTrue(folderCreatedOnTree,"Folder create on tree");
-            Assert.IsTrue(Directory.Exists(subFolder),"sub folder exist");
+            Assert.IsTrue(folderCreatedOnTree, "Folder create on tree");
+            Assert.IsTrue(Directory.Exists(subFolder), "sub folder exist");
         }
 
         [Ignore]  // FIXME failing because the folder doesn't expand to show the added agent
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void AddAgentsFolderUsingMenuAndAddAgent()
         {
             //Arrange
@@ -194,12 +199,13 @@ namespace GingerTest
 
             // assert            
             Assert.IsTrue(folderExist, "Folder exist");
-            Assert.IsTrue(agentExist , "Agent exist");
+            Assert.IsTrue(agentExist, "Agent exist");
         }
-        
+
         [Ignore] // TODO: FIXME not working when running multiple tests
-        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", @".\TestData\Agents.csv", "Agents#csv", DataAccessMethod.Sequential)]        
-        [TestMethod]  [Timeout(60000)]
+        [DataSource("Microsoft.VisualStudio.TestTools.DataSource.CSV", @".\TestData\Agents.csv", "Agents#csv", DataAccessMethod.Sequential)]
+        [TestMethod]
+        [Timeout(60000)]
         public void CreateAgentsFromCSV()
         {
             // arrange
@@ -209,21 +215,22 @@ namespace GingerTest
 
             //Act
             AgentsPOM AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();
-            ePlatformType platform = (ePlatformType)Enum.Parse(typeof(ePlatformType), platfromType);            
+            ePlatformType platform = (ePlatformType)Enum.Parse(typeof(ePlatformType), platfromType);
             Agent.eDriverType driver = (Agent.eDriverType)Enum.Parse(typeof(Agent.eDriverType), driverType);
-            
+
             AgentsPOM.CreateAgent(agentName, platform, driver);
             bool agentCreated = AgentsPOM.AgentsTree.IsItemExist(agentName);
 
             //Assert
-            Assert.IsTrue(agentCreated, "Agent created: " + agentName + ", " + platfromType + ", " + driverType );
+            Assert.IsTrue(agentCreated, "Agent created: " + agentName + ", " + platfromType + ", " + driverType);
         }
 
 
         [Ignore]
         [DataRow("Web 1", "Web", "SeleniumChrome")]
         [DataRow("Web 2", "Web", "SeleniumFireFox")]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void CreateAgentsbyTestData(string agentName, string platfromType, string driverType)
         {
             // arrange
@@ -243,7 +250,8 @@ namespace GingerTest
 
 
         [Ignore] // FIXME missing functionality
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void CopyPasteAgentinAgentRoot()
         {
             //Arrange            
@@ -255,7 +263,7 @@ namespace GingerTest
             //Act                        
             AgentsPOM.AgentsTree.Copy();
             AgentsPOM.AgentsTree.SelectRootItem();
-            AgentsPOM.AgentsTree.Paste(copy);            
+            AgentsPOM.AgentsTree.Paste(copy);
             bool agentExist = AgentsPOM.AgentsTree.IsItemExist(copy);
 
             Agent Acopy = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Name == copy select x).SingleOrDefault();
@@ -270,7 +278,8 @@ namespace GingerTest
         }
 
         [Ignore] // FIXME missing functionality
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void CutPasteAgentFromRootToSubFolder()
         {
             //Arrange            
@@ -279,7 +288,7 @@ namespace GingerTest
             AgentsPOM AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();
             Agent MyAgent = AgentsPOM.CreateAgent(name, ePlatformType.Web, Agent.eDriverType.SeleniumChrome);
             AgentsPOM.AgentsTree.SelectRootItem();
-            AgentsPOM.AddSubFolder(folderName);            
+            AgentsPOM.AddSubFolder(folderName);
 
             //Act            
             AgentsPOM.AgentsTree.SelectItem(name);
@@ -288,7 +297,7 @@ namespace GingerTest
             AgentsPOM.AgentsTree.Paste();
 
             bool agentExist = AgentsPOM.AgentsTree.IsItemExist(name);
-            
+
             RepositoryFolder<Agent> AgentsFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Agent>();
             RepositoryFolder<Agent> subFolder = AgentsFolder.GetSubFolder(folderName);
             Agent ACopyTag = (from x in subFolder.GetFolderItems() where x.Name == name select x).SingleOrDefault();
@@ -301,16 +310,17 @@ namespace GingerTest
         }
 
         [Ignore] // FIXME missing functionality
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void CutPasteAgentFromSubFolderToRoot()
         {
             //Arrange            
             string name = "Move Me Up";
             string folderName = "MySubFolder 2";
-            AgentsPOM AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();            
+            AgentsPOM AgentsPOM = mGingerAutomator.MainWindowPOM.GotoAgents();
             AgentsPOM.AgentsTree.SelectRootItem();
             AgentsPOM.AddSubFolder(folderName);
-            Agent MyAgent = AgentsPOM.CreateAgent(folderName, name, ePlatformType.Web, Agent.eDriverType.SeleniumChrome);            
+            Agent MyAgent = AgentsPOM.CreateAgent(folderName, name, ePlatformType.Web, Agent.eDriverType.SeleniumChrome);
 
             //Act            
             AgentsPOM.AgentsTree.SelectItem(name);
@@ -332,7 +342,8 @@ namespace GingerTest
         }
 
         [Ignore] // failing because the sub folder is not auto expand
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void DuplicateAgentinSubFolder()
         {
             //Arrange
@@ -354,7 +365,7 @@ namespace GingerTest
             bool b = AgentsPOM.AgentsTree.IsItemExist(agentDupName);
 
             // Assert            
-            Assert.IsTrue(b, "Dup agent exist in tree");            
+            Assert.IsTrue(b, "Dup agent exist in tree");
         }
 
     }

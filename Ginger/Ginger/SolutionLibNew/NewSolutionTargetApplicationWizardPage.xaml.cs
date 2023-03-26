@@ -32,7 +32,7 @@ namespace GingerWPF.SolutionLib
         public NewSolutionTargetApplicationWizardPage(Solution solution)
         {
             InitializeComponent();
-            ApplicationPlatform applicationPlatform = new ApplicationPlatform();   
+            ApplicationPlatform applicationPlatform = new ApplicationPlatform();
             MainApplicationNameTextBox.BindControl(applicationPlatform, nameof(ApplicationPlatform.AppName));
             MainApplicationPlatformComboBox.BindControl(applicationPlatform, nameof(applicationPlatform.Platform));
         }

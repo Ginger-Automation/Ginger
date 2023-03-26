@@ -18,24 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
+using Ginger.Run;
 using GingerCore.DataSource;
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Mail;
-using Ginger.Run;
-using NPOI.HPSF;
-using Org.BouncyCastle.Asn1.X509;
-using Array = System.Array;
 using System.Security.Cryptography.X509Certificates;
-using System.IO;
-using Applitools;
-using Ginger.Run.RunSetActions;
-using GingerCore.Actions.WebServices;
-using System.Net.Security;
-using System.Reflection;
-using System.Windows;
+using Array = System.Array;
 
 namespace GingerCore.GeneralLib
 {

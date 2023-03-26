@@ -16,19 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using GingerCore.Properties;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Speech.Recognition;
 using System.Speech.Synthesis;
 using System.Text;
-using GingerCore.Helpers;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions
 {
@@ -44,7 +41,7 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddText("To perform a Radio button action, Select TextSpeech action,TextToSayLoud,WaveLocation,Interval and value");
-        }        
+        }
 
         public override string ActionEditPage { get { return "ActTextSpeechEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
@@ -177,8 +174,8 @@ namespace GingerCore.Actions
                 }
             }
             SpeechEngine.Dispose();
-            string TranslatedValue = CheckStringConditionByPresenceOfWords(sb.ToString(), 
-                                                new List<string>() { "A" }, 
+            string TranslatedValue = CheckStringConditionByPresenceOfWords(sb.ToString(),
+                                                new List<string>() { "A" },
                                                 new List<string>() { "c", "cr", "English", "start", "started" }); // TODO; create dic
 
             AddOrUpdateReturnParamActual("RecordedText", TranslatedValue);
@@ -200,19 +197,31 @@ namespace GingerCore.Actions
         /// <param name="SuccessMessage"></param>
         /// <param name="NoMatchMessage"></param>
         /// <returns></returns>
-        private string CheckStringConditionByPresenceOfWords(string TextExtracted, 
-                List<string> FailureWords, 
-                List<string> SuccessWords, 
-                string FailureMessage="Call did not reach C", 
-                string SuccessMessage="Call reached C", 
-                string NoMatchMessage="No words were matched for this call")
+        private string CheckStringConditionByPresenceOfWords(string TextExtracted,
+                List<string> FailureWords,
+                List<string> SuccessWords,
+                string FailureMessage = "Call did not reach C",
+                string SuccessMessage = "Call reached C",
+                string NoMatchMessage = "No words were matched for this call")
         {
             //TODO: use a dictinary from file or alike -need to externalize
             // if elminating words are used return fail & exit
-            foreach(string word in FailureWords)    {if (TextExtracted.IndexOf(word) > -1) return FailureMessage;   }
+            foreach (string word in FailureWords)
+            {
+                if (TextExtracted.IndexOf(word) > -1)
+                {
+                    return FailureMessage;
+                }
+            }
 
             // if any passing words are used return pass & exit
-            foreach (string word in SuccessWords)   {if (TextExtracted.IndexOf(word) > -1) return SuccessMessage;   }
+            foreach (string word in SuccessWords)
+            {
+                if (TextExtracted.IndexOf(word) > -1)
+                {
+                    return SuccessMessage;
+                }
+            }
 
             // if we're still here that means nothing was recognized, so we should return no matches
             return NoMatchMessage;
@@ -233,7 +242,7 @@ namespace GingerCore.Actions
 
 
             SpeechEngine.SetInputToWaveFile(WaveLocation);
-            
+
 
             //Add waits to sort out any audio issues
             SpeechEngine.BabbleTimeout = new TimeSpan(Int32.MaxValue); //Background noise

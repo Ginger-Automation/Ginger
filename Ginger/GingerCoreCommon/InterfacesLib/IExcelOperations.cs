@@ -19,7 +19,6 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
 
 namespace Amdocs.Ginger.Common.InterfacesLib
 {

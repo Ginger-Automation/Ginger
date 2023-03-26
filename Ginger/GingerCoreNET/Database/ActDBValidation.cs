@@ -16,20 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
 using GingerCore.Environments;
-using GingerCore.Helpers;
 using GingerCore.NoSqlBase;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
-using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Actions
 {
@@ -164,9 +163,13 @@ namespace GingerCore.Actions
                 try
                 {
                     if (DB != null && (DB.DBType == Database.eDBTypes.Cassandra || DB.DBType == Database.eDBTypes.Couchbase || DB.DBType == Database.eDBTypes.MongoDb || DB.DBType == Database.eDBTypes.CosmosDb))
+                    {
                         return eDatabaseTye.NoSQL;
+                    }
                     else
+                    {
                         return eDatabaseTye.Relational;
+                    }
                 }
 
                 catch
@@ -211,7 +214,9 @@ namespace GingerCore.Actions
                     return returnValue;
                 }
                 else
+                {
                     return false;
+                }
             }
         }
 
@@ -277,7 +282,9 @@ namespace GingerCore.Actions
             }
 
             if (SetDBConnection() == false)
+            {
                 return;//Failed to find the DB in the Environment
+            }
 
             switch (DatabaseType)
             {
@@ -395,7 +402,10 @@ namespace GingerCore.Actions
         {
             string calcSQL = GetInputParamCalculatedValue("SQL");
             if (string.IsNullOrEmpty(calcSQL))
+            {
                 Error = "Fail to run Update SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error = Missing Query";
+            }
+
             string val = DB.DatabaseOperations.GetRecordCount(calcSQL);
             this.AddOrUpdateReturnParamActual("Record Count", val);
         }
@@ -418,7 +428,9 @@ namespace GingerCore.Actions
                 }
 
                 if (string.IsNullOrEmpty(calcSQL))
+                {
                     Error = "Fail to run Update SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error = Missing Query";
+                }
 
                 string val = DB.DatabaseOperations.fUpdateDB(calcSQL, CommitDB_Value);
                 this.AddOrUpdateReturnParamActual("Impacted Lines", val);
@@ -427,14 +439,18 @@ namespace GingerCore.Actions
             catch (Exception e)
             {
                 if (string.IsNullOrEmpty(Error))
+                {
                     this.Error = "Fail to run Update SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error= " + e.Message;
-
+                }
             }
         }
         private void SimpleSQLOneValueHandler()
         {
             if (string.IsNullOrEmpty(Where))
+            {
                 Where = "rownum<2";
+            }
+
             string val = DB.DatabaseOperations.fTableColWhere(Table, Column, Where);
             this.AddOrUpdateReturnParamActual(Column, val);
         }
@@ -460,11 +476,15 @@ namespace GingerCore.Actions
             {
                 GetSqlValueFromFilePath();
                 if (string.IsNullOrEmpty(calcSQL))
+                {
                     this.Error = "Fail to run Free SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error= Missing SQL Query.";
+                }
 
                 updateQueryParams();
                 foreach (ActInputValue param in QueryParams)
+                {
                     calcSQL = calcSQL.Replace("<<" + param.ItemName + ">>", param.ValueForDriver);
+                }
 
                 List<object> DBResponse = DB.DatabaseOperations.FreeSQL(calcSQL, queryTimeout);
 
@@ -472,7 +492,10 @@ namespace GingerCore.Actions
                 List<List<string>> Records = (List<List<string>>)DBResponse.ElementAt(1);
 
 
-                if (Records.Count == 0) return;
+                if (Records.Count == 0)
+                {
+                    return;
+                }
 
                 int recordcount = Records.Count;
                 for (int j = 0; j < Records.Count; j++)
@@ -499,9 +522,13 @@ namespace GingerCore.Actions
             catch (Exception e)
             {
                 if (string.IsNullOrEmpty(ErrorString))
+                {
                     this.Error = "Fail to run Free SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error= " + e.Message;
+                }
                 else
+                {
                     this.Error = "Fail to execute query: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error= " + ErrorString;
+                }
 
                 if (e.Message.ToUpper().Contains("COULD NOT LOAD FILE OR ASSEMBLY 'ORACLE.MANAGEDDATAACCESS"))
                 {

@@ -39,7 +39,7 @@ namespace Ginger.PlugInsWindows
 
         public void SetGrids()
         {
-            SetPlugInsGridView();            
+            SetPlugInsGridView();
         }
 
         private void SetPlugInsGridView()
@@ -48,24 +48,24 @@ namespace Ginger.PlugInsWindows
             PlugInsGrid.ShowEdit = Visibility.Collapsed;
             PlugInsGrid.ShowUpDown = Visibility.Collapsed;
             PlugInsGrid.SetTitleLightStyle = true;
-            
+
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(PluginPackage.PluginId) ,Header = "Plugin ID", WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(PluginPackage.Folder ), Header = "Folder", WidthWeight = 300, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(PluginPackage.PluginPackageVersion ), Header = "Version", WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(PluginPackage.PluginId), Header = "Plugin ID", WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(PluginPackage.Folder), Header = "Folder", WidthWeight = 300, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(PluginPackage.PluginPackageVersion), Header = "Version", WidthWeight = 300, BindingMode = BindingMode.OneWay });
             //view.GridColsView.Add(new GridColView() { Field = "Description", WidthWeight = 300, BindingMode = BindingMode.OneWay });
             //view.GridColsView.Add(new GridColView() { Field = "PlugInType", Header = "Type", WidthWeight = 300, BindingMode = BindingMode.OneWay }); 
-            
+
 
             PlugInsGrid.SetAllColumnsDefaultView(view);
-            PlugInsGrid.InitViewItems();            
+            PlugInsGrid.InitViewItems();
             PlugInsGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
         }
 
-        
 
-        
+
+
     }
 }

@@ -21,7 +21,7 @@ using System.Collections.Generic;
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
     public class DynamicGingerExecution
-    {        
+    {
         public SolutionDetails SolutionDetails { get; set; }
 
         public bool ShowAutoRunWindow { get; set; }

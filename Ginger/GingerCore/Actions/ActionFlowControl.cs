@@ -31,7 +31,7 @@ namespace GingerCore.Actions
     {
         public enum eFlowAction
         {
-            StopFlow = 1,            
+            StopFlow = 1,
             NextActivity = 2,
         }
     }

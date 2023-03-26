@@ -36,7 +36,7 @@ namespace Ginger.Imports.UFT
             public static string Checked = "Checked";
         }
 
-        public string CodeLine { get; set; }        
+        public string CodeLine { get; set; }
         public string Converted { get; set; }
         public eStatus Status { get; set; }
 

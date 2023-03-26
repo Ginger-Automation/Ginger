@@ -28,32 +28,32 @@ namespace GingerCoreNETUnitTest.Examples
         [TestInitialize]
         public void TestInitialize()
         {
-            mTestHelper.TestInitialize(TestContext);            
+            mTestHelper.TestInitialize(TestContext);
         }
 
-      
+
         [TestCleanup]
         public void TestCleanUp()
         {
-            mTestHelper.TestCleanup();            
+            mTestHelper.TestCleanup();
         }
 
-        [TestMethod]        
+        [TestMethod]
         public void SampleTest1()
-        {            
+        {
             //Arrange
             string s1 = "aaa";
             string s2 = "bbb";
 
             //Act
-            string result = s1 + s2;         
+            string result = s1 + s2;
 
             //Assert
-            Assert.AreEqual("aaabbb", result, "result");            
+            Assert.AreEqual("aaabbb", result, "result");
         }
 
 
-        [TestMethod]        
+        [TestMethod]
         public void SampleTestWithLog()
         {
             //Arrange
@@ -67,7 +67,7 @@ namespace GingerCoreNETUnitTest.Examples
             mTestHelper.Log("result = " + result);
 
             //Assert
-            Assert.AreEqual("aaabbb", result, "result");            
+            Assert.AreEqual("aaabbb", result, "result");
         }
 
         [TestMethod]
@@ -78,20 +78,20 @@ namespace GingerCoreNETUnitTest.Examples
             int i = 0;
 
             //Act
-            while (i<100000)
+            while (i < 100000)
             {
                 i++;
-            }            
+            }
 
             //Assert
-            Assert.AreEqual(100000, i, "i");            
+            Assert.AreEqual(100000, i, "i");
         }
 
         [TestMethod]
         public void SampleTestArtifact()
         {
             //Arrange            
-            string longstring = "abc" + Environment.NewLine;            
+            string longstring = "abc" + Environment.NewLine;
 
             //Act
             while (longstring.Length < 1000)
@@ -104,7 +104,7 @@ namespace GingerCoreNETUnitTest.Examples
             mTestHelper.CreateTestArtifact("longstring.txt", longstring);
 
             //Assert
-            Assert.IsTrue(longstring.Length > 1000, "longstring.Length");            
+            Assert.IsTrue(longstring.Length > 1000, "longstring.Length");
         }
 
         [TestMethod]
@@ -114,7 +114,7 @@ namespace GingerCoreNETUnitTest.Examples
             string fileName = mTestHelper.GetTempFileName("numbers.txt");
 
             //Act
-            for (int i=0;i<10;i++)
+            for (int i = 0; i < 10; i++)
             {
                 System.IO.File.AppendAllText(fileName, "line " + i + "##");
             }
@@ -125,7 +125,7 @@ namespace GingerCoreNETUnitTest.Examples
             //Assert
             long fileSize = new FileInfo(fileName).Length;
 
-            Assert.AreEqual(80, fileSize, "fileSize");                            
+            Assert.AreEqual(80, fileSize, "fileSize");
         }
     }
 }

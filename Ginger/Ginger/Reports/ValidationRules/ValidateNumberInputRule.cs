@@ -17,14 +17,10 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Ginger.ValidationRules
-{ 
+{
     public class ValidateNumberInputRule : ValidationRule
     {
         private string _Message = string.Empty;
@@ -40,7 +36,7 @@ namespace Ginger.ValidationRules
             {
                 if (value != null && !string.IsNullOrEmpty(value?.ToString()))
                 {
-                    int iValue = int.Parse(value.ToString());                    
+                    int iValue = int.Parse(value.ToString());
                 }
 
                 return new ValidationResult(true, null);

@@ -19,10 +19,8 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
-using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Drivers;
-using GingerCore.Drivers.Common;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -34,22 +32,22 @@ namespace Ginger.WindowExplorer.HTMLCommon
     /// </summary>
     public partial class HTMLCanvasElementPage : Page
     {
-        ElementInfo ElementInfo;  
+        ElementInfo ElementInfo;
         Act mAct;
-        
+
         public HTMLCanvasElementPage(ElementInfo elementInfo)
         {
             InitializeComponent();
             ElementInfo = elementInfo;
-            InjectScriptAndStartEvent();            
+            InjectScriptAndStartEvent();
         }
 
         public ObservableList<ActInputValue> GetTableRelatedInputValues()
         {
-            if(mAct!=null)
+            if (mAct != null)
             {
                 return mAct.InputValues;
-            }  
+            }
             else
             {
                 return null;
@@ -71,7 +69,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
                 string[] spliter = new string[] { "," };
                 string[] cordinations = xAndY.Split(spliter, StringSplitOptions.RemoveEmptyEntries);
                 x = cordinations[0];
-                y = cordinations[1]; 
+                y = cordinations[1];
             }
             catch
             {
@@ -87,10 +85,10 @@ namespace Ginger.WindowExplorer.HTMLCommon
             else
             {
                 XOffset.Text = x;
-                YOffset.Text = y;                
+                YOffset.Text = y;
                 mAct.AddOrUpdateInputParamValue("XCoordinate", x);
                 mAct.AddOrUpdateInputParamValue("YCoordinate", y);
-            }            
+            }
         }
     }
 }

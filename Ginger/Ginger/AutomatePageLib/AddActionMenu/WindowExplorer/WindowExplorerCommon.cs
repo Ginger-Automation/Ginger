@@ -30,11 +30,6 @@ using GingerCore.Drivers.Common;
 using GingerCore.Drivers.JavaDriverLib;
 using GingerCore.Drivers.PBDriver;
 using GingerWPF.UserControlsLib.UCTreeView;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
@@ -45,7 +40,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         public static ITreeViewItem GetTreeViewItemForElementInfo(Amdocs.Ginger.Common.UIElement.ElementInfo EI)
         {
-            if (EI == null) return null; // can happen when grid is filtered
+            if (EI == null)
+            {
+                return null; // can happen when grid is filtered
+            }
 
             //TODO: make it OO style avoid the if else if
             ITreeViewItem TVI = null;
@@ -74,7 +72,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 TVI = HTMLElementInfoConverter.GetHTMLElementTreeItem(((HTMLElementInfo)EI));
             }
-            else if(EI.ElementObject is XmlNode)
+            else if (EI.ElementObject is XmlNode)
             {
                 TVI = AppiumElementInfoConverter.GetTreeViewItemFor(EI);
             }

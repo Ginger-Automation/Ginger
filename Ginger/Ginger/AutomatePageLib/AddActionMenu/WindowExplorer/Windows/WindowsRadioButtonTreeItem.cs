@@ -17,13 +17,12 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
 using Ginger.WindowExplorer;
-using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Windows;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Controls;
 
 namespace Ginger.Drivers.Windows
 {
@@ -37,7 +36,7 @@ namespace Ginger.Drivers.Windows
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
             ObservableList<Act> list = new ObservableList<Act>();
-            
+
             list.Add(new ActWindowsControl()
             {
                 Description = "Select Radio Button " + UIAElementInfo.ElementTitle,

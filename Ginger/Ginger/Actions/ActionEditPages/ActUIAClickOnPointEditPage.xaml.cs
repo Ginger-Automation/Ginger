@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using GingerCore.Actions;
+using System.Windows.Controls;
 
 namespace Ginger.Actions
 {
@@ -33,7 +33,7 @@ namespace Ginger.Actions
             InitializeComponent();
             currentAct = Act;
             GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.ActUIAClickOnPointAction);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "ActUIAClickOnPointAction"); 
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "ActUIAClickOnPointAction");
         }
 
         private void ActionNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

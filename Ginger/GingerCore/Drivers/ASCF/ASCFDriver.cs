@@ -17,25 +17,24 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.GeneralLib;
+using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
+using GingerCore.Actions.ASCF;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
-using GingerCore.Actions;
-using System.IO;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
-using GingerCore.Actions.ASCF;
-using System.Diagnostics;
-using System.Reflection;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.CoreNET.GeneralLib;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace GingerCore.Drivers.ASCF
 {
@@ -62,7 +61,7 @@ namespace GingerCore.Drivers.ASCF
         private IPEndPoint serverAddress;
         // Socket clientSocket;
         TcpClient clientSocket;
-        
+
         private bool mConnected = false;
 
         // Used when we want to close this form so stop connecting 
@@ -95,7 +94,7 @@ namespace GingerCore.Drivers.ASCF
 
         public override void StartDriver()
         {
-            if (GingerToolBoxHost == null || GingerToolBoxHost.Length ==0)
+            if (GingerToolBoxHost == null || GingerToolBoxHost.Length == 0)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Missing GingerToolBoxHost config value- Please verify Agent config parameter GingerToolBoxHost is not empty");
                 return;
@@ -120,13 +119,17 @@ namespace GingerCore.Drivers.ASCF
 
             //add timeout or it gets stuck
             //TODO: add to driver config
-            
+
             clientSocket.ReceiveTimeout = CommunicationTimout * 1000; ;
-            if (CommunicationTimout == 0) CommunicationTimout = 120;
+            if (CommunicationTimout == 0)
+            {
+                CommunicationTimout = 120;
+            }
+
             clientSocket.SendTimeout = CommunicationTimout * 1000; ;
             clientSocket.ReceiveBufferSize = 1000000;
             clientSocket.SendBufferSize = 1000000;
-            clientSocket.NoDelay = true;            
+            clientSocket.NoDelay = true;
 
             // Need to run the window on another task and wait 
             //TODO: maybe config time out
@@ -139,16 +142,23 @@ namespace GingerCore.Drivers.ASCF
                 {
                     try
                     {
-                        if (bClosing) return;
-                        
+                        if (bClosing)
+                        {
+                            return;
+                        }
+
                         //Will go to catch if agent is not ready
                         clientSocket.Connect(serverAddress);
-                        
-                        if (CommunicationTimout == 0) CommunicationTimout = 120;
+
+                        if (CommunicationTimout == 0)
+                        {
+                            CommunicationTimout = 120;
+                        }
+
                         mConnected = true;
                         //TODO: raise Propertychanged event on IsConnected
                         SetConfig();
-                        
+
                         IsTryingToConnect = false;
                         return;
                     }
@@ -163,7 +173,7 @@ namespace GingerCore.Drivers.ASCF
                 General.DoEvents();
                 //Connect Failed after x retry...   
                 IsTryingToConnect = false;
-                Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, "ASCF","");
+                Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, "ASCF", "");
             });
         }
 
@@ -174,10 +184,10 @@ namespace GingerCore.Drivers.ASCF
         private void Reconnect()
         {
             //TODO: put the 240 in driver config            
-            
+
             for (int i = 0; i < 240; i++)
-            {                
-                Reporter.ToStatus(eStatusMsgKey.ASCFTryToConnect,null, "Try#" + i);
+            {
+                Reporter.ToStatus(eStatusMsgKey.ASCFTryToConnect, null, "Try#" + i);
                 try
                 {
                     clientSocket.Connect(serverAddress);
@@ -189,17 +199,17 @@ namespace GingerCore.Drivers.ASCF
                 catch (Exception)
                 {
                     Thread.Sleep(500);
-                    clientSocket = new TcpClient();                 
-                }                
+                    clientSocket = new TcpClient();
+                }
             }
             //Show message failed
             Reporter.HideStatusMessage();
         }
-        
+
         public string Send(String Action, String LocateBy, String LocateValue, String Property, String Value, bool WaitForIdle)
-        {            
+        {
             try
-            {     
+            {
                 // If connection failed then go out of here
                 if (!mConnected)
                 {
@@ -212,22 +222,26 @@ namespace GingerCore.Drivers.ASCF
                 {
                     v = " ";
                 }
-                else{
-                     v = Value.Replace("~", "[Tilde]");
+                else
+                {
+                    v = Value.Replace("~", "[Tilde]");
                 }
 
-                
+
                 string toSend = "1234" + Action + "~" + LocateBy + "~" + LocateValue.Replace("~", "[Tilde]") + "~" + Property + "~" + v;
-                if (WaitForIdle) toSend += "~Y";
-                                
+                if (WaitForIdle)
+                {
+                    toSend += "~Y";
+                }
+
                 // Sending
-                int toSendLen = System.Text.Encoding.UTF8.GetByteCount(toSend)-4;
-                
+                int toSendLen = System.Text.Encoding.UTF8.GetByteCount(toSend) - 4;
+
                 //TODO: make it multi lang support - currently hebrew dosen't pass thru
                 byte[] toSendBytes = System.Text.Encoding.UTF8.GetBytes(toSend);
-                
+
                 byte[] toSendLenBytes = System.BitConverter.GetBytes(toSendLen);
-                
+
                 toSendBytes[0] = toSendLenBytes[0];
                 toSendBytes[1] = toSendLenBytes[1];
                 toSendBytes[2] = toSendLenBytes[2];
@@ -235,13 +249,13 @@ namespace GingerCore.Drivers.ASCF
 
 
                 //TODO: check if it will speed sending one packet
-                NetworkStream ns = clientSocket.GetStream();                
+                NetworkStream ns = clientSocket.GetStream();
 
                 clientSocket.Client.Send(toSendBytes);
                 ns.Flush();
-                
-                string response ="";
-                
+
+                string response = "";
+
                 // speed is important so we do the shift with what we know, so it is super fast
                 byte[] rcvLenBytesBB = new byte[4];
 
@@ -256,18 +270,18 @@ namespace GingerCore.Drivers.ASCF
                     }
                 }
                 ns.Read(rcvLenBytesBB, 0, 4);
-                
+
                 int rcvLen = ((rcvLenBytesBB[3]) << 24) + (rcvLenBytesBB[2] << 16) + (rcvLenBytesBB[1] << 8) + rcvLenBytesBB[0];
-                
+
                 int received = 0;
-                
+
                 byte[] rcvBytes = new byte[rcvLen];
 
-                 while (received < rcvLen)
-                 {
+                while (received < rcvLen)
+                {
                     received += ns.Read(rcvBytes, received, rcvLen - received);
-                 }
-                   
+                }
+
                 ns.Flush();
 
                 response = Encoding.UTF8.GetString(rcvBytes, 0, rcvBytes.Length);
@@ -314,7 +328,7 @@ namespace GingerCore.Drivers.ASCF
             try
             {
                 bClosing = true;
-                clientSocket.Client.Shutdown(SocketShutdown.Both);                
+                clientSocket.Client.Shutdown(SocketShutdown.Both);
                 if (clientSocket.Client.Connected)
                 {
                     clientSocket.Client.Disconnect(true);
@@ -334,8 +348,11 @@ namespace GingerCore.Drivers.ASCF
             //TODO: cleanup if not used
 
             String RC = Send("GetCurrentElement", NA, NA, NA, NA, false);
-            string [] a = RC.Split('|');
-            if (a.Length < 4) return null;
+            string[] a = RC.Split('|');
+            if (a.Length < 4)
+            {
+                return null;
+            }
 
             string ActType = a[0];
             string LocateValue = a[2];
@@ -347,14 +364,14 @@ namespace GingerCore.Drivers.ASCF
                     ActButton act = new ActButton();
                     act.LocateBy = eLocateBy.ByName;
                     act.LocateValue = LocateValue;
-                    act.AddOrUpdateInputParamValue("Value",Value);
+                    act.AddOrUpdateInputParamValue("Value", Value);
                     return act;
-                   // break;
-                case "ActTextBox" :
+                // break;
+                case "ActTextBox":
                     ActTextBox actTB = new ActTextBox();
                     actTB.LocateBy = eLocateBy.ByName;
                     actTB.LocateValue = LocateValue;
-                    actTB.AddOrUpdateInputParamValue("Value",Value);
+                    actTB.AddOrUpdateInputParamValue("Value", Value);
                     actTB.TextBoxAction = ActTextBox.eTextBoxAction.SetValue;
                     return actTB;
                 default:
@@ -362,7 +379,7 @@ namespace GingerCore.Drivers.ASCF
             }
         }
 
-        
+
 
         public override void RunAction(Act act)
         {
@@ -372,9 +389,9 @@ namespace GingerCore.Drivers.ASCF
             //TODO: avoid hard coded string...
             actClass = actClass.Replace("GingerCore.Actions.ASCF.", "");
             actClass = actClass.Replace("GingerCore.Actions.", "");
-            
+
             if (!SocketConnected(clientSocket))
-            {            
+            {
                 Reconnect();
             }
             switch (actClass)
@@ -390,14 +407,14 @@ namespace GingerCore.Drivers.ASCF
                     RunTextBoxAction((ActTextBox)act);
                     break;
                 case "ActLink":
-                    ActLink Alink = (ActLink)act;                    
+                    ActLink Alink = (ActLink)act;
                     ClickLink(Alink);
                     break;
                 case "ActButton":
                     ActButton b = (ActButton)act;
                     ClickButton(b);
                     break;
-                case "ActMenuItem":     
+                case "ActMenuItem":
 
                     ActMenuItem ami = (ActMenuItem)act;
                     MenuItem(ami);
@@ -406,10 +423,10 @@ namespace GingerCore.Drivers.ASCF
                 //TODO Add ActScreenShot     
                 case "ActScreenShot":
                     ActScreenShot actSS = (ActScreenShot)act;
-                                    
+
                     if (actSS.WindowsToCapture == ActScreenShot.eWindowsToCapture.AllAvailableWindows)
                     {
-                        ObservableList<Bitmap> screenShots= TakeScreeShotAllWindows(actSS);
+                        ObservableList<Bitmap> screenShots = TakeScreeShotAllWindows(actSS);
 
                         foreach (Bitmap screenShot in screenShots)
                         {
@@ -421,13 +438,13 @@ namespace GingerCore.Drivers.ASCF
                         Bitmap tempBmp = TakeScreenShot(actSS);
                         act.AddScreenShot(tempBmp);
                     }
- 
+
                     break;
                 case "ActGetMsgboxText":
                     ActGetMsgboxText actmsg = (ActGetMsgboxText)act;
                     GetMsgboxText(actmsg);
                     break;
-                    
+
                 //TODO Add ActSetConfig     
                 case "ActSetConfig":
                     ActSetConfig actsc = (ActSetConfig)act;
@@ -457,28 +474,28 @@ namespace GingerCore.Drivers.ASCF
             // Step 2 - check 
 
             string script = "";
-            
+
             switch (act.ControlAction)
             {
                 case ActASCFBrowserElement.eControlAction.SetBrowserControl:
-                    SetCurrentBrowserControl(act.LocateBy, act.LocateValueCalculated);                        
-                        string RC1 = Send("GetControlInfo", mBrowserLocateBy.ToString(), mBrowserLocateValue, NA, NA, false);
-                        if (RC1.StartsWith("OK|Name="))
-                        {
-                            // Inject Ginger Helper
-                            // CheckInjectGingerHTMLHelper();
+                    SetCurrentBrowserControl(act.LocateBy, act.LocateValueCalculated);
+                    string RC1 = Send("GetControlInfo", mBrowserLocateBy.ToString(), mBrowserLocateValue, NA, NA, false);
+                    if (RC1.StartsWith("OK|Name="))
+                    {
+                        // Inject Ginger Helper
+                        // CheckInjectGingerHTMLHelper();
 
-                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;                            
-                        }
-                        else
-                        {
-                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                            act.Error = "Browser Control not Found";
-                            mBrowserLocateValue = null;
-                        }
-                        act.ExInfo = RC1;                        
-                        return;
-                    //break;
+                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                    }
+                    else
+                    {
+                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        act.Error = "Browser Control not Found";
+                        mBrowserLocateValue = null;
+                    }
+                    act.ExInfo = RC1;
+                    return;
+                //break;
                 case ActASCFBrowserElement.eControlAction.SetValue:
 
                     script = string.Format("SetElementValue('{0}','{1}','{2}');", act.LocateBy, act.LocateValue, act.ValueForDriver);
@@ -490,7 +507,7 @@ namespace GingerCore.Drivers.ASCF
                 case ActASCFBrowserElement.eControlAction.Click:
                     script = string.Format("ClickElement('{0}','{1}');", act.LocateBy, act.LocateValue);
                     break;
-                case ActASCFBrowserElement.eControlAction.SelectedIndex:                    
+                case ActASCFBrowserElement.eControlAction.SelectedIndex:
                     //TODO: fix me
                     // script = GetActScript(act);
                     script += ".selectedIndex=" + act.ValueForDriver;
@@ -499,15 +516,15 @@ namespace GingerCore.Drivers.ASCF
                     //TODO: return script or RC or ...
 
                     /// Is needed? since SetBrowserControl does it, but naybe the script will dsiapear if new page loaded
-                    InjectGingerHTMLHelper();  
-                    break;                
+                    InjectGingerHTMLHelper();
+                    break;
                 default:
-                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage,"Unknown Browser Control Action - " + act.ControlAction);
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Unknown Browser Control Action - " + act.ControlAction);
                     return;
             }
             // send the js script to the current browser, but first check that we have browser set
             if (string.IsNullOrEmpty(mBrowserLocateValue))
-            {                
+            {
                 act.Error = "Browser Control not set, please do Switch to Browser control first";
                 return;
             }
@@ -522,7 +539,7 @@ namespace GingerCore.Drivers.ASCF
 
         public void SetCurrentBrowserControl(eLocateBy LocateBy, string LocateValue)
         {
-            if (mBrowserLocateBy != LocateBy ||  mBrowserLocateValue != LocateValue)
+            if (mBrowserLocateBy != LocateBy || mBrowserLocateValue != LocateValue)
             {
                 mBrowserLocateBy = LocateBy;
                 mBrowserLocateValue = LocateValue;
@@ -530,35 +547,38 @@ namespace GingerCore.Drivers.ASCF
                 InjectGingerHTMLHelper();
             }
         }
-        
+
         private void HandleActWindow(ActWindow AW)
         {
             String RC = null;
             if (AW.WindowActionType == ActWindow.eWindowActionType.Switch)
             {
-                RC = Send("SwitchWindow", AW.LocateBy.ToString(), AW.LocateValueCalculated, NA, NA, false);                
+                RC = Send("SwitchWindow", AW.LocateBy.ToString(), AW.LocateValueCalculated, NA, NA, false);
             }
 
-            else  if (AW.WindowActionType == ActWindow.eWindowActionType.Close)
+            else if (AW.WindowActionType == ActWindow.eWindowActionType.Close)
             {
                 RC = Send("CloseWindow", AW.LocateBy.ToString(), AW.LocateValueCalculated, NA, NA, false);
                 // If the app is closing then we close the connection so new app will get new driver - Ashwini case
 
                 if (RC.StartsWith("OK") && AW.LocateValueCalculated == "Application")
                 {
-                 
+
                     CloseDriver();
                 }
             }
 
-            else  if (AW.WindowActionType == ActWindow.eWindowActionType.IsExist)
+            else if (AW.WindowActionType == ActWindow.eWindowActionType.IsExist)
             {
                 RC = Send("IsExist", AW.LocateBy.ToString(), AW.LocateValueCalculated, NA, NA, false);
             }
-            
-            else if (RC == null) RC = "Error - Unsupported Window Action - " + AW.WindowActionType.ToString();
 
-            SetActionStatus(AW, RC);   
+            else if (RC == null)
+            {
+                RC = "Error - Unsupported Window Action - " + AW.WindowActionType.ToString();
+            }
+
+            SetActionStatus(AW, RC);
         }
 
         private void ActivateRow(ActActivateRow AAR)
@@ -574,9 +594,14 @@ namespace GingerCore.Drivers.ASCF
             {
                 string output = null;
                 if (actmsg.ExInfo.StartsWith("OK|"))
+                {
                     output = actmsg.ExInfo.Remove(0, 3);
+                }
                 else
+                {
                     output = actmsg.ExInfo;
+                }
+
                 actmsg.AddOrUpdateReturnParamActual(actmsg.GetOrCreateInputParam("Value").Param, output);
             }
         }
@@ -626,7 +651,7 @@ namespace GingerCore.Drivers.ASCF
                 case ActASCFControl.eControlAction.Click:
                     AAC.WaitForIdle = true;
                     action = "Click";
-                    break;                
+                    break;
                 case ActASCFControl.eControlAction.SetVisible:
                     AAC.WaitForIdle = true;
                     action = "SetVisible";
@@ -664,44 +689,44 @@ namespace GingerCore.Drivers.ASCF
                     break;
                 default:
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Unknown Control Action - " + AAC.ControlAction);
-                    return;                    
+                    return;
             }
             //Must get the value for driver !!
 
             //temp ugly fix me later
-            
-                string value = AAC.ValueForDriver;
-                //TODO: fixme - temp ugly code to handle date
-                
-                if (AAC.ControlProperty == ActASCFControl.eControlProperty.DateTimeValue)
-                {
-                    value = GetUnixTime(value);
-                }
 
-                Stopwatch st = new Stopwatch();
-                st.Reset();
-                st.Start();
-                RC = Send(action, AAC.LocateBy.ToString(), AAC.LocateValueCalculated, NA, value, AAC.WaitForIdle);
-                st.Stop();             
-                RC += "| - ElapsedMS=" + st.ElapsedMilliseconds;
-                SetActionStatus(AAC, RC);       
+            string value = AAC.ValueForDriver;
+            //TODO: fixme - temp ugly code to handle date
+
+            if (AAC.ControlProperty == ActASCFControl.eControlProperty.DateTimeValue)
+            {
+                value = GetUnixTime(value);
+            }
+
+            Stopwatch st = new Stopwatch();
+            st.Reset();
+            st.Start();
+            RC = Send(action, AAC.LocateBy.ToString(), AAC.LocateValueCalculated, NA, value, AAC.WaitForIdle);
+            st.Stop();
+            RC += "| - ElapsedMS=" + st.ElapsedMilliseconds;
+            SetActionStatus(AAC, RC);
         }
 
         private string UnixTimetoDateTimeLocalString(string longUnixTime)
-        {            
+        {
             //TODO: when we take .NET 4.6 we use built in functions
 
             DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            
+
             long l = long.Parse(longUnixTime);
             DateTime dd = dt.AddMilliseconds(l);
-            string s = dd.ToLocalTime().ToString("yyyy-MM-dd HH:mm");  
+            string s = dd.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
             return s;
         }
 
         private string GetUnixTime(string sDateTime)
         {
-            DateTime dt = DateTime.ParseExact(sDateTime, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal );
+            DateTime dt = DateTime.ParseExact(sDateTime, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal);
             string s = GetUnixTimestamp(dt.ToUniversalTime()).ToString();
             return s;
         }
@@ -722,17 +747,17 @@ namespace GingerCore.Drivers.ASCF
         private void ClickButton(ActButton actButton)
         {
             String RC = Send("Click", actButton.LocateBy.ToString(), actButton.LocateValueCalculated, NA, NA, true);
-            SetActionStatus(actButton, RC);                      
+            SetActionStatus(actButton, RC);
         }
 
         private void RunTextBoxAction(ActTextBox actTextBox)
         {
             String RC = Send("SetControlValue", actTextBox.LocateBy.ToString(), actTextBox.LocateValueCalculated, NA, actTextBox.GetInputParamCalculatedValue("Value"), false);
-            SetActionStatus(actTextBox, RC);            
+            SetActionStatus(actTextBox, RC);
         }
-        
+
         public Bitmap TakeScreenShot(ActScreenShot actScreenShot)
-        {                   
+        {
             String RC = Send("ScreenShot", NA, NA, NA, NA, false);
             if (RC.StartsWith("ERROR"))
             {
@@ -741,10 +766,10 @@ namespace GingerCore.Drivers.ASCF
             Image imageTmp = Base64ToImage(RC);
 
             // Make sure to set status on Action screen shot only and not when action fail, keep the err
-            SetActionStatus(actScreenShot, RC);               
+            SetActionStatus(actScreenShot, RC);
             Bitmap bmp = new Bitmap(imageTmp);
             return bmp;
-         }
+        }
 
         public ObservableList<Bitmap> TakeScreeShotAllWindows(ActScreenShot actScreenShot)
         {
@@ -764,21 +789,21 @@ namespace GingerCore.Drivers.ASCF
             else
             {
                 a = RC.Split('@');
-            }               
+            }
 
             Image imageTemp;
             Bitmap bmp;
-            ObservableList<Bitmap> bmpList=new ObservableList<Bitmap>();
+            ObservableList<Bitmap> bmpList = new ObservableList<Bitmap>();
             int count = 0;
             foreach (string str in a)
             {
                 if (count == 0) { count++; continue; }
-                imageTemp=Base64ToImage(str);
+                imageTemp = Base64ToImage(str);
                 bmp = new Bitmap(imageTemp);
-               bmpList.Add(bmp);
+                bmpList.Add(bmp);
             }
-                       
-           return bmpList;
+
+            return bmpList;
         }
 
         //Adding code to convert base64 string to image
@@ -787,14 +812,14 @@ namespace GingerCore.Drivers.ASCF
 
             string[] a = RC.Split('|');
             string base64String = a[1];
-            
+
             //TODO: check that RC is base64 - or use try catch before convert
             byte[] imageBytes = Convert.FromBase64String(base64String);
             MemoryStream ms = new MemoryStream(imageBytes, 0,
               imageBytes.Length);
-            
+
             ms.Write(imageBytes, 0, imageBytes.Length);
-            Image image = Image.FromStream(ms, true);            
+            Image image = Image.FromStream(ms, true);
 
             return image;
         }
@@ -804,12 +829,12 @@ namespace GingerCore.Drivers.ASCF
         {
         }
 
-        private void SetActionStatus(Act act,string RC)
+        private void SetActionStatus(Act act, string RC)
         {
             if (RC.StartsWith("OK"))
             {
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
-            }            
+            }
             else
             {
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
@@ -821,19 +846,19 @@ namespace GingerCore.Drivers.ASCF
         private void SwitchWindow(ActSwitchWindow ActSwitchWindow)
         {
             String RC = Send("SwitchWindow", ActSwitchWindow.LocateBy.ToString(), ActSwitchWindow.LocateValueCalculated, NA, NA, false);
-            SetActionStatus(ActSwitchWindow, RC);                        
+            SetActionStatus(ActSwitchWindow, RC);
         }
 
         private void ClickLink(ActLink Alink)
         {
             String RC = Send("LaunchAction", NA, Alink.LocateValueCalculated, NA, Alink.GetInputParamCalculatedValue("Value"), true);
-            SetActionStatus(Alink, RC);                                    
+            SetActionStatus(Alink, RC);
         }
-        
+
         // used for unit test only
         public string LaunchForm(string FormName)
         {
-            String RC = Send("LaunchForm", "ByName" ,FormName, NA, NA, true);
+            String RC = Send("LaunchForm", "ByName", FormName, NA, NA, true);
             return RC;
         }
 
@@ -847,7 +872,7 @@ namespace GingerCore.Drivers.ASCF
         //{
         //    String sWindows = Send("FormsList", NA, NA, NA, NA, false);
         //    String[] aWindows = sWindows.Split('|');
-            
+
         //    List<ActWindow> Actwindows = new List<ActWindow>();
         //    foreach (string s in aWindows)
         //    {
@@ -864,7 +889,7 @@ namespace GingerCore.Drivers.ASCF
         //{
         //    String sLinks = Send("FormActions", NA, NA, NA, NA, false);            
         //    String[] aLinks = sLinks.Split('|');
-            
+
         //    List<ActLink> ActLinks = new List<ActLink>();
         //    foreach (string s in aLinks)
         //    {                
@@ -886,14 +911,14 @@ namespace GingerCore.Drivers.ASCF
 
         public override void HighlightActElement(Act act)
         {
-            Send("HighLightControl", act.LocateBy + "" , act.LocateValue, NA, NA, false);
+            Send("HighLightControl", act.LocateBy + "", act.LocateValue, NA, NA, false);
         }
 
         internal string StartRecord()
         {
             String st = Send("StartRecording", NA, NA, NA, NA, false);
             //TODO: check RC
-            return st;            
+            return st;
         }
 
         public void SetHighLightMode(bool p)
@@ -923,7 +948,7 @@ namespace GingerCore.Drivers.ASCF
         {
             return SocketConnected(clientSocket);
         }
-        
+
         List<AppWindow> IWindowExplorer.GetAppWindows()
         {
             List<AppWindow> list = new List<AppWindow>();
@@ -950,8 +975,8 @@ namespace GingerCore.Drivers.ASCF
                 }
             }
             return list;
-        }       
-        
+        }
+
         void IWindowExplorer.SwitchWindow(string Title)
         {
         }
@@ -959,13 +984,13 @@ namespace GingerCore.Drivers.ASCF
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
             ASCFControlInfo CI = (ASCFControlInfo)ElementInfo;
-            
+
             string RC = Send("HighLightControl", "ByName" + "", CI.Path, " ", " ", false);
             if (!RC.StartsWith("OK"))
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Element Not found - path=" + CI.Path);
             }
-            
+
             //TODO: fix later to get HTMLPage
             //else
             //{
@@ -987,7 +1012,7 @@ namespace GingerCore.Drivers.ASCF
             return null;
         }
 
-        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo,PomSetting pomSetting=null)
+        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
             return null;
         }
@@ -1029,16 +1054,16 @@ namespace GingerCore.Drivers.ASCF
         AppWindow IWindowExplorer.GetActiveWindow()
         {
             string RC = Send("GetActiveForm", " ", " ", " ", " ", false);
-            
+
             if (RC.StartsWith("OK"))
             {
-                
+
                 string[] WinInfo = RC.Substring(3).Split('^');
-                
+
                 //fixme zzz
                 AppWindow AW = new AppWindow() { Title = WinInfo[0], Path = WinInfo[1], WindowType = AppWindow.eWindowType.ASCFForm };
                 return AW;
-                
+
             }
             else
             {
@@ -1054,7 +1079,7 @@ namespace GingerCore.Drivers.ASCF
         }
 
         public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
-        
+
         void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording(bool learnAdditionalChanges)
         {
             StartRecord();
@@ -1074,7 +1099,7 @@ namespace GingerCore.Drivers.ASCF
 
         public override void StartRecording()
         {
- 	        StartRecord();
+            StartRecord();
         }
 
         public override void StopRecording()
@@ -1096,12 +1121,12 @@ namespace GingerCore.Drivers.ASCF
             do
             {
                 s = Send("GetRecording", NA, NA, NA, NA, false);
-                
+
                 if (s.StartsWith("ERROR"))
                 {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, s);
                     break;
-                }                
+                }
                 CreateAction(s);
 
             } while (s != "NA");
@@ -1294,7 +1319,7 @@ namespace GingerCore.Drivers.ASCF
             switch (locateBy)
             {
                 case "ByName":
-                    act.LocateBy= eLocateBy.ByName;
+                    act.LocateBy = eLocateBy.ByName;
                     break;
                 default:
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Unknown Locate By: " + locateBy);
@@ -1311,13 +1336,13 @@ namespace GingerCore.Drivers.ASCF
         }
 
         public string ExecuteScriptOnBrowser(string script)
-        {            
-            string RC = Send("InvokeScript", "ByName", mBrowserLocateValue , NA, script, false);           
+        {
+            string RC = Send("InvokeScript", "ByName", mBrowserLocateValue, NA, script, false);
             return RC;
         }
 
         private void InjectGingerHTMLHelper()
-        {            
+        {
             // TODO: if needed only!!! Jquery
 
             string script0 = JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min);
@@ -1452,7 +1477,7 @@ namespace GingerCore.Drivers.ASCF
             throw new NotImplementedException();
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting=null)
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting = null)
         {
             return EI;
         }
@@ -1512,7 +1537,7 @@ namespace GingerCore.Drivers.ASCF
             return null;
         }
 
-        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting pomSetting=null)
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
             throw new NotImplementedException();
         }

@@ -17,12 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.ASCF;
 using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.ASCF
 {
@@ -43,7 +42,7 @@ namespace Ginger.WindowExplorer.ASCF
             a2.Description = "Click Drop Down" + ASCFBrowserElementInfo.Path;
             a2.LocateBy = eLocateBy.ByID;
             a2.LocateValue = ASCFBrowserElementInfo.Path;
-            a2.ControlAction = ActASCFBrowserElement.eControlAction.Click;            
+            a2.ControlAction = ActASCFBrowserElement.eControlAction.Click;
             list.Add(a2);
             return list;
         }

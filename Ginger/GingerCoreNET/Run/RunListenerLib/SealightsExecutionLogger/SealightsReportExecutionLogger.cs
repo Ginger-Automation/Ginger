@@ -16,12 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Run;
 using Ginger.Configurations;
-using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
@@ -134,13 +132,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         public async Task RunSetEnd(RunSetConfig runsetConfig)
         {
             await SealightsReportApiHandler.SendDeleteSessionToSealightsAsync(); // Delete Sealights session
-            
+
             // set each runner's sealights execution logger running in runset mode to false & set the test session id to null as the session has been closed
             foreach (GingerRunner GR in runsetConfig.GingerRunners)
             {
                 if (GR == null || GR.Executor == null || ((GingerExecutionEngine)GR.Executor).Sealights_Logger == null || ((GingerExecutionEngine)GR.Executor).Sealights_Logger.SealightsReportApiHandler == null)
                 {
-                    continue; 
+                    continue;
                 }
                 ((GingerExecutionEngine)GR.Executor).Sealights_Logger.RunningInRunsetMode = false;
                 ((GingerExecutionEngine)GR.Executor).Sealights_Logger.SealightsReportApiHandler.TestSessionId = null;

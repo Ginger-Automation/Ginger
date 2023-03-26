@@ -16,13 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
 
 namespace GingerCoreCommonTest.Repository
 {
@@ -32,7 +27,7 @@ namespace GingerCoreCommonTest.Repository
         public override string ItemName { get { return Name; } set => throw new NotImplementedException(); }
 
         string mName;
-        
+
 
         [IsSerializedForLocalRepository]
         public string Name

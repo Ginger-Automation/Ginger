@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using GingerCore.Environments;
 
 namespace Ginger.Reports
@@ -26,10 +25,10 @@ namespace Ginger.Reports
         private ProjEnvironment mEnvironment;
         public string Name { get { return mEnvironment.Name; } }
         public EnvironmentReport(ProjEnvironment env)
-        {            
+        {
             mEnvironment = env;
         }
 
-        public ProjEnvironment ProjEnvironment {  get { return mEnvironment; } }
+        public ProjEnvironment ProjEnvironment { get { return mEnvironment; } }
     }
 }

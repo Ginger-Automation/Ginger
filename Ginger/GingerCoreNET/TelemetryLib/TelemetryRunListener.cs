@@ -21,12 +21,9 @@ using Amdocs.Ginger.Run;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Activities;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
 using GingerCore.Actions.PlugIns;
+using GingerCore.Activities;
+using System.Linq;
 
 namespace Amdocs.Ginger.CoreNET.TelemetryLib
 {
@@ -61,12 +58,12 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                     Guid = action.Guid,
                     Name = action.GetType().Name,
                     Elasped = action.Elapsed,
-                    Status = action.Status.ToString()                    
+                    Status = action.Status.ToString()
                 });
             }
-                
+
         }
-        
+
 
         public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
         {
@@ -93,7 +90,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             {
                 return null;
             }
-                
+
         }
 
         public override void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
@@ -105,12 +102,12 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         {
             WorkSpace.Instance.Telemetry.Add("businessflowend", new { Guid = businessFlow.Guid, Elapsed = businessFlow.Elapsed, Status = businessFlow.RunStatus.ToString() });
         }
-        
+
         public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
         {
             WorkSpace.Instance.Telemetry.Add("runnerrunend", new { Guid = gingerRunner.Guid, Elapsed = gingerRunner.Executor.Elapsed, Status = gingerRunner.Status });
         }
-        
+
 
 
     }

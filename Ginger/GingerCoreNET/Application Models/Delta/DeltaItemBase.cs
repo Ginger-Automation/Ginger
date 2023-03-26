@@ -17,10 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.Enums;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 
 namespace GingerCoreNET.Application_Models
 {
@@ -34,7 +31,7 @@ namespace GingerCoreNET.Application_Models
         Avoided,
     }
 
-    public class DeltaItemBase: INotifyPropertyChanged
+    public class DeltaItemBase : INotifyPropertyChanged
     {
         private bool mIsSelected = false;
         public bool IsSelected

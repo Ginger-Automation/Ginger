@@ -30,7 +30,7 @@ namespace Amdocs.Ginger.Repository
 
         // for parallel we need to use Concurrent
         ConcurrentDictionary<string, WeakReference> mItems = new ConcurrentDictionary<string, WeakReference>();
-        
+
 
         public Type RepositoryItemType { get; set; }
 
@@ -38,12 +38,12 @@ namespace Amdocs.Ginger.Repository
         {
             this.RepositoryItemType = RepositoryItemType;
         }
-        
+
         public object this[string key]
         {
             get
             {
-                WeakReference WR;                
+                WeakReference WR;
                 if (mItems.TryGetValue(key, out WR))
                 {
                     if (WR.IsAlive) return WR.Target;
@@ -52,8 +52,8 @@ namespace Amdocs.Ginger.Repository
                 return null;
             }
             set
-            {                
-                mItems[key] = new WeakReference(value);                
+            {
+                mItems[key] = new WeakReference(value);
             }
         }
 
@@ -64,7 +64,7 @@ namespace Amdocs.Ginger.Repository
 
         public T GetItemByGuid<T>(Guid Guid)
         {
-            T o = (T)(from x in mItems.Values where x.Target != null && ((RepositoryItemBase)x.Target).Guid.Equals(Guid) select x.Target).FirstOrDefault();            
+            T o = (T)(from x in mItems.Values where x.Target != null && ((RepositoryItemBase)x.Target).Guid.Equals(Guid) select x.Target).FirstOrDefault();
             return o;
         }
 

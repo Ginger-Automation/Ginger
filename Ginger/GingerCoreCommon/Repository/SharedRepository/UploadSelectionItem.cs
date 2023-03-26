@@ -16,11 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using System;
 using System.ComponentModel;
-using GingerCore;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using GingerCore;
 
 namespace Ginger.Repository.ItemToRepositoryWizard
 {

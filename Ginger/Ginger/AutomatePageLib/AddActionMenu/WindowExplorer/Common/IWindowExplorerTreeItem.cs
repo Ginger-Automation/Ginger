@@ -17,14 +17,13 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using GingerCore.Actions;
-using GingerCore.Drivers;
 using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
 
 namespace Ginger.WindowExplorer
 {
     interface IWindowExplorerTreeItem
-    {      
+    {
         //TODO: clean remove, need to use ElementInfo       
         ObservableList<Act> GetElementActions();
         ObservableList<Amdocs.Ginger.Common.UIElement.ControlProperty> GetElementProperties();

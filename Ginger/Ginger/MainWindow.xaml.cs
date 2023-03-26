@@ -554,7 +554,7 @@ namespace Ginger
             s1.SolutionOperations = solutionOperations;
             AddSolutionPage addSol = new AddSolutionPage(s1);
             addSol.ShowAsWindow();
-            if(addSol.IsUploadSolutionToSourceControl)
+            if (addSol.IsUploadSolutionToSourceControl)
             {
                 UploadSolutionMenuItem_Click(sender, e);
             }
@@ -682,7 +682,11 @@ namespace Ginger
 
         private void btnSourceControlCheckIn_Click(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) return;
+            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+            {
+                return;
+            }
+
             App.CheckIn(WorkSpace.Instance.Solution.Folder);
         }
 
@@ -946,7 +950,9 @@ namespace Ginger
                 WorkSpace.Instance.OpenSolution(selectedSol.Folder);
             }
             else
+            {
                 Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Selected Solution was not found");
+            }
 
             e.Handled = true;
         }
@@ -1416,7 +1422,7 @@ namespace Ginger
         }
         public async Task SaveCurrentItemAsync()
         {
-            if(WorkSpace.Instance.CurrentSelectedItem == null || WorkSpace.Instance.CurrentSelectedItem.DirtyStatus != eDirtyStatus.Modified)
+            if (WorkSpace.Instance.CurrentSelectedItem == null || WorkSpace.Instance.CurrentSelectedItem.DirtyStatus != eDirtyStatus.Modified)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Nothing found to Save.");
                 return;

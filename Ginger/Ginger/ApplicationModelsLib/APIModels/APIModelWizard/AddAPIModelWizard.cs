@@ -19,7 +19,6 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Repository;
-using Ginger.ApplicationModelsLib.APIModels;
 using Ginger.ApplicationModelsLib.APIModels.APIModelWizard;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.WizardLib;
@@ -94,11 +93,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         public override void Finish()
         {
             //ExportAPIFiles(SelectedAAMList);
-            if(DeltaModelsList != null && DeltaModelsList.Count > 0)
+            if (DeltaModelsList != null && DeltaModelsList.Count > 0)
             {
-                foreach(DeltaAPIModel deltaAPI in DeltaModelsList.Where(d => d.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges || d.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting).GroupBy(d => d.matchingAPIModel).Select(d => d.First()))     // (DeltaAPIModel.matchingAPIModel)))          //.Where(d => d.IsSelected))
+                foreach (DeltaAPIModel deltaAPI in DeltaModelsList.Where(d => d.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges || d.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting).GroupBy(d => d.matchingAPIModel).Select(d => d.First()))     // (DeltaAPIModel.matchingAPIModel)))          //.Where(d => d.IsSelected))
                 {
-                    if(deltaAPI.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges 
+                    if (deltaAPI.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges
                         || deltaAPI.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting)
                     {
                         if (deltaAPI.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)

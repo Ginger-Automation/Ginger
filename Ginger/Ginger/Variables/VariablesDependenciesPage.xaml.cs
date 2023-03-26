@@ -44,18 +44,18 @@ namespace Ginger.Variables
         object mParentObject;
         eDependedItemsType mDepededItemType;
         DataTable mDependsDT;
-        List<VariableBase> mParentListVars;        
+        List<VariableBase> mParentListVars;
         bool mItemsVarsDataIsValid = true;
         bool isHorizentalScrollAllowed = false;
 
         private enum eDependedItemsType
         {
-            Actions,Activities
+            Actions, Activities
         }
 
         private enum eAutoCheckArea
         {
-            Table,Column,Row
+            Table, Column, Row
         }
 
         public VariablesDependenciesPage(object parentObject)
@@ -69,7 +69,7 @@ namespace Ginger.Variables
             {
                 mDepededItemType = eDependedItemsType.Actions;
                 chkBoxEnableDisableDepControl.Content = "Enable Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies Control";
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(chkBoxEnableDisableDepControl, CheckBox.IsCheckedProperty, (Activity)mParentObject, nameof(Activity.EnableActionsVariablesDependenciesControl));                
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(chkBoxEnableDisableDepControl, CheckBox.IsCheckedProperty, (Activity)mParentObject, nameof(Activity.EnableActionsVariablesDependenciesControl));
                 infoImage.ToolTip = "In case the Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " dependencies control is enabled then a specific Action will be executed in run time only if it was mapped (checked) to a " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " value which was selected in run time." + System.Environment.NewLine +
                                   "The mapping is been done between the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Actions and " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " from type Selection List.";
             }
@@ -81,7 +81,7 @@ namespace Ginger.Variables
                 infoImage.ToolTip = "In case the " + GingerDicser.GetTermResValue(eTermResKey.Activities) + "-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " dependencies control is enabled then a specific " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " will be executed in run time only if it was mapped (checked) to a " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " value which was selected in run time." + System.Environment.NewLine +
                                              "The mapping is been done between the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " and " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " from type Selection List.";
             }
-            
+
 
             mDependsDT = new DataTable();
             SetDependenciesGrid();
@@ -93,7 +93,9 @@ namespace Ginger.Variables
             try
             {
                 if (chkBoxEnableDisableDepControl.IsChecked == true)
+                {
                     grdDependencies.IsEnabled = true;
+                }
 
                 //Set title
                 switch (mDepededItemType)
@@ -202,20 +204,33 @@ namespace Ginger.Variables
                                 {
                                     VariableDependency varDep = null;
                                     if (act.VariablesDependencies != null)
+                                    {
                                         varDep = act.VariablesDependencies.Where(avd => avd.VariableName == listVar.Name && avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                    }
+
                                     if (varDep == null)
+                                    {
                                         varDep = act.VariablesDependencies.Where(avd => avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                    }
+
                                     foreach (OptionalValue varOptionalVal in ((VariableSelectionList)listVar).OptionalValuesList)
                                     {
                                         if (varDep != null)
                                         {
                                             if (varDep.VariableValues.Contains(varOptionalVal.Value))
+                                            {
                                                 actRow[colIndex] = true;
+                                            }
                                             else
+                                            {
                                                 actRow[colIndex] = false;
+                                            }
                                         }
                                         else
+                                        {
                                             actRow[colIndex] = false;
+                                        }
+
                                         colIndex++;
                                     }
                                 }
@@ -236,20 +251,33 @@ namespace Ginger.Variables
                                 {
                                     VariableDependency varDep = null;
                                     if (activity.VariablesDependencies != null)
+                                    {
                                         varDep = activity.VariablesDependencies.Where(avd => avd.VariableName == listVar.Name && avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                    }
+
                                     if (varDep == null)
+                                    {
                                         varDep = activity.VariablesDependencies.Where(avd => avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                    }
+
                                     foreach (OptionalValue varOptionalVal in ((VariableSelectionList)listVar).OptionalValuesList)
                                     {
                                         if (varDep != null)
                                         {
                                             if (varDep.VariableValues.Contains(varOptionalVal.Value))
+                                            {
                                                 actRow[colIndex] = true;
+                                            }
                                             else
+                                            {
                                                 actRow[colIndex] = false;
+                                            }
                                         }
                                         else
+                                        {
                                             actRow[colIndex] = false;
+                                        }
+
                                         colIndex++;
                                     }
                                 }
@@ -263,7 +291,7 @@ namespace Ginger.Variables
                 grdDependencies.UseGridWithDataTableAsSource(mDependsDT);
                 grdDependencies.Grid.Loaded += grdMain_Loaded;
                 grdDependencies.Grid.CurrentCellChanged += grdMain_CurrentCellChanged;
-                grdDependencies.Grid.PreviewMouseUp += grdMain_PreviewMouseUp;              
+                grdDependencies.Grid.PreviewMouseUp += grdMain_PreviewMouseUp;
             }
             catch (Exception ex)
             {
@@ -287,7 +315,7 @@ namespace Ginger.Variables
                     {
                         for (int indx = 0; indx < ((VariableSelectionList)var).OptionalValuesList.Count; indx++)
                         {
-                            Style colStyle = new System.Windows.Style(typeof(DataGridColumnHeader));                          
+                            Style colStyle = new System.Windows.Style(typeof(DataGridColumnHeader));
                             SolidColorBrush backgroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString(variableColumnBackgroundColor[colorIndx % 8]);
                             colStyle.Setters.Add(new Setter(DataGridColumnHeader.BackgroundProperty, backgroundColor));
                             SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_Primary")).ToString());
@@ -317,11 +345,15 @@ namespace Ginger.Variables
                 if (grdDependencies.grdMain.Columns.Count >= 2)
                 {
                     for (int i = 0; i < grdDependencies.grdMain.Columns.Count; i++)
+                    {
                         if (grdDependencies.grdMain.Columns[i].Visibility == System.Windows.Visibility.Visible && i > 1)
+                        {
                             ((DataGridCheckBoxColumn)grdDependencies.grdMain.Columns[i]).ElementStyle = (Style)FindResource("@CheckBoxGridCellElemntStyle");
+                        }
+                    }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to design the " + mDepededItemType.ToString() + "-Variables dependencies grid data", ex);
             }
@@ -413,11 +445,14 @@ namespace Ginger.Variables
                         case (eDependedItemsType.Activities):
                             TBH.AddFormattedText("Add " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " from type 'Selection List' to the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " in order to configure dependencies.", Brushes.OrangeRed, true);
                             break;
-                    }                    
+                    }
                     TBH.AddLineBreak();
                     dependedItemsOrVarsAremissing = true;
                 }
-                if (dependedItemsOrVarsAremissing) return;
+                if (dependedItemsOrVarsAremissing)
+                {
+                    return;
+                }
 
                 //Set helper according to selected row               
                 DataRowView currentRow = (DataRowView)grdDependencies.grdMain.CurrentItem;
@@ -432,7 +467,7 @@ namespace Ginger.Variables
                         case (eDependedItemsType.Activities):
                             TBH.AddUnderLineText(" " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Dependencies Configurations Meaning:");
                             break;
-                    }                    
+                    }
                     TBH.AddLineBreak();
                     Dictionary<string, List<string>> actionConfigs = new Dictionary<string, List<string>>();
                     int colsIndex = 2;
@@ -442,7 +477,10 @@ namespace Ginger.Variables
                         foreach (OptionalValue optVal in ((VariableSelectionList)var).OptionalValuesList)
                         {
                             if ((bool)currentRow[colsIndex] == true)
+                            {
                                 configuredVals.Add(optVal.Value);
+                            }
+
                             colsIndex++;
                         }
                         actionConfigs.Add(var.Name, configuredVals);
@@ -458,7 +496,7 @@ namespace Ginger.Variables
                             case (eDependedItemsType.Activities):
                                 TBH.AddText("The " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " will be executed only in case:");
                                 break;
-                        }                        
+                        }
                         TBH.AddLineBreak();
                         bool isFirst = true;
                         foreach (KeyValuePair<string, List<string>> configuredVar in actionConfigs)
@@ -472,8 +510,11 @@ namespace Ginger.Variables
                             TBH.AddBoldText("'" + configuredVar.Key + "' ");
                             TBH.AddText(GingerDicser.GetTermResValue(eTermResKey.Variable) + " selected value is: ");
                             string vars = string.Empty;
-                            foreach(string configVal in configuredVar.Value)
-                                vars= vars + "'" + configVal + "' Or ";
+                            foreach (string configVal in configuredVar.Value)
+                            {
+                                vars = vars + "'" + configVal + "' Or ";
+                            }
+
                             vars = vars.Remove(vars.Length - 4, 4);
                             TBH.AddText(vars);
                             TBH.AddLineBreak();
@@ -489,7 +530,7 @@ namespace Ginger.Variables
                             case (eDependedItemsType.Activities):
                                 TBH.AddFormattedText("The " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " won't be executed in any case because it missing dependency configurations for the " + GingerDicser.GetTermResValue(eTermResKey.Variable) + "/s: ", Brushes.OrangeRed, true);
                                 break;
-                        }                        
+                        }
                         TBH.AddLineBreak();
                         foreach (KeyValuePair<string, List<string>> notConfiguredVar in notConfiguredVars)
                         {
@@ -576,7 +617,7 @@ namespace Ginger.Variables
 
         private void CheckAllColumn(object sender, RoutedEventArgs e)
         {
-            AutoCheckUncheck(eAutoCheckArea.Column, true);            
+            AutoCheckUncheck(eAutoCheckArea.Column, true);
         }
 
         private void UnCheckAllRow(object sender, RoutedEventArgs e)
@@ -599,8 +640,12 @@ namespace Ginger.Variables
                         if (mDependsDT != null)
                         {
                             foreach (DataRow row in mDependsDT.Rows)
+                            {
                                 for (int i = 2; i < mDependsDT.Columns.Count; i++)
+                                {
                                     row[i] = checkValue;
+                                }
+                            }
                         }
                         break;
 
@@ -609,13 +654,22 @@ namespace Ginger.Variables
                         if (selectedCol != null)
                         {
                             if (selectedCol.DisplayIndex > 1)
+                            {
                                 foreach (DataRow row in mDependsDT.Rows)
+                                {
                                     row[selectedCol.DisplayIndex] = checkValue;
+                                }
+                            }
                             else
+                            {
                                 Reporter.ToUser(eUserMsgKey.SelectValidColumn);
+                            }
                         }
                         else
+                        {
                             Reporter.ToUser(eUserMsgKey.SelectValidColumn);
+                        }
+
                         break;
 
                     case eAutoCheckArea.Row:
@@ -623,10 +677,15 @@ namespace Ginger.Variables
                         {
                             DataRowView selectedRow = ((DataRowView)grdDependencies.grdMain.CurrentItem);
                             for (int i = 2; i < grdDependencies.grdMain.Columns.Count; i++)
+                            {
                                 selectedRow.Row[i] = checkValue;
+                            }
                         }
                         else
+                        {
                             Reporter.ToUser(eUserMsgKey.SelectValidRow);
+                        }
+
                         break;
                 }
 
@@ -640,13 +699,13 @@ namespace Ginger.Variables
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
-        {            
+        {
             string closeContent = string.Empty;
 
             Button okBtn = new Button();
             okBtn.Content = "Ok";
             okBtn.Click += new RoutedEventHandler(okBtn_Click);
-            
+
             Button undoBtn = new Button();
             undoBtn.Content = "Undo & Close";
             undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
@@ -654,21 +713,21 @@ namespace Ginger.Variables
             ObservableList<Button> winButtons = new ObservableList<Button>();
             winButtons.Add(okBtn);
             winButtons.Add(undoBtn);
-            
+
             switch (mDepededItemType)
             {
                 case (eDependedItemsType.Actions):
-                    GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit '" + ((Activity)mParentObject).ActivityName + "' Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies", this, winButtons, false, "Undo & Close" , CloseWinClicked);           
+                    GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit '" + ((Activity)mParentObject).ActivityName + "' Actions-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies", this, winButtons, false, "Undo & Close", CloseWinClicked);
                     break;
                 case (eDependedItemsType.Activities):
-                    GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit '" + ((BusinessFlow)mParentObject).Name + "' " + GingerDicser.GetTermResValue(eTermResKey.Activities) + "-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies", this, winButtons, false, "Undo & Close", CloseWinClicked);            
+                    GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit '" + ((BusinessFlow)mParentObject).Name + "' " + GingerDicser.GetTermResValue(eTermResKey.Activities) + "-" + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Dependencies", this, winButtons, false, "Undo & Close", CloseWinClicked);
                     break;
-            }            
+            }
         }
 
         private void UndoChangesAndClose()
         {
-            Mouse.OverrideCursor = Cursors.Wait;            
+            Mouse.OverrideCursor = Cursors.Wait;
             ((RepositoryItemBase)mParentObject).RestoreFromBackup(true);
             Mouse.OverrideCursor = null;
 
@@ -698,13 +757,21 @@ namespace Ginger.Variables
                     switch (mDepededItemType)
                     {
                         case (eDependedItemsType.Actions):
-                            foreach (Act activityAct in ((Activity)mParentObject).Acts) activityAct.VariablesDependencies.Clear();
+                            foreach (Act activityAct in ((Activity)mParentObject).Acts)
+                            {
+                                activityAct.VariablesDependencies.Clear();
+                            }
+
                             break;
                         case (eDependedItemsType.Activities):
-                            foreach (Activity activity in ((BusinessFlow)mParentObject).Activities) activity.VariablesDependencies.Clear();
+                            foreach (Activity activity in ((BusinessFlow)mParentObject).Activities)
+                            {
+                                activity.VariablesDependencies.Clear();
+                            }
+
                             break;
                     }
-                    
+
                     //Save new dependencies configurations
                     grdDependencies.StopGridSearch();
                     grdDependencies.grdMain.CommitEdit();
@@ -725,7 +792,9 @@ namespace Ginger.Variables
                                             if (actAcd != null)
                                             {
                                                 if (actAcd.VariableValues.Contains(optVal.Value) == false)
+                                                {
                                                     actAcd.VariableValues.Add(optVal.Value);
+                                                }
                                             }
                                             else
                                             {
@@ -741,7 +810,7 @@ namespace Ginger.Variables
                         case (eDependedItemsType.Activities):
                             foreach (DataRowView row in grdDependencies.grdMain.Items)
                             {
-                                Activity act =(Activity)((BusinessFlow)mParentObject).Activities[grdDependencies.grdMain.Items.IndexOf(row)];
+                                Activity act = (Activity)((BusinessFlow)mParentObject).Activities[grdDependencies.grdMain.Items.IndexOf(row)];
                                 int colsIndex = 2;
                                 foreach (VariableBase var in mParentListVars)
                                 {
@@ -753,7 +822,9 @@ namespace Ginger.Variables
                                             if (actAcd != null)
                                             {
                                                 if (actAcd.VariableValues.Contains(optVal.Value) == false)
+                                                {
                                                     actAcd.VariableValues.Add(optVal.Value);
+                                                }
                                             }
                                             else
                                             {

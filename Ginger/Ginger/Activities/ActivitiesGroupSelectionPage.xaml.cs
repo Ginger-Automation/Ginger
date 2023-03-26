@@ -48,7 +48,7 @@ namespace Ginger.BusinessFlowPages
             xGroupComboBox.DisplayMemberPath = nameof(ActivitiesGroup.Name);
             if (businessFlow.ActivitiesGroups.Count > 0)
             {
-                if(parentGroup==null)
+                if (parentGroup == null)
                 {
                     xGroupComboBox.SelectedItem = businessFlow.ActivitiesGroups[0];
                 }
@@ -56,7 +56,7 @@ namespace Ginger.BusinessFlowPages
                 {
                     xGroupComboBox.SelectedItem = parentGroup;
                 }
-              
+
             }
 
             if (mAddPOMActivity)
@@ -96,7 +96,7 @@ namespace Ginger.BusinessFlowPages
         {
             string title = "Configurations";
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();          
+            ObservableList<Button> winButtons = new ObservableList<Button>();
             Button selectBtn = new Button();
             selectBtn.Content = "Select";
             selectBtn.Click += SelectBtn_Click;

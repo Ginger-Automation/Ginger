@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System.Collections.Generic;
 
 namespace GingerATS
 {
@@ -48,7 +47,7 @@ namespace GingerATS
         {
             this.ID = id;
             this.Steps = new Dictionary<long, StepAutoStatus>();
-            this.KnownByGinger=null;
+            this.KnownByGinger = null;
         }
     }
 }

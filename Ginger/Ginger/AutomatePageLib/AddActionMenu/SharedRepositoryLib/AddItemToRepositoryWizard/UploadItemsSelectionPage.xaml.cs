@@ -145,7 +145,9 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             if (UploadItemSelection.mSelectedItems.Count > 0)
             {
                 foreach (UploadItemSelection usage in UploadItemSelection.mSelectedItems)
+                {
                     usage.Selected = activeStatus;
+                }
             }
         }
     }

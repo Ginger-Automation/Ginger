@@ -17,12 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Helpers;
 using GingerCoreNET.SourceControl;
 using Medallion.Shell;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 namespace Amdocs.Ginger.CoreNET.SourceControl
 {
@@ -89,7 +87,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override void Disconnect()
         {
-    ;
+            ;
         }
 
         public override List<string> GetBranches()
@@ -115,8 +113,8 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
         public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths)
         {
             Console.WriteLine("Reverting and Get Latest");
-             RunSVNCommand(new object[] { "revert","-R", "." , "--username", SourceControlUser, "--password", SourceControlPass }, path);
-            return RunSVNCommand(new object[] { "up" , "--username", SourceControlUser, "--password", SourceControlPass }, path);
+            RunSVNCommand(new object[] { "revert", "-R", ".", "--username", SourceControlUser, "--password", SourceControlPass }, path);
+            return RunSVNCommand(new object[] { "up", "--username", SourceControlUser, "--password", SourceControlPass }, path);
         }
 
         public override string GetLockOwner(string path, ref string error)
@@ -138,8 +136,8 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
             return RunSVNCommand(new object[] { "checkout", URI, Path, "--username", SourceControlUser, "--password", SourceControlPass }, Path);
         }
-          
-    
+
+
         public override ObservableList<SolutionInfo> GetProjectsList()
         {
             throw new NotImplementedException();
@@ -157,7 +155,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override void Init()
         {
-        
+
         }
 
         public override bool Lock(string path, string lockComment, ref string error)
@@ -192,7 +190,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
             throw new NotImplementedException();
         }
 
-        private static bool RunSVNCommand(object[] args,string Path)
+        private static bool RunSVNCommand(object[] args, string Path)
         {
             if (!Directory.Exists(Path))
             {
