@@ -528,10 +528,10 @@ namespace GingerCore.ALM
                                     List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.Name)).Select(a => a).ToList();
 
                                     //Commented below create test run as Above create test suite function creates test runs by default.
-                                    CrateTestRun(publishToALMConfig, activGroup, tsTest, runSuite.Id, runFields);
+                                    Run runTExport = CrateTestRun(publishToALMConfig, activGroup, tsTest, runSuite.Id, runFields);
 
                                     // Attach ActivityGroup Report if needed
-                                    if (publishToALMConfig.ToAttachActivitiesGroupReport)
+                                    if (publishToALMConfig.ToAttachActivitiesGroupReport) 
                                     {
                                         if ((activGroup.TempReportFolder != null) && (activGroup.TempReportFolder != string.Empty) &&
                                             (System.IO.Directory.Exists(activGroup.TempReportFolder)))
@@ -552,7 +552,7 @@ namespace GingerCore.ALM
                                             System.IO.Directory.Delete(activGroup.TempReportFolder, true);
                                             //Creating the Zip file - finish
 
-                                            if (!this.AddAttachment(testSet.Id, zipFileName))
+                                            if (!this.AddAttachmentForTestRun(runTExport.Id, zipFileName))
                                             {
                                                 result = "Failed to create attachment";
                                                 return false;
@@ -658,6 +658,27 @@ namespace GingerCore.ALM
                 var tt = Task.Run(() =>
                 {
                     return this.octaneRepository.AttachEntity(GetLoginDTO(), new TestSuite() { Id = new EntityId(testSuiteId) },
+                         zipFileName.Split(Path.DirectorySeparatorChar).Last(), fileData, "text/zip", null);
+                }).Result;
+                fs.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private bool AddAttachmentForTestRun(string TestRunId, string zipFileName)
+        {
+            try
+            {
+                FileStream fs = new FileStream(zipFileName, FileMode.Open, FileAccess.Read);
+                BinaryReader br = new BinaryReader(fs);
+                byte[] fileData = br.ReadBytes((Int32)fs.Length);
+                var tt = Task.Run(() =>
+                {
+                    return this.octaneRepository.AttachEntity(GetLoginDTO(), new Run() { Id = new EntityId(TestRunId) },
                          zipFileName.Split(Path.DirectorySeparatorChar).Last(), fileData, "text/zip", null);
                 }).Result;
                 fs.Close();
