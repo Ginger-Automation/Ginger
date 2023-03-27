@@ -586,7 +586,7 @@ namespace GingerWPF.BusinessFlowsLib
                     if (mActivityPage == null)
                     {
                         var pageViewMode = mContext.Activity.Type == Amdocs.Ginger.Repository.eSharedItemType.Regular ? Ginger.General.eRIPageViewMode.Automation : Ginger.General.eRIPageViewMode.ViewAndExecute;
-                        mActivityPage = new ActivityPage(mContext.Activity, mContext, pageViewMode);
+                        mActivityPage = new ActivityPage(mContext.Activity, mContext, pageViewMode, highlightActivityName:true);
                     }
                     else
                     {

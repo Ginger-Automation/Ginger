@@ -146,7 +146,7 @@ namespace Ginger.WindowExplorer
             xWindowControlsTreeView.SearchStarted += WindowControlsTreeView_SearchStarted;
             xWindowControlsTreeView.SearchCancelled += WindowControlsTreeView_SearchCancelled;
             xWindowControlsTreeView.SearchCompleted += WindowControlsTreeView_SearchCompleted;
-            xWindowControlsTreeView.TreeTitleStyle = (Style)TryFindResource("@NoTitle");
+            xWindowControlsTreeView.TreeTitleVisibility = Visibility.Collapsed;
             xWindowControlsTreeView.Tree.ItemSelected += WindowControlsTreeView_ItemSelected;
 
             xWindowSelection.RefreshWindowsButton.Click += RefreshWindowsButton_Click;

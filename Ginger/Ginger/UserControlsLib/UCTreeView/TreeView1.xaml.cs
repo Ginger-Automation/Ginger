@@ -110,10 +110,21 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             set { xTreeViewTree.ToolTip = value; xTreeTitle.ToolTip = value; }
         }
 
-        public Style TreeTitleStyle
+        public Visibility TreeTitleVisibility
         {
-            get { return xTreeTitle.Style; }
-            set { xTreeTitle.Style = value; }
+            get { return xTreeTitle.Visibility; }
+            set 
+            {
+                xTreeItemHeaderPnl.Visibility = value;
+                if (value == Visibility.Collapsed)
+                {
+                    xTreeTitleRow.Height = new GridLength(40);
+                }
+                else
+                {
+                    xTreeTitleRow.Height = new GridLength(80);
+                }
+            }
         }
 
         public eImageType AddButtonIcon

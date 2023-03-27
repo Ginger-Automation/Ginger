@@ -2634,9 +2634,6 @@
         <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
     </Style>
-    <Style TargetType="Label" x:Key="@NoTitle">
-        <Setter Property="Visibility" Value="Collapsed"/>
-    </Style>
 
 
     <Style TargetType="Label" x:Key="@SectionHeaderLabelStyle" >

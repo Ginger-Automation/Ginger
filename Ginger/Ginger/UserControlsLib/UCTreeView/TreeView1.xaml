@@ -10,14 +10,14 @@
 
     <Grid x:Name="xGrid" Background="{StaticResource $BackgroundColor_White}" >
         <Grid.RowDefinitions>
-            <RowDefinition Height="80"/>
+            <RowDefinition Height="80" x:Name="xTreeTitleRow"/>
             <RowDefinition Height="40"/>
             <RowDefinition Height="200*" />
         </Grid.RowDefinitions>
 
         <!--Title Section-->
         <DockPanel Grid.Row="0" VerticalAlignment="Center" x:Name="xTitleSection">
-            <StackPanel x:Name="xTreeItemHeaderPnl" Orientation="Horizontal" DockPanel.Dock="Left" Margin="5,5,5,0">
+            <StackPanel x:Name="xTreeItemHeaderPnl" Orientation="Horizontal" DockPanel.Dock="Left" Margin="5,5,5,0" >
                 <usercontrols:ImageMakerControl x:Name="xTreeIcon" ImageType="Empty" Width="20" VerticalAlignment="Top" HorizontalAlignment="Left" ImageForeground="{StaticResource $BackgroundColor_DarkGray}" Margin="0,10,0,0" MaxHeight="32"/>
                 <Label x:Name="xTreeTitle" Content="Item Name" FontSize="20"  Foreground="{StaticResource $BackgroundColor_Black}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0" />
             </StackPanel>
@@ -33,36 +33,14 @@
 
         <!-- Tree Tool Bar Section-->
         <Grid Grid.Row="1" >
-            <!--<Grid.ColumnDefinitions>
-                <ColumnDefinition Width="40" />
-                <ColumnDefinition Width="100*" />
-            </Grid.ColumnDefinitions>
-
-            <Button x:Name="xGroupBtn" Grid.Column="0" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center" Width="30" Click="xGroupBtn_Click" Margin="5,0,5,0" BorderBrush="Transparent" Background="Transparent" >
-                <Button.Content>
-                    <StackPanel Orientation="Horizontal">
-                        <usercontrols:ImageMakerControl ImageType="ListGroup" Width="16" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_Black}"/>
-                        <Path x:Name="sortBtnArrow" Margin="4" VerticalAlignment="Center" Width="5" Fill="#FF527DB5" Stretch="Uniform" HorizontalAlignment="Right" Data="F1 M 301.14,-189.041L 311.57,-189.041L 306.355,-182.942L 301.14,-189.041 Z "/>
-                    </StackPanel>
-                </Button.Content>
-                <Button.ContextMenu>
-                    <ContextMenu >
-                        <MenuItem Header="Group By Tag"/>
-                        <MenuItem Header="Group By Target Application"/>
-                    </ContextMenu>
-                </Button.ContextMenu>
-            </Button>-->
-
             <!-- Search Text Box -->
             <!-- overlay with hint text & Clear button-->
-            <TextBox x:Name="xSearchTextBox" Grid.Column="1" MinWidth="50" Height="25" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="xSearchTextBox_TextChangedAsync" BorderBrush="White" />
-           
+            <TextBox x:Name="xSearchTextBox" Grid.Column="1" MinWidth="50" Height="25" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="xSearchTextBox_TextChangedAsync" BorderBrush="{StaticResource $PrimaryColor_Black}" />
             <usercontrols:ucButton x:Name="xSearchClearBtn" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="xSearchClearBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
             <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" Click="xSearchBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
         </Grid>
 
         <!-- Tree Section-->
         <local:UCTreeView x:Name="xTreeViewTree" Grid.Row="2" Background="Transparent" EnableRightClick="True" EnableDragDrop="True"  BorderThickness="0" />
-
     </Grid>
 </UserControl>

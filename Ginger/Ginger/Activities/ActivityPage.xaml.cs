@@ -63,7 +63,7 @@ namespace GingerWPF.BusinessFlowsLib
         }
 
         // We keep a static page so even if we move between activities the Run controls and info stay the same
-        public ActivityPage(Activity activity, Context context, Ginger.General.eRIPageViewMode pageViewMode)
+        public ActivityPage(Activity activity, Context context, Ginger.General.eRIPageViewMode pageViewMode, bool highlightActivityName = false)
         {
             InitializeComponent();
 
@@ -73,6 +73,11 @@ namespace GingerWPF.BusinessFlowsLib
 
             SetUIView();
             BindControlsToActivity();
+
+            if (highlightActivityName)
+            {
+                xNameTextBlock.Foreground= (SolidColorBrush)FindResource("$SelectionColor_Pink");
+            }
         }
 
         private void UpdateActivityViewMode(Ginger.General.eRIPageViewMode pageViewMod)
