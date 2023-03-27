@@ -504,10 +504,12 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     propertiesQouteFixed = propertiesQouteFixed.Replace("\0", "");
                     act.AddOrUpdateReturnParamActual(kpr.Value[0] + "-Properties", kpr.Value[5]);
                 }
-
-                act.RawResponseValues = mWebAPI.ResponseFileContent;
-                act.AddOrUpdateReturnParamActual("Raw Request: ", mWebAPI.RequestFileContent);
-                act.AddOrUpdateReturnParamActual("Raw Response: ", mWebAPI.ResponseFileContent);
+                if(mWebAPI is not null)
+                {
+                    act.RawResponseValues = mWebAPI.ResponseFileContent;
+                    act.AddOrUpdateReturnParamActual("Raw Request: ", mWebAPI.RequestFileContent);
+                    act.AddOrUpdateReturnParamActual("Raw Response: ", mWebAPI.ResponseFileContent);
+                }
             }
 
             Dictionary<List<string>, List<string>> dictValues = new Dictionary<List<string>, List<string>>();
