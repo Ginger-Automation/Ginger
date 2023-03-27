@@ -553,7 +553,7 @@ namespace GingerCore.Drivers.PBDriver
                         break;
 
                     case ActPBControl.eControlAction.RightClick:
-                        mUIAutomationHelper.DoRightClick(AE);
+                        mUIAutomationHelper.DoRightClick(AE, actPBC.ValueForDriver);
                         break;
 
                     case ActPBControl.eControlAction.DoubleClick:
