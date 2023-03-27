@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -103,6 +103,22 @@ namespace GingerCore
             get
             {
                 return eImageType.Wrench;
+            }
+        }
+
+        public override eImageType TargetApplicationPlatformImage
+        {
+            get
+            {
+                return eImageType.Wrench;
+            }
+        }
+
+        public override string TargetApplicationPlatformName
+        {
+            get
+            {
+                return "NA";
             }
         }
 
