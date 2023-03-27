@@ -9,7 +9,7 @@
       d:DesignHeight="550" d:DesignWidth="600"
 	Title="RunSetActionSendDataToExternalSourceEditPage">
 
-    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="600"/>
         </Grid.ColumnDefinitions>

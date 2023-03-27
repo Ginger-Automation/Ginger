@@ -20,7 +20,7 @@
         </x:ArrayExtension>
     </Page.Resources>
     
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*"/>
             <ColumnDefinition Width="60"/>

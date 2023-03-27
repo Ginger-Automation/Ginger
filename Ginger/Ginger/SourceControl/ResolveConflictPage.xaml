@@ -7,7 +7,7 @@
       Height="350" Width="700"
 	Title="ResolveConflictPage">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid Background="{StaticResource $BackgroundColor_White}">
         <StackPanel Margin="0,10,0,10">
             <Image HorizontalAlignment="Right" Source="{StaticResource  @BrokenFile_Orange_32x32 }" Height="32" Width="32" Margin="5,0,30,5" />
             <TextBlock x:Name="UserMessaheTextBlock" Style="{StaticResource @TextBlockStyle}" Text="Conflict has been identified..." Margin="5,0,0,20" Height="Auto"></TextBlock>

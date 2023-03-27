@@ -11,17 +11,17 @@
 	Title="BusinessFlowRunVariablesPage">
 
     <Grid>
-        <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
-            <DockPanel DockPanel.Dock="Top" Background="{StaticResource $BackgroundColor_LightGray}" >
+        <DockPanel Background="{StaticResource $BackgroundColor_White}">
+            <DockPanel DockPanel.Dock="Top" Background="{StaticResource $BackgroundColor_White}" >
                 <Label DockPanel.Dock="Left" Content="Run Description:"  Style="{StaticResource @InputFieldLabelStyle}"></Label>
                 <Button DockPanel.Dock="Right" x:Name="btnAutoCreateDescription" Click="btnAutoCreateDescription_Click" ToolTip="Create Description Automatically" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Right" Margin="0,0,10,0">
                     <Image Source="{StaticResource @AutoEdit_16x16.png}" Height="16" Width="16"/>
                 </Button>
             </DockPanel>
-            <DockPanel DockPanel.Dock="Top" Background="{StaticResource $BackgroundColor_LightGray}" >
+            <DockPanel DockPanel.Dock="Top" Background="{StaticResource $BackgroundColor_White}" >
                 <BussinesFlow:UCValueExpression x:Name="RunDescritpion" ToolTip="Subject" HorizontalAlignment="Stretch" Height="50" Margin="0,-13,0,13"/>                
             </DockPanel>
-            <DockPanel DockPanel.Dock="Top" Background="{StaticResource $BackgroundColor_LightGray}" >
+            <DockPanel DockPanel.Dock="Top" Background="{StaticResource $BackgroundColor_White}" >
                 <CheckBox x:Name="MandatoryBusinessFlowCB" Height="20" FontWeight="Bold" Style="{StaticResource @InputCheckBoxStyle}" HorizontalAlignment="Left" Margin="10,0,10,0" Content="Mandatory">
                     <CheckBox.ToolTip>
                         <GingerCore:ucTextDicResource Text="If this [BusinessFlow] fails, the following will be blocked"/>
@@ -29,17 +29,17 @@
                 </CheckBox>
             </DockPanel>
             <!--Tabs Area-->
-            <TabControl x:Name="BusinessFlowTab" Grid.Row="1"  HorizontalAlignment="Stretch" SelectionChanged="BusinessFlowTab_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}">
+            <TabControl x:Name="BusinessFlowTab" Grid.Row="1"  HorizontalAlignment="Stretch" SelectionChanged="BusinessFlowTab_SelectionChanged" Background="{StaticResource $BackgroundColor_White}">
                 <TabControl.Resources>
                     <Style TargetType="{x:Type TabItem}">
-                        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                        <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                         <Setter Property="Height" Value="33"/>
                         <Style.Triggers>
                             <Trigger Property="IsSelected" Value="False" >
-                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True" >
-                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -51,7 +51,7 @@
                             <Image Source="{StaticResource  @Outputs_32x32.png }" Height="20" Width="20" />
                             <Image Tag="OffSignImage" Source="{StaticResource  @OffSign_24x24.png }" Height="20" Width="20" Margin="-4,0,0,0"  />
                             <Image Tag="OnSignImage" Source="{StaticResource  @OnSign_24x24.png }" Height="20" Width="20" Margin="-4,0,0,0" Visibility="Collapsed"/>
-                            <TextBlock x:Name="OutputTabTextBlock" VerticalAlignment="Center" Margin="-1,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold">
+                            <TextBlock x:Name="OutputTabTextBlock" VerticalAlignment="Center" Margin="-1,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold">
                             <Run>Edit Variables</Run>
                             <Run x:Name="EditVariablesCountLabel">(0)</Run>
                             </TextBlock>
@@ -70,7 +70,7 @@
                             <Image Source="{StaticResource  @Flow_24x24.png }" Height="20" Width="20" />
                             <Image Tag="OffSignImage" Source="{StaticResource  @OffSign_24x24.png }" Height="20" Width="20" Margin="-7,0,0,0"  />
                             <Image Tag="OnSignImage" Source="{StaticResource  @OnSign_24x24.png }" Height="20" Width="20" Margin="-7,0,0,0" Visibility="Collapsed"/>
-                            <TextBlock x:Name="FlowControlTabTextBlock" VerticalAlignment="Center" Margin="0,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold">
+                            <TextBlock x:Name="FlowControlTabTextBlock" VerticalAlignment="Center" Margin="0,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold">
                             <Run>Flow Control</Run>
                             <Run x:Name="FlowControlCountLabel">(0)</Run>
                             </TextBlock>

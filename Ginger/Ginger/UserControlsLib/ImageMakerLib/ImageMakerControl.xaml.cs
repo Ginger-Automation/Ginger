@@ -1085,7 +1085,7 @@ namespace Amdocs.Ginger.UserControls
             }
             else if (foreground == null)
             {
-                foreground = (SolidColorBrush)FindResource("$BackgroundColor_Primary");
+                foreground = (SolidColorBrush)FindResource("$BackgroundColor_Black");
             }
             xFAImage.Foreground = foreground;
             if (this.ImageForeground != null)
@@ -1124,7 +1124,7 @@ namespace Amdocs.Ginger.UserControls
             if (SetBorder)
             {
                 ImageMakerBorder.BorderThickness = new Thickness(1);
-                ImageMakerBorder.BorderBrush = (SolidColorBrush)FindResource("$BackgroundColor_Primary");
+                ImageMakerBorder.BorderBrush = (SolidColorBrush)FindResource("$BackgroundColor_Black");
             }
             else
             {

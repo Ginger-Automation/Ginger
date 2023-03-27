@@ -9,7 +9,7 @@
       d:DesignHeight="300" d:DesignWidth="300"
 	  Title="EnvsListPage">
 
-    <Grid Name="pageGrid"  Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Name="pageGrid"  Background="{StaticResource $BackgroundColor_White}">
         <Ginger:ucGrid x:Name="grdEnvs" Title="Environments" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowUndo="Collapsed" IsReadOnly="True"/>
        
     </Grid>

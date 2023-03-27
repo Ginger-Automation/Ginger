@@ -7,7 +7,7 @@
              xmlns:Ginger="clr-namespace:Ginger" xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="600" PreviewKeyDown="UCTextEditor_PreviewKeyDown" >
-    <Grid x:Name="xFirstGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="xFirstGrid" Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Name="ToolBarRow" Height="35"/>
@@ -18,7 +18,7 @@
             <ColumnDefinition Width="100*"/>
         </Grid.ColumnDefinitions>
 
-        <Border x:Name="xTitleBorder" Grid.Row="0" BorderThickness="1" BorderBrush="{StaticResource $Color_Primary}" Grid.ColumnSpan="1" >
+        <Border x:Name="xTitleBorder" Grid.Row="0" BorderThickness="1" BorderBrush="{StaticResource $PrimaryColor_Black}" Grid.ColumnSpan="1" >
             <DockPanel>
                 <Label x:Name="lblTitle" Style="{DynamicResource @ucGridTitleLightStyle}" >Document Title</Label>
                 <Label x:Name="ContentEditorTitleLabel" Style="{DynamicResource @ucGridTitleLightStyle}" Visibility="Collapsed" >Document Editor</Label>

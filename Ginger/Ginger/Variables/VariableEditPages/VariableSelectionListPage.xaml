@@ -9,12 +9,12 @@
 	Title="VariableSelectionListPage" Unloaded="Page_Unloaded">
 
     <Grid>
-        <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
+        <StackPanel Background="{StaticResource $BackgroundColor_White}">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Selected Value:</Label>
             <ComboBox x:Name="comboSelectedValue" Style="{StaticResource @InputComboBoxStyle}" Margin="0,0,0,2"/>
             <CheckBox x:Name="xEnableAutoLoopCheckbox" Style="{StaticResource $CeckBoxStyle}" IsChecked="True" Margin="0,5,0,5">Enable Looping</CheckBox>
             <CheckBox x:Name="xEnableDynamicValueModificationCheckbox" Style="{StaticResource $CeckBoxStyle}" IsChecked="False" Margin="0,5,0,5">Allow dynamic optional value manipulation</CheckBox>
-            <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
+            <DockPanel Background="{StaticResource $BackgroundColor_White}">
                 <Label Style="{StaticResource @InputFieldLabelStyle}" DockPanel.Dock="Top">Optional Values:</Label>
                 <Ginger:ucGrid x:Name="grdOptionalValues" DockPanel.Dock="Top" Title="Optional Values" ShowTitle="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowUpDown="Visible" Height="220"/>
             </DockPanel>                       

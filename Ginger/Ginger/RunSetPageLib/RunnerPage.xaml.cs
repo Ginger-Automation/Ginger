@@ -440,7 +440,7 @@ namespace Ginger.Run
             }
             else
             {
-                ((RunnerItemPage)sender).xItemName.Foreground = FindResource("$BackgroundColor_Primary") as Brush;
+                ((RunnerItemPage)sender).xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
             }
             mExecutorEngine.GingerRunner.DirtyStatus = eDirtyStatus.Modified;
         }
@@ -838,7 +838,7 @@ namespace Ginger.Run
             }
             else
             {
-                xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Primary") as Brush;
+                xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Black") as Brush;
             }
         }
 

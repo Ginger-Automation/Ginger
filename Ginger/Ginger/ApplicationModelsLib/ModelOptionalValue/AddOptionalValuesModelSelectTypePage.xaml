@@ -10,7 +10,7 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="AddOptionalValuesModelSelectTypePage">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid Background="{StaticResource $BackgroundColor_White}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="Auto"/>
@@ -27,7 +27,7 @@
             <ComboBox Grid.Row="0" Grid.Column="1"  Name="xSourceTypeComboBox" ContextMenu="{x:Null}" Width="150"  Style="{StaticResource @InputComboBoxStyle}"  VerticalAlignment="Center" SelectionChanged="xSourceTypeComboBox_SelectionChanged"  HorizontalAlignment="Left"  Margin="0,0,5,0"></ComboBox>
 
             <StackPanel x:Name="xDBStackPanel" Grid.Row="1" Grid.ColumnSpan="3" Visibility="Collapsed" HorizontalAlignment="Left" >
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />
@@ -103,7 +103,7 @@
                         <usercontrols:ucButton x:Name="xExcelViewWhereButton" ToolTip="View Filtered Data" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageType="Filter" Click="xExcelViewWhereButton_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,25,0,0" />
                     </DockPanel>
 
-                    <GridSplitter x:Name="xExcelGridSplitter" Grid.ColumnSpan="3" Grid.Row="4" Height="1"  HorizontalAlignment="Stretch"  Background="{StaticResource $Color_Primary}" IsEnabled="False" Margin="0,5,0,5" />
+                    <GridSplitter x:Name="xExcelGridSplitter" Grid.ColumnSpan="3" Grid.Row="4" Height="1"  HorizontalAlignment="Stretch"  Background="{StaticResource $PrimaryColor_Black}" IsEnabled="False" Margin="0,5,0,5" />
 
                     <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,5">
                         <DockPanel x:Name="xExcelDataGridDockPanel" Margin="0,5,5,5">

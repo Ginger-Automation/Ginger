@@ -9,7 +9,7 @@
       Height="600" Width="1200" Title="Resolve Conflict Window">
 
 
-    <Grid x:Name="ResolveConflictsGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="ResolveConflictsGrid" Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="300*"/>
         </Grid.RowDefinitions>

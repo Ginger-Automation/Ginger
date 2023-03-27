@@ -11,15 +11,15 @@
         <Image x:Key="Mark" Source="{StaticResource @CheckAllColumn_16x16.png}"></Image>
         <Image x:Key="UnMark" Source="{StaticResource @UnCheckAllColumn_16x16.png}"></Image>
     </UserControl.Resources>
-    <DockPanel x:Name="mainDockPanel"  HorizontalAlignment="Stretch" LastChildFill="true" Margin="0,0,0,0" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}">
+    <DockPanel x:Name="mainDockPanel"  HorizontalAlignment="Stretch" LastChildFill="true" Margin="0,0,0,0" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}">
         <!-- Grid Title -->
-        <Border x:Name="xSimpleHeader" DockPanel.Dock="Top" Visibility="{Binding  ElementName=lblTitle, Path=Visibility}" Background="{Binding ElementName=lblTitle, Path=Background}" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_Primary}"  >
+        <Border x:Name="xSimpleHeader" DockPanel.Dock="Top" Visibility="{Binding  ElementName=lblTitle, Path=Visibility}" Background="{Binding ElementName=lblTitle, Path=Background}" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_Black}"  >
             <Label x:Name="xSimpleHeaderTitle" Style="{DynamicResource $ucGridTitleLightStyle}" Margin="0,1,0,1">Grid Title</Label>
         </Border>
-        <DockPanel x:Name="xEnhancedHeader" DockPanel.Dock="Top" VerticalAlignment="Center" Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Collapsed">
+        <DockPanel x:Name="xEnhancedHeader" DockPanel.Dock="Top" VerticalAlignment="Center" Background="{StaticResource $BackgroundColor_White}" Visibility="Collapsed">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="5,5,5,0">
                 <usercontrols:ImageMakerControl x:Name="xEnhancedHeaderIcon" ImageType="Empty" SetAsFontImageWithSize="20" VerticalAlignment="Top" HorizontalAlignment="Left" ImageForeground="{StaticResource $BackgroundColor_DarkGray}" Margin="0,12,0,0"/>
-                <Label x:Name="xEnhancedHeaderTitle" Content="Item Name" FontSize="20"  Foreground="{StaticResource $BackgroundColor_Primary}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0" />
+                <Label x:Name="xEnhancedHeaderTitle" Content="Item Name" FontSize="20"  Foreground="{StaticResource $BackgroundColor_Black}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,0" />
             </StackPanel>
             <GridSplitter Height="1" ResizeDirection="Rows" DockPanel.Dock="Bottom" Grid.Row="0" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,5,0,5" IsEnabled="False" Background="LightGray" />
             <DockPanel x:Name="xEnhancedHeaderToolsPnl" DockPanel.Dock="Bottom" Margin="0,20,0,0" HorizontalAlignment="Left">
@@ -29,9 +29,9 @@
         </DockPanel>
 
         <!-- Grid Tools Bar -->
-        <Border DockPanel.Dock="Top" Visibility="{Binding  ElementName=ToolsTray, Path=Visibility}" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_Primary}" Background="{StaticResource $BackgroundColor_LightGray}" >
-            <ToolBarTray x:Name="ToolsTray" Background="{StaticResource $BackgroundColor_LightGray}"  >
-                <ToolBar x:Name="toolbar" ToolBarTray.IsLocked="True" Band="1" Background="{StaticResource $BackgroundColor_LightGray}"
+        <Border DockPanel.Dock="Top" Visibility="{Binding  ElementName=ToolsTray, Path=Visibility}" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_Black}" Background="{StaticResource $BackgroundColor_White}" >
+            <ToolBarTray x:Name="ToolsTray" Background="{StaticResource $BackgroundColor_White}"  >
+                <ToolBar x:Name="toolbar" ToolBarTray.IsLocked="True" Band="1" Background="{StaticResource $BackgroundColor_White}"
                      IsHitTestVisible="True" ScrollViewer.CanContentScroll="True" Width="{Binding ElementName=ToolsTray,Path=ActualWidth}">
                     <Button x:Name="btnMarkAll" ToolTip="Mark All As InActive"  Visibility="Collapsed" Click="Btn_MarkUnMarkAll">
                         <Image Source="{DynamicResource @UnCheckAllColumn_16x16.png}"/>
@@ -136,7 +136,7 @@
                 </DataGrid.RowStyle>
                 <DataGrid.RowHeaderStyle>
                     <Style TargetType="DataGridRowHeader">
-                        <Setter Property="Foreground" Value="{StaticResource $Color_Primary}"/>
+                        <Setter Property="Foreground" Value="{StaticResource $PrimaryColor_Black}"/>
                         <Setter Property="FontWeight"  Value="Bold"/>
                     </Style>
                 </DataGrid.RowHeaderStyle>

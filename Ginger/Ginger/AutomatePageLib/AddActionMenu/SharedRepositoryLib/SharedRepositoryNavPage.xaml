@@ -20,14 +20,14 @@
         <TabControl x:Name="xTabRepository" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Stretch" SelectionChanged="TabControl_SelectionChanged" >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
-                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                     <Setter Property="Height" Value="33"/>
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="False" >
-                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True" >
-                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                         </Trigger>
                     </Style.Triggers>
                 </Style>
@@ -37,29 +37,29 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource  @Group_16x16.png }" Height="16" Width="16" />
-                        <TextBlock x:Name="xActivitiesGroupsTextBlock" Text="Activities Groups" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
+                        <TextBlock x:Name="xActivitiesGroupsTextBlock" Text="Activities Groups" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Frame x:Name="xFrameActivitiesGroups" Background="{StaticResource $BackgroundColor_LightGray}"></Frame>
+                <Frame x:Name="xFrameActivitiesGroups" Background="{StaticResource $BackgroundColor_White}"></Frame>
             </TabItem>
             <TabItem x:Name="xTabActivities" Margin="2,0,-6,0">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource  @Activities_16x16 }" Height="16" Width="16" />
-                        <TextBlock x:Name="xActivitiesTextBlock" Text="Activities" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
+                        <TextBlock x:Name="xActivitiesTextBlock" Text="Activities" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Frame  x:Name="xFrameActivities" Background="{StaticResource $BackgroundColor_LightGray}"></Frame>
+                <Frame  x:Name="xFrameActivities" Background="{StaticResource $BackgroundColor_White}"></Frame>
             </TabItem>
 
             <TabItem x:Name="xTabActions" Margin="8,0,-12,0">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource  @Action_32x32 }" Height="16" Width="16" />
-                        <TextBlock Text="Actions" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
+                        <TextBlock Text="Actions" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Frame  x:Name="xFrameActions" Background="{StaticResource $BackgroundColor_LightGray}"></Frame>
+                <Frame  x:Name="xFrameActions" Background="{StaticResource $BackgroundColor_White}"></Frame>
             </TabItem>
         </TabControl>
     </Grid>

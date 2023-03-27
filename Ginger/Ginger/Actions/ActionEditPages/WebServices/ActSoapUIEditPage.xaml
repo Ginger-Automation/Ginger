@@ -12,7 +12,7 @@
       Title="ActSoapUIEditPage">
 
 
-    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_White}">
 
 
         <StackPanel Orientation="Vertical">

@@ -2441,7 +2441,7 @@ namespace Ginger
             }
             else
             {
-                Grid.BorderBrush = FindResource("$Color_Primary") as Brush;
+                Grid.BorderBrush = FindResource("$PrimaryColor_Black") as Brush;
             }
 
             return validationRes;

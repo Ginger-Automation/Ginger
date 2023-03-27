@@ -11,7 +11,7 @@
       Title="Learn Config">
 
     <ScrollViewer>
-        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid Background="{StaticResource $BackgroundColor_White}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="80"/>
                 <RowDefinition Height="320*"/>

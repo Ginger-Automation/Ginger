@@ -21,7 +21,7 @@
         </Grid.RowDefinitions>
 
         <!--Main area top buttons-->
-        <Frame x:Name="MainTopFrame" Grid.Row="0" Grid.Column="1" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_LightGray}"/>
+        <Frame x:Name="MainTopFrame" Grid.Row="0" Grid.Column="1" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_White}"/>
         <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button x:Name="RefreshButton" Click="RefreshButton_Click" ToolTip="Refresh Mobile Screen Image" Style="{StaticResource @InputImageButtonStyle_NoBorder}" Height="32" Width="32">
                 <Image Source="{StaticResource @RoundRefresh_32x32.png}"/>
@@ -59,7 +59,7 @@
 
         <!--Inspector area-->
         <GridSplitter x:Name="inspectroSplitter" Grid.Column="1" Grid.Row="0" ResizeDirection="Columns" Grid.RowSpan="3" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="5" Style="{StaticResource @VerticalGridSplitterStyle}"/>
-        <Frame x:Name="InspectorFrame" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_LightGray}"/>
+        <Frame x:Name="InspectorFrame" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_White}"/>
         <Label Grid.Column="0" Grid.Row="0" Content="Controller" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"/>
         <DockPanel Grid.Row="1" Grid.Column="0" Grid.RowSpan="2">
             <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,0,0,5">

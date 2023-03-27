@@ -11,7 +11,7 @@
 	Title="Ginger Window Explorer">
 
     <!--<DockPanel x:Name="xMaiDock" SizeChanged="xMainDock_SizeChanged">-->
-    <Grid x:Name="xViewAndControlsSection" Background="{StaticResource $BackgroundColor_LightGray}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" SizeChanged="xMainGrid_SizeChanged">
+    <Grid x:Name="xViewAndControlsSection" Background="{StaticResource $BackgroundColor_White}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" SizeChanged="xMainGrid_SizeChanged">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="WindowComboboxRow" Height="50" />
             <RowDefinition Height="*" />
@@ -38,18 +38,18 @@
                 <ColumnDefinition x:Name="xElementDetailGridColumn" Width="50*"  />
             </Grid.ColumnDefinitions>
 
-            <TabControl x:Name="xViewsTabs" Margin="0,5,0,0" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="ViewsTabs_SelectionChanged" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+            <TabControl x:Name="xViewsTabs" Margin="0,5,0,0" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="ViewsTabs_SelectionChanged" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                         MouseEnter="xViewsTabs_MouseEnter" MouseLeave="xViewsTabs_MouseLeave">
                 <TabControl.Resources>
                     <Style TargetType="{x:Type TabItem}">
-                        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                        <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                         <Setter Property="Height" Value="25"/>
                         <Style.Triggers>
                             <Trigger Property="IsSelected" Value="False" >
-                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True" >
-                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -59,7 +59,7 @@
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <usercontrols:ImageMakerControl ImageType="Image"  SetAsFontImageWithSize="20"  Width="20" Height="20" />
-                            <TextBlock VerticalAlignment="Center" Text="Screenshot"  Margin="5,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
+                            <TextBlock VerticalAlignment="Center" Text="Screenshot"  Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                         </StackPanel>
                     </TabItem.Header>
 
@@ -67,7 +67,7 @@
                         <!--Loading panel-->
                         <StackPanel x:Name="xLoadingScreenShotBanner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
                             <usercontrols:ImageMakerControl ImageType="Processing" HorizontalAlignment="Center" Height="50" Width="50" VerticalAlignment="Center"/>
-                            <TextBlock Text="Loading Screenshot . . ." Foreground="{StaticResource $BackgroundColor_Primary}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <TextBlock Text="Loading Screenshot . . ." Foreground="{StaticResource $BackgroundColor_Black}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </StackPanel>
 
                         <!--Retry Button for error in taking screenshot-->
@@ -84,14 +84,14 @@
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <usercontrols:ImageMakerControl ImageType="TreeView"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                            <TextBlock x:Name="xTreeViewTabTextBlock" VerticalAlignment="Center" Text="Tree View"  Margin="5,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
+                            <TextBlock x:Name="xTreeViewTabTextBlock" VerticalAlignment="Center" Text="Tree View"  Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                         </StackPanel>
                     </TabItem.Header>
 
                     <Grid>
                         <StackPanel x:Name="xLoadingTreeViewBanner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
                             <usercontrols:ImageMakerControl ImageType="Processing" HorizontalAlignment="Center" Height="50" Width="50" VerticalAlignment="Center"/>
-                            <TextBlock Text="Loading Page Controls Tree . . ." Foreground="{StaticResource $BackgroundColor_Primary}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <TextBlock Text="Loading Page Controls Tree . . ." Foreground="{StaticResource $BackgroundColor_Black}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </StackPanel>
                         <UCTreeView:TreeView1 x:Name="xWindowControlsTreeView"  Grid.Row="2" TreeTitle="Window Visible Controls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                     </Grid>
@@ -101,14 +101,14 @@
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <usercontrols:ImageMakerControl ImageType="DataTable"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                            <TextBlock x:Name="xGridViewTabTextBlock" VerticalAlignment="Center" Text="Grid View"  Margin="5,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
+                            <TextBlock x:Name="xGridViewTabTextBlock" VerticalAlignment="Center" Text="Grid View"  Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                         </StackPanel>
                     </TabItem.Header>
 
                     <Grid>
                         <StackPanel x:Name="xLoadingControlsGridBanner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
                             <usercontrols:ImageMakerControl ImageType="Processing" HorizontalAlignment="Center" Height="50" Width="50" VerticalAlignment="Center"/>
-                            <TextBlock Text="Loading Page Controls Grid. . ." Foreground="{StaticResource $BackgroundColor_Primary}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <TextBlock Text="Loading Page Controls Grid. . ." Foreground="{StaticResource $BackgroundColor_Black}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </StackPanel>
                         <Ginger:ucGrid x:Name="xWindowControlsGridView" Title="Window Visible Controls" RowChangedEvent="ControlsGrid_RowChangedEvent" ShowTitle="Collapsed" ScrollViewer.HorizontalScrollBarVisibility="Visible" />
                     </Grid>
@@ -118,7 +118,7 @@
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                             <usercontrols:ImageMakerControl ImageType="Spy"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                            <TextBlock x:Name="xLiveSpyTabTextBlock" Text="Live Spy" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
+                            <TextBlock x:Name="xLiveSpyTabTextBlock" Text="Live Spy" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                         </StackPanel>
                     </TabItem.Header>
                     <ScrollViewer x:Name="xScrollViewer" VerticalScrollBarVisibility="Auto">
@@ -130,7 +130,7 @@
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <usercontrols:ImageMakerControl ImageType="DataSource" SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                            <TextBlock x:Name="xPageSrcTabTextBlock" VerticalAlignment="Center" Text="Page Source"  Margin="5,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
+                            <TextBlock x:Name="xPageSrcTabTextBlock" VerticalAlignment="Center" Text="Page Source"  Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                         </StackPanel>
                     </TabItem.Header>
 
@@ -141,7 +141,7 @@
                         </Grid.RowDefinitions>
                         <StackPanel x:Name="xLoadingPageSrcBanner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" Grid.Row="0" Grid.RowSpan="2">
                             <usercontrols:ImageMakerControl ImageType="Processing" HorizontalAlignment="Center" Height="50" Width="50" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="xPageSrcLoadingText" Text="Loading Page Source . . ." Foreground="{StaticResource $BackgroundColor_Primary}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <TextBlock x:Name="xPageSrcLoadingText" Text="Loading Page Source . . ." Foreground="{StaticResource $BackgroundColor_Black}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </StackPanel>
                         <usercontrols:ucButton x:Name="xCopyPageSrc" Grid.Row="0" ToolTip="Copy Page Source" ButtonImageType="Copy" HorizontalAlignment="Right"
                                    ButtonType="CircleImageButton" ButtonImageWidth="15" ButtonImageHeight="20" Click="xCopyPageSrc_Click"/>
@@ -152,16 +152,16 @@
                 </TabItem>
             </TabControl>
 
-            <GridSplitter x:Name="xRowSplitter" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ResizeDirection="Rows" Height="1" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource $Color_Primary}"/>
-            <GridSplitter x:Name="xColumnSplitter" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" ResizeDirection="Columns" Height="Auto" Width="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $Color_Primary}" Visibility="Collapsed"/>
+            <GridSplitter x:Name="xRowSplitter" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ResizeDirection="Rows" Height="1" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource $PrimaryColor_Black}"/>
+            <GridSplitter x:Name="xColumnSplitter" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" ResizeDirection="Columns" Height="Auto" Width="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $PrimaryColor_Black}" Visibility="Collapsed"/>
 
             <Ginger:UCElementDetails x:Name="xUCElementDetails" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"/>
         </Grid>
 
         <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
-            <Border BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_Primary}" DockPanel.Dock="Top" />
+            <Border BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_Black}" DockPanel.Dock="Top" />
             <usercontrols:ImageMakerControl x:Name="xStatusBarIcon" DockPanel.Dock="Left" ImageType="MousePointer" Width="12" Height="12" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed" />
-            <TextBlock x:Name="xStatusBarText" Text="Click on an element to see its details" VerticalAlignment="Center" DockPanel.Dock="Left" Margin="10,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" Visibility="Collapsed" />
+            <TextBlock x:Name="xStatusBarText" Text="Click on an element to see its details" VerticalAlignment="Center" DockPanel.Dock="Left" Margin="10,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" Visibility="Collapsed" />
         </DockPanel>
     </Grid>
 

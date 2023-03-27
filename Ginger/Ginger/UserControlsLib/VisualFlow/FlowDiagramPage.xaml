@@ -11,7 +11,7 @@
       >
 
 
-    <Grid x:Name="xPageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="xPageGrid" Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="xZoomRow" Height="25" />
             <RowDefinition Height="250*"/>

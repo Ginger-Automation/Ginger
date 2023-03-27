@@ -7,7 +7,7 @@
       d:DesignHeight="300" d:DesignWidth="300"
 	Title="ActJavaEXEEditPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <StackPanel>
             <StackPanel>
                 <Label  Style="{StaticResource @LabelStyle}" FontWeight="Bold">Java Version Path:</Label>

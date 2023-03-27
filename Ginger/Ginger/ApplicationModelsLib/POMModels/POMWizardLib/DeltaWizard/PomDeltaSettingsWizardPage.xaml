@@ -13,7 +13,7 @@
       Title="PomDeltaSettingsPage">
 
     <ScrollViewer>
-        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid Background="{StaticResource $BackgroundColor_White}">
             <DockPanel Margin="5,20,10,0">
                 <!--<agents:ucAgentControl x:Name="xAgentControlUC" AutomationProperties.AutomationId="ucAgentControl AID" DockPanel.Dock="Top" Margin="0,0,0,15"></agents:ucAgentControl>-->
 

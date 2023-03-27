@@ -10,7 +10,7 @@
       Height="400" Width="800"
 	  Title="Upload Solution To Source Control">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="105"/>
             <RowDefinition Height="100"/>

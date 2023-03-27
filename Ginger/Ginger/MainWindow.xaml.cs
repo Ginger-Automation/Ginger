@@ -984,7 +984,7 @@ namespace Ginger
         {
             if (string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.ProfileImage))
             {
-                xProfileImageImgBrush.ImageSource = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User, foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_LightGray"), width: 50);
+                xProfileImageImgBrush.ImageSource = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User, foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_White"), width: 50);
             }
             else
             {

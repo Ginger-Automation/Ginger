@@ -48,7 +48,7 @@ namespace Ginger.GeneralLib
         {
             txtBlkApplicationInfo.Text = string.Empty;
             TextBlockHelper TBH = new TextBlockHelper(txtBlkApplicationInfo);
-            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_Primary")).ToString());
+            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$PrimaryColor_Black")).ToString());
 
             //Application info
             TBH.AddFormattedText("Application:", foregroundColor, true);
@@ -69,7 +69,7 @@ namespace Ginger.GeneralLib
         {
             txtCredit.Text = string.Empty;
             TextBlockHelper TBH = new TextBlockHelper(txtCredit);
-            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_Primary")).ToString());
+            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$PrimaryColor_Black")).ToString());
 
             TBH.AddFormattedText("Inventor, Chief Architect & Developer:", foregroundColor);
             TBH.AddLineBreak();

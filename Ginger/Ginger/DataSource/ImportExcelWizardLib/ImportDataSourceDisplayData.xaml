@@ -11,7 +11,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
 	Title="Import DataSource from Excel">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -49,7 +49,7 @@
                     <CheckBox VerticalAlignment="Center" x:Name="chkHeadingRow" Content="Sheet first row as Column name" IsChecked="True" Margin="5,0,20,0" />                    
                 </StackPanel>-->
                 
-                <GridSplitter x:Name="xExcelGridSplitter" Grid.Row="2" Grid.ColumnSpan="3" Height="1"  HorizontalAlignment="Stretch"  Background="{StaticResource $Color_Primary}" IsEnabled="False" Margin="0,5,0,5" />
+                <GridSplitter x:Name="xExcelGridSplitter" Grid.Row="2" Grid.ColumnSpan="3" Height="1"  HorizontalAlignment="Stretch"  Background="{StaticResource $PrimaryColor_Black}" IsEnabled="False" Margin="0,5,0,5" />
                 <Label Style ="{StaticResource @InputFieldLabelStyle}" Grid.Row="3" Grid.Column="0" Content="Excel Data:" DockPanel.Dock="Left" Margin="10,0,0,0"></Label>
                 <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="10,0,0,5">                   
                     <DockPanel x:Name="xExcelDataGridDockPanel" Margin="0,5,5,5">                        

@@ -2,8 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
-        Title="Closing" Height="240" Width="320" BorderThickness="10" BorderBrush="{StaticResource $BackgroundColor_LightGray}" WindowStyle="None"  Topmost="True" WindowStartupLocation="CenterScreen">
-    <Grid Background="{StaticResource $Color_Primary}">
+        Title="Closing" Height="240" Width="320" BorderThickness="10" BorderBrush="{StaticResource $BackgroundColor_White}" WindowStyle="None"  Topmost="True" WindowStartupLocation="CenterScreen">
+    <Grid Background="{StaticResource $PrimaryColor_Black}">
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
             <RowDefinition Height="30"/>

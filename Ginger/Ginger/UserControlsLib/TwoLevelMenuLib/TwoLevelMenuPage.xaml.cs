@@ -124,7 +124,7 @@ namespace Ginger.GeneralWindows
                 return;
             }
 
-            SetSelectedListItemStyle(xMainNavigationListView, (SolidColorBrush)FindResource("$Color_Primary"));
+            SetSelectedListItemStyle(xMainNavigationListView, (SolidColorBrush)FindResource("$PrimaryColor_Black"));
 
             ObservableList<SubMenuItem> subItems;
             subItems = SelectedMainListItem.SubItems;
@@ -160,7 +160,7 @@ namespace Ginger.GeneralWindows
             {
                 if (subItems.Count > 1)
                 {
-                    SetSelectedListItemStyle(xSubNavigationListView, (SolidColorBrush)FindResource("$Color_Primary"));
+                    SetSelectedListItemStyle(xSubNavigationListView, (SolidColorBrush)FindResource("$PrimaryColor_Black"));
                 }
             }
 
@@ -193,7 +193,7 @@ namespace Ginger.GeneralWindows
 
             if (xSubNavigationListView.Items.Count > 1)
             {
-                SetSelectedListItemStyle(xSubNavigationListView, (SolidColorBrush)FindResource("$Color_Primary"));
+                SetSelectedListItemStyle(xSubNavigationListView, (SolidColorBrush)FindResource("$PrimaryColor_Black"));
             }
         }
 
@@ -231,14 +231,14 @@ namespace Ginger.GeneralWindows
 
         private void xMainNavigationListView_Loaded(object sender, RoutedEventArgs e)
         {
-            SetSelectedListItemStyle(xMainNavigationListView, (SolidColorBrush)FindResource("$Color_Primary"));
+            SetSelectedListItemStyle(xMainNavigationListView, (SolidColorBrush)FindResource("$PrimaryColor_Black"));
         }
 
         private void xSubNavigationListView_Loaded(object sender, RoutedEventArgs e)
         {
             if (xSubNavigationListView.Items.Count > 1 && xSubNavigationListView.IsVisible)
             {
-                SetSelectedListItemStyle(xSubNavigationListView, (SolidColorBrush)FindResource("$Color_Primary"));
+                SetSelectedListItemStyle(xSubNavigationListView, (SolidColorBrush)FindResource("$PrimaryColor_Black"));
             }
         }
     }

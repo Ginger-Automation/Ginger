@@ -9,7 +9,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PomAllElementsPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition Height="700*"/>
@@ -32,14 +32,14 @@
         <TabControl x:Name="xPOMModelTabs" Grid.Row="1"  HorizontalAlignment="Stretch" SelectionChanged="POMModelTabsSelectionChanged"  >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
-                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                     <Setter Property="Height" Value="25"/>
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="False" >
-                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True" >
-                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                         </Trigger>
                     </Style.Triggers>
                 </Style>
@@ -49,7 +49,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl ImageType="Elements"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                        <TextBlock x:Name="xMappedElementsTextBlock" Text="Mapped Elements" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
+                        <TextBlock x:Name="xMappedElementsTextBlock" Text="Mapped Elements" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Frame x:Name="xMappedElementsFrame" HorizontalAlignment="Stretch" />
@@ -59,7 +59,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl ImageType="Elements"  SetAsFontImageWithSize="18"  Width="18" Height="18" Foreground="Gray" />
-                        <TextBlock x:Name="xUnMappedElementsTextBlock" Text="Unmapped Elements" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
+                        <TextBlock x:Name="xUnMappedElementsTextBlock" Text="Unmapped Elements" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Frame x:Name="xUnMappedElementsFrame" HorizontalAlignment="Stretch"/>

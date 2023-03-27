@@ -10,7 +10,7 @@
       d:DesignHeight="300" d:DesignWidth="300"
 	Title="SharedRepositoryPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="200*"/>            

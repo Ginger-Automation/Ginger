@@ -11,7 +11,7 @@
       MinHeight="300" MinWidth="785"
 	Title="General HTML Reports Configurations">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Background="{StaticResource $BackgroundColor_White}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <StackPanel>
             <StackPanel x:Name="htmlReportFolderPnl" Margin="10,0,0,0" HorizontalAlignment="Left">
                 <usercontrols:ucButton x:Name="xSaveButton"  ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" Visibility="Collapsed" HorizontalAlignment="Left" Margin="-3,0,0,10"/>
@@ -57,7 +57,7 @@
 
                 <StackPanel Orientation="Horizontal" Grid.Row="0">
                     <Label  Content="Centralized Report Data Settings" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
-                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Primary}" />
+                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
                 </StackPanel>
 
                 <DockPanel Grid.Row="1" Margin="5 0 5 5">

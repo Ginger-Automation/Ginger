@@ -8,7 +8,7 @@
       Height="60" Width="500" MinHeight="60"
 	Title="Add New Table">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="130"/>
             <ColumnDefinition Width="370"/>

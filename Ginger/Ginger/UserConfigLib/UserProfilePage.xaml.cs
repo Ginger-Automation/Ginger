@@ -43,7 +43,7 @@ namespace Ginger.User
             //profile image
             if (string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.ProfileImage))
             {
-                xProfileImageImgBrush.ImageSource = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User, foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_Primary"), width: 50);
+                xProfileImageImgBrush.ImageSource = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User, foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_Black"), width: 50);
             }
             else
             {

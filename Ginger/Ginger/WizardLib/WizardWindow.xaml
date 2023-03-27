@@ -30,14 +30,14 @@
 
     </Window.Resources>
 
-    <Grid x:Name="gridMain" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="gridMain" Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300" />
             <ColumnDefinition Width="*"	/>
         </Grid.ColumnDefinitions>
 
-        <Grid x:Name="gridNavPanel"  Background="{StaticResource $BackgroundColor_LightGray}">
-            <ListBox x:Name="NavigationList" Background="{StaticResource $BackgroundColor_LightGray}"  Foreground="{StaticResource $BackgroundColor_Primary}"
+        <Grid x:Name="gridNavPanel"  Background="{StaticResource $BackgroundColor_White}">
+            <ListBox x:Name="NavigationList" Background="{StaticResource $BackgroundColor_White}"  Foreground="{StaticResource $BackgroundColor_Black}"
 					 SelectionChanged="NavigationList_SelectionChanged"
 					 >
                 <ListBox.ItemContainerStyle>
@@ -58,14 +58,14 @@
                                     <SolidColorBrush Color="SteelBlue" Opacity="1" />
                                 </Polygon.Fill>
                             </Polygon>
-                            <TextBlock x:Name="xTitleTextBlock" Grid.Column="1" FontSize="14" Text="{Binding Title}" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_Primary}" />
+                            <TextBlock x:Name="xTitleTextBlock" Grid.Column="1" FontSize="14" Text="{Binding Title}" VerticalAlignment="Center" Foreground="{StaticResource $BackgroundColor_Black}" />
                         </Grid>
                         <DataTemplate.Triggers>
                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="false">
                                 <Setter TargetName="SelectionArrow" Property="Opacity" Value="0" />
                             </DataTrigger>
                             <Trigger Property="IsEnabled" Value="false">
-                                <Setter TargetName="xTitleTextBlock" Property="Foreground" Value="{StaticResource $BackgroundColor_Primary}"/>
+                                <Setter TargetName="xTitleTextBlock" Property="Foreground" Value="{StaticResource $BackgroundColor_Black}"/>
                             </Trigger>
                         </DataTemplate.Triggers>
                     </DataTemplate>
@@ -94,7 +94,7 @@
                         <!-- for icon/image -->
                         <Image Source="{Binding Path=WizConfig.BannerImage}" />
                     </StackPanel>
-                    <StackPanel Height="30"  VerticalAlignment="Center" Background="{DynamicResource $Color_Primary}"  HorizontalAlignment="{Binding Path=WizConfig.BannerTextAlignment, Mode=OneWay}" >
+                    <StackPanel Height="30"  VerticalAlignment="Center" Background="{DynamicResource $PrimaryColor_Black}"  HorizontalAlignment="{Binding Path=WizConfig.BannerTextAlignment, Mode=OneWay}" >
                         
                         <TextBlock x:Name="tbSubTitle" AutomationProperties.AutomationId="Title AID" Foreground="White"
 					

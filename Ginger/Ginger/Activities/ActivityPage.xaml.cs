@@ -363,7 +363,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 xDescriptionTextBlock.Text = string.Empty;
                 TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
-                SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_Primary")).ToString());
+                SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$PrimaryColor_Black")).ToString());
                 if (mActivity != null)
                 {
                     //Application info
@@ -590,7 +590,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
         }
 
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)

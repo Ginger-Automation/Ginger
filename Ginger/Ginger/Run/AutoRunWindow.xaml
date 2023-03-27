@@ -5,10 +5,10 @@
         xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
         Title="AutoRunWindow" Height="300" Width="300" WindowState="Maximized">
     
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+    <Grid Background="{StaticResource $BackgroundColor_White}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <StackPanel x:Name="xRunSetLoadingPnl" HorizontalAlignment="Center" VerticalAlignment="Center" >
             <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="118" Visibility="Visible" Height="62" />
-            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Primary}">
+            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Black}">
                 <Label.Content>
                     <GingerCore:ucTextDicResource Text="Loading [RunSet]..."/>
                 </Label.Content>

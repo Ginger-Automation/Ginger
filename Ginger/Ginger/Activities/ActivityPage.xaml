@@ -13,7 +13,7 @@
       d:DesignHeight="1000" d:DesignWidth="1000"
       Title="ActivityPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="30"/>
@@ -70,7 +70,7 @@
                         </MenuItem>
                     </Menu>
                 </StackPanel>
-                <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Primary}" Margin="4,4,4,4"/>
+                <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="4,4,4,4"/>
                 <StackPanel x:Name="xExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
                     <usercontrols:ucButton x:Name="xRunBtn" ButtonType="RoundTextAndImageButton" ButtonImageType="Run" ButtonText="Run Activity"  ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
                         <usercontrols:ucButton.ToolTip>
@@ -102,7 +102,7 @@
         </Grid>-->
         <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1"  Grid.Column="0" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Activity Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontSize="13" Style="{StaticResource $TextBlockStyle}"/>
 
-        <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="XItemsTabs_SelectionChanged">
+        <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}" SelectionChanged="XItemsTabs_SelectionChanged">
             <TabItem x:Name="xActionsTab"  Style="{StaticResource $CoolTab}" TabIndex="1">
                 <TabItem.Header>
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
@@ -112,7 +112,7 @@
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <Frame x:Name="xActionsTabFrame" Content="Actions" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}"/>
+                <Frame x:Name="xActionsTabFrame" Content="Actions" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_White}"/>
             </TabItem>
 
             <TabItem x:Name="xVariablesTab" Style="{StaticResource $CoolTab}" TabIndex="2">
@@ -124,7 +124,7 @@
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <Frame x:Name="xVariabelsTabFrame" Content="Variables" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
+                <Frame x:Name="xVariabelsTabFrame" Content="Variables" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_White}" />
             </TabItem>
 
             <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTab}" TabIndex="3">

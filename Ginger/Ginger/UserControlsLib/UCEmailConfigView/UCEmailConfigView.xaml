@@ -10,7 +10,7 @@
              xmlns:Ginger="clr-namespace:Ginger"
              mc:Ignorable="d" 
              d:DesignHeight="556.717" d:DesignWidth="728.358">
-    <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
+    <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_White}">
         <StackPanel.Resources>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
             <GridLength x:Key="LabelColumnWidth">180</GridLength>
@@ -33,12 +33,12 @@
                 <RadioButton GroupName="ActionTypeRadioButtonGroup" x:Name="xActionTypeReadRadioButton" Content="Read" Style="{StaticResource RadioButtonStyle}" Checked="xActionType_Changed" Unchecked="xBodyContentType_Changed"/>
             </StackPanel>
         </Grid>
-        <TabControl x:Name="xSendDetailContainer" Background="{StaticResource $BackgroundColor_LightGray}">
-            <TabItem x:Name="xMessageTab" IsSelected="True" Background="{StaticResource $BackgroundColor_LightGray}">
+        <TabControl x:Name="xSendDetailContainer" Background="{StaticResource $BackgroundColor_White}">
+            <TabItem x:Name="xMessageTab" IsSelected="True" Background="{StaticResource $BackgroundColor_White}">
                 <TabItem.Header>
                     <Label Content="Message"/>
                 </TabItem.Header>
-                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
+                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_White}">
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
@@ -129,7 +129,7 @@
                     </StackPanel>
                 </StackPanel>
             </TabItem>
-            <TabItem x:Name="xAttachmentsTab" Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Collapsed" >
+            <TabItem x:Name="xAttachmentsTab" Background="{StaticResource $BackgroundColor_White}" Visibility="Collapsed" >
                 <TabItem.Header>
                     <Label Content="Attachments"/>
                 </TabItem.Header>
@@ -143,11 +143,11 @@
                 </TabItem.Resources>
                 <Ginger:ucGrid x:Name="xAttachmentsGrid" Title="Attachments" ShowAdd="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>
             </TabItem>
-            <TabItem x:Name="xDeliveryTab" Background="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem x:Name="xDeliveryTab" Background="{StaticResource $BackgroundColor_White}">
                 <TabItem.Header>
                     <Label Content="Configuration"/>
                 </TabItem.Header>
-                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
+                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_White}">
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
@@ -257,11 +257,11 @@
             </TabItem>
         </TabControl>
         <TabControl x:Name="xReadDetailContainer" Visibility="Collapsed">
-            <TabItem Background="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem Background="{StaticResource $BackgroundColor_White}">
                 <TabItem.Header>
                     <Label Content="Filters"/>
                 </TabItem.Header>
-                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
+                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_White}">
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
@@ -455,11 +455,11 @@
                     </Grid>
                 </StackPanel>
             </TabItem>
-            <TabItem Background="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem Background="{StaticResource $BackgroundColor_White}">
                 <TabItem.Header>
                     <Label Content="Configuration"/>
                 </TabItem.Header>
-                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
+                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_White}">
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>

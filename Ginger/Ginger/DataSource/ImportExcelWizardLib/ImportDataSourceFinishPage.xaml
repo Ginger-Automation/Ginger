@@ -11,7 +11,7 @@
       Height="400" Width="500" 
 	Title="Import DataSource from Excel">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="80"/>
             <RowDefinition Height="Auto"/>

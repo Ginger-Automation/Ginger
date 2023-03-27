@@ -7,7 +7,7 @@
       d:DesignHeight="300" d:DesignWidth="300"
 	Title="ActJavaElementEditPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <StackPanel>
             <Label Style="{StaticResource @LabelStyle}" FontWeight="Bold">Operation to Perform:</Label>
             <ComboBox x:Name="ControlActionComboBox" SelectionChanged="ControlActionComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>

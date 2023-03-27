@@ -10,7 +10,7 @@
     <TabControl x:Name="ActionTab" HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged">
         <TabItem Header="Configuration" >
 
-        <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}" >
+        <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_White}" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="140"/>
             <ColumnDefinition Width="300"/>
@@ -74,7 +74,7 @@
 
         
         <TabItem x:Name="ConsoleTab" Header="Console" >
-            <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+            <Grid Background="{StaticResource $BackgroundColor_White}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40"/>
                     <RowDefinition Height="500"/>

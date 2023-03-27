@@ -74,7 +74,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                                 }
                                 else
                                 {
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_Primary");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$PrimaryColor_Black");
                                 } ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
                         }

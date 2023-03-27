@@ -8,7 +8,7 @@
       d:DesignHeight="120" d:DesignWidth="500"
 	Title="TableActionsPage">
 
-    <Grid Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="110"/>
             <ColumnDefinition Width="250*"/>

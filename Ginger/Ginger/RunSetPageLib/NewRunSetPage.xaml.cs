@@ -413,7 +413,7 @@ namespace Ginger.Run
                 {
                     xRunRunsetBtn.ButtonImageType = eImageType.Running;
                     xRunRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
-                    xRunRunsetBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+                    xRunRunsetBtn.ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
                     xRunRunsetBtn.IsEnabled = false;
                     xStopRunsetBtn.Visibility = Visibility.Visible;
                     xContinueRunsetBtn.Visibility = Visibility.Collapsed;
@@ -806,7 +806,7 @@ namespace Ginger.Run
             {
                 xDescriptionTextBlock.Text = string.Empty;
                 TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
-                SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_Primary")).ToString());
+                SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$PrimaryColor_Black")).ToString());
 
                 //description
                 if (!string.IsNullOrEmpty(mRunSetConfig.Description))
@@ -1017,7 +1017,7 @@ namespace Ginger.Run
             if (mCurrentSelectedRunner != null)
             {
                 mCurrentSelectedRunner.xBorder.Visibility = System.Windows.Visibility.Collapsed;
-                mCurrentSelectedRunner.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_Primary") as Brush;
+                mCurrentSelectedRunner.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_Black") as Brush;
                 mCurrentSelectedRunner.xRunnerInfoSplitterBorder.Height = 1;
                 if (!mCurrentSelectedRunner.ExecutorEngine.GingerRunner.Active)
                 {
@@ -1025,7 +1025,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    mCurrentSelectedRunner.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Primary") as Brush;
+                    mCurrentSelectedRunner.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                 }
             }
 
@@ -1240,8 +1240,8 @@ namespace Ginger.Run
 
             GRP.xBorder.Visibility = System.Windows.Visibility.Collapsed;
             GRP.xRunnerInfoSplitterBorder.Height = 1;
-            GRP.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_Primary") as Brush;
-            GRP.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Primary") as Brush;
+            GRP.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_Black") as Brush;
+            GRP.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Black") as Brush;
             mFlowX = mFlowX + 610;
             return GRP;
         }
@@ -2203,7 +2203,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    currentitem.xItemName.Foreground = FindResource("$BackgroundColor_Primary") as Brush;
+                    currentitem.xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                 }
             }
 
@@ -2266,7 +2266,7 @@ namespace Ginger.Run
 
             foreach (RunnerItemPage currentitem in xActivitiesRunnerItemsListView.Items)
             {
-                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_Primary") as Brush;
+                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
             }
             if (mCurrentActivityRunnerItem != null)
             {
@@ -2307,7 +2307,7 @@ namespace Ginger.Run
 
             foreach (RunnerItemPage currentitem in xActionsRunnerItemsListView.Items)
             {
-                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_Primary") as Brush;
+                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
             }
             //Need it for first time.
             if (xActionsRunnerItemsListView.SelectedItem == null)
@@ -2777,7 +2777,7 @@ namespace Ginger.Run
                     bf.Active = SetBusinessflowActive;
                     if (SetBusinessflowActive)
                     {
-                        ((RunnerItemPage)ri).xItemName.Foreground = FindResource("$BackgroundColor_Primary") as Brush;
+                        ((RunnerItemPage)ri).xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                     }
                     else
                     {
@@ -2883,7 +2883,7 @@ namespace Ginger.Run
                 gr.GingerRunner.Active = SetRunnerActive;
                 if (SetRunnerActive)
                 {
-                    ((RunnerPage)rp.GetCustomeShape().Content).xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Primary") as Brush;
+                    ((RunnerPage)rp.GetCustomeShape().Content).xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                 }
                 else
                 {
@@ -2986,7 +2986,7 @@ namespace Ginger.Run
 
         private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
         }
 
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)

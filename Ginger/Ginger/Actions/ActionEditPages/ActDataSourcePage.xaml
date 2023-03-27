@@ -8,7 +8,7 @@
       mc:Ignorable="d" d:DesignWidth="600" Height="1040" 
 	Title="DataSource Expression Editor" >
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
+    <Grid Background="{StaticResource $BackgroundColor_White}" Margin="0,0,0,0">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="UpdateVERow1" Height="0"/>
             <RowDefinition Height="55"/>
@@ -28,7 +28,7 @@
 
 
         <StackPanel x:Name="HeaderPanel" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Margin="0,0,0.4,6.2" Grid.RowSpan="2">
-            <Grid Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
+            <Grid Background="{StaticResource $BackgroundColor_White}" Margin="0,0,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
@@ -74,7 +74,7 @@
             </Expander.Header>
             <Expander.Content>
                 <StackPanel>
-                    <Grid Visibility="Collapsed" Name="ExcelGrid" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
+                    <Grid Visibility="Collapsed" Name="ExcelGrid" Background="{StaticResource $BackgroundColor_White}" Margin="0,0,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition/>
                             <!--<RowDefinition/>-->
@@ -100,7 +100,7 @@
                         <Frame  Grid.Row="0" HorizontalAlignment="Left" x:Name="ExcelSpecificFrame" Content="ExcelSpecificFrame" Visibility="Collapsed" Margin="10,0,0,0" NavigationUIVisibility="Hidden"/>
                     </Grid>
                     
-                    <Grid Visibility="Collapsed" Name="KeyGrid" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
+                    <Grid Visibility="Collapsed" Name="KeyGrid" Background="{StaticResource $BackgroundColor_White}" Margin="0,0,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
@@ -115,7 +115,7 @@
                             <ComboBox x:Name="cmbKeyName" Grid.Column="1" Height="25" IsEditable="True" SelectionChanged="cmbKeyName_SelectionChanged" LostFocus="cmbKeyName_LostFocus" Margin="10,2,-95.2,0" Style="{StaticResource @InputComboBoxStyle}" LostKeyboardFocus="cmbKeyName_LostKeyboardFocus"/>
                         </StackPanel>
                     </Grid>
-                    <Grid Visibility="Visible" Name="CustomizedGrid" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
+                    <Grid Visibility="Visible" Name="CustomizedGrid" Background="{StaticResource $BackgroundColor_White}" Margin="0,0,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="78"/>
                             <RowDefinition x:Name="DataRow" Height="387"/>
@@ -148,7 +148,7 @@
                             <Button Grid.Row="1" x:Name="QueryValVE" Content="..." Click="QueryValVE_Click" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}"  Width="25" ></Button>
                         </Grid>
                         <StackPanel Name="CustomizedPanel" Visibility="Visible" Grid.ColumnSpan="5" Margin="0,4.6,0,0.6" Grid.Row="1">
-                            <Grid Name ="WhereGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+                            <Grid Name ="WhereGrid" Background="{StaticResource $BackgroundColor_White}">
                                 <Grid.Resources>
                                     <DataTemplate x:Key="ValueExpressionButton">
                                         <Button x:Name="GridVEButton" Content="..." Click="GridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
@@ -211,7 +211,7 @@
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
-                <DockPanel x:Name="ValueExpression" Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="0" >
+                <DockPanel x:Name="ValueExpression" Background="{StaticResource $BackgroundColor_White}" Grid.Row="0" >
                     <Border Name="VEBorder" BorderThickness="1" BorderBrush="Black">
                         
                         <TextBlock x:Name="txtValueExpression" TextWrapping="Wrap" Style="{StaticResource @DetailsTextBlockStyle}" DockPanel.Dock="Top" Background="#FFEFEFF2" Margin="0,0,0,0" ></TextBlock>
@@ -220,7 +220,7 @@
                 <Label Name="ErrorLabel" Grid.Row="1" FontWeight="Bold" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top">Error</Label>
             </Grid>
         </StackPanel>        
-        <Label Name="ValueLabel"  Grid.Row="7" Grid.Column="0" Style="{StaticResource @SubInputFieldLabelStyle}" Content="Value:" Background="{StaticResource $BackgroundColor_LightGray}"/>        
+        <Label Name="ValueLabel"  Grid.Row="7" Grid.Column="0" Style="{StaticResource @SubInputFieldLabelStyle}" Content="Value:" Background="{StaticResource $BackgroundColor_White}"/>        
         <Actions:UCValueExpression x:Name="ValueUC" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" VerticalAlignment="Top" ToolTip="Value to Set"/>        
     </Grid>
 </Page>

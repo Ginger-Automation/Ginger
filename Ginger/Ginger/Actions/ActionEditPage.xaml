@@ -14,7 +14,7 @@
       d:DesignWidth="1000"
       d:DesignHeight="800">
 
-    <Grid Name="xPageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Name="xPageGrid" Background="{StaticResource $BackgroundColor_White}">
         <Grid.Resources>
             <DataTemplate x:Key="ValueExpressionButton">
                 <Button x:Name="GridVEButton" Content="..." Click="GridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
@@ -53,7 +53,7 @@
 
         <Grid Grid.Row="0">
             <!--Tabs Area-->
-            <TabControl x:Name="xActionTabs" Margin="0,8,0,-8" SelectionChanged="xActionTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_Primary}" BorderThickness="0" >
+            <TabControl x:Name="xActionTabs" Margin="0,8,0,-8" SelectionChanged="xActionTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_White}" BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="0" >
                 <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="0" Tag="False">
                     <TabItem.Header>
                         <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="General Details">
@@ -63,7 +63,7 @@
                             </DockPanel>
                         </Border>
                     </TabItem.Header>
-                    <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_Primary}" BorderThickness="1" CornerRadius="3">
+                    <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="1" CornerRadius="3">
                         <ScrollViewer>
                             <Grid x:Name="xActionsDetailsPnl" Margin="10">
                                 <Grid.ColumnDefinitions>
@@ -99,7 +99,7 @@
                             </DockPanel>
                         </Border>
                     </TabItem.Header>
-                    <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_Primary}" BorderThickness="1" CornerRadius="3">
+                    <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="1" CornerRadius="3">
                         <ScrollViewer>
                             <DockPanel x:Name="xOperationSettingsPnl" Margin="5">
                                 <Grid x:Name="xActionLocatorPnl" DockPanel.Dock="Top">
@@ -145,7 +145,7 @@
                             </DockPanel>
                         </Border>
                     </TabItem.Header>
-                    <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_Primary}" BorderThickness="1" CornerRadius="3">
+                    <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="1" CornerRadius="3">
                         <ScrollViewer>
                             <DockPanel Margin="5" >
                                 <StackPanel x:Name="xWaitTimeoutPnl"  DockPanel.Dock="Top" Orientation="Horizontal"  HorizontalAlignment="Left" Margin="0,5,0,0">
@@ -197,7 +197,7 @@
                             </DockPanel>
                         </Border>
                     </TabItem.Header>
-                    <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_Primary}" BorderThickness="1" CornerRadius="3">
+                    <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="1" CornerRadius="3">
                         <ScrollViewer>
                             <DockPanel Margin="5">
                                 <Expander x:Name="xDataSourceExpander" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="False" Grid.Row="0" Style="{StaticResource $ExpanderStyle}" Expanded="xDataSourceExpander_Expanded">
@@ -209,7 +209,7 @@
                                         </Label>
                                     </Expander.Header>
                                     <Expander.Content>
-                                        <StackPanel x:Name="xAddOutputToDataSourcePnl" Margin="5" Background="{StaticResource $BackgroundColor_LightGray}">
+                                        <StackPanel x:Name="xAddOutputToDataSourcePnl" Margin="5" Background="{StaticResource $BackgroundColor_White}">
                                             <CheckBox Name="xAddOutToDSCheckbox" Content="Add Output Value/s to Data Source" Checked="AddOutDS_Checked"  Unchecked="AddOutDS_Unchecked" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" FontWeight="Bold"/>
                                             <DockPanel x:Name="xAddOutputToDataSourceConfigPnl" >
                                                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,5,0,5">
@@ -254,7 +254,7 @@
                             </DockPanel>
                         </Border>
                     </TabItem.Header>
-                    <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_Primary}" BorderThickness="1" CornerRadius="3">
+                    <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="1" CornerRadius="3">
                         <ScrollViewer>
                             <DockPanel Margin="5">
                                 <Expander x:Name="xExecutionDetailsRelatedSettingsExpander" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}">
@@ -334,7 +334,7 @@
                                             <DockPanel x:Name="xScreenShotsPnl" DockPanel.Dock="Top" Margin="0,10,0,0" >
                                                 <Label Content="Screenshots:" DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}"/>
                                                 <!--<Grid x:Name="xScreenShotsGrid" DockPanel.Dock="Top" Margin="10"/>-->
-                                                <Border BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_Primary}">
+                                                <Border BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_Black}">
                                                     <DockPanel x:Name="xScreenShotsViewPnl" DockPanel.Dock="Top" Margin="10"/>
                                                 </Border>
                                             </DockPanel>
@@ -355,7 +355,7 @@
                             </DockPanel>
                         </Border>
                     </TabItem.Header>-->
-                    <Border Margin="5" DockPanel.Dock="Top" BorderBrush="{StaticResource $BackgroundColor_Primary}" BorderThickness="1" CornerRadius="3">
+                    <Border Margin="5" DockPanel.Dock="Top" BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="1" CornerRadius="3">
                         <ScrollViewer>
                             <Frame x:Name="xActionHelpDetailsFram" Margin="10" Content="Action Description" NavigationUIVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
                         </ScrollViewer>

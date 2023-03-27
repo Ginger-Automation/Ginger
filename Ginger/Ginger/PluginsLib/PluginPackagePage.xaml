@@ -8,7 +8,7 @@
       d:DesignHeight="600" d:DesignWidth="800"
       Title="PluginPackagePage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="541*"/>
         </Grid.ColumnDefinitions>
@@ -17,19 +17,19 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <StackPanel Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="0">
+        <StackPanel Background="{StaticResource $BackgroundColor_White}" Grid.Row="0">
             <StackPanel Orientation="Horizontal">
                 <Label Style="{StaticResource  @InputFieldLabelStyle}" FontWeight="Bold"  Content="Plugin Package:"/>
                 <Label x:Name="PlugInNamelbl" Style="{StaticResource  @InputFieldLabelStyle}"/>
             </StackPanel>
 
-            <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+            <Grid Background="{StaticResource $BackgroundColor_White}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="25"/>
                     <RowDefinition Height="55"/>
                 </Grid.RowDefinitions>
                 <Label Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" Content="Description:" />
-                <Border BorderThickness="1" BorderBrush="{StaticResource $Color_Primary}" Grid.Row="1" Margin="5,0,0,0" >
+                <Border BorderThickness="1" BorderBrush="{StaticResource $PrimaryColor_Black}" Grid.Row="1" Margin="5,0,0,0" >
                     <ScrollViewer  >
                         <TextBlock x:Name="xSummaryTextBlock" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" ></TextBlock>
                     </ScrollViewer>
@@ -56,14 +56,14 @@
         <TabControl x:Name="PlugInTab" Grid.Row="2" >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
-                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                     <Setter Property="Height" Value="30"/>
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="False" >
-                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True" >
-                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                         </Trigger>
                     </Style.Triggers>
                 </Style>
@@ -72,7 +72,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
                         <Image Source="{StaticResource  @GeneralAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
-                        <TextBlock Text="Services" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
+                        <TextBlock Text="Services" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Grid>
@@ -88,7 +88,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource @Edit_20x20}" Height="20" Width="20" Margin="-6,0,0,0"/>
-                        <TextBlock Text="PlugIn Text Editors" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
+                        <TextBlock Text="PlugIn Text Editors" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="PlugInsEditorActionsGrid" Title="PlugIn Editors" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed"/>

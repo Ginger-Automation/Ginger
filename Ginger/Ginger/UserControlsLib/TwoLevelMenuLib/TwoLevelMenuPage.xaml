@@ -8,7 +8,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="MenusPage">
 
-    <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
+    <DockPanel Background="{StaticResource $BackgroundColor_White}">
         <Border BorderThickness="0,0,0,1" DockPanel.Dock="Top">
             <DockPanel DockPanel.Dock="Top">
                 <!--Main Navigation Panel-->

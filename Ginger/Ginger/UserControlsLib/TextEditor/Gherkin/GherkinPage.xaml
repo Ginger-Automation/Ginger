@@ -72,7 +72,7 @@
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1" Margin="231,0" Width="0"/>
 
-        <GridSplitter ResizeDirection="Columns" Grid.Row="0" Grid.Column="1" Grid.RowSpan="1" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $Color_Primary}" IsEnabled="True" />
+        <GridSplitter ResizeDirection="Columns" Grid.Row="0" Grid.Column="1" Grid.RowSpan="1" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $PrimaryColor_Black}" IsEnabled="True" />
 
         <TextEditor:UCTextEditor x:Name="GherkinTextEditor" Grid.Row="0" />
 

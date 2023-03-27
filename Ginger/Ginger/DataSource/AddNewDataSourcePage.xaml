@@ -10,7 +10,7 @@
       Height="120" Width="500" MinHeight="120"
 	Title="Config Data Source">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="130"/>
             <ColumnDefinition Width="370"/>

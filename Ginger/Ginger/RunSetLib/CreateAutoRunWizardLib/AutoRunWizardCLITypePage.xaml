@@ -12,7 +12,7 @@
         <BooleanToVisibilityConverter x:Key="b2v" />
     </Page.Resources>
     
-    <DockPanel Background="{StaticResource $BackgroundColor_LightGray}" Margin="10">
+    <DockPanel Background="{StaticResource $BackgroundColor_White}" Margin="10">
 
         <!--<Label DockPanel.Dock="Top" HorizontalAlignment="Left" Style="{StaticResource $SectionHeaderLabelStyle}" Margin="-5,0,0,0">Auto Run Configuration Setup</Label>-->
 

@@ -21,14 +21,14 @@
             <Frame x:Name="xPOMFrame" NavigationUIVisibility="Hidden" VerticalAlignment="Top" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
         </ScrollViewer>
         
-        <GridSplitter x:Name="xPOMSplitter" ResizeDirection="Rows" Grid.Row="1" Height="1" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_Primary}" IsEnabled="False" />
+        <GridSplitter x:Name="xPOMSplitter" ResizeDirection="Rows" Grid.Row="1" Height="1" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_Black}" IsEnabled="False" />
 
-        <TabControl x:Name="xPomTabs" Margin="0,5,0,0" Grid.Row="1" Background="{StaticResource $BackgroundColor_LightGray}">
+        <TabControl x:Name="xPomTabs" Margin="0,5,0,0" Grid.Row="1" Background="{StaticResource $BackgroundColor_White}">
             <TabItem Name="xUiElementsTabItem">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl ImageType="Elements"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                        <TextBlock x:Name="xUIElementTabTextBlock" VerticalAlignment="Center" Text="UI Elements"  Margin="5,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
+                        <TextBlock x:Name="xUIElementTabTextBlock" VerticalAlignment="Center" Text="UI Elements"  Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <userControlsLib1:UcListView x:Name="xPomElementsListView" AllowDrop="True"/>
@@ -37,7 +37,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl ImageType="Activity" SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                        <TextBlock x:Name="xSharedActivitiesTabTextBlock" VerticalAlignment="Center" Text="Suggested Activities"  Margin="5,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
+                        <TextBlock x:Name="xSharedActivitiesTabTextBlock" VerticalAlignment="Center" Text="Suggested Activities"  Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Frame x:Name="xSharedActivitiesFrame" Content="Frame" NavigationUIVisibility="Hidden"/>

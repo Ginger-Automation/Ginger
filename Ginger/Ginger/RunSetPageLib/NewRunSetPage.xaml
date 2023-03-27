@@ -16,17 +16,17 @@
       Title="Runset"  Loaded="Page_loaded">
 
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+    <Grid Background="{StaticResource $BackgroundColor_White}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <StackPanel x:Name="xRunSetLoadingPnl" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" >
             <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
-            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Primary}">
+            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Black}">
                 <Label.Content>
                     <GingerCore:ucTextDicResource Text="Loading [RunSet]..."/>
                 </Label.Content>
             </Label>
         </StackPanel>
 
-        <Grid Name="xRunsetPageGrid" Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Visible" >
+        <Grid Name="xRunsetPageGrid" Background="{StaticResource $BackgroundColor_White}" Visibility="Visible" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="55"/>
                 <RowDefinition Height="60"/>
@@ -52,7 +52,7 @@
                                 </usercontrols:ucButton.ToolTip>
                             </usercontrols:ucButton>
 
-                            <GridSplitter Width="1" Height="25" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_Primary}" Margin="10 0 10 0"/>
+                            <GridSplitter Width="1" Height="25" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_Black}" Margin="10 0 10 0"/>
 
                             <usercontrols:ucButton x:Name="xRunsetSaveBtn"  ButtonType="ImageButton" Visibility="Collapsed"  ButtonFontImageSize="21" ButtonImageWidth="22" ButtonImageHeight="22" ButtonImageType="Save" Click="xRunsetSaveBtn_Click">
                                 <usercontrols:ucButton.ToolTip>
@@ -113,7 +113,7 @@
                             </Menu>
                         </StackPanel>
 
-                        <GridSplitter Width="1" Height="25" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_Primary}" Margin="10 0 10 0"/>
+                        <GridSplitter Width="1" Height="25" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_Black}" Margin="10 0 10 0"/>
 
                         <StackPanel x:Name="xExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
                             <usercontrols:ucButton x:Name="xRunRunsetBtn"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
@@ -141,7 +141,7 @@
             </ScrollViewer>
 
 
-            <TabControl DockPanel.Dock="Left" SelectionChanged="TabControl_SelectionChanged" x:Name="RunTab" Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="2" Grid.Column="1" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <TabControl DockPanel.Dock="Left" SelectionChanged="TabControl_SelectionChanged" x:Name="RunTab" Background="{StaticResource $BackgroundColor_White}" Grid.Row="2" Grid.Column="1" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <TabItem x:Name="xRunnersTab" Style="{StaticResource $CoolTab}" TabIndex="1">
                     <TabItem.Header>
                         <Border x:Name="RunnerBorder" Style="{StaticResource $CoolTabBorderStyle}" >
@@ -159,10 +159,10 @@
                                 <RowDefinition x:Name="xRunnerItemsViewRow" Height="200*" />
                             </Grid.RowDefinitions>
 
-                            <DockPanel x:Name="xRunnersControlPnl" Grid.Row="0" Background="{StaticResource $BackgroundColor_LightGray}" >
+                            <DockPanel x:Name="xRunnersControlPnl" Grid.Row="0" Background="{StaticResource $BackgroundColor_White}" >
                                 <usercontrols:ucButton x:Name="xRunnerDetailViewBtn" Margin="40 0 0 0" ToolTip="Expand / Collapse All Runners" ButtonType="ImageButton" HorizontalAlignment="Left" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="CollapseAll" Click="xRunnerDetailView_Click" Visibility="Visible" />
-                                <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_Primary}" Margin="10 0 10 0"/>
-                                <DockPanel x:Name="xRunnersCanvasControls" HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_LightGray}">
+                                <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_Black}" Margin="10 0 10 0"/>
+                                <DockPanel x:Name="xRunnersCanvasControls" HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_White}">
                                     <usercontrols:ucButton x:Name="xRunnersActiveBtn" ToolTip="Active / Inactive All Runners" ButtonFontImageSize="14" ButtonImageWidth="17" ButtonImageHeight="17" ButtonType="CircleImageButton" ButtonImageType="ActiveAll" Click="xRunnersActive_Click" />
                                     <usercontrols:ucButton x:Name="xAddRunnerBtn" ToolTip="Add Runner" ButtonType="CircleImageButton" ButtonFontImageSize="14" ButtonImageWidth="17" ButtonImageHeight="17" ButtonImageType="Add" Click="addRunner_Click"></usercontrols:ucButton>
                                     <usercontrols:ucButton x:Name="xClearAllRunnerBtn" ToolTip="Delete All Runners" ButtonType="CircleImageButton" ButtonFontImageSize="14" ButtonImageWidth="17" ButtonImageHeight="17"  ButtonImageType="Delete" Click="clearAllRunner_Click"></usercontrols:ucButton>
@@ -170,13 +170,13 @@
                                     <usercontrols:ucButton x:Name="xMoveRunnerRightBtn" ToolTip="Shift Runner Right" ButtonType="CircleImageButton" ButtonFontImageSize="14" ButtonImageWidth="17" ButtonImageHeight="17"  ButtonImageType="MoveRight" Click="MoveRunnerRight_Click"/>
                                     <z:ZoomPanel x:Name="xZoomPanel"></z:ZoomPanel>
                                 </DockPanel>
-                                <DockPanel x:Name="xRunnersExecutionControls" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,-3,0">
-                                    <Label Content="Environment :" x:Name="xEnvironmentCombolbl" Foreground="{StaticResource $BackgroundColor_Primary}" ></Label>
+                                <DockPanel x:Name="xRunnersExecutionControls" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="{StaticResource $BackgroundColor_White}" Margin="0,0,-3,0">
+                                    <Label Content="Environment :" x:Name="xEnvironmentCombolbl" Foreground="{StaticResource $BackgroundColor_Black}" ></Label>
                                     <ComboBox x:Name="xRunsetEnvironmentCombo" ToolTip="Environment"  HorizontalAlignment="Left" ContextMenu="{x:Null}" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="0,5,5,3" SelectionChanged="XRunsetEnvironmentCombo_SelectionChanged"></ComboBox>
                                     <usercontrols:ucButton x:Name="xRunnersExecutionConfigBtn" ToolTip="Runners Execution Configurations" ButtonType="ImageButton" ButtonFontImageSize="18" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Config" Click="xRunnersExecutionConfigBtn_Click"></usercontrols:ucButton>
                                     <usercontrols:ucButton x:Name="xSelfHealingConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageType="SelfHealing" Click="xSelfHealingConfigBtn_Click"  ToolTip="Self Healing Configurations"/>
 
-                                    <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_Primary}" Margin="6 0 6 0"/>
+                                    <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_Black}" Margin="6 0 6 0"/>
                                     <usercontrols:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Runner Items Selection is Synced with Execution Progress, Click to Un-Sync it" ButtonType="ImageButton" ButtonFontImageSize="17" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click"></usercontrols:ucButton>
                                 </DockPanel>
                             </DockPanel>
@@ -185,7 +185,7 @@
                                 <ScrollViewer Name="xRunnersCanvasView" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                                     <Frame Name="xRunnersCanvasFrame" HorizontalAlignment="Stretch"  Background="White"  Margin="0 0 0 0" />
                                 </ScrollViewer>
-                                <DockPanel Name="xRunnersMiniView" HorizontalAlignment="Stretch" Panel.ZIndex="1" VerticalAlignment="Stretch"  Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Collapsed" >
+                                <DockPanel Name="xRunnersMiniView" HorizontalAlignment="Stretch" Panel.ZIndex="1" VerticalAlignment="Stretch"  Background="{StaticResource $BackgroundColor_White}" Visibility="Collapsed" >
                                     <ComboBox x:Name="xRunnersCombo" ToolTip="Runners"  Validation.ErrorTemplate="{x:Null}" Width="350" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="40,5,5,3" FontSize="20" FontWeight="Bold" Height="30" Foreground="{StaticResource $SelectionColor_Pink}"></ComboBox>
                                     <DockPanel HorizontalAlignment="Right" x:Name="xRunnerInfoDocPanel">
                                         <DockPanel x:Name="xMiniRunnerExecutionPanel">
@@ -193,8 +193,8 @@
                                             <usercontrols:ucButton x:Name="xStopRunnerBtn" ToolTip="Stop Runner Execution" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Stop" Click="xStopRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
                                             <usercontrols:ucButton x:Name="xContinueRunnerBtn"  ToolTip="Continue Runner Execution from Last Stopped Action" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Continue" Click="xContinueRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
                                         </DockPanel>
-                                        <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_Primary}" Margin="12 0 12 0"/>
-                                        <Label x:Name="xRuntimeLbl" Content="00:00:00" Width="90" Height="32" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" Foreground="{StaticResource $SelectionColor_LightBlue}" />
+                                        <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_Black}" Margin="12 0 12 0"/>
+                                        <Label x:Name="xRuntimeLbl" Content="00:00:00" Width="90" Height="32" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" Foreground="{StaticResource $HighlightColor_LightBlue}" />
                                         <state:StatusItem x:Name="xStatus" Margin="0 2 2 0" HorizontalAlignment="Right" SetStatusIcon="True"></state:StatusItem>
                                     </DockPanel>
                                 </DockPanel>
@@ -364,7 +364,7 @@
                         </Border>
                     </TabItem.Header>
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <DockPanel Grid.Row="0" x:Name="Config" Visibility="Visible" Background="{StaticResource $BackgroundColor_LightGray}" MinHeight="800">
+                        <DockPanel Grid.Row="0" x:Name="Config" Visibility="Visible" Background="{StaticResource $BackgroundColor_White}" MinHeight="800">
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                                 <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
                                 <usercontrols1:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
@@ -396,7 +396,7 @@
                                 <Expander.Header>
                                     <StackPanel Orientation="Horizontal">
                                         <Label Content="Sealights Execution Logger Settings" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Primary}" />
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
                                     </StackPanel>
                                 </Expander.Header>
                                 <Expander.Content>

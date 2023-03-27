@@ -47,7 +47,7 @@ namespace Ginger.WizardLib
             string[] lines = txt.Split(Environment.NewLine.ToCharArray());
             TextBlockHelper TBH = new TextBlockHelper(xIntroTextBlock);
             TBH.AddLineBreak();
-            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_Primary")).ToString());
+            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$PrimaryColor_Black")).ToString());
             foreach (string line in lines)
             {
                 string l = line.Replace("```$GingerCore.eTermResKey.BusinessFlow$```", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));

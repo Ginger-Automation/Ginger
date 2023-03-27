@@ -9,7 +9,7 @@
       d:DesignHeight="800" d:DesignWidth="600"
 	Title="ActLaunchJavaWSApplicationEditPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}" Margin="10">
+    <Grid Background="{StaticResource $BackgroundColor_White}" Margin="10">
 
         <Grid.RowDefinitions>
             <RowDefinition/>

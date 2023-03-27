@@ -10,7 +10,7 @@
 	Title="HTML Reports Attachment Configurations">
 
     <ScrollViewer>
-        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid Background="{StaticResource $BackgroundColor_White}">
             <StackPanel Margin="0,0,-11,0">
                 <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
                     <Label Margin="0,0,10,0" Style="{StaticResource @LabelStyle}" Content="Select Report Template:"/>

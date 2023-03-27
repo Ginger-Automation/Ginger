@@ -9,10 +9,10 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="LoadingPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
-            <Label x:Name="xProcessingLabel" HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Primary}" Content="Loading..."/>
+            <Label x:Name="xProcessingLabel" HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Black}" Content="Loading..."/>
         </StackPanel>
     </Grid>
 </Page>

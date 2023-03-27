@@ -7,7 +7,7 @@
       d:DesignHeight="600" d:DesignWidth="1000"
 	Title="ActRESTEditPage">
 
-    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}" >
+    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_White}" >
         <Grid.Resources>
             <DataTemplate x:Key="InputValueExpressionButton">
 

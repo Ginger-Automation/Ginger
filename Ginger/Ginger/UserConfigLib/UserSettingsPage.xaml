@@ -9,7 +9,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="UserSettings">
 
-    <ScrollViewer Background="{StaticResource $BackgroundColor_LightGray}">
+    <ScrollViewer Background="{StaticResource $BackgroundColor_White}">
         <StackPanel>
             <Label Content="Terminology Type:" Style="{StaticResource $LabelStyle}" Margin="-5,20,0,0"/>
             <ComboBox x:Name="xTerminologyTypeComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="xTerminologyTypeComboBox_SelectionChanged"/>
@@ -28,7 +28,7 @@
 
             <StackPanel Orientation="Horizontal">
                 <CheckBox x:Name="xShowEnterpriseFeatures" Style="{StaticResource $CeckBoxStyle}" Content="Show enterprise features"  Margin="0,5,0,0"/>
-                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Primary}" />
+                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
             </StackPanel>
             <!--<CheckBox x:Name="xShowBFSaveWarnCheckBox" Style="{StaticResource $CeckBoxStyle}"  Margin="0,5,0,0">
                 <CheckBox.Content>

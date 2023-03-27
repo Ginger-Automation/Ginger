@@ -7,10 +7,10 @@
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="600"
 	Title="RunSetActionEmailReportEditPage">
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <TabControl Grid.RowSpan="2">
             <TabItem Header="Message">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="230" />
@@ -51,8 +51,8 @@
                     <TextBox Grid.Row="1" x:Name="BodyTextBox" TextWrapping="Wrap" AcceptsReturn="True" ScrollViewer.VerticalScrollBarVisibility="Auto" Style="{StaticResource @MultiRowsTextBoxStyle}" />
                 </Grid>
             </TabItem>
-            <TabItem Header="Attachments" Background="{StaticResource $BackgroundColor_LightGray}">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem Header="Attachments" Background="{StaticResource $BackgroundColor_White}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
                     <StackPanel>
                         <Ginger:ucGrid x:Name="AttachmentsGrid" Title="Attachments" ShowAdd="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>
                     </StackPanel>
@@ -60,8 +60,8 @@
             </TabItem>
 
 
-            <TabItem Header="Delivery Method" Background="{StaticResource $BackgroundColor_LightGray}">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem Header="Delivery Method" Background="{StaticResource $BackgroundColor_White}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label Style="{StaticResource @LabelStyle}"  VerticalAlignment="Center" Margin="-2,10,0,10" Width="118">E-mail Method:</Label>

@@ -404,7 +404,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                         if (operation.ImageForeground == null)
                         {
-                            //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_Primary");
+                            //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_Black");
                         }
                         else
                         {
@@ -464,7 +464,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                         if (operation.ImageForeground == null)
                         {
-                            //iconImage.ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Primary");
+                            //iconImage.ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Black");
                         }
                         else
                         {
@@ -559,7 +559,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                         if (operation.ImageForeground == null)
                         {
-                            //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_Primary");
+                            //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_Black");
                         }
                         else
                         {
@@ -760,7 +760,7 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     string fullDesc = string.Empty;
                     bool errorWasSet = false;
-                    xItemDescriptionTxtBlock.Foreground = FindResource("$BackgroundColor_Primary") as Brush;
+                    xItemDescriptionTxtBlock.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                     if (!string.IsNullOrEmpty(mItemErrorField))
                     {
                         Object error = Item.GetType().GetProperty(mItemErrorField).GetValue(Item);

@@ -9,12 +9,12 @@
       d:DesignHeight="400" d:DesignWidth="600"
       Title="RunSetActionDeliveryMethodConfigPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="399*"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid Margin="10" Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid Margin="10" Background="{StaticResource $BackgroundColor_White}">
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Style="{StaticResource @LabelStyle}"  VerticalAlignment="Center" Margin="-2,10,0,10" Width="118">E-mail Method:</Label>

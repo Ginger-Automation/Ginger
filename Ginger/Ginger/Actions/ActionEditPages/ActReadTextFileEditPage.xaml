@@ -7,7 +7,7 @@
       d:DesignHeight="350" d:DesignWidth="700"
 	Title="ActReadTextFileEditPage" >
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="500*"/>
             <ColumnDefinition Width="100"/>

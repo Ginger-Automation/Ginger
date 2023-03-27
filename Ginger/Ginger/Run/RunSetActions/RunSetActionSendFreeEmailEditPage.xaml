@@ -10,7 +10,7 @@
 	Title="RunSetActionSendFreeEmailEditPage">
 
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="399*"/>
             <RowDefinition/>
@@ -22,7 +22,7 @@
                 MouseLeftButtonDown="Label_MouseLeftButtonDown" 
                 HorizontalAlignment="Stretch"/>
                 </TabItem.Header>
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="57*"/>
                         <ColumnDefinition Width="238*"/>
@@ -54,7 +54,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Delivery Method" Background="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem Header="Delivery Method" Background="{StaticResource $BackgroundColor_White}">
                 <Frame x:Name="RunsetActionDeliveryMethodConfigPageFrame"></Frame>
             </TabItem>
         </TabControl>

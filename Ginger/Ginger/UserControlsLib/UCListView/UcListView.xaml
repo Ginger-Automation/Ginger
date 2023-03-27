@@ -43,7 +43,7 @@
         </DockPanel>
 
         <Grid Grid.Row="1" >
-            <TextBox x:Name="xSearchTextBox" MinWidth="50" Height="25" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="xSearchTextBox_TextChangedAsync" BorderBrush="{StaticResource $Color_Primary}" />
+            <TextBox x:Name="xSearchTextBox" MinWidth="50" Height="25" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="xSearchTextBox_TextChangedAsync" BorderBrush="{StaticResource $PrimaryColor_Black}" />
             <usercontrols:ucButton x:Name="xSearchClearBtn" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="xSearchClearBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
             <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" Click="xSearchBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
         </Grid>
@@ -73,11 +73,11 @@
                                                         <ColumnDefinition Width="100"/>
                                                     </Grid.ColumnDefinitions>
                                                     <DockPanel HorizontalAlignment="Stretch" Grid.Column="0">
-                                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" ToolTip="{Binding Name}" Foreground="{StaticResource $BackgroundColor_Primary}" FontSize="16" VerticalAlignment="Center" Style="{StaticResource $TextBlockStyle}" TextTrimming="CharacterEllipsis" Margin="0,0,0,0" />
+                                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" ToolTip="{Binding Name}" Foreground="{StaticResource $BackgroundColor_Black}" FontSize="16" VerticalAlignment="Center" Style="{StaticResource $TextBlockStyle}" TextTrimming="CharacterEllipsis" Margin="0,0,0,0" />
                                                         <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="2,0,0,0">
-                                                            <TextBlock Foreground="{StaticResource $BackgroundColor_Primary}" VerticalAlignment="Center" FontSize="11" >(</TextBlock>
-                                                            <TextBlock Text="{Binding ItemCount}" Foreground="{StaticResource $BackgroundColor_Primary}" FontSize="11" VerticalAlignment="Center" Margin="0,0,0,0"></TextBlock>
-                                                            <TextBlock Foreground="{StaticResource $BackgroundColor_Primary}" VerticalAlignment="Center" FontSize="11" Margin="0,0,0,0">)</TextBlock>
+                                                            <TextBlock Foreground="{StaticResource $BackgroundColor_Black}" VerticalAlignment="Center" FontSize="11" >(</TextBlock>
+                                                            <TextBlock Text="{Binding ItemCount}" Foreground="{StaticResource $BackgroundColor_Black}" FontSize="11" VerticalAlignment="Center" Margin="0,0,0,0"></TextBlock>
+                                                            <TextBlock Foreground="{StaticResource $BackgroundColor_Black}" VerticalAlignment="Center" FontSize="11" Margin="0,0,0,0">)</TextBlock>
                                                         </StackPanel>
                                                         <DockPanel x:Name="xGroupNotificationsPnl" Tag="{Binding Name}" HorizontalAlignment="Left" Margin="5,0,0,0" Loaded="XGroupNotificationsPnl_Loaded" />
                                                     </DockPanel>

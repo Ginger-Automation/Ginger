@@ -12,7 +12,7 @@
       Height="600" Width="800"
 	Title="Download Solution">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Name="ExpenderDetailsRow" Height="50"/>
             <RowDefinition Name="ExpenderConfigurationRow" Height="50"/>

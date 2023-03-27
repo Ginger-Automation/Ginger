@@ -10,7 +10,7 @@
       d:DesignHeight="556.717" d:DesignWidth="728.358"
 	Title="ValidationDBPage" >
 
-    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="170*"/>
             <RowDefinition Height="387*"/>
@@ -22,7 +22,7 @@
         </Grid.Resources>
         <StackPanel Grid.Row="0">
             <StackPanel Margin="0,5,5,5" Orientation="Horizontal">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
                     <Grid.RowDefinitions>
                         <RowDefinition MaxHeight="50"></RowDefinition>
                     </Grid.RowDefinitions>
@@ -39,7 +39,7 @@
             </StackPanel>
 
             <StackPanel Margin="0,5,5,5" Orientation="Horizontal">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
                     <Grid.RowDefinitions>
                         <RowDefinition MaxHeight="50"></RowDefinition>
                     </Grid.RowDefinitions>
@@ -58,7 +58,7 @@
             </StackPanel>
 
             <StackPanel Margin="0,5,5,5" Orientation="Horizontal">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
                     <Grid.RowDefinitions>
                         <RowDefinition MaxHeight="70"></RowDefinition>
                     </Grid.RowDefinitions>
@@ -73,7 +73,7 @@
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Vertical">
             <StackPanel x:Name="RadioButtonsSection" Margin="0,7,7,7" Orientation="Horizontal">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
                     <Grid.RowDefinitions>
                         <RowDefinition MaxHeight="70"></RowDefinition>
                     </Grid.RowDefinitions>
@@ -88,7 +88,7 @@
                 </Grid>
             </StackPanel>
             <StackPanel x:Name="Keyspace" Orientation="Horizontal">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
                     <Grid.RowDefinitions>
                         <RowDefinition MaxHeight="70"></RowDefinition>
                     </Grid.RowDefinitions>
@@ -106,7 +106,7 @@
                 </Grid>
             </StackPanel>
             <StackPanel x:Name="FreeSQLStackPanel" Orientation="Horizontal">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
                     <Grid.RowDefinitions>
                         <RowDefinition MaxHeight="70"></RowDefinition>
                     </Grid.RowDefinitions>
@@ -125,7 +125,7 @@
             </StackPanel>
             <StackPanel x:Name="SqlFile" Orientation="Horizontal">
 
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
                     <Grid.RowDefinitions>
                         <RowDefinition MaxHeight="70"></RowDefinition>
                     </Grid.RowDefinitions>
@@ -143,7 +143,7 @@
 
             <StackPanel x:Name="TableColWhereStackPanel" Height="244">
                 <StackPanel Margin="0,5,5,5" Orientation="Horizontal">
-                    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                    <Grid Background="{StaticResource $BackgroundColor_White}">
                         <Grid.RowDefinitions>
                             <RowDefinition MaxHeight="70"></RowDefinition>
                         </Grid.RowDefinitions>
@@ -159,7 +159,7 @@
                     </Grid>
                 </StackPanel>
                 <StackPanel x:Name="ColumnStack" Margin="0,5,5,5" Orientation="Horizontal">
-                    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                    <Grid Background="{StaticResource $BackgroundColor_White}">
                         <Grid.RowDefinitions>
                             <RowDefinition MaxHeight="70"></RowDefinition>
                         </Grid.RowDefinitions>
@@ -175,7 +175,7 @@
                     </Grid>
                 </StackPanel>
                 <StackPanel Margin="0,5,5,5" Orientation="Horizontal">
-                    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                    <Grid Background="{StaticResource $BackgroundColor_White}">
                         <Grid.RowDefinitions>
                             <RowDefinition MaxHeight="70"></RowDefinition>
                         </Grid.RowDefinitions>
@@ -195,7 +195,7 @@
             </StackPanel>
             <StackPanel Orientation="Vertical" x:Name="DoUpdate" Visibility="Collapsed" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Auto">
                 <StackPanel x:Name="xPrimaryKeyStackPanel" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,10,10">
-                    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                    <Grid Background="{StaticResource $BackgroundColor_White}">
                         <Grid.RowDefinitions>
                             <RowDefinition MaxHeight="70"></RowDefinition>
                         </Grid.RowDefinitions>
@@ -208,7 +208,7 @@
                     </Grid>
                 </StackPanel>
                 <StackPanel x:Name="xPartitionKeyStackPanel" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,10,10">
-                    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                    <Grid Background="{StaticResource $BackgroundColor_White}">
                         <Grid.RowDefinitions>
                             <RowDefinition MaxHeight="70"></RowDefinition>
                         </Grid.RowDefinitions>
@@ -235,7 +235,7 @@
                 </Grid>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,10,10">
-                    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                    <Grid Background="{StaticResource $BackgroundColor_White}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="70*"></RowDefinition>
                         </Grid.RowDefinitions>

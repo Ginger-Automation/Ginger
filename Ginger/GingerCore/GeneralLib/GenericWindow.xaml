@@ -4,7 +4,7 @@
         Title="" 
         WindowStyle="None"
         BorderThickness="1"
-        BorderBrush="{DynamicResource $Color_Primary}"     
+        BorderBrush="{DynamicResource $PrimaryColor_Black}"     
         Height="300" Width="300"
         StateChanged="Window_StateChanged" 
         WindowStartupLocation="CenterScreen"
@@ -21,8 +21,8 @@
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
 
-        <DockPanel x:Name="HeaderPanel" Grid.Row="0" Background="{DynamicResource $BackgroundColor_Primary}" MouseLeftButtonDown="HeaderPanel_MouseLeftButtonDown" >
-            <Label x:Name="winTitle" Content="Page Title" Foreground="{StaticResource $BackgroundColor_LightGray}" FontWeight="Bold" FontSize="14" FontFamily="Open Sans" VerticalAlignment="Center" Margin="0,0,0,0"/>
+        <DockPanel x:Name="HeaderPanel" Grid.Row="0" Background="{DynamicResource $BackgroundColor_Black}" MouseLeftButtonDown="HeaderPanel_MouseLeftButtonDown" >
+            <Label x:Name="winTitle" Content="Page Title" Foreground="{StaticResource $BackgroundColor_White}" FontWeight="Bold" FontSize="14" FontFamily="Open Sans" VerticalAlignment="Center" Margin="0,0,0,0"/>
             <Button x:Name="UpperCloseBtn" ToolTip="Close Window" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,10,0" Click="CloseBtn_Click" Background="Transparent" Width="20" BorderBrush="Transparent">
                 <Image Source="{DynamicResource @CloseWhite_20x20.png}" />
             </Button>
@@ -44,7 +44,7 @@
             <Frame x:Name="PageFrame" AutomationProperties.AutomationId="PageFrame AID"  Background="white" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden" ></Frame>
         </ScrollViewer>
 
-        <DockPanel x:Name="BottomPanel" Grid.Row="2" Background="{DynamicResource $BackgroundColor_LightGray}">
+        <DockPanel x:Name="BottomPanel" Grid.Row="2" Background="{DynamicResource $BackgroundColor_White}">
             <Button x:Name="CloseBtn" IsCancel="True" Content="Close" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,10,0" Click="CloseBtn_Click" Style="{StaticResource $RoundTextButtonStyle_Generic}" />
         </DockPanel>
     </Grid>

@@ -9,7 +9,7 @@
       d:DesignHeight="300" d:DesignWidth="500"
 	Title="ControlActionsPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200*"/>
             <ColumnDefinition Width="200*"/>
@@ -25,7 +25,7 @@
         <ScrollViewer x:Name="DataFrameScrollViewer" Grid.Row="0" Grid.ColumnSpan="2" Visibility="Collapsed">
             <Frame x:Name="DataFrame" />
         </ScrollViewer>
-        <GridSplitter x:Name="DataFrameSplitter" ResizeDirection="Rows" Grid.Row="0" Height="5"  Grid.ColumnSpan="2" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"  Background="{StaticResource $Color_Primary}" Visibility="Collapsed" />
+        <GridSplitter x:Name="DataFrameSplitter" ResizeDirection="Rows" Grid.Row="0" Height="5"  Grid.ColumnSpan="2" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"  Background="{StaticResource $PrimaryColor_Black}" Visibility="Collapsed" />
 
         <Ginger:ucGrid x:Name="AvailableControlActionsGrid" Title="Actions:" Grid.Row="1" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" Grid.Column="0" RowChangedEvent="AvailableControlActionsGrid_RowChangedEvent" Margin="0,0,5,0" IsSupportDragDrop="False" />
 
@@ -39,7 +39,7 @@
             <TextBox x:Name="SelectedActionLocateValueTextBox" IsEnabled="False"></TextBox>
         </StackPanel>
 
-        <GridSplitter ResizeDirection="Columns" Grid.Column="0" Width="1" HorizontalAlignment="Right" Grid.Row="1" VerticalAlignment="Stretch" Background="{StaticResource $Color_Primary}" IsEnabled="True" Margin="0,1,0,0"/>
+        <GridSplitter ResizeDirection="Columns" Grid.Column="0" Width="1" HorizontalAlignment="Right" Grid.Row="1" VerticalAlignment="Stretch" Background="{StaticResource $PrimaryColor_Black}" IsEnabled="True" Margin="0,1,0,0"/>
         <Ginger:ucGrid x:Name="AvailableLocatorsGrid" Title="Locators:" Grid.Row="1" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" Grid.Column="1" IsSupportDragDrop="False" />
 
         <Grid Grid.Row="2" Grid.ColumnSpan="2">
@@ -68,7 +68,7 @@
 
         <!--Output goes here-->
         <ScrollViewer Grid.Row="4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.ColumnSpan="2">
-            <Border BorderThickness="1" BorderBrush="{StaticResource $Color_Primary}">
+            <Border BorderThickness="1" BorderBrush="{StaticResource $PrimaryColor_Black}">
                 <StackPanel Orientation="Horizontal">                    
                     <TextBlock x:Name="TestStatusTextBlock" Text="Ready" TextWrapping="Wrap" Style="{StaticResource @DetailsTextBlockStyle}"/>
                 </StackPanel>

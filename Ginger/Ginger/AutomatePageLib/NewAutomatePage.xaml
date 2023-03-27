@@ -26,21 +26,20 @@
         <!--Top Row displaying Business Flow level controls-->
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
             <DockPanel x:Name="xBusinessFlowControlsPnl"  Background="{StaticResource $BackgroundColor_White}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <!--<UserControls:ucButton x:Name="xGoToBFsTreeBtn" DockPanel.Dock="Left" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="GoBack"  Click="xGoToBFsTreeBtn_Click" Foreground="{StaticResource $SelectionColor_LightBlue}" >
+                <!--<UserControls:ucButton x:Name="xGoToBFsTreeBtn" DockPanel.Dock="Left" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="GoBack"  Click="xGoToBFsTreeBtn_Click" Foreground="{StaticResource $HighlightColor_LightBlue}" >
                     <UserControls:ucButton.ToolTip>
                         <GingerCore:ucTextDicResource Text="Back to [BusinessFlows] Tree"></GingerCore:ucTextDicResource>
                     </UserControls:ucButton.ToolTip>
                 </UserControls:ucButton>-->
-
-                <StackPanel x:Name="xBusinessFlowDetailsPnl" DockPanel.Dock="Left" Orientation="Horizontal" Margin="10,0,0,0">
+                <StackPanel x:Name="xBusinessFlowDetailsPnl" DockPanel.Dock="Left" Orientation="Horizontal" Margin="10,0,0,0" MinWidth="370">
                     <UserControls:ImageMakerControl ImageType="BusinessFlow" SetAsFontImageWithSize="22" Width="32" Height="32" Foreground="{StaticResource $BackgroundColor_DarkGray}">
                         <UserControls:ImageMakerControl.ToolTip>
                             <GingerCore:ucTextDicResource Text="[BusinessFlow]"/>
                         </UserControls:ImageMakerControl.ToolTip>
                     </UserControls:ImageMakerControl>
-                    <TextBlock x:Name="xBusinessFlowNameTxtBlock" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Business Flow Name" FontSize="20" FontWeight="Bold" MaxWidth="250" Margin="5,0,0,0" TextTrimming="CharacterEllipsis"  Foreground="{StaticResource $SelectionColor_Pink}"  />
+                    <TextBlock x:Name="xBusinessFlowNameTxtBlock" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Business Flow Name" FontSize="20" FontWeight="Bold" MaxWidth="250"  Margin="5,0,0,0" TextTrimming="CharacterEllipsis"  Foreground="{StaticResource $SelectionColor_Pink}"  />
                     <StackPanel Orientation="Horizontal" Margin="0,0,30,0">
-                        <Label HorizontalAlignment="Center" FontSize="20" Foreground="{StaticResource $BackgroundColor_Primary}">></Label>
+                        <Label HorizontalAlignment="Center" FontSize="20" Foreground="{StaticResource $BackgroundColor_Black}">></Label>
                         <ComboBox x:Name="xBusinessFlowItemComboBox" ContextMenu="{x:Null}" SelectionChanged="xBusinessFlowItemComboBox_SelectionChanged" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" FontSize="18" Height="30" Foreground="{StaticResource $SelectionColor_Pink}"/>
                     </StackPanel>
                     <UserControls:ucButton x:Name="xSaveBusinessFlowBtn" ButtonType="ImageButton" HorizontalAlignment="Left" Visibility="Collapsed" VerticalAlignment="Center" ButtonFontImageSize="22" ButtonImageType="Save" Click="xSaveBusinessFlowBtn_Click" >
@@ -55,18 +54,7 @@
                     </UserControls:ucButton>
                 </StackPanel>
 
-                <GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Primary}" Margin="5,10,5,10"/>
-
-                <StackPanel x:Name="xExecutionControlsPnl" HorizontalAlignment="Left" DockPanel.Dock="Left" Orientation="Horizontal">
-                    <UserControls:ucButton x:Name="xRunFlowBtn" ToolTip="Reset &amp; Run Flow"  ButtonType="RoundTextAndImageButton"  ButtonText="Run Flow" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
-                    <UserControls:ucButton x:Name="xStopRunBtn" ToolTip= "Stop Execution" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_ExecutionStop}" Visibility="Collapsed"/>
-                    <UserControls:ucButton x:Name="xContinueRunBtn" ToolTip="Continue Execution from where it Stopped" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Collapsed" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
-                    <UserControls:ucButton x:Name="xResetFlowBtn" ButtonType="ImageButton" Click="xResetFlowBtn_Click"  ButtonFontImageSize="20" ButtonImageType="Reset" Margin="0,3,0,0" >
-                        <UserControls:ucButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Reset [BusinessFlow] Execution Details"/>
-                        </UserControls:ucButton.ToolTip>
-                    </UserControls:ucButton>
-                </StackPanel>
+                <GridSplitter Width="0.5" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="5,10,5,10"/>
 
                 <StackPanel x:Name="xExecutionConfigsPnl" DockPanel.Dock="Left" Orientation="Horizontal" >
                     <Frame x:Name="xAppsAgentsMappingFrame" NavigationUIVisibility="Hidden"/>
@@ -77,10 +65,9 @@
                     <UserControls:ucButton x:Name="xAutomationRunnerConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="19" ButtonImageType="Config" Click="xAutomationRunnerConfigBtn_Click" ToolTip="All Execution Configurations"/>
                     <UserControls:ucButton x:Name="xSelfHealingConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageType="SelfHealing" Click="xSelfHealingConfigBtn_Click"  ToolTip="Self Healing Configurations"/>
                     <UserControls:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Lists items selection in sync with execution progress. Click to un-sync it" ButtonType="ImageButton" ButtonFontImageSize="20"  ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click"/>
-
                 </StackPanel>
 
-                <GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Primary}" Margin="5,10,5,10"/>
+                <GridSplitter Width="0.5" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="5,10,5,10"/>
 
                 <StackPanel x:Name="xBusinessFlowOperationssPnl" DockPanel.Dock="Left" Orientation="Horizontal">
                     <UserControls:ucButton x:Name="xSearchBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageType="Search" Click="xSearchBtn_Click" >
@@ -292,14 +279,27 @@
                         </MenuItem>
                     </Menu>
                 </StackPanel>
+
+                <GridSplitter Width="0.5" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="5,10,5,10"/>
+
+                <StackPanel x:Name="xExecutionControlsPnl" HorizontalAlignment="Right" DockPanel.Dock="Right" Orientation="Horizontal" Margin="0,0,15,0">
+                    <UserControls:ucButton x:Name="xRunFlowBtn" ToolTip="Reset &amp; Run Flow"  ButtonType="RoundTextAndImageButton"  ButtonText="Run Flow" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $HighlightColor_LightBlue}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
+                    <UserControls:ucButton x:Name="xStopRunBtn" ToolTip= "Stop Execution" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_ExecutionStop}" Visibility="Collapsed"/>
+                    <UserControls:ucButton x:Name="xContinueRunBtn" ToolTip="Continue Execution from where it Stopped" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Collapsed" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
+                    <UserControls:ucButton x:Name="xResetFlowBtn" ButtonType="ImageButton" Click="xResetFlowBtn_Click"  ButtonFontImageSize="20" ButtonImageType="Reset" Margin="0,3,0,0" >
+                        <UserControls:ucButton.ToolTip>
+                            <GingerCore:ucTextDicResource Text="Reset [BusinessFlow] Execution Details"/>
+                        </UserControls:ucButton.ToolTip>
+                    </UserControls:ucButton>
+                </StackPanel>
             </DockPanel>
         </ScrollViewer>
 
         <Border x:Name="xItemsTabsSection" Grid.Row="2" Background="White" BorderThickness="0">
             <TabControl x:Name="xItemsTabs"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}" Background="White" Margin="0,0,0,0">
                 <TabItem x:Name="xBfActiVitiesTab" Style="{StaticResource $CoolMainTab}" TabIndex="1" >
-                    <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
-                        <DockPanel x:Name="xActivitiesLoadingPnl" Visibility="Collapsed"  DockPanel.Dock="Top" Margin="0,100,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="{StaticResource $BackgroundColor_LightGray}" >
+                    <DockPanel Background="{StaticResource $BackgroundColor_White}">
+                        <DockPanel x:Name="xActivitiesLoadingPnl" Visibility="Collapsed"  DockPanel.Dock="Top" Margin="0,100,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="{StaticResource $BackgroundColor_White}" >
                             <UserControls:ImageMakerControl DockPanel.Dock="Top" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
                             <Label DockPanel.Dock="Bottom" HorizontalAlignment="Center" FontSize="15" Style="{StaticResource $LabelStyle}" Margin="5,5,0,0" FontWeight="Normal">
                                 <Label.Content>
@@ -307,14 +307,14 @@
                                 </Label.Content>
                             </Label>
                         </DockPanel>
-                        <Grid x:Name="xActivitiesDataGrid" DockPanel.Dock="Top" Visibility="Visible" Background="{StaticResource $BackgroundColor_LightGray}">
+                        <Grid x:Name="xActivitiesDataGrid" DockPanel.Dock="Top" Visibility="Visible" Background="{StaticResource $BackgroundColor_White}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="382"/>
                                 <ColumnDefinition Width="300*"/>
                                 <ColumnDefinition x:Name="xAddActionsColumn" Width="5" MinWidth="5" MaxWidth="1300"/>
                             </Grid.ColumnDefinitions>
 
-                            <Border Grid.Column="0" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
+                            <Border Grid.Column="0" Background="{StaticResource $BackgroundColor_White}" Margin="0,0,0,0">
                                 <Frame x:Name="xActivitiesListFrame"  Content="Activities List Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden"  />
                             </Border>
 
@@ -325,7 +325,7 @@
                                 <Label Content="Loading..." HorizontalAlignment="Center" FontSize="15" Style="{StaticResource $LabelStyle}" Margin="5,5,0,0" FontWeight="Normal"/>
                             </StackPanel>
 
-                            <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
+                            <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_White}" />
 
                             <GridSplitter x:Name="xAddActionSectionSpliter" ResizeDirection="Columns" Grid.Column="2" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="Auto" Background="{StaticResource $amdocsLogoLinarGradientBrush}" IsEnabled="False" Margin="0,0,0,0" />
 
@@ -347,7 +347,7 @@
 
         <StackPanel x:Name="xItemsLoadingPnl" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" >
             <UserControls:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
-            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Primary}">
+            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Black}">
                 <Label.Content>
                     <GingerCore:ucTextDicResource x:Name="xLoadWindowText" Text="Loading [BusinessFlow]..."/>
                 </Label.Content>

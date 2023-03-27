@@ -1129,7 +1129,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             else
             {
                 Tree.BorderThickness = new Thickness(0);
-                Tree.BorderBrush = FindResource("$Color_Primary") as Brush;
+                Tree.BorderBrush = FindResource("$PrimaryColor_Black") as Brush;
             }
 
             return validationRes;

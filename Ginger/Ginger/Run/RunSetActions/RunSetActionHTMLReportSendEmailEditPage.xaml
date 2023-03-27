@@ -10,7 +10,7 @@
 	Title="RunSetActionHTMLReportEmailEditPage">
 
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="399*"/>
             <RowDefinition/>
@@ -22,7 +22,7 @@
                 MouseLeftButtonDown="TabItem_MouseLeftButtonDown" 
                 HorizontalAlignment="Stretch"/>
                 </TabItem.Header>
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="57*"/>
                         <ColumnDefinition Width="238*"/>
@@ -65,8 +65,8 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Attachments" Background="{StaticResource $BackgroundColor_LightGray}">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}" x:Name="GridAttachment">
+            <TabItem Header="Attachments" Background="{StaticResource $BackgroundColor_White}">
+                <Grid Background="{StaticResource $BackgroundColor_White}" x:Name="GridAttachment">
                     <Grid.Resources>
                         <DataTemplate x:Key="ReportAttachment">
                             <CheckBox x:Name="AttachmentsGrid_TemplateIsReport" Style="{StaticResource @CheckBoxStyle}" IsEnabled="{Binding IsReport}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="{Binding ZipIt,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
@@ -82,7 +82,7 @@
             </TabItem>
 
 
-            <TabItem Header="Delivery Method" Background="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem Header="Delivery Method" Background="{StaticResource $BackgroundColor_White}">
                 <Frame x:Name="RunsetActionDeliveryMethodConfigPageFrame"></Frame>
             </TabItem>
         </TabControl>

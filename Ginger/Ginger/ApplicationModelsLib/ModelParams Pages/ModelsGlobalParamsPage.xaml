@@ -23,7 +23,7 @@
 
         <StackPanel x:Name="xUpdatingItemsPnl" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" >
             <UserControls:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
-            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Primary}">
+            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Black}">
                 <Label.Content>
                     <GingerCore:ucTextDicResource x:Name="xLoadWindowText" Text="Updating Value Expression instances with the Model Global Parameters name change. Please Wait..."/>
                 </Label.Content>

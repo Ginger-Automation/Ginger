@@ -20,7 +20,7 @@
         </x:ArrayExtension>
     </Page.Resources>
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
             <RowDefinition Height="100"/>
@@ -34,11 +34,11 @@
 
         <StackPanel Grid.Row="1" VerticalAlignment="Center">
             <Label x:Name="StatusLabel" Content="Status"  FontSize="30" FontWeight="ExtraBold" />
-            <Label x:Name="lblElapsed" Content="Elapsed" FontSize="15" Foreground="{StaticResource $Color_Primary}"/>
+            <Label x:Name="lblElapsed" Content="Elapsed" FontSize="15" Foreground="{StaticResource $PrimaryColor_Black}"/>
         </StackPanel>
         <StackPanel Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="150,0,0,0" >
-            <Label x:Name="Activities" Content="Activities" Background="{StaticResource $BackgroundColor_LightGray}" Foreground="{StaticResource $BackgroundColor_DarkGray}" HorizontalAlignment="Left" FontFamily="MS Arial"  FontSize="20" Margin="310,0,0,0"/>
-            <Label x:Name="Actions" Content="Actions" Background="{StaticResource $BackgroundColor_LightGray}" Foreground="{StaticResource $BackgroundColor_DarkGray}" HorizontalAlignment="Left" FontFamily="MS Arial" FontSize="20"  Margin="110,0,0,0"/>
+            <Label x:Name="Activities" Content="Activities" Background="{StaticResource $BackgroundColor_White}" Foreground="{StaticResource $BackgroundColor_DarkGray}" HorizontalAlignment="Left" FontFamily="MS Arial"  FontSize="20" Margin="310,0,0,0"/>
+            <Label x:Name="Actions" Content="Actions" Background="{StaticResource $BackgroundColor_White}" Foreground="{StaticResource $BackgroundColor_DarkGray}" HorizontalAlignment="Left" FontFamily="MS Arial" FontSize="20"  Margin="110,0,0,0"/>
         </StackPanel>
         <DockPanel Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50,0,0,70">
             <StackPanel Grid.Row="1" Margin="0,50,0,0">

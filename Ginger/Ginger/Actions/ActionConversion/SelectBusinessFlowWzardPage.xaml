@@ -10,7 +10,7 @@
       d:DesignHeight="450" d:DesignWidth="700"
       Title="SelectBusinessFlowWzardPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Ginger:ucGrid x:Name="xBusinessFlowGrid" Grid.Row="0" ShowTagsFilter="Collapsed" IsReadOnly="True" ShowAdd="Visible" ShowDelete="Visible" ShowClearAll="Visible"  ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed">
             <Ginger:ucGrid.Title>
                 <GingerCore:ucTextDicResource Text="[BusinessFlows] to Convert"/>

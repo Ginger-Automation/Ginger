@@ -10,7 +10,7 @@
       Title="APIModelPage">
 
     <ScrollViewer>
-        <Grid Background="{DynamicResource $BackgroundColor_LightGray}">
+        <Grid Background="{DynamicResource $BackgroundColor_White}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="215"/>
                 <RowDefinition Name="SecondRow" Height="700"/>
@@ -39,17 +39,17 @@
             </StackPanel>
 
 
-            <TabControl x:Name="APIModelTabs" Grid.Row="1" Background="{StaticResource $BackgroundColor_LightGray}"  HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged" Margin="5,0,10,0" >
+            <TabControl x:Name="APIModelTabs" Grid.Row="1" Background="{StaticResource $BackgroundColor_White}"  HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged" Margin="5,0,10,0" >
                 <TabControl.Resources>
                     <Style TargetType="{x:Type TabItem}">
-                        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                        <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                         <Setter Property="Height" Value="25"/>
                         <Style.Triggers>
                             <Trigger Property="IsSelected" Value="False" >
-                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True" >
-                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -59,11 +59,11 @@
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Image Source="{StaticResource  @Config_20x20.png }" Height="20" Width="20" />
-                            <TextBlock Text="Configurations" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
+                            <TextBlock Text="Configurations" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                         </StackPanel>
                     </TabItem.Header>
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <Grid Name="APIConfigurationsTab" Background="{StaticResource $BackgroundColor_LightGray}">
+                        <Grid Name="APIConfigurationsTab" Background="{StaticResource $BackgroundColor_White}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="400*"/>
                                 <RowDefinition Height="350*"/>
@@ -170,7 +170,7 @@
                                                     <StackPanel x:Name="TemplateStackPanel" Visibility="Hidden">
                                                         <Label Style="{StaticResource @InputFieldLabelStyle}">Template File Path:</Label>
                                                         <StackPanel Orientation="Vertical">
-                                                            <Grid Name="TemplateFileGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+                                                            <Grid Name="TemplateFileGrid" Background="{StaticResource $BackgroundColor_White}">
                                                                 <Grid.ColumnDefinitions>
                                                                     <ColumnDefinition Width="200*"/>
                                                                     <ColumnDefinition Width="55"/>
@@ -183,7 +183,7 @@
                                                         </StackPanel>
                                                     </StackPanel>
                                                     <StackPanel x:Name="BodyInputGridPannel" Visibility="Visible">
-                                                        <Grid  Name="controlGrid" Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Visible">
+                                                        <Grid  Name="controlGrid" Background="{StaticResource $BackgroundColor_White}" Visibility="Visible">
                                                             <Grid.Resources>
                                                                 <DataTemplate x:Key="BrowseValueFilesButton">
                                                                     <Button x:Name="GridInputGridBrowseButton" Content="Browse" Click="GridInputGridBrowseButton_Click" Style="{DynamicResource DataGridCellButtonStyle}"  IsEnabled="{Binding IsBrowseNeeded,Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"/>
@@ -223,7 +223,7 @@
                                                 <StackPanel Orientation="Vertical">
 
                                                     <StackPanel Orientation="Vertical">
-                                                        <Grid Name="CertificateFileGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+                                                        <Grid Name="CertificateFileGrid" Background="{StaticResource $BackgroundColor_White}">
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition Width="200*"/>
                                                                 <ColumnDefinition Width="55"/>
@@ -267,7 +267,7 @@
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                             <Image Source="{StaticResource  @Grid_24x24.png }" Height="20" Width="20"/>
-                            <TextBlock x:Name="xDynamicParamsTab" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
+                            <TextBlock x:Name="xDynamicParamsTab" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                         </StackPanel>
                     </TabItem.Header>
                     <Frame x:Name="xDynamicParamsFrame" HorizontalAlignment="Stretch"/>
@@ -276,7 +276,7 @@
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                             <Image Source="{StaticResource  @Outputs_32x32.png }" Height="20" Width="20"/>
-                            <TextBlock x:Name="xOutputTemplateTab" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_Primary}" FontWeight="Bold" />
+                            <TextBlock x:Name="xOutputTemplateTab" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                         </StackPanel>
                     </TabItem.Header>
                     <Frame x:Name="xOutputTemplateFrame" HorizontalAlignment="Stretch"/>

@@ -36,7 +36,7 @@ namespace Ginger.Actions.ActionConversion
                         return App.Current.TryFindResource("$PassedStatusColor") as SolidColorBrush; //green
 
                     case Amdocs.Ginger.Common.Enums.eImageType.Running:
-                        return App.Current.TryFindResource("$Color_Primary") as SolidColorBrush;//blue
+                        return App.Current.TryFindResource("$PrimaryColor_Black") as SolidColorBrush;//blue
 
                     case Amdocs.Ginger.Common.Enums.eImageType.Pending:
                         return App.Current.TryFindResource("$PendingStatusColor") as SolidColorBrush;//orange 

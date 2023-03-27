@@ -9,7 +9,7 @@
       d:DesignHeight="650" d:DesignWidth="600"
       Title="FilterElementsPage">
     
-        <Grid Background="{StaticResource $BackgroundColor_LightGray}" >
+        <Grid Background="{StaticResource $BackgroundColor_White}" >
          
         <Ginger:ucGrid x:Name="FilterElementsGridView" Title="Filter Elements"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Grid>

@@ -9,7 +9,7 @@
       d:DesignHeight="150" d:DesignWidth="600"
 	Title="RunSetActionHTMLReportEditPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
 
         <StackPanel>
             <StackPanel Margin="0,5,0,15" Orientation="Horizontal">

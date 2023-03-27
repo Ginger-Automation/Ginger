@@ -9,7 +9,7 @@
              xmlns:state="clr-namespace:Ginger.MoveToGingerWPF.Run_Set_Pages"
               d:DesignWidth="515" MouseDoubleClick="UserControl_MouseDoubleClick">
 
-            <Grid Name="pageGrid" Margin="0" Background="{StaticResource $BackgroundColor_LightGray}" Width="510">
+            <Grid Name="pageGrid" Margin="0" Background="{StaticResource $BackgroundColor_White}" Width="510">
                 <Grid.ColumnDefinitions>
                  <ColumnDefinition Width="200*"/>
                  <ColumnDefinition Width="55"/>
@@ -19,7 +19,7 @@
             <RowDefinition Height="0"/>
         </Grid.RowDefinitions>
         <Border x:Name="NormalBorder"
-	    BorderBrush="{DynamicResource $Color_Primary}"
+	    BorderBrush="{DynamicResource $PrimaryColor_Black}"
 	    BorderThickness="1"	                
         Grid.RowSpan="2" Grid.ColumnSpan="2" Visibility="Collapsed"/>
 
@@ -35,13 +35,13 @@
         </Label>
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
             <usercontrols:ucButton x:Name="xDetailView" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="15" ButtonImageHeight="11" ButtonImageType="Expand" Click="xDetailView_Click" VerticalAlignment="Bottom" Visibility="Visible" />
-            <TextBlock x:Name="xItemName" FontSize="13" MaxWidth="250" Margin="0,3,0,0" Foreground="{StaticResource $BackgroundColor_Primary}" TextTrimming="CharacterEllipsis"  ></TextBlock>
+            <TextBlock x:Name="xItemName" FontSize="13" MaxWidth="250" Margin="0,3,0,0" Foreground="{StaticResource $BackgroundColor_Black}" TextTrimming="CharacterEllipsis"  ></TextBlock>
             <Label x:Name="xItemSeparator" Content=" :" Margin="0,-2,0,0"></Label>
-            <TextBlock x:Name="xItemDescription" MaxWidth="170" FontSize="11" Margin="0 6 0 0" Foreground="{StaticResource $BackgroundColor_Primary}" FontStyle="Normal" FontWeight="Normal" TextTrimming="CharacterEllipsis" TextWrapping="Wrap"  HorizontalAlignment="Left"></TextBlock>
+            <TextBlock x:Name="xItemDescription" MaxWidth="170" FontSize="11" Margin="0 6 0 0" Foreground="{StaticResource $BackgroundColor_Black}" FontStyle="Normal" FontWeight="Normal" TextTrimming="CharacterEllipsis" TextWrapping="Wrap"  HorizontalAlignment="Left"></TextBlock>
         </StackPanel>
         <DockPanel x:Name="xRunnerItemButtons" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Grid.ColumnSpan="2" Margin="0 0 0 0" Visibility="Visible">
             <usercontrols:ucButton x:Name="xRunnerItemContinue" DockPanel.Dock="Right" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Continue" Click="xRunnerItemContinue_Click" VerticalAlignment="Bottom" Visibility="Visible" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"/>
-            <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="{StaticResource $BackgroundColor_Primary}" Margin="0,6,0,6"    />
+            <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="{StaticResource $BackgroundColor_Black}" Margin="0,6,0,6"    />
             <Menu x:Name="xRunnerItemMenu" Margin="0,5,0,0" DockPanel.Dock="Right" Visibility="Visible" >
                 <MenuItem >
                     <MenuItem.Header>

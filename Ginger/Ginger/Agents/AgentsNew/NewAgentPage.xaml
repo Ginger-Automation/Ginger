@@ -7,7 +7,7 @@
       Height="85" Width="350" MinHeight="85"
 	Title="Add New Agent">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="110"/>
             <ColumnDefinition Width="200*"/>            
