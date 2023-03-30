@@ -101,7 +101,7 @@ namespace Ginger.Variables
             }           
         }
 
-        public VariableBase mSelectedTargetVariable;
+        private VariableBase mSelectedTargetVariable;
         public VariableBase SelectedTargetVariable
         {
             get
@@ -115,10 +115,24 @@ namespace Ginger.Variables
         }
 
 
+        private bool mActive;
         [IsSerializedForLocalRepository]
-        public bool Active { get; set; }
+        public bool Active 
+        { 
+            get
+            {
+                return mActive;
+            }
+            set
+            {
+                if (value != mActive)
+                {
+                    mActive = value;
+                }
+            }
+        }
 
-        public Guid mSourceVariableGuid;
+        private Guid mSourceVariableGuid;
         [IsSerializedForLocalRepository]
         public Guid SourceVariableGuid 
         {
@@ -129,16 +143,33 @@ namespace Ginger.Variables
 
             set
             {
-                mSourceVariableGuid = value;
-                OnPropertyChanged(nameof(SelectedSourceVariable));
-                OnPropertyChanged(nameof(TargetVariableList));
+                if(value!= mSourceVariableGuid)
+                {
+                    mSourceVariableGuid = value;
+                    OnPropertyChanged(nameof(SelectedSourceVariable));
+                    OnPropertyChanged(nameof(TargetVariableList));
+                }                            
             }
-        } 
+        }
 
+        private string mTriggerValue;
         [IsSerializedForLocalRepository]
-        public string TriggerValue { get; set; }
+        public string TriggerValue 
+        { 
+            get
+            {
+                return mTriggerValue;
+            }
+            set
+            {
+                if(value != mTriggerValue)
+                {
+                    mTriggerValue = value;
+                }
+            }
+        }
 
-        public Guid mTargetVariableGuid;
+        private Guid mTargetVariableGuid;
         [IsSerializedForLocalRepository]
         public Guid TargetVariableGuid 
         {
@@ -149,8 +180,11 @@ namespace Ginger.Variables
 
             set
             {
-                mTargetVariableGuid = value;                
-                OnPropertyChanged(nameof(SelectedTargetVariable));
+                if (value != mTargetVariableGuid)
+                {
+                    mTargetVariableGuid = value;
+                    OnPropertyChanged(nameof(SelectedTargetVariable)); 
+                }
             } 
         }
 
@@ -164,9 +198,11 @@ namespace Ginger.Variables
             }
             set
             {
-                mOperationType = value;
-
-                OnPropertyChanged(nameof(OperationType));
+                if (value != mOperationType)
+                {
+                    mOperationType = value;
+                    OnPropertyChanged(nameof(OperationType)); 
+                }
             }
         }
 
@@ -180,9 +216,11 @@ namespace Ginger.Variables
             }
             set
             {
-                mOperator = value;
-
-                OnPropertyChanged(nameof(Operator));
+                if (value != mOperator)
+                {
+                    mOperator = value;
+                    OnPropertyChanged(nameof(Operator)); 
+                }
             }
         }
 
@@ -196,8 +234,11 @@ namespace Ginger.Variables
             }
             set
             {
-                mOperationValue = value;
-                OnPropertyChanged(nameof(OperationValue));
+                if (value != mOperationValue)
+                {
+                    mOperationValue = value;
+                    OnPropertyChanged(nameof(OperationValue)); 
+                }
             }
         }
 
@@ -211,8 +252,11 @@ namespace Ginger.Variables
             }
             set
             {
-                mOperationValueList = value;
-                OnPropertyChanged(nameof(OperationValueList));
+                if (value != mOperationValueList)
+                {
+                    mOperationValueList = value;
+                    OnPropertyChanged(nameof(OperationValueList)); 
+                }
             }
         }
 
