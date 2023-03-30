@@ -182,6 +182,7 @@ namespace Ginger.Run
                         if (inputVar.SupportSetValue)
                         {
                             inputVar.PossibleOutputVariables = optionalOutputVars;
+                        }
                     }
                    
                     processInputVariable.GetVariablesByRules(bfInputVariables);                    
@@ -250,6 +251,7 @@ namespace Ginger.Run
             else
             {
                 Reporter.ToUser(eUserMsgKey.ShareVariableNotSelected);
+            }
         }
 
         private void ShowRulesPage(object sender, RoutedEventArgs e)
