@@ -40,7 +40,7 @@ namespace Ginger.Run.RunSetActions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TargetTestNGReportFolderBox, TextBox.TextProperty, mRunSetActionScript, nameof(RunSetActionGenerateTestNGReport.SaveResultsInSolutionFolderName));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(sourceActivityRadioBtn, RadioButton.IsCheckedProperty, mRunSetActionScript, nameof(RunSetActionGenerateTestNGReport.IsStatusByActivity));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(sourceActivitiesRadioBtn, RadioButton.IsCheckedProperty, mRunSetActionScript, nameof(RunSetActionGenerateTestNGReport.IsStatusByActivitiesGroup));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUseDynamicParameters, CheckBox.IsCheckedProperty, mRunSetActionScript,nameof(RunSetActionGenerateTestNGReport.ConfiguerDynamicParameters));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xUseDynamicParameters, CheckBox.IsCheckedProperty, mRunSetActionScript, nameof(RunSetActionGenerateTestNGReport.ConfiguerDynamicParameters));
 
             SetParametersGridView();
             grdTestNGReportParameters.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddButton));
@@ -52,7 +52,7 @@ namespace Ginger.Run.RunSetActions
                 TargetTestNGReportFolderBox.Text = folderName;
             }
         }
-    private void useDynamicParameters_Checked(object sender, RoutedEventArgs e)
+        private void useDynamicParameters_Checked(object sender, RoutedEventArgs e)
         {
             if (xUseDynamicParameters.IsChecked == true)
             {

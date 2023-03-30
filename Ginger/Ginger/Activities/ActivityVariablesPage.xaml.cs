@@ -30,7 +30,7 @@ namespace GingerWPF.BusinessFlowsLib
         public ActivityVariablesPage(ObservableList<VariableBase> variables)
         {
             InitializeComponent();
-            
+
         }
     }
 }

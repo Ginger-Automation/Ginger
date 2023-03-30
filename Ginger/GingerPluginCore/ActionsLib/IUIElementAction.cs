@@ -26,6 +26,6 @@ namespace Amdocs.Ginger.Plugin.Core
     [GingerInterface("IUIElementAction", "UI Element Action")]
     public interface IUIElementAction
     {
-         void PerformUIElementAction(GingerAction GA, ActUIElementInfo act);
+        void PerformUIElementAction(GingerAction GA, ActUIElementInfo act);
     }
 }

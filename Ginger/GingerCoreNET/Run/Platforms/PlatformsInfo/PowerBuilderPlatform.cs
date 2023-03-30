@@ -64,12 +64,12 @@ namespace GingerCore.Platforms.PlatformsInfo
             switch (ElementType)
             {
                 case eElementType.Unknown:
-                        controlActionlist.Add(ActUIElement.eElementAction.DragDrop);
+                    controlActionlist.Add(ActUIElement.eElementAction.DragDrop);
                     break;
 
-                case eElementType.Button:                   
-                    controlActionlist.Add(ActUIElement.eElementAction.ClickAndValidate);                    
-                    break;                
+                case eElementType.Button:
+                    controlActionlist.Add(ActUIElement.eElementAction.ClickAndValidate);
+                    break;
                 case eElementType.List:
                 case eElementType.ComboBox:
                     controlActionlist.Add(ActUIElement.eElementAction.SendKeysAndValidate);
@@ -98,9 +98,9 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override List<ActUIElement.eSubElementType> GetSubElementType(eElementType elementType)
         {
             List<ActUIElement.eSubElementType> list = new List<ActUIElement.eSubElementType>();
-            if (elementType== eElementType.List || elementType == eElementType.ComboBox)
-            {                
-                list.Add(ActUIElement.eSubElementType.Pane);                
+            if (elementType == eElementType.List || elementType == eElementType.ComboBox)
+            {
+                list.Add(ActUIElement.eSubElementType.Pane);
             }
             return list;
         }
@@ -139,7 +139,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         }
 
         public override List<ActUIElement.eElementAction> GetPlatformUIValidationTypesList()
-        {            
+        {
             List<ActUIElement.eElementAction> list = new List<ActUIElement.eElementAction>();
             list.Add(ActUIElement.eElementAction.IsEnabled);
             list.Add(ActUIElement.eElementAction.Exist);

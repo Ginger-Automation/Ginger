@@ -16,20 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 
 namespace GingerWPFDriverWindowTest
 {
 
-   
+
 
     // Here we define the action we want to run on the display
     public interface IDummyTestDriverDisplay
     {
-        
+
         void ShowDisplay();
 
         string URL { get; set; }

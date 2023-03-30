@@ -17,16 +17,14 @@ limitations under the License.
 #endregion
 
 //using amdocs.ginger.GingerCoreNET;
+using System;
+using System.Drawing;
+using System.IO;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 //using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.Repository;
-using System;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 
 namespace Ginger.Reports
 {
@@ -87,7 +85,7 @@ namespace Ginger.Reports
             }
             set
             {
-                if(mIgnoreSkippedEntities != value)
+                if (mIgnoreSkippedEntities != value)
                 {
                     mIgnoreSkippedEntities = value;
                     OnPropertyChanged(nameof(IgnoreSkippedEntities));
@@ -276,7 +274,7 @@ namespace Ginger.Reports
                 return nameof(this.Name);
             }
         }
-        
+
         private string SetReportTempalteName(string name, int configId)
         {
             if (name.Equals(string.Empty))
@@ -297,7 +295,7 @@ namespace Ginger.Reports
             }
         }
 
-        
+
     }
 
     public class HTMLReportConfigFieldToSelect : RepositoryItemBase

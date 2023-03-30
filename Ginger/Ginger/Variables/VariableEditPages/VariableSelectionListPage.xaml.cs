@@ -73,15 +73,18 @@ namespace Ginger.Variables
         private void AddOptionalValue(object sender, RoutedEventArgs e)
         {
             if (grdOptionalValues.Grid.CurrentItem != null)
+            {
                 grdOptionalValues.Grid.CommitEdit();
+            }
+
             grdOptionalValues.Grid.SelectedItem = null;
-            grdOptionalValues.Grid.CurrentItem = null;   
+            grdOptionalValues.Grid.CurrentItem = null;
 
             OptionalValue newVal = new OptionalValue(string.Empty);
             mVar.OptionalValuesList.Add(newVal);
 
             grdOptionalValues.Grid.SelectedItem = newVal;
-            grdOptionalValues.Grid.CurrentItem = newVal;           
+            grdOptionalValues.Grid.CurrentItem = newVal;
             UpdateOptionalValues();
         }
 
@@ -108,7 +111,7 @@ namespace Ginger.Variables
         }
 
         private void UpdateOptionalValues()
-        {            
+        {
             mVar.OnPropertyChanged(nameof(VariableSelectionList.Formula));
             VerifySelectedValue();
         }

@@ -16,21 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GlobalSolutionLib;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.GlobalSolutionLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
-using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.WizardLib;
 using GingerCore;
 using GingerCore.Actions;
@@ -39,15 +30,20 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
 {
     class ImportItemWizard : WizardBase
     {
         public GlobalSolution.eImportFromType ImportFromType = GlobalSolution.eImportFromType.LocalFolder;
-        public string SolutionFolder { get; set; } 
-        public string EncryptionKey { get; set; } 
+        public string SolutionFolder { get; set; }
+        public string EncryptionKey { get; set; }
         public List<object> SelectedItems { get; set; }
 
         public List<string> ItemTypesList = Enum.GetNames(typeof(GlobalSolution.eImportItemType)).ToList();
@@ -62,7 +58,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
         public ImportItemWizard()
         {
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Global Solution Introduction", Page: new WizardIntroPage("/GlobalSolutionLib/ImportItemWizardLib/ImportItemIntro.md"));
-            
+
             AddPage(Name: "Select Item Source Type", Title: "Select Item Source Type", SubTitle: "Choose ...", Page: new SelectItemImportTypePage());
 
             AddPage(Name: "Select Item Types", Title: "Select Item Types", SubTitle: "Choose ...", Page: new SelectItemTypesToImportPage());
@@ -185,7 +181,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             {
                 string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder), "Ginger.Solution.xml", SearchOption.AllDirectories);
                 Solution solution = (Solution)newRepositorySerializer.DeserializeFromFile(filePaths[0]);
-                ApplicationPlatform applicationPlatform  = solution.ApplicationPlatforms.Where(x=>x.AppName == itemToImport.ItemName).FirstOrDefault();
+                ApplicationPlatform applicationPlatform = solution.ApplicationPlatforms.Where(x => x.AppName == itemToImport.ItemName).FirstOrDefault();
 
                 ApplicationPlatform appPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == applicationPlatform.AppName && x.Platform == applicationPlatform.Platform).FirstOrDefault();
                 if (appPlatform == null)
@@ -236,9 +232,9 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 repoItemToImport = newRepositorySerializer.DeserializeFromFile(sourceFile);
                 repoItemToImport.ContainingFolder = Path.GetDirectoryName(targetFile);
                 repoItemToImport.FilePath = targetFile;
-                if (!string.IsNullOrEmpty(itemToImport.ItemNewName))
+                if (!string.IsNullOrEmpty(itemToImport.ItemName))
                 {
-                    repoItemToImport.ItemName = itemToImport.ItemNewName;
+                    repoItemToImport.ItemName = itemToImport.ItemName;
                 }
                 if (itemToImport.ItemType == GlobalSolution.eImportItemType.DataSources)
                 {
@@ -261,6 +257,15 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     dataSource.FilePath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(newFile);
                     //
                     File.Copy(sourceFile, newFile);
+                }
+                else if (itemToImport.ItemType == GlobalSolution.eImportItemType.BusinessFlows)
+                {
+                    BusinessFlow businessFlow = (BusinessFlow)repoItemToImport;
+                    //Lazy load activities and actions
+                    foreach(Activity activity in businessFlow.Activities)
+                    {
+                        _ = activity.Acts;
+                    }
                 }
                 //Create repository (sub) folder before adding
                 AddRepositoryItem(itemToImport, repoItemToImport, targetFile);

@@ -21,9 +21,7 @@ using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
-using System;
 using System.Windows.Controls;
-using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
 {
@@ -33,7 +31,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
     public partial class AutoRunWizardOptionsPage : Page, IWizardPage
     {
         AutoRunWizard mAutoRunWizard;
-        
+
         public AutoRunWizardOptionsPage()
         {
             InitializeComponent();

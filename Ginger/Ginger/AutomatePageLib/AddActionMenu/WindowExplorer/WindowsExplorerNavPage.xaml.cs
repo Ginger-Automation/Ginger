@@ -57,7 +57,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             InitializeComponent();
 
-            mContext = context;            
+            mContext = context;
             context.PropertyChanged += Context_PropertyChanged;
 
             if (mContext.Agent != null)
@@ -69,9 +69,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 WindowExplorerDriver = null;
             }
 
-            LoadWindowExplorerPage();            
+            LoadWindowExplorerPage();
         }
-        
+
         /// <summary>
         /// Context Property changed event
         /// </summary>
@@ -109,7 +109,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// </summary>
         /// <returns></returns>
         public async Task<bool> DoSearchControls()
-        {            
+        {
             return await mCurrentLoadedPage.DoSearchControls();
         }
 

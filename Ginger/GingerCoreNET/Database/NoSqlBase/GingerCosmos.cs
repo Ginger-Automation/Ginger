@@ -17,16 +17,12 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using Microsoft.Azure.Cosmos;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using static GingerCore.Actions.ActDBValidation;
 
 namespace GingerCore.NoSqlBase

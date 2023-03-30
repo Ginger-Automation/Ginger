@@ -16,15 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
-using GingerCore;
+using Ginger.UserControlsLib;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
-using System;
-using Ginger.UserControlsLib;
 
 namespace Ginger.TagsLib
 {
@@ -48,7 +47,7 @@ namespace Ginger.TagsLib
             CurrentItemToSave = WorkSpace.Instance.Solution;
             if (mViewMode == eViewMode.Solution)
             {
-                 WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+                WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
             }
 
             SetTagsGridView();
@@ -60,16 +59,16 @@ namespace Ginger.TagsLib
             if (e.PropertyName == nameof(WorkSpace.Solution))
             {
                 SetGridData();
-            }                
+            }
         }
 
         private void SetGridData()
         {
             if (mViewMode == eViewMode.Solution)
             {
-                if ( WorkSpace.Instance.Solution != null)
+                if (WorkSpace.Instance.Solution != null)
                 {
-                    mTags =  WorkSpace.Instance.Solution.Tags;
+                    mTags = WorkSpace.Instance.Solution.Tags;
                 }
                 else
                 {
@@ -139,7 +138,7 @@ namespace Ginger.TagsLib
         {
             xTagsGrid.Grid.CommitEdit(DataGridEditingUnit.Row, true);
             CleanUnValidTags();
-             WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.Tags);
+            WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.Tags);
         }
 
         private void closeBtn_Click(object sender, EventArgs e)
@@ -153,20 +152,26 @@ namespace Ginger.TagsLib
         {
             //remove empty tags
             for (int i = 0; i < mTags.Count; i++)
+            {
                 if (string.IsNullOrEmpty(mTags[i].Name))
                 {
                     mTags.RemoveAt(i);
                     i--;
                 }
+            }
 
             //remove duplicated tags
             for (int i = 0; i < mTags.Count; i++)
+            {
                 for (int j = i + 1; j < mTags.Count; j++)
+                {
                     if (mTags[i].Name.Trim().ToLower() == mTags[j].Name.Trim().ToLower())
                     {
                         mTags.RemoveAt(j);
                         j--;
                     }
+                }
+            }
         }
     }
 }

@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using mshtml;
 using System;
 using System.Windows.Controls;
-using mshtml;
 
 namespace Ginger.Support
 {
@@ -37,11 +37,11 @@ namespace Ginger.Support
                 ViewWebBrowser.Navigate("http://ginger");
 
             }
-            catch(Exception )
+            catch (Exception)
             {
                 //TODO: display message saying support's unavailable & disable buttons
-             
-            }  
+
+            }
         }
 
         private const string DisableScriptError =

@@ -1,12 +1,5 @@
-﻿using Amdocs.Ginger;
-using GingerCore;
-using GingerCore.Variables;
+﻿using GingerCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UnitTests.NonUITests
 {
@@ -16,10 +9,11 @@ namespace UnitTests.NonUITests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-            
+
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void IsEncryptedFalse()
         {
             //Arrange
@@ -33,7 +27,8 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(false, IsDecrypt);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void IsEncryptedTrue()
         {
             //Arrange
@@ -47,7 +42,8 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(true, IsDecrypt);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void EncryptString()
         {
             //Arrange
@@ -61,7 +57,8 @@ namespace UnitTests.NonUITests
             Assert.AreEqual("mDL33JRKM3Zv1FdtGQMNZg==", encryptedString);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void DecryptString()
         {
             //Arrange

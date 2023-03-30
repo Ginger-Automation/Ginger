@@ -36,10 +36,10 @@ namespace Ginger.Variables
             try
             {
                 //set date format in datetime field
-               var datetime = dateTimeVar.ConvertDateTimeToSpecificFormat(value as string);
+                var datetime = dateTimeVar.ConvertDateTimeToSpecificFormat(value as string);
 
                 //if dateformat is invalid it will throw exception invalid date format exception
-               Convert.ToDateTime(datetime);
+                Convert.ToDateTime(datetime);
             }
             catch (Exception ex)
             {

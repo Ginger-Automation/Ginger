@@ -41,16 +41,16 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         public enum eOptionalValuesTargetType
         {
-            ModelLocalParams,GlobalParams
+            ModelLocalParams, GlobalParams
         }
-        public  ObservableList<TemplateFile> OVFList = new ObservableList<TemplateFile>();//optional values files list
-        public  List<ParameterValues> ParameterValues = new List<ParameterValues>();// EXCEL & DB
-        public  ImportOptionalValuesForParameters ImportOptionalValues = new ImportOptionalValuesForParameters();
-        public  Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict;//XML&JSON
-        public  ObservableList<GlobalAppModelParameter> mGlobalParamterList;
+        public ObservableList<TemplateFile> OVFList = new ObservableList<TemplateFile>();//optional values files list
+        public List<ParameterValues> ParameterValues = new List<ParameterValues>();// EXCEL & DB
+        public ImportOptionalValuesForParameters ImportOptionalValues = new ImportOptionalValuesForParameters();
+        public Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict;//XML&JSON
+        public ObservableList<GlobalAppModelParameter> mGlobalParamterList;
         public ApplicationModelBase mAAMB;
-        public  ObservableList<AppModelParameter> ParamsList = new ObservableList<AppModelParameter>();//Grid presentation
-        public  ObservableList<GlobalAppModelParameter> GlobalParamsList = new ObservableList<GlobalAppModelParameter>();//Grid presentation
+        public ObservableList<AppModelParameter> ParamsList = new ObservableList<AppModelParameter>();//Grid presentation
+        public ObservableList<GlobalAppModelParameter> GlobalParamsList = new ObservableList<GlobalAppModelParameter>();//Grid presentation
 
         public eSourceType SourceType { get; set; }
         public AddModelOptionalValuesWizard(ApplicationModelBase AAMB)//Local Parameters
@@ -110,18 +110,20 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
 
                 }
-                if(mAAMB is ApplicationAPIModel)
+                if (mAAMB is ApplicationAPIModel)
+                {
                     ((ApplicationAPIModel)mAAMB).OptionalValuesTemplates.Clear();
+                }
             }
             ProcessEnded();
         }
-    
+
         public bool IsDefaultPresentInParameterValues(ParameterValues parm)
         {
             bool isPresent = false;
             foreach (var item in parm.ParameterValuesByNameDic)
             {
-                if(item.Contains("*"))
+                if (item.Contains("*"))
                 {
                     isPresent = true;
                 }
@@ -134,7 +136,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             bool isPresent = false;
             if (parm.ParameterValuesByNameDic.Count > 0)
             {
-                parm.ParameterValuesByNameDic[0] = string.Format("{0}*", parm.ParameterValuesByNameDic[0]);  
+                parm.ParameterValuesByNameDic[0] = string.Format("{0}*", parm.ParameterValuesByNameDic[0]);
             }
             return isPresent;
         }

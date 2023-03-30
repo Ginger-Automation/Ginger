@@ -18,16 +18,16 @@ limitations under the License.
 
 
 
+using GingerTest.WizardLib;
 using GingerTestHelper;
 using GingerWPF.WizardLib;
 using GingerWPFUnitTest.POMs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 using System.Threading.Tasks;
-using GingerTest.WizardLib;
 
 namespace GingerTest
-{    
+{
     [TestClass]
     public class WizardTest
     {
@@ -35,14 +35,14 @@ namespace GingerTest
         public TestContext TestContext { get; set; }
 
 
-        static GingerAutomator mGingerAutomator;        
+        static GingerAutomator mGingerAutomator;
         Mutex mutex = new Mutex();
 
         [ClassInitialize]
         public static void ClassInit(TestContext TestContext)
         {
             mTestHelper.ClassInitialize(TestContext);
-            
+
             mGingerAutomator = GingerAutomator.StartSession();
         }
 
@@ -71,14 +71,19 @@ namespace GingerTest
 
         WizardPOM ShowMyWizard(string folder, double width = 0)
         {
-            Task.Factory.StartNew(() => {
-                mGingerAutomator.MainWindowPOM.Execute(() => {
+            Task.Factory.StartNew(() =>
+            {
+                mGingerAutomator.MainWindowPOM.Execute(() =>
+                {
                     MyWizard wiz = new MyWizard(folder);
-                    if (width == 0)                    
+                    if (width == 0)
+                    {
                         WizardWindow.ShowWizard(wiz);
-                    
+                    }
                     else
+                    {
                         WizardWindow.ShowWizard(wiz, width);
+                    }
                 });
             });
 
@@ -87,7 +92,8 @@ namespace GingerTest
         }
 
         [Level3]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void VerifyButtonsOnStartThenCancel()
         {
             //Arrange            
@@ -97,7 +103,7 @@ namespace GingerTest
             WizardPOM mWizard = ShowMyWizard(folder);
             bool nextButtonEnabled = mWizard.NextButton.IsEnabled;
             bool prevButtonEnabled = mWizard.PrevButton.IsEnabled;
-            bool finishButtonEnabled = mWizard.FinishButton.IsEnabled;            
+            bool finishButtonEnabled = mWizard.FinishButton.IsEnabled;
             mWizard.CancelButton.Click();
             bool WizardOpen = WizardPOM.IsWizardOpen;
             mGingerAutomator.MainWindowPOM.TakeScreenShot(mTestHelper.GetTempFileName("Wizard Screen Shot.png"));
@@ -108,11 +114,12 @@ namespace GingerTest
             Assert.IsTrue(nextButtonEnabled, "Next button is enabled");
             Assert.IsFalse(prevButtonEnabled, "Prev button is disabled");
             Assert.IsTrue(finishButtonEnabled, "Finish button is enabled");
-            Assert.IsFalse(WizardOpen, "Wizard was closed");            
+            Assert.IsFalse(WizardOpen, "Wizard was closed");
         }
 
         [Level3]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void CreateMyWizardItem()
         {
             //Arrange            
@@ -134,7 +141,8 @@ namespace GingerTest
 
         [Level3]
         [Ignore] //TODO FIXME
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void WizardWithWindowWidth()
         {
             //Arrange            
@@ -148,7 +156,7 @@ namespace GingerTest
             mWizard.CancelButton.Click();
 
             //Assert
-            Assert.AreEqual(width, w, "Wizard width");            
+            Assert.AreEqual(width, w, "Wizard width");
         }
 
 

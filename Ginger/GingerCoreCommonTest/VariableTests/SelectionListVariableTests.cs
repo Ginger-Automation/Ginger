@@ -36,7 +36,7 @@ namespace GingerCoreCommonTest.VariableTests
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            
+
         }
 
         [ClassCleanup]
@@ -58,7 +58,8 @@ namespace GingerCoreCommonTest.VariableTests
         }
         #endregion
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SelectionListVar_TestVariableType()
         {
             //Arrange
@@ -71,7 +72,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("Selection List", varType, "Selection List Variable Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SelectionListVar_TestVariableUIType()
         {
             //Arrange
@@ -85,7 +87,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("Variable Selection List", varType, "Selection List Variable UI Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SelectionListVar_TestImageType()
         {
             //Arrange
@@ -221,7 +224,7 @@ namespace GingerCoreCommonTest.VariableTests
             OptionalValue newVal3 = new OptionalValue("Three");
             variableSelectionList.OptionalValuesList.Add(newVal3);
 
-            
+
             variableSelectionList.SetValue("Two");
 
             // Act

@@ -17,10 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.Appium
 {
@@ -38,7 +38,7 @@ namespace Ginger.WindowExplorer.Appium
             list.Add(new ActGenElement()
             {
                 Description = "Click " + Name,
-                 GenElementAction = ActGenElement.eGenElementAction.Click
+                GenElementAction = ActGenElement.eGenElementAction.Click
             });
 
             list.Add(new ActGenElement()

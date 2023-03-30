@@ -16,14 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using Amdocs.Ginger.Common;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace GingerCore.Actions.ScreenCapture
 {
@@ -34,7 +34,7 @@ namespace GingerCore.Actions.ScreenCapture
     public partial class ScreenCaptureWindow : Window
     {
         #region Data Members
-        private Rect dragRect=new Rect();
+        private Rect dragRect = new Rect();
         private ActCompareImgs f;
         /// <summary>
         /// Set to 'true' when the left mouse-button is down.
@@ -51,11 +51,11 @@ namespace GingerCore.Actions.ScreenCapture
         /// <summary>
         /// Records the location of the mouse (relative to the window) when the left-mouse button has pressed down.
         /// </summary>
-        private  System.Windows.Point origMouseDownPoint;
+        private System.Windows.Point origMouseDownPoint;
         private System.Windows.Point clickMousePoint;
         private bool bCapturedOrigCoordinates = false;
         private bool bCapturedTargetCoordinates = false;
-        private string ScreenPath="";
+        private string ScreenPath = "";
         /// <summary>
         /// The threshold distance the mouse-cursor must move before drag-selection begins.
         /// </summary>
@@ -246,7 +246,7 @@ namespace GingerCore.Actions.ScreenCapture
                     g.CopyFromScreen(SourcePoint, System.Drawing.Point.Empty, SelectionRectangle.Size);
 
                 }
-                
+
                 //FilePath = FilePath.Replace("~\\", f.SolutionFolder);
                 FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(FilePath);
 
@@ -261,10 +261,12 @@ namespace GingerCore.Actions.ScreenCapture
                 //TODO: need to find a way to hold the image in the Act so it will go to shared repo have version and more
                 // Need to think if good or not
                 if (!Directory.Exists(System.IO.Path.Combine(f.SolutionFolder, @"Documents\ExpectedImages\")))
+                {
                     Directory.CreateDirectory(System.IO.Path.Combine(f.SolutionFolder, @"Documents\ExpectedImages\"));
+                }
             }
             catch (Exception e)
-            {                
+            {
                 Reporter.ToUser(eUserMsgKey.FolderOperationError, e.Message);
             }
             //return f.SolutionFolder + @"Documents\ExpectedImages\"+Guid.NewGuid().ToString()+".png";
@@ -288,11 +290,11 @@ namespace GingerCore.Actions.ScreenCapture
                 f.EndY = f.StartY + (int)dragRect.Height;
             }
             catch (Exception e)
-            {                
+            {
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, e.Message);
             }
-            
-            return (f.StartX + ", " + f.StartY + ", " + f.EndX + ", " + f.EndY); 
+
+            return (f.StartX + ", " + f.StartY + ", " + f.EndX + ", " + f.EndY);
         }
         public void SaveSelection(System.Drawing.Point clickdp)
         {
@@ -315,7 +317,7 @@ namespace GingerCore.Actions.ScreenCapture
                 f.StartY = (int)origMouseDownPoint.Y;
                 f.EndX = f.StartX + (int)dragRect.Width;
                 f.EndY = f.StartY + (int)dragRect.Height;
-                
+
                 f.ExpectedImgFile = ScreenPath;
             }
         }

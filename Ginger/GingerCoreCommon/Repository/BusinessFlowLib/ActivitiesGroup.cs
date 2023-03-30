@@ -346,13 +346,13 @@ namespace GingerCore.Activities
                     }
                     else
                     {
-                        foreach(ActivityIdentifiers actIdentify in updatedGroup.ActivitiesIdentifiers)
+                        foreach (ActivityIdentifiers actIdentify in updatedGroup.ActivitiesIdentifiers)
                         {
-                            if(actIdentify.ActivityParentGuid != Guid.Empty)
+                            if (actIdentify.ActivityParentGuid != Guid.Empty)
                             {
                                 actIdentify.ActivityGuid = actIdentify.ActivityParentGuid;
                             }
-                        }    
+                        }
                     }
 
                     break;

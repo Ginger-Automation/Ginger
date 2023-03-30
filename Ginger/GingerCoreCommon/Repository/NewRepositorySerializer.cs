@@ -188,10 +188,10 @@ namespace Amdocs.Ginger.Repository
             List<RIAttr> SimpleAttrs = new List<RIAttr>();
             List<RIAttr> ListAttrs = new List<RIAttr>();
             // order by attrs with simple prop first then lists latest 
-            
+
             foreach (MemberInfo mi in attrs)
             {
-                IsSerializedForLocalRepositoryAttribute isSerialziedAttr = (IsSerializedForLocalRepositoryAttribute)mi.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));              
+                IsSerializedForLocalRepositoryAttribute isSerialziedAttr = (IsSerializedForLocalRepositoryAttribute)mi.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
 
                 if (isSerialziedAttr != null)
                 {

@@ -16,14 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
-using System.Windows;
-using Amdocs.Ginger.Common;
-using GingerCore;
-using GingerCore.Helpers;
 
 namespace Ginger.Imports.UFT
 {
@@ -47,7 +44,7 @@ namespace Ginger.Imports.UFT
         {
             //Fetch Connection string
             string ConnString = GetExcelString(sExcelFileName);
-            
+
             //DB Objects
             DataSet ds = new DataSet();
             OleDbCommand Cmd = new OleDbCommand();
@@ -57,17 +54,24 @@ namespace Ginger.Imports.UFT
             {
                 try
                 {
-                    if (Conn.State != ConnectionState.Open) Conn.Open();
+                    if (Conn.State != ConnectionState.Open)
+                    {
+                        Conn.Open();
+                    }
+
                     var tableschema = Conn.GetSchema();
 
                     // Get all Sheets in Excel File
                     DataTable dtSheet = Conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
 
-                     // Loop through all Sheets to get data
+                    // Loop through all Sheets to get data
                     foreach (DataRow dr in dtSheet.Rows)
                     {
                         string sheetName = dr["TABLE_NAME"].ToString();
-                        if (!sheetName.EndsWith("$")) continue;
+                        if (!sheetName.EndsWith("$"))
+                        {
+                            continue;
+                        }
 
                         if (sheetName == "MAIN$" || sheetName == "Main$")
                         {
@@ -86,16 +90,16 @@ namespace Ginger.Imports.UFT
                     return dt;
                 }
                 catch (Exception ex)
-                {                    
+                {
                     Reporter.ToUser(eUserMsgKey.ExcelProcessingError, ex.Message);
                     return null;
                 }
-            }  
+            }
         }
 
-         public Dictionary<string, string> FetchVariableValuesfromCalendar(string sExcelFileName, string sSelectedBusFunction, DataTable dt_BizFlow)
-         {
-             //Dictionary for storing variable name and its value
+        public Dictionary<string, string> FetchVariableValuesfromCalendar(string sExcelFileName, string sSelectedBusFunction, DataTable dt_BizFlow)
+        {
+            //Dictionary for storing variable name and its value
             Dictionary<string, string> Variables = new Dictionary<string, string>();
             int i = 1;
 
@@ -107,7 +111,7 @@ namespace Ginger.Imports.UFT
                 {
                     while (i < sCount)
                     {
-                        if (row[i].ToString().Contains("&") && row[i].ToString() != "" )
+                        if (row[i].ToString().Contains("&") && row[i].ToString() != "")
                         {
                             //Variable Name
                             string sVariableName = row[i].ToString().Replace("&", "");
@@ -120,20 +124,20 @@ namespace Ginger.Imports.UFT
                             {
                                 Variables.Add(sVariableName, sValue);
                             }
-                           
+
                         }
                         i++;
                     }
                 }
             }
             return Variables;
-         }
+        }
 
-         public string ReadKEEP_REFER(string sVarName, string sExcelFileName)
+        public string ReadKEEP_REFER(string sVarName, string sExcelFileName)
         {
             //Fetch Connection string
             string ConnString = GetExcelString(sExcelFileName);
-            string Value="";
+            string Value = "";
 
             //DB objects
             DataSet ds = new DataSet();
@@ -144,7 +148,11 @@ namespace Ginger.Imports.UFT
             {
                 try
                 {
-                    if (Conn.State != ConnectionState.Open) Conn.Open();
+                    if (Conn.State != ConnectionState.Open)
+                    {
+                        Conn.Open();
+                    }
+
                     var tableschema = Conn.GetSchema();
 
                     // Get all Sheets in Excel File
@@ -155,7 +163,10 @@ namespace Ginger.Imports.UFT
                     {
 
                         string sheetName = dr["TABLE_NAME"].ToString();
-                        if (!sheetName.EndsWith("$")) continue;
+                        if (!sheetName.EndsWith("$"))
+                        {
+                            continue;
+                        }
 
                         if (sheetName == "KEEP_REFER$" || sheetName == "Keep_Refer$")
                         {
@@ -168,35 +179,35 @@ namespace Ginger.Imports.UFT
                             dt.TableName = sheetName;
                             da.Fill(dt);
                             ds.Tables.Add(dt);
-                            Value = LoopKEEP_REFER(dt,sVarName);
+                            Value = LoopKEEP_REFER(dt, sVarName);
                             return Value;
                         }
                     }
                     return Value;
                 }
                 catch (Exception ex)
-                {                    
+                {
                     Reporter.ToUser(eUserMsgKey.ExcelProcessingError, ex.Message);
                     return null;
                 }
-            }  
+            }
         }
 
-        private string LoopKEEP_REFER(DataTable KeepRefer_DT,string VarName)
+        private string LoopKEEP_REFER(DataTable KeepRefer_DT, string VarName)
         {
             string VarValue = "";
 
             //When a Bus function is selected from calendar, Read its variables
             foreach (DataRow row in KeepRefer_DT.Rows)
             {
-                if (row[0].ToString()==VarName)
+                if (row[0].ToString() == VarName)
                 {
                     //Variable Name
                     VarValue = row[1].ToString();
-                    return VarValue;;
+                    return VarValue; ;
                 }
-              }
-              return VarValue;
-           }
+            }
+            return VarValue;
         }
-  }
+    }
+}

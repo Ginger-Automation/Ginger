@@ -1,11 +1,8 @@
 ﻿using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using LiteDB;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Linq;
-using System.Linq.Expressions;
-using LiteDB;
 
 namespace GingerCoreNETUnitTest.LiteDb
 {
@@ -36,7 +33,7 @@ namespace GingerCoreNETUnitTest.LiteDb
             dbConector.SetCollection(bfLiteColl, filterData);
             Assert.IsTrue(bfLiteColl.Count() > 0);
         }
-        
+
         [TestMethod]
         public void WriteToLiteDbFromObject()
         {
@@ -52,7 +49,7 @@ namespace GingerCoreNETUnitTest.LiteDb
             mapper.DbRef(x => x.ActivitiesGroupColl, "acGrColl");
         }
 
-        
+
         //[TestMethod]
         //public void ReadGingerRunSet()
         //{

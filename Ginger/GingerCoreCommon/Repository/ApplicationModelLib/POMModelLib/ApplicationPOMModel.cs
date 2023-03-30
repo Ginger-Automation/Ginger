@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
@@ -23,10 +25,6 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -36,11 +34,11 @@ namespace Amdocs.Ginger.Repository
         {
         }
 
-        public const int cLearnScreenWidth= 1000;
+        public const int cLearnScreenWidth = 1000;
         public const int cLearnScreenHeight = 1000;
 
-        public static readonly List<ePlatformType> PomSupportedPlatforms = new List<ePlatformType>() { ePlatformType.Web , ePlatformType.Java , ePlatformType.Windows, ePlatformType.Mobile };
-        
+        public static readonly List<ePlatformType> PomSupportedPlatforms = new List<ePlatformType>() { ePlatformType.Web, ePlatformType.Java, ePlatformType.Windows, ePlatformType.Mobile };
+
         public bool IsLearning { get; set; }
 
         private string mPageURL = string.Empty;
@@ -82,7 +80,7 @@ namespace Amdocs.Ginger.Repository
 
         RepositoryItemKey mMappedBusinessFlow;
         [IsSerializedForLocalRepository]
-        public RepositoryItemKey MappedBusinessFlow 
+        public RepositoryItemKey MappedBusinessFlow
         {
             get
             {
@@ -103,7 +101,7 @@ namespace Amdocs.Ginger.Repository
         /// Been used to identify if UnMappedUIElements were lazy loaded already or not
         /// </summary>
         public bool UnMappedUIElementsLazyLoad { get { return (mUnMappedElements != null) ? mUnMappedElements.LazyLoad : false; } }
-        [IsLazyLoad (LazyLoadListConfig.eLazyLoadType.NodePath)]
+        [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.NodePath)]
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> UnMappedUIElements
         {
@@ -134,7 +132,7 @@ namespace Amdocs.Ginger.Repository
         /// Been used to identify if MappedUIElements were lazy loaded already or not
         /// </summary>
         public bool MappedUIElementsLazyLoad { get { return (mMappedElements != null) ? mMappedElements.LazyLoad : false; } }
-        [IsLazyLoad (LazyLoadListConfig.eLazyLoadType.NodePath)]
+        [IsLazyLoad(LazyLoadListConfig.eLazyLoadType.NodePath)]
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> MappedUIElements
         {
@@ -159,7 +157,7 @@ namespace Amdocs.Ginger.Repository
                 mMappedElements = value;
             }
         }
-       
+
         [IsSerializedForLocalRepository]
         public ObservableList<CustomRelativeXpathTemplate> RelativeXpathTemplateList = new ObservableList<CustomRelativeXpathTemplate>();
 
@@ -200,7 +198,7 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                 return eImageType;
+                return eImageType;
             }
         }
 
@@ -222,9 +220,9 @@ namespace Amdocs.Ginger.Repository
                     break;
                 default:
                     eImageType = eImageType.ApplicationPOMModel;
-                break;
+                    break;
             }
-            
+
         }
 
         public override string ItemNameField

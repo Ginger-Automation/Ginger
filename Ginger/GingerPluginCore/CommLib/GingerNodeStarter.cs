@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.Plugin.Core
     {
 
         List<GingerNode> mNodes = new List<GingerNode>();
-      
+
         public void Dispose()
         {
             ClosedAllNodes();
@@ -97,13 +97,13 @@ namespace Amdocs.Ginger.Plugin.Core
         public void StartNode(string name, Type serviceType)
         {
             object serviceObject = Activator.CreateInstance(serviceType);
-            StartNode(name, serviceObject);            
+            StartNode(name, serviceObject);
         }
 
         public void StartNode(string name, Type serviceType, string gingerGridIP, int gingerGridport)
         {
             object serviceObject = Activator.CreateInstance(serviceType);
-            StartNode(name, serviceObject, gingerGridIP, gingerGridport);            
+            StartNode(name, serviceObject, gingerGridIP, gingerGridport);
         }
 
         /// <summary>
@@ -148,16 +148,16 @@ namespace Amdocs.Ginger.Plugin.Core
             Console.WriteLine("GetServiceType failed for Service Id: " + serviceId);
             throw new Exception("Error: Cannot find class type to create for Service Id: " + serviceId);
         }
-  
+
 
         public void StartNode(string name, string serviceId)
-        {            
-            object serviceObject = CreateServiceObjectByServiceId(serviceId); 
-            StartNode(name, serviceObject);                                                 
+        {
+            object serviceObject = CreateServiceObjectByServiceId(serviceId);
+            StartNode(name, serviceObject);
         }
 
         public void StartNode(string name, string serviceId, string gingerGridIP, int gingerGridport)
-        {            
+        {
             object serviceObject = CreateServiceObjectByServiceId(serviceId);
             StartNode(name, serviceObject, gingerGridIP, gingerGridport);
         }
@@ -195,7 +195,7 @@ namespace Amdocs.Ginger.Plugin.Core
                     Console.WriteLine("Comment line ignoed");
                     continue;
                 }
-                
+
                 string[] paramList = line.Split('|');
                 if (paramList.Length == 2)
                 {
@@ -208,7 +208,7 @@ namespace Amdocs.Ginger.Plugin.Core
                     string name = paramList[0].Trim();
                     string className = paramList[1].Trim();
                     string ip = paramList[2].Trim();
-                    int port = int.Parse(paramList[3].Trim());                    
+                    int port = int.Parse(paramList[3].Trim());
                     StartNode(name, className, ip, port);
                 }
                 else
@@ -216,9 +216,9 @@ namespace Amdocs.Ginger.Plugin.Core
                     Console.WriteLine("Params mismatch should be 2 or 4");
                 }
             }
-            
+
         }
 
-        
+
     }
 }

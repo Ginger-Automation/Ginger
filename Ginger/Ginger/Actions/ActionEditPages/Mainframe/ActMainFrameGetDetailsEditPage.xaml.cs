@@ -37,16 +37,19 @@ namespace Ginger.Actions.Mainframe
 
             GingerCore.General.FillComboFromEnumObj(TextDetailsInstanceCombo, mAct.TextInstanceType);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TextDetailsInstanceCombo, ComboBox.SelectedValueProperty, mAct, "TextInstanceType");
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TextInstanceNumberTextBox,TextBox.TextProperty,mAct,"TextInstanceNumber");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TextInstanceNumberTextBox, TextBox.TextProperty, mAct, "TextInstanceNumber");
         }
 
         private void GetMainFrameDetailsCombo_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (GetMainFrameDetailsCombo.SelectedValue == null)
-                return;
-            if (GetMainFrameDetailsCombo.SelectedValue.ToString () == "GetDetailsFromText")
             {
-                InstanceDetailsPanel.Visibility=Visibility.Visible;
+                return;
+            }
+
+            if (GetMainFrameDetailsCombo.SelectedValue.ToString() == "GetDetailsFromText")
+            {
+                InstanceDetailsPanel.Visibility = Visibility.Visible;
                 TextDetailsInstancePanel.Visibility = Visibility.Visible;
             }
             else
@@ -59,8 +62,11 @@ namespace Ginger.Actions.Mainframe
         private void TextDetailsInstanceCombo_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (TextDetailsInstanceCombo.SelectedValue == null)
+            {
                 return;
-            if (TextDetailsInstanceCombo.SelectedValue.ToString () != "InstanceN")
+            }
+
+            if (TextDetailsInstanceCombo.SelectedValue.ToString() != "InstanceN")
             {
 
                 InstanceDetailsPanel.Visibility = Visibility.Hidden;

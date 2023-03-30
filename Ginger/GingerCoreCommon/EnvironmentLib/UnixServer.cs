@@ -21,7 +21,7 @@ using Amdocs.Ginger.Repository;
 namespace GingerCore.Environments
 {
     public class UnixServer : RepositoryItemBase
-    {        
+    {
 
         [IsSerializedForLocalRepository]
         public string Name { get; set; }

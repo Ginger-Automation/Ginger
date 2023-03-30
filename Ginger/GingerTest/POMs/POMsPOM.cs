@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.UserControls;
 using Ginger;
 using Ginger.Agents;
 using GingerCore;
@@ -28,12 +27,8 @@ using GingerTest.POMs.Common;
 using GingerTestHelper;
 using GingerWPF.UserControlsLib;
 using GingerWPFUnitTest.POMs;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace GingerTest.POMs
 {
@@ -56,9 +51,9 @@ namespace GingerTest.POMs
             return CreatePOMOnWizard(POMName, POMDescription, targetApp, ChromeAgent, URL, elementTypeCheckBoxToClickList, prioritizedLocatorsList);
         }
 
-        private ApplicationPOMModel CreatePOMOnWizard(string POMName,string POMDescription, string targetApp, Agent agent, string URL,List<eElementType> elementTypeCheckBoxToClickList, List<ElementLocator> prioritizedLocatorsList)
+        private ApplicationPOMModel CreatePOMOnWizard(string POMName, string POMDescription, string targetApp, Agent agent, string URL, List<eElementType> elementTypeCheckBoxToClickList, List<ElementLocator> prioritizedLocatorsList)
         {
-            WizardPOM wizard = WizardPOM.CurrentWizard;            
+            WizardPOM wizard = WizardPOM.CurrentWizard;
             wizard.NextButton.Click();
             ucAgentControl ucAgentControl = (ucAgentControl)wizard.CurrentPage["ucAgentControl AID"].dependencyObject;
             ucAgentControlPOM ucAgentControlPOM = new ucAgentControlPOM(ucAgentControl);
@@ -72,8 +67,10 @@ namespace GingerTest.POMs
             int locatorIndex = 0;
             foreach (ElementLocator elemLocator in prioritizedLocatorsList)
             {
-                if(!elemLocator.Active)
+                if (!elemLocator.Active)
+                {
                     ucElementLocatorsGridPOM.ClickOnCheckBox(nameof(ElementLocator.Active), nameof(ElementLocator.LocateBy), elemLocator.LocateBy.ToString());
+                }
 
                 ucElementLocatorsGridPOM.ReOrderGridRows(nameof(ElementLocator.LocateBy), elemLocator.LocateBy.ToString(), locatorIndex);
 

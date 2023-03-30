@@ -21,11 +21,8 @@ using Amdocs.Ginger.Common;
 using Ginger.SolutionCategories;
 using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
 
 namespace Ginger.SolutionWindows
 {
@@ -88,7 +85,7 @@ namespace Ginger.SolutionWindows
                 xCategoriesExpander.Visibility = Visibility.Collapsed;
             }
         }
-     
+
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
             xCategoriesExpander.Visibility = Visibility.Visible;
@@ -176,7 +173,7 @@ namespace Ginger.SolutionWindows
         {
             if (IsEncrytedStrAvailableOnSol)
             {
-                UCEncryptionKey.ValidateKey();               
+                UCEncryptionKey.ValidateKey();
             }
             else
             {

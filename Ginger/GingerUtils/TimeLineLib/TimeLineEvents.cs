@@ -66,7 +66,7 @@ namespace GingerUtils.TimeLine
         {
             string txt = System.IO.File.ReadAllText(fileName);
             mEvents = JsonConvert.DeserializeObject<List<TimeLineEvent>>(txt);
-            
+
         }
     }
 }

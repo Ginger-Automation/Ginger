@@ -164,7 +164,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                     return new ListItemUniqueIdentifier() { Color = "Purple", Tooltip = "This is a Auto Learned Activity" };
                 }
             }
-            if (mActivity.Type==eSharedItemType.Link)
+            if (mActivity.Type == eSharedItemType.Link)
             {
                 return new ListItemUniqueIdentifier() { Color = "Orange", Tooltip = "Linked Shared Activity" };
             }
@@ -272,7 +272,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             extraOperationsList.Add(cutAllList);
 
             ListItemOperation copySelected = new ListItemOperation();
-            copySelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute,General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            copySelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             copySelected.AutomationID = "copySelected";
             copySelected.Group = "Clipboard";
             copySelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy;
@@ -343,8 +343,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             {
                 ListItemNotification sharedRepoInd = new ListItemNotification();
                 sharedRepoInd.AutomationID = "sharedRepoInd";
-                sharedRepoInd.ImageType = mActivity.IsLinkedItem ? Amdocs.Ginger.Common.Enums.eImageType.InstanceLink: Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
-                sharedRepoInd.ToolTip = mActivity.IsLinkedItem ? string.Format("{0} source is linked to {0} from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity)):string.Format("{0} source is instance from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                sharedRepoInd.ImageType = mActivity.IsLinkedItem ? Amdocs.Ginger.Common.Enums.eImageType.InstanceLink : Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
+                sharedRepoInd.ToolTip = mActivity.IsLinkedItem ? string.Format("{0} source is linked to {0} from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity)) : string.Format("{0} source is instance from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
                 sharedRepoInd.ImageForeground = Brushes.Orange;
                 sharedRepoInd.BindingObject = mActivity;
                 sharedRepoInd.BindingFieldName = nameof(Activity.IsSharedRepositoryInstance);
@@ -453,7 +453,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             extraOperationsList.Add(resetRest);
 
             ListItemOperation copy = new ListItemOperation();
-            copy.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute,  General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            copy.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             copy.AutomationID = "copy";
             copy.Group = "Clipboard";
             copy.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Clipboard;

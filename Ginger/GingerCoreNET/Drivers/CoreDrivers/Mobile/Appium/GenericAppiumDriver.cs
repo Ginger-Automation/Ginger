@@ -45,10 +45,9 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
-using GingerCore.Actions.WebAPI;
-using GingerCore.Actions.WebServices;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.Graph.SecurityNamespace;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
@@ -66,7 +65,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -254,23 +252,36 @@ namespace Amdocs.Ginger.CoreNET
                         break;
                 }
 
-                mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
-                mSeleniumDriver.StopProcess = this.StopProcess;
-                mSeleniumDriver.BusinessFlow = this.BusinessFlow;
-
-                if (AppType == eAppType.Web && mDefaultURL != null)
+                //If Driver.SessionId is null, it means that the Mobile Agent already in use.
+                
+                if (!(Driver.Capabilities.HasCapability("message") && Driver.Capabilities.GetCapability("message").ToString() == "Could not find available device"))
                 {
-                    try
+                    mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
+                    mSeleniumDriver.StopProcess = this.StopProcess;
+                    mSeleniumDriver.BusinessFlow = this.BusinessFlow;
+
+                    if (AppType == eAppType.Web && mDefaultURL != null)
                     {
-                        Driver.Navigate().GoToUrl(mDefaultURL);
+                        try
+                        {
+                            Driver.Navigate().GoToUrl(mDefaultURL);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to load default mobile web app URL, please validate the URL is valid", ex);
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to load default mobile web app URL, please validate the URL is valid", ex);
-                    }
+
+                    return true;
+                }
+                else
+                {
+                    string error = string.Format("Failed to start Appium session.{0}Error: Mobile device is already in use. Please close all other sessions and try again.", System.Environment.NewLine);
+                    Reporter.ToLog(eLogLevel.ERROR, error);
+                    ErrorMessageFromDriver = error;
+                    return false;
                 }
 
-                return true;
             }
             catch (Exception ex)
             {
@@ -905,7 +916,6 @@ namespace Amdocs.Ginger.CoreNET
                     case ActMobileDevice.eMobileDeviceAction.SwipeUp:
                         SwipeScreen(eSwipeSide.Up, 0.25);
                         break;
-
                     case ActMobileDevice.eMobileDeviceAction.SwipeLeft:
                         SwipeScreen(eSwipeSide.Left);
                         break;
@@ -964,25 +974,10 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.LockDevice:
-                        if (DevicePlatformType == eDevicePlatformType.Android)
-                        {
                             PerformLockButtonPress(eLockOperation.Lock);
-                        }
-                        else
-                        {
-                            act.Error = "Operation not supported for this mobile OS or application type.";
-                        }
                         break;
-
                     case ActMobileDevice.eMobileDeviceAction.UnlockDevice:
-                        if (DevicePlatformType == eDevicePlatformType.Android)
-                        {
                             PerformLockButtonPress(eLockOperation.UnLock);
-                        }
-                        else
-                        {
-                            act.Error = "Operation not supported for this mobile OS or application type.";
-                        }
                         break;
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceBattery:
                         AddReturnParamFromDict(GetDeviceBatteryInfo(), act);
@@ -1008,23 +1003,49 @@ namespace Amdocs.Ginger.CoreNET
                         break;
                     case ActMobileDevice.eMobileDeviceAction.SimulatePhoto:
                         string photoString = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).ValueForDriver);
-                        Bitmap picture = null;
-                        if (isValidPhotoExtention(photoString))
+                        string photoSimulationResponse = SimulatePhotoOrBarcode(photoString, "camera");
+                        if (!string.IsNullOrEmpty(photoSimulationResponse) && photoSimulationResponse != "success")
                         {
-                            picture = new Bitmap(photoString);
-                            string photoSimulation = CameraSimulation(picture, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
-                            if (photoSimulation != "success")
-                            {
-                                act.Error = "An Error occured during camera simulation. Error: " + photoSimulation;
-                            }
-                        }
-                        else
-                        {
-                            act.Error = "File is not supported. Upload a supported file to use Camera simulation";
+                            act.Error = photoSimulationResponse;
                         }
                         break;
+                    case ActMobileDevice.eMobileDeviceAction.SimulateBarcode:
+                        string barcodeString = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(act.GetOrCreateInputParam(nameof(act.SimulatedPhotoPath)).ValueForDriver);
+                        string barcodeSimulationResponse = SimulatePhotoOrBarcode(barcodeString, "barcode");
+                        if (!string.IsNullOrEmpty(barcodeSimulationResponse) && barcodeSimulationResponse != "success")
+                        {
+                            act.Error = barcodeSimulationResponse;
+                        }
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.SimulateBiometrics:
+                        {
+                            string biometricsAnswer = string.Empty;
+                            switch (act.AuthResultSimulation)
+                            {
+                                case ActMobileDevice.eAuthResultSimulation.Success:
+                                    {
+                                        biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), "");
+                                        break;
+                                    }
+                                case ActMobileDevice.eAuthResultSimulation.Failure:
+                                    {
+                                        biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsFailureSimulation.ToString());
+                                        break;
+                                    }
+                                case ActMobileDevice.eAuthResultSimulation.Cancel:
+                                    {
+                                        biometricsAnswer = BiometricSimulation(act.AuthResultSimulation.ToString(), act.AuthResultDetailsCancelSimulation.ToString());
+                                        break;
+                                    }
+                            }
+                            if (!string.IsNullOrEmpty(biometricsAnswer) && biometricsAnswer != "success")
+                            {
+                                act.Error = "An Error occured during biometrics simulation. Error2: " + biometricsAnswer;
+                            }
+                            break;
+                        }
                     case ActMobileDevice.eMobileDeviceAction.StopSimulatePhotoOrVideo:
-                        CameraSimulation(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
+                        CameraAndBarcodeSimulationRequest(null, ImageFormat.Png, contentType: "image", fileName: "image.png", action: "camera");
                         break;
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
@@ -1034,6 +1055,26 @@ namespace Amdocs.Ginger.CoreNET
             {
                 act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
             }
+        }
+
+        public string SimulatePhotoOrBarcode(string photoString, string action)
+        {
+            Bitmap picture = null;
+            string response = string.Empty;
+            if (isValidPhotoExtention(photoString))
+            {
+                picture = new Bitmap(photoString);
+                response = CameraAndBarcodeSimulationRequest(picture, ImageFormat.Png, contentType: "image", fileName: "image.png", action: action);
+                if (response != "success")
+                {
+                    return "An Error occured during " + action + " simulation. Error: " + response;
+                }
+            }
+            else
+            {
+                return "File is not supported. Upload a supported file to use " + action + " simulation";
+            }
+            return response;
         }
 
         public bool isValidPhotoExtention(string photo)
@@ -1052,7 +1093,7 @@ namespace Amdocs.Ginger.CoreNET
                 return false;
             }
         }
-        public string CameraSimulation(Bitmap picture, ImageFormat format, string contentType, string fileName, string action)
+        public string CameraAndBarcodeSimulationRequest(Bitmap picture, ImageFormat format, string contentType, string fileName, string action)
         {
             MemoryStream ms = new MemoryStream();
             string encodeString = "0";
@@ -1069,6 +1110,22 @@ namespace Amdocs.Ginger.CoreNET
                 { "fileName", fileName },
                 { "action", action }
             };
+
+            string simulationResult = JsonConvert.SerializeObject(Driver.ExecuteScript("mc:sensorSimulation", sensorSimulationMap));
+            return JToken.Parse(simulationResult)["message"].ToString();
+        }
+
+        public string BiometricSimulation(string authResult, string authResultDetails)
+        {
+            Dictionary<string, object> sensorSimulationMap = new Dictionary<string, object>();
+            Dictionary<string, string> simulationData = new Dictionary<string, string>
+            {
+                { "authResult", authResult },
+                { "authType", "Fingerprint" },
+                { "authResultDetails", authResultDetails }
+            };
+            sensorSimulationMap.Add("simulationData", simulationData);
+            sensorSimulationMap.Add("action", "authentication");
 
             string simulationResult = JsonConvert.SerializeObject(Driver.ExecuteScript("mc:sensorSimulation", sensorSimulationMap));
             return JToken.Parse(simulationResult)["message"].ToString();
@@ -1279,10 +1336,21 @@ namespace Amdocs.Ginger.CoreNET
                             break;
                         case eLockOperation.UnLock:
                             ((AndroidDriver)Driver).Unlock();
+                            System.Threading.Thread.Sleep(200);
+                            SwipeScreen(eSwipeSide.Up);
                             break;
                     }
                     break;
                 case eDevicePlatformType.iOS:
+                    switch (LockOperation)
+                    {
+                        case eLockOperation.Lock:
+                            ((IOSDriver)Driver).Lock();
+                            break;
+                        case eLockOperation.UnLock:
+                            ((IOSDriver)Driver).Unlock();
+                            break;
+                    }
                     break;
             }
 
@@ -1601,7 +1669,9 @@ namespace Amdocs.Ginger.CoreNET
                 return aw;
             }
             else
+            {
                 return null;
+            }
         }
 
         async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
@@ -1618,7 +1688,9 @@ namespace Amdocs.Ginger.CoreNET
                 mIsDriverBusy = true;
 
                 if (foundElementsList == null)
+                {
                     foundElementsList = new ObservableList<ElementInfo>();
+                }
 
                 await GetPageSourceDocument(true);
 
@@ -1656,19 +1728,25 @@ namespace Amdocs.Ginger.CoreNET
                             eLocateBy CustomLocLocateBy = eLocateBy.ByRelXPath;
 
                             if (template.Contains('{'))
+                            {
                                 CustomLocLocateBy = eLocateBy.iOSPredicateString;
+                            }
 
                             var customLocator = GetUserDefinedCustomLocatorFromTemplates(template, CustomLocLocateBy, EI.Properties.ToList());
 
                             if (customLocator != null)
+                            {
                                 EI.Locators.Add(customLocator);
+                            }
                             //CreateXpathFromUserTemplate(template, foundElemntInfo);
                         }
                     }
 
                     if (pomSetting.filteredElementType == null ||
                         (pomSetting.filteredElementType != null && pomSetting.filteredElementType.Contains(EI.ElementTypeEnum)))
+                    {
                         foundElementsList.Add(EI);
+                    }
                 }
 
                 return foundElementsList.ToList();
@@ -1881,9 +1959,13 @@ namespace Amdocs.Ginger.CoreNET
 
             // the path to a node is the path to its parent, plus "/node()[n]", where n is its position among its siblings.
             if (node.Name.ToLower() == "appiumaut")
+            {
                 return string.Format("/");
+            }
             else
+            {
                 return String.Format("{0}/{1}[{2}]", await GetXPathToNode(node.ParentNode), node.Name, indexInParent);          //Testing Async
+            }
         }
 
         List<ElementInfo> IWindowExplorer.GetElementChildren(ElementInfo ElementInfo)
@@ -1941,16 +2023,30 @@ namespace Amdocs.Ginger.CoreNET
             }
 
             if (!string.IsNullOrEmpty(Name))
+            {
                 return Name;
+            }
 
             return xmlNode.Name;
         }
 
         static string GetAttrValue(XmlNode xmlNode, string attr)
         {
-            if (xmlNode.Attributes == null) return null;
-            if (xmlNode.Attributes[attr] == null) return null;
-            if (string.IsNullOrEmpty(xmlNode.Attributes[attr].Value)) return null;
+            if (xmlNode.Attributes == null)
+            {
+                return null;
+            }
+
+            if (xmlNode.Attributes[attr] == null)
+            {
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(xmlNode.Attributes[attr].Value))
+            {
+                return null;
+            }
+
             return xmlNode.Attributes[attr].Value;
         }
 
@@ -2100,11 +2196,17 @@ namespace Amdocs.Ginger.CoreNET
 
             XmlNode node = ElementInfo.ElementObject as XmlNode;
 
-            if (node == null) return list;
+            if (node == null)
+            {
+                return list;
+            }
 
             XmlAttributeCollection attrs = node.Attributes;
 
-            if (attrs == null) return list;
+            if (attrs == null)
+            {
+                return list;
+            }
 
             for (int i = 0; i < attrs.Count; i++)
             {
@@ -2114,9 +2216,13 @@ namespace Amdocs.Ginger.CoreNET
                 list.Add(CP);
 
                 if (CP.Name == "x")
+                {
                     ElementInfo.X = Convert.ToInt32(CP.Value);
+                }
                 else if (CP.Name == "y")
+                {
                     ElementInfo.Y = Convert.ToInt32(CP.Value);
+                }
             }
 
             return list;
@@ -2586,9 +2692,13 @@ namespace Amdocs.Ginger.CoreNET
                 // Do once?
                 // if XMLSOurce changed we need to refresh
                 if (IsAsyncCall)
+                {
                     pageSourceString = await GetPageSource();
+                }
                 else
+                {
                     pageSourceString = Driver.PageSource;
+                }
 
                 pageSourceXml = new XmlDocument();
                 pageSourceXml.LoadXml(pageSourceString);
@@ -2626,7 +2736,9 @@ namespace Amdocs.Ginger.CoreNET
                         //}
 
                         if (!skipElement)
+                        {
                             ElmsNodesColc.Add(elemNode);
+                        }
                     }
 
                     Dictionary<XmlNode, long> foundElements = new Dictionary<XmlNode, long>();
@@ -2724,7 +2836,9 @@ namespace Amdocs.Ginger.CoreNET
                         }
                     }
                     if (foundNode != null)
+                    {
                         return foundNode;
+                    }
                 }
 
                 return null;
@@ -2952,7 +3066,9 @@ namespace Amdocs.Ginger.CoreNET
             }
 
             if (ReloadHtmlDoc)
+            {
                 pageSourceXml = null;
+            }
 
             if (pageSourceXml == null)
             {

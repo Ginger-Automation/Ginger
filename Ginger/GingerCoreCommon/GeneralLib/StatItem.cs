@@ -21,7 +21,7 @@ namespace GingerCoreNET.GeneralLib
 {
     public class StatItem
     {
-        public string Description { get; set;}
+        public string Description { get; set; }
         public double Count { get; set; }
     }
 }

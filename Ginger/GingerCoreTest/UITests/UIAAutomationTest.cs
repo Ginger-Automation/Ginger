@@ -63,7 +63,7 @@ limitations under the License.
 //            activity.TargetApplication = "PBTestApp";
 //            mBF.Activities.Add(activity);
 //            mBF.CurrentActivity = activity;
-            
+
 //            mDriver = new WindowsDriver(mBF);
 //            mDriver.StartDriver();
 
@@ -138,7 +138,7 @@ limitations under the License.
 //        }
 
 //        [TestMethod]  [Timeout(60000)]
-     
+
 //        public void Find_checkListBox_XPath_Using_Full_Absolutue_Path_andByAutoID()
 //        {
 //            //Arrange
@@ -182,7 +182,7 @@ limitations under the License.
 
 
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_label()
 //        {
@@ -203,7 +203,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "label1=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_linkLabel()
 //        {
@@ -224,7 +224,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "linkLabel1=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_listBox1()
 //        {
@@ -245,7 +245,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "listBox1=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_listView()
 //        {
@@ -266,7 +266,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "listView1=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_maskedTextBox()
 //        {
@@ -287,7 +287,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "maskedTextBox1=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_menuStrip()
 //        {
@@ -308,7 +308,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "menuStrip1=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_numericUpDown()
 //        {
@@ -329,7 +329,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "numericUpDown1=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_monthCalendar()
 //        {
@@ -350,7 +350,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "monthCalendar1=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_treeView()
 //        {
@@ -371,7 +371,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "treeView1=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_tabControl()
 //        {
@@ -392,7 +392,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "tabControl1=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_medXPathtextBox()
 //        {
@@ -413,7 +413,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "medXPathtextBox1=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_medXPathradioButton()
 //        {
@@ -434,7 +434,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "medXPathradioButton1=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_medXPathlabel()
 //        {
@@ -455,7 +455,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "medXPathlabel2=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_medXPathbutton()
 //        {
@@ -476,7 +476,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "medXPathbutton2=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_medXPathcheckBox()
 //        {
@@ -497,7 +497,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "medXPathcheckBox2=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_vScrollBar()
 //        {
@@ -518,7 +518,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "vScrollBar1=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_richTextBox()
 //        {
@@ -539,7 +539,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "richTextBox1=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_deepXPathbutton()
 //        {
@@ -560,7 +560,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "deepXPathbutton3=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_deepXPathcheckBox()
 //        {
@@ -582,7 +582,7 @@ limitations under the License.
 //        }
 
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_deepXPathradioButton()
 //        {
@@ -603,7 +603,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "deepXPathradioButton2=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_deepXPathlabel()
 //        {
@@ -624,7 +624,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "deepXPathlabel3=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Form_deepXPathtextBox()
 //        {
@@ -645,7 +645,7 @@ limitations under the License.
 //            Assert.AreEqual(button1, AEBtn, "deepXPathtextBox2=AEBtn");
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Button1_Xpath_Simple()
 //        {
@@ -680,7 +680,7 @@ limitations under the License.
 //            Assert.AreEqual(XPath, "button1", "XPath");  // Simple control with name on the root      
 //        }
 
-        
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Browser_Xpath_Simple()
 //        {
@@ -695,7 +695,7 @@ limitations under the License.
 //            Assert.AreEqual(XPath, "[AutomationId:webBrowser1]", "XPath");  // Simple control with no Name and AutomationID         
 //        }
 
-  
+
 //        [TestMethod]  [Timeout(60000)]
 //        public void Verify_Browser_Xpath_()
 //        {

@@ -39,14 +39,14 @@ namespace Ginger.Agents.AddAgentWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mWizard = ((AddAgentWizard)WizardEventArgs.Wizard);        
+                    mWizard = ((AddAgentWizard)WizardEventArgs.Wizard);
                     break;
 
                 case EventType.Active:
                     AgentDriverConfigPage p = new AgentDriverConfigPage(mWizard.Agent);
                     xDriverConfigFrame.SetContent(p);
                     break;
-            }             
+            }
         }
 
         private void xTestBtn_Click(object sender, RoutedEventArgs e)
@@ -60,6 +60,6 @@ namespace Ginger.Agents.AddAgentWizardLib
             {
                 xTestBtn.IsEnabled = true;
             }
-        }        
+        }
     }
 }

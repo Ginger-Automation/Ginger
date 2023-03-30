@@ -20,7 +20,6 @@ using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Threading;
 
 namespace GingerCoreNETUnitTest.SolutionTestsLib

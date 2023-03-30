@@ -18,9 +18,6 @@ limitations under the License.
 
 using Ginger.Run;
 using Ginger.SolutionGeneral;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
@@ -30,7 +27,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         string Verb { get; }
 
         string FileExtension { get; }
-        
+
         /// <summary>
         /// Create CLI content from runsetExecutor
         /// </summary>

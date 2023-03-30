@@ -59,7 +59,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportAction.EntityId = action.Guid;
             accountReportAction.AccountReportDbActivityId = action.ParentExecutionId;
             accountReportAction.ExecutionId = (Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
-            accountReportAction.Name = action.Description;            
+            accountReportAction.Name = action.Description;
             accountReportAction.ActionType = action.ActionType;
             accountReportAction.Description = action.Description;
             accountReportAction.RunDescription = GetCalculatedValue(context, action.RunDescription);    //must pass also BF to VE
@@ -71,7 +71,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportAction.Wait = Convert.ToInt32(action.Wait);
             accountReportAction.TimeOut = action.Timeout;
             accountReportAction.RunStatus = _InProgressStatus;
-            
+
             return accountReportAction;
         }
         public static AccountReportAction MapActionEndData(GingerCore.Actions.Act action, Context context)
@@ -424,14 +424,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
             foreach (BusinessFlow businessFlow in runner.BusinessFlows)
             {
-                if(IsStart)
+                if (IsStart)
                 {
-                    ChildExecutableItemsCountActivity = ChildExecutableItemsCountActivity + businessFlow.Activities.Count(x=> x.Active);
+                    ChildExecutableItemsCountActivity = ChildExecutableItemsCountActivity + businessFlow.Activities.Count(x => x.Active);
                 }
                 else
                 {
                     ChildExecutableItemsCountActivity = ChildExecutableItemsCountActivity + businessFlow.Activities.Count(x => x.Active && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Failed || x.Status == eRunStatus.Blocked));
-                }                
+                }
 
                 ChildExecutedItemsCountActivity = ChildExecutedItemsCountActivity + businessFlow.Activities.Count(ac => ac.Status == eRunStatus.Failed || ac.Status == eRunStatus.Passed || ac.Status == eRunStatus.FailIgnored || ac.Status == eRunStatus.Stopped || ac.Status == eRunStatus.Completed);
 
@@ -439,14 +439,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
                 foreach (Activity activity in businessFlow.Activities)
                 {
-                    if(IsStart)
+                    if (IsStart)
                     {
                         ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.Acts.Count(x => x.Active);
                     }
                     else
                     {
                         ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.Acts.Count(x => x.Active && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Failed || x.Status == eRunStatus.Blocked));
-                    }                    
+                    }
 
                     ChildExecutedItemsCountAction = ChildExecutedItemsCountAction + activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Stopped || x.Status == eRunStatus.Completed);
 
@@ -489,14 +489,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             {
                 foreach (BusinessFlow businessFlow in runner.Executor.BusinessFlows)
                 {
-                    if(IsStart)
+                    if (IsStart)
                     {
                         ChildExecutableItemsCountActivity = ChildExecutableItemsCountActivity + businessFlow.Activities.Count(x => x.Active);
                     }
                     else
                     {
                         ChildExecutableItemsCountActivity = ChildExecutableItemsCountActivity + businessFlow.Activities.Count(x => x.Active && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Failed || x.Status == eRunStatus.Blocked));
-                    }                    
+                    }
 
                     ChildExecutedItemsCountActivity = ChildExecutedItemsCountActivity + businessFlow.Activities.Count(ac => ac.Status == eRunStatus.Failed || ac.Status == eRunStatus.Passed || ac.Status == eRunStatus.FailIgnored || ac.Status == eRunStatus.Stopped || ac.Status == eRunStatus.Completed);
 

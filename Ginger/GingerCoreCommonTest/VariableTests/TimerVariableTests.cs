@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common.Enums;
 using GingerCore.Variables;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 using System.Threading;
 
 namespace GingerCoreCommonTest.VariableTests
@@ -56,7 +55,8 @@ namespace GingerCoreCommonTest.VariableTests
         #endregion
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TimerVar_TestVariableType()
         {
             //Arrange
@@ -69,7 +69,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual("Timer", varType, "Timer Variable Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TimerVar_TestVariableUIType()
         {
             //Arrange
@@ -82,7 +83,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(varType.Contains("Timer"), "Timer Variable UI Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TimerVar_TestImageType()
         {
             //Arrange
@@ -95,7 +97,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.AreEqual(eImageType.Timer, eImageType, "Image Type");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TimerVar_TestTimerInMS()
         {
             //Arrange
@@ -112,7 +115,8 @@ namespace GingerCoreCommonTest.VariableTests
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TimerVar_TestTimerInSec()
         {
             //Arrange
@@ -128,7 +132,8 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsNotNull(restVal);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TimerVar_TestTimerInMin()
         {
             //Arrange

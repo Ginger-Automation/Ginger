@@ -21,8 +21,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using GingerCore.Drivers;
-using OpenQA.Selenium;
 
 namespace GingerCore.Actions.VisualTesting
 {
@@ -84,7 +82,7 @@ namespace GingerCore.Actions.VisualTesting
 
                 //TODO: if output each mismatch then do output
 
-                
+
                 mAct.AddScreenShot(bmp, "Compare Result");
 
                 //TODO: add small bitmap of mismatch elem
@@ -108,6 +106,6 @@ namespace GingerCore.Actions.VisualTesting
             throw new NotImplementedException();
         }
 
-        
+
     }
 }

@@ -16,8 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.IO;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -28,6 +26,8 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.IO;
 
 namespace Amdocs.Ginger.Repository
 {

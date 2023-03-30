@@ -30,8 +30,8 @@ namespace Ginger.UserControlsLib.TextEditor.Common
         public List<ISegment> Segments = new List<ISegment>();
 
         private ICSharpCode.AvalonEdit.TextEditor _editor;
-        
-        public DocumentLine HighLightLine {get; set;}
+
+        public DocumentLine HighLightLine { get; set; }
 
         public KnownLayer Layer { get { return KnownLayer.Caret; } }
 
@@ -44,7 +44,10 @@ namespace Ginger.UserControlsLib.TextEditor.Common
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
-            if (textView.ActualWidth == 0) return;
+            if (textView.ActualWidth == 0)
+            {
+                return;
+            }
 
             textView.EnsureVisualLines();
             if (HighLightLine != null)
@@ -66,7 +69,7 @@ namespace Ginger.UserControlsLib.TextEditor.Common
 
             // Draw line marker - this one is simple red line below the text
             foreach (ISegment seg in Segments)
-            {                
+            {
                 IEnumerable<Rect> rects = BackgroundGeometryBuilder.GetRectsForSegment(textView, seg);
                 try
                 {
@@ -97,9 +100,9 @@ namespace Ginger.UserControlsLib.TextEditor.Common
         {
             //TODO: improve it to look like zigzag wabbely line
             Path p = new Path();
-            p.Data = Geometry.Parse("M 0,2 L 2,0 4,2 6,0 8,2 10,0 12,2");                
+            p.Data = Geometry.Parse("M 0,2 L 2,0 4,2 6,0 8,2 10,0 12,2");
             p.Stroke = Brushes.Red;
-            VisualBrush VB = new VisualBrush(p);            
+            VisualBrush VB = new VisualBrush(p);
             return VB;
         }
     }

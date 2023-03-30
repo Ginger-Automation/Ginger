@@ -27,7 +27,7 @@ namespace Amdocs.Ginger.CoreNET.GingerConsoleLib
         static string GetGingerConsoleDLL()
         {
             //TODO: cache
-            
+
             Assembly a = Assembly.GetExecutingAssembly();
             string s = a.Location;
             string dir = Path.GetDirectoryName(s);

@@ -44,8 +44,8 @@ namespace Ginger.SolutionWindows
         {
             InitializeComponent();
 
-            mSolution =  WorkSpace.Instance.Solution;
-             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+            mSolution = WorkSpace.Instance.Solution;
+            WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
             CurrentItemToSave = mSolution;
 
             LoadGridData();
@@ -54,9 +54,9 @@ namespace Ginger.SolutionWindows
 
         private void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == nameof(WorkSpace.Solution))
+            if (e.PropertyName == nameof(WorkSpace.Solution))
             {
-                mSolution =  WorkSpace.Instance.Solution;
+                mSolution = WorkSpace.Instance.Solution;
                 LoadGridData();
             }
         }
@@ -75,7 +75,7 @@ namespace Ginger.SolutionWindows
 
             xTargetApplicationsGrid.SetAllColumnsDefaultView(view);
             xTargetApplicationsGrid.InitViewItems();
-            
+
             xTargetApplicationsGrid.Grid.PreparingCellForEdit += ApplicationGrid_PreparingCellForEdit;
             xTargetApplicationsGrid.Grid.CellEditEnding += ApplicationGrid_CellEditEnding;
 
@@ -111,7 +111,7 @@ namespace Ginger.SolutionWindows
             {
                 xTargetApplicationsGrid.DataSourceList = new ObservableList<ApplicationPlatform>();
             }
-                
+
         }
 
         private void CopySelectedItemID(object sender, RoutedEventArgs e)
@@ -133,16 +133,16 @@ namespace Ginger.SolutionWindows
 
         private void AddApplication(object sender, RoutedEventArgs e)
         {
-            AddApplicationPage AAP = new AddApplicationPage( WorkSpace.Instance.Solution);
+            AddApplicationPage AAP = new AddApplicationPage(WorkSpace.Instance.Solution);
             AAP.ShowAsWindow();
         }
 
-        private void ApplicationGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e) 
+        private void ApplicationGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {
             if (e.Column.DisplayIndex == 1)//App Name Column 
-            { 
-                ApplicationPlatform currentApp = (ApplicationPlatform)xTargetApplicationsGrid.CurrentItem; 
-                currentApp.NameBeforeEdit = currentApp.AppName; 
+            {
+                ApplicationPlatform currentApp = (ApplicationPlatform)xTargetApplicationsGrid.CurrentItem;
+                currentApp.NameBeforeEdit = currentApp.AppName;
                 AppName = currentApp.NameBeforeEdit;
             }
         }
@@ -166,7 +166,7 @@ namespace Ginger.SolutionWindows
                     if (NameAlreadyExists(currentApp.AppName))
                     {
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Target Application with same name already exists");
-                        return ;
+                        return;
                     }
                     UpdateApplicationNameChangeInSolution(currentApp);
                 }
@@ -222,7 +222,7 @@ namespace Ginger.SolutionWindows
             {
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Can not remove " + xTargetApplicationsGrid.grdMain.SelectedItem.ToString() + ", as it is being used by business flows.");
             }
-            else 
+            else
             {
                 WorkSpace.Instance.Solution.ApplicationPlatforms.Remove((ApplicationPlatform)xTargetApplicationsGrid.grdMain.SelectedItem);
             }
@@ -241,7 +241,7 @@ namespace Ginger.SolutionWindows
                     WorkSpace.Instance.Solution.ApplicationPlatforms.Remove(applicationPlatform);
                 }
             }
-            
+
         }
     }
 }

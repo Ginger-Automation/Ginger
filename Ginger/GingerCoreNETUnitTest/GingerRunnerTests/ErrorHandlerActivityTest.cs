@@ -524,14 +524,16 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
         private Activity[] CreateDummyActivities(int activityCount, int actionCount)
         {
             Activity[] activities = new Activity[activityCount];
-            for(int count = 0; count < activityCount; count++)
+            for (int count = 0; count < activityCount; count++)
             {
                 Activity activity = new Activity();
                 activity.Active = true;
 
                 Act[] actions = CreateDummyActions(actionCount);
                 foreach (Act action in actions)
+                {
                     activity.Acts.Add(action);
+                }
 
                 activities[count] = activity;
             }
@@ -542,7 +544,7 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
         private Act[] CreateDummyActions(int actionCount)
         {
             Act[] actions = new Act[actionCount];
-            for(int count = 0; count < actionCount; count++)
+            for (int count = 0; count < actionCount; count++)
             {
                 ActDummy act = new ActDummy();
                 act.Active = true;

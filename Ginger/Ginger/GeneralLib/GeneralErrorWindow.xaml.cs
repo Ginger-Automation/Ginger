@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using GingerCore;
 using System;
 using System.Windows;
 
@@ -27,7 +26,7 @@ namespace Ginger.GeneralLib
     /// Interaction logic for GeneralErrorWindow.xaml
     /// </summary>
     public partial class GeneralErrorWindow : Window
-    {        
+    {
         public static void ShowError(Exception ex)
         {
             GeneralErrorWindow GEW = new GeneralErrorWindow(ex);
@@ -42,7 +41,7 @@ namespace Ginger.GeneralLib
             string FullInfo = "Error:" + ex.Message + Environment.NewLine;
             FullInfo += "Source:" + ex.Source + Environment.NewLine;
             FullInfo += "Stack Trace: " + ex.StackTrace;
-            FullInfoTextBox.Text =  FullInfo;
+            FullInfoTextBox.Text = FullInfo;
         }
 
         private void MoreInfoButton_Click(object sender, RoutedEventArgs e)
@@ -58,7 +57,7 @@ namespace Ginger.GeneralLib
 
         private void CopyToClipboardButton_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(FullInfoTextBox.Text);            
+            Clipboard.SetText(FullInfoTextBox.Text);
             Reporter.ToUser(eUserMsgKey.CopiedErrorInfo);
         }
     }

@@ -52,7 +52,7 @@ namespace Amdocs.Ginger.Common
                 ToConsole(logLevel, messageToLog, exceptionToLog);
             }
 
-            WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog);            
+            WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog);
         }
         #endregion ToLog
 
@@ -68,9 +68,9 @@ namespace Amdocs.Ginger.Common
             eUserMsgIcon messageImage = eUserMsgIcon.None;
 
             try
-            {                
+            {
                 if ((UserMsgsPool != null) && UserMsgsPool.Keys.Contains(messageKey))
-                {             
+                {
                     messageToShow = UserMsgsPool[messageKey];
                 }
 

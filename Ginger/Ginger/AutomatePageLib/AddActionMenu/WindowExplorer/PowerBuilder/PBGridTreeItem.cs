@@ -17,15 +17,14 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Ginger.WindowExplorer;
 using Ginger.WindowExplorer.PowerBuilder;
 using GingerCore.Actions;
-
-using System.Windows.Controls;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Controls;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace Ginger.Drivers.PowerBuilder
 {
@@ -39,7 +38,7 @@ namespace Ginger.Drivers.PowerBuilder
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
             ObservableList<Act> list = new ObservableList<Act>();
-          
+
             list.Add(new ActTableElement()
             {
                 Description = "Set table cell" + UIAElementInfo.ElementObject + " Value",
@@ -53,7 +52,7 @@ namespace Ginger.Drivers.PowerBuilder
             {
                 Description = "Get Cell Value",
                 RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum,
-                ControlAction = ActTableElement.eTableAction.GetValue,                
+                ControlAction = ActTableElement.eTableAction.GetValue,
             });
             return list;
         }

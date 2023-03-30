@@ -16,20 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.Actions;
 using Ginger.Run.RunSetActions;
 using GingerCore;
+using GingerCore.DataSource;
 using System;
+using System.IO;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
-using System.Security.Principal;
-using System.Security.AccessControl;
-using System.IO;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.DataSource;
-
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Reports
 {
@@ -38,10 +36,10 @@ namespace Ginger.Reports
     /// </summary>
     public partial class HTMLReportAttachmentConfigurationPage : Page
     {
-        GenericWindow _pageGenericWin = null;        
-        EmailHtmlReportAttachment mEmailAttachment = new EmailHtmlReportAttachment();      
-        private bool IsLinkEnabled;               
-               
+        GenericWindow _pageGenericWin = null;
+        EmailHtmlReportAttachment mEmailAttachment = new EmailHtmlReportAttachment();
+        private bool IsLinkEnabled;
+
         public HTMLReportAttachmentConfigurationPage(EmailHtmlReportAttachment emailAttachment)
         {
             InitializeComponent();
@@ -52,15 +50,15 @@ namespace Ginger.Reports
         private void Init()
         {
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DefaultTemplatePickerCbx, ComboBox.SelectedValueProperty, mEmailAttachment, nameof(EmailHtmlReportAttachment.SelectedHTMLReportTemplateID));
-            HTMLReportFolderTextBox.Init(null, mEmailAttachment, nameof(EmailAttachment.ExtraInformation), true, true, UCValueExpression.eBrowserType.Folder,"*.*", null); 
-            
+            HTMLReportFolderTextBox.Init(null, mEmailAttachment, nameof(EmailAttachment.ExtraInformation), true, true, UCValueExpression.eBrowserType.Folder, "*.*", null);
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UseAlternativeHTMLReportFolderCbx, CheckBox.IsCheckedProperty, mEmailAttachment, nameof(EmailHtmlReportAttachment.IsAlternameFolderUsed));
             RadioButtonInit(mEmailAttachment.IsLinkEnabled);
 
             DefaultTemplatePickerCbx.ItemsSource = null;
 
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            if ( WorkSpace.Instance.Solution != null  && HTMLReportConfigurations.Count > 0)
+            if (WorkSpace.Instance.Solution != null && HTMLReportConfigurations.Count > 0)
             {
                 DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 DefaultTemplatePickerCbx.DisplayMemberPath = nameof(HTMLReportConfiguration.Name);
@@ -69,27 +67,31 @@ namespace Ginger.Reports
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
-        {                            
+        {
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button SaveAllButton = new Button();
             SaveAllButton.Content = "Ok";
             SaveAllButton.Click += new RoutedEventHandler(OkButton_Click);
             winButtons.Add(SaveAllButton);
-          
+
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, false);
         }
-      
+
         public void RadioButtonInit(bool IsLinkEnabled)
-        {            
+        {
             if (IsLinkEnabled == true)
+            {
                 RadioLinkOption.IsChecked = true;
+            }
             else
+            {
                 RadioZippedReportOption.IsChecked = true;
+            }
         }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueExpression mVE=new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+            ValueExpression mVE = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
             string extraInformationCalculated = string.Empty;
             mVE.Value = mEmailAttachment.ExtraInformation;
             extraInformationCalculated = mVE.ValueCalculated;
@@ -119,10 +121,10 @@ namespace Ginger.Reports
         {
             if ((bool)UseAlternativeHTMLReportFolderCbx.IsChecked)
             {
-                HTMLReportFolderPanel.IsEnabled = true;               
+                HTMLReportFolderPanel.IsEnabled = true;
             }
         }
-        
+
         private void LinkOption_Checked(object sender, RoutedEventArgs e)
         {
             try
@@ -131,7 +133,7 @@ namespace Ginger.Reports
                 ZipReportlbl.Visibility = Visibility.Collapsed;
                 Linklbl.Visibility = Visibility.Visible;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 String err = ex.Message;
             }
@@ -153,17 +155,17 @@ namespace Ginger.Reports
         {
             if (!(bool)UseAlternativeHTMLReportFolderCbx.IsChecked)
             {
-                HTMLReportFolderPanel.IsEnabled = false;                              
+                HTMLReportFolderPanel.IsEnabled = false;
             }
-        }              
+        }
         private void HTMLReportFolderTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            
+
         }
 
         private void DefaultTemplatePickerCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mEmailAttachment.SelectedHTMLReportTemplateID = ((HTMLReportConfiguration)DefaultTemplatePickerCbx.SelectedItem).ID;          
+            mEmailAttachment.SelectedHTMLReportTemplateID = ((HTMLReportConfiguration)DefaultTemplatePickerCbx.SelectedItem).ID;
         }
 
         public static bool HasWritePermission(string FilePath)
@@ -212,9 +214,14 @@ namespace Ginger.Reports
                     }
 
                     if (rule.AccessControlType == AccessControlType.Deny)
+                    {
                         return false;
+                    }
+
                     if (rule.AccessControlType == AccessControlType.Allow)
+                    {
                         result = true;
+                    }
                 }
                 return result;
             }

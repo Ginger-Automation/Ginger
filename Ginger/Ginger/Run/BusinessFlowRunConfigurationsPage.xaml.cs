@@ -138,7 +138,9 @@ namespace Ginger.Run
             grdVariables.InitViewItems();
 
             if (mWindowMode == eWindowMode.SummaryView)
+            {
                 grdVariables.ShowEdit = System.Windows.Visibility.Collapsed;
+            }
         }
 
         private void LoadGridData()
@@ -162,7 +164,9 @@ namespace Ginger.Run
                     foreach (VariableBase inputVar in bfInputVariables)
                     {
                         if (inputVar.SupportSetValue)
+                        {
                             inputVar.PossibleVariables = optionalVars;
+                        }
                     }
 
                     //Set Output Variabels can be used
@@ -176,6 +180,7 @@ namespace Ginger.Run
                     foreach (VariableBase inputVar in bfInputVariables)
                     {
                         if (inputVar.SupportSetValue)
+                        {
                             inputVar.PossibleOutputVariables = optionalOutputVars;
                     }
                    
@@ -243,6 +248,7 @@ namespace Ginger.Run
 
             }
             else
+            {
                 Reporter.ToUser(eUserMsgKey.ShareVariableNotSelected);
         }
 
@@ -258,7 +264,10 @@ namespace Ginger.Run
             {
                 BusinessFlow originalBF = (from bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where bf.Guid == mBusinessFlow.Guid select bf).FirstOrDefault();
                 if (originalBF == null)
+                {
                     originalBF = (from bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where bf.Name == mBusinessFlow.Name select bf).FirstOrDefault();
+                }
+
                 if (originalBF == null)
                 {
                     Reporter.ToUser(eUserMsgKey.ResetBusinessFlowRunVariablesFailed, "Original " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " was not found");
@@ -397,9 +406,13 @@ namespace Ginger.Run
                 foreach (VariableBase var in bfVariables)
                 {
                     if (string.IsNullOrEmpty(var.MappedOutputVariable) == false)
+                    {
                         autoDesc += "'" + var.Name + "' variable value mapped to '" + var.Value + "', ";
+                    }
                     else
+                    {
                         autoDesc += "'" + var.Name + "' variable value = '" + var.Value + "', ";
+                    }
                 }
 
                 autoDesc = autoDesc.TrimEnd(new char[] { ',', ' ' });
@@ -432,16 +445,19 @@ namespace Ginger.Run
                     foreach (TabItem tab in BusinessFlowTab.Items)
                     {
                         foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
-
+                        {
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (BusinessFlowTab.SelectedItem == tab)
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                }
                                 else
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
-
-                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                                } ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
+                        }
                     }
                 }
             }
@@ -474,8 +490,12 @@ namespace Ginger.Run
         {
             int count = 0;
             foreach (VariableBase var in mBusinessFlow.GetBFandActivitiesVariabeles(true, true))
+            {
                 if (var.DiffrentFromOrigin == true)
+                {
                     count++;
+                }
+            }
 
             if (count > 0)
             {
@@ -497,23 +517,37 @@ namespace Ginger.Run
                 if (tab != null)
                 {
                     foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
+                    {
                         if (ctrl.GetType() == typeof(System.Windows.Controls.Image))
                         {
                             System.Windows.Controls.Image img = (System.Windows.Controls.Image)ctrl;
                             if (img.Tag != null)
                             {
                                 if (img.Tag.ToString() == "OffSignImage")
+                                {
                                     if (indicatorToShow)
+                                    {
                                         img.Visibility = Visibility.Collapsed;
+                                    }
                                     else
+                                    {
                                         img.Visibility = Visibility.Visible;
+                                    }
+                                }
                                 else if (img.Tag.ToString() == "OnSignImage")
+                                {
                                     if (indicatorToShow)
+                                    {
                                         img.Visibility = Visibility.Visible;
+                                    }
                                     else
+                                    {
                                         img.Visibility = Visibility.Collapsed;
+                                    }
+                                }
                             }
                         }
+                    }
                 }
             }
             catch (Exception ex)

@@ -20,19 +20,14 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
-using Ginger.UserConfig;
 using GingerCore;
 using GingerCore.GeneralLib;
-using GingerCoreNET.ALMLib;
-using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNET.SourceControl;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace Ginger
 {
@@ -170,10 +165,16 @@ namespace Ginger
             {
                 if (mUserProfileFilePath == null)
                 {
-                    string userProfileFileName = "Ginger.UserProfile.xml";
-                    string sharedUserProfilePath = Path.Combine(WorkSpace.Instance.CommonApplicationDataFolderPath, userProfileFileName);
-                    string specificUserProfilePath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, userProfileFileName);
-                    if (WorkSpace.Instance.RunningInExecutionMode && File.Exists(sharedUserProfilePath))
+                    string specificUserProfilePath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Ginger.UserProfile.xml");
+                    string sharedUserProfilePath = Path.Combine(WorkSpace.Instance.CommonApplicationDataFolderPath, "Ginger.UserProfile.xml");
+                    string sharedUserProfileForUIPath = Path.Combine(WorkSpace.Instance.CommonApplicationDataFolderPath, "GingerUI.UserProfile.xml");
+                    if (File.Exists(sharedUserProfileForUIPath))
+                    {
+                        mUserProfileFilePath = sharedUserProfileForUIPath;
+                        Reporter.ToLog(eLogLevel.INFO, string.Format("Shared User Profile for UI is been used, path:'{0}'", sharedUserProfileForUIPath));
+                        mSharedUserProfileBeenUsed = true;
+                    }
+                    else if (WorkSpace.Instance.RunningInExecutionMode && File.Exists(sharedUserProfilePath))
                     {
                         mUserProfileFilePath = sharedUserProfilePath;
                         Reporter.ToLog(eLogLevel.INFO, string.Format("Shared User Profile is been used, path:'{0}'", sharedUserProfilePath));

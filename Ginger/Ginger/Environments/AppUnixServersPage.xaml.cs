@@ -17,11 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows;
-using System.Windows.Controls;
 using Ginger.UserControls;
 using GingerCore.Environments;
-using GingerCore;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Environments
 {
@@ -39,7 +38,7 @@ namespace Ginger.Environments
             AppOwner = applicationOwner;
             //Set grid look and data
             SetGridView();
-            SetGridData();            
+            SetGridData();
         }
 
         #region Events
@@ -52,7 +51,7 @@ namespace Ginger.Environments
         private void AddUnixSvr(object sender, RoutedEventArgs e)
         {
             AppOwner.UnixServers.Add(new UnixServer() { Name = "Unix " + AppOwner.UnixServers.Count, Description = "unix server", Host = "", Username = "", Password = "", RootPath = @"~/" });
-        }        
+        }
         #endregion Events
 
         #region Functions
@@ -68,7 +67,7 @@ namespace Ginger.Environments
             grdAppUnixs.AddButton("Test Connection", new RoutedEventHandler(TestUnixConnection));
             grdAppUnixs.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddUnixSvr));
             //Set the Data Grid columns
-            
+
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
@@ -80,7 +79,7 @@ namespace Ginger.Environments
             view.GridColsView.Add(new GridColView() { Field = nameof(UnixServer.PrivateKey), WidthWeight = 150 });
             view.GridColsView.Add(new GridColView() { Field = nameof(UnixServer.PrivateKeyPassPhrase), WidthWeight = 150 });
             view.GridColsView.Add(new GridColView() { Field = nameof(UnixServer.RootPath), WidthWeight = 200, Header = "Root Path" });
-            
+
             grdAppUnixs.SetAllColumnsDefaultView(view);
             grdAppUnixs.InitViewItems();
         }
@@ -88,8 +87,8 @@ namespace Ginger.Environments
         private void SetGridData()
         {
             //###TODO: Add dynamic data load
-             grdAppUnixs.DataSourceList = AppOwner.UnixServers;
-            
+            grdAppUnixs.DataSourceList = AppOwner.UnixServers;
+
         }
         #endregion Functions
     }

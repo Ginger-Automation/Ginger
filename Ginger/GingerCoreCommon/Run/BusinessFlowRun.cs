@@ -36,12 +36,12 @@ namespace Ginger.Run
 
         [IsSerializedForLocalRepository]
         public Guid BusinessFlowInstanceGuid { get; set; }
-        
+
         [IsSerializedForLocalRepository]
         public bool BusinessFlowIsActive { get; set; }
 
-		[IsSerializedForLocalRepository]
-		public bool BusinessFlowIsMandatory { get; set; }
+        [IsSerializedForLocalRepository]
+        public bool BusinessFlowIsMandatory { get; set; }
 
         /// <summary>
         /// Used by the user to describe the logic of the BF run with a specific set of variables values
@@ -67,7 +67,7 @@ namespace Ginger.Run
             }
         }
 
-        
+
 
     }
 }

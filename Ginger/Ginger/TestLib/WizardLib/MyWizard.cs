@@ -20,16 +20,12 @@ using Ginger.TestLib.WizardLib;
 using Ginger.WizardLib;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GingerTest.WizardLib
 {
     public class MyWizard : WizardBase
-    {        
+    {
         public MyWizardItem myWizardItem = new MyWizardItem() { Active = true };
         string mFolder;
 
@@ -43,7 +39,7 @@ namespace GingerTest.WizardLib
             AddPage(Name: "General Details", Title: "MyWizardItem Details", SubTitle: "MyWizardItem General Details", Page: new MyWizardDetailsPage());
             AddPage(Name: "Properties", Title: "MyWizardItem Configurations", SubTitle: "MyWizardItem Configurations", Page: new MyWizardPropertiesPage());
         }
-        
+
 
         public override void Finish()
         {

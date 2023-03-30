@@ -16,17 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Environments;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.UserControls;
-using GingerCore.Environments;
-using GingerCore;
-using GingerCore.Actions;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Environments
 {
@@ -109,8 +109,10 @@ namespace Ginger.Environments
 
         public void UpdateVariableNameChange(GeneralParam parameter)
         {
-            if (parameter == null) return;
-
+            if (parameter == null)
+            {
+                return;
+            }
             else
             {
                 ObservableList<BusinessFlow> bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
@@ -226,10 +228,14 @@ namespace Ginger.Environments
                 }
 
                 if (paramsWereAdded)
+                {
                     Reporter.ToUser(eUserMsgKey.ShareEnvAppParamWithAllEnvs);
+                }
             }
             else
+            {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
         }
         #endregion Functions
 

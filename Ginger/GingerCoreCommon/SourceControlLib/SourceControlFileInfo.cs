@@ -20,8 +20,8 @@ using Amdocs.Ginger.Common;
 
 namespace GingerCoreNET.SourceControl
 {
-    public class SourceControlFileInfo 
-    {      
+    public class SourceControlFileInfo
+    {
 
         public enum eRepositoryItemStatus
         {
@@ -46,6 +46,6 @@ namespace GingerCoreNET.SourceControl
         public string LockedOwner { get; set; }
         public string LockComment { get; set; }
         public string Diff { get; set; }
-      
+
     }
 }

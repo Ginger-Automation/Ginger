@@ -27,7 +27,7 @@ namespace TimeLineControl
     {
         public TimeLineTreeGraph()
         {
-            InitializeComponent();            
+            InitializeComponent();
         }
     }
 }

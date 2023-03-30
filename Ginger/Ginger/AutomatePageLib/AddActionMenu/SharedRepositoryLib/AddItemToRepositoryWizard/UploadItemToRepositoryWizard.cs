@@ -16,9 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
@@ -28,6 +25,9 @@ using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Variables;
 using GingerWPF.WizardLib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using static Ginger.Repository.ItemToRepositoryWizard.UploadItemSelection;
 
 namespace Ginger.Repository.AddItemToRepositoryWizard
@@ -66,7 +66,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
         }
 
         private void InitializeWizardPages()
-        {           
+        {
             AddPage(Name: "Items Selection", Title: "Item/s Selection", SubTitle: "Selected items to be added to Shared Repository", Page: new UploadItemsSelectionPage(UploadItemSelection.mSelectedItems, isConvert));
             AddPage(Name: "Items Validation", Title: "Item/s Validation", SubTitle: "Validate the items to be added to Shared Repository", Page: new UploadItemsValidationPage());
             AddPage(Name: "Items Status", Title: "Item/s Status", SubTitle: "Upload Item Status", Page: new UploadStatusPage());

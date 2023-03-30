@@ -17,12 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCore.ALM;
 using GingerCore.ALM.RQM;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.ALM;
 
 namespace Ginger.ALM.RQM
 {
@@ -46,7 +45,7 @@ namespace Ginger.ALM.RQM
             lblStatus.Content = "";
             lblStatus.Visibility = System.Windows.Visibility.Collapsed;
         }
-        private void UpdateStatus(string msg="")
+        private void UpdateStatus(string msg = "")
         {
             if (importStatus == false)
             {

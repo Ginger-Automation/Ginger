@@ -16,14 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using GingerCore.Helpers;
-using GingerCore.Properties;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions.Common
 {
@@ -58,7 +56,7 @@ namespace GingerCore.Actions.Common
         public new static partial class Fields
         {
             public static String DeviceButtonAction = "DeviceButtonAction";
-            public static String PressKey = "PressKey";            
+            public static String PressKey = "PressKey";
         }
 
         public enum eDeviceButtonAction
@@ -73,7 +71,7 @@ namespace GingerCore.Actions.Common
         public enum ePressKey
         {
             Home,
-            Menu,            
+            Menu,
             Search,
             Back,
             Delete,

@@ -120,22 +120,22 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (mShowMode == eActivitiesGroupsItemsShowMode.ReadWrite)
             {
                 if (mActivitiesGroupFolder.IsRootFolder)
-                { 
+                {
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh: false, allowDeleteAllItems: true);
                 }
                 else
-                { 
+                {
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), allowAddNew: false, allowRefresh: false);
                 }
 
                 MenuItem exportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export");
                 TreeViewUtils.AddSubMenuItem(exportMenu, "Export All to ALM", ExportAllToALM, null, "@ALM_16x16.png");
-                
+
                 AddSourceControlOptions(mContextMenu, false, false);
             }
             else
             {
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), false, false, false, false, false, false, false, false, false,false);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), false, false, false, false, false, false, false, false, false, false);
             }
         }
 
@@ -145,12 +145,16 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (agToExport.Count > 0)
             {
                 if (agToExport.Count == 1)
+                {
                     ALMIntegration.Instance.ExportActivitiesGroupToALM(agToExport[0], true);
+                }
                 else
                 {
 
                     foreach (ActivitiesGroup ag in agToExport)
+                    {
                         ALMIntegration.Instance.ExportActivitiesGroupToALM(ag, true);
+                    }
                 }
             }
         }

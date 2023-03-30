@@ -25,16 +25,17 @@ namespace GingerCoreNET.SourceControl
         public string LocalFolder { get; set; }
         public string SourceControlLocation { get; set; }
         private bool mExistInLocaly;
-        public bool ExistInLocaly {
-            get 
+        public bool ExistInLocaly
+        {
+            get
             {
                 return mExistInLocaly;
-            } 
-            set 
+            }
+            set
             {
                 mExistInLocaly = value;
                 OnPropertyChanged(nameof(ExistInLocaly));
-            } 
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

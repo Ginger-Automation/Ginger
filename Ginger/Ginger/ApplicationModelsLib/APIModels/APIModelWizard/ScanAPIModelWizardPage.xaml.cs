@@ -23,14 +23,10 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.UserControls;
 using Ginger;
-using Ginger.ApplicationModelsLib.APIModels;
 using Ginger.ApplicationModelsLib.APIModels.APIModelWizard;
 using Ginger.UserControls;
-using GingerCore;
 using GingerCoreNET.Application_Models;
-using GingerCoreNET.GeneralLib;
 using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
@@ -41,8 +37,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Media;
-using static GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard.AddAPIModelWizard;
 
 namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 {
@@ -85,9 +79,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
             AddAPIModelWizard.DeltaModelsList = new ObservableList<DeltaAPIModel>(APIDeltaUtils.DoAPIModelsCompare(selectedAPIModels).OrderBy(d => d.comparisonStatus));
 
-            if(AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)).Count() != 0)
+            if (AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)).Count() != 0)
             {
-                foreach(DeltaAPIModel deltaAPIMod in AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)))
+                foreach (DeltaAPIModel deltaAPIMod in AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)))
                 {
                     deltaAPIMod.MatchingAPIName = "[Warning] " + deltaAPIMod.MatchingAPIName;
                 }
@@ -150,10 +144,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
                     bool matchingModelsReplacementIssue = repeatingMatchingModels.Count() != 0;
                     int apiCount = 0;
-                    if(matchingModelsReplacementIssue)
+                    if (matchingModelsReplacementIssue)
                     {
                         System.Text.StringBuilder issueMsg = new System.Text.StringBuilder(Environment.NewLine + Environment.NewLine);
-                        foreach(DeltaAPIModel deltaMod in repeatingMatchingModels)
+                        foreach (DeltaAPIModel deltaMod in repeatingMatchingModels)
                         {
                             apiCount++;
                             issueMsg.Append(apiCount + "). " + deltaMod.MatchingAPIName + Environment.NewLine);
@@ -168,7 +162,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                         ApplicationAPIModel selectedAPIModel = null;
 
                         if (deltaModel.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.Add)
+                        {
                             selectedAPIModel = deltaModel.learnedAPI;
+                        }
                         else if (deltaModel.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)
                         {
                             if (deltaModel.MergedAPIModel == null)
@@ -193,10 +189,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                         }
 
                         if (selectedAPIModel != null)
+                        {
                             AddAPIModelWizard.LearnedAPIModelsList.Add(selectedAPIModel);
+                        }
                     }
 
-                    if(mergeIssue)
+                    if (mergeIssue)
                     {
                         Reporter.ToUser(eUserMsgKey.BaseAPIWarning, "Please configure Merged API on Compare and Merge window.");
                         WizardEventArgs.CancelEvent = true;
@@ -225,20 +223,29 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 }
                 bool parseSuccess = false;
                 if (AddAPIModelWizard.LearnedAPIModelsList != null)
+                {
                     AddAPIModelWizard.LearnedAPIModelsList.Clear();
+                }
 
                 if (AddAPIModelWizard.APIType == AddAPIModelWizard.eAPIType.WSDL)
                 {
                     WSDLP = AddAPIModelWizard.mWSDLParser;
                     bool ParsingStoped = false;
                     if (WSDLP.mStopParsing)
+                    {
                         ParsingStoped = true;
+                    }
+
                     WSDLP.mStopParsing = false;
 
                     if (PrevURL != AddAPIModelWizard.URL || ParsingStoped)
+                    {
                         parseSuccess = await ShowWSDLOperations();
+                    }
                     else
+                    {
                         parseSuccess = true;
+                    }
                 }
                 else if (AddAPIModelWizard.APIType == AddAPIModelWizard.eAPIType.XMLTemplates)
                 {
@@ -297,7 +304,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     AAMTempList = await Task.Run(() => WSDLP.ParseDocument(XTF.FilePath, AAMCompletedList, AddAPIModelWizard.AvoidDuplicatesNodes));
                     if (!string.IsNullOrEmpty(XTF.MatchingResponseFilePath))
+                    {
                         AAMTempList.Last().ReturnValues = await Task.Run(() => APIConfigurationsDocumentParserBase.ParseResponseSampleIntoReturnValuesPerFileType(XTF.MatchingResponseFilePath));
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -326,7 +335,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     AAMTempList = await Task.Run(() => JsonTemplate.ParseDocument(XTF.FilePath, AAMCompletedList, AddAPIModelWizard.AvoidDuplicatesNodes));
                     if (!string.IsNullOrEmpty(XTF.MatchingResponseFilePath))
+                    {
                         AAMTempList.Last().ReturnValues = await Task.Run(() => APIConfigurationsDocumentParserBase.ParseResponseSampleIntoReturnValuesPerFileType(XTF.MatchingResponseFilePath));
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -367,7 +378,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void MarkUnMarkAllActions(bool ActiveStatus)
         {
-            if (xApisSelectionGrid.DataSourceList.Count <= 0) return;
+            if (xApisSelectionGrid.DataSourceList.Count <= 0)
+            {
+                return;
+            }
+
             if (xApisSelectionGrid.DataSourceList.Count > 0)
             {
                 ObservableList<ApplicationAPIModel> lstMarkUnMarkAPI = (ObservableList<ApplicationAPIModel>)xApisSelectionGrid.DataSourceList;
@@ -396,7 +411,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             GridViewDef initView = new GridViewDef(eAddAPIWizardViewStyle.Add.ToString());
             initView.GridColsView = new ObservableList<GridColView>();
 
-            initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.IsSelected), Header = "Selected", Order=0, WidthWeight = 50, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xIsSelectedTemplate"] });
+            initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.IsSelected), Header = "Selected", Order = 0, WidthWeight = 50, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xIsSelectedTemplate"] });
             initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.MatchingAPIName), Header = "Matching API Model", WidthWeight = 20, Visible = false });
             initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.comparisonStatus), Header = "Comp. Status", WidthWeight = 150, Visible = false, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xDeltaStatusIconTemplate"], BindingMode = System.Windows.Data.BindingMode.OneWay });
             initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.OperationsList), Header = "Comp. Operation", Visible = false });
@@ -441,7 +456,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             DeltaAPIModel deltaAPI = null;
             var fEl = sender as FrameworkElement;
             if (fEl != null)
+            {
                 deltaAPI = fEl.DataContext as DeltaAPIModel;
+            }
+
             if (deltaAPI != null)
             {
                 if (deltaAPI.mergerPageObject == null)
@@ -465,7 +483,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 DeltaAPIModel deltaAPI = null;
                 var fEl = sender as FrameworkElement;
                 if (fEl != null)
+                {
                     deltaAPI = fEl.DataContext as DeltaAPIModel;
+                }
+
                 if (deltaAPI != null)
                 {
                     deltaAPI.SelectedOperation = Convert.ToString(handlingOpCB.SelectedItem);
@@ -473,9 +494,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     // Update default Operation Enum field
                     deltaAPI.SelectedOperationEnum = selectedOperation;
                     if (selectedOperation == DeltaAPIModel.eHandlingOperations.DoNotAdd)
+                    {
                         deltaAPI.IsSelected = false;
+                    }
                     else
+                    {
                         deltaAPI.IsSelected = true;
+                    }
                 }
 
                 // Launch the Merger Window as Merge Changes is selected.
@@ -490,9 +515,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         {
             var fEl = sender as FrameworkElement;
             if (fEl != null)
+            {
                 return fEl.DataContext;
+            }
             else
+            {
                 return null;
+            }
         }
 
         private void XManualMatchBtn_Click(object sender, RoutedEventArgs e)
@@ -540,7 +569,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             int modelIndex = xApisSelectionGrid.DataSourceList.IndexOf(deltaAPI);
             if (deltaAPI != null)
             {
-                if(deltaAPI.matchingAPIModel != null)
+                if (deltaAPI.matchingAPIModel != null)
                 {
                     deltaAPI.matchingAPIModel = null;
                     deltaAPI.comparisonStatus = DeltaAPIModel.eComparisonOutput.Unknown;

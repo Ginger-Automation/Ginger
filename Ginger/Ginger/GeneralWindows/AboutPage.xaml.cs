@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.GeneralLib;
 using GingerCore.Helpers;
 using System.Diagnostics;
@@ -70,7 +69,7 @@ namespace Ginger.GeneralLib
         {
             txtCredit.Text = string.Empty;
             TextBlockHelper TBH = new TextBlockHelper(txtCredit);
-            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());            
+            SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
 
             TBH.AddFormattedText("Inventor, Chief Architect & Developer:", foregroundColor);
             TBH.AddLineBreak();

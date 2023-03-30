@@ -16,13 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
-using System.Windows.Controls;
 using System.Linq;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
+using System.Windows.Controls;
 
 namespace Ginger.TagsLib
 {
@@ -43,7 +43,7 @@ namespace Ginger.TagsLib
         private void ShowTags()
         {
             TagsListBox.Items.Clear();
-            IEnumerable<RepositoryItemTag> ttg =  WorkSpace.Instance.Solution.Tags.ItemsAsEnumerable();
+            IEnumerable<RepositoryItemTag> ttg = WorkSpace.Instance.Solution.Tags.ItemsAsEnumerable();
             foreach (Guid g in mTags)
             {
                 // Get the Name for solution tags                

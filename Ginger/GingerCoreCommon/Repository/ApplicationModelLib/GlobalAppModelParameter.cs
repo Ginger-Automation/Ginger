@@ -17,12 +17,12 @@ limitations under the License.
 #endregion
 
 
-using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -33,7 +33,7 @@ namespace Amdocs.Ginger.Repository
         public static string CURRENT_VALUE = "{Current Value}";
 
         string mCurrentValue = string.Empty;
-       [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public string CurrentValue//Used for Model Global Variables
         {
             get
@@ -44,7 +44,7 @@ namespace Amdocs.Ginger.Repository
             {
                 mCurrentValue = value;
                 OnPropertyChanged(nameof(CurrentValue));
-            } 
+            }
         }
 
         public override string ParamLevel { get { return "Global"; } set { } }
@@ -100,7 +100,7 @@ namespace Amdocs.Ginger.Repository
                 try
                 {
                     if (mi.MemberType == MemberTypes.Property)
-                    {                        
+                    {
                         value = PI.GetValue(item);
                     }
                     else if (mi.MemberType == MemberTypes.Field)
@@ -146,7 +146,7 @@ namespace Amdocs.Ginger.Repository
                                 }
                             }
                         }
-                        catch (Exception ex) 
+                        catch (Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Exception occurred during Action Analyze of App Model global Params, object='{0}', field='{1}'", item, mi.Name), ex);
                         }

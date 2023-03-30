@@ -50,7 +50,7 @@ namespace Ginger.GingerGridLib
             {
                 mGingerNodeProxy.Reserve();
             }
-           
+
         }
     }
 }

@@ -16,15 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using Ginger.SolutionGeneral;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore.SourceControl;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -68,9 +67,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-            return Childrens;           
+            return Childrens;
         }
-        
+
         bool ITreeViewItem.IsExpandable()
         {
             return false;
@@ -98,20 +97,24 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mContextMenu = new ContextMenu();
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Open Execution Results Default Folder", OpenExecutionResultsFolder, null, "@Folder_16x16.png");
-            TV.AddToolbarTool("@Folder_16x16.png", "Open Execution Results Default Folder", OpenExecutionResultsFolder);                 
+            TV.AddToolbarTool("@Folder_16x16.png", "Open Execution Results Default Folder", OpenExecutionResultsFolder);
         }
 
         private void OpenExecutionResultsFolder(object sender, System.Windows.RoutedEventArgs e)
         {
             ViewFolderFiles(GetExecutionResultsFolder());
-        } 
+        }
 
         private string GetExecutionResultsFolder()
         {
-            if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.LoggerConfigurations != null)
+            if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
+            {
                 return new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
+            }
             else
+            {
                 return string.Empty;
+            }
         }
     }
 }

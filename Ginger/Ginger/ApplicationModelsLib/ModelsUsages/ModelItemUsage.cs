@@ -68,7 +68,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
 
         public Activity HostActivity { get; set; }
 
-        public Act Action { get; set; } 
+        public Act Action { get; set; }
         public string HostActivityName { get; set; }
 
         public RepositoryItemBase UsageItem { get; set; }
@@ -130,7 +130,9 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                 }
             }
             if (ItemParts.Count > 0)
+            {
                 SelectedItemPart = ItemParts[0];
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

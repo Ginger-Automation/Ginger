@@ -75,7 +75,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             }
 
             Assembly assembly = Assembly.GetEntryAssembly();
-            if (assembly ==null)
+            if (assembly == null)
             {
                 //running from unit tests
                 exe = "Unit Test";
@@ -84,7 +84,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             {
                 exe = assembly.GetName().Name;
             }
-            
+
         }
 
     }

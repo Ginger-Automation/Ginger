@@ -17,17 +17,16 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using Ginger.Actions;
+using Ginger.UserControls;
+using GingerCore;
+using GingerCore.Actions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.UserControls;
-using GingerCore;
-using GingerCore.Actions;
-using Ginger.Actions;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.BusinessFlowWindows
 {
@@ -56,7 +55,7 @@ namespace Ginger.BusinessFlowWindows
             {
                 lstLocateBy.Add(item.ToString());
             }
-            
+
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
@@ -74,7 +73,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
-            sMultiLocatorVals = UIA.getSelectedLocators(Locators); 
+            sMultiLocatorVals = UIA.getSelectedLocators(Locators);
             this.Close();
         }
 

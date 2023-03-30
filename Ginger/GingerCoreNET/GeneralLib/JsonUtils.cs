@@ -21,7 +21,7 @@ using System;
 using System.Net.Http;
 
 namespace Amdocs.Ginger.CoreNET.GeneralLib
-{ 
+{
     public static class RequestResponseFormat
     {
         public const string JSON = "application/json";

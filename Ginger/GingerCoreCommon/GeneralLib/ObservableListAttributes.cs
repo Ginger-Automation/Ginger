@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
         public IsLazyLoadAttribute(Repository.LazyLoadListConfig.eLazyLoadType lazyLoadType)
         {
             LazyLoadType = lazyLoadType;
-        }        
+        }
 
         public override string ToString()
         {

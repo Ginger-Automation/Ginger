@@ -84,14 +84,14 @@
 
 //        }
 
-      
+
 
 
 //        [TestMethod]  [Timeout(60000)]
 //        public void TestMethod1()
 //        {
-            
-            
+
+
 //            RemoteObjectsClient c = new RemoteObjectsClient();            
 //            c.Connect(SocketHelper.GetDisplayHost(), SocketHelper.GetDisplayPort());            
 

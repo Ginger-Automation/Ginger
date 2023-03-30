@@ -17,17 +17,13 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Amdocs.Ginger.ValidationRules
 {
     public class MinValueValidationRule : ValidationRule
-    {        
+    {
         string mMessage;
         string Message
         {
@@ -48,12 +44,12 @@ namespace Amdocs.Ginger.ValidationRules
             }
         }
 
-        int mMinValue;        
-        
+        int mMinValue;
+
         public MinValueValidationRule(int minValue, string message = "")
         {
-            mMinValue = minValue;            
-            Message = message;           
+            mMinValue = minValue;
+            Message = message;
         }
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {

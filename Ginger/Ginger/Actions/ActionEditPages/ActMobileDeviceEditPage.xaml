@@ -36,11 +36,24 @@
 
         <StackPanel x:Name="xPhotoSimulationPnl" HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed">
             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal"  DockPanel.Dock="Top">
-                <Label Style="{StaticResource $LabelStyle}" Content="Choose Photo:" Margin="0 0 0 0"/>
+                <Label Style="{StaticResource $LabelStyle}" Content="Choose Photo:"/>
                 <Actions:UCValueExpression x:Name="xPhotoSumilationTxtBox" HorizontalAlignment="Left" VerticalAlignment="Center" Width="600" />
             </StackPanel>
+            <UserControlsLib1:UcLabel Content="*Action will work only with a UFTM mobile device"></UserControlsLib1:UcLabel>
             <Frame x:Name="SimulatedPhotoFrame" Background="White" Margin="-5,5,0,0" Width="670" Height="470"></Frame>
         </StackPanel>
 
+        <StackPanel x:Name="xAuthSimulationPnl" HorizontalAlignment="Left" Orientation="Vertical"  DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed">
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" DockPanel.Dock="Top">
+                <Label Style="{StaticResource $LabelStyle}" Content="Authentication Result:"/>
+                <UserControlsLib1:UCComboBox x:Name="xAuthResultComboBox" VerticalAlignment="Top" Width="200"/>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" DockPanel.Dock="Top">
+                <Label x:Name="xAuthResultDetailsLbl" Style="{StaticResource $LabelStyle}" Content="Authentication Result Details:"/>
+                <UserControlsLib1:UCComboBox x:Name="xAuthResultDetailsComboBox" VerticalAlignment="Top" Width="200"/>
+            </StackPanel>
+            <UserControlsLib1:UcLabel Content="*Action will work only with a UFTM mobile device"></UserControlsLib1:UcLabel>
+            <UserControlsLib1:UcLabel Content="*Andoid device will simulate FingerPrint, iOS devices will simulate FaceID"></UserControlsLib1:UcLabel>
+        </StackPanel>
     </DockPanel>
 </Page>

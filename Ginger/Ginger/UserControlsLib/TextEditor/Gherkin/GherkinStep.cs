@@ -16,11 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Gherkin.Ast;
 
 namespace Ginger.GherkinLib
@@ -32,7 +27,7 @@ namespace Ginger.GherkinLib
         public int Counter { get; set; }
         public string AutomationStatus { get; set; }
         public int ColorIndex { get; set; }
-        public Step Step { get; internal set; }        
+        public Step Step { get; internal set; }
 
         public static class Fields
         {

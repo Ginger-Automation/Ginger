@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Repository;
-using GingerWPF;
 using GingerWPF.WizardLib;
 using System.Data;
 using System.Data.OleDb;
@@ -44,11 +43,11 @@ namespace Ginger.ApplicationModels.DBModels.DBModelWizard
             TableInfoGrid.ItemsSource = mApplicationDBModel.Tables;
 
             //TODO: TEMP - keep in AppDB RI or take from env
-          
+
             // TODO: remove hard code conn string
             ConnectionStringTextBox.Text = (@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\yaron\Ginger\POM\POM\Documents\Customers.accdb");
 
-            mApplicationDBModel.Name  = "splcustm";
+            mApplicationDBModel.Name = "splcustm";
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)

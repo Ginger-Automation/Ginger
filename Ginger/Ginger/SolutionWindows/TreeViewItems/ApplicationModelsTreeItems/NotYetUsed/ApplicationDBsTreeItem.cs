@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Ginger.ApplicationModels.DBModels.DBModelWizard;
-using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.SourceControl;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
@@ -125,7 +124,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         private void AddDBModel(object sender, RoutedEventArgs e)
         {
-            WizardWindow.ShowWizard(new AddDBModelWizard(this.Path));            
+            WizardWindow.ShowWizard(new AddDBModelWizard(this.Path));
         }
     }
 }

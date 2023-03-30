@@ -18,9 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
 
 namespace Amdocs.Ginger.Common.GlobalSolutionLib
 {
@@ -63,7 +61,7 @@ namespace Amdocs.Ginger.Common.GlobalSolutionLib
             [EnumValueDescription("~\\Ginger.Solution.xml")]
             ExtrnalIntegrationConfigurations
         }
-        
+
         public static IEnumerable<T> GetEnumValues<T>()
         {
             return Enum.GetValues(typeof(T)).Cast<T>();

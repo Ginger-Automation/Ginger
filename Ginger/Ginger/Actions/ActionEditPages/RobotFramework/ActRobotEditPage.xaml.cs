@@ -18,10 +18,9 @@ limitations under the License.
 
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.RobotFramework;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore.GeneralLib;
-using System.IO;
 
 namespace Ginger.Actions.RobotFramework
 {
@@ -34,7 +33,7 @@ namespace Ginger.Actions.RobotFramework
         public ActRobotEditPage(ActRobot act)
         {
             InitializeComponent();
-            mAct = act;           
+            mAct = act;
             Bind();
             if (RobotFileTextBox.Text != string.Empty)
             {
@@ -47,7 +46,7 @@ namespace Ginger.Actions.RobotFramework
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RobotLibsTextBox, TextBox.TextProperty, mAct.RobotLibraries, nameof(ActInputValue.Value));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RobotFileTextBox, TextBox.TextProperty, mAct.RobotFileName, nameof(ActInputValue.Value));
         }
-        
+
         private void DisplayFileContents(string fileName)
         {
             if (File.Exists(fileName))

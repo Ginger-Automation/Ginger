@@ -24,7 +24,7 @@ namespace Amdocs.Ginger.Utils
     // Most Recently Used Manager Class
     public class MRUManager
     {
-        public string MRUFileName {get; set;}
+        public string MRUFileName { get; set; }
         public int MaxEntries { get; set; }
 
         // TODO: config for user to decide list long
@@ -35,7 +35,7 @@ namespace Amdocs.Ginger.Utils
         }
 
         public string[] GetList()
-        { 
+        {
             string[] list;
             if (File.Exists(MRUFileName))
             {
@@ -43,9 +43,9 @@ namespace Amdocs.Ginger.Utils
             }
             else
             {
-                 list = new string[0];
+                list = new string[0];
             }
-            return list;                
+            return list;
         }
 
         public void AddItem(string item)
@@ -60,11 +60,15 @@ namespace Amdocs.Ginger.Utils
             {
                 int i = alist.FindIndex(x => x == item);
                 if (i >= 0)
+                {
                     alist.RemoveAt(i);
+                }
                 else
+                {
                     break;
+                }
             }
-            
+
             // insert it in first place
             alist.Insert(0, item);
 

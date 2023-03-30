@@ -18,9 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Utility
 {

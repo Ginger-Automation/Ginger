@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows;
-using System.Windows.Controls;
 using Amdocs.Ginger.Common;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.UserControls;
 using GingerWPF.WizardLib;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Repository.ItemToRepositoryWizard
 {
@@ -59,11 +59,13 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         }
 
         private void SelectUnSelectAll(bool activeStatus)
-        {          
+        {
             if (ItemValidationBase.mIssuesList.Count > 0)
-            {                
+            {
                 foreach (ItemValidationBase usage in ItemValidationBase.mIssuesList)
+                {
                     usage.Selected = activeStatus;
+                }
             }
         }
 
@@ -71,12 +73,12 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         {
             switch (WizardEventArgs.EventType)
             {
-                case EventType.Init:            
+                case EventType.Init:
                     UploadItemToRepositoryWizard = ((UploadItemToRepositoryWizard)WizardEventArgs.Wizard);
                     break;
 
                 case EventType.Active:
-            
+
                     ItemValidationBase.mIssuesList.Clear();
                     int issuesCount = 0;
                     foreach (UploadItemSelection item in UploadItemSelection.mSelectedItems)

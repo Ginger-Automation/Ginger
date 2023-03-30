@@ -16,21 +16,22 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Plugin.Core;
+using Ginger.UserControlsLib.TextEditor.Common;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Highlighting;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using Ginger.UserControlsLib.TextEditor.Common;
-using ICSharpCode.AvalonEdit.CodeCompletion;
-using GingerPlugIns.TextEditorLib;
-using Amdocs.Ginger.Plugin.Core;
 
 namespace Ginger.UserControlsLib.TextEditor.Office
 {
     public class OfficeDcoumentEditor : TextEditorBase
     {
         public override string Descritpion { get { return "Office Document"; } }
-        public override Image Icon { get
+        public override Image Icon
+        {
+            get
             {
                 return null;
             }
@@ -52,9 +53,13 @@ namespace Ginger.UserControlsLib.TextEditor.Office
         }
 
 
-        public override ITextEditorPage EditorPage { get {
-                return new OfficeDocumentPage();                
-            } }
+        public override ITextEditorPage EditorPage
+        {
+            get
+            {
+                return new OfficeDocumentPage();
+            }
+        }
 
         public override IHighlightingDefinition HighlightingDefinition
         {

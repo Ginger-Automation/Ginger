@@ -16,37 +16,21 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using GingerCore.GeneralLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions.WebServices;
-using System.Net.Http;
-using System.Net.Security;
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using System.IO;
-using Org.BouncyCastle.X509;
 using Ginger.Run;
-using System.Reflection;
-using OpenQA.Selenium.DevTools.V99.DOM;
-using static System.Net.WebRequestMethods;
-using File = System.IO.File;
-using DocumentFormat.OpenXml.EMMA;
-using Microsoft.Graph;
-using Azure.Identity;
-using System.Text;
-using System.Threading.Tasks;
+using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using MongoDB.Driver;
-using Microsoft.Graph.Extensions;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Diagnostics;
-using GingerCore.DataSource;
-using GingerCore.Environments;
+using System.Net;
+using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
+using File = System.IO.File;
 
 namespace GingerCore.Actions.Communication
 {
@@ -125,8 +109,8 @@ namespace GingerCore.Actions.Communication
             get { return "Email" + eMailActionType.ToString(); }
         }
 
-        public eEmailActionType eMailActionType 
-        { 
+        public eEmailActionType eMailActionType
+        {
             get
             {
                 return GetOrCreateInputParam(nameof(eMailActionType), eEmailActionType.SendEmail);
@@ -195,7 +179,7 @@ namespace GingerCore.Actions.Communication
                 OnPropertyChanged(nameof(MSGraphClientId));
             }
         }
-        
+
         public string MSGraphTenantId
         {
             get
@@ -507,7 +491,9 @@ namespace GingerCore.Actions.Communication
                     return returnValue;
                 }
                 else
+                {
                     return false;
+                }
             }
         }
         #endregion  
@@ -532,7 +518,10 @@ namespace GingerCore.Actions.Communication
 
             bool isSuccess;
             if (!string.IsNullOrEmpty(Host))
+            {
                 email.SMTPMailHost = Host;
+            }
+
             try { email.SMTPPort = Convert.ToInt32(this.GetInputParamCalculatedValue(nameof(Port))); }
             catch { email.SMTPPort = 25; }
 
@@ -643,7 +632,7 @@ namespace GingerCore.Actions.Communication
             EmailReadFilters filters = CreateEmailReadFilters();
             MSGraphConfig config = CreateMSGraphConfig();
             int index = 1;
-            emailReadOperations.ReadEmails(filters, config, email => 
+            emailReadOperations.ReadEmails(filters, config, email =>
             {
                 AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.From), email.From, index.ToString());
                 AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Subject), email.Subject, index.ToString());
@@ -653,7 +642,7 @@ namespace GingerCore.Actions.Communication
                 if (DownloadAttachments && FilterHasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes)
                 {
                     IEnumerable<(string filename, string filepath)> fileNamesAndPaths = DownloadAttachmentFiles(email);
-                    foreach((string filename, string filepath) in fileNamesAndPaths)
+                    foreach ((string filename, string filepath) in fileNamesAndPaths)
                     {
                         AddOrUpdateReturnParamActualWithPath(filename, filepath, index.ToString());
                     }
@@ -743,7 +732,7 @@ namespace GingerCore.Actions.Communication
 
             foreach (ReadEmail.Attachment attachment in email.Attachments)
             {
-                if (expectedContentTypes != null && expectedContentTypes.Count() > 0 && 
+                if (expectedContentTypes != null && expectedContentTypes.Count() > 0 &&
                     !expectedContentTypes.Any(expectedContentType => expectedContentType.Equals(attachment.ContentType)))
                 {
                     continue;

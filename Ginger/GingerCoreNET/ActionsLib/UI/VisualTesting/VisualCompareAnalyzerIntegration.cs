@@ -36,7 +36,7 @@ namespace GingerCore.Actions.VisualTesting
     }
 
     public class VisualCompareAnalyzerIntegration
-    {        
+    {
         public event VisualTestingEventHandler VisualTestingEvent;
         public delegate void VisualTestingEventHandler(VisualTestingEventArgs EventArgs);
 

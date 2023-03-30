@@ -16,13 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
-using Ginger.DataSource;
-using Ginger.Environments;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.WizardLib;
-using GingerCore;
 using GingerCore.DataSource;
 using GingerWPF.WizardLib;
 using System;
@@ -30,7 +28,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Text;
-using Amdocs.Ginger.Common;
 
 namespace Ginger.DataSource.ImportExcelWizardLib
 {
@@ -77,20 +74,20 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Import DataSource From Excel File", Page: new WizardIntroPage("/DataSource/ImportExcelWizardLib/ImportDataSourceIntro.md"));
             AddPage(Name: "Browse File", Title: "Browse File", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceBrowseFile());
             AddPage(Name: "Sheet Selection", Title: "Sheet Selection", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceSheetSelection());
-            AddPage(Name: "Display Data", Title: "Display Data", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceDisplayData());            
+            AddPage(Name: "Display Data", Title: "Display Data", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceDisplayData());
         }
 
         /// <summary>
         /// This method is the final finish method
         /// </summary>
         public override void Finish()
-        {   
+        {
             try
             {
                 ImportOptionalValuesForParameters impParams = new ImportOptionalValuesForParameters();
-                
+
                 impParams.ExcelFileName = Path;
-                impParams.ExcelSheetName = SheetName;                
+                impParams.ExcelSheetName = SheetName;
 
                 if (ExcelImportData == null || ExcelImportData.Tables.Count <= 0)
                 {
@@ -100,9 +97,9 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                 {
                     string cols = GetColumnNameListForTableCreation(dt);
                     AddDefaultColumn(dt);
-                    CreateTable(dt.TableName, cols);                    
+                    CreateTable(dt.TableName, cols);
                     mDSDetails.SaveTable(dt);
-                }                
+                }
             }
             catch (System.Exception ex)
             {
@@ -120,15 +117,15 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             try
             {
                 StringBuilder colList = new StringBuilder();
-                colList.Append(mDSDetails.AddNewCustomizedTableQuery()+",");
+                colList.Append(mDSDetails.AddNewCustomizedTableQuery() + ",");
                 foreach (DataColumn col in dt.Columns)
                 {
-                    if(col.ColumnName == "GINGER_ID" || col.ColumnName == "GINGER_USED" || col.ColumnName == "GINGER_LAST_UPDATED_BY" || col.ColumnName == "GINGER_LAST_UPDATE_DATETIME")
+                    if (col.ColumnName == "GINGER_ID" || col.ColumnName == "GINGER_USED" || col.ColumnName == "GINGER_LAST_UPDATED_BY" || col.ColumnName == "GINGER_LAST_UPDATE_DATETIME")
                     {
                         continue;
                     }
                     colList.Append(mDSDetails.AddColumnName(col.ColumnName));
-                    
+
                 }
                 cols = colList.ToString().Remove(colList.ToString().LastIndexOf(","), 1);
             }

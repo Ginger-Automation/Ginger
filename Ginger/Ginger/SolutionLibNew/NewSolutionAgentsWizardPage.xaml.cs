@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using GingerWPF.WizardLib;
 using System.Windows.Controls;

@@ -39,7 +39,7 @@ namespace GingerCore.GeneralLib
                 return envVarValue;
             }
         }
-        
+
         /*
          * Getting Python Executable from the PYTHON_EXEC environment variable
          */

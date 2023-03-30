@@ -17,8 +17,6 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
@@ -45,7 +43,7 @@ namespace Ginger.Run
         Runner,
         BusinessFlow
     }
-    public  class GingerRunner : RepositoryItemBase
+    public class GingerRunner : RepositoryItemBase
     {
         public enum eActionExecutorType
         {

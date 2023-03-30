@@ -16,19 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.CoreNET.Execution;
-
-
-using Amdocs.Ginger.Repository;
-using Ginger.Reports;
-using GingerCore;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.Reports;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -68,7 +60,7 @@ namespace Ginger.Run.RunSetActions
         {
             RunSetActionSaveResultsOperations.Execute(RI);
         }
-        
+
         public override string GetEditPage()
         {
             //RunSetActionSaveResultsEditPage p = new RunSetActionSaveResultsEditPage(this);

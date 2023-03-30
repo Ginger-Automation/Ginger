@@ -16,19 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Ginger;
-using Ginger.Variables;
-using GingerCore.Variables;
-using GingerTest.POMs.Common;
 using GingerWPFUnitTest.POMs;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace GingerTest.POMs
 {

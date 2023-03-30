@@ -16,14 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Web;
-using GingerCore.Drivers.Selenium.SeleniumBMP;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace GingerCore.Drivers.Selenium.SeleniumBMP
 {
@@ -37,7 +36,9 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
         public Client(string url)
         {
             if (String.IsNullOrEmpty(url))
+            {
                 throw new ArgumentException("url not supplied", "url");
+            }
 
             _url = url;
             _baseUrlProxy = String.Format("{0}/proxy", _url);
@@ -45,24 +46,28 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
             {
                 var responseStream = response.GetResponseStream();
                 if (responseStream == null)
+                {
                     throw new Exception("No response from proxy");
+                }
 
                 using (var responseStreamReader = new StreamReader(responseStream))
                 {
                     var jsonReader = new JsonTextReader(responseStreamReader);
                     var token = JToken.ReadFrom(jsonReader);
-                    var portToken = token.SelectToken("port");                    
-                    if (portToken == null) 
+                    var portToken = token.SelectToken("port");
+                    if (portToken == null)
+                    {
                         throw new Exception("No port number returned from proxy");
+                    }
 
-                    _port = (Int16) portToken;
-                }            
+                    _port = (Int16)portToken;
+                }
             }
 
             var parts = url.Split(':');
             _proxy = parts[1].TrimStart('/') + ":" + _port;
         }
-        
+
         public void NewHar(string reference = null)
         {
             MakeRequest(String.Format("{0}/{1}/har", _baseUrlProxy, _port), "PUT", reference);
@@ -70,7 +75,7 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
 
         private static WebResponse MakeRequest(string url, string method, string reference = null)
         {
-            var request = (HttpWebRequest) WebRequest.Create(url);     
+            var request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = method;
             if (reference != null)
             {
@@ -80,12 +85,14 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
                     requestStream.Write(requestBytes, 0, requestBytes.Length);
                     requestStream.Close();
                 }
-                
+
                 request.ContentType = "application/x-www-form-urlencoded";
             }
-            else            
+            else
+            {
                 request.ContentLength = 0;
-            
+            }
+
             return request.GetResponse();
         }
 
@@ -93,7 +100,7 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
         {
             var request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = method;
-            
+
             if (payload != null)
             {
                 request.ContentType = "text/json";
@@ -106,14 +113,16 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
                 }
             }
             else
+            {
                 request.ContentLength = 0;
+            }
 
-            return request.GetResponse();           
+            return request.GetResponse();
         }
 
         public void NewPage(string reference)
         {
-            MakeRequest(String.Format("{0}/{1}/har/pageRef", _baseUrlProxy, _port), "PUT", reference);            
+            MakeRequest(String.Format("{0}/{1}/har/pageRef", _baseUrlProxy, _port), "PUT", reference);
         }
 
         public HarResult GetHar()
@@ -122,7 +131,9 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
             using (var responseStream = response.GetResponseStream())
             {
                 if (responseStream == null)
+                {
                     return null;
+                }
 
                 using (var responseStreamReader = new StreamReader(responseStream))
                 {
@@ -139,20 +150,24 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
             using (var responseStream = response.GetResponseStream())
             {
                 if (responseStream == null)
+                {
                     return;
+                }
 
                 using (var responseStreamReader = new StreamReader(responseStream))
                 {
                     var json = responseStreamReader.ReadToEnd();
-                    File.WriteAllText(FileName, json);                    
+                    File.WriteAllText(FileName, json);
                 }
             }
         }
-       
+
         public void SetLimits(LimitOptions options)
         {
             if (options == null)
+            {
                 throw new ArgumentNullException("options", "LimitOptions must be supplied");
+            }
 
             MakeRequest(String.Format("{0}/{1}/limit", _baseUrlProxy, _port), "PUT", options.ToFormData());
         }
@@ -160,23 +175,23 @@ namespace GingerCore.Drivers.Selenium.SeleniumBMP
         public string SeleniumProxy
         {
             get { return _proxy; }
-        }       
+        }
 
         public void WhiteList(string regexp, int statusCode)
         {
             string data = FormatBlackOrWhiteListFormData(regexp, statusCode);
-            MakeRequest(String.Format("{0}/{1}/whitelist", _baseUrlProxy, _port), "PUT", data);                                    
+            MakeRequest(String.Format("{0}/{1}/whitelist", _baseUrlProxy, _port), "PUT", data);
         }
 
         public void Blacklist(string regexp, int statusCode)
         {
             string data = FormatBlackOrWhiteListFormData(regexp, statusCode);
-            MakeRequest(String.Format("{0}/{1}/blacklist", _baseUrlProxy, _port), "PUT", data); 
-        }        
+            MakeRequest(String.Format("{0}/{1}/blacklist", _baseUrlProxy, _port), "PUT", data);
+        }
 
         public void RemapHost(string host, string ipAddress)
         {
-            MakeJsonRequest(String.Format("{0}/{1}/hosts", _baseUrlProxy, _port), "POST", "{\"" + host + "\":\"" + ipAddress + "\"}");            
+            MakeJsonRequest(String.Format("{0}/{1}/hosts", _baseUrlProxy, _port), "POST", "{\"" + host + "\":\"" + ipAddress + "\"}");
         }
 
         private static string FormatBlackOrWhiteListFormData(string regexp, int statusCode)

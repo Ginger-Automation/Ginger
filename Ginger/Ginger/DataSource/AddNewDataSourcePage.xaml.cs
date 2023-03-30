@@ -16,19 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using GingerCore.DataSource;
+using GingerCoreNET.DataSource;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.IO;
-using Ginger.Repository;
-using GingerCore;
-using GingerCore.DataSource;
-using Ginger.UserControls;
-using Ginger.UserControlsLib;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
-using GingerCoreNET.DataSource;
 
 namespace Ginger.DataSource
 {
@@ -45,7 +41,7 @@ namespace Ginger.DataSource
         RepositoryFolder<DataSourceBase> mTargetFolder;
 
         public AddNewDataSourcePage(RepositoryFolder<DataSourceBase> folder)
-        {           
+        {
             InitializeComponent();
 
             mTargetFolder = folder;
@@ -61,13 +57,13 @@ namespace Ginger.DataSource
 
             GingerCore.General.FillComboFromEnumType(DSTypeComboBox, typeof(DataSourceBase.eDSType));
             DSTypeComboBox.SelectionChanged += DSTypeComboBox_SelectionChanged;
-            
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FilePathTextBox, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.FilePath);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSName, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.Name);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSTypeComboBox, ComboBox.SelectedValueProperty, mDSDetails, DataSourceBase.Fields.DSType); 
-            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSTypeComboBox, ComboBox.SelectedValueProperty, mDSDetails, DataSourceBase.Fields.DSType);
+
         }
-        
+
         void SetAccessDataSource()
         {
             if (!(mDSDetails is AccessDataSource))
@@ -116,17 +112,17 @@ namespace Ginger.DataSource
             else if (DSTypeComboBox.SelectedItem == null) { Reporter.ToUser(eUserMsgKey.MissingNewDSDetails, "DB type"); return; }
 
             mDSDetails.FilePath = FilePathTextBox.Text;
-            mDSDetails.FileFullPath = mDSDetails.FilePath.Replace("~",  WorkSpace.Instance.Solution.Folder);
+            mDSDetails.FileFullPath = mDSDetails.FilePath.Replace("~", WorkSpace.Instance.Solution.Folder);
             mDSDetails.Name = DSName.Text;
             if (!Directory.Exists(Path.GetDirectoryName(mDSDetails.FileFullPath)))
             { Reporter.ToUser(eUserMsgKey.InvalidDSPath, Path.GetDirectoryName(mDSDetails.FileFullPath)); return; }
 
-            mDSDetails.FilePath = mDSDetails.FilePath.Replace( WorkSpace.Instance.Solution.Folder, "~");//Pending                       
-            
-           
+            mDSDetails.FilePath = mDSDetails.FilePath.Replace(WorkSpace.Instance.Solution.Folder, "~");//Pending                       
+
+
 
             ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            foreach(DataSourceBase ds in DSList)
+            foreach (DataSourceBase ds in DSList)
             {
                 ds.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ds.FilePath);
                 if (ds.FileFullPath.Trim() == mDSDetails.FileFullPath.Trim())
@@ -135,10 +131,10 @@ namespace Ginger.DataSource
                     return;
                 }
             }
-             
-            
-            okClicked = true;           
-            
+
+
+            okClicked = true;
+
             if (File.Exists(mDSDetails.FileFullPath.Replace("~", WorkSpace.Instance.Solution.Folder)) == false)
             {
                 if (mDSDetails.DSType == DataSourceBase.eDSType.MSAccess)
@@ -179,15 +175,23 @@ namespace Ginger.DataSource
         // Handles browsing of Script File from user desktop
         private void FileBrowse_Click(object sender, RoutedEventArgs e)
         {
-            string path = FilePathTextBox.Text.Replace("~",  WorkSpace.Instance.Solution.Folder);
+            string path = FilePathTextBox.Text.Replace("~", WorkSpace.Instance.Solution.Folder);
             var dlg = new System.Windows.Forms.OpenFileDialog();
             if (path != "")
+            {
                 dlg.InitialDirectory = Path.GetDirectoryName(path);
+            }
             else
-                dlg.InitialDirectory = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, "DataSources");
+            {
+                dlg.InitialDirectory = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, "DataSources");
+            }
+
             dlg.Title = "Select DB File";
-            if(mFileType != "")
+            if (mFileType != "")
+            {
                 dlg.Filter = mFileType.ToUpper() + " Files (*." + mFileType + ")|*." + mFileType + "|All Files (*.*)|*.*";
+            }
+
             System.Windows.Forms.DialogResult result = dlg.ShowDialog();
 
             if (result == System.Windows.Forms.DialogResult.OK)
@@ -215,9 +219,11 @@ namespace Ginger.DataSource
         private void Default_Checked(object sender, RoutedEventArgs e)
         {
             if (DSTypeComboBox == null)
-                return;               
-            
-            DSTypeComboBox.IsEnabled = true;            
+            {
+                return;
+            }
+
+            DSTypeComboBox.IsEnabled = true;
             FilePathTextBox.IsEnabled = false;
             FileBrowseButton.IsEnabled = false;
             DSName.IsEnabled = false;
@@ -225,15 +231,17 @@ namespace Ginger.DataSource
             DSTypeComboBox.SelectedValue = DataSourceBase.eDSType.MSAccess;
             SetAccessDataSource();
 
-            DSName.Text = "GingerDataSource";            
+            DSName.Text = "GingerDataSource";
             FilePathTextBox.Text = mTargetFolder.FolderRelativePath + @"\GingerDataSource.mdb";
-            
+
         }
 
         private void New_Checked(object sender, RoutedEventArgs e)
         {
             if (DSTypeComboBox == null)
+            {
                 return;
+            }
 
             DSTypeComboBox.IsEnabled = true;
             DSName.IsEnabled = true;
@@ -249,11 +257,11 @@ namespace Ginger.DataSource
 
         private void DSName_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if(Default.IsChecked == false)
+            if (Default.IsChecked == false)
             {
                 FilePathTextBox.Clear();
                 string FilePath = FilePathTextBox.Text;
-                if(FilePath == "" || FilePath.StartsWith(@"~DataSources\") || FilePath.StartsWith(@"~\DataSources\"))
+                if (FilePath == "" || FilePath.StartsWith(@"~DataSources\") || FilePath.StartsWith(@"~\DataSources\"))
                 {
                     if (DSName.Text != "")
                     {
@@ -262,9 +270,11 @@ namespace Ginger.DataSource
                         mDSDetails.Name = DSName.Text;
                     }
                     else
-                        FilePathTextBox.Text = "";                        
-                }               
-            }            
+                    {
+                        FilePathTextBox.Text = "";
+                    }
+                }
+            }
         }
     }
 }

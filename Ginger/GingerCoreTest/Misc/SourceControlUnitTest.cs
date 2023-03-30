@@ -36,16 +36,16 @@ namespace UnitTests.NonUITests
         string error = string.Empty;
         bool res = false;
         string SolutionFolder = TestResources.GetTempFolder("SourceControl");
-   
+
         public static IEnumerable<object[]> GetData()
         {
             yield return new object[] { "https://svn.riouxsvn.com/dummytest", "Dummy", "DontKnow", "SVN" };
             yield return new object[] { "https://github.com/NewDummyUser/Dummy", "NewDummyUser", "TempPassword!1234", "GIT" };
         }
-        
+
         [DataTestMethod]
         [DynamicData(nameof(GetData), DynamicDataSourceType.Method)]
-        public void GetSCType (string SourceControlURL, string SourceControlUser, string SourceControlPass, string SourceControlType)
+        public void GetSCType(string SourceControlURL, string SourceControlUser, string SourceControlPass, string SourceControlType)
         {
             if (SourceControlType == "SVN")
             {
@@ -119,7 +119,7 @@ namespace UnitTests.NonUITests
             string workingDirectory = Path.Combine(SolutionFolder, SourceControlType);
 
             DeleteDirectory(workingDirectory);
-           
+
             TestConnection(SourceControlURL, SourceControlUser, SourceControlPass, SourceControlType);
             string error = string.Empty;
             bool getproj = false;

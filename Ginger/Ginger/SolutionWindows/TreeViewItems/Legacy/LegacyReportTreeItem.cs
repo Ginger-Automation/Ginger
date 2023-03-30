@@ -29,7 +29,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private ReportTemplatesPage mReportTemplatesPage;
         public string Folder { get; set; }
         public string Path { get; set; }
-        
+
         Object ITreeViewItem.NodeObject()
         {
             return null;
@@ -45,11 +45,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
             //Add Reports
-            ReportTemplatesTreeItem REPRI = new ReportTemplatesTreeItem(null);            
+            ReportTemplatesTreeItem REPRI = new ReportTemplatesTreeItem(null);
             Childrens.Add(REPRI);
 
-            HTMLReportTemplatesTreeItem HTMLREPRI = new HTMLReportTemplatesTreeItem(null);            
-            Childrens.Add(HTMLREPRI);           
+            HTMLReportTemplatesTreeItem HTMLREPRI = new HTMLReportTemplatesTreeItem(null);
+            Childrens.Add(HTMLREPRI);
 
             return Childrens;
         }

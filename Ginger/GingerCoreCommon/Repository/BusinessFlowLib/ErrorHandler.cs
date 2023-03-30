@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -73,7 +73,7 @@ namespace GingerCore
         [IsSerializedForLocalRepository]
         public eHandlerType HandlerType
         {
-            get{return mHandlerType;}
+            get { return mHandlerType; }
             set { if (mHandlerType != value) { mHandlerType = value; OnPropertyChanged(nameof(HandlerType)); } }
         }
 
@@ -106,6 +106,22 @@ namespace GingerCore
             }
         }
 
+        public override eImageType TargetApplicationPlatformImage
+        {
+            get
+            {
+                return eImageType.Wrench;
+            }
+        }
+
+        public override string TargetApplicationPlatformName
+        {
+            get
+            {
+                return "NA";
+            }
+        }
+
         public override string ActivityType
         {
             get
@@ -113,7 +129,7 @@ namespace GingerCore
                 switch (HandlerType)
                 {
                     case eHandlerType.Popup_Handler:
-                        return GingerDicser.GetTermResValue(eTermResKey.Activity, "Pop Up Handler");               
+                        return GingerDicser.GetTermResValue(eTermResKey.Activity, "Pop Up Handler");
                     default:
                         return GingerDicser.GetTermResValue(eTermResKey.Activity, "Error Handler");
                 }

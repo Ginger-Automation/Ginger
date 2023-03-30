@@ -16,14 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.UserControls;
+using GingerCore.DataSource;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
-using GingerCore.DataSource;
-using Ginger.UserControls;
-using amdocs.ginger.GingerCoreNET;
-using System;
 
 namespace Ginger.DataSource
 {
@@ -38,7 +37,7 @@ namespace Ginger.DataSource
         {
             InitializeComponent();
             SetDataSourcesGridView();
-            grdDataSources.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();            
+            grdDataSources.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             grdDataSources.btnDelete.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteDataSource));
             grdDataSources.btnRefresh.Visibility = Visibility.Collapsed;
         }
@@ -59,7 +58,7 @@ namespace Ginger.DataSource
             grdDataSources.InitViewItems();
         }
 
-        
+
 
     }
 }

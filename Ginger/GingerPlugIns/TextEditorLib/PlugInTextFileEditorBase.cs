@@ -65,7 +65,7 @@ limitations under the License.
 //        public abstract byte[] HighlightingDefinition { get;}
 
 //        public abstract List<TextEditorToolBarItem> Tools { get; }
-        
+
 //        public string ExtensionsAsString
 //        {
 //            get

@@ -16,18 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Repository;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using System.IO;
-using Amdocs.Ginger.Common.GeneralLib;
-using Newtonsoft.Json.Linq;
 
 namespace GingerAutoPilot.APIModelLib
 {

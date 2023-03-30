@@ -26,6 +26,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
         [XmlAttribute]
         public string Name { get; set; }
 
-        public List<InputVariable> InputVariables { get; set; } 
+        public List<InputVariable> InputVariables { get; set; }
     }
 }

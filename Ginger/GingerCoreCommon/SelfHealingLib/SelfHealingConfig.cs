@@ -34,7 +34,7 @@ namespace Amdocs.Ginger.Common.SelfHealingLib
         public bool AutoUpdateApplicationModel { get; set; }
 
         [IsSerializedForLocalRepository]
-        public bool AutoExecuteInSimulationMode{ get; set; }
+        public bool AutoExecuteInSimulationMode { get; set; }
 
         public bool SaveChangesInSourceControl { get; set; }
 

@@ -17,20 +17,17 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerCore.Drivers.CommunicationProtocol;
+using GingerCore.Drivers.JavaDriverLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
-using Ginger.Drivers.Common;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Actions.Common;
-using GingerCore.Drivers;
-using GingerCore.Drivers.CommunicationProtocol;
-using GingerCore.Drivers.JavaDriverLib;
-using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
 
 namespace Ginger.WindowExplorer.Java
 {
@@ -47,7 +44,7 @@ namespace Ginger.WindowExplorer.Java
             string ImageFileName = "ASCF16x16.png";
             return TreeViewUtils.CreateItemHeader(Name, ImageFileName);
         }
-      
+
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
             return base.Childrens();
@@ -94,34 +91,36 @@ namespace Ginger.WindowExplorer.Java
             Request.AddValue("ByXPath");
             Request.AddValue(JavaElementInfo.XPath);
             Request.ClosePackage();
-            
-            JavaDriver d = (JavaDriver)JavaElementInfo.WindowExplorer;    
+
+            JavaDriver d = (JavaDriver)JavaElementInfo.WindowExplorer;
             PayLoad Response = d.Send(Request);
             if (Response.IsErrorPayLoad())
             {
                 string ErrMSG = Response.GetErrorValue();
-                return null;  
+                return null;
             }
-            
+
             if (Response.Name == "ControlProperties")
             {
                 ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
                 List<PayLoad> props = Response.GetListPayLoad();
-                foreach(PayLoad prop in props)
+                foreach (PayLoad prop in props)
                 {
                     string PropName = prop.GetValueString();
                     string PropValue = String.Empty;
-                    if(PropName!="Value")
+                    if (PropName != "Value")
                     {
-                        PropValue = prop.GetValueString();                        
+                        PropValue = prop.GetValueString();
                     }
                     else
                     {
                         List<String> valueList = prop.GetListString();
-                        if(valueList.Count!=0)
+                        if (valueList.Count != 0)
+                        {
                             PropValue = valueList.ElementAt(0);
+                        }
                     }
-                   
+
                     list.Add(new ControlProperty() { Name = PropName, Value = PropValue });
                 }
                 return list;

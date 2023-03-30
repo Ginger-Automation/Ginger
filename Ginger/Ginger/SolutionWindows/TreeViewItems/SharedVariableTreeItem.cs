@@ -16,16 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using Ginger.Repository;
-using GingerWPF.UserControlsLib.UCTreeView;
 using Ginger.Variables;
 using GingerCore.Variables;
+using GingerWPF.TreeViewItemsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using GingerWPF.TreeViewItemsLib;
-using Amdocs.Ginger.Common.Enums;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -111,9 +111,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (SharedRepositoryOperations.CheckIfSureDoingChange(mVariableBase, "delete") == true)
             {
-                return (base.DeleteTreeItem(mVariableBase, deleteWithoutAsking, refreshTreeAfterDelete));                
+                return (base.DeleteTreeItem(mVariableBase, deleteWithoutAsking, refreshTreeAfterDelete));
             }
             return false;
-        }       
+        }
     }
 }

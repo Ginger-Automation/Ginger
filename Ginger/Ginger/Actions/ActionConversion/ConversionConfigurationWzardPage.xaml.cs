@@ -87,7 +87,7 @@ namespace Ginger.Actions.ActionConversion
             xRadSameActivity.IsChecked = !mWizard.NewActivityChecked;
             xNewActivityRadioBtn.IsChecked = mWizard.NewActivityChecked;
             SetTargetApplicationGridView();
-             
+
             xChkPOM.Visibility = IsPOMSupportedFromSelectedTargetApplications() ? Visibility.Visible : Visibility.Hidden;
             xChkPOM.IsChecked = mWizard.ConvertToPOMAction;
         }
@@ -100,7 +100,7 @@ namespace Ginger.Actions.ActionConversion
         {
             bool isSupported = false;
             foreach (string targetapp in TargetAppList)
-            {                
+            {
                 ePlatformType platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
                 if (platform != ePlatformType.NA && PlatformInfoBase.GetPlatformImpl(platform) != null)
                 {
@@ -108,7 +108,7 @@ namespace Ginger.Actions.ActionConversion
                     if (isSupported)
                     {
                         break;
-                    } 
+                    }
                 }
             }
             return isSupported;
@@ -122,11 +122,11 @@ namespace Ginger.Actions.ActionConversion
             //Set the Data Grid columns
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            
+
             if (mWizard.ConvertableTargetApplications != null && mWizard.ConvertableTargetApplications.Count <= 0)
             {
                 TargetAppList = new ObservableList<string>();
-                mWizard.ConvertableTargetApplications = GetTargetApplication(); 
+                mWizard.ConvertableTargetApplications = GetTargetApplication();
             }
 
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableTargetApplicationDetails.SourceTargetApplicationName), WidthWeight = 15, ReadOnly = true, Header = "Source - Target Application" });
@@ -145,7 +145,7 @@ namespace Ginger.Actions.ActionConversion
             xTargetApplication.ShowTitle = Visibility.Collapsed;
             xTargetApplication.ActiveStatus = false;
         }
-        
+
         /// <summary>
         /// This event is used to expand the Target Application grid which helps to map the target application
         /// </summary>
@@ -183,7 +183,7 @@ namespace Ginger.Actions.ActionConversion
                 xPOMControlsViewRow.MaxHeight = 35;
             }
         }
-        
+
         /// <summary>
         /// This method is used to get the Target Application
         /// </summary>
@@ -228,7 +228,7 @@ namespace Ginger.Actions.ActionConversion
             mWizard.NewActivityChecked = (bool)xNewActivityRadioBtn.IsChecked;
             if ((bool)xRadSameActivity.IsChecked)
             {
-                xControlsViewRow.Height = new GridLength(0);                
+                xControlsViewRow.Height = new GridLength(0);
             }
             else
             {

@@ -27,7 +27,6 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Environments;
-using GingerCore.FlowControlLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -47,7 +46,7 @@ namespace GingerTest.Variable_Dependancies
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-            
+
 
             BF1 = new BusinessFlow();
             BF1.Name = "VariableDependancyTest";
@@ -65,7 +64,7 @@ namespace GingerTest.Variable_Dependancies
 
             activity1.Acts.Add(actDummy1);
             activity1.Acts.Add(actDummy2);
-            
+
 
             Activity activity2 = new Activity();
             activity2.Active = true;
@@ -179,7 +178,7 @@ namespace GingerTest.Variable_Dependancies
 
             VariableDependency actiVD2 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variableValues[1]);
             activityList[2].VariablesDependencies.Add(actiVD2);
-            
+
             //Act
             mGR.Executor.RunBusinessFlow(BF1);
 
@@ -245,7 +244,7 @@ namespace GingerTest.Variable_Dependancies
             Assert.AreEqual(BF1.Activities[1].Acts[1].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
             Assert.AreEqual(BF1.Activities[1].Acts[2].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
             Assert.AreEqual(BF1.Activities[1].Acts[3].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped);
-            
+
             //Changed the selected value of selection list
             ((VariableSelectionList)activity.Variables[0]).SelectedValue = selectionList.OptionalValuesList[0].Value;
 

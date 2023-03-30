@@ -27,7 +27,7 @@ namespace GingerCore
     {
         static Dictionary<string, eTermResKey> mTermResKeyList = null;
 
-        private string mText=string.Empty;
+        private string mText = string.Empty;
         public string Text
         {
             get
@@ -46,7 +46,7 @@ namespace GingerCore
 
         public ucTextDicResource()
         {
-            InitializeComponent();           
+            InitializeComponent();
         }
 
         private void TranslateText()
@@ -74,8 +74,8 @@ namespace GingerCore
                 txtBlock.Inlines.Add(newText);
             }
             else
-            {                
-                txtBlock.Inlines.Add(mText);                
+            {
+                txtBlock.Inlines.Add(mText);
             }
         }
     }

@@ -16,9 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace GingerATS
 {
@@ -106,8 +103,9 @@ namespace GingerATS
                             Logger.AddLineToLog(eLogLineType.INFO, "SVN Result: Local copy was updated to Revision number: " + sourceControl.OperationResult.Revision.ToString());
                         }
                         else
+                        {
                             Logger.AddLineToLog(eLogLineType.WARNING, "SVN Result: No result value returned, probably error occurred.");
-
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -157,7 +155,11 @@ namespace GingerATS
                     foreach (TestCaseAutoStatus tc in testCases.Values)
                     {
                         tcsCounter++;
-                        if (tc == null) continue;
+                        if (tc == null)
+                        {
+                            continue;
+                        }
+
                         Logger.AddLineToLog(eLogLineType.INFO, "Checking the automation status of TC ID: " + tc.ID + " (" + tcsCounter + "/" + testCases.Count + ")");
                         //Search for the TC in the Activities Group reposiotry
                         GingerRepositoryItem tc_ActivitiesGroup = null;
@@ -210,7 +212,9 @@ namespace GingerATS
                                                 foreach (StepParamAutoStatus param in step.Parameters.Values)
                                                 {
                                                     if (param.SelectedValue == null || param.SelectedValue == string.Empty) //was added to support empty value as an option
+                                                    {
                                                         param.SelectedValue = "<Empty>";
+                                                    }
 
                                                     //check if the variable is known to Ginger
                                                     List<NodeAttributeValidation> variableExistsAttributes = new List<NodeAttributeValidation>();

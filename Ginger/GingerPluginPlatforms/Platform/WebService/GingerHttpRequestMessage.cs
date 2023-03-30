@@ -18,9 +18,6 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 
 namespace Ginger.Plugin.Platform.WebService
 {
@@ -64,7 +61,7 @@ namespace Ginger.Plugin.Platform.WebService
         public List<KeyValuePair<String, string>> Headers = new List<KeyValuePair<string, string>>();
 
         public eContentType BodyContentType;
-      
-       
+
+
     }
 }

@@ -17,13 +17,11 @@ limitations under the License.
 #endregion
 
 using Ginger;
-using System;
-using System.Collections.Generic;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using GingerWPF.UserControlsLib.UCTreeView;
 
 namespace GingerWPF
 {
@@ -40,7 +38,7 @@ namespace GingerWPF
         {
             get
             {
-                if(mInstance == null)
+                if (mInstance == null)
                 {
                     mInstance = new ValidationDetails();
                 }

@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
-using System.Xml;
 using System.Linq;
+using System.Xml;
 
 namespace Ginger.Imports.UFT
 {
     public static class ObjectRepositoryConverter
     {
-       //Create List Objects for Property and Repo Item
+        //Create List Objects for Property and Repo Item
         public static List<ObjectRepositoryItem> Objectlist = new List<ObjectRepositoryItem>();
 
         public static List<ObjectRepositoryItem> ProcessXML(string sXMLPath)
         {
             // force cleaning the list 
-            Objectlist.Clear(); 
+            Objectlist.Clear();
 
             //Parse the XML
             XmlDocument xmlDoc = new XmlDocument();
@@ -22,7 +22,7 @@ namespace Ginger.Imports.UFT
             //Fetch all the properties associated with the object from XML
             foreach (XmlNode node in nodeList)
             {
-               ObjectRepositoryItem Object_ori = new ObjectRepositoryItem();
+                ObjectRepositoryItem Object_ori = new ObjectRepositoryItem();
 
                 //fetch the Object Class and Name as it appears in OR
                 var sXMLObjectName = node.Attributes["Name"].Value;
@@ -66,10 +66,10 @@ namespace Ginger.Imports.UFT
             ObjectRepositoryItem Item = (from x in Objectlist where x.Name == ObjectName select x).FirstOrDefault();
             if (Item != null)
             {
-                return (from y in Item.Properties where y.Name == PropertyName select y.Value).FirstOrDefault(); 
+                return (from y in Item.Properties where y.Name == PropertyName select y.Value).FirstOrDefault();
             }
 
-            return null; 
+            return null;
         }
     }
 }

@@ -366,7 +366,10 @@ namespace GingerCore.Actions
                 }
 
                 if (!uIElementTypeAssigned)
+                {
                     NewActUIElement.ElementType = eElementType.Unknown;
+                }
+
                 if (!NewActUIElement.Platforms.Contains(this.Platform))
                 {
                     NewActUIElement.Platform = ePlatformType.Web; // ??? to check
@@ -647,7 +650,9 @@ namespace GingerCore.Actions
             {
                 //nd for backworth support
                 if (GetInputParamValue(Fields.Xoffset) == null && mXoffset != string.Empty)
+                {
                     AddOrUpdateInputParamValue(Fields.Xoffset, mXoffset);
+                }
 
                 return GetInputParamCalculatedValue(Fields.Xoffset);
             }
@@ -666,7 +671,9 @@ namespace GingerCore.Actions
             {
                 //nd for backworth support
                 if (GetInputParamValue(Fields.Yoffset) == null && mYoffset != string.Empty)
+                {
                     AddOrUpdateInputParamValue(Fields.Yoffset, mYoffset);
+                }
 
                 return GetInputParamCalculatedValue(Fields.Yoffset);
             }

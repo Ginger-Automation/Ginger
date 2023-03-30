@@ -16,32 +16,31 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.ALM.QC.TreeViewItems;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore;
-using GingerCore.ALM.QC;
+using GingerCore.ALM;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using GingerCore.ALM.QCRestAPI;
-using GingerCore.ALM;
-using amdocs.ginger.GingerCoreNET;
 
-namespace Ginger.ALM.QC {
+namespace Ginger.ALM.QC
+{
     public partial class QCTestLabExplorerPage : Page
     {
         public enum eExplorerTestLabPageUsageType { Import, Select, BrowseFolders }
-                
+
         private eExplorerTestLabPageUsageType mExplorerTestLabPageUsageType;
         ObservableList<BusinessFlow> mBizFlows;
         private List<string[]> mExecDetailNames;
 
         private ITreeViewItem mCurrentSelectedTreeItem = null;
         public string CurrentSelectedPath { get; set; }
-        ObservableList<QCTestSetTreeItem> mCurrentSelectedTestSets= new ObservableList<QCTestSetTreeItem>();
+        ObservableList<QCTestSetTreeItem> mCurrentSelectedTestSets = new ObservableList<QCTestSetTreeItem>();
         public ObservableList<QCTestSetTreeItem> CurrentSelectedTestSets
         {
             get
@@ -53,10 +52,10 @@ namespace Ginger.ALM.QC {
                 mCurrentSelectedTestSets = value;
             }
         }
-        private string mImportDestinationPath = string.Empty;       
+        private string mImportDestinationPath = string.Empty;
         GenericWindow _GenericWin = null;
-        
-        public QCTestLabExplorerPage(eExplorerTestLabPageUsageType explorerTestLabPageUsageType, string importDestinationPath="")
+
+        public QCTestLabExplorerPage(eExplorerTestLabPageUsageType explorerTestLabPageUsageType, string importDestinationPath = "")
         {
             InitializeComponent();
 
@@ -89,7 +88,9 @@ namespace Ginger.ALM.QC {
             {
                 short number;
                 if (Int16.TryParse(detail[1], out number))
+                {
                     total += number;
+                }
             }
             Label totalTcsNum = new Label();
             totalTcsNum.Content = "Total Number of TC's: " + total;
@@ -111,8 +112,8 @@ namespace Ginger.ALM.QC {
         /// load BF for Import ExternalID check if exists
         /// </summary>
         private void LoadDataBizFlows()
-        {     
-            mBizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();            
+        {
+            mBizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
         }
 
         private void TestLabExplorerTreeView_ItemSelected(object sender, EventArgs e)
@@ -135,7 +136,7 @@ namespace Ginger.ALM.QC {
                 {
                     //don't count as selected
                     mCurrentSelectedTreeItem = null;
-                    mCurrentSelectedTestSets.Clear();                    
+                    mCurrentSelectedTestSets.Clear();
                 }
             }
             else
@@ -149,18 +150,25 @@ namespace Ginger.ALM.QC {
         private void GetFolderChildTestSets(ITreeViewItem folder)
         {
             if (((QCTestLabFolderTreeItem)folder).CurrentChildrens == null)
+            {
                 folder.Childrens();
+            }
+
             foreach (ITreeViewItem item in ((QCTestLabFolderTreeItem)folder).CurrentChildrens)
             {
                 if (item is QCTestSetTreeItem)
+                {
                     mCurrentSelectedTestSets.Add((QCTestSetTreeItem)item);
+                }
                 else
+                {
                     GetFolderChildTestSets(item);
+                }
             }
         }
 
         private void GetTestSetDetails(QCTestSetTreeItem testSetItem)
-        {            
+        {
             mExecDetailNames = testSetItem.TestSetStatuses;
             LoadExecutionDetails();
             if (testSetItem.AlreadyImported)
@@ -204,7 +212,7 @@ namespace Ginger.ALM.QC {
                     Button selectBtn = new Button();
                     selectBtn.Content = "Select";
                     selectBtn.Click += new RoutedEventHandler(Select);
-                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Lab", this, new ObservableList<Button> { selectBtn }, true,"Cancel", Cancel_Clicked);
+                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Lab", this, new ObservableList<Button> { selectBtn }, true, "Cancel", Cancel_Clicked);
                     return CurrentSelectedTestSets;
 
                 case (eExplorerTestLabPageUsageType.BrowseFolders):
@@ -221,7 +229,9 @@ namespace Ginger.ALM.QC {
         private void Select(object sender, RoutedEventArgs e)
         {
             if (mCurrentSelectedTreeItem == null)
+            {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
             else
             {
                 if (mCurrentSelectedTreeItem is QCTestLabFolderTreeItem)
@@ -238,12 +248,14 @@ namespace Ginger.ALM.QC {
         private void SelectFolder(object sender, RoutedEventArgs e)
         {
             if (mCurrentSelectedTreeItem == null)
+            {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select a folder item");
+            }
             else
             {
                 _GenericWin.Close();
             }
-        }  
+        }
 
         private void ImportSelected(object sender, RoutedEventArgs e)
         {
@@ -256,18 +268,23 @@ namespace Ginger.ALM.QC {
                     GetFolderChildTestSets(mCurrentSelectedTreeItem);
                     Mouse.OverrideCursor = null;
                 }
-    
+
                 if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, (IEnumerable<object>)CurrentSelectedTestSets) == true)
                 {
                     //Refresh the explorer selected tree items import status
                     LoadDataBizFlows();
                     foreach (QCTestSetTreeItem testSet in CurrentSelectedTestSets)
+                    {
                         testSet.IsTestSetAlreadyImported();
+                    }
+
                     ShowTestSetDetailsPanel(false);
                 }
             }
             else
+            {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
         }
 
         private void Cancel_Clicked(object sender, EventArgs e)
