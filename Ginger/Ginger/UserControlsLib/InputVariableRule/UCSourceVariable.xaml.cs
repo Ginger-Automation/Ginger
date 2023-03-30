@@ -83,7 +83,7 @@ namespace Ginger.UserControlsLib
             if (variableList != null && variableList.Count > 0)
             {
                 xVariablesComboBox.DisplayMemberPath = nameof(VariableBase.Name);
-                xVariablesComboBox.SelectedValuePath = nameof(VariableBase.Guid);
+                xVariablesComboBox.SelectedValuePath = nameof(VariableBase.Guid);              
                 xVariablesComboBox.ItemsSource = variableList.OrderBy(nameof(VariableBase.Name));
                 xVariablesComboBox.SelectionChanged +=XVariablesComboBox_SelectionChanged;
             }

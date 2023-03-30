@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -1524,7 +1524,7 @@ namespace GingerCore
         public ObservableList<FlowControl> BFFlowControls { get; set; } = new ObservableList<FlowControl>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<InputVariableRule> inputVariableRules { get; set; } = new ObservableList<InputVariableRule>();
+        public ObservableList<InputVariableRule> InputVariableRules { get; set; } = new ObservableList<InputVariableRule>();
 
         public string Applications
         {

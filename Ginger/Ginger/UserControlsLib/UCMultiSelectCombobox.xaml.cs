@@ -19,34 +19,95 @@ using System.Windows.Shapes;
 using Amdocs.Ginger.Common.VariablesLib;
 using Ginger.UserControlsLib.InputVariableRule;
 using GingerCore.Variables;
+using GingerCore.GeneralLib;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.UserControlsLib
 {
     /// <summary>
     /// Interaction logic for UCMultiSelectCombobox.xaml
     /// </summary>
-    public partial class UCMultiSelectCombobox : UserControl
+    public partial class UCMultiSelectCombobox : UserControl, INotifyPropertyChanged
     {
-     
-        public delegate void MultiSelectEventHandler(bool EventArgs, UCOperationValue obj);
-        private static event MultiSelectEventHandler MultSelectEvent;
-        public void OnMultiSelectEvent(bool SelectionChanged, UCOperationValue obj)
+
+        public static DependencyProperty MultiSelectValuesListProperty =
+         DependencyProperty.Register("MultiSelectValuesList", typeof(ObservableList<SelectableObject<string>>), typeof(UCMultiSelectCombobox), 
+             new PropertyMetadata(OnMultiSelectValuesListPropertyChanged));
+
+        public static DependencyProperty VariableValuesListProperty =
+        DependencyProperty.Register("VariableValuesList", typeof(ObservableList<OptionalValue>), typeof(UCMultiSelectCombobox), new PropertyMetadata(OnVariableValuesListPropertyChanged));
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string propertyName)
         {
-            MultiSelectEventHandler handler = MultSelectEvent;
+            PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)
             {
-                handler(SelectionChanged, obj);
+                handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 
-        public static void SetMultiSelectEvent(MultiSelectEventHandler multiSelectEvent)
+        private static void OnVariableValuesListPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            if (MultSelectEvent == null)
+            var control = sender as UCMultiSelectCombobox;
+            if (control != null)
             {
-                MultSelectEvent -= multiSelectEvent;
-                MultSelectEvent += multiSelectEvent;
+                control.VariableValuesListPropertyChanged((ObservableList<OptionalValue>)args.NewValue);
             }
         }
+
+        private void VariableValuesListPropertyChanged(ObservableList<OptionalValue> list)
+        {
+            SetControlsData();
+        }
+
+        private static void OnMultiSelectValuesListPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+
+            var control = sender as UCMultiSelectCombobox;
+            if (control != null)
+            {
+                control.MultiSelectValuesListPropertyChanged((ObservableList<SelectableObject<string>>)args.NewValue);
+            }
+        }
+
+        private void MultiSelectValuesListPropertyChanged(ObservableList<SelectableObject<string>> list)
+        {
+            OnPropertyChanged(nameof(MultiSelectValuesList));
+        }
+
+        public ObservableList<SelectableObject<string>> MultiSelectValuesList
+        {
+            get { return (ObservableList<SelectableObject<string>>)GetValue(MultiSelectValuesListProperty); }
+            set { SetValue(MultiSelectValuesListProperty, value); }
+        }
+
+        public ObservableList<OptionalValue> VariableValuesList
+        {
+            get { return (ObservableList<OptionalValue>)GetValue(VariableValuesListProperty); }
+            set { SetValue(VariableValuesListProperty, value); }
+        }
+
+        //public delegate void MultiSelectEventHandler(bool EventArgs, UCOperationValue obj);
+        //private static event MultiSelectEventHandler MultSelectEvent;
+        //public void OnMultiSelectEvent(bool SelectionChanged, UCOperationValue obj)
+        //{
+        //    MultiSelectEventHandler handler = MultSelectEvent;
+        //    if (handler != null)
+        //    {
+        //        handler(SelectionChanged, obj);
+        //    }
+        //}
+
+        //public static void SetMultiSelectEvent(MultiSelectEventHandler multiSelectEvent)
+        //{
+        //    if (MultSelectEvent == null)
+        //    {
+        //        MultSelectEvent -= multiSelectEvent;
+        //        MultSelectEvent += multiSelectEvent;
+        //    }
+        //}
 
         private object obj;
         private string AttrName;
@@ -57,14 +118,52 @@ namespace Ginger.UserControlsLib
             InitializeComponent();           
         }
 
-        public void Init(object obj, string AttrName)
+        public void SetControlsData()
         {
-            //// If the VE is on stand alone form:
-            this.obj = obj;
-            this.AttrName = AttrName;          
+            MultiSelectValuesList = new ObservableList<SelectableObject<string>>();
+            List<string> possibleValues = VariableValuesList.Select(x => x.Value).ToList();
+            foreach (string possibleValue in possibleValues)
+            {                          
+                if (VariableValuesList!=null && (VariableValuesList.Where(x => x.Value == possibleValue).Count() == 1))
+                {
+                    MultiSelectValuesList.Add(new SelectableObject<string>(possibleValue, true));
+                }
+                else
+                {
+                    MultiSelectValuesList.Add(new SelectableObject<string>(possibleValue, false));
+                }
+            }
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xMultiSelectCombobox, ComboBox.ItemsSourceProperty, obj, AttrName);           
         }
+
+        public void SetControlsBinding(string variableValuesListProperty, string multiSelectValuesListProperty, UCOperationValue Source)
+        {
+            Binding variableValuesListBinding = new Binding(variableValuesListProperty);
+            variableValuesListBinding.Mode = BindingMode.TwoWay;
+            variableValuesListBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            //variableValuesListBinding.Source = Source;
+            Source.SetBinding(UCMultiSelectCombobox.VariableValuesListProperty, variableValuesListBinding);
+
+            Binding multiSelectValuesListBinding = new Binding(multiSelectValuesListProperty);
+            multiSelectValuesListBinding.Mode = BindingMode.TwoWay;
+            multiSelectValuesListBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            //multiSelectValuesListBinding.Source = Source;
+            Source.SetBinding(UCMultiSelectCombobox.MultiSelectValuesListProperty, multiSelectValuesListBinding);
+
+            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(this, UCMultiSelectCombobox.VariableValuesListProperty, Source, variableValuesListProperty);
+            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(this, UCMultiSelectCombobox.MultiSelectValuesListProperty, Source, multiSelectValuesListProperty);
+
+            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xMultiSelectCombobox, ComboBox.ItemsSourceProperty, MultiSelectValuesList, nameof(MultiSelectValuesListProperty));
+        }
+
+        //public void Init(object obj, string AttrName)
+        //{
+        //    //// If the VE is on stand alone form:
+        //    this.obj = obj;
+        //    this.AttrName = AttrName;          
+
+        //    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xMultiSelectCombobox, ComboBox.ItemsSourceProperty, obj, AttrName);           
+        //}
 
         //private void SetComboboxValues()
         //{
@@ -106,7 +205,7 @@ namespace Ginger.UserControlsLib
 
             if(triggerEvent)
             {
-                OnMultiSelectEvent(true, (UCOperationValue)this.obj);
+                //OnMultiSelectEvent(true, (UCOperationValue)this.obj);
             }            
         }
 

@@ -50,15 +50,23 @@ namespace Ginger.Variables
       
         GenericWindow _pageGenericWin = null;
         
-        public InputVariablesRules(BusinessFlow businessFlow = null)
+        public InputVariablesRules(BusinessFlow businessFlow = null, bool IsReadOnly = false)
         {
             InitializeComponent();
             mBusinessFlow = businessFlow;
            // ((RepositoryItemBase)mBusinessFlow).SaveBackup();          
             SetGridView();
             GenerateStoreToVarsList();
-            VariableRulesGrid.DataSourceList = mBusinessFlow.inputVariableRules;
+            VariableRulesGrid.DataSourceList = mBusinessFlow.InputVariableRules;
             VariableRulesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddVariableRule));
+            if(IsReadOnly)
+            {
+                VariableRulesGrid.IsEnabled = false;
+            }
+            else
+            {
+                VariableRulesGrid.IsEnabled = true;
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -76,20 +84,21 @@ namespace Ginger.Variables
             InputVariableRule variableRule = new InputVariableRule();
             variableRule.Active = true;            
             variableRule.SourceVariableList = variableList;            
-            mBusinessFlow.inputVariableRules.Add(variableRule);
+            mBusinessFlow.InputVariableRules.Add(variableRule);
         }
 
         private void SetGridView()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);                   
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.Active), WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.SourceVariableGuid), Header = "Source Variable", WidthWeight = 50, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCSourceVariable.GetTemplate(nameof(InputVariableRule.SourceVariableList), nameof(InputVariableRule.SourceVariableGuid)) });
-            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.TriggerValue), Header = "Trigger Value", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCTriggerValue.GetTemplate(nameof(InputVariableRule.SelectedSourceVariable), nameof(InputVariableRule.TriggerValue)) });
-            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.TargetVariableGuid), Header = "Target Variable", WidthWeight = 50, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCTargetVariable.GetTemplate(nameof(InputVariableRule.TargetVariableList), nameof(InputVariableRule.TargetVariableGuid), nameof(InputVariableRule.SourceVariableGuid)) });
+            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.Active), WidthWeight = 5, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.SourceVariableGuid), Header = "Source Variable", WidthWeight = 20, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCSourceVariable.GetTemplate(nameof(InputVariableRule.SourceVariableList), nameof(InputVariableRule.SourceVariableGuid)) });
+            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.Operator), Header = "Operator", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCOperator.GetTemplate(nameof(InputVariableRule.Operator)) });
+            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.TriggerValue), Header = "Trigger Value", WidthWeight = 15, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCTriggerValue.GetTemplate(nameof(InputVariableRule.SelectedSourceVariable), nameof(InputVariableRule.TriggerValue)) });            
+            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.TargetVariableGuid), Header = "Target Variable", WidthWeight = 20, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCTargetVariable.GetTemplate(nameof(InputVariableRule.TargetVariableList), nameof(InputVariableRule.TargetVariableGuid), nameof(InputVariableRule.SourceVariableGuid)) });
             //view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.OperationType), Header = "Operation Type", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCOperationType.GetTemplate(nameof(InputVariableRule.SelectedTargetVariable), nameof(InputVariableRule.OperationType)) });
-            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.OperationType), Header = "Operation Configuration", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCOperationValue.GetTemplate(nameof(InputVariableRule.SelectedTargetVariable), nameof(InputVariableRule.OperationType), nameof(InputVariableRule.OperationValue), nameof(InputVariableRule.OperationValueList)) });
-           // view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.OperationValue), Header = "Operation Values List", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCMultiSelectCombobox.GetTemplate(nameof(InputVariableRule.OperationSelectedValues)) });
+            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.OperationType), Header = "Operation Configuration", WidthWeight = 26, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCOperationValue.GetTemplate(nameof(InputVariableRule.SelectedTargetVariable), nameof(InputVariableRule.OperationType), nameof(InputVariableRule.OperationValue), "", nameof(InputVariableRule.OperationValueList)) });
+            // view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.OperationValue), Header = "Operation Values List", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCMultiSelectCombobox.GetTemplate(nameof(InputVariableRule.OperationSelectedValues)) });
             //GridColView operationType = new GridColView()
             //{
             //    Field = nameof(InputVariableRule.OperationType),
@@ -100,7 +109,8 @@ namespace Ginger.Variables
             //};
 
             //view.GridColsView.Add(operationType);
-
+            VariableRulesGrid.btnRefresh.Visibility = Visibility.Collapsed;
+            VariableRulesGrid.btnEdit.Visibility = Visibility.Collapsed;
             VariableRulesGrid.SetAllColumnsDefaultView(view);
             VariableRulesGrid.InitViewItems();
         }
@@ -109,36 +119,39 @@ namespace Ginger.Variables
         {            
             if (mBusinessFlow != null)
             {
-                variableList = mBusinessFlow.GetBFandActivitiesVariabeles(includeParentDetails:true, includeOnlySetAsInputValue:true);                                
+                List<VariableBase> vList = mBusinessFlow.GetBFandActivitiesVariabeles(includeParentDetails: true, includeOnlySetAsInputValue: true)
+                    .Where(x => x.VariableType.Equals("DateTime") || x.VariableType.Equals("Number")
+                               || x.VariableType.Equals("String") || x.VariableType.Equals("Selection List")).ToList();
+                if (vList !=null)
+                {
+                    variableList = new ObservableList<VariableBase>(vList);
+                }
             }
 
-            foreach (InputVariableRule ivr in mBusinessFlow.inputVariableRules)
+            foreach (InputVariableRule ivr in mBusinessFlow.InputVariableRules)
             {
                 ivr.SourceVariableList = variableList;               
             }
                       
         }
 
+
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            this.Title = "Add Input " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Rule";
+            this.Title = "Input " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Rule";
 
             Button okBtn = new Button();
             okBtn.Content = "Ok";
             okBtn.Click += new RoutedEventHandler(okBtn_Click);
 
-            Button undoBtn = new Button();
-            undoBtn.Content = "Undo & Close";
-            undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
-
+         
             ObservableList<Button> winButtons = new ObservableList<Button>();
             winButtons.Add(okBtn);
-            winButtons.Add(undoBtn);
-
-            this.Width = 800;
+          
+            this.Width = 850;
             this.Height = 400;
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, showClosebtn:false);
         }
 
         private void undoBtn_Click(object sender, RoutedEventArgs e)

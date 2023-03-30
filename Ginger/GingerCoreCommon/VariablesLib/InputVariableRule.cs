@@ -23,6 +23,33 @@ namespace Ginger.Variables
             SetOptionalValues
         }
 
+        public enum eInputVariableOperator
+        {
+            [EnumValueDescription("=")]
+            Equals,
+            [EnumValueDescription("<>")]
+            NotEquals,
+            [EnumValueDescription(">")]
+            GreaterThan,
+            [EnumValueDescription(">=")]
+            GreaterThanEquals,
+            [EnumValueDescription("<")]
+            LessThan,
+            [EnumValueDescription("<=")]
+            LessThanEquals,
+            [EnumValueDescription("Contains")]
+            Contains,
+            [EnumValueDescription("Does Not Contains")]
+            DoesNotContains,
+            Evaluate           
+        }
+
+        public enum eVisibilityOptions
+        {
+            Show,
+            Hide
+        }
+
         ObservableList<VariableBase> mSourceVariableList = new ObservableList<VariableBase>();
         public ObservableList<VariableBase> SourceVariableList
         {
@@ -143,6 +170,22 @@ namespace Ginger.Variables
             }
         }
 
+        private eInputVariableOperator mOperator;
+        [IsSerializedForLocalRepository]
+        public eInputVariableOperator Operator
+        {
+            get
+            {
+                return mOperator;
+            }
+            set
+            {
+                mOperator = value;
+
+                OnPropertyChanged(nameof(Operator));
+            }
+        }
+
         private string mOperationValue;
         [IsSerializedForLocalRepository]
         public string OperationValue 
@@ -160,8 +203,8 @@ namespace Ginger.Variables
 
         private ObservableList<OperationValues> mOperationValueList;
         [IsSerializedForLocalRepository]
-        public ObservableList<OperationValues> OperationValueList 
-        { 
+        public ObservableList<OperationValues> OperationValueList
+        {
             get
             {
                 return mOperationValueList;
@@ -172,8 +215,23 @@ namespace Ginger.Variables
                 OnPropertyChanged(nameof(OperationValueList));
             }
         }
-        
-       // public ObservableList<SelectableObject<string>> OperationSelectedValues { get; set; }        
+
+        //private Dictionary<string, object> mOperationValueList;
+        //[IsSerializedForLocalRepository]
+        //public Dictionary<string, object> OperationValueList
+        //{
+        //    get
+        //    {
+        //        return mOperationValueList;
+        //    }
+        //    set
+        //    {
+        //        mOperationValueList = value;
+        //        OnPropertyChanged(nameof(OperationValueList));
+        //    }
+        //}
+
+        // public ObservableList<SelectableObject<string>> OperationSelectedValues { get; set; }        
 
 
         public override string ItemName

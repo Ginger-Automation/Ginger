@@ -1,4 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
+using Ginger.Variables;
+using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
@@ -53,6 +55,9 @@ namespace Ginger.UserControlsLib
         public UCTriggerValue()
         {
             InitializeComponent();
+            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtNumberValue, TextBox.TextProperty, SourceVariable, nameof(VariableNumber.InitialNumberValue));
+            //txtNumberValue.AddValidationRule(new NumberValidationRule());
+            //txtNumberValue.AddValidationRule(new NumberValidationRule((VariableNumber)SourceVariable));
         }
 
         private static void OnSelectedSourceVariabelPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
@@ -66,33 +71,87 @@ namespace Ginger.UserControlsLib
 
         private void SelectedSourceVariabelPropertyChanged(VariableBase selectedVar)
         {
+            //SourceVariable = selectedVar;
+            //OnPropertyChanged(nameof(SourceVariable));
+            //SetTriggerValue();
+            TriggerValue = "";
             if (selectedVar != null && selectedVar.VariableType == "Selection List")
             {
+                txtNumberValue.ClearControlsBindings();
+                xValueExpressionTxtbox.ClearControlsBindings();
                 xValueExpressionTxtbox.Visibility = Visibility.Collapsed;
-                xVariablesValuesComboBox.Visibility = Visibility.Visible;             
-                xVariablesValuesComboBox.ItemsSource = ((VariableSelectionList)selectedVar).OptionalValuesList.Select(x=>x.Value).ToList();
-                xVariablesValuesComboBox.SelectionChanged += XVariablesValuesComboBox_SelectionChanged;                
+                dateWindow.Visibility = Visibility.Collapsed;
+                txtNumberValue.Visibility = Visibility.Collapsed;
+                xVariablesValuesComboBox.Visibility = Visibility.Visible;                
+                xVariablesValuesComboBox.SelectedValue = selectedVar.Value;
+                xVariablesValuesComboBox.ItemsSource = ((VariableSelectionList)selectedVar).OptionalValuesList.Select(x => x.Value).ToList();
+                xVariablesValuesComboBox.SelectionChanged += XVariablesValuesComboBox_SelectionChanged;
             }
 
-            if (selectedVar.VariableType == "String")
+            if (selectedVar != null &&  selectedVar.VariableType == "String")
             {
+                txtNumberValue.ClearControlsBindings();
                 xVariablesValuesComboBox.Visibility = Visibility.Collapsed;
+                dateWindow.Visibility = Visibility.Collapsed;
+                txtNumberValue.Visibility = Visibility.Collapsed;
                 xValueExpressionTxtbox.Visibility = Visibility.Visible;
-                xValueExpressionTxtbox.Text = selectedVar.Value;
-                xValueExpressionTxtbox.TextChanged += XValueExpressionTxtbox_TextChanged;                               
-            }            
-        }
+                //xValueExpressionTxtbox.TextChanged += XValueExpressionTxtbox_TextChanged;
+                BindingHandler.ObjFieldBinding(xValueExpressionTxtbox, TextBox.TextProperty, this, nameof(TriggerValue));
+                xValueExpressionTxtbox.Text = selectedVar.Value;               
+            }
 
-       
-        private void XValueExpressionTxtbox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            TextBox txtBox = (TextBox)sender;
-            if (txtBox.Text !=null)
+            if (selectedVar != null &&  selectedVar.VariableType == "DateTime")
             {
-                string var = txtBox.Text;
-                TriggerValue = var;
+                txtNumberValue.ClearControlsBindings();
+                xValueExpressionTxtbox.ClearControlsBindings();
+                xValueExpressionTxtbox.Visibility = Visibility.Collapsed;
+                xVariablesValuesComboBox.Visibility = Visibility.Collapsed;
+                txtNumberValue.Visibility = Visibility.Collapsed;
+                dateWindow.Visibility = Visibility.Visible;
+                dpDate.CustomFormat = ((VariableDateTime)selectedVar).DateTimeFormat;
+                dpDate.Value =  Convert.ToDateTime(((VariableDateTime)selectedVar).Value);
+                dpDate.MinDate =  Convert.ToDateTime(((VariableDateTime)selectedVar).MinDateTime);
+                dpDate.MaxDate =  Convert.ToDateTime(((VariableDateTime)selectedVar).MaxDateTime);
+            }
+
+            if (selectedVar != null &&  selectedVar.VariableType == "Number")
+            {
+                xValueExpressionTxtbox.ClearControlsBindings();
+                xValueExpressionTxtbox.Visibility = Visibility.Collapsed;
+                xVariablesValuesComboBox.Visibility = Visibility.Collapsed;
+                dateWindow.Visibility = Visibility.Collapsed;
+                txtNumberValue.Visibility = Visibility.Visible;
+                //txtNumberValue.Text = selectedVar.Value;
+                //txtNumberValue.TextChanged += txtNumberValue_TextChanged;
+                BindingHandler.ObjFieldBinding(txtNumberValue, TextBox.TextProperty, this, nameof(TriggerValue));
+                txtNumberValue.Text =  selectedVar.Value;                
             }
         }
+
+
+        private void SetTriggerValue()
+        {
+           
+        }
+        //private void txtNumberValue_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    TextBox txtBox = (TextBox)sender;
+        //    if (txtBox.Text !=null)
+        //    {
+        //        string var = txtBox.Text;
+        //        TriggerValue = var;
+        //    }
+        //}
+
+        //private void XValueExpressionTxtbox_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    TextBox txtBox = (TextBox)sender;
+        //    if (txtBox.Text !=null)
+        //    {
+        //        string var = txtBox.Text;
+        //        TriggerValue = var;
+        //    }
+        //}
                
         private static void OnTriggerValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
@@ -110,29 +169,42 @@ namespace Ginger.UserControlsLib
             {                
                 xVariablesValuesComboBox.SelectedValue = newValue;
             }
-
-            if (SourceVariable.VariableType == "String")
+            else if (SourceVariable.VariableType == "String")
             {
                 xValueExpressionTxtbox.Text = newValue;
+            }
+            else if (SourceVariable.VariableType == "DateTime" && !string.IsNullOrEmpty(newValue))
+            {
+                dpDate.Value = Convert.ToDateTime(newValue);
+            }
+            else if (SourceVariable.VariableType == "Number")
+            {
+                txtNumberValue.Text =  newValue;
             }
         }
 
         private void XVariablesValuesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
-            if (comboBox.Items.Count > 0)
+            if (comboBox.Items.Count > 0 && (comboBox).SelectedItem != null)
             {
                 string var = (comboBox).SelectedItem.ToString();
                 TriggerValue = var;
             }
         }
 
-        private static void OnInputVariabelsSourcePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        private void dpDate_TextChanged(object sender, EventArgs e)
         {
-            var control = sender as UCTriggerValue;
-            if (control != null)
+            VariableDateTime vdt = (VariableDateTime)SourceVariable;
+            if (!(vdt.CheckDateTimeWithInRange(dpDate.Value.ToString())))
             {
-                control.SelectedSourceVariabelPropertyChanged((VariableBase)args.NewValue);
+                Reporter.ToLog(eLogLevel.ERROR, $"Input Value is not in range:- Maximum date :[{vdt.MaxDateTime}], Minimum Date:[{vdt.MinDateTime}]");
+                dpDate.Focus();
+                return;
+            }
+            else
+            {
+                TriggerValue = dpDate.Value.ToString();
             }
         }
 
@@ -154,6 +226,6 @@ namespace Ginger.UserControlsLib
             template.VisualTree = triggerValue;
             return template;
         }
-
+        
     }
 }

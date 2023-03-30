@@ -273,17 +273,17 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             addSelectedToSR.OperationHandler = AddSelectedToSRHandler;
             extraOperationsList.Add(addSelectedToSR);
 
-            if(VariablesParent.GetType() == typeof(BusinessFlow))
-            {
-                ListItemOperation inputvariablesRules = new ListItemOperation();
-                inputvariablesRules.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation };
-                inputvariablesRules.AutomationID = "inputvrules";
-                inputvariablesRules.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Rules;
-                inputvariablesRules.Header = "Input " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Rules";
-                inputvariablesRules.ToolTip = "Input " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Rules";
-                inputvariablesRules.OperationHandler = InputVariablesRuleHandler;
-                extraOperationsList.Add(inputvariablesRules);
-            }
+            //if(VariablesParent.GetType() == typeof(BusinessFlow))
+            //{
+            ListItemOperation inputvariablesRules = new ListItemOperation();
+            inputvariablesRules.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation };
+            inputvariablesRules.AutomationID = "inputvrules";
+            inputvariablesRules.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Rules;
+            inputvariablesRules.Header = "Input " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Rules";
+            inputvariablesRules.ToolTip = "Input " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Rules";
+            inputvariablesRules.OperationHandler = InputVariablesRuleHandler;
+            extraOperationsList.Add(inputvariablesRules);
+            //}
             
             return extraOperationsList;
         }

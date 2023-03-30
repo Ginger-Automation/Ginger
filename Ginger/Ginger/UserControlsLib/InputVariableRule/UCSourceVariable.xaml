@@ -16,9 +16,18 @@
         <ComboBox x:Name="xVariablesComboBox" Grid.Column="0"  VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Height="20" FontWeight="Bold" Visibility="Visible">
             <ComboBox.ToolTip>
                 <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}">
-                    <TextBlock Text="{Binding SelectionBoxItem}"/>
+                    <TextBlock Text="{Binding SelectionBoxItem.ParentName}" Foreground="Black"/>
                 </ToolTip>
             </ComboBox.ToolTip>
+            <ComboBox.ItemContainerStyle>
+                <Style TargetType="ComboBoxItem">
+                    <Setter Property="ToolTip">
+                        <Setter.Value>
+                            <TextBlock Text="{Binding ParentName}" />
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ComboBox.ItemContainerStyle>
         </ComboBox>
     </Grid>
 </UserControl>
