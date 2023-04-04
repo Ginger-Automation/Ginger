@@ -15,7 +15,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="xVariableValueColumn" Width="50*"/>
         </Grid.ColumnDefinitions>
-      
+
         <ComboBox x:Name="xVariablesValuesComboBox" Grid.Column="0"  VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Height="20" Visibility="Visible">
             <ComboBox.ToolTip>
                 <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}">
@@ -23,7 +23,6 @@
                 </ToolTip>
             </ComboBox.ToolTip>
         </ComboBox>
-        <!--<Button x:Name="xValueBtn" Grid.Column="1" VerticalAlignment="Top" Click="xValueBtn_Click" HorizontalAlignment="Right" Height="21" Width="20" Margin="0,0,0.6,0" Style="{StaticResource $InputButtonStyle}" Visibility="Collapsed">...</Button>-->
         <TextBox x:Name="xValueExpressionTxtbox" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBoxStyle}"  Height="21" Margin="0,0,22,0" IsReadOnly="false" BorderThickness="0,0,0,1" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" Visibility="Collapsed"></TextBox>
 
         <window:WindowsFormsHost x:Name="dateWindow" Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}"  Visibility="Collapsed" Width="190">

@@ -31,71 +31,68 @@ namespace Amdocs.Ginger.CoreNET
             removedbfInputVariables = new ObservableList<VariableBase>();
             foreach (InputVariableRule variableRule in mBusinessFlow.InputVariableRules)
             {
-                if (variableRule.Active)
+                try
                 {
-                    VariableBase sourceVariable = variables.Where(x => x.Guid == variableRule.SourceVariableGuid).FirstOrDefault();
-                    VariableBase targetVariable = variables.Where(x => x.Guid == variableRule.TargetVariableGuid).FirstOrDefault();
-                    //if (targetVariable == null)
-                    //{
-                    //    targetVariable = removedbfInputVariables.Where(x => x.Guid == variableRule.TargetVariableGuid).FirstOrDefault();
-                    //    variables.Add(targetVariable);
-                    //    removedbfInputVariables.Remove(targetVariable);                        
-                    //}
-                    if (variableRule.OperationType == InputVariableRule.eInputVariableOperation.SetValue && CalculateOperatorStatus(sourceVariable, variableRule))
+                    if (variableRule.Active)
                     {
-                        if (targetVariable.GetType() == typeof(VariableSelectionList))
+                        VariableBase sourceVariable = variables.Where(x => x.Guid == variableRule.SourceVariableGuid).FirstOrDefault();
+                        VariableBase targetVariable = variables.Where(x => x.Guid == variableRule.TargetVariableGuid).FirstOrDefault();
+                        if (sourceVariable !=null && targetVariable!=null)
                         {
-                            OptionalValue optionalValue = ((VariableSelectionList)targetVariable).OptionalValuesList.Where(x => x.Value == variableRule.OperationValue).FirstOrDefault();
-                            if (optionalValue !=null)
+                            if (variableRule.OperationType == InputVariableRule.eInputVariableOperation.SetValue && CalculateOperatorStatus(sourceVariable, variableRule))
                             {
-                                targetVariable.Value = variableRule.OperationValue;
-                            }
-                        }
-                        else
-                        {
-                            targetVariable.Value = variableRule.OperationValue;
-                        }
+                                if (targetVariable.GetType() == typeof(VariableSelectionList))
+                                {
+                                    OptionalValue optionalValue = ((VariableSelectionList)targetVariable).OptionalValuesList.Where(x => x.Value == variableRule.OperationValue).FirstOrDefault();
+                                    if (optionalValue !=null)
+                                    {
+                                        targetVariable.Value = variableRule.OperationValue;
+                                    }
+                                }
+                                else
+                                {
+                                    targetVariable.Value = variableRule.OperationValue;
+                                }
 
-                        targetVariable.DiffrentFromOrigin = true;
-                    }
+                                targetVariable.DiffrentFromOrigin = true;
+                            }
 
-                    else if (variableRule.OperationType == InputVariableRule.eInputVariableOperation.SetOptionalValues && CalculateOperatorStatus(sourceVariable, variableRule))
-                    {
-                        if (targetVariable.GetType() == typeof(VariableSelectionList))
-                        {
-                            ((VariableSelectionList)targetVariable).OptionalValuesList = new ObservableList<OptionalValue>();
-                            foreach (OperationValues values in variableRule.OperationValueList)
+                            else if (variableRule.OperationType == InputVariableRule.eInputVariableOperation.SetOptionalValues && CalculateOperatorStatus(sourceVariable, variableRule))
                             {
-                                ((VariableSelectionList)targetVariable).OptionalValuesList.Add(new OptionalValue(values.Value));
+                                if (targetVariable.GetType() == typeof(VariableSelectionList))
+                                {
+                                    ((VariableSelectionList)targetVariable).OptionalValuesList = new ObservableList<OptionalValue>();
+                                    foreach (OperationValues values in variableRule.OperationValueList)
+                                    {
+                                        ((VariableSelectionList)targetVariable).OptionalValuesList.Add(new OptionalValue(values.Value));
+                                    }
+                                }
                             }
-                            //targetVariable.Value = ((VariableSelectionList)targetVariable).OptionalValuesList[0].Value;
-                        }
-                    }
-                    else if (variableRule.Active && variableRule.OperationType == InputVariableRule.eInputVariableOperation.SetVisibility && CalculateOperatorStatus(sourceVariable, variableRule))
-                    {
-                        if (variableRule.OperationValue == eVisibilityOptions.Hide.ToString())
-                        {
-                            variables.Remove(targetVariable);                          
-                            if (removedbfInputVariables.Where(x => x.Guid != targetVariable.Guid).FirstOrDefault() == null)
+                            else if (variableRule.Active && variableRule.OperationType == InputVariableRule.eInputVariableOperation.SetVisibility && CalculateOperatorStatus(sourceVariable, variableRule))
                             {
-                                removedbfInputVariables.Add(targetVariable);
+                                if (variableRule.OperationValue == eVisibilityOptions.Hide.ToString())
+                                {
+                                    variables.Remove(targetVariable);
+                                    if (removedbfInputVariables.Where(x => x.Guid != targetVariable.Guid).FirstOrDefault() == null)
+                                    {
+                                        removedbfInputVariables.Add(targetVariable);
+                                    }
+                                }
+                                else if (variableRule.OperationValue == eVisibilityOptions.Show.ToString())
+                                {
+                                    VariableBase variable = removedbfInputVariables.Where(x => x.Guid == variableRule.TargetVariableGuid).FirstOrDefault();
+                                    variables.Add(variable);
+                                    removedbfInputVariables.Remove(targetVariable);
+                                }
                             }
-                        }
-                        else if (variableRule.OperationValue == eVisibilityOptions.Show.ToString())
-                        {
-                            VariableBase variable = removedbfInputVariables.Where(x => x.Guid == variableRule.TargetVariableGuid).FirstOrDefault();
-                            variables.Add(variable);
-                            removedbfInputVariables.Remove(targetVariable);
                         }
                     }
                 }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Failed to process rule"), ex);
+                }
             }
-
-            //foreach (InputVariableRule variableRule in mBusinessFlow.InputVariableRules.Where(x => x.OperationType == InputVariableRule.eInputVariableOperation.SetVisibility))
-            //{
-            //    VariableBase sourceVariable = variables.Where(x => x.Guid == variableRule.SourceVariableGuid).FirstOrDefault();
-            //    VariableBase targetVariable = variables.Where(x => x.Guid == variableRule.TargetVariableGuid).FirstOrDefault();
-            //}
         }
 
         private bool CalculateOperatorStatus(VariableBase sourceVariable, InputVariableRule variableRule)
@@ -109,10 +106,16 @@ namespace Amdocs.Ginger.CoreNET
                 switch (variableRule.Operator)
                 {
                     case eInputVariableOperator.Contains:
-                        status = sourceVariable.Value.Contains(variableRule.TriggerValue);
+                        if (sourceVariable.GetType() == typeof(VariableSelectionList) || sourceVariable.GetType() == typeof(VariableString))
+                        {
+                            status = sourceVariable.Value.Contains(variableRule.TriggerValue);
+                        }                        
                         break;
                     case eInputVariableOperator.DoesNotContains:
-                        status = !sourceVariable.Value.Contains(variableRule.TriggerValue);
+                        if (sourceVariable.GetType() == typeof(VariableSelectionList) || sourceVariable.GetType() == typeof(VariableString))
+                        {
+                            status = !sourceVariable.Value.Contains(variableRule.TriggerValue);
+                        }
                         break;
                     case eInputVariableOperator.Equals:
                         status = string.Equals(sourceVariable.Value, variableRule.TriggerValue);
@@ -121,43 +124,72 @@ namespace Amdocs.Ginger.CoreNET
                         Expression = sourceVariable.Value;
                         break;
                     case eInputVariableOperator.GreaterThan:
-                        if (!CheckIfValuesCanbecompared(sourceVariable.Value, variableRule.TriggerValue))
+                        if (sourceVariable.GetType() == typeof(VariableNumber) || sourceVariable.GetType() == typeof(VariableSelectionList) || sourceVariable.GetType() == typeof(VariableString))
                         {
-                            status = false;
+                            if (!CheckIfValuesCanbecompared(sourceVariable.Value, variableRule.TriggerValue))
+                            {
+                                status = false;
+                            }
+                            else
+                            {
+                                Expression = sourceVariable.Value + ">" + variableRule.TriggerValue;
+                            }
                         }
-                        else
+                        else if (sourceVariable.GetType() == typeof(VariableDateTime))
                         {
-                            Expression = sourceVariable.Value + ">" + variableRule.TriggerValue;
+                            status =   ComparerDateTime(sourceVariable.Value, variableRule.TriggerValue, ((VariableDateTime)sourceVariable).DateTimeFormat, variableRule.Operator);
                         }
+
                         break;
                     case eInputVariableOperator.GreaterThanEquals:
-                        if (!CheckIfValuesCanbecompared(sourceVariable.Value, variableRule.TriggerValue))
+                        if (sourceVariable.GetType() == typeof(VariableNumber) || sourceVariable.GetType() == typeof(VariableSelectionList) || sourceVariable.GetType() == typeof(VariableString))
                         {
-                            status = false;
+                            if (!CheckIfValuesCanbecompared(sourceVariable.Value, variableRule.TriggerValue))
+                            {
+                                status = false;
+                            }
+                            else
+                            {
+                                Expression = sourceVariable.Value + ">=" + variableRule.TriggerValue;
+                            } 
                         }
-                        else
+                        else if (sourceVariable.GetType() == typeof(VariableDateTime))
                         {
-                            Expression = sourceVariable.Value + ">=" + variableRule.TriggerValue;
+                            status =  ComparerDateTime(sourceVariable.Value, variableRule.TriggerValue, ((VariableDateTime)sourceVariable).DateTimeFormat, variableRule.Operator);
                         }
                         break;
                     case eInputVariableOperator.LessThan:
-                        if (!CheckIfValuesCanbecompared(sourceVariable.Value, variableRule.TriggerValue))
+                        if (sourceVariable.GetType() == typeof(VariableNumber) || sourceVariable.GetType() == typeof(VariableSelectionList) || sourceVariable.GetType() == typeof(VariableString))
                         {
-                            status = false;
+                            if (!CheckIfValuesCanbecompared(sourceVariable.Value, variableRule.TriggerValue))
+                            {
+                                status = false;
+                            }
+                            else
+                            {
+                                Expression = sourceVariable.Value + "<" + variableRule.TriggerValue;
+                            } 
                         }
-                        else
+                        else if (sourceVariable.GetType() == typeof(VariableDateTime))
                         {
-                            Expression = sourceVariable.Value + "<" + variableRule.TriggerValue;
+                           status =  ComparerDateTime(sourceVariable.Value, variableRule.TriggerValue, ((VariableDateTime)sourceVariable).DateTimeFormat, variableRule.Operator);
                         }
                         break;
                     case eInputVariableOperator.LessThanEquals:
-                        if (!CheckIfValuesCanbecompared(sourceVariable.Value, variableRule.TriggerValue))
+                        if (sourceVariable.GetType() == typeof(VariableNumber) || sourceVariable.GetType() == typeof(VariableSelectionList) || sourceVariable.GetType() == typeof(VariableString))
                         {
-                            status = false;
+                            if (!CheckIfValuesCanbecompared(sourceVariable.Value, variableRule.TriggerValue))
+                            {
+                                status = false;
+                            }
+                            else
+                            {
+                                Expression = sourceVariable.Value + "<=" + variableRule.TriggerValue;
+                            } 
                         }
-                        else
+                        else if (sourceVariable.GetType() == typeof(VariableDateTime))
                         {
-                            Expression = sourceVariable.Value + "<=" + variableRule.TriggerValue;
+                            status =  ComparerDateTime(sourceVariable.Value, variableRule.TriggerValue, ((VariableDateTime)sourceVariable).DateTimeFormat, variableRule.Operator);
                         }
                         break;
                     case eInputVariableOperator.NotEquals:
@@ -176,12 +208,58 @@ namespace Amdocs.Ginger.CoreNET
             return Convert.ToBoolean(status);
         }
 
+        private bool ComparerDateTime(string variableValue, string triggerValue,string dateFormat, eInputVariableOperator voperator)
+        {
+            bool status = false;
+            try
+            {
+                if (!string.IsNullOrEmpty(variableValue) && !string.IsNullOrEmpty(triggerValue) && !string.IsNullOrEmpty(dateFormat))
+                {
+                    DateTime dtVariable = DateTime.Parse(Convert.ToDateTime(variableValue).ToString(dateFormat, System.Globalization.CultureInfo.InvariantCulture));
+
+                    DateTime triggerDate = DateTime.Parse(Convert.ToDateTime(triggerValue).ToString(dateFormat, System.Globalization.CultureInfo.InvariantCulture));
+
+                    switch (voperator)
+                    {
+                        case eInputVariableOperator.GreaterThan:
+                            if (dtVariable > triggerDate)
+                            {
+                                status = true;
+                            }
+                            break;
+                        case eInputVariableOperator.GreaterThanEquals:
+                            if (dtVariable >= triggerDate)
+                            {
+                                status = true;
+                            }
+                            break;
+                        case eInputVariableOperator.LessThan:
+                            if (dtVariable < triggerDate)
+                            {
+                                status = true;
+                            }
+                            break;
+                        case eInputVariableOperator.LessThanEquals:
+                            if (dtVariable <= triggerDate)
+                            {
+                                status = true;
+                            }
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                status = false;
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Failed to compare datetime"), ex);
+            }
+            return status;
+        }
+
         private static bool CheckIfValuesCanbecompared(string actual, string Expected)
         {
             try
             {
-
-
                 double.Parse(actual);
                 double.Parse(actual);
                 return true;

@@ -29,8 +29,7 @@ namespace Ginger.UserControlsLib
         public MultiSelectComboBox()
         {
             InitializeComponent();
-            _nodeList = new ObservableCollection<Node>();
-            //OperationSelectedItems = new ObservableList<OperationValues>();
+            _nodeList = new ObservableCollection<Node>();            
         }
 
         #region Dependency Properties

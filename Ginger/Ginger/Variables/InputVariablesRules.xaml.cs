@@ -29,11 +29,7 @@ namespace Ginger.Variables
     public partial class InputVariablesRules : Page
     {
         public BusinessFlow mBusinessFlow { get; set; }
-
-        //ObservableList<VariableBase> variableList = new ObservableList<VariableBase>();
-
-        //ObservableList<string> variableNameList = new ObservableList<string>();
-
+       
         ObservableList<VariableBase> mVariableList = new ObservableList<VariableBase>();
         public ObservableList<VariableBase> variableList
         {
@@ -53,8 +49,7 @@ namespace Ginger.Variables
         public InputVariablesRules(BusinessFlow businessFlow = null, bool IsReadOnly = false)
         {
             InitializeComponent();
-            mBusinessFlow = businessFlow;
-           // ((RepositoryItemBase)mBusinessFlow).SaveBackup();          
+            mBusinessFlow = businessFlow;                   
             SetGridView();
             GenerateStoreToVarsList();
             VariableRulesGrid.DataSourceList = mBusinessFlow.InputVariableRules;
@@ -95,20 +90,8 @@ namespace Ginger.Variables
             view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.SourceVariableGuid), Header = "Source Variable", WidthWeight = 20, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCSourceVariable.GetTemplate(nameof(InputVariableRule.SourceVariableList), nameof(InputVariableRule.SourceVariableGuid)) });
             view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.Operator), Header = "Operator", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCOperator.GetTemplate(nameof(InputVariableRule.Operator)) });
             view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.TriggerValue), Header = "Trigger Value", WidthWeight = 15, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCTriggerValue.GetTemplate(nameof(InputVariableRule.SelectedSourceVariable), nameof(InputVariableRule.TriggerValue)) });            
-            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.TargetVariableGuid), Header = "Target Variable", WidthWeight = 20, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCTargetVariable.GetTemplate(nameof(InputVariableRule.TargetVariableList), nameof(InputVariableRule.TargetVariableGuid), nameof(InputVariableRule.SourceVariableGuid)) });
-            //view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.OperationType), Header = "Operation Type", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCOperationType.GetTemplate(nameof(InputVariableRule.SelectedTargetVariable), nameof(InputVariableRule.OperationType)) });
-            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.OperationType), Header = "Operation Configuration", WidthWeight = 26, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCOperationValue.GetTemplate(nameof(InputVariableRule.SelectedTargetVariable), nameof(InputVariableRule.OperationType), nameof(InputVariableRule.OperationValue), "", nameof(InputVariableRule.OperationValueList)) });
-            // view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.OperationValue), Header = "Operation Values List", WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCMultiSelectCombobox.GetTemplate(nameof(InputVariableRule.OperationSelectedValues)) });
-            //GridColView operationType = new GridColView()
-            //{
-            //    Field = nameof(InputVariableRule.OperationType),
-            //    Header = "Operation Type",
-            //    WidthWeight = 20,
-            //    StyleType = GridColView.eGridColStyleType.Template,
-            //    CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(InputVariableRule.eInputVariableOperation)), nameof(InputVariableRule.OperationType), false, false, "", true)
-            //};
-
-            //view.GridColsView.Add(operationType);
+            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.TargetVariableGuid), Header = "Target Variable", WidthWeight = 20, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCTargetVariable.GetTemplate(nameof(InputVariableRule.TargetVariableList), nameof(InputVariableRule.TargetVariableGuid), nameof(InputVariableRule.SourceVariableGuid)) });            
+            view.GridColsView.Add(new GridColView() { Field = nameof(InputVariableRule.OperationType), Header = "Operation Configuration", WidthWeight = 26, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCOperationValue.GetTemplate(nameof(InputVariableRule.SelectedTargetVariable), nameof(InputVariableRule.OperationType), nameof(InputVariableRule.OperationValue), "", nameof(InputVariableRule.OperationValueList)) });            
             VariableRulesGrid.btnRefresh.Visibility = Visibility.Collapsed;
             VariableRulesGrid.btnEdit.Visibility = Visibility.Collapsed;
             VariableRulesGrid.SetAllColumnsDefaultView(view);

@@ -54,10 +54,7 @@ namespace Ginger.UserControlsLib
 
         public UCTriggerValue()
         {
-            InitializeComponent();
-            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtNumberValue, TextBox.TextProperty, SourceVariable, nameof(VariableNumber.InitialNumberValue));
-            //txtNumberValue.AddValidationRule(new NumberValidationRule());
-            //txtNumberValue.AddValidationRule(new NumberValidationRule((VariableNumber)SourceVariable));
+            InitializeComponent();           
         }
 
         private static void OnSelectedSourceVariabelPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
@@ -70,10 +67,7 @@ namespace Ginger.UserControlsLib
         }
 
         private void SelectedSourceVariabelPropertyChanged(VariableBase selectedVar)
-        {
-            //SourceVariable = selectedVar;
-            //OnPropertyChanged(nameof(SourceVariable));
-            //SetTriggerValue();
+        {           
             TriggerValue = "";
             if (selectedVar != null && selectedVar.VariableType == "Selection List")
             {
@@ -94,8 +88,7 @@ namespace Ginger.UserControlsLib
                 xVariablesValuesComboBox.Visibility = Visibility.Collapsed;
                 dateWindow.Visibility = Visibility.Collapsed;
                 txtNumberValue.Visibility = Visibility.Collapsed;
-                xValueExpressionTxtbox.Visibility = Visibility.Visible;
-                //xValueExpressionTxtbox.TextChanged += XValueExpressionTxtbox_TextChanged;
+                xValueExpressionTxtbox.Visibility = Visibility.Visible;               
                 BindingHandler.ObjFieldBinding(xValueExpressionTxtbox, TextBox.TextProperty, this, nameof(TriggerValue));
                 xValueExpressionTxtbox.Text = selectedVar.Value;               
             }
@@ -108,8 +101,8 @@ namespace Ginger.UserControlsLib
                 xVariablesValuesComboBox.Visibility = Visibility.Collapsed;
                 txtNumberValue.Visibility = Visibility.Collapsed;
                 dateWindow.Visibility = Visibility.Visible;
-                dpDate.CustomFormat = ((VariableDateTime)selectedVar).DateTimeFormat;
-                dpDate.Value =  Convert.ToDateTime(((VariableDateTime)selectedVar).Value);
+                dpDate.CustomFormat = ((VariableDateTime)selectedVar).DateTimeFormat;                
+                dpDate.Value = DateTime.Parse(Convert.ToDateTime(((VariableDateTime)selectedVar).Value).ToString(dpDate.CustomFormat, System.Globalization.CultureInfo.InvariantCulture));
                 dpDate.MinDate =  Convert.ToDateTime(((VariableDateTime)selectedVar).MinDateTime);
                 dpDate.MaxDate =  Convert.ToDateTime(((VariableDateTime)selectedVar).MaxDateTime);
             }
@@ -120,9 +113,7 @@ namespace Ginger.UserControlsLib
                 xValueExpressionTxtbox.Visibility = Visibility.Collapsed;
                 xVariablesValuesComboBox.Visibility = Visibility.Collapsed;
                 dateWindow.Visibility = Visibility.Collapsed;
-                txtNumberValue.Visibility = Visibility.Visible;
-                //txtNumberValue.Text = selectedVar.Value;
-                //txtNumberValue.TextChanged += txtNumberValue_TextChanged;
+                txtNumberValue.Visibility = Visibility.Visible;                
                 BindingHandler.ObjFieldBinding(txtNumberValue, TextBox.TextProperty, this, nameof(TriggerValue));
                 txtNumberValue.Text =  selectedVar.Value;                
             }
@@ -132,26 +123,7 @@ namespace Ginger.UserControlsLib
         private void SetTriggerValue()
         {
            
-        }
-        //private void txtNumberValue_TextChanged(object sender, TextChangedEventArgs e)
-        //{
-        //    TextBox txtBox = (TextBox)sender;
-        //    if (txtBox.Text !=null)
-        //    {
-        //        string var = txtBox.Text;
-        //        TriggerValue = var;
-        //    }
-        //}
-
-        //private void XValueExpressionTxtbox_TextChanged(object sender, TextChangedEventArgs e)
-        //{
-        //    TextBox txtBox = (TextBox)sender;
-        //    if (txtBox.Text !=null)
-        //    {
-        //        string var = txtBox.Text;
-        //        TriggerValue = var;
-        //    }
-        //}
+        }       
                
         private static void OnTriggerValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
@@ -165,21 +137,24 @@ namespace Ginger.UserControlsLib
         private void TriggerValuePropertyChanged(string newValue)
         {
             OnPropertyChanged(nameof(TriggerValue));
-            if (SourceVariable != null && SourceVariable.VariableType == "Selection List")
-            {                
-                xVariablesValuesComboBox.SelectedValue = newValue;
-            }
-            else if (SourceVariable.VariableType == "String")
+            if (SourceVariable != null)
             {
-                xValueExpressionTxtbox.Text = newValue;
-            }
-            else if (SourceVariable.VariableType == "DateTime" && !string.IsNullOrEmpty(newValue))
-            {
-                dpDate.Value = Convert.ToDateTime(newValue);
-            }
-            else if (SourceVariable.VariableType == "Number")
-            {
-                txtNumberValue.Text =  newValue;
+                if (SourceVariable.VariableType == "Selection List")
+                {
+                    xVariablesValuesComboBox.SelectedValue = newValue;
+                }
+                else if (SourceVariable.VariableType == "String")
+                {
+                    xValueExpressionTxtbox.Text = newValue;
+                }
+                else if (SourceVariable.VariableType == "DateTime" && !string.IsNullOrEmpty(newValue))
+                {                    
+                    dpDate.Value = DateTime.Parse(Convert.ToDateTime(newValue).ToString(((VariableDateTime)SourceVariable).DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture));
+                }
+                else if (SourceVariable.VariableType == "Number")
+                {
+                    txtNumberValue.Text =  newValue;
+                } 
             }
         }
 
@@ -204,7 +179,7 @@ namespace Ginger.UserControlsLib
             }
             else
             {
-                TriggerValue = dpDate.Value.ToString();
+                TriggerValue = Convert.ToDateTime(dpDate.Value).ToString(vdt.DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
             }
         }
 

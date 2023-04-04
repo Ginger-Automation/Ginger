@@ -35,10 +35,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
 
         public static DependencyProperty OperationValueProperty = 
         DependencyProperty.Register("OperationValue", typeof(string), typeof(UCOperationValue), new PropertyMetadata(OnOperationValuePropertyChanged));
-
-        //public static DependencyProperty OperationValuesListProperty = 
-        //DependencyProperty.Register("OperationValuesList", typeof(ObservableList<OperationValues>), typeof(UCOperationValue), new PropertyMetadata(OnOperationValuesListPropertyChanged));
-
+       
         public static DependencyProperty OperationSelectedValuesProperty = 
             DependencyProperty.Register("OperationSelectedValues", typeof(ObservableList<OperationValues>), typeof(UCOperationValue), new PropertyMetadata(OnOperationSelectedValuesPropertyChanged));
        
@@ -59,32 +56,14 @@ namespace Ginger.UserControlsLib.InputVariableRule
             get { return (string)GetValue(OperationValueProperty); }
             set { SetValue(OperationValueProperty, value); }
         }
-
-        //public ObservableList<OperationValues> OperationValuesList
-        //{
-        //    get { return (ObservableList<OperationValues>)GetValue(OperationValuesListProperty); }
-        //    set { SetValue(OperationValuesListProperty, value); }
-        //}
+      
 
         public ObservableList<OperationValues> OperationSelectedValues
         {
             get { return (ObservableList<OperationValues>)GetValue(OperationSelectedValuesProperty); }
             set { SetValue(OperationSelectedValuesProperty, value); }
         }
-
-        //private ObservableList<SelectableObject<string>> mOperationSelectedValues = new ObservableList<SelectableObject<string>>();
-        //public ObservableList<SelectableObject<string>> OperationSelectedValues
-        //{
-        //    get 
-        //    {
-        //        return mOperationSelectedValues;
-        //    }
-        //    set 
-        //    {
-        //        mOperationSelectedValues = value;                
-        //        OnPropertyChanged(nameof(OperationSelectedValues));
-        //    }
-        //}
+       
 
         private ObservableList<OptionalValue> mVariableValuesList = new ObservableList<OptionalValue>();
         public ObservableList<OptionalValue> VariableValuesList
@@ -100,8 +79,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
             }
         }
 
-        private Dictionary<string, object> _items;
-        //private Dictionary<string, object> _selectedItems;
+        private Dictionary<string, object> _items;       
 
         public Dictionary<string, object> Items
         {
@@ -116,19 +94,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
             }
         }
 
-        //public Dictionary<string, object> SelectedItems
-        //{
-        //    get
-        //    {
-        //        return _selectedItems;
-        //    }
-        //    set
-        //    {
-        //        _selectedItems = value;
-
-        //    }
-        //}
-
+    
         private void xButton_Click(object sender, RoutedEventArgs e)
         {
             string selectedItems = string.Join(",", OperationSelectedValues.Select(x => x.Value).ToArray());
@@ -157,20 +123,22 @@ namespace Ginger.UserControlsLib.InputVariableRule
         private void SelectedTargetVariabelPropertyChanged_OV(VariableBase targetVar)
         {
             TargetVariable = targetVar;
-            OnPropertyChanged(nameof(TargetVariable));            
-            /////
-            if (targetVar != null && targetVar.VariableType == "Selection List")
+            OnPropertyChanged(nameof(TargetVariable));
+            if (targetVar != null)
             {
-                GingerCore.General.EnableComboItem(xOperationTypeComboBox, eInputVariableOperation.SetOptionalValues);
-                OperationType = eInputVariableOperation.SetOptionalValues;
+                if (targetVar.VariableType == "Selection List")
+                {
+                    GingerCore.General.EnableComboItem(xOperationTypeComboBox, eInputVariableOperation.SetOptionalValues);
+                    OperationType = eInputVariableOperation.SetOptionalValues;
+                }
+                else
+                {
+                    GingerCore.General.DisableComboItem(xOperationTypeComboBox, eInputVariableOperation.SetOptionalValues);
+                    OperationType= eInputVariableOperation.SetValue;
+                }
+                OperationValue = targetVar.Value;
+                SetOperationValueControls(); 
             }
-            else
-            {
-                GingerCore.General.DisableComboItem(xOperationTypeComboBox, eInputVariableOperation.SetOptionalValues);
-                OperationType= eInputVariableOperation.SetValue;
-            }
-            OperationValue = targetVar.Value;
-            SetOperationValueControls();
         }
 
         private static void OnSelectedTargetVariabelPropertyChanged_OV(DependencyObject sender, DependencyPropertyChangedEventArgs args)
@@ -185,9 +153,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
         private void OperationTypePropertyChanged_OV(eInputVariableOperation operationType)
         {
             OnPropertyChanged(nameof(OperationType));
-            OperationType = operationType;           
-            ///
-            //GingerCore.General.SelectComboValue(xOperationTypeComboBox, operationType.ToString());
+            OperationType = operationType;                      
             SetOperationValueControls();
         }
 
@@ -279,8 +245,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
                     dateWindow.Visibility = Visibility.Collapsed;
                     txtNumberValue.Visibility = Visibility.Collapsed;
                     OperationValue = TargetVariable.Value;
-                    BindingHandler.ObjFieldBinding(xSetValueTxtBox, TextBox.TextProperty, this, nameof(OperationValue));
-                    //xSetValueTxtBox.TextChanged +=XSetValueTxtBox_TextChanged;
+                    BindingHandler.ObjFieldBinding(xSetValueTxtBox, TextBox.TextProperty, this, nameof(OperationValue));                    
                     xSetValueTxtBox.Visibility = Visibility.Visible;                                      
                 }
             }
@@ -293,32 +258,15 @@ namespace Ginger.UserControlsLib.InputVariableRule
                 xPossibleValues.Visibility = Visibility.Collapsed;
                 xVisibilityOptions.Visibility = Visibility.Collapsed;
                 dateWindow.Visibility = Visibility.Collapsed;
-                txtNumberValue.Visibility = Visibility.Collapsed;
-                //OperationSelectedValues = new ObservableList<SelectableObject<string>>();
-                //List<string> possibleValues = ((VariableSelectionList)TargetVariable).OptionalValuesList.Select(x => x.Value).ToList();
-                //foreach(string possibleValue in possibleValues)
-                //{
-                //    if(OperationValuesList!=null && (OperationValuesList.Where(x=> x.Value == possibleValue).Count() == 1))
-                //    {
-                //        OperationSelectedValues.Add(new SelectableObject<string>(possibleValue, true));
-                //    }
-                //    else
-                //    {
-                //        OperationSelectedValues.Add(new SelectableObject<string>(possibleValue, false));
-                //    }
-                //}
-                Items = new Dictionary<string, object>();
-               // OperationSelectedValues = new Dictionary<string, object>();               
+                txtNumberValue.Visibility = Visibility.Collapsed;               
+                Items = new Dictionary<string, object>();                          
                 foreach (OptionalValue optionalValue in ((VariableSelectionList)TargetVariable).OptionalValuesList)
                 {
                     Items.Add(optionalValue.Value, optionalValue.Guid.ToString());
                 }
                 MC.Visibility = Visibility.Visible;
                 MC.ItemsSource = Items;
-                MC.Init(this, nameof(OperationSelectedValues));
-                // multiselectCombobox.Visibility = Visibility.Visible;
-                //VariableValuesList.Add(new OptionalValue() { Value = "w" });
-                //multiselectCombobox.SetSelectedString(false);
+                MC.Init(this, nameof(OperationSelectedValues));                
                 xSetValueTxtBox.Visibility = Visibility.Collapsed;
             }          
         }
@@ -354,24 +302,9 @@ namespace Ginger.UserControlsLib.InputVariableRule
 
         private void OperationValuePropertyChanged(string newValue)
         {
-            OnPropertyChanged(nameof(OperationValue));
-           // SetOperationValueControls();
+            OnPropertyChanged(nameof(OperationValue));          
         }
-
-        //private static void OnOperationValuesListPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        //{
-        //    var control = sender as UCOperationValue;
-        //    if (control != null)
-        //    {
-        //        control.OperationValuesListPropertyChanged((ObservableList<OperationValues>)args.NewValue);
-        //    }
-        //}
-
-        //private void OperationValuesListPropertyChanged(ObservableList<OperationValues> newValue)
-        //{
-        //    OnPropertyChanged(nameof(OperationValuesList));
-        //    //SetOperationValueControls();
-        //}
+      
 
         public UCOperationValue()
         {
@@ -382,45 +315,16 @@ namespace Ginger.UserControlsLib.InputVariableRule
         public void InitOperationConfiguration()
         {           
             GingerCore.General.FillComboItemsFromEnumType(xVisibilityOptions, typeof(eVisibilityOptions));            
-            xVisibilityOptions.SelectionChanged+=XVisibilityOptions_SelectionChanged;
-
-            //BindingHandler.ObjFieldBinding(multiselectCombobox, ComboBox.ItemsSourceProperty, this, nameof(OperationSelectedValues), BindingMode.TwoWay);
-            //OperationSelectedValues = new ObservableList<SelectableObject<string>>();
-            //multiselectCombobox.Init(this, nameof(OperationSelectedValues));
-            //UCMultiSelectCombobox.SetMultiSelectEvent(MultiSelection);                    
-            //multiselectCombobox.SetControlsBinding(nameof(VariableValuesList), nameof(OperationSelectedValues), this);
-
+            xVisibilityOptions.SelectionChanged+=XVisibilityOptions_SelectionChanged;           
             UCTargetVariable.SetOperationvalueEvent(OperationValueEvent);
 
             BindingHandler.ObjFieldBinding(xOperationTypeComboBox, ComboBox.SelectedValueProperty, this, nameof(OperationType));                        
             GingerCore.General.FillComboItemsFromEnumType(xOperationTypeComboBox, typeof(eInputVariableOperation));
             xOperationTypeComboBox.SelectionChanged+=XOperationTypeComboBox_SelectionChanged;
-            //BindingHandler.ObjFieldBinding(xOperationTypeComboBox, ComboBox.SelectedValueProperty, this, nameof(OperationType));
-            GingerCore.General.DisableComboItem(xOperationTypeComboBox, eInputVariableOperation.SetOptionalValues);
-            //OperationSelectedValues = new Dictionary<string, object>();
-            //BindingHandler.ObjFieldBinding(MC, ComboBox.SelectedValueProperty, this, nameof(OperationSelectedValues));
-            //MC.SelectedItems = OperationSelectedValues;            
+            
+            GingerCore.General.DisableComboItem(xOperationTypeComboBox, eInputVariableOperation.SetOptionalValues);                      
         }
-
-        //private void MultiSelection(bool selection, UCOperationValue obj)
-        //{
-        //    if(selection)
-        //    {
-        //        //OperationSelectedValues = obj.OperationSelectedValues;
-        //        //OperationValuesList = new ObservableList<OperationValue>(new OperationValue { Value = OperationSelectedValues.Where(x => x.IsSelected == true).Select(x => x.TextData) });
-        //        ObservableList<OperationValues> lst = new ObservableList<OperationValues>();
-
-        //        foreach(SelectableObject<string> opValue in obj.OperationSelectedValues)
-        //        {
-        //            if(opValue.IsSelected)
-        //            {
-        //                lst.Add(new OperationValues() { Value = opValue.TextData });
-        //            }
-        //        }
-
-        //        OperationValuesList = new ObservableList<OperationValues>(lst.ToList());                
-        //    }
-        //}
+       
 
         private void OperationValueEvent(VariableBase variable)
         {
@@ -455,14 +359,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
             operationValueBinding.Mode = BindingMode.TwoWay;
             operationValueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
             operationValue.SetBinding(UCOperationValue.OperationValueProperty, operationValueBinding);
-
-            //if(!string.IsNullOrEmpty(operationValuesListProperty))
-            //{
-            //    Binding operationValuesListBinding = new Binding(operationValuesListProperty);
-            //    operationValuesListBinding.Mode = BindingMode.TwoWay;
-            //    operationValuesListBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            //    operationValue.SetBinding(UCOperationValue.OperationValuesListProperty, operationValuesListBinding);
-            //}
+           
 
             if (!string.IsNullOrEmpty(operationSelectedValuesProperty))
             {

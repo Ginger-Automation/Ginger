@@ -259,25 +259,7 @@ namespace Ginger.Variables
                 }
             }
         }
-
-        //private Dictionary<string, object> mOperationValueList;
-        //[IsSerializedForLocalRepository]
-        //public Dictionary<string, object> OperationValueList
-        //{
-        //    get
-        //    {
-        //        return mOperationValueList;
-        //    }
-        //    set
-        //    {
-        //        mOperationValueList = value;
-        //        OnPropertyChanged(nameof(OperationValueList));
-        //    }
-        //}
-
-        // public ObservableList<SelectableObject<string>> OperationSelectedValues { get; set; }        
-
-
+      
         public override string ItemName
         {
             get
