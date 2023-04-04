@@ -112,7 +112,30 @@ namespace Ginger.UserControlsLib.InputVariableRule
         {
             OnPropertyChanged(nameof(UCTargetVariable.TargetVariableGuid));
             SetComboBoxValue(guid);
+            MarkTargetVariableValidation(guid);
         }
+
+        private void MarkTargetVariableValidation(Guid guid)
+        {
+            bool isValid = true;
+
+            if(!TargeteVariables.Where(x=> x.Guid == guid).Any())
+            {
+                isValid = false;
+            }
+
+            if (isValid == false)
+            {
+                this.BorderThickness = new Thickness(1);
+                this.BorderBrush = Brushes.Red;
+            }
+            else
+            {
+                this.BorderThickness = new Thickness(0);
+                this.BorderBrush = null;
+            }
+        }
+
 
         private static void OnSourceVariabelGuidPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {

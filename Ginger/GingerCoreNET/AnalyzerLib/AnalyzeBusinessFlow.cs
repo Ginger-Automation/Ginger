@@ -131,11 +131,11 @@ namespace Ginger.AnalyzerLib
                     string vtype = string.Empty;
                     if(tVariable == null)
                     {
-                        vtype = "Target";
+                        vtype = "Target ";
                     }
                     else if(sVariable == null)
                     {
-                        vtype = "Source";
+                        vtype = "Source ";
                     }
                     AnalyzeBusinessFlow AA = new AnalyzeBusinessFlow();
                     AA.Description =  "The '" + vtype + GingerDicser.GetTermResValue(eTermResKey.Variable) + "' is missing in Input Variable Rule"; 
@@ -162,7 +162,7 @@ namespace Ginger.AnalyzerLib
                         AA.UTDescription = "MissingVariableValue";
                         AA.Details = "The 'Source " + GingerDicser.GetTermResValue(eTermResKey.Variable) + "' trigger value used in Input Variable Rule is  missing in Selection List " +
                                             GingerDicser.GetTermResValue(eTermResKey.Variable)+ ": " + sVariable.Name;
-                        AA.HowToFix = " Change 'Source" + GingerDicser.GetTermResValue(eTermResKey.Variable)  + " Trigger Value in Input Variable Rule";
+                        AA.HowToFix = " Change 'Source " + GingerDicser.GetTermResValue(eTermResKey.Variable)  + " Trigger Value in Input Variable Rule";
                         AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                         AA.IssueType = eType.Error;
                         AA.Impact = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " will fail due to missing " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Value";
@@ -184,7 +184,7 @@ namespace Ginger.AnalyzerLib
                         AA.UTDescription = "MissingVariableValue";
                         AA.Details = "The 'Target " + GingerDicser.GetTermResValue(eTermResKey.Variable) + "' trigger value used in Input Variable Rule is  missing in Selection List " +
                                             GingerDicser.GetTermResValue(eTermResKey.Variable)+ ": " + tVariable.Name;
-                        AA.HowToFix = " Change 'Target" + GingerDicser.GetTermResValue(eTermResKey.Variable)  + " Trigger Value in Input Variable Rule";
+                        AA.HowToFix = " Change 'Target " + GingerDicser.GetTermResValue(eTermResKey.Variable)  + " Trigger Value in Input Variable Rule";
                         AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                         AA.IssueType = eType.Error;
                         AA.Impact = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " will fail due to missing " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Value";

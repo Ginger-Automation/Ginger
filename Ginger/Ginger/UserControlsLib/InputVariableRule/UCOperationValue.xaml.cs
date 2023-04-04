@@ -237,7 +237,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
                     OperationValue = TargetVariable.Value;
                     BindingHandler.ObjFieldBinding(txtNumberValue, TextBox.TextProperty, this, nameof(OperationValue));
                 }
-                else
+                else if (TargetVariable != null)
                 {
                     xPossibleValues.ClearControlsBindings();
                     txtNumberValue.ClearControlsBindings();

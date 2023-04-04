@@ -92,9 +92,30 @@ namespace Ginger.UserControlsLib
         private void SourceVariabelGuidPropertyChanged(Guid guid)
         {   
             OnPropertyChanged(nameof(UCSourceVariable.SourceVariableGuid));                
-            SetComboBoxValue(guid);                      
+            SetComboBoxValue(guid);
+            MarkSourceVariableValidation(guid);
         }
-      
+        private void MarkSourceVariableValidation(Guid guid)
+        {
+            bool isValid = true;
+
+            if (!SourceVariables.Where(x => x.Guid == guid).Any())
+            {
+                isValid = false;
+            }
+
+            if (isValid == false)
+            {
+                this.BorderThickness = new Thickness(1);
+                this.BorderBrush = Brushes.Red;
+            }
+            else
+            {
+                this.BorderThickness = new Thickness(0);
+                this.BorderBrush = null;
+            }
+        }
+
         private void SetComboBoxValue(Guid guid)
         {
             xVariablesComboBox.SelectedValue = guid;
