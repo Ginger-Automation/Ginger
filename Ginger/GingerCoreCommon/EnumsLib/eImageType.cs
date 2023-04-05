@@ -190,6 +190,7 @@ namespace Amdocs.Ginger.Common.Enums
         Cut,
         Paste,
         WindowRestore,
+        Rules,
         #endregion
 
         #region Items Images

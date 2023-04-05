@@ -273,6 +273,18 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             addSelectedToSR.OperationHandler = AddSelectedToSRHandler;
             extraOperationsList.Add(addSelectedToSR);
 
+            //if(VariablesParent.GetType() == typeof(BusinessFlow))
+            //{
+            ListItemOperation inputvariablesRules = new ListItemOperation();
+            inputvariablesRules.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation };
+            inputvariablesRules.AutomationID = "inputvrules";
+            inputvariablesRules.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Rules;
+            inputvariablesRules.Header = "Input " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Rules";
+            inputvariablesRules.ToolTip = "Input " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Rules";
+            inputvariablesRules.OperationHandler = InputVariablesRuleHandler;
+            extraOperationsList.Add(inputvariablesRules);
+            //}
+            
             return extraOperationsList;
         }
 
@@ -499,6 +511,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public List<ListItemGroupOperation> GetItemGroupOperationsList()
         {
             return null;
+        }
+
+        private void InputVariablesRuleHandler(object sender, RoutedEventArgs e)
+        {
+            InputVariablesRules inputVariableRule = new InputVariablesRules(mContext.BusinessFlow);
+            inputVariableRule.ShowAsWindow();
         }
 
         private void AddNewHandler(object sender, RoutedEventArgs e)

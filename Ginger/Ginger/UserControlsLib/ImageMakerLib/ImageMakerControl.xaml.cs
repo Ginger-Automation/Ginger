@@ -589,6 +589,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.SelfHealing:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Magic);
                     break;
+                case eImageType.Rules:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Gavel);
+                    break;
                 #endregion
 
 
