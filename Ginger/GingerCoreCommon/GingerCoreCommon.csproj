@@ -17,7 +17,7 @@
     <Company>Amdocs</Company>
     <Product>Ginger by Amdocs</Product>
     <Copyright>Copyright © 2014-2022 European Support Limited</Copyright>
-    <Version>5.3</Version>
+    <Version>5.3.2</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
