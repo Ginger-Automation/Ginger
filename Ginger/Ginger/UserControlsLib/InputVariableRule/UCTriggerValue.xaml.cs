@@ -115,6 +115,8 @@ namespace Ginger.UserControlsLib
                 dateWindow.Visibility = Visibility.Collapsed;
                 txtNumberValue.Visibility = Visibility.Visible;                
                 BindingHandler.ObjFieldBinding(txtNumberValue, TextBox.TextProperty, this, nameof(TriggerValue));
+                txtNumberValue.AddValidationRule(new NumberValidationRule());
+                txtNumberValue.AddValidationRule(new NumberValidationRule((VariableNumber)selectedVar));
                 txtNumberValue.Text =  selectedVar.Value;                
             }
         }
@@ -135,8 +137,7 @@ namespace Ginger.UserControlsLib
         }
 
         private void TriggerValuePropertyChanged(string newValue)
-        {
-            OnPropertyChanged(nameof(TriggerValue));
+        {            
             if (SourceVariable != null)
             {
                 if (SourceVariable.VariableType == "Selection List")
@@ -156,6 +157,7 @@ namespace Ginger.UserControlsLib
                     txtNumberValue.Text =  newValue;
                 } 
             }
+            OnPropertyChanged(nameof(TriggerValue));
         }
 
         private void XVariablesValuesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
