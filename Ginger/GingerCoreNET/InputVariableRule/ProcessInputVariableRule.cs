@@ -66,6 +66,10 @@ namespace Amdocs.Ginger.CoreNET
                                     {
                                         ((VariableSelectionList)targetVariable).OptionalValuesList.Add(new OptionalValue(values.Value));
                                     }
+                                    if(((VariableSelectionList)targetVariable).OptionalValuesList != null && ((VariableSelectionList)targetVariable).OptionalValuesList.Count > 0)
+                                    {
+                                        ((VariableSelectionList)targetVariable).Value = ((VariableSelectionList)targetVariable).OptionalValuesList[0].Value;
+                                    }                                    
                                 }
                             }
                             else if (variableRule.Active && variableRule.OperationType == InputVariableRule.eInputVariableOperation.SetVisibility && CalculateOperatorStatus(sourceVariable, variableRule))
@@ -81,8 +85,11 @@ namespace Amdocs.Ginger.CoreNET
                                 else if (variableRule.OperationValue == eVisibilityOptions.Show.ToString())
                                 {
                                     VariableBase variable = removedbfInputVariables.Where(x => x.Guid == variableRule.TargetVariableGuid).FirstOrDefault();
-                                    variables.Add(variable);
-                                    removedbfInputVariables.Remove(targetVariable);
+                                    if(variable != null)
+                                    {
+                                        variables.Add(variable);
+                                        removedbfInputVariables.Remove(targetVariable);
+                                    }                                    
                                 }
                             }
                         }
