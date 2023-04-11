@@ -40,11 +40,11 @@ jobs:
       - name: 'Update Assembly'
         if: ${{github.workflow == 'CD'}} 
         run: |
-          $save=((Get-Content .\Ginger\GingerCoreCommon/GingerCoreCommon.csproj) -replace '<AssemblyVersion>*.*.*.*</AssemblyVersion>','<AssemblyVersion>${{github.event.inputs.Version}}</AssemblyVersion>')  -replace '<FileVersion>*.*.*.*</FileVersion>','<FileVersion>${{github.event.inputs.Version}}</FileVersion>'
+          $save=((Get-Content .\Ginger\GingerCoreCommon/GingerCoreCommon.csproj) -replace '<AssemblyVersion>*.*.*.*</AssemblyVersion>','<AssemblyVersion>${{ env.gingernumber}}</AssemblyVersion>')  -replace '<FileVersion>*.*.*.*</FileVersion>','<FileVersion>${{ env.gingernumber}}</FileVersion>'
           echo $save > .\Ginger\GingerCoreCommon/GingerCoreCommon.csproj
-          $save=(Get-Content .\Ginger\GingerInstallerScript.iss) -replace '#define MyAppVersion "*.*.*.*"','#define MyAppVersion "${{github.event.inputs.Version}}"'
+          $save=(Get-Content .\Ginger\GingerInstallerScript.iss) -replace '#define MyAppVersion "*.*.*.*"','#define MyAppVersion "${{ env.gingernumber}}"'
           echo $save > .\Ginger\GingerInstallerScript.iss
-          $save=(Get-Content .\Ginger\GingerCore\Drivers\JavaDriverLib\GingerJavaAgent\agent\com\amdocs\ginger\GingerAgent.java) -replace 'public static final String GINGER_JAVA_AGENT_VERSION="*.*.*.*";','public static final String GINGER_JAVA_AGENT_VERSION="${{github.event.inputs.Version}}";'
+          $save=(Get-Content .\Ginger\GingerCore\Drivers\JavaDriverLib\GingerJavaAgent\agent\com\amdocs\ginger\GingerAgent.java) -replace 'public static final String GINGER_JAVA_AGENT_VERSION="*.*.*.*";','public static final String GINGER_JAVA_AGENT_VERSION="${{ env.gingernumber}}";'
           echo $save > .\Ginger\GingerCore\Drivers\JavaDriverLib\GingerJavaAgent\agent\com\amdocs\ginger\GingerAgent.java
       
 # ------------------------------------------------------------------------------------------------------
