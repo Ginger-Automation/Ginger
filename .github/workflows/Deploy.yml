@@ -10,7 +10,22 @@ jobs:
       name: Deploy Releases to Github Release
       runs-on: ubuntu-latest
       steps:
+# ------------------------------------------------------------------------------------------------------
+# Createin version Tag & Number variables 
+# ------------------------------------------------------------------------------------------------------
+          - name: Download Version Artifacts
+            uses: actions/download-artifact@v3
+            with:
+              name: ginger-version     
 
+          - name: Create variables from Artifacts file
+            shell: bash
+            run: |
+              source version.txt
+              echo $TAG
+              echo "gingernumber=$NUMBER" >> $GITHUB_ENV
+              echo "gingertag=$TAG" >> $GITHUB_ENV
+          
 # ------------------------------------------------------------------------------------------------------
 # Copy Ginger repo
 # ------------------------------------------------------------------------------------------------------
@@ -41,8 +56,8 @@ jobs:
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
             with:
-              tag_name: v${{ github.run_number }}  #${{ github.ref }}
-              release_name: Release v${{ github.run_number }}
+              tag_name: V${{ env.gingertag}}
+              release_name: Release V${{ env.gingertag}}
               draft: true
 
 # ------------------------------------------------------------------------------------------------------
@@ -55,7 +70,7 @@ jobs:
             with:
               upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
               asset_path: ./GingerRuntime.tar.gz
-              asset_name: GingerRuntime.${{ github.run_number }}.tar.gz
+              asset_name: GingerRuntime.${{ env.gingertag}}.tar.gz
               asset_content_type: application/gzip
 
 # ------------------------------------------------------------------------------------------------------
@@ -68,7 +83,7 @@ jobs:
             with:
               upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
               asset_path: ./Ginger.exe
-              asset_name: Ginger.exe
+              asset_name: Ginger.${{ env.gingertag}}.exe
               asset_content_type: application/exe 
 
 # ------------------------------------------------------------------------------------------------------
