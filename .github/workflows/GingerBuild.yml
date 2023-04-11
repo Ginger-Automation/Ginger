@@ -10,7 +10,25 @@ jobs:
     env:
       BUILD_CONFIGURATION: Release
       
-    steps:      
+    steps:
+# ------------------------------------------------------------------------------------------------------
+# Createin version Tag & Number variables - only for CD Job
+# ------------------------------------------------------------------------------------------------------
+      - name: Download Version Artifacts
+        if: ${{github.workflow == 'CD'}} 
+        uses: actions/download-artifact@v3
+        with:
+          name: ginger-version     
+        
+      - name: Create variables from Artifacts file
+        if: ${{github.workflow == 'CD'}} 
+        shell: bash
+        run: |
+          source version.txt
+          echo $TAG
+          echo "gingernumber=$NUMBER" >> $GITHUB_ENV
+          echo "gingertag=$TAG" >> $GITHUB_ENV
+          
 # ------------------------------------------------------------------------------------------------------
 # Copy Ginger repo
 # ------------------------------------------------------------------------------------------------------
