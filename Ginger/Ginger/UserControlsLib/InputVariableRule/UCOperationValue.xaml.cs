@@ -188,11 +188,11 @@ namespace Ginger.UserControlsLib.InputVariableRule
                 txtNumberValue.Visibility = Visibility.Collapsed;                
                 BindingHandler.ObjFieldBinding(xVisibilityOptions, ComboBox.SelectedValueProperty, this, nameof(OperationValue));
                 xVisibilityOptions.SelectionChanged+=XVisibilityOptions_SelectionChanged;            
-                MC.Visibility = Visibility.Collapsed;
-              
+                MC.Visibility = Visibility.Collapsed; 
+                
             }
             if (OperationType == eInputVariableOperation.SetValue)
-            {               
+            {                
                 xVisibilityOptions.ClearControlsBindings();
                 xVisibilityOptions.Visibility = Visibility.Collapsed;
                 MC.Visibility = Visibility.Collapsed;                
@@ -262,7 +262,10 @@ namespace Ginger.UserControlsLib.InputVariableRule
                 Items = new Dictionary<string, object>();                          
                 foreach (OptionalValue optionalValue in ((VariableSelectionList)TargetVariable).OptionalValuesList)
                 {
-                    Items.Add(optionalValue.Value, optionalValue.Guid.ToString());
+                    if(!string.IsNullOrEmpty(optionalValue.Value) && !Items.ContainsKey(optionalValue.Value))
+                    {
+                        Items.Add(optionalValue.Value, optionalValue.Guid.ToString());
+                    }                    
                 }
                 MC.Visibility = Visibility.Visible;
                 MC.ItemsSource = Items;
@@ -303,7 +306,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
         private void OperationValuePropertyChanged(string newValue)
         {
             OnPropertyChanged(nameof(OperationValue));
-            if (TargetVariable != null)
+            if (TargetVariable != null && OperationType != eInputVariableOperation.SetVisibility)
             {
                 if (TargetVariable.VariableType == "Selection List")
                 {

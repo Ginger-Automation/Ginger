@@ -12,6 +12,7 @@ using Amdocs.Ginger.Common.VariablesLib;
 using static Ginger.Variables.InputVariableRule;
 using GingerCoreNET.RosLynLib;
 using Ginger.Run;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Amdocs.Ginger.CoreNET
 {
@@ -57,20 +58,28 @@ namespace Amdocs.Ginger.CoreNET
                                 targetVariable.DiffrentFromOrigin = true;
                             }
 
-                            else if (variableRule.OperationType == InputVariableRule.eInputVariableOperation.SetOptionalValues && CalculateOperatorStatus(sourceVariable, variableRule))
+                            else if (variableRule.OperationType == InputVariableRule.eInputVariableOperation.SetOptionalValues)
                             {
-                                if (targetVariable.GetType() == typeof(VariableSelectionList))
+                                if (CalculateOperatorStatus(sourceVariable, variableRule))
                                 {
-                                    ((VariableSelectionList)targetVariable).OptionalValuesList = new ObservableList<OptionalValue>();
-                                    foreach (OperationValues values in variableRule.OperationValueList)
+                                    if (targetVariable.GetType() == typeof(VariableSelectionList))
                                     {
-                                        ((VariableSelectionList)targetVariable).OptionalValuesList.Add(new OptionalValue(values.Value));
-                                    }
-                                    if(((VariableSelectionList)targetVariable).OptionalValuesList != null && ((VariableSelectionList)targetVariable).OptionalValuesList.Count > 0)
-                                    {
-                                        ((VariableSelectionList)targetVariable).Value = ((VariableSelectionList)targetVariable).OptionalValuesList[0].Value;
-                                    }                                    
-                                }
+                                        ((VariableSelectionList)targetVariable).OptionalValuesList = new ObservableList<OptionalValue>();
+                                        foreach (OperationValues values in variableRule.OperationValueList)
+                                        {
+                                            ((VariableSelectionList)targetVariable).OptionalValuesList.Add(new OptionalValue(values.Value));
+                                        }
+                                        if (((VariableSelectionList)targetVariable).OptionalValuesList != null && ((VariableSelectionList)targetVariable).OptionalValuesList.Count > 0)
+                                        {
+                                           OptionalValue op = ((VariableSelectionList)targetVariable).OptionalValuesList.Where(x => x.Value == ((VariableSelectionList)targetVariable).Value).FirstOrDefault();
+                                            if(op == null)
+                                            {
+                                                ((VariableSelectionList)targetVariable).Value = ((VariableSelectionList)targetVariable).OptionalValuesList[0].Value;
+                                                targetVariable.DiffrentFromOrigin = true;
+                                            }                                            
+                                        }
+                                    } 
+                                }                                
                             }
                             else if (variableRule.Active && variableRule.OperationType == InputVariableRule.eInputVariableOperation.SetVisibility && CalculateOperatorStatus(sourceVariable, variableRule))
                             {
@@ -99,7 +108,7 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, string.Format("Failed to process rule"), ex);
                 }
-            }
+            }           
         }
 
         private bool CalculateOperatorStatus(VariableBase sourceVariable, InputVariableRule variableRule)
