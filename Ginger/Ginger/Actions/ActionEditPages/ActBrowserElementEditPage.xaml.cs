@@ -172,6 +172,12 @@ namespace Ginger.Actions
                     xUpdateNetworkUrlGridPnl.Visibility = System.Windows.Visibility.Visible;
                 }
             }
+            else if (mAct.ControlAction == ActBrowserElement.eControlAction.GetConsoleLog)
+            {
+                ResetPOMView();
+                xValueGrid.Visibility = System.Windows.Visibility.Visible;
+                xValueLabel.Content = "Text File Path:";
+            }
             else
             {
                 if (mAct.ControlAction == ActBrowserElement.eControlAction.InitializeBrowser)

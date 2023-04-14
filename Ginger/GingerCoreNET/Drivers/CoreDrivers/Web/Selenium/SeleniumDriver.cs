@@ -157,6 +157,11 @@ namespace GingerCore.Drivers
         public bool BrowserMinimized { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Set the minimum log level. Valid values are from 0 to 4: All = 0, Debug = 1, Info = 2, Warning = 3, Severe = 4")]
+        public string BrowserLogLevel { get; set; }
+
+        [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Only for Edge: Open Edge browser in IE Mode")]
         public bool OpenIEModeInEdge { get; set; }
@@ -397,6 +402,7 @@ namespace GingerCore.Drivers
                     case eBrowserType.IE:
                         InternetExplorerOptions ieoptions = new InternetExplorerOptions();
                         SetCurrentPageLoadStrategy(ieoptions);
+                        SetBrowserLogLevel(ieoptions);
 
                         if (EnsureCleanSession == true)
                         {
@@ -446,6 +452,7 @@ namespace GingerCore.Drivers
                         FirefoxOptions FirefoxOption = new FirefoxOptions();
                         FirefoxOption.AcceptInsecureCertificates = true;
                         SetCurrentPageLoadStrategy(FirefoxOption);
+                        SetBrowserLogLevel(FirefoxOption);
 
                         if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                         {
@@ -483,6 +490,7 @@ namespace GingerCore.Drivers
                         ChromeOptions options = new ChromeOptions();
                         options.AddArgument("--start-maximized");
                         SetCurrentPageLoadStrategy(options);
+                        SetBrowserLogLevel(options);
 
                         if (IsUserProfileFolderPathValid())
                         {
@@ -597,6 +605,7 @@ namespace GingerCore.Drivers
                             var ieOptions = new InternetExplorerOptions();
                             ieOptions.AttachToEdgeChrome = true;
                             ieOptions.EdgeExecutablePath = EdgeExcutablePath;
+                            SetBrowserLogLevel(ieOptions);
 
                             if (EnsureCleanSession == true)
                             {
@@ -644,6 +653,7 @@ namespace GingerCore.Drivers
 
                         {
                             EdgeOptions EDOpts = new EdgeOptions();
+                            SetBrowserLogLevel(EDOpts);
                             //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
                             //EDOpts.UseChromium = true;
                             EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
@@ -7617,6 +7627,19 @@ namespace GingerCore.Drivers
                     }
 
                     break;
+                case ActBrowserElement.eControlAction.GetConsoleLog:
+                    string logs = Newtonsoft.Json.JsonConvert.SerializeObject(Driver.Manage().Logs.GetLog(OpenQA.Selenium.LogType.Browser));
+                    string filePath = act.GetInputParamCalculatedValue("Value");
+                    switch (CreateConsoleLogFile(filePath, logs, act))
+                    {
+                        case 1: // in case the file is created successfully, print a message
+                            act.ExInfo = "Created a Console Log file in the path: " + filePath;
+                            break;
+                        case 0: // in case the filePath is null or empty, output the logs in Ginger
+                            act.AddOrUpdateReturnParamActual("Console logs", logs);
+                            break;
+                    }
+                    break;
                 case ActBrowserElement.eControlAction.StartMonitoringNetworkLog:
                     mAct = act;
                     SetUPDevTools(Driver);
@@ -9617,6 +9640,27 @@ namespace GingerCore.Drivers
 
         }
 
+        private void SetBrowserLogLevel(DriverOptions options)
+        {
+            if (!string.IsNullOrEmpty(BrowserLogLevel))
+            {
+                int numberLogLevel;
+                if (int.TryParse(BrowserLogLevel, out numberLogLevel))
+                {
+                    if (numberLogLevel >= 0 && numberLogLevel <= 4)
+                    {
+                        options.SetLoggingPreference(OpenQA.Selenium.LogType.Browser, (OpenQA.Selenium.LogLevel)numberLogLevel);
+                    }
+                    else throw new Exception("Please enter a valid number in the BrowserLogLevel parameter");
+                }
+                else
+                {
+                    throw new Exception("Please enter a valid value in the BrowserLogLevel parameter");
+                }
+
+            }
+        }
+
 
         public string GetApplitoolServerURL()
         {
@@ -9774,6 +9818,37 @@ namespace GingerCore.Drivers
 
             }
             return FullFilePath;
+        }
+
+        private int CreateConsoleLogFile(string filePath, string logs, ActBrowserElement act)
+        {
+            string calculatedFilePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(filePath);
+            string fileDictionary = Path.GetDirectoryName(calculatedFilePath);
+
+            if (!String.IsNullOrEmpty(calculatedFilePath))
+            {
+                try
+                {
+                    bool isRootedPath = Path.IsPathRooted(fileDictionary);
+                    if (!isRootedPath)
+                    {
+                        calculatedFilePath = new Uri(calculatedFilePath).LocalPath;
+                    }
+                    using (Stream fileStream = System.IO.File.Create(calculatedFilePath))
+                    {
+                        fileStream.Close();
+                    }
+                    System.IO.File.WriteAllText(calculatedFilePath, logs);
+                }
+                catch (Exception ex)
+                {
+                    act.Error = ex.Message;
+                    return -1;
+                }
+            }
+            else return 0;
+
+            return 1;
         }
 
         private void OnNetworkRequestSent(object sender, NetworkRequestSentEventArgs e)
