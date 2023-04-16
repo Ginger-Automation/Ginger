@@ -128,6 +128,7 @@ namespace Ginger.Variables
                 if (value != mActive)
                 {
                     mActive = value;
+                    OnPropertyChanged(nameof(Active));
                 }
             }
         }
@@ -148,6 +149,7 @@ namespace Ginger.Variables
                     mSourceVariableGuid = value;
                     OnPropertyChanged(nameof(SelectedSourceVariable));
                     OnPropertyChanged(nameof(TargetVariableList));
+                    OnPropertyChanged(nameof(SourceVariableGuid));
                 }                            
             }
         }
@@ -165,6 +167,7 @@ namespace Ginger.Variables
                 if(value != mTriggerValue)
                 {
                     mTriggerValue = value;
+                    OnPropertyChanged(nameof(TriggerValue));
                 }
             }
         }
