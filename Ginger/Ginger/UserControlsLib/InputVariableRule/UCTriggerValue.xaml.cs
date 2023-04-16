@@ -76,10 +76,10 @@ namespace Ginger.UserControlsLib
                 xValueExpressionTxtbox.Visibility = Visibility.Collapsed;
                 dateWindow.Visibility = Visibility.Collapsed;
                 txtNumberValue.Visibility = Visibility.Collapsed;
-                xVariablesValuesComboBox.Visibility = Visibility.Visible;                
-                xVariablesValuesComboBox.SelectedValue = selectedVar.Value;
+                xVariablesValuesComboBox.Visibility = Visibility.Visible;               
                 xVariablesValuesComboBox.ItemsSource = ((VariableSelectionList)selectedVar).OptionalValuesList.Select(x => x.Value).ToList();
                 xVariablesValuesComboBox.SelectionChanged += XVariablesValuesComboBox_SelectionChanged;
+                xVariablesValuesComboBox.SelectedValue = selectedVar.Value;
             }
 
             if (selectedVar != null &&  selectedVar.VariableType == "String")

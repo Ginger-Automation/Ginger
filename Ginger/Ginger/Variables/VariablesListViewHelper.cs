@@ -276,7 +276,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             //if(VariablesParent.GetType() == typeof(BusinessFlow))
             //{
             ListItemOperation inputvariablesRules = new ListItemOperation();
-            inputvariablesRules.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation };
+            inputvariablesRules.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.Child };
             inputvariablesRules.AutomationID = "inputvrules";
             inputvariablesRules.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Rules;
             inputvariablesRules.Header = "Input " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Rules";
