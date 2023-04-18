@@ -7,6 +7,7 @@ using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -317,8 +318,13 @@ namespace Ginger.UserControlsLib.InputVariableRule
                     xSetValueTxtBox.Text = newValue;
                 }
                 else if (TargetVariable.VariableType == "DateTime" && !string.IsNullOrEmpty(newValue))
-                {
-                    dpDate.Value = DateTime.Parse(Convert.ToDateTime(newValue).ToString(((VariableDateTime)TargetVariable).DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture));
+                {                 
+                    DateTime dt;
+                    DateTime.TryParseExact(newValue, ((VariableDateTime)TargetVariable).DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture, DateTimeStyles.None, out dt);
+                    if(dt!=null && dt != DateTime.MinValue)
+                    {
+                        dpDate.Value = dt;
+                    }                    
                 }
                 else if (TargetVariable.VariableType == "Number")
                 {
@@ -405,7 +411,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
             }
             else
             {
-                OperationValue = dpDate.Value.ToString();
+                OperationValue = dpDate.Text.ToString();
             }
         }
     }
