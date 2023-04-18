@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -33,5 +33,7 @@ namespace Ginger
         void SaveRecentAppAgentsMapping();
         void SaveUserProfile();
         public void RefreshSourceControlCredentials(GingerCoreNET.SourceControl.SourceControlBase.eSourceControlType argsSourceControlType);
+
+        bool IsSharedUserProfile { get; }
     }
 }
