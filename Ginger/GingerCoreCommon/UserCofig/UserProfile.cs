@@ -113,6 +113,8 @@ namespace Ginger
             }
         }
 
+        public bool IsSharedUserProfile { get { return UserProfileOperations.IsSharedUserProfile; } }
+
         [IsSerializedForLocalRepository]
         public eGingerStatus GingerStatus { get; set; }
 

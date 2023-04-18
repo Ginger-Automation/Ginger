@@ -189,6 +189,8 @@ namespace Ginger
             }
         }
 
+        public bool IsSharedUserProfile { get { return mSharedUserProfileBeenUsed; } }
+
         public void SaveUserProfile()
         {
             if (mSharedUserProfileBeenUsed)
