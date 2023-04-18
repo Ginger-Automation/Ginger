@@ -321,7 +321,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
                 {                 
                     DateTime dt;
                     DateTime.TryParseExact(newValue, ((VariableDateTime)TargetVariable).DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture, DateTimeStyles.None, out dt);
-                    if(dt!=null && dt != DateTime.MinValue)
+                    if(dt != DateTime.MinValue)
                     {
                         dpDate.Value = dt;
                     }                    
