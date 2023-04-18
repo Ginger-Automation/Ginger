@@ -328,14 +328,34 @@ namespace Ginger.Run
                 {
                     EventRaiseVariableEdit(null, null);
                 }
+                
+                processInputVariable = new ProcessInputVariableRule(mBusinessFlow);
+                ObservableList<VariableBase> bfInputVariables = mBusinessFlow.GetBFandActivitiesVariabeles(true, true);
+                ResetVariableValuesToDefault(bfInputVariables);
+                processInputVariable.GetVariablesByRules(bfInputVariables);
+                grdVariables.DataSourceList = VariableBase.SortByMandatoryInput(new ObservableList<VariableBase>(bfInputVariables));
             }
 
-            UpdateEditVariablesTabVisual();
+            UpdateEditVariablesTabVisual();            
+        }
 
-            processInputVariable = new ProcessInputVariableRule(mBusinessFlow);
-            ObservableList<VariableBase> bfInputVariables = mBusinessFlow.GetBFandActivitiesVariabeles(true, true);            
-            processInputVariable.GetVariablesByRules(bfInputVariables);
-            grdVariables.DataSourceList = VariableBase.SortByMandatoryInput(new ObservableList<VariableBase>(bfInputVariables));
+        private void ResetVariableValuesToDefault(ObservableList<VariableBase> bfInputVariables)
+        {          
+            //Revert selection list optional values to original list. 
+            BusinessFlow cachedBusinessFlow = WorkSpace.Instance?.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(mBusinessFlow.Guid);
+            ObservableList<VariableBase> cachedVariables = cachedBusinessFlow.GetBFandActivitiesVariabeles(true);
+            foreach (VariableBase variable in bfInputVariables)
+            {
+                VariableBase vb = cachedVariables.Where(x => x.Guid == variable.Guid).FirstOrDefault();
+                if (vb !=null && vb.GetType() == typeof(VariableSelectionList))
+                {
+                    ((VariableSelectionList)variable).OptionalValuesList = new ObservableList<OptionalValue>();
+                    foreach (OptionalValue values in ((VariableSelectionList)vb).OptionalValuesList)
+                    {
+                        ((VariableSelectionList)variable).OptionalValuesList.Add(new OptionalValue(values.Value));
+                    }                   
+                }     
+            }        
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
