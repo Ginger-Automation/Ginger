@@ -56,7 +56,18 @@ namespace Amdocs.Ginger.CoreNET
                                 }
                                 else
                                 {
-                                    targetVariable.Value = variableRule.OperationValue;
+                                    if(targetVariable.GetType() == typeof(VariableString))
+                                    {
+                                       ((VariableString)targetVariable).InitialStringValue = variableRule.OperationValue;
+                                    }
+                                    else if(targetVariable.GetType() == typeof(VariableNumber))
+                                    {
+                                        ((VariableNumber)targetVariable).InitialNumberValue = variableRule.OperationValue;
+                                    }
+                                    else if (targetVariable.GetType() == typeof(VariableDateTime))
+                                    {
+                                        ((VariableDateTime)targetVariable).InitialDateTime = variableRule.OperationValue;
+                                    }
                                 }                                
                             }
 
