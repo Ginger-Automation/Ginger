@@ -483,8 +483,11 @@ namespace amdocs.ginger.GingerCoreNET
                             // To support existing solutions, 
                             solution.EncryptionKey = EncryptionHandler.GetDefaultKey();
                             solution.NeedVariablesReEncryption = true;
-                            solution.SolutionOperations.SaveEncryptionKey();
-                            solution.SolutionOperations.SaveSolution(false);
+                            if (!WorkSpace.Instance.UserProfile.IsSharedUserProfile)//do not auto save the encryption key for shared user profile to avoid asking for password
+                            {
+                                solution.SolutionOperations.SaveEncryptionKey();
+                                solution.SolutionOperations.SaveSolution(false);
+                            }
                         }
                         else if (!Instance.EventHandler.OpenEncryptionKeyHandler(solution))
                         {
@@ -531,7 +534,7 @@ namespace amdocs.ginger.GingerCoreNET
                 //Solution items upgrade
                 SolutionUpgrade.CheckSolutionItemsUpgrade(solutionFolder, solution.Name, solutionFiles.ToList());
 
-                if (!RunningInExecutionMode && mSolution.NeedVariablesReEncryption)
+                if (!RunningInExecutionMode && mSolution.NeedVariablesReEncryption && !WorkSpace.Instance.UserProfile.IsSharedUserProfile)
                 {
                     string msg = "Going forward each solution needs to have its own key for encrypting password values\n"
                         + "Please make a note of Default key updated on Solution details page. This key is mandatory for accessing solution";
