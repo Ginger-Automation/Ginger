@@ -160,6 +160,7 @@ namespace GingerCore.ALM
             AlmConfig.ALMProjectName = ALMProject;
             AlmConfig.ALMProjectKey = ALMProjectKey;
             AlmConfig.AlmType = almType;
+            AlmConfig.IsTestSuite = GetIsTestSuiteValueFromDict(GetDynamicServerConfigAndSetPaths());
             AlmConfig.ALMConfigPackageFolderPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(ALMConfigPackageFolderPath);
             AlmConfig.JiraTestingALM = testingALMType;
 
@@ -185,8 +186,11 @@ namespace GingerCore.ALM
                     //Extract end return ServerURL value from RQM/GeneralData/ServerURL node
                     XmlNode ServerURLNode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/ServerURL");
                     string serverURL = ServerURLNode.InnerText;
+                    XmlNode IsTestSuiteNode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/IsTestSuite");
+                    string IsTestSuite = IsTestSuiteNode.InnerText;
                     Dictionary<String, Object> dictionary = new Dictionary<string, object>();
                     dictionary.Add("ServerURL", serverURL);
+                    dictionary.Add("IsTestSuite", IsTestSuite);
                     return dictionary;
                 }
                 catch (Exception e)
@@ -250,6 +254,18 @@ namespace GingerCore.ALM
             if (dic.ContainsKey("ServerURL"))
             {
                 return (string)dic["ServerURL"];
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        private string GetIsTestSuiteValueFromDict(Dictionary<string, object> dic)
+        {
+            if (dic.ContainsKey("IsTestSuite"))
+            {
+                return (string)dic["IsTestSuite"];
             }
             else
             {

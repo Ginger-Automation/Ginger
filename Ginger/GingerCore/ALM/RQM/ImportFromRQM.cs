@@ -72,6 +72,7 @@ namespace GingerCore.ALM.RQM
 
         public static BusinessFlow ConvertRQMTestPlanToBF(RQMTestPlan testPlan)
         {
+            System.Diagnostics.Trace.WriteLine("in ConvertRQMTestPlanToBF :");
             try
             {
                 if (testPlan == null)
@@ -877,7 +878,7 @@ namespace GingerCore.ALM.RQM
                     {
                         itemField.SelectedValue = "Unassigned";
                     }
-
+                    Reporter.ToLog(eLogLevel.DEBUG, "Item : " + Newtonsoft.Json.JsonConvert.SerializeObject(itemField));
                     ItemFieldsPossibleValues.Add(itemField);
                 }
             }
@@ -917,12 +918,12 @@ namespace GingerCore.ALM.RQM
             List<IProjectDefinitions> rqmProjectsDataList;
             string rqmSserverUrl = ALMCore.DefaultAlmConfig.ALMServerURL + "/";
             LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
-            IProjectData rqmProjectsData = rqmRep.GetVisibleProjects(loginData);
-            rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
-            IProjectDefinitions currentProj = rqmProjectsDataList.Where(prj => prj.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName)).FirstOrDefault();
-            string rqmDomain = currentProj.Prefix;
-            string rqmProject = currentProj.ProjectName;
-            string rqmProjectGuid = currentProj.Guid;
+            //IProjectData rqmProjectsData = rqmRep.GetVisibleProjects(loginData);
+            //rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
+            //IProjectDefinitions currentProj = rqmProjectsDataList.Where(prj => prj.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName)).FirstOrDefault();
+            string rqmDomain = RQMCore.ALMProjectGroupName; //currentProj.Prefix;
+            string rqmProject = ALMCore.DefaultAlmConfig.ALMProjectName; //currentProj.ProjectName;
+            string rqmProjectGuid = ALMCore.DefaultAlmConfig.ALMProjectGUID; //currentProj.Guid;
             //------------------------------- Improved solution
 
             string baseUri_ = string.Empty;
@@ -937,7 +938,10 @@ namespace GingerCore.ALM.RQM
             {
                 //TODO: Populate list fields with CategoryTypes
                 populatedValue = "Starting fields retrieve process... ";
-                bw.ReportProgress(totalValues, populatedValue);
+                if(bw != null)
+                {
+                    bw.ReportProgress(totalValues, populatedValue);
+                }
                 RqmResponseData categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + rqmDomain + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + rqmProjectGuid + "/categoryType"));
                 XmlDocument categoryTypeList = new XmlDocument();
 
@@ -946,10 +950,11 @@ namespace GingerCore.ALM.RQM
                 {
                     categoryTypeList.LoadXml(categoryType.responseText);
                 }
-
+                
                 //TODO: Get 'next' and 'last links
                 XmlNodeList linkList_ = categoryTypeList.GetElementsByTagName("link");
-
+                Reporter.ToLog(eLogLevel.DEBUG, "in if loop linkList_.Count : " + linkList_.Count);
+                Reporter.ToLog(eLogLevel.DEBUG, "in if linkList_ :" + JsonConvert.SerializeObject(linkList_));
                 if (linkList_.Count > 0)
                 {
                     XmlNode selfPage = linkList_.Item(1);
@@ -993,20 +998,22 @@ namespace GingerCore.ALM.RQM
 
                     //Parallel computing solution
                     List<XmlNode> entryList = new List<XmlNode>();
+                    Reporter.ToLog(eLogLevel.DEBUG, "in if loop categoryTypeUriPages.Count : " + categoryTypeUriPages.Count);
+                    Reporter.ToLog(eLogLevel.DEBUG, "in if loop categoryTypeUriPages : " + JsonConvert.SerializeObject(categoryTypeUriPages));
                     if (categoryTypeUriPages.Count > 1)
                     {
-                        Parallel.ForEach(categoryTypeUriPages.AsParallel(), categoryTypeUri =>
+                        Parallel.ForEach(categoryTypeUriPages.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, categoryTypeUri =>
                         {
 
                             //System.Diagnostics.Debug.WriteLine("parallel foreach #1");
                             newUri_ = categoryTypeUri;
+                            Reporter.ToLog(eLogLevel.DEBUG, "in if loop newUri_ : " + newUri_);
                             //categoryType = rqmRep.GetRqmResponse(loginData, new Uri(newUri_));
                             categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(newUri_));
                             if (!string.IsNullOrEmpty(categoryType.responseText))
                             {
                                 categoryTypeList.LoadXml(categoryType.responseText);
                             }
-
                             //TODO: Get all ID links under entry:
                             XmlNodeList categoryTypeEntry_ = categoryTypeList.GetElementsByTagName("entry");
 
@@ -1014,8 +1021,9 @@ namespace GingerCore.ALM.RQM
                             {
                                 entryList.Add(entryNode);
                             }
-
-                            ParallelLoopResult innerResult = Parallel.ForEach(entryList.AsParallel(), singleEntry =>
+                            Reporter.ToLog(eLogLevel.DEBUG, "in if loop categoryTypeUriPages entryList.Count : " + entryList.Count);
+                            Reporter.ToLog(eLogLevel.DEBUG, "in if loop categoryTypeUriPages entryList : " + JsonConvert.SerializeObject(entryList));
+                            ParallelLoopResult innerResult = Parallel.ForEach(entryList.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, singleEntry =>
                             {
 
                                 XmlNodeList innerNodes = singleEntry.ChildNodes;
@@ -1033,7 +1041,7 @@ namespace GingerCore.ALM.RQM
                                 {
                                     categoryTypeListing.LoadXml(categoryTypeDetail.responseText);
                                 }
-
+                                
 
                                 string categoryTypeName = string.Empty; // -->itemfield.Name
                                 string categoryTypeItemType = string.Empty; //-->itemfield.ItemType
@@ -1067,10 +1075,18 @@ namespace GingerCore.ALM.RQM
 
                                 catTypeRsult.Add(itemfield);
                                 populatedValue = "Populating field :" + categoryTypeName + " \r\nNumber of fields populated :" + catTypeRsult.Count;
-                                bw.ReportProgress(catTypeRsult.Count, populatedValue);
+                                Reporter.ToLog(eLogLevel.DEBUG, "in if loop Populating field :" + populatedValue);
+                                
+                                if (bw!= null)
+                                {
+                                    bw.ReportProgress(catTypeRsult.Count, populatedValue);
+                                }
+                                
 
-                            });
-                        });
+                            }
+                            );
+                        }
+                        );
                     }
                     else
                     {
@@ -1082,7 +1098,7 @@ namespace GingerCore.ALM.RQM
                         {
                             categoryTypeList.LoadXml(categoryType.responseText);
                         }
-
+                        
                         //TODO: Get all ID links under entry:
                         XmlNodeList categoryTypeEntry_ = categoryTypeList.GetElementsByTagName("entry");
 
@@ -1090,8 +1106,9 @@ namespace GingerCore.ALM.RQM
                         {
                             entryList.Add(entryNode);
                         }
-
-                        ParallelLoopResult innerResult = Parallel.ForEach(entryList.AsParallel(), singleEntry =>
+                        Reporter.ToLog(eLogLevel.DEBUG, "in else loop entryList.count : " + entryList.Count);
+                        Reporter.ToLog(eLogLevel.DEBUG, "in else loop entryList :" + JsonConvert.SerializeObject(entryList));
+                        ParallelLoopResult innerResult = Parallel.ForEach(entryList.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, singleEntry =>
                         {
 
                             XmlNodeList innerNodes = singleEntry.ChildNodes;
@@ -1109,7 +1126,7 @@ namespace GingerCore.ALM.RQM
                             {
                                 categoryTypeListing.LoadXml(categoryTypeDetail.responseText);
                             }
-
+                            
                             string categoryTypeName = string.Empty; // -->itemfield.Name
                             string categoryTypeItemType = string.Empty; //-->itemfield.ItemType
                             string categoryTypeMandatory = string.Empty; // --> itemfield.Mandatory & initial value for : --> itemfield.ToUpdate
@@ -1141,21 +1158,29 @@ namespace GingerCore.ALM.RQM
 
                             catTypeRsult.Add(itemfield);
                             populatedValue = "Populating field :" + categoryTypeName + " \r\n Number of fields populated :" + catTypeRsult.Count;
-                            bw.ReportProgress(catTypeRsult.Count, populatedValue);
-                        });
+                            Reporter.ToLog(eLogLevel.DEBUG, "in else loop populatedValue : " + populatedValue);
+                            
+                            if (bw!= null)
+                            {
+                                bw.ReportProgress(catTypeRsult.Count, populatedValue);
+                            }
+                            
+                        }
+                        );
                     }
-
+                    Reporter.ToLog(eLogLevel.DEBUG, "in outer loop catTypeRsult.count : " + catTypeRsult.Count);
                     foreach (ExternalItemFieldBase field in catTypeRsult)
                     {
+                        System.Diagnostics.Debug.WriteLine("in outer loop field name:" + field.Name + "field Id =" + field.ID + "field Type =" + field.Type + "field mandetory =" + field.Mandatory + "field ItemType=" + field.ItemType + "field toupdate="+field.ToUpdate);
                         fields.Add(field);
                         totalCategoryTypeCount++;
-                        System.Diagnostics.Debug.WriteLine("Number of retrieved fields:" + totalCategoryTypeCount);
-                    }
-
-                    //TODO: Add Values to CategoryTypes Parallel
+                        System.Diagnostics.Debug.WriteLine("Number of retrieved fields:" + totalCategoryTypeCount);                        
+                    }//TODO: Add Values to CategoryTypes Parallel
                     populatedValue = "Starting values retrieve process... ";
-                    bw.ReportProgress(totalValues, populatedValue);
-
+                    if(bw!= null)
+                    {
+                        bw.ReportProgress(totalValues, populatedValue);
+                    }
                     RqmResponseData category = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + rqmDomain + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + rqmProjectGuid + "/category"));
                     XmlDocument CategoryList = new XmlDocument();
                     CategoryList.LoadXml(category.responseText);
@@ -1168,10 +1193,10 @@ namespace GingerCore.ALM.RQM
                     XmlNode lastPageNode = linkList.Item(3);
 
                     string selfLink = selfPageNode.Attributes["href"].Value.ToString();
-                    string baseUri = selfLink.Substring(0, selfLink.Length - 1);
+                    string baseUri = selfLink.EndsWith("/") ? selfLink.Substring(0, selfLink.Length - 1) : selfLink.Substring(0, selfLink.Length);
 
                     string tempString = lastPageNode.Attributes["href"].Value.ToString();
-                    int maxPageNumber = System.Convert.ToInt32(tempString.Substring(tempString.LastIndexOf('=') + 1));
+                    bool checkResult = int.TryParse(tempString.Substring(tempString.LastIndexOf('=') + 1), out int maxPageNumber);
                     string newUri = string.Empty;
                     List<string> categoryUriPages = new List<string>();
 
@@ -1277,7 +1302,11 @@ namespace GingerCore.ALM.RQM
                                             System.Diagnostics.Debug.WriteLine("Total number of populated values is :" + totalValues + "/" + iDCount * (categoryUriPages.Count + 1)); //TODO pass this to a string to print in the UI
                                                                                                                                                                                       //bw.ReportProgress(totalValues);
                                             populatedValue = "Populating value:" + categoryValue + " \r\n Total Values:" + totalValues;
-                                            bw.ReportProgress(totalValues, populatedValue);
+                                            if(bw != null)
+                                            {
+                                                bw.ReportProgress(totalValues, populatedValue);
+                                            }
+                                            
                                         }
                                     }
                                 } //simple foreach closing                                                   

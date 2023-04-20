@@ -37,6 +37,7 @@ limitations under the License.
 using ALM_CommonStd.Abstractions;
 using ALM_CommonStd.DataContracts;
 using Amdocs.Ginger.Common;
+using Newtonsoft.Json;
 using RQM_RepositoryStd;
 using RQM_RepositoryStd.Data_Contracts;
 using System;
@@ -152,10 +153,14 @@ namespace GingerCore.ALM.RQM
             try
             {
                 LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
-                IProjectData rqmProjectsData = RQMRep.GetVisibleProjects(loginData);
+                if(rqmProjectsDataList == null || rqmProjectsDataList.Count == 0)
+                {
+                    IProjectData rqmProjectsData = RQMRep.GetVisibleProjects(loginData);
 
 
-                rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
+                    rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
+                }
+                
                 if (rqmProjectsDataList.Count > 0)
                 {
                     foreach (var proj in rqmProjectsDataList)
@@ -186,6 +191,7 @@ namespace GingerCore.ALM.RQM
                 //Save selected project details
                 connectedProjectDefenition = selectedProj;
                 ALMCore.DefaultAlmConfig.ALMProjectName = selectedProj.ProjectName;
+                ALMCore.DefaultAlmConfig.ALMProjectGUID = selectedProj.Guid;
                 RQMCore.ALMProjectGuid = selectedProj.Guid;
                 RQMCore.ALMProjectGroupName = selectedProj.Prefix;
                 return true;
@@ -199,6 +205,7 @@ namespace GingerCore.ALM.RQM
             ObservableList<RQMTestPlan> RQMTestPlanList = new ObservableList<RQMTestPlan>();
             try
             {
+                Reporter.ToLog(eLogLevel.DEBUG, " In GetRQMTestPlansByProject");
                 string importConfigTemplate = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Import", "RQM_ImportConfigs_Template.xml");
                 if (File.Exists(importConfigTemplate))
                 {
@@ -220,8 +227,12 @@ namespace GingerCore.ALM.RQM
                             //
                             //
                             LoginDTO loginData = new LoginDTO() { User = RQMUserName, Password = RQMPassword, Server = RQMServerUrl };
-                            IProjectData rqmProjectsData = RQMRep.GetVisibleProjects(loginData);
-                            rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
+                            if(rqmProjectsDataList == null || rqmProjectsDataList.Count == 0)
+                            {
+                                IProjectData rqmProjectsData = RQMRep.GetVisibleProjects(loginData);
+                                rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
+                            }
+
                             IProjectDefinitions currentProj = rqmProjectsDataList.Where(x => x.ProjectName == RQMProject).FirstOrDefault();
 
                             List<RqmResponseData> responseDataList = RQMRep.GetAllTestPlansByProject(loginData, currentProj.Guid, currentProj.Prefix);
@@ -294,10 +305,15 @@ namespace GingerCore.ALM.RQM
                             //
                             //
                             LoginDTO loginData = new LoginDTO() { User = RQMUserName, Password = RQMPassword, Server = RQMServerUrl };
-                            IProjectData rqmProjectsData = RQMRep.GetVisibleProjects(loginData);
-                            rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
+                            if(rqmProjectsDataList == null || rqmProjectsDataList.Count == 0)
+                            {
+                                IProjectData rqmProjectsData = RQMRep.GetVisibleProjects(loginData);
+                                rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
+                            }
+                            
                             IProjectDefinitions currentProj = rqmProjectsDataList.Where(x => x.ProjectName == RQMProject).FirstOrDefault();
                             RqmResponseData responseData = RQMRep.GetTestPlanByIdByProject(loginData, currentProj.Prefix, currentProj.Guid, RQMTestPlanId);
+                            System.Diagnostics.Debug.WriteLine(" in GetTestPlanByIdByProject :" + JsonConvert.SerializeObject(responseData));
                             try //skip result incase of error, defect #5164
                             {
                                 XmlDocument doc = new XmlDocument();
@@ -325,6 +341,7 @@ namespace GingerCore.ALM.RQM
                                         {
                                             // TestSuite data from RQM
                                             RqmResponseData responseDataTestSuite = RQMRep.GetRqmResponse(loginData, new Uri(testSuitesURInode.Attributes[0].InnerText.ToString()));
+                                            System.Diagnostics.Debug.WriteLine(" in responseDataTestSuite :" + JsonConvert.SerializeObject(responseDataTestSuite));
                                             XmlDocument docTestSuite = new XmlDocument();
                                             docTestSuite.LoadXml(responseDataTestSuite.responseText.ToString());
                                             XmlNamespaceManager nsmgrTestSuite = new XmlNamespaceManager(reader.NameTable);
@@ -334,6 +351,7 @@ namespace GingerCore.ALM.RQM
                                             rQMTestSuite.Name = responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteAsItemMapping.Name, nsmgrTestSuite).InnerText.ToString();
                                             // TestSuite data from RQM
                                             RqmResponseData responseDataTestSuiteExecutionRecords = RQMRep.GetTestSuiteExecutionRecordsByTestSuite(loginData, currentProj.Prefix, currentProj.Guid, testSuitesURInode.Attributes[0].InnerText.ToString());
+                                            System.Diagnostics.Debug.WriteLine(" in responseDataTestSuiteExecutionRecords :" + JsonConvert.SerializeObject(responseDataTestSuiteExecutionRecords));
                                             XmlDocument docTestSuiteExecutionRecords = new XmlDocument();
                                             docTestSuiteExecutionRecords.LoadXml(responseDataTestSuiteExecutionRecords.responseText.ToString());
                                             XmlNamespaceManager nsmgrTestSuiteExecutionRecords = new XmlNamespaceManager(reader.NameTable);
@@ -351,13 +369,17 @@ namespace GingerCore.ALM.RQM
                                             }
                                             catch { }
                                         }
-                                        catch { }
+                                        catch(Exception ex) 
+                                        {
+                                            System.Diagnostics.Debug.WriteLine(" in testSuitesURInodes loop :" + JsonConvert.SerializeObject(ex));
+                                        }
                                         testPlanRes.TestSuites.Add(rQMTestSuite);
                                     }
                                 }
                             }
                             catch (Exception ex)
                             {
+                                System.Diagnostics.Debug.WriteLine("in GetTestPlanByIdByProject :" + JsonConvert.SerializeObject(ex));
                                 Reporter.ToLog(eLogLevel.ERROR, "Error while trying to retrieve TestPlan id:" + RQMTestPlanId);
                                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                             }
@@ -369,6 +391,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine("in GetRQMTestPlanByIdByProject :" + JsonConvert.SerializeObject(ex));
                 Reporter.ToLog(eLogLevel.ERROR, "Project Test Plan by Id not found " + ex.Message);
             }
             return testPlanRes;
@@ -378,7 +401,7 @@ namespace GingerCore.ALM.RQM
         {
             try
             {
-
+                System.Diagnostics.Trace.WriteLine("in GetRQMTestPlanFullData :");
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 string importConfigTemplate = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Import", "RQM_ImportConfigs_Template.xml");
                 if (File.Exists(importConfigTemplate))
@@ -401,11 +424,16 @@ namespace GingerCore.ALM.RQM
                             //
                             // building a list of TestCases
                             LoginDTO loginData = new LoginDTO() { User = RQMUserName, Password = RQMPassword, Server = RQMServerUrl };
-                            IProjectData rqmProjectsData = RQMRep.GetVisibleProjects(loginData);
-                            rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
+                            if(rqmProjectsDataList == null || rqmProjectsDataList.Count == 0)
+                            {
+                                IProjectData rqmProjectsData = RQMRep.GetVisibleProjects(loginData);
+                                rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
+                            }
+
                             IProjectDefinitions currentProj = rqmProjectsDataList.Where(x => x.ProjectName == RQMProject).FirstOrDefault();
 
                             RqmResponseData responseData = RQMRep.GetRqmResponse(loginData, new Uri(testPlan.URLPath));
+                            System.Diagnostics.Trace.WriteLine("in GetRQMTestPlanFullData responseData for testplan :" + Newtonsoft.Json.JsonConvert.SerializeObject(responseData));
                             XmlDocument docTP = new XmlDocument();
                             docTP.LoadXml(responseData.responseText.ToString());
                             XmlNamespaceManager nsmgrTP = new XmlNamespaceManager(reader.NameTable);
@@ -417,7 +445,7 @@ namespace GingerCore.ALM.RQM
                             // Building execution Results Dictionary - start
                             // - execution records that are seating on Test Plan
                             testPlan.RQMExecutionRecords = GetExecutionRecordsByTestPlan(loginData, reader, currentRQMProjectMapping, currentProj.Prefix, currentProj.Guid, testPlan.URLPathVersioned);
-
+                            System.Diagnostics.Trace.WriteLine("in GetRQMTestPlanFullData testPlan.RQMExecutionRecords :" + Newtonsoft.Json.JsonConvert.SerializeObject(testPlan.RQMExecutionRecords));
                             // building test cases lists of TestSuits (not on TestPlan)
                             // test suites should be created already by function GetRQMTestPlanByIdByProject()
                             // this is only enhancement that will add to them test cases and some values like description and so on
@@ -425,6 +453,7 @@ namespace GingerCore.ALM.RQM
                             foreach (XmlNode testSuite in testSuites)
                             {
                                 RqmResponseData responseDataTestSuite = RQMRep.GetRqmResponse(loginData, new Uri(testSuite.Attributes[0].InnerText.ToString()));
+                                System.Diagnostics.Trace.WriteLine("in GetRQMTestPlanFullData responseData for testSuite :" + Newtonsoft.Json.JsonConvert.SerializeObject(responseDataTestSuite));
                                 XmlDocument docTestSuite = new XmlDocument();
                                 docTestSuite.LoadXml(responseDataTestSuite.responseText.ToString());
                                 XmlNamespaceManager nsmgrTS = new XmlNamespaceManager(reader.NameTable);
@@ -434,7 +463,7 @@ namespace GingerCore.ALM.RQM
                                 ObservableList<RQMTestCase> currentSuiteTestCases = BuildRQMTestCaseList(responseDataNodeTestSuite.SelectNodes(currentRQMProjectMapping.RQMTestSuiteMapping.PathXML, nsmgrTS), nsmgrTS, loginData, currentRQMProjectMapping, reader,
                                                                                                          responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.Name, nsmgrTS).InnerText.ToString(),
                                                                                                          responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.RQMID, nsmgrTS).InnerText.ToString());
-
+                                System.Diagnostics.Trace.WriteLine("in GetRQMTestPlanFullData currentSuiteTestCases :" + Newtonsoft.Json.JsonConvert.SerializeObject(currentSuiteTestCases));
                                 RQMTestSuite currentTestSuite = testPlan.TestSuites.Where(z => z.RQMID == responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.RQMID, nsmgrTS).InnerText.ToString()).FirstOrDefault();
                                 if (currentTestSuite != null)
                                 {
@@ -485,6 +514,7 @@ namespace GingerCore.ALM.RQM
                 foreach (XmlNode testCase in testCases)
                 {
                     RqmResponseData responseDataTC = RQMRep.GetRqmResponse(loginData, new Uri(testCase.Attributes[0].InnerText.ToString()));
+                    System.Diagnostics.Trace.WriteLine("in BuildRQMTestCaseList responseDataTC :" + Newtonsoft.Json.JsonConvert.SerializeObject(responseDataTC));
                     XmlDocument doc = new XmlDocument();
                     XmlDocument docTC = new XmlDocument();
                     doc.LoadXml(responseDataTC.responseText.ToString());
@@ -524,6 +554,7 @@ namespace GingerCore.ALM.RQM
                     foreach (XmlNode testScript in testScripts)
                     {
                         RqmResponseData responseDataTestScript = RQMRep.GetRqmResponse(loginData, new Uri(testScript.Attributes[0].InnerText.ToString()));
+                        System.Diagnostics.Trace.WriteLine("in BuildRQMTestCaseList responseDataTestScript :" + Newtonsoft.Json.JsonConvert.SerializeObject(responseDataTestScript));
                         doc.LoadXml(responseDataTestScript.responseText.ToString());
                         nsmgr = new XmlNamespaceManager(reader.NameTable);
                         currentRQMProjectMapping.RQMTestScriptMapping.RQMNameSpaces.RQMNameSpaceList.ForEach(y => nsmgr.AddNamespace(y.RQMNameSpacePrefix, y.RQMNameSpaceName));

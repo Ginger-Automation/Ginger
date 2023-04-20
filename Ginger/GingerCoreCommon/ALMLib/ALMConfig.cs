@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -159,6 +159,21 @@ namespace GingerCoreNET.ALMLib
             }
         }
 
+        private string mALMProjectGUID;
+        [IsSerializedForLocalRepository]
+        public string ALMProjectGUID
+        {
+            get { return mALMProjectGUID; }
+            set
+            {
+                if (mALMProjectGUID != value)
+                {
+                    mALMProjectGUID = value;
+                    OnPropertyChanged(nameof(ALMProjectGUID));
+                }
+            }
+        }
+
         private string mALMConfigPackageFolderPath;
         [IsSerializedForLocalRepository]
         public string ALMConfigPackageFolderPath
@@ -200,6 +215,21 @@ namespace GingerCoreNET.ALMLib
             set
             {
                 mAlmType = value;
+            }
+        }
+
+        private string mIsTestSuite;
+        [IsSerializedForLocalRepository]
+        public string IsTestSuite
+        {
+            get { return mIsTestSuite; }
+            set
+            {
+                if (mIsTestSuite != value)
+                {
+                    mIsTestSuite = value;
+                    OnPropertyChanged(nameof(IsTestSuite));
+                }
             }
         }
 
