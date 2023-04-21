@@ -21,10 +21,12 @@ namespace Amdocs.Ginger.CoreNET
         private ObservableList<VariableBase> removedbfInputVariables;
 
         public BusinessFlow mBusinessFlow;
-
-        public ProcessInputVariableRule(BusinessFlow businessFlow)
+        public GingerRunner mGingerRunner;
+        
+        public ProcessInputVariableRule(BusinessFlow businessFlow, GingerRunner gingerRunner)
         {
             mBusinessFlow = businessFlow;
+            mGingerRunner = gingerRunner;
         }
 
         public void GetVariablesByRules(ObservableList<VariableBase> variables)
@@ -38,6 +40,8 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         VariableBase sourceVariable = variables.Where(x => x.Guid == variableRule.SourceVariableGuid).FirstOrDefault();
                         VariableBase targetVariable = variables.Where(x => x.Guid == variableRule.TargetVariableGuid).FirstOrDefault();
+                        string originalFormula = targetVariable.Formula;
+                        string originalValue = targetVariable.Value;
                         if (sourceVariable !=null && targetVariable!=null)
                         {
                             if (variableRule.OperationType == InputVariableRule.eInputVariableOperation.SetValue && CalculateOperatorStatus(sourceVariable, variableRule))
@@ -52,10 +56,19 @@ namespace Amdocs.Ginger.CoreNET
                                 }
                                 else
                                 {
-                                    targetVariable.Value = variableRule.OperationValue;
-                                }
-
-                                targetVariable.DiffrentFromOrigin = true;
+                                    if(targetVariable.GetType() == typeof(VariableString))
+                                    {
+                                       ((VariableString)targetVariable).InitialStringValue = variableRule.OperationValue;
+                                    }
+                                    else if(targetVariable.GetType() == typeof(VariableNumber))
+                                    {
+                                        ((VariableNumber)targetVariable).InitialNumberValue = variableRule.OperationValue;
+                                    }
+                                    else if (targetVariable.GetType() == typeof(VariableDateTime))
+                                    {
+                                        ((VariableDateTime)targetVariable).InitialDateTime = variableRule.OperationValue;
+                                    }
+                                }                                
                             }
 
                             else if (variableRule.OperationType == InputVariableRule.eInputVariableOperation.SetOptionalValues)
@@ -74,8 +87,7 @@ namespace Amdocs.Ginger.CoreNET
                                            OptionalValue op = ((VariableSelectionList)targetVariable).OptionalValuesList.Where(x => x.Value == ((VariableSelectionList)targetVariable).Value).FirstOrDefault();
                                             if(op == null)
                                             {
-                                                ((VariableSelectionList)targetVariable).Value = ((VariableSelectionList)targetVariable).OptionalValuesList[0].Value;
-                                                targetVariable.DiffrentFromOrigin = true;
+                                                ((VariableSelectionList)targetVariable).Value = ((VariableSelectionList)targetVariable).OptionalValuesList[0].Value;                                                                                              
                                             }                                            
                                         }
                                     } 
@@ -101,6 +113,14 @@ namespace Amdocs.Ginger.CoreNET
                                     }                                    
                                 }
                             }
+                        }
+
+                        if (targetVariable.Formula != originalFormula || targetVariable.Value != originalValue)//variable was changed
+                        {
+                            targetVariable.VarValChanged = true;
+                            targetVariable.DiffrentFromOrigin = true;
+                            //TODO : Raise event to mark runset dirty status as modified. 
+                            mGingerRunner.Executor.UpdateBusinessFlowsRunList();
                         }
                     }
                 }
