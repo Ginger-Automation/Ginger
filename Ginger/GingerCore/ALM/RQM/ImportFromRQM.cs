@@ -918,12 +918,10 @@ namespace GingerCore.ALM.RQM
             List<IProjectDefinitions> rqmProjectsDataList;
             string rqmSserverUrl = ALMCore.DefaultAlmConfig.ALMServerURL + "/";
             LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
-            //IProjectData rqmProjectsData = rqmRep.GetVisibleProjects(loginData);
-            //rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
-            //IProjectDefinitions currentProj = rqmProjectsDataList.Where(prj => prj.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName)).FirstOrDefault();
-            string rqmDomain = RQMCore.ALMProjectGroupName; //currentProj.Prefix;
-            string rqmProject = ALMCore.DefaultAlmConfig.ALMProjectName; //currentProj.ProjectName;
-            string rqmProjectGuid = ALMCore.DefaultAlmConfig.ALMProjectGUID; //currentProj.Guid;
+
+            string rqmDomain = RQMCore.ALMProjectGroupName;
+            string rqmProject = ALMCore.DefaultAlmConfig.ALMProjectName;
+            string rqmProjectGuid = ALMCore.DefaultAlmConfig.ALMProjectGUID;
             //------------------------------- Improved solution
 
             string baseUri_ = string.Empty;
