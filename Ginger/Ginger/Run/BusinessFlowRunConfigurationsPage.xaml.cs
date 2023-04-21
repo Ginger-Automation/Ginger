@@ -18,11 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.VariablesLib;
+using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using Ginger.Variables;
 using GingerCore;
 using GingerCore.Variables;
+using GingerCoreNET.RosLynLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +34,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using static Ginger.Variables.InputVariableRule;
+using Amdocs.Ginger.CoreNET;
 
 namespace Ginger.Run
 {
@@ -46,7 +51,7 @@ namespace Ginger.Run
         private eWindowMode mWindowMode;
 
         private BusinessFlow mBusinessFlow;
-
+        
         private BusinessFlowExecutionSummary mBusinessFlowExecSummary;
 
         public EventHandler EventRaiseVariableEdit;
@@ -56,14 +61,16 @@ namespace Ginger.Run
         public GingerRunner mGingerRunner;
         Context mContext;
 
+        private ProcessInputVariableRule processInputVariable;
+
         public BusinessFlowRunConfigurationsPage(GingerRunner runner, BusinessFlow businessFlow)
         {
+            mBusinessFlow = businessFlow;
             InitializeComponent();
 
             mWindowMode = eWindowMode.Configuration;
 
             mGingerRunner = runner;
-            mBusinessFlow = businessFlow;
             mContext = new Context() { BusinessFlow = businessFlow, Runner = runner.Executor };
 
             mBusinessFlow.SaveBackup();
@@ -75,6 +82,7 @@ namespace Ginger.Run
             grdVariables.btnEdit.AddHandler(Button.ClickEvent, new RoutedEventHandler(EditVar));
             grdVariables.AddToolbarTool("@Undo_16x16.png", "Reset " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " to Original Configurations", new RoutedEventHandler(ResetBusFlowVariables));
             grdVariables.AddToolbarTool("@Share_16x16.png", "Share Selected " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Value to all Similar " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " in " + GingerDicser.GetTermResValue(eTermResKey.RunSet), new RoutedEventHandler(CopyBusFlowVariables));
+            grdVariables.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Rules, "Rules page", new RoutedEventHandler(ShowRulesPage));
             grdVariables.RowDoubleClick += VariablesGrid_grdMain_MouseDoubleClick;
 
             SetVariablesGridView();
@@ -83,7 +91,7 @@ namespace Ginger.Run
 
             LoadBusinessFlowcontrols(businessFlow);
             UpdateFlowControlTabVisual();
-            mBusinessFlow.BFFlowControls.CollectionChanged += BFFlowControls_CollectionChanged;
+            mBusinessFlow.BFFlowControls.CollectionChanged += BFFlowControls_CollectionChanged;            
         }
 
         private void LoadBusinessFlowcontrols(BusinessFlow businessFlow)
@@ -141,10 +149,10 @@ namespace Ginger.Run
             switch (mWindowMode)
             {
                 case eWindowMode.Configuration:
+                    processInputVariable = new ProcessInputVariableRule(mBusinessFlow, mGingerRunner);
                     grdVariables.Title = "'" + mBusinessFlow.Name + "' Run " + GingerDicser.GetTermResValue(eTermResKey.Variables);
                     ObservableList<VariableBase> bfInputVariables = mBusinessFlow.GetBFandActivitiesVariabeles(true, true);
-                    grdVariables.DataSourceList = VariableBase.SortByMandatoryInput(bfInputVariables);
-
+                    
                     //**Legacy--- set the Variabels can be used- user should use Global Variabels/ Output Variabels instead
                     ObservableList<string> optionalVars = new ObservableList<string>();
                     optionalVars.Add(string.Empty);//default value for clear selection
@@ -165,6 +173,7 @@ namespace Ginger.Run
                     ObservableList<VariableBase> optionalOutputVars = new ObservableList<VariableBase>();
                     foreach (VariableBase outputVar in ((GingerExecutionEngine)mGingerRunner.Executor).GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, mBusinessFlow, includeGlobalVars: false, includePrevRunnersVars: true))
                     {
+                        ;
                         optionalOutputVars.Add(outputVar);
                     }
                     //allow setting output vars options only to variables types which supports setting value
@@ -175,6 +184,9 @@ namespace Ginger.Run
                             inputVar.PossibleOutputVariables = optionalOutputVars;
                         }
                     }
+                   
+                    processInputVariable.GetVariablesByRules(bfInputVariables);                    
+                    grdVariables.DataSourceList = VariableBase.SortByMandatoryInput(new ObservableList<VariableBase>(bfInputVariables));
                     break;
 
                 case eWindowMode.SummaryView:
@@ -184,6 +196,7 @@ namespace Ginger.Run
             }
         }
 
+            
         private void CopyBusFlowVariables(object sender, RoutedEventArgs e)
         {
             if (grdVariables.CurrentItem != null)
@@ -240,6 +253,14 @@ namespace Ginger.Run
                 Reporter.ToUser(eUserMsgKey.ShareVariableNotSelected);
             }
         }
+
+        private void ShowRulesPage(object sender, RoutedEventArgs e)
+        {
+            BusinessFlow cachedBusinessFlow = WorkSpace.Instance?.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(mBusinessFlow.Guid);
+            InputVariablesRules inputVariableRule = new InputVariablesRules(cachedBusinessFlow, true);
+            inputVariableRule.ShowAsWindow();
+        }
+
         private void ResetBusFlowVariables(object sender, RoutedEventArgs e)
         {
             try
@@ -290,7 +311,7 @@ namespace Ginger.Run
 
         private void VariablesGrid_grdMain_MouseDoubleClick(object sender, EventArgs e)
         {
-            EditVar();
+            EditVar();            
         }
 
         private void EditVar()
@@ -306,10 +327,36 @@ namespace Ginger.Run
                 varToEdit.DiffrentFromOrigin = true;
                 if (EventRaiseVariableEdit != null)
                 {
-                    EventRaiseVariableEdit(null, null);
+                    EventRaiseVariableEdit(null, null);                    
                 }
+                
+                processInputVariable = new ProcessInputVariableRule(mBusinessFlow, mGingerRunner);
+                ObservableList<VariableBase> bfInputVariables = mBusinessFlow.GetBFandActivitiesVariabeles(true, true);
+                ResetVariableValuesToDefault(bfInputVariables);
+                processInputVariable.GetVariablesByRules(bfInputVariables);
+                grdVariables.DataSourceList = VariableBase.SortByMandatoryInput(new ObservableList<VariableBase>(bfInputVariables));                
             }
-            UpdateEditVariablesTabVisual();
+
+            UpdateEditVariablesTabVisual();            
+        }
+        
+        private void ResetVariableValuesToDefault(ObservableList<VariableBase> bfInputVariables)
+        {          
+            //Revert selection list optional values to original list. 
+            BusinessFlow cachedBusinessFlow = WorkSpace.Instance?.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(mBusinessFlow.Guid);
+            ObservableList<VariableBase> cachedVariables = cachedBusinessFlow.GetBFandActivitiesVariabeles(true);
+            foreach (VariableBase variable in bfInputVariables)
+            {
+                VariableBase vb = cachedVariables.Where(x => x.Guid == variable.Guid).FirstOrDefault();
+                if (vb !=null && vb.GetType() == typeof(VariableSelectionList))
+                {
+                    ((VariableSelectionList)variable).OptionalValuesList = new ObservableList<OptionalValue>();
+                    foreach (OptionalValue values in ((VariableSelectionList)vb).OptionalValuesList)
+                    {
+                        ((VariableSelectionList)variable).OptionalValuesList.Add(new OptionalValue(values.Value));
+                    }                   
+                }     
+            }        
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)

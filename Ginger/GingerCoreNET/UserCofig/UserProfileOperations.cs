@@ -165,10 +165,16 @@ namespace Ginger
             {
                 if (mUserProfileFilePath == null)
                 {
-                    string userProfileFileName = "Ginger.UserProfile.xml";
-                    string sharedUserProfilePath = Path.Combine(WorkSpace.Instance.CommonApplicationDataFolderPath, userProfileFileName);
-                    string specificUserProfilePath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, userProfileFileName);
-                    if (WorkSpace.Instance.RunningInExecutionMode && File.Exists(sharedUserProfilePath))
+                    string specificUserProfilePath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Ginger.UserProfile.xml");
+                    string sharedUserProfilePath = Path.Combine(WorkSpace.Instance.CommonApplicationDataFolderPath, "Ginger.UserProfile.xml");
+                    string sharedUserProfileForUIPath = Path.Combine(WorkSpace.Instance.CommonApplicationDataFolderPath, "GingerUI.UserProfile.xml");
+                    if (File.Exists(sharedUserProfileForUIPath))
+                    {
+                        mUserProfileFilePath = sharedUserProfileForUIPath;
+                        Reporter.ToLog(eLogLevel.INFO, string.Format("Shared User Profile for UI is been used, path:'{0}'", sharedUserProfileForUIPath));
+                        mSharedUserProfileBeenUsed = true;
+                    }
+                    else if (WorkSpace.Instance.RunningInExecutionMode && File.Exists(sharedUserProfilePath))
                     {
                         mUserProfileFilePath = sharedUserProfilePath;
                         Reporter.ToLog(eLogLevel.INFO, string.Format("Shared User Profile is been used, path:'{0}'", sharedUserProfilePath));
@@ -182,6 +188,8 @@ namespace Ginger
                 return mUserProfileFilePath;
             }
         }
+
+        public bool IsSharedUserProfile { get { return mSharedUserProfileBeenUsed; } }
 
         public void SaveUserProfile()
         {

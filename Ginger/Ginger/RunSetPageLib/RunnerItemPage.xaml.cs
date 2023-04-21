@@ -310,6 +310,10 @@ namespace Ginger.Run
             {
                 Click(this, e);
             }
+            if(e.Handled)
+            {
+                OnRunnerItemEvent(RunnerItemEventArgs.eEventType.ViewConfiguration, this, ItemtType, ItemObject);
+            }            
         }
         public event RoutedEventHandler ClickAutomate;
         private void xautomateBusinessflow_Click(object sender, RoutedEventArgs e)

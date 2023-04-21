@@ -664,9 +664,9 @@
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.61" />
     <PackageReference Include="RoyWpf.System.Windows.Interactivity" Version="0.1.2" />
     <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="111.0.5563.6400" />
-    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.32.1" />
-    <PackageReference Include="Selenium.WebDriver.IEDriver" Version="4.8.0" />
-    <PackageReference Include="Selenium.WebDriver.MSEdgeDriver" Version="109.0.1518.61" />
+    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.33.0" />
+    <PackageReference Include="Selenium.WebDriver.IEDriver" Version="4.8.1" />
+    <PackageReference Include="Selenium.WebDriver.MSEdgeDriver" Version="112.0.1722.39" />
     <PackageReference Include="sharpadbclient" Version="2.3.23" />
     <PackageReference Include="Syncfusion.Shared.WPF" Version="20.1.0.55" />
     <PackageReference Include="System.Data.OleDb" Version="6.0.0" />
