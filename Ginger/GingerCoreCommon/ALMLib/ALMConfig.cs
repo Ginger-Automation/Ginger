@@ -219,7 +219,6 @@ namespace GingerCoreNET.ALMLib
         }
 
         private string mIsTestSuite;
-        [IsSerializedForLocalRepository]
         public string IsTestSuite
         {
             get { return mIsTestSuite; }

@@ -443,7 +443,6 @@ namespace GingerCore.ALM.RQM
             {
                 result = "Unexpected error occurred- " + ex.Message;
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to RQM/ALM", ex.InnerException);
-                System.Diagnostics.Debug.WriteLine(" in getExeResultforAg :" + JsonConvert.SerializeObject(ex));
                 return null;
             }
         }
@@ -568,7 +567,6 @@ namespace GingerCore.ALM.RQM
                             businessFlow.ActivitiesGroups[ActivityGroupCounter].TestSuiteTitle = testSuite.TestSuiteName;
                             foreach (ACL_Data_Contract.ActivityStep activityStep in act.ActivityData.ActivityStepsColl)
                             {
-                                //string activityStepID = "RQMID=" + activityStepOrderID.ToString() + "|AtsID=" + act.EntityId.ToString();
                                 string activityStepID = "RQMID=" + act.ExportedTestScriptId.ToString() + "_" + activityStepOrderID + "|AtsID=" + act.EntityId.ToString();
                                 businessFlow.Activities[activityStepCounter].ExternalID = activityStepID;
                                 activityStepCounter++;
@@ -586,7 +584,6 @@ namespace GingerCore.ALM.RQM
                             businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalID = ActivityGroupID;
                             foreach (ACL_Data_Contract.ActivityStep activityStep in act.ActivityData.ActivityStepsColl)
                             {
-                                //string activityStepID = "RQMID=" + activityStepOrderID.ToString() + "|AtsID=" + act.EntityId.ToString();
                                 string activityStepID = "RQMID=" + act.ExportedTestScriptId.ToString() + "_" + activityStepOrderID + "|AtsID=" + act.EntityId.ToString();
                                 businessFlow.Activities[activityStepCounter].ExternalID = activityStepID;
                                 activityStepCounter++;

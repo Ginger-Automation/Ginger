@@ -919,9 +919,6 @@ namespace GingerCore.ALM.RQM
             string rqmSserverUrl = ALMCore.DefaultAlmConfig.ALMServerURL + "/";
             LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
 
-            string rqmDomain = RQMCore.ALMProjectGroupName;
-            string rqmProject = ALMCore.DefaultAlmConfig.ALMProjectName;
-            string rqmProjectGuid = ALMCore.DefaultAlmConfig.ALMProjectGUID;
             //------------------------------- Improved solution
 
             string baseUri_ = string.Empty;
@@ -940,7 +937,7 @@ namespace GingerCore.ALM.RQM
                 {
                     bw.ReportProgress(totalValues, populatedValue);
                 }
-                RqmResponseData categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + rqmDomain + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + rqmProjectGuid + "/categoryType"));
+                RqmResponseData categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + RQMCore.ALMProjectGroupName + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + ALMCore.DefaultAlmConfig.ALMProjectGUID + "/categoryType"));
                 XmlDocument categoryTypeList = new XmlDocument();
 
 
@@ -952,7 +949,6 @@ namespace GingerCore.ALM.RQM
                 //TODO: Get 'next' and 'last links
                 XmlNodeList linkList_ = categoryTypeList.GetElementsByTagName("link");
                 Reporter.ToLog(eLogLevel.DEBUG, "in if loop linkList_.Count : " + linkList_.Count);
-                Reporter.ToLog(eLogLevel.DEBUG, "in if linkList_ :" + JsonConvert.SerializeObject(linkList_));
                 if (linkList_.Count > 0)
                 {
                     XmlNode selfPage = linkList_.Item(1);
@@ -997,7 +993,6 @@ namespace GingerCore.ALM.RQM
                     //Parallel computing solution
                     List<XmlNode> entryList = new List<XmlNode>();
                     Reporter.ToLog(eLogLevel.DEBUG, "in if loop categoryTypeUriPages.Count : " + categoryTypeUriPages.Count);
-                    Reporter.ToLog(eLogLevel.DEBUG, "in if loop categoryTypeUriPages : " + JsonConvert.SerializeObject(categoryTypeUriPages));
                     if (categoryTypeUriPages.Count > 1)
                     {
                         Parallel.ForEach(categoryTypeUriPages.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, categoryTypeUri =>
@@ -1006,7 +1001,6 @@ namespace GingerCore.ALM.RQM
                             //System.Diagnostics.Debug.WriteLine("parallel foreach #1");
                             newUri_ = categoryTypeUri;
                             Reporter.ToLog(eLogLevel.DEBUG, "in if loop newUri_ : " + newUri_);
-                            //categoryType = rqmRep.GetRqmResponse(loginData, new Uri(newUri_));
                             categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(newUri_));
                             if (!string.IsNullOrEmpty(categoryType.responseText))
                             {
@@ -1020,7 +1014,6 @@ namespace GingerCore.ALM.RQM
                                 entryList.Add(entryNode);
                             }
                             Reporter.ToLog(eLogLevel.DEBUG, "in if loop categoryTypeUriPages entryList.Count : " + entryList.Count);
-                            Reporter.ToLog(eLogLevel.DEBUG, "in if loop categoryTypeUriPages entryList : " + JsonConvert.SerializeObject(entryList));
                             ParallelLoopResult innerResult = Parallel.ForEach(entryList.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, singleEntry =>
                             {
 
@@ -1105,7 +1098,6 @@ namespace GingerCore.ALM.RQM
                             entryList.Add(entryNode);
                         }
                         Reporter.ToLog(eLogLevel.DEBUG, "in else loop entryList.count : " + entryList.Count);
-                        Reporter.ToLog(eLogLevel.DEBUG, "in else loop entryList :" + JsonConvert.SerializeObject(entryList));
                         ParallelLoopResult innerResult = Parallel.ForEach(entryList.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, singleEntry =>
                         {
 
@@ -1179,7 +1171,7 @@ namespace GingerCore.ALM.RQM
                     {
                         bw.ReportProgress(totalValues, populatedValue);
                     }
-                    RqmResponseData category = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + rqmDomain + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + rqmProjectGuid + "/category"));
+                    RqmResponseData category = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + RQMCore.ALMProjectGroupName + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + ALMCore.DefaultAlmConfig.ALMProjectGUID + "/category"));
                     XmlDocument CategoryList = new XmlDocument();
                     CategoryList.LoadXml(category.responseText);
                     totalValues = 0;
