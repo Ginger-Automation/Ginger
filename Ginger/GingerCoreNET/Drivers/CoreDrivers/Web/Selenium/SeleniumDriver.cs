@@ -157,8 +157,8 @@ namespace GingerCore.Drivers
         public bool BrowserMinimized { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Set the minimum log level. Valid values are from 0 to 4: All = 0, Debug = 1, Info = 2, Warning = 3, Severe = 4")]
+        [UserConfiguredDefault("3")]
+        [UserConfiguredDescription("Set the minimum log level to read the console logs from the browser console. Valid values are from 0 to 4: All = 0, Debug = 1, Info = 2, Warning = 3, Severe = 4")]
         public string BrowserLogLevel { get; set; }
 
         [UserConfigured]
@@ -9642,7 +9642,7 @@ namespace GingerCore.Drivers
 
         private void SetBrowserLogLevel(DriverOptions options)
         {
-            if (!string.IsNullOrEmpty(BrowserLogLevel))
+            if (!BrowserLogLevel.Equals("3"))
             {
                 int numberLogLevel;
                 if (int.TryParse(BrowserLogLevel, out numberLogLevel))
@@ -9651,13 +9651,12 @@ namespace GingerCore.Drivers
                     {
                         options.SetLoggingPreference(OpenQA.Selenium.LogType.Browser, (OpenQA.Selenium.LogLevel)numberLogLevel);
                     }
-                    else throw new Exception("Please enter a valid number in the BrowserLogLevel parameter");
+                    else throw new Exception("Please enter a valid number in the BrowserLogLevel parameter in Agent Configuration");
                 }
                 else
                 {
-                    throw new Exception("Please enter a valid value in the BrowserLogLevel parameter");
+                    throw new Exception("Please enter a valid value in the BrowserLogLevel parameter in Agent Configurations");
                 }
-
             }
         }
 
