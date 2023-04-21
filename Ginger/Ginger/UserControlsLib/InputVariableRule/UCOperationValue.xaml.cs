@@ -1,11 +1,13 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.Repository;
+using Ginger.Variables;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -184,15 +186,14 @@ namespace Ginger.UserControlsLib.InputVariableRule
                 xSetValueTxtBox.Visibility = Visibility.Collapsed;
                 xVisibilityOptions.Visibility = Visibility.Visible;
                 dateWindow.Visibility = Visibility.Collapsed;
-                txtNumberValue.Visibility = Visibility.Collapsed;
-                OperationValue = eVisibilityOptions.Show.ToString();
+                txtNumberValue.Visibility = Visibility.Collapsed;                
                 BindingHandler.ObjFieldBinding(xVisibilityOptions, ComboBox.SelectedValueProperty, this, nameof(OperationValue));
                 xVisibilityOptions.SelectionChanged+=XVisibilityOptions_SelectionChanged;            
-                MC.Visibility = Visibility.Collapsed;
-              
+                MC.Visibility = Visibility.Collapsed; 
+                
             }
             if (OperationType == eInputVariableOperation.SetValue)
-            {               
+            {                
                 xVisibilityOptions.ClearControlsBindings();
                 xVisibilityOptions.Visibility = Visibility.Collapsed;
                 MC.Visibility = Visibility.Collapsed;                
@@ -233,9 +234,10 @@ namespace Ginger.UserControlsLib.InputVariableRule
                     xSetValueTxtBox.Visibility = Visibility.Collapsed;
                     xPossibleValues.Visibility = Visibility.Collapsed;
                     dateWindow.Visibility = Visibility.Collapsed;
-                    txtNumberValue.Visibility = Visibility.Visible;
-                    OperationValue = TargetVariable.Value;
+                    txtNumberValue.Visibility = Visibility.Visible;                    
                     BindingHandler.ObjFieldBinding(txtNumberValue, TextBox.TextProperty, this, nameof(OperationValue));
+                    txtNumberValue.AddValidationRule(new NumberValidationRule());
+                    txtNumberValue.AddValidationRule(new NumberValidationRule((VariableNumber)TargetVariable));
                 }
                 else if (TargetVariable != null)
                 {
@@ -243,8 +245,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
                     txtNumberValue.ClearControlsBindings();
                     xPossibleValues.Visibility = Visibility.Collapsed;
                     dateWindow.Visibility = Visibility.Collapsed;
-                    txtNumberValue.Visibility = Visibility.Collapsed;
-                    OperationValue = TargetVariable.Value;
+                    txtNumberValue.Visibility = Visibility.Collapsed;                    
                     BindingHandler.ObjFieldBinding(xSetValueTxtBox, TextBox.TextProperty, this, nameof(OperationValue));                    
                     xSetValueTxtBox.Visibility = Visibility.Visible;                                      
                 }
@@ -262,7 +263,10 @@ namespace Ginger.UserControlsLib.InputVariableRule
                 Items = new Dictionary<string, object>();                          
                 foreach (OptionalValue optionalValue in ((VariableSelectionList)TargetVariable).OptionalValuesList)
                 {
-                    Items.Add(optionalValue.Value, optionalValue.Guid.ToString());
+                    if(!string.IsNullOrEmpty(optionalValue.Value) && !Items.ContainsKey(optionalValue.Value))
+                    {
+                        Items.Add(optionalValue.Value, optionalValue.Guid.ToString());
+                    }                    
                 }
                 MC.Visibility = Visibility.Visible;
                 MC.ItemsSource = Items;
@@ -302,7 +306,31 @@ namespace Ginger.UserControlsLib.InputVariableRule
 
         private void OperationValuePropertyChanged(string newValue)
         {
-            OnPropertyChanged(nameof(OperationValue));          
+            OnPropertyChanged(nameof(OperationValue));
+            if (TargetVariable != null && OperationType != eInputVariableOperation.SetVisibility)
+            {
+                if (TargetVariable.VariableType == "Selection List")
+                {
+                    xPossibleValues.SelectedValue = newValue;
+                }
+                else if (TargetVariable.VariableType == "String")
+                {
+                    xSetValueTxtBox.Text = newValue;
+                }
+                else if (TargetVariable.VariableType == "DateTime" && !string.IsNullOrEmpty(newValue))
+                {                 
+                    DateTime dt;
+                    DateTime.TryParseExact(newValue, ((VariableDateTime)TargetVariable).DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture, DateTimeStyles.None, out dt);
+                    if(dt != DateTime.MinValue)
+                    {
+                        dpDate.Value = dt;
+                    }                    
+                }
+                else if (TargetVariable.VariableType == "Number")
+                {
+                    txtNumberValue.Text =  newValue;
+                }
+            }
         }
       
 
@@ -383,7 +411,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
             }
             else
             {
-                OperationValue = dpDate.Value.ToString();
+                OperationValue = dpDate.Text.ToString();
             }
         }
     }
