@@ -31,19 +31,7 @@ namespace Ginger.Functionalties
     public class SolutionRecover
     {
         public string mRecoverFolderPath = null;
-        public string RecoverFolderPath
-        {
-            get
-            {
-                return mRecoverFolderPath;
-
-            }
-            set
-            {
-                WorkSpace.Instance.RecoverFolderPath = mRecoverFolderPath;
-            }
-        }
-
+        
         public object NewrepositorySerializer { get; private set; }
 
         string RecoverFolderContianerWithTS = null;
@@ -86,7 +74,7 @@ namespace Ginger.Functionalties
             if (Directory.Exists(mRecoverFolderPath))
             {
                 NewRepositorySerializer serializer = new NewRepositorySerializer();
-
+                
                 foreach (var directory in new DirectoryInfo(mRecoverFolderPath).GetDirectories())
                 {
                     string timestamp = directory.Name.ToString().Replace("AutoSave_", string.Empty);
@@ -111,11 +99,6 @@ namespace Ginger.Functionalties
                         }
                     }
                 }
-
-                if (recovredItems.Count == 0)
-                {
-                    CleanUp(); //have empty folders
-                }
             }
 
             if (recovredItems.Count > 0 || showRecoverPageAnyway)
@@ -123,24 +106,17 @@ namespace Ginger.Functionalties
                 TargetFrameworkHelper.Helper.ShowRecoveryItemPage(recovredItems);
             }
         }
-        public void CleanUp()
+        public void CleanUpRecoverFolder()
         {
             if (Directory.Exists(mRecoverFolderPath))
             {
-                foreach (var directory in new DirectoryInfo(mRecoverFolderPath).GetDirectories())
+                try
                 {
-                    long size = directory.GetFiles("*", SearchOption.AllDirectories).Sum(t => t.Length);
-                    if (size == 0)
-                    {
-                        try
-                        {
-                            directory.Delete(true);
-                        }
-                        catch
-                        {
-
-                        }
-                    }
+                    Directory.Delete(mRecoverFolderPath, true);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to delete Recover folder", ex);
                 }
             }
         }

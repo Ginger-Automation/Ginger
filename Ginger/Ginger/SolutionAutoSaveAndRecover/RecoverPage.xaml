@@ -38,7 +38,7 @@
         
         <Ginger:ucGrid x:Name="xRecoveredItemsGrid" Grid.Row="2" Title="Pending Recover Items" IsReadOnly="False" FontStyle="Normal" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" />
        
-        <CheckBox x:Name="xDoNotAskAgainChkbox" Grid.Row="3"  DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource @CheckBoxStyle}" Content="Do not ask to Recover on Solution load"  />
+        <CheckBox x:Name="xDoNotAskAgainChkbox" Grid.Row="3" Visibility="Collapsed" DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource @CheckBoxStyle}" Content="Do not ask to Recover on Solution load"  />
             
     </Grid>
 </Page>

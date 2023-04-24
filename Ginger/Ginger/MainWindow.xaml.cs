@@ -118,7 +118,13 @@ namespace Ginger
                 if (WorkSpace.Instance.UserProfile.GingerStatus == eGingerStatus.Active)
                 {
                     Reporter.ToStatus(eStatusMsgKey.ExitMode);
+                    WorkSpace.Instance.UserProfile.DoNotAskToRecoverSolutions = false;
                 }
+                else if (WorkSpace.Instance.UserProfile.GingerStatus == eGingerStatus.Closed)
+                {
+                    WorkSpace.Instance.UserProfile.DoNotAskToRecoverSolutions = true;
+                }
+
                 WorkSpace.Instance.UserProfile.GingerStatus = eGingerStatus.Active;
                 WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
                 ((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
@@ -421,7 +427,14 @@ namespace Ginger
             eUserMsgSelection userSelection;
             if (mRestartApplication)
             {
-                userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestart);
+                if (WorkSpace.Instance.SolutionRepository.ModifiedFiles.Any())
+                {
+                    userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestart);
+                }
+                else
+                {
+                    userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestartWithoutNote);
+                }
             }
             else if (!mAskUserIfToClose)
             {
@@ -429,7 +442,14 @@ namespace Ginger
             }
             else
             {
-                userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToClose);
+                if (WorkSpace.Instance.SolutionRepository.ModifiedFiles.Any())
+                {
+                    userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToClose);
+                }
+                else
+                {
+                    userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToCloseWithoutNote);
+                }
             }
 
 
