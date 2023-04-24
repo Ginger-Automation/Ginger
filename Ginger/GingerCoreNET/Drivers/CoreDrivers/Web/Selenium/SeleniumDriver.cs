@@ -4240,17 +4240,18 @@ namespace GingerCore.Drivers
 
                 try
                 {
-                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && this.mDriverProcessId != 0)
-                    {
-                        try
-                        {
-                            return IsBrowserAlive();
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occured in IsBrowserAlive called from IsRunning Method using handle.exe ", ex);
-                        }
-                    }
+                    //TODO: MaheshK: Need to improve IsBrowserAlive code to handle non responsive browsers and when machine running low on resource.
+                    //if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && this.mDriverProcessId != 0)
+                    //{
+                    //    try
+                    //    {
+                    //        return IsBrowserAlive();
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        Reporter.ToLog(eLogLevel.DEBUG, "Exception occured in IsBrowserAlive called from IsRunning Method using handle.exe ", ex);
+                    //    }
+                    //}
 
                     int count = 0;
                     ///IAsyncResult result;
