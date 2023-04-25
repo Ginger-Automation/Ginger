@@ -12,7 +12,7 @@
        Height="500" Width="800" MinHeight="500" MinWidth="800"
       Title="Solution Recover">
 
-    <Grid x:Name="RecoveredItems" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="RecoveredItems" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0">
         <Grid.Resources>
             <DataTemplate x:Key="ViewDetailsButton">
                 <Button x:Name="xViewDetailsButton" Click="ViewDetailsClicked" ToolTip="View Details" Style="{StaticResource @InputImageGridCellButtonStyle}">
@@ -22,23 +22,22 @@
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="70"  />
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="300*" />
-           
-            <RowDefinition Height="30" />
+            <RowDefinition Height="300*"/>
+            <RowDefinition Height="40" />
         </Grid.RowDefinitions>
 
 
         <TextBlock x:Name="xExplanationLable" Grid.Row="0" Style="{StaticResource @TextBlockStyle}" TextWrapping="Wrap" FontSize="14" FontWeight="Light" Margin="10,10,0,0" >Ginger has recovered the following items.<LineBreak/>Recover the ones you need and delete the ones you don’t.</TextBlock>
 
-        <StackPanel Grid.Row="1" x:Name="stackNaveRightSide"  Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Bottom" >
+        
+        <Ginger:ucGrid x:Name="xRecoveredItemsGrid" Grid.Row="1" Title="Pending Recover Items" IsReadOnly="False" FontStyle="Normal" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" />
+              
+        <StackPanel Grid.Row="2" x:Name="stackNaveRightSide"  Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Bottom" >
+            <usercontrols:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Height="30" Width="30" Visibility="Collapsed"></usercontrols:ImageMakerControl>
             <usercontrols:ucButton x:Name="xDeleteButton" ButtonType="RoundTextAndImageButton" ButtonText="Delete Selected" ButtonImageType="Delete" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="DeleteButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
             <usercontrols:ucButton x:Name="xRecoverButton" ButtonType="RoundTextAndImageButton" ButtonText="Recover Selected" ButtonImageType="Reset" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="RecoverButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
+            <usercontrols:ucButton x:Name="xCloseButton" ButtonType="RoundTextAndImageButton" ButtonText="Close" ButtonImageType="Close" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="CloseButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
         </StackPanel>
-        
-        <Ginger:ucGrid x:Name="xRecoveredItemsGrid" Grid.Row="2" Title="Pending Recover Items" IsReadOnly="False" FontStyle="Normal" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" />
-       
-        <CheckBox x:Name="xDoNotAskAgainChkbox" Grid.Row="3" Visibility="Collapsed" DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource @CheckBoxStyle}" Content="Do not ask to Recover on Solution load"  />
-            
+
     </Grid>
 </Page>
