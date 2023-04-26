@@ -631,6 +631,7 @@ public class SwingHelper implements IXPath {
 		int actualIndex=0;
     	int numOfFoundWins=0;  
     	boolean partialTitleFound = false;
+    	boolean appletsTitleFound = false;
     	//Get actual window title and index
     	if (Title.contains("[Index:"))
     	{
@@ -683,10 +684,15 @@ public class SwingHelper implements IXPath {
     		{  
     			CurrentWindow = w;
     			partialTitleFound =  true;    			
-    		}   
+    		}
+    		else if (Title.equals(w.getName()))
+			{
+    			CurrentWindow = w;
+    			appletsTitleFound = true;    	
+			}
     	}
     	
-    	if(partialTitleFound)
+    	if(partialTitleFound || appletsTitleFound)
     	{
     		return true;
     	}
@@ -721,15 +727,15 @@ public class SwingHelper implements IXPath {
 //    	
 		//temp solution to be able to see it in Win Explorer
     	// for applets we might have only name
-    	for(Window w:windows2)
-    	{
-    		if (Title.equals(w.getName()))
-			{
-    			CurrentWindow = w;
-    			return true;    	
-			}
-    	
-    	}    	
+//    	for(Window w:windows2)
+//    	{
+//    		if (Title.equals(w.getName()))
+//			{
+//    			CurrentWindow = w;
+//    			return true;    	
+//			}
+//    	
+//    	}    	
     	return false;
     }
 	
