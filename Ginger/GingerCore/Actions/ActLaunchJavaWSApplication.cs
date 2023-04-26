@@ -1047,13 +1047,18 @@ namespace GingerCore.Actions
 
         private bool ProcessExists(int processId)
         {
-            Process p = Process.GetProcesses().FirstOrDefault(x => x.Id == processId);
-
-            if (p != null && !p.HasExited)
+            try
             {
-                return true;
+                Process p = Process.GetProcessById(processId);
+                if (p != null && !p.HasExited)
+                {
+                    return true;
+                }
             }
-
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG,"Error occured while fectching process by id.", ex);
+            }
             return false;
         }
         private static string handleExePath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "StaticDrivers", "handle.exe");

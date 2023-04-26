@@ -460,11 +460,16 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             while (!response.IsOK())
             {
+                if (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)
+                {
+                    break;
+                }
                 response = Send(Request);
                 if (St.ElapsedMilliseconds > waitTime * 1000)
                 {
                     break;
                 }
+                Thread.Sleep(500);
             }
             St.Stop();
             return response;
