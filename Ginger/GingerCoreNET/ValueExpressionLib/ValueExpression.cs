@@ -1567,8 +1567,11 @@ namespace GingerCore
                 {
                     if (vb is VariablePasswordString)
                     {
-                        string strValuetoPass;
-                        strValuetoPass = EncryptionHandler.DecryptwithKey(vb.Value);
+                        string strValuetoPass = String.Empty;
+                        if (DecryptFlag)
+                        {
+                            strValuetoPass = EncryptionHandler.DecryptwithKey(vb.Value);
+                        }
                         if (!string.IsNullOrEmpty(strValuetoPass))
                         {
                             VarValue = strValuetoPass;
