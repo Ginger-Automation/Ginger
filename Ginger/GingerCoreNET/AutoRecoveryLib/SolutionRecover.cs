@@ -69,7 +69,8 @@ namespace Ginger.Functionalties
 
         public async void SolutionRecoverStart(bool showRecoverPageAnyway = false)
         {
-            if (Directory.Exists(WorkSpace.Instance.AppSolutionRecover.RecoverFolderPath))
+            if (Directory.Exists(WorkSpace.Instance.AppSolutionRecover.RecoverFolderPath)
+                && Directory.GetFiles(WorkSpace.Instance.AppSolutionRecover.RecoverFolderPath, "*.xml", SearchOption.AllDirectories).Length > 0)
             {
                 TargetFrameworkHelper.Helper.ShowRecoveryItemPage();
             }

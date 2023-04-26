@@ -39,7 +39,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
     /// </summary>
     public partial class RecoverPage : Page, IDisposable
     {
-        GenericWindow _pageGenericWin = null;
+        GenericWindow? _pageGenericWin = null;
         ObservableList<RecoveredItem> mRecoveredItems;
         bool selected = false;
 
@@ -59,7 +59,6 @@ namespace Ginger.SolutionAutoSaveAndRecover
         {
             if (Directory.Exists(WorkSpace.Instance.AppSolutionRecover.RecoverFolderPath))
             {
-
                 await Task.Run(() =>
                 {
                     this.ShowLoader();
