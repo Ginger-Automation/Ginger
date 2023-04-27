@@ -976,6 +976,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 DeleteSelectedHandler(null, null);
             }
         }
+
+        string IListViewHelper.GetConflictedItemField()
+        {
+            return null;
+        }
     }
 
 

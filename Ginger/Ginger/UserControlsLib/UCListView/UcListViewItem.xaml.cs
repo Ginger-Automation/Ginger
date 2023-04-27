@@ -127,6 +127,7 @@ namespace Ginger.UserControlsLib.UCListView
         string mItemIconTooltipField;
         string mItemExecutionStatusField;
         string mItemActiveField;
+        string mItemIsConflictedField;
 
         bool mMainViewWasSet;
         bool mSubViewWasSet;
@@ -173,6 +174,7 @@ namespace Ginger.UserControlsLib.UCListView
                 mItemNameExtentionField = ListHelper.GetItemNameExtentionField();
                 mItemExecutionStatusField = ListHelper.GetItemExecutionStatusField();
                 mItemActiveField = ListHelper.GetItemActiveField();
+                mItemIsConflictedField = "ItemIsConflicted";
 
                 this.Dispatcher.Invoke(() =>
                 {
@@ -700,12 +702,19 @@ namespace Ginger.UserControlsLib.UCListView
                     if (!string.IsNullOrEmpty(mItemNameField))
                     {
                         Object name = Item.GetType().GetProperty(mItemNameField).GetValue(Item);
+                        bool bConflict = false;
+                        if (!string.IsNullOrEmpty(mItemIsConflictedField))
+                        {
+                            bConflict = (bool)(Item.GetType().GetProperty(mItemIsConflictedField)).GetValue(Item);
+                        }
+                        //bool bConflict = (Boolean)(typeof(RepositoryItemBase).GetProperty("ItemIsConflicted").GetValue(Item));
                         if (name != null)
                         {
                             xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
                             {
                                 FontSize = 15,
-                                Text = name.ToString()
+                                Text = name.ToString(),
+                                Foreground = bConflict ? Brushes.Red : Brushes.Black
                             });
 
                             fullname += name;

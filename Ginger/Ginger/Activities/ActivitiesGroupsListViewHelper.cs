@@ -278,5 +278,9 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             throw new System.NotImplementedException();
         }
 
+        string IListViewHelper.GetConflictedItemField()
+        {
+            return null;
+        }
     }
 }

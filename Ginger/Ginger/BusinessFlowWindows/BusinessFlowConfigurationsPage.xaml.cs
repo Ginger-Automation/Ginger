@@ -20,7 +20,9 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.BusinessFlowWindows;
+using Ginger.ConflictResolve;
 using Ginger.UserControls;
+using System.Collections.Generic;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
@@ -30,6 +32,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -41,8 +44,9 @@ namespace GingerWPF.BusinessFlowsLib
         BusinessFlow mBusinessFlow;
         Context mContext;
         Ginger.General.eRIPageViewMode mPageViewMode;
+        List<string> ListCompareObject;
 
-        public BusinessFlowConfigurationsPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode)
+        public BusinessFlowConfigurationsPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode, bool RenderConflict = false, List<string> listCompareObject = null)
         {
             InitializeComponent();
 
@@ -54,6 +58,44 @@ namespace GingerWPF.BusinessFlowsLib
             mBusinessFlow.TargetApplications.CollectionChanged += TargetApplications_CollectionChanged;
             TrackBusinessFlowAutomationPrecentage();
             BindControls();
+            if (RenderConflict)
+            {
+                this.Loaded += BusinessFlowConfigurationsPage_Loaded;
+                ListCompareObject = listCompareObject;
+            }
+        }
+
+        private void BusinessFlowConfigurationsPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            List<FrameworkElement> lstLocalContrls = GetListOfChildControls.GetAllControls(this);
+
+            foreach (FrameworkElement control in lstLocalContrls)
+            {
+                Type getType = typeof(FrameworkElement);
+                Binding bindingObj = BindingElementsOperations.GetBindingElement(control, out getType);
+                if (bindingObj != null)
+                {
+                    string variableName = bindingObj.Path.Path;
+                    if (ListCompareObject.Any(l => l.Contains(variableName)))
+                    {
+                        if (getType.Equals(typeof(TextBox)))
+                        {
+                            int idx = lstLocalContrls.IndexOf(control);
+                            ((TextBox)control).SetStyleToHighlightConflict();
+                        }
+                        if (getType.Equals(typeof(ComboBox)))
+                        {
+                            int idx = lstLocalContrls.IndexOf(control);
+                            ((ComboBox)control).SetStyleToHighlightConflict();
+                        }
+                        if (getType.Equals(typeof(CheckBox)))
+                        {
+                            int idx = lstLocalContrls.IndexOf(control);
+                            ((CheckBox)control).SetStyleToHighlightConflict();
+                        }
+                    }
+                }
+            }
         }
 
         private void TargetApplications_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -166,7 +208,6 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xCreatedByTextBox, TextBox.TextProperty, mBusinessFlow.RepositoryItemHeader, nameof(RepositoryItemHeader.CreatedBy));
             BindingHandler.ObjFieldBinding(xAutoPrecentageTextBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.AutomationPrecentage), System.Windows.Data.BindingMode.OneWay);
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mBusinessFlow, nameof(RepositoryItemBase.Publish));
-
             //// Per source we can show specific source page info
             //if (mBusinessFlow.Source == BusinessFlow.eSource.Gherkin)
             //{

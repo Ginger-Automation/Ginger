@@ -392,6 +392,8 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public bool ItemIsConflicted { get; set; } = false;
+
         public bool ClearBackup(bool isLocalBackup = false)
         {
             if (mBackupInProgress)

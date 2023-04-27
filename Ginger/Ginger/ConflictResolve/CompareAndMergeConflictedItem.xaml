@@ -1,0 +1,34 @@
+﻿<Page x:Class="Ginger.ConflictResolve.CompareAndMergeConflictedItem"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"  
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      mc:Ignorable="d" 
+      d:DesignHeight="500" d:DesignWidth="800"
+      Height="1800" Width="1200"
+      Title="Compare And Merge Conflicted Item"
+      Loaded="Page_Loaded">
+    <Grid x:Name="MergeConflictsGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="500*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400*"/>
+            <ColumnDefinition Width="400*"/>
+        </Grid.ColumnDefinitions>
+        <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource @LabelStyle}" FontWeight="ExtraBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Local Version "/>
+
+        <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource @LabelStyle}" FontWeight="ExtraBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Server Version "/>
+        <Border Grid.Column="0" Grid.Row="1" Margin="5" DockPanel.Dock="Top" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+            <ScrollViewer x:Name="LocalScroll" ScrollChanged="ScrollViewer_ScrollChanged">
+                <Frame x:Name="xLocalVersion" Margin="10" Content="Local Version" NavigationUIVisibility="Automatic" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
+            </ScrollViewer>
+        </Border>
+        <Border Grid.Column="1" Grid.Row="1" Margin="5" DockPanel.Dock="Top" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+            <ScrollViewer x:Name="ServerScroll" ScrollChanged="ScrollViewer_ScrollChanged">
+                <Frame x:Name="xServerVersion" Margin="10" Content="Server Version" NavigationUIVisibility="Automatic" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Page>

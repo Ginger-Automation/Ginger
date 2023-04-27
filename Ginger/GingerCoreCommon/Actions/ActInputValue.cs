@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -193,6 +193,19 @@ namespace Amdocs.Ginger.Repository
         public override string GetNameForFileName()
         {
             return Param;
+        }
+
+        public override string GetItemType()
+        {
+            return "ActInputValue";
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return this.Param;
+            }
         }
 
     }

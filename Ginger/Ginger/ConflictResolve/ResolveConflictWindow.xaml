@@ -3,7 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Ginger.ConflictResolve" xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:local="clr-namespace:Ginger.ConflictResolve" xmlns:Ginger="clr-namespace:Ginger" xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="1200"
       Height="600" Width="1200" Title="Resolve Conflict Window">
@@ -13,7 +13,14 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="300*"/>
         </Grid.RowDefinitions>
-
+        <Grid.Resources>
+            <DataTemplate x:Key="xCompareAndMergeTemplate">
+                <UserControls:ucButton x:Name="xCompareAndMergeButton" VerticalAlignment="Center" IsEnabled="true" Margin="0" Padding="0" Height="23"
+                      ButtonType="ImageButton" Click="xCompareAndMergeButton_Click" ButtonText="" ToolTip="Compare and Merge"  ButtonFontImageSize="15" ButtonImageHeight="15"
+                            ButtonImageWidth="15" ButtonImageType="Columns" />
+            </DataTemplate>
+        </Grid.Resources>
+        
         <Ginger:ucGrid x:Name="xConflictingItemsGrid" Grid.Row="0" Title="Conflict Items" IsReadOnly="False" FontStyle="Normal" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" />
 
     </Grid>

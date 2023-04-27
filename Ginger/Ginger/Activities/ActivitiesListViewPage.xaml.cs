@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository;
@@ -45,17 +46,40 @@ namespace Ginger.BusinessFlowPages
         {
             get { return xActivitiesListView; }
         }
-
-        public ActivitiesListViewPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode)
+        IObserverListener Observer = null;
+        List<string> ListConflictCompare;
+        List<int> conflictedIndices;
+        public ActivitiesListViewPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode,
+            bool IsRenderConflict = false, List<string> argsListConflict = null, IObserverListener argsObserver = null)
         {
             InitializeComponent();
-
             mBusinessFlow = businessFlow;
             mContext = context;
             mPageViewMode = pageViewMode;
 
             SetListView();
+            if (IsRenderConflict)
+            {
+                ListConflictCompare = argsListConflict;
+                GetListOfActivitiesChanges();
+                Observer = argsObserver;
+            }
             SetListViewData();
+        }
+
+        private void GetListOfActivitiesChanges()
+        {
+            var ActivityList = mBusinessFlow.Activities;
+            foreach (string conflict in ListConflictCompare)
+            {
+                if (conflict.StartsWith("Activities") && !conflict.Contains("ActivitiesGroup"))
+                {
+                    string targetString = conflict.Split(':')[0];
+                    string[] findEntities = targetString.Split('.');
+                    string idxValue = findEntities[0].Substring("Activities".Length + 1, findEntities[0].IndexOf(']') - "Activities".Length - 1);
+                    ActivityList[int.Parse(idxValue)].ItemIsConflicted = true;
+                }
+            }
         }
 
         /// <summary>
@@ -100,10 +124,29 @@ namespace Ginger.BusinessFlowPages
 
                 //shared repo indicator
                 await Task.Run(() => this.SetSharedRepositoryMark());
+
+                if (ListConflictCompare != null)
+                {
+                    xActivitiesListView.NotifyParentListItemClicked -= NotifyParentListItemClickedEvtHandler;
+                    xActivitiesListView.NotifyParentListItemClicked += NotifyParentListItemClickedEvtHandler;
+                }
             }
             else
             {
                 xActivitiesListView.DataSourceList = null;
+            }
+        }
+
+        private void NotifyParentListItemClickedEvtHandler(object sender, EventArgs e)
+        {
+            if (Observer != null)
+            {
+                SyncListViews objSync = new SyncListViews()
+                {
+                    TargetSite = "Activities",
+                    Index = (int)sender
+                };
+                Observer.NotifyListener(objSync);
             }
         }
 

@@ -21,6 +21,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using GingerCore.GeneralLib;
@@ -107,6 +108,8 @@ namespace Ginger.UserControlsLib.UCListView
         }
 
         IListViewHelper mListViewHelper = null;
+        public EventHandler NotifyParentListItemClicked;
+        public EventHandler OpenEditPage;
 
         public UcListView()
         {
@@ -443,9 +446,30 @@ namespace Ginger.UserControlsLib.UCListView
             if (mObjList != null && mObjList.SyncCurrentItemWithViewSelectedItem)
             {
                 SetSourceCurrentItemAsListSelectedItem();
+                if (NotifyParentListItemClicked != null && !bDoNotRaiseSyncEvent)
+                {
+                    int idxOfCurrentItem = mObjList.IndexOf(xListView.SelectedItem);
+                    NotifyParentListItemClicked(idxOfCurrentItem, EventArgs.Empty);
+                }
+                if (bDoNotRaiseSyncEvent)
+                {
+                    bDoNotRaiseSyncEvent = false;
+                }
             }
 
             //e.Handled = true;
+        }
+        bool bDoNotRaiseSyncEvent = false;
+        public void SyncViews(object sender, EventArgs e)
+        {
+            SyncListViews objSync = (SyncListViews)sender;
+            int idxOfItem = objSync.Index;
+            bDoNotRaiseSyncEvent = true;
+            xListView.SelectedIndex = idxOfItem;
+            if (objSync.IsDoubleClick)
+            {
+                OpenEditPage?.Invoke(objSync, e);
+            }
         }
 
         private void SetSourceCurrentItemAsListSelectedItem()

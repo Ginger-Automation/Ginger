@@ -52,6 +52,8 @@ namespace Ginger.UserControlsLib.UCListView
 
         string GetItemActiveField();
 
+        string GetConflictedItemField();
+
         List<ListItemOperation> GetListOperations();
 
         List<ListItemOperation> GetListExtraOperations();

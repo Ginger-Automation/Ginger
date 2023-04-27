@@ -43,5 +43,7 @@ namespace Ginger.ConflictResolve
         public string ItemName { get; set; }
 
         public eResolveOperations resolveOperations { get; set; }
+
+        public string Merge { get; set; }
     }
 }

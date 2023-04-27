@@ -1336,6 +1336,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 }
             }
         }
+
+        string IListViewHelper.GetConflictedItemField()
+        {
+            return nameof(Activity.ItemIsConflicted);
+        }
     }
 
     public class ActivityListItemEventArgs

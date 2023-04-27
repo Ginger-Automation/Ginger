@@ -35,6 +35,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Collections.Generic;
+using Amdocs.Ginger.CoreNET;
 
 namespace Ginger.BusinessFlowPages
 {
@@ -57,8 +59,10 @@ namespace Ginger.BusinessFlowPages
         {
             get { return mVariabelsListView; }
         }
-
-        public VariabelsListViewPage(RepositoryItemBase variabelsParent, Context context, General.eRIPageViewMode pageViewMode)
+        List<string> ListCompareObject;
+        IObserverListener Observer;
+        public VariabelsListViewPage(RepositoryItemBase variabelsParent, Context context, General.eRIPageViewMode pageViewMode, bool IsRenderConflict = false,
+            List<string> argsListCompareObject = null, IObserverListener argsObserver = null)
         {
             InitializeComponent();
 
@@ -70,9 +74,48 @@ namespace Ginger.BusinessFlowPages
             {
                 CurrentItemToSave = WorkSpace.Instance.Solution;
             }
+            if (IsRenderConflict)
+            {
+                ListCompareObject = argsListCompareObject;
+                GetListOfVariablesChanges();
+                Observer = argsObserver;
+            }
 
             SetListView();
             ShowHideEditPage(null);
+        }
+
+        //public void SyncListSelectionWithParallelControl(VariabelsListViewPage argsParallelView)
+        //{
+        //    this.ListView.SyncParallelListViews -= argsParallelView.ListView.SyncViews;
+        //    this.ListView.SyncParallelListViews += argsParallelView.ListView.SyncViews;
+        //}
+
+        private void GetListOfVariablesChanges()
+        {
+            ObservableList<VariableBase> varList = new ObservableList<VariableBase>();
+            switch (mVariablesLevel)
+            {
+                case eVariablesLevel.BusinessFlow:
+                    varList = (mVariabelsParent as BusinessFlow).Variables;
+                    break;
+                case eVariablesLevel.Activity:
+                    varList = (mVariabelsParent as Activity).Variables;
+                    break;
+                case eVariablesLevel.Solution:
+                    varList = (mVariabelsParent as Solution).Variables;
+                    break;
+            }
+            foreach (string conflict in ListCompareObject)
+            {
+                if (conflict.StartsWith("Variables"))
+                {
+                    string targetString = conflict.Split(':')[0];
+                    string[] findEntities = targetString.Split('.');
+                    string idxValue = findEntities[0].Substring("Variables".Length + 1, findEntities[0].IndexOf(']') - "Variables".Length - 1);
+                    varList[int.Parse(idxValue)].ItemIsConflicted = true;
+                }
+            }
         }
 
         public void UpdatePageViewMode(Ginger.General.eRIPageViewMode pageViewMode)
@@ -151,7 +194,7 @@ namespace Ginger.BusinessFlowPages
                 }
                 else if (mVariabelsParent is BusinessFlow)
                 {
-                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Default, parent: mVariabelsParent);
+                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Default, parent: mVariabelsParent, ListCompareObject == null ? false : true, ListCompareObject);
                 }
                 else if (mVariabelsParent is Activity)
                 {
@@ -228,7 +271,6 @@ namespace Ginger.BusinessFlowPages
                 mVariabelsListView.ItemDropped += ListVars_ItemDropped;
 
                 mVariabelsListView.List.MouseDoubleClick += VariabelsListView_MouseDoubleClick;
-
                 mVariabelsListView.List.SetValue(ScrollViewer.CanContentScrollProperty, true);
 
                 if (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
@@ -252,6 +294,14 @@ namespace Ginger.BusinessFlowPages
                 {
                     SharedRepositoryOperations.MarkSharedRepositoryItems(GetVariablesList(), WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>());
                 }
+                if (ListCompareObject != null)
+                {
+                    mVariabelsListView.NotifyParentListItemClicked -= NotifyParentListItemClickedEvtHandler;
+                    mVariabelsListView.NotifyParentListItemClicked += NotifyParentListItemClickedEvtHandler;
+                    mVariabelsListView.OpenEditPage -= OpenEditPagedEvtHandler;
+                    mVariabelsListView.OpenEditPage += OpenEditPagedEvtHandler;
+
+                }
             }
             else
             {
@@ -260,7 +310,6 @@ namespace Ginger.BusinessFlowPages
                 mVariabelsListView.DataSourceList = null;
             }
         }
-
         private void MVariabelListItemInfo_VariabelListItemEvent(VariabelListItemEventArgs EventArgs)
         {
             switch (EventArgs.EventType)
@@ -276,6 +325,17 @@ namespace Ginger.BusinessFlowPages
             if (mVariabelsListView.CurrentItem != null)
             {
                 ShowHideEditPage((VariableBase)mVariabelsListView.CurrentItem);
+
+                if (Observer != null)
+                {
+                    SyncListViews objSync = new SyncListViews()
+                    {
+                        TargetSite = "Variables",
+                        Index = mVariabelsListView.CurrentItemIndex,
+                        IsDoubleClick = true
+                    };
+                    Observer.NotifyListener(objSync);
+                }
             }
         }
 
@@ -423,6 +483,26 @@ namespace Ginger.BusinessFlowPages
             if (!string.IsNullOrEmpty(errorMsg))
             {
                 Reporter.ToUser(eUserMsgKey.VariablesAssignError, errorMsg);
+            }
+        }
+        private void NotifyParentListItemClickedEvtHandler(object sender, EventArgs e)
+        {
+            if (Observer != null)
+            {
+                SyncListViews objSync = new SyncListViews()
+                {
+                    TargetSite = "Variables",
+                    Index = (int)sender
+                };
+                Observer.NotifyListener(objSync);
+            }
+        }
+        private void OpenEditPagedEvtHandler(object sender, EventArgs e)
+        {
+            if (Observer != null)
+            {
+                SyncListViews objSync = (SyncListViews)sender;
+                ShowHideEditPage((VariableBase)mVariabelsListView.List.Items[objSync.Index]);
             }
         }
     }
