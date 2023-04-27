@@ -313,7 +313,8 @@
                         <usercontrols:ImageMakerControl x:Name="xProcessMsgIcon" ImageType="Processing" ToolTip="Running With Beta Features" SetAsFontImageWithSize="18" Foreground="OrangeRed" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="10,0,5,0"/>
                         <TextBlock x:Name="xProcessMsgTxtBlock" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Text="Showing something is running" MaxWidth="400" />
                     </StackPanel>
-
+                    <usercontrols:ImageMakerControl x:Name="xAdminModeIcon" ImageType="NormalUser" ToolTip="Ginger Not Running In Admin Mode. Click to Launch It In Admin Mode" SetAsFontImageWithSize="12" MouseDown="xAdminModeIcon_MouseDown" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,2,0"/>
+                    
                     <usercontrols:ImageMakerControl x:Name="xVersionAndNewsIcon" MouseDown="XVersionAndNewsIcon_MouseDown" ImageType="Info" ToolTip="Version Info" HorizontalAlignment="Right" DockPanel.Dock="Right" SetAsFontImageWithSize="18" Margin="0,0,5,0"/>
                     <Label x:Name="lblVersion" DockPanel.Dock="Right"  Content="Version" VerticalAlignment="Center" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Right" Margin="0,-2,0,0"/>
                 </DockPanel>

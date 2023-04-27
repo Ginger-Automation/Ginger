@@ -56,6 +56,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger
@@ -69,6 +70,7 @@ namespace Ginger
 
         ObservableList<HelpLayoutArgs> mHelpLayoutList = new ObservableList<HelpLayoutArgs>();
         private bool mRestartApplication = false;
+        private bool mLaunchInAdminMode = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -161,6 +163,12 @@ namespace Ginger
                     WorkSpace.Instance.UserProfile.NewHelpLibraryMessgeShown = true;
                 }
 
+                if (General.IsAdmin())
+                {
+                    xAdminModeIcon.ImageType = eImageType.AdminUser;
+                    xAdminModeIcon.ToolTip = "Ginger Running In Admin Mode";
+                    xAdminModeIcon.Foreground = Brushes.OrangeRed;
+                }
 
                 Reporter.ReporterData.PropertyChanged += ReporterDataChanged;
 
@@ -427,7 +435,7 @@ namespace Ginger
             eUserMsgSelection userSelection;
             if (mRestartApplication)
             {
-                if (WorkSpace.Instance.SolutionRepository.ModifiedFiles.Any())
+                if (WorkSpace.Instance.SolutionRepository != null && WorkSpace.Instance.SolutionRepository.ModifiedFiles.Any())
                 {
                     userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestart);
                 }
@@ -442,7 +450,7 @@ namespace Ginger
             }
             else
             {
-                if (WorkSpace.Instance.SolutionRepository.ModifiedFiles.Any())
+                if (WorkSpace.Instance.SolutionRepository != null && WorkSpace.Instance.SolutionRepository.ModifiedFiles.Any())
                 {
                     userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToClose);
                 }
@@ -460,6 +468,7 @@ namespace Ginger
             else
             {
                 mRestartApplication = false;
+                mLaunchInAdminMode = false;
                 e.Cancel = true;
             }
         }
@@ -909,7 +918,14 @@ namespace Ginger
             base.OnClosed(e);
             if (mRestartApplication)
             {
-                Process.Start(new ProcessStartInfo() { FileName = System.AppDomain.CurrentDomain.FriendlyName, UseShellExecute = true });
+                if (mLaunchInAdminMode)
+                {
+                    Process.Start(new ProcessStartInfo() { FileName = System.AppDomain.CurrentDomain.FriendlyName, UseShellExecute = true, Verb = "runas" });
+                }
+                else
+                {
+                    Process.Start(new ProcessStartInfo() { FileName = System.AppDomain.CurrentDomain.FriendlyName, UseShellExecute = true });
+                }
             }
 
             Application.Current.Shutdown();
@@ -1549,6 +1565,16 @@ namespace Ginger
         private void xSaveCurrentBtn_MouseLeave(object sender, MouseEventArgs e)
         {
             xSaveCurrentBtn.ButtonImageType = eImageType.SaveLightGrey;
+        }
+
+        private void xAdminModeIcon_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!General.IsAdmin())
+            {
+                mLaunchInAdminMode = true;
+                mRestartApplication = true;
+                App.MainWindow.Close();
+            }
         }
     }
 }
