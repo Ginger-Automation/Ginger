@@ -10,7 +10,7 @@
        
       mc:Ignorable="d" 
        Height="500" Width="800" MinHeight="500" MinWidth="800"
-      Title="Solution Recover">
+      Title="Recover Unsaved Items">
 
     <Grid x:Name="RecoveredItems" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0">
         <Grid.Resources>
@@ -27,17 +27,22 @@
         </Grid.RowDefinitions>
 
 
-        <TextBlock x:Name="xExplanationLable" Grid.Row="0" Style="{StaticResource @TextBlockStyle}" TextWrapping="Wrap" FontSize="14" FontWeight="Light" Margin="10,10,0,0" >Ginger has recovered the following items.<LineBreak/>Recover the ones you need and delete the ones you don’t.</TextBlock>
+        <TextBlock x:Name="xExplanationLable" Grid.Row="0" Style="{StaticResource @TextBlockStyle}" TextWrapping="Wrap" FontSize="14" FontWeight="Light" Margin="10,10,0,0" >Ginger has recovered the following unsaved items. Recover the items you need. Unrecoverd items will be deleted.</TextBlock>
 
-        
+         
         <Ginger:ucGrid x:Name="xRecoveredItemsGrid" Grid.Row="1" Title="Pending Recover Items" IsReadOnly="False" FontStyle="Normal" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" />
-              
-        <StackPanel Grid.Row="2" x:Name="stackNaveRightSide"  Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Bottom" >
-            <usercontrols:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Height="30" Width="30" Visibility="Collapsed" HorizontalAlignment="Left"></usercontrols:ImageMakerControl>
-            <usercontrols:ucButton x:Name="xDeleteButton" ButtonType="RoundTextAndImageButton" ButtonText="Delete Selected" ButtonImageType="Delete" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="DeleteButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
-            <usercontrols:ucButton x:Name="xRecoverButton" ButtonType="RoundTextAndImageButton" ButtonText="Recover Selected" ButtonImageType="Reset" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="RecoverButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
-            <usercontrols:ucButton x:Name="xCloseButton" ButtonType="RoundTextAndImageButton" ButtonText="Close" ButtonImageType="Close" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="CloseButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
-        </StackPanel>
+
+        <DockPanel Grid.Row="2" x:Name="stackNaveRightSide" Margin="0,0,0,0" VerticalAlignment="Center" >
+            
+            <usercontrols:ImageMakerControl x:Name="xProcessingImage" ImageType="Processing" Margin="5,0,0,0" Height="30" Width="30" Visibility="Visible"></usercontrols:ImageMakerControl>
+            
+            <usercontrols:ucButton x:Name="xCloseButton" ButtonType="RoundTextAndImageButton" ButtonText="Close" ButtonImageType="Close" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="CloseButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"  DockPanel.Dock="Right" />
+            
+            <usercontrols:ucButton x:Name="xDeleteButton" ButtonType="RoundTextAndImageButton" ButtonText="Delete Selected" ButtonImageType="Delete" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="DeleteButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" DockPanel.Dock="Right" />
+
+            <usercontrols:ucButton x:Name="xRecoverButton" ButtonType="RoundTextAndImageButton" ButtonText="Recover Selected" ButtonImageType="Reset" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="RecoverButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"  DockPanel.Dock="Right" HorizontalAlignment="Right" />
+            
+        </DockPanel>
 
     </Grid>
 </Page>
