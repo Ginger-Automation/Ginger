@@ -336,6 +336,7 @@ namespace GingerCore.Actions
 
         private CancellationTokenSource mAttachAgentCancellationToken = null;
         private Task mAttachAgentTask = null;
+        private bool mWaitForWindowTimeOut = false;
         public override void Execute()
         {
             mJavaApplicationProcessID = -1;
@@ -405,7 +406,7 @@ namespace GingerCore.Actions
                     //Wait Max 30 secs for Attach agent to attach the jar or process to exit
                     Stopwatch st = new Stopwatch();
                     st.Start();
-                    while (st.ElapsedMilliseconds < 30 * 1000)
+                    while (st.ElapsedMilliseconds < 30 * 1000 && !mWaitForWindowTimeOut)
                     {
                         if (IsInstrumentationModuleLoaded(mProcessIDForAttach))
                         {
@@ -805,8 +806,8 @@ namespace GingerCore.Actions
                     // If Application is not launched from Ginger then we go over the process to find the target Process ID
                     else
                     {
-                        Process[] processlist = Process.GetProcesses();
-                        List<Process> matchingProcessList = new List<Process>();
+                      Process[] processlist = Process.GetProcesses();
+                      List<Process> matchingProcessList = new List<Process>();
 
                         foreach (Process process in processlist)
                         {
@@ -867,6 +868,7 @@ namespace GingerCore.Actions
                     // Go out after max seconds
                     if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
                     {
+                        mWaitForWindowTimeOut = true;
                         break;
                     }
 
