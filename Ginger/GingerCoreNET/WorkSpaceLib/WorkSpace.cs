@@ -58,6 +58,9 @@ namespace amdocs.ginger.GingerCoreNET
     // DO NOT ADD STATIC FIELDS
     public class WorkSpace
     {
+        public SolutionAutoSave AppSolutionAutoSave = new SolutionAutoSave();
+        public SolutionRecover AppSolutionRecover = new SolutionRecover();
+
         private static WorkSpace mWorkSpace;
         public static WorkSpace Instance
         {
@@ -876,10 +879,6 @@ namespace amdocs.ginger.GingerCoreNET
                 }
             }
         }
-
-
-        public SolutionAutoSave AppSolutionAutoSave = new SolutionAutoSave();
-        public SolutionRecover AppSolutionRecover = new SolutionRecover();
 
         public BusinessFlow GetNewBusinessFlow(string Name, bool setTargetApp = false)
         {

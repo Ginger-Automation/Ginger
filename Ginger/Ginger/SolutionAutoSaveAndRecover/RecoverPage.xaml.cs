@@ -55,7 +55,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
         }
 
 
-        private async void LoadFiles()
+        private async Task LoadFiles()
         {
             if (Directory.Exists(WorkSpace.Instance.AppSolutionRecover.RecoverFolderPath))
             {
@@ -66,7 +66,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
 
                     foreach (var directory in new DirectoryInfo(WorkSpace.Instance.AppSolutionRecover.RecoverFolderPath).GetDirectories())
                     {
-                        string timestamp = directory.Name.ToString().Replace("AutoSave_", string.Empty);
+                        string timestamp = directory.Name.Replace("AutoSave_", string.Empty);
 
                         IEnumerable<FileInfo> files = directory.GetFiles("*", SearchOption.AllDirectories);
 
@@ -89,7 +89,6 @@ namespace Ginger.SolutionAutoSaveAndRecover
                         }
                     }
                     this.HideLoader();
-                    xRecoveredItemsGrid.Refresh();
                     xRecoveredItemsGrid.DataSourceList = this.mRecoveredItems;
                 });
 
@@ -196,7 +195,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
             _pageGenericWin.Close();
         }
 
-        private async void SetGridView()
+        private async Task SetGridView()
         {
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -211,13 +210,11 @@ namespace Ginger.SolutionAutoSaveAndRecover
             view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.Status), Header = "Status", WidthWeight = 15, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = "View Details", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.RecoveredItems.Resources["ViewDetailsButton"] });
 
-            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDoNotAskAgainChkbox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));
-
             xRecoveredItemsGrid.SetAllColumnsDefaultView(view);
             xRecoveredItemsGrid.InitViewItems();
             xRecoveredItemsGrid.SetTitleLightStyle = true;
             xRecoveredItemsGrid.DataSourceList = this.mRecoveredItems;
-            LoadFiles();
+            await LoadFiles();
             xRecoveredItemsGrid.Grid.MouseDoubleClick += xRecoveredItemsGrid_MouseDoubleClick;
             xRecoveredItemsGrid.AddToolbarTool("@CheckAllColumn_16x16.png", "Select All", new RoutedEventHandler(SelectAll));
 

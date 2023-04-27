@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Ginger.Functionalties
 {
@@ -67,7 +68,7 @@ namespace Ginger.Functionalties
             }
         }
 
-        public async void SolutionRecoverStart(bool showRecoverPageAnyway = false)
+        public void SolutionRecoverStart(bool showRecoverPageAnyway = false)
         {
             if (Directory.Exists(WorkSpace.Instance.AppSolutionRecover.RecoverFolderPath)
                 && Directory.GetFiles(WorkSpace.Instance.AppSolutionRecover.RecoverFolderPath, "*.xml", SearchOption.AllDirectories).Length > 0)
