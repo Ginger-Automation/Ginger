@@ -16,6 +16,7 @@
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
 
         <!--Java Version Path-->
@@ -71,7 +72,7 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="190"/>
+                        <ColumnDefinition Width="200"/>
                         <ColumnDefinition Width="200*"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Row="0" Grid.Column="0"  Style="{StaticResource @InputFieldLabelStyle}">Full/Partial Java Window Title:</Label>
@@ -149,6 +150,29 @@
                         <CheckBox x:Name="ShowAgent"  Grid.Row="2" Grid.ColumnSpan="2" Style="{StaticResource @CheckBoxStyle}" Margin="0,20,0,2" HorizontalAlignment="Left" VerticalAlignment="Center">Show Ginger Agent Console</CheckBox>
                     </Grid>
 
+                </Grid>
+            </StackPanel>
+        </StackPanel>
+
+        <!--Application Process Name-->
+        <StackPanel Grid.Row="4" Margin="0,20,0,0">
+            <StackPanel x:Name="ApplicationProcessNamePnl" Margin="0,20,0,10" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="240"/>
+                        <ColumnDefinition Width="180*"/>
+                    </Grid.ColumnDefinitions>
+                    <CheckBox x:Name="ApplicationProcessNameChkBox" Grid.Row="0" Grid.Column="0"
+                              Style="{StaticResource @CheckBoxStyle}"
+                              Checked="ApplicationProcessNameChkBox_Checked"  Unchecked="ApplicationProcessNameChkBox_Unchecked" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                        Custom Application Process Name
+                    </CheckBox>
+                    
+                    <Actions:UCValueExpression x:Name="ApplicationProcessNameTextBox" Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,2,0,2"/>
                 </Grid>
             </StackPanel>
         </StackPanel>

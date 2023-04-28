@@ -26,6 +26,7 @@ using GingerCore.Drivers;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -95,6 +96,8 @@ namespace GingerCore.Actions
             public static string BlockingJavaWindow = "BlockingJavaWindow"; //search for blocking java window that popup before the application(Security, Update...) 
             public static string PortConfigParam = "PortConfigParam";
             public static string DynamicPortPlaceHolder = "DynamicPortPlaceHolder";
+            public static string IsCustomApplicationProcessName = "IsCustomApplicationProcessName";
+            public static string ApplicationProcessName = "ApplicationProcessName";
 
         }
 
@@ -308,6 +311,36 @@ namespace GingerCore.Actions
             }
         }
 
+        //------------------- application process name to attach
+        string mApplicationProcessName = string.Empty;
+        string mJApplicationProcessName_calc = string.Empty;
+        [IsSerializedForLocalRepository]
+        public string ApplicationProcessName
+        {
+            get
+            {
+                return mApplicationProcessName;
+            }
+            set
+            {
+                mApplicationProcessName = value;
+                OnPropertyChanged(Fields.ApplicationProcessName);
+            }
+        }
+        private bool mIsCustomApplicationProcessName = false;
+        [IsSerializedForLocalRepository]
+        public bool IsCustomApplicationProcessName
+        {
+            get
+            {
+                return mIsCustomApplicationProcessName;
+            }
+            set
+            {
+                mIsCustomApplicationProcessName = value;
+                OnPropertyChanged(Fields.IsCustomApplicationProcessName);
+            }
+        }
         // ValueExpression mVE = null;
 
         enum URLExtensionType
@@ -496,6 +529,7 @@ namespace GingerCore.Actions
                 mWaitForWindowTitle_Calc = CalculateValue(mWaitForWindowTitle);
                 mWaitForWindowTitleMaxTime_Calc = CalculateValue(mWaitForWindowTitleMaxTime);
                 mAttachAgentProcessSyncTime_Calc = CalculateValue(mAttachAgentProcessSyncTime);
+                mJApplicationProcessName_calc = CalculateValue(mApplicationProcessName);
                 return true;
             }
             catch (Exception ex)
@@ -790,6 +824,14 @@ namespace GingerCore.Actions
             bool bFound = false;
             try
             {
+                ArrayList processNames = new();
+                processNames.Add("java");
+                processNames.Add("jp2");
+
+                if (IsCustomApplicationProcessName && !string.IsNullOrEmpty(mJApplicationProcessName_calc))
+                {
+                    processNames.Add(mJApplicationProcessName_calc.Trim().ToLower());
+                }
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
                 while (!bFound)
@@ -806,8 +848,9 @@ namespace GingerCore.Actions
                     // If Application is not launched from Ginger then we go over the process to find the target Process ID
                     else
                     {
-                      Process[] processlist = Process.GetProcesses();
-                      List<Process> matchingProcessList = new List<Process>();
+
+                        var processlist = Process.GetProcesses().Where(x => processNames.Contains(x.ProcessName.ToLower()));
+                        List<Process> matchingProcessList = new List<Process>();
 
                         foreach (Process process in processlist)
                         {
