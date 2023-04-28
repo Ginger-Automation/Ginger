@@ -151,8 +151,6 @@ namespace GingerCore.Drivers.JavaDriverLib
         }
         public override void StartDriver()
         {
-            
-            BusinessFlow.CurrentActivity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
 
             if (JavaAgentHost == null || JavaAgentHost.Length == 0)
             {
@@ -236,10 +234,6 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     try
                     {
-                        if (BusinessFlow.CurrentActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
-                        {
-                            break;
-                        }
                         General.DoEvents();
                         //Will go to catch if agent is not ready
                         clientSocket.Connect(serverAddress);
@@ -832,7 +826,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     st.Start();
                     while (!(sResponse.Contains("True")))
                     {
-                        Thread.Sleep(100);
+                        Thread.Sleep(200);
                         PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
                         sResponse = PL.GetValueString();
 
@@ -855,7 +849,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                         st.Start();
                         while (!(sResponse.Contains("False")))
                         {
-                            Thread.Sleep(100);
+                            Thread.Sleep(200);
                             PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
                             sResponse = PL.GetValueString();
                             if (st.ElapsedMilliseconds > MaxTimeout * 1000)

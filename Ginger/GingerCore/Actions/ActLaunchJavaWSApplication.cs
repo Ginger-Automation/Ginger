@@ -370,8 +370,13 @@ namespace GingerCore.Actions
         private CancellationTokenSource mAttachAgentCancellationToken = null;
         private Task mAttachAgentTask = null;
         private bool mWaitForWindowTimeOut = false;
+        ArrayList processNames;
         public override void Execute()
         {
+            processNames = new();
+            processNames.Add("java");
+            processNames.Add("jp2");
+
             mJavaApplicationProcessID = -1;
 
             //calculate the arguments
@@ -824,10 +829,6 @@ namespace GingerCore.Actions
             bool bFound = false;
             try
             {
-                ArrayList processNames = new();
-                processNames.Add("java");
-                processNames.Add("jp2");
-
                 if (IsCustomApplicationProcessName && !string.IsNullOrEmpty(mJApplicationProcessName_calc))
                 {
                     processNames.Add(mJApplicationProcessName_calc.Trim().ToLower());

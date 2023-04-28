@@ -172,7 +172,8 @@
                         Custom Application Process Name
                     </CheckBox>
                     
-                    <Actions:UCValueExpression x:Name="ApplicationProcessNameTextBox" Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,2,0,2"/>
+                    <Actions:UCValueExpression x:Name="ApplicationProcessNameTextBox" Grid.Row="0" Grid.Column="1"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,2,0,2"
+                                               ToolTip="Java application process name. default is java and jp2. you can find the process name from task manager."/>
                 </Grid>
             </StackPanel>
         </StackPanel>
