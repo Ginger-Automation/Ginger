@@ -151,6 +151,9 @@ namespace GingerCore.Drivers.JavaDriverLib
         }
         public override void StartDriver()
         {
+            
+            BusinessFlow.CurrentActivity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+
             if (JavaAgentHost == null || JavaAgentHost.Length == 0)
             {
                 Reporter.ToLog(eLogLevel.WARN, "Missing JavaAgentHost config value- Please verify Agent config parameter JavaAgentHost is not empty");
@@ -233,6 +236,10 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     try
                     {
+                        if (BusinessFlow.CurrentActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
+                        {
+                            break;
+                        }
                         General.DoEvents();
                         //Will go to catch if agent is not ready
                         clientSocket.Connect(serverAddress);
