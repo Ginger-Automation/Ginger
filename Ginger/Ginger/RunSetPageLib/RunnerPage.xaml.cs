@@ -57,7 +57,7 @@ namespace Ginger.Run
 
         public event RunnerPageEventHandler RunnerPageEvent;
         public delegate void RunnerPageEventHandler(RunnerPageEventArgs EventArgs);
-        public event EventHandler CheckIfRunsetDirty;
+        public event EventHandler CheckIfRunsetDirty;        
 
         public void OnGingerRunnerEvent(RunnerPageEventArgs.eEventType EvType, Object obj)
         {
@@ -489,12 +489,9 @@ namespace Ginger.Run
         {
             if (CheckCurrentRunnerIsNotRuning())
             {
+                e.Handled = false;
                 return;
-            }
-
-            BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
-            BusinessFlowRunConfigurationsPage varsPage = new BusinessFlowRunConfigurationsPage(mExecutorEngine.GingerRunner, bf);
-            varsPage.ShowAsWindow();
+            }            
         }
         //Contains event fired for Change of BusinessFlow/Activities/Actions changed
         private void UpdateBusinessFlowGrid()

@@ -149,7 +149,7 @@ namespace Ginger.Run
             switch (mWindowMode)
             {
                 case eWindowMode.Configuration:
-                    processInputVariable = new ProcessInputVariableRule(mBusinessFlow);
+                    processInputVariable = new ProcessInputVariableRule(mBusinessFlow, mGingerRunner);
                     grdVariables.Title = "'" + mBusinessFlow.Name + "' Run " + GingerDicser.GetTermResValue(eTermResKey.Variables);
                     ObservableList<VariableBase> bfInputVariables = mBusinessFlow.GetBFandActivitiesVariabeles(true, true);
                     
@@ -256,7 +256,8 @@ namespace Ginger.Run
 
         private void ShowRulesPage(object sender, RoutedEventArgs e)
         {
-            InputVariablesRules inputVariableRule = new InputVariablesRules(mBusinessFlow, true);
+            BusinessFlow cachedBusinessFlow = WorkSpace.Instance?.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(mBusinessFlow.Guid);
+            InputVariablesRules inputVariableRule = new InputVariablesRules(cachedBusinessFlow, true);
             inputVariableRule.ShowAsWindow();
         }
 
@@ -326,19 +327,19 @@ namespace Ginger.Run
                 varToEdit.DiffrentFromOrigin = true;
                 if (EventRaiseVariableEdit != null)
                 {
-                    EventRaiseVariableEdit(null, null);
+                    EventRaiseVariableEdit(null, null);                    
                 }
                 
-                processInputVariable = new ProcessInputVariableRule(mBusinessFlow);
+                processInputVariable = new ProcessInputVariableRule(mBusinessFlow, mGingerRunner);
                 ObservableList<VariableBase> bfInputVariables = mBusinessFlow.GetBFandActivitiesVariabeles(true, true);
                 ResetVariableValuesToDefault(bfInputVariables);
                 processInputVariable.GetVariablesByRules(bfInputVariables);
-                grdVariables.DataSourceList = VariableBase.SortByMandatoryInput(new ObservableList<VariableBase>(bfInputVariables));
+                grdVariables.DataSourceList = VariableBase.SortByMandatoryInput(new ObservableList<VariableBase>(bfInputVariables));                
             }
 
             UpdateEditVariablesTabVisual();            
         }
-
+        
         private void ResetVariableValuesToDefault(ObservableList<VariableBase> bfInputVariables)
         {          
             //Revert selection list optional values to original list. 
