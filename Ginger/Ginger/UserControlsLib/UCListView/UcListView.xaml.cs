@@ -249,9 +249,9 @@ namespace Ginger.UserControlsLib.UCListView
             }
 
             //Filter by search text            
-            if (!string.IsNullOrEmpty(mObjList.FilterStringData))
+            if (!string.IsNullOrEmpty(mObjList.FilterStringData) && item is RepositoryItemBase repoItem && !string.IsNullOrEmpty(repoItem.ItemName))
             {
-                return ((item as RepositoryItemBase).ItemName.IndexOf(mObjList.FilterStringData, StringComparison.OrdinalIgnoreCase) >= 0);
+                return repoItem.ItemName.Contains(mObjList.FilterStringData, StringComparison.OrdinalIgnoreCase);
             }
 
             //Filter by Tags            
