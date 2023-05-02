@@ -592,6 +592,12 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Rules:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Gavel);
                     break;
+                case eImageType.AdminUser:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserCog, Brushes.OrangeRed);
+                    break;
+                case eImageType.NormalUser:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserCog);
+                    break;
                 #endregion
 
 
