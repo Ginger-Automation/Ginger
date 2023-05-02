@@ -450,6 +450,7 @@ namespace Ginger.Run
             BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == bf.Guid).FirstOrDefault();
             if (actualBf != null)
             {
+                actualBf.StartDirtyTracking();
                 App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.Automate, actualBf);
             }
         }
