@@ -548,10 +548,12 @@ namespace Ginger
 
 
 
-        public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
+        public void ShowRecoveryItemPage()
         {
-            RecoverPage recoverPage = new RecoverPage(recovredItems);
-            recoverPage.ShowAsWindow();
+            using (RecoverPage recoverPage = new RecoverPage())
+            {
+                recoverPage.ShowAsWindow();
+            }
 
         }
 

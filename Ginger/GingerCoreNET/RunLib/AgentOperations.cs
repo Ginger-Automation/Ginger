@@ -429,7 +429,10 @@ namespace GingerCore
                                 }
                                 break;
                             case "Int32":
-                                Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, int.Parse(value));
+                                if (!string.IsNullOrEmpty(value))
+                                {
+                                    Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, int.Parse(value));
+                                }
                                 break;
                             default:
                                 Reporter.ToUser(eUserMsgKey.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
