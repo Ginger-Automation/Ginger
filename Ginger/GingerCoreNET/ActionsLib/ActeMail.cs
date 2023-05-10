@@ -658,9 +658,9 @@ namespace GingerCore.Actions.Communication
         }
         private void ReadEmails()
         {
-            IEmailReadOperations emailReadOperations = new EmailReadOperations();
+            IEmailReadOperations emailReadOperations = new EmailReadMSGraphOperations();
             EmailReadFilters filters = CreateEmailReadFilters();
-            MSGraphConfig config = CreateMSGraphConfig();
+            EmailReadConfig config = CreateMSGraphConfig();
             int index = 1;
             emailReadOperations.ReadEmails(filters, config, email =>
             {
@@ -721,7 +721,7 @@ namespace GingerCore.Actions.Communication
             return filters;
         }
 
-        private MSGraphConfig CreateMSGraphConfig()
+        private EmailReadConfig CreateMSGraphConfig()
         {
             string calculatedUserEmail = GetInputParamCalculatedValue(nameof(ReadUserEmail));
             string calculatedUserPassword = GetInputParamCalculatedValue(nameof(ReadUserPassword));
@@ -732,7 +732,7 @@ namespace GingerCore.Actions.Communication
             string calculatedMSGraphClientId = GetInputParamCalculatedValue(nameof(MSGraphClientId));
             string calculatedMSGraphTenantId = GetInputParamCalculatedValue(nameof(MSGraphTenantId));
 
-            MSGraphConfig config = new()
+            EmailReadConfig config = new()
             {
                 UserEmail = calculatedUserEmail,
                 UserPassword = calculatedUserPassword,
