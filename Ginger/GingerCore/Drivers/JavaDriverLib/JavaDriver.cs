@@ -253,6 +253,8 @@ namespace GingerCore.Drivers.JavaDriverLib
                         Thread.Sleep(500);
                     }
                 }
+                //if the agent loading was cancelled for some reason, we need to reset the flag so that next time the loading can continue normally
+                cancelAgentLoading = false;
                 //Connect Failed after x retry...   
                 IsTryingToConnect = false;
             });

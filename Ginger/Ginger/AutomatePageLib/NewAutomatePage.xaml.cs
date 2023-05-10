@@ -809,8 +809,8 @@ namespace GingerWPF.BusinessFlowsLib
         {
             try
             {
-                xStopRunBtn_UpdateDuringStopping();
                 mExecutionEngine.StopRun();
+                xStopRunBtn_UpdateDuringStopping();
                 this.Dispatcher.Invoke(() =>
                 {
                     xContinueRunBtn.Visibility = Visibility.Visible;
