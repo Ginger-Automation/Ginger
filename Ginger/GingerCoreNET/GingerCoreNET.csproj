@@ -253,6 +253,8 @@
   
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="7.22.0" />
   
+    <PackageReference Include="MailKit" Version="4.0.0" />
+  
     <PackageReference Include="MedallionShell" Version="1.6.2" />
   
     <PackageReference Include="Meziantou.Framework.Win32.CredentialManager" Version="1.4.2" />

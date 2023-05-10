@@ -69,6 +69,14 @@ namespace GingerCore.Actions.Communication
             ReadEmail = 2
         }
 
+        public enum ReadEmailActionType
+        {
+            MSGraphAPI = 1,
+            IMAP = 2
+        }
+
+       
+
         public new static partial class Fields
         {
             public static string EnableSSL = "EnableSSL";
@@ -119,6 +127,19 @@ namespace GingerCore.Actions.Communication
             {
                 AddOrUpdateInputParamValue(nameof(eMailActionType), value.ToString());
                 OnPropertyChanged(nameof(eMailActionType));
+            }
+        }
+
+        public ReadEmailActionType readMailActionType
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(readMailActionType), ReadEmailActionType.MSGraphAPI);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(readMailActionType), value.ToString());
+                OnPropertyChanged(nameof(readMailActionType));
             }
         }
 
@@ -499,17 +520,20 @@ namespace GingerCore.Actions.Communication
         #endregion  
 
         public override void Execute()
-        {
+        {           
             if (eMailActionType == eEmailActionType.SendEmail)
             {
                 SendEmail();
             }
             else if (eMailActionType == eEmailActionType.ReadEmail)
-            {
-                ReadEmails();
+            {                
+                if(readMailActionType == ReadEmailActionType.MSGraphAPI)
+                    ReadEmails();
+                else
+                    ReadGmails();
             }
         }
-
+           
         private void SendEmail()
         {
             Email email = new Email();
@@ -625,7 +649,13 @@ namespace GingerCore.Actions.Communication
                 Error = email.Event;
             }
         }
+        private void ReadGmails()
+        {
+           
+            
 
+
+        }
         private void ReadEmails()
         {
             IEmailReadOperations emailReadOperations = new EmailReadOperations();
