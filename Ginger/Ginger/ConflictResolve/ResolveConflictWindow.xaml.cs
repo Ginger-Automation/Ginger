@@ -96,23 +96,11 @@ namespace Ginger.ConflictResolve
             }
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
-            viewCols.Add(new GridColView() { Field = nameof(ConflictResolve.RelativeConflictPath), Header = "Conflicted File", WidthWeight = 150, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            viewCols.Add(new GridColView() { Field = nameof(ConflictResolve.resolveOperations), Header = "Operation", WidthWeight = 90, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(eResolveOperations)), nameof(ConflictResolve.resolveOperations), false, true) }); ;
-            viewCols.Add(new GridColView() { Field = nameof(ConflictResolve.Merge), Header = "Comp. & Merge", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xConflictingItemsGrid.Resources["xCompareAndMergeTemplate"] });
             view.GridColsView = viewCols;
-
-            GridViewDef initView = new GridViewDef(GridViewDef.DefaultViewName);
-            initView.GridColsView = new ObservableList<GridColView>();
-            initView.GridColsView.Add(new GridColView() { Field = nameof(ConflictResolve.Merge), Header = "Comp. & Merge", Visible = false });
-
-
-
+            view.GridColsView.Add(new GridColView() { Field = nameof(ConflictResolve.RelativeConflictPath), Header = "Conflicted File", WidthWeight = 150, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ConflictResolve.resolveOperations), Header = "Operation", WidthWeight = 90, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(eResolveOperations)), nameof(ConflictResolve.resolveOperations), false, true) });
+            view.GridColsView.Add(new GridColView() { Field = "Compare and Merge", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.ResolveConflictsGrid.Resources["xCompareAndMergeTemplate"] });
             xConflictingItemsGrid.SetAllColumnsDefaultView(view);
-
-            xConflictingItemsGrid.AddCustomView(initView);
-            xConflictingItemsGrid.ShowViewCombo = Visibility.Collapsed;
-
-            xConflictingItemsGrid.ChangeGridView(initView.Name);
             xConflictingItemsGrid.InitViewItems();
             xConflictingItemsGrid.SetTitleLightStyle = true;
             xConflictingItemsGrid.DataSourceList = this.conflictResolves;
@@ -128,11 +116,15 @@ namespace Ginger.ConflictResolve
         }
         private void xCompareAndMergeButton_Click(object sender, EventArgs e)
         {
-            //MergeConflictWindow mergeConflictWindow = new MergeConflictWindow();
-            //mergeConflictWindow.ShowAsWindow();
+            ConflictResolve conflict = (ConflictResolve)((FrameworkElement)sender).DataContext;
+            if (!conflict.IsMerge)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Compare Conflict is not yet supporter for this entity");
+                return;
+            }
             string localPath = string.Empty;
             string serverPath = string.Empty;
-            CreateSeparateLocalAndServerCopies(mConflictPaths[0], ref localPath, ref serverPath);
+            CreateSeparateLocalAndServerCopies(conflict.ConflictPath, ref localPath, ref serverPath);
             string localXml = File.ReadAllText(localPath);
             BusinessFlow? localFlow = NewRepositorySerializer.DeserializeFromText(localXml) as BusinessFlow;
             string serverXml = File.ReadAllText(serverPath);

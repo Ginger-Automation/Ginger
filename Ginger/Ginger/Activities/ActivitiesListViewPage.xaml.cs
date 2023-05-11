@@ -72,7 +72,7 @@ namespace Ginger.BusinessFlowPages
             var ActivityList = mBusinessFlow.Activities;
             foreach (string conflict in ListConflictCompare)
             {
-                if (conflict.StartsWith("Activities") && !conflict.Contains("ActivitiesGroup"))
+                if (conflict.StartsWith("Activities") && !conflict.Contains("ActivitiesGroup") && !conflict.Contains("ActivitiesLazy"))
                 {
                     string targetString = conflict.Split(':')[0];
                     string[] findEntities = targetString.Split('.');

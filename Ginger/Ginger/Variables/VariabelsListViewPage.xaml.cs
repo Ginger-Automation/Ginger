@@ -36,6 +36,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Collections.Generic;
+using Ginger.ConflictResolve;
+using System.Linq;
 using Amdocs.Ginger.CoreNET;
 
 namespace Ginger.BusinessFlowPages
@@ -117,6 +119,12 @@ namespace Ginger.BusinessFlowPages
                 }
             }
         }
+
+        //public void SyncListSelectionWithParallelControl(VariabelsListViewPage argsParallelView)
+        //{
+        //    this.ListView.SyncParallelListViews -= argsParallelView.ListView.SyncViews;
+        //    this.ListView.SyncParallelListViews += argsParallelView.ListView.SyncViews;
+        //}
 
         public void UpdatePageViewMode(Ginger.General.eRIPageViewMode pageViewMode)
         {

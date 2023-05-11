@@ -40,10 +40,17 @@ namespace Ginger.ConflictResolve
             }
         }
 
+        public bool IsMerge
+        {
+            get
+            {
+                return RelativeConflictPath.EndsWith("BusinessFlow.xml");
+            }
+        }
+
         public string ItemName { get; set; }
 
         public eResolveOperations resolveOperations { get; set; }
 
-        public string Merge { get; set; }
     }
 }

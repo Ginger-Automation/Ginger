@@ -107,6 +107,8 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
+        //public event EventHandler SyncParallelListViews;
+
         IListViewHelper mListViewHelper = null;
         public EventHandler NotifyParentListItemClicked;
         public EventHandler OpenEditPage;
