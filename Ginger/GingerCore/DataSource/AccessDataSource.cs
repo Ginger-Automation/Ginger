@@ -52,28 +52,31 @@ namespace GingerCore.DataSource
             ObservableList<DataSourceTable> mDataSourceTableDetails = new ObservableList<DataSourceTable>();
             try
             {
-                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Read")))
+                lock (this)
                 {
-                    if (connObj.State != System.Data.ConnectionState.Open)
+                    using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Read")))
                     {
-                        connObj.Open();
-                    }
-                    DataTable dataTable = connObj.GetSchema("Tables");
-                    foreach (DataRow row in dataTable.Rows)
-                    {
-                        string tablename = (string)row[2];
-                        if (row["TABLE_TYPE"].ToString() == "TABLE")
+                        if (connObj.State != System.Data.ConnectionState.Open)
                         {
-                            string strAccessSelect = "SELECT  * FROM " + tablename;
-                            OleDbDataAdapter myDataAdapter = new OleDbDataAdapter(strAccessSelect, connObj);
-                            DataTable dtTable = new DataTable();
-                            myDataAdapter.Fill(dtTable);
-                            dtTable.TableName = tablename;
-                            mDataSourceTableDetails.Add(CheckDSTableDesign(dtTable));
+                            connObj.Open();
+                        }
+                        DataTable dataTable = connObj.GetSchema("Tables");
+                        foreach (DataRow row in dataTable.Rows)
+                        {
+                            string tablename = (string)row[2];
+                            if (row["TABLE_TYPE"].ToString() == "TABLE")
+                            {
+                                string strAccessSelect = "SELECT  * FROM " + tablename;
+                                OleDbDataAdapter myDataAdapter = new OleDbDataAdapter(strAccessSelect, connObj);
+                                DataTable dtTable = new DataTable();
+                                myDataAdapter.Fill(dtTable);
+                                dtTable.TableName = tablename;
+                                mDataSourceTableDetails.Add(CheckDSTableDesign(dtTable));
+                            }
                         }
                     }
+                    return mDataSourceTableDetails;
                 }
-                return mDataSourceTableDetails;
             }
             catch (Exception ex)
             {
@@ -147,23 +150,26 @@ namespace GingerCore.DataSource
             List<string> mColumnNames = new List<string>();
             try
             {
-                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Read")))
+                lock (this)
                 {
-                    if (connObj.State != System.Data.ConnectionState.Open)
+                    using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Read")))
                     {
-                        connObj.Open();
-                    }
-                    string strAccessSelect = "SELECT * FROM " + tableName;
-                    OleDbDataAdapter myDataAdapter = new OleDbDataAdapter(strAccessSelect, connObj);
-                    DataSet myDataSet = new DataSet();
-                    myDataAdapter.Fill(myDataSet, tableName);
+                        if (connObj.State != System.Data.ConnectionState.Open)
+                        {
+                            connObj.Open();
+                        }
+                        string strAccessSelect = "SELECT * FROM " + tableName;
+                        OleDbDataAdapter myDataAdapter = new OleDbDataAdapter(strAccessSelect, connObj);
+                        DataSet myDataSet = new DataSet();
+                        myDataAdapter.Fill(myDataSet, tableName);
 
-                    foreach (DataColumn column in myDataSet.Tables[0].Columns)
-                    {
-                        mColumnNames.Add(column.ToString());
+                        foreach (DataColumn column in myDataSet.Tables[0].Columns)
+                        {
+                            mColumnNames.Add(column.ToString());
+                        }
                     }
+                    return mColumnNames;
                 }
-                return mColumnNames;
             }
             catch (Exception ex)
             {
@@ -176,19 +182,22 @@ namespace GingerCore.DataSource
         {
             try
             {
-                DataTable dataTable = new DataTable();
-                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Read")))
+                lock (this)
                 {
-                    if (connObj.State != System.Data.ConnectionState.Open)
+                    DataTable dataTable = new DataTable();
+                    using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Read")))
                     {
-                        connObj.Open();
+                        if (connObj.State != System.Data.ConnectionState.Open)
+                        {
+                            connObj.Open();
+                        }
+                        OleDbDataAdapter myDataAdapterTest = new OleDbDataAdapter(query, connObj);
+                        myDataAdapterTest.AcceptChangesDuringUpdate = true;
+                        myDataAdapterTest.MissingSchemaAction = MissingSchemaAction.AddWithKey;
+                        myDataAdapterTest.Fill(dataTable);
                     }
-                    OleDbDataAdapter myDataAdapterTest = new OleDbDataAdapter(query, connObj);
-                    myDataAdapterTest.AcceptChangesDuringUpdate = true;
-                    myDataAdapterTest.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-                    myDataAdapterTest.Fill(dataTable);
+                    return dataTable;
                 }
-                return dataTable;
             }
             catch (Exception ex)
             {
@@ -202,16 +211,19 @@ namespace GingerCore.DataSource
         {
             try
             {
-                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Write")))
+                lock (this)
                 {
-                    if (connObj.State != System.Data.ConnectionState.Open)
+                    using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Write")))
                     {
-                        connObj.Open();
+                        if (connObj.State != System.Data.ConnectionState.Open)
+                        {
+                            connObj.Open();
+                        }
+                        OleDbCommand myCommand = new OleDbCommand();
+                        myCommand.Connection = connObj;
+                        myCommand.CommandText = query;
+                        myCommand.ExecuteNonQuery();
                     }
-                    OleDbCommand myCommand = new OleDbCommand();
-                    myCommand.Connection = connObj;
-                    myCommand.CommandText = query;
-                    myCommand.ExecuteNonQuery();
                 }
             }
             catch (Exception ex)
@@ -247,20 +259,23 @@ namespace GingerCore.DataSource
 
         public override bool IsTableExist(string TableName)
         {
-            using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Write")))
+            lock (this)
             {
-                if (connObj.State == ConnectionState.Closed)
+                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Write")))
                 {
-                    connObj.Open();
+                    if (connObj.State == ConnectionState.Closed)
+                    {
+                        connObj.Open();
+                    }
+                    DataTable dt = connObj.GetSchema("Tables");
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        if (TableName == (string)row[2])
+                            return true;
+                    }
                 }
-                DataTable dt = connObj.GetSchema("Tables");
-                foreach (DataRow row in dt.Rows)
-                {
-                    if (TableName == (string)row[2])
-                        return true;
-                }
+                return false;
             }
-            return false;
         }
         public override string CopyTable(string tableName)
         {
