@@ -342,6 +342,23 @@ namespace Ginger
             MainWindow.Init();
         }
 
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+        }
+
+        private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception? ex = e.ExceptionObject as Exception;
+
+            if (ex != null)
+            {
+                // Log the exception
+                Reporter.ToLog(eLogLevel.ERROR, "An unhandled exception occurred: ", ex.InnerException);
+            }
+        }
 
     }
 }

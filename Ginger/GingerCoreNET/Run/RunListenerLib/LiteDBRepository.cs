@@ -96,9 +96,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                         if (File.Exists(completeSSPath))
                         {
                             continue;
-                        }
-                        File.Move(action.ScreenShots[s], completeSSPath);
-                        action.ScreenShots[s] = completeSSPath;
+                        }                        
+                        File.Move(action.ScreenShots[s], completeSSPath, true);
+                        action.ScreenShots[s] = completeSSPath; 
                     }
                 }
                 catch (Exception ex)
@@ -125,7 +125,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
 
             //change the paths to Defect suggestion list
-            var defectSuggestion = WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.FirstOrDefault(z => z.FailedActionGuid == action.Guid);
+            var defectSuggestion = WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.FirstOrDefault(z => z!=null && z.FailedActionGuid == action.Guid);
             if (defectSuggestion != null)
             {
                 defectSuggestion.ScreenshotFileNames = action.ScreenShots.ToList();
