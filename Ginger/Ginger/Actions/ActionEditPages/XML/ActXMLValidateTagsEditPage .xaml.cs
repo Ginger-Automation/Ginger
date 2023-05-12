@@ -37,14 +37,13 @@ namespace Ginger.Actions.XML
         {
             InitializeComponent();
             this.mAct = (ActXMLTagValidation)act;
-            
+
             //// Bind Controls
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(XMLFileTextBox, TextBox.TextProperty, mAct.InputFile, nameof(ActInputValue.Value));
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ReqisFromFile, CheckBox.IsCheckedProperty, mAct, "ReqisFromFile");
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(chkReadJustAttributeValues, CheckBox.IsCheckedProperty, mAct, nameof(ActXMLTagValidation.ReadJustXMLAttributeValues));            
 
-            xDocumentTypeComboBox.Init(mAct, ActXMLTagValidation.Fields.DocumentType, typeof(ActXMLTagValidation.eDocumentType),xDocumentTypeComboBox_SelectionChanged);
+            xDocumentTypeComboBox.Init(mAct, ActXMLTagValidation.Fields.DocumentType, typeof(ActXMLTagValidation.eDocumentType));
 
             XMLFileTextBox.Init(Context.GetAsContext(mAct.Context), mAct.InputFile);
 
@@ -116,28 +115,6 @@ namespace Ginger.Actions.XML
         private void BodyType_SelectionChanged(object sender, RoutedEventArgs e)
         {
 
-        }
-        private void chkReadJustAttributeValuesChecked(object sender, RoutedEventArgs e)
-        {
-            mAct.ReadJustXMLAttributeValues = true;
-            mAct.InvokPropertyChanngedForAllFields();
-        }
-
-        private void chkReadJustAttributeValuesUnChecked(object sender, RoutedEventArgs e)
-        {
-            mAct.ReadJustXMLAttributeValues = false;
-            mAct.InvokPropertyChanngedForAllFields();
-        }
-        private void xDocumentTypeComboBox_SelectionChanged(object sender, RoutedEventArgs e)
-        {
-            if (mAct.DocumentType == ActXMLTagValidation.eDocumentType.XML)
-            {
-                grRowReadJustAttributeValues.Visibility = Visibility.Visible;                   
-            }
-            else
-            {
-                grRowReadJustAttributeValues.Visibility = Visibility.Collapsed;
-            }
         }
     }
 }

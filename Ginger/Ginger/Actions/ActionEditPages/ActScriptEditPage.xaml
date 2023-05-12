@@ -6,36 +6,33 @@
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
 	Title="ActVBScriptEditPage">
-    <Grid> 
-        <StackPanel Margin="0,0,0,0">
-            <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
-                <Label Style="{StaticResource @InputFieldLabelStyle}"  Height="35" Width="250">Script Interpreter</Label>
-                <ComboBox x:Name="ScriptInterpreterComboBox" HorizontalAlignment="Left" SelectionChanged="ScriptInterpreterComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" Width="370"/>
-            </StackPanel>
-            <StackPanel Orientation="Vertical" >
-                <StackPanel x:Name="InterpreterPathPanel" Visibility="Collapsed" Orientation="Horizontal" >
-                    <Label x:Name="ScriptInterpreterLabel" Style="{StaticResource @InputFieldLabelStyle}"  Width="250" Height="35">Script Interpreter Path</Label>
-                    <Actions:UCFileBrowser HorizontalAlignment="Left" x:Name="ScriptInterPreter"  Width="370"/>
-                </StackPanel>
-                <StackPanel x:Name="ScriptActionPanel" Visibility="Visible"  Orientation="Horizontal">
-                    <Label Style="{StaticResource @InputFieldLabelStyle}"  Height="35" Width="250">Script Action</Label>
-                    <ComboBox x:Name="ScriptActComboBox" HorizontalAlignment="Left" SelectionChanged="ScriptActComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" Width="370"></ComboBox>
-                </StackPanel>
-            </StackPanel>
-            <DockPanel x:Name="ScriptStackPanel"  Grid.ColumnSpan="2">
-                <Label Style="{StaticResource @InputFieldLabelStyle}" Height="35"   Width="250">Script Name</Label>
-                <ComboBox x:Name="ScriptNameComboBox" HorizontalAlignment="Left"  Style="{StaticResource $FlatInputComboBoxStyle}" Width="370" ></ComboBox>
+    <Grid>
+       <StackPanel Margin="0,10,0,0">
+            <DockPanel>
+                <Label Style="{StaticResource @InputFieldLabelStyle}"  Height="35" >Script Interpreter</Label>
+                <ComboBox x:Name="ScriptInterpreterComboBox" Margin="47,0,0,0" HorizontalAlignment="Left" SelectionChanged="ScriptInterpreterComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" Width="370"/>
             </DockPanel>
-            <StackPanel x:Name="pnlIgnoreErrors" Orientation="Horizontal">
-                <Label Style="{StaticResource @InputFieldLabelStyle}" Height="35"  Width="250">Ignore script errors</Label>
-                <CheckBox x:Name="chkIgnoreScriptErrors" VerticalAlignment="Center" HorizontalAlignment="Left" Checked="chkIgnoreScriptErrorsChecked" Unchecked="chkIgnoreScriptErrorsUnChecked" />
-
+            <StackPanel >
+                <DockPanel x:Name="InterpreterPathPanel" Visibility="Collapsed">
+                    <Label x:Name="ScriptInterpreterLabel" Style="{StaticResource @InputFieldLabelStyle}" Height="35">Script Interpreter Path</Label>
+                    <Actions:UCFileBrowser HorizontalAlignment="Left" x:Name="ScriptInterPreter"  Margin="15,0,0,0" Width="370"/>
+                </DockPanel>
+                <DockPanel x:Name="ScriptActionPanel" Visibility="Visible">
+                    <Label Style="{StaticResource @InputFieldLabelStyle}"  Height="35">Script Action</Label>
+                    <ComboBox x:Name="ScriptActComboBox" HorizontalAlignment="Left"  Margin="75,0,0,0" SelectionChanged="ScriptActComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" Width="370"></ComboBox>
+                </DockPanel>
             </StackPanel>
-            <StackPanel x:Name="ScriptDescriptionPanel" Visibility="Collapsed" Orientation="Horizontal">
-                <Label Style="{StaticResource @InputFieldLabelStyle}" x:Name="ScriptDescriptionLabel" HorizontalAlignment="Left"  Width="250">Script Description:</Label>
-                <Label Style="{StaticResource @InputFieldLabelStyle}" x:Name="ScriptDescriptionContent" HorizontalAlignment="Left" Margin="30,0,0,0" ></Label>
-            </StackPanel>
 
+            <DockPanel x:Name="ScriptStackPanel">
+                <Label Style="{StaticResource @InputFieldLabelStyle}" Height="35"  >Script Name</Label>
+                <ComboBox x:Name="ScriptNameComboBox" HorizontalAlignment="Left" Margin="75,0,0,0" Style="{StaticResource $FlatInputComboBoxStyle}" Width="370" ></ComboBox>
+               
+            </DockPanel>
+            <DockPanel x:Name="ScriptDescriptionPanel" Visibility="Collapsed">
+                <Label Style="{StaticResource @InputFieldLabelStyle}" x:Name="ScriptDescriptionLabel" HorizontalAlignment="Left" >Script Description: </Label>
+                <Label Style="{StaticResource @InputFieldLabelStyle}" x:Name="ScriptDescriptionContent" HorizontalAlignment="Left" Margin="30,0,0,0"></Label>
+            </DockPanel>
+          
         </StackPanel>
 
     </Grid>

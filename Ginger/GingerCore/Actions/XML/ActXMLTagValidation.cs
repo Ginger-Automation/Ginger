@@ -43,7 +43,7 @@ namespace GingerCore.Actions.XML
         {
             public static string InputFile = "InputFile";
             public static string ReqisFromFile = "ReqisFromFile";
-            public static string DocumentType = "DocumentType";            
+            public static string DocumentType = "DocumentType";
         }
 
 
@@ -83,7 +83,9 @@ namespace GingerCore.Actions.XML
                 return GetOrCreateInputParam(Fields.InputFile);
 
             }
-        }        
+        }
+
+
 
         [IsSerializedForLocalRepository(true)]
         public bool ReqisFromFile
@@ -124,11 +126,8 @@ namespace GingerCore.Actions.XML
                 return "XML Tag Validation";
             }
         }
-        [IsSerializedForLocalRepository]
-        public bool ReadJustXMLAttributeValues
-        {
-            get;set;
-        }
+
+
         public override eImageType Image { get { return eImageType.CodeFile; } }
 
 
@@ -237,12 +236,10 @@ namespace GingerCore.Actions.XML
                     // var.Value = VE.ValueCalculated;
 
                     XmlNode node = ReadNodeFromXmlDoc(xmlReqDoc, VE.ValueCalculated);
-                    if (!this.ReadJustXMLAttributeValues)
+
+                    if (node.InnerText != null)
                     {
-                        if (node.InnerText != null)
-                        {
-                            AddOrUpdateReturnParamActualWithPath("InnerText", node.InnerText.ToString(), VE.ValueCalculated);
-                        }
+                        AddOrUpdateReturnParamActualWithPath("InnerText", node.InnerText.ToString(), VE.ValueCalculated);
                     }
 
                     if (aiv.Value == null || aiv.Value == String.Empty)
@@ -265,7 +262,7 @@ namespace GingerCore.Actions.XML
                         if (node.Attributes != null)
                         {
                             var nameAttribute = node.Attributes[@aiv.Value];
-                            ActReturnValue rv = ReturnValues.Where(x => (x.Path == aiv.Value && x.FilePath == aiv.FilePath)).FirstOrDefault();
+                            ActReturnValue rv = ReturnValues.Where(x => x.Path == aiv.Value).FirstOrDefault();
                             if (rv == null)
                             {
                                 AddOrUpdateReturnParamActualWithPath(aiv.Param, nameAttribute.Value.ToString(), aiv.Value);
