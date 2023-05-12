@@ -41,14 +41,13 @@ namespace Ginger.Actions
         public ActScriptEditPage(GingerCore.Actions.ActScript Act)
         {
             InitializeComponent();
-            this.f = Act;            
+            this.f = Act;
             GingerCore.General.FillComboFromEnumObj(ScriptActComboBox, Act.ScriptCommand);
             GingerCore.General.FillComboFromEnumObj(ScriptInterpreterComboBox, Act.ScriptInterpreterType);
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptInterpreterComboBox, ComboBox.SelectedValueProperty, Act, nameof(ActScript.ScriptInterpreterType));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptActComboBox, ComboBox.SelectedValueProperty, Act, nameof(ActScript.ScriptCommand));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, f, nameof(ActScript.ScriptName));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(chkIgnoreScriptErrors, CheckBox.IsCheckedProperty, f, nameof(ActScript.IgnoreStdOutErrors));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, Act, nameof(ActScript.ScriptName));
 
             ScriptNameComboBox.SelectionChanged += ScriptNameComboBox_SelectionChanged;
 
@@ -169,17 +168,6 @@ namespace Ginger.Actions
                     ScriptNameComboBox.SelectedValue = fileEntries.FirstOrDefault();
                 }
             }
-        }
-        private void chkIgnoreScriptErrorsChecked(object sender, RoutedEventArgs e)
-        {
-            f.IgnoreStdOutErrors = true;
-            f.InvokPropertyChanngedForAllFields();
-        }
-
-        private void chkIgnoreScriptErrorsUnChecked(object sender, RoutedEventArgs e)
-        {
-            f.IgnoreStdOutErrors = false;
-            f.InvokPropertyChanngedForAllFields();
         }
     }
 }
