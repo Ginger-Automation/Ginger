@@ -344,21 +344,18 @@ namespace Ginger
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+
             base.OnStartup(e);
-
-            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
         }
-
-        private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Exception? ex = e.ExceptionObject as Exception;
-
+            Exception ex = (Exception)e.ExceptionObject;
+            // log the exception or do other error handling
             if (ex != null)
             {
-                // Log the exception
                 Reporter.ToLog(eLogLevel.ERROR, "An unhandled exception occurred: ", ex.InnerException);
             }
         }
-
     }
 }
