@@ -25,6 +25,7 @@ using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using Newtonsoft.Json;
+using RQMExportStd.ExportBLL;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -79,6 +80,7 @@ namespace GingerCore.ALM.RQM
             // 
             // get data about execution records per current test plan - start
             RQMTestPlan testPlan = new RQMTestPlan();
+
             string importConfigTemplate = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Import", "RQM_ImportConfigs_Template.xml");
             if (File.Exists(importConfigTemplate))
             {
@@ -118,6 +120,7 @@ namespace GingerCore.ALM.RQM
                     || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
                     || publishToALMConfig.FilterStatus == FilterByStatus.All)
                 {
+                    testPlan.Name = !string.IsNullOrEmpty(publishToALMConfig.VariableForTCRunNameCalculated) ? publishToALMConfig.VariableForTCRunNameCalculated : testPlan.Name;
                     ExecutionResult exeResult = GetExeResultforAg(businessFlow, bfExportedID, activGroup, ref result, testPlan);
                     if (exeResult != null)
                     {
@@ -131,7 +134,7 @@ namespace GingerCore.ALM.RQM
             }
 
             ResultInfo resultInfo = new ResultInfo();
-
+            System.Diagnostics.Debug.WriteLine("exeResultList in ExportExecutionDetailsToRQM:" + JsonConvert.SerializeObject(exeResultList));
             ////
             //// Updating of Execution Record Results (test plan level)
             try
@@ -238,6 +241,7 @@ namespace GingerCore.ALM.RQM
 
         private ExecutionResult GetExeResultforAg(BusinessFlow businessFlow, string bfExportedID, ActivitiesGroup activGroup, ref string result, RQMTestPlan testPlan)
         {
+            System.Diagnostics.Debug.WriteLine("in GetExeResultforAg");
             try
             {
                 LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
@@ -253,12 +257,13 @@ namespace GingerCore.ALM.RQM
                 List<Activity> relevantActivities = new List<Activity>();
                 relevantActivities = businessFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.FileName).ToList();
                 exeResult.ExecutionStep = new List<ExecutionStep>();
-
+                System.Diagnostics.Debug.WriteLine("in GetExeResultforAg before extract EternalId");
                 string txExportID = GetExportedIDString(activGroup.ExternalID, "RQMID");
                 string tsExportID = GetExportedIDString(activGroup.ExternalID, "RQMScriptID");
                 string erExportID = GetExportedIDString(activGroup.ExternalID, "RQMRecordID");
                 if ((activGroup.TestSuiteId != null) && (activGroup.TestSuiteId != string.Empty))
                 {
+                    System.Diagnostics.Debug.WriteLine("in GetExeResultforAg activGroup.TestSuiteId :" + activGroup.TestSuiteId);
                     // check if test suite execution record is exists per current Test Suite ID
                     // if not exists to create it and than procced to work on just created
                     RQMTestSuite testSuite = testPlan.TestSuites.Where(z => z.RQMID == activGroup.TestSuiteId).FirstOrDefault();
@@ -338,45 +343,92 @@ namespace GingerCore.ALM.RQM
                 }
                 else if (string.IsNullOrEmpty(erExportID) || erExportID.Equals("0") || !testPlan.RQMExecutionRecords.Select(z => z.RQMID).ToList().Contains(erExportID))
                 {
+                    System.Diagnostics.Debug.WriteLine("in GetExeResultforAg erExportID :" + erExportID);
                     ResultInfo resultInfo;
-                    ACL_Data_Contract.Activity currentActivity = GetTestCaseFromActivityGroup(activGroup);
+                    System.Diagnostics.Debug.WriteLine("in GetExeResultforAg before Acitity :" + erExportID);
                     try
                     {
-                        // check if executionRecordID exist in RQM but still was not updated in business flow XML
-                        RQMExecutionRecord currentExecutionRecord = testPlan.RQMExecutionRecords.Where(y => y.RelatedTestCaseRqmID == txExportID && y.RelatedTestScriptRqmID == tsExportID).ToList().FirstOrDefault();
-                        if (currentExecutionRecord != null)
+                        ACL_Data_Contract.Activity currentActivity = GetTestCaseFromActivityGroup(activGroup);
+                        System.Diagnostics.Debug.WriteLine("in GetExeResultforAg currentActivity" + JsonConvert.SerializeObject(currentActivity));
+                        try
                         {
-                            erExportID = currentExecutionRecord.RQMID;
-                        }
-                        else
-                        {
-                            // if executionRecord not updated and not exists - so create one in RQM and update BussinesFlow object (this may be not saved due not existed "autosave" functionality)
-                            resultInfo = RQMConnect.Instance.RQMRep.CreateExecutionRecordPerActivity(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, bfExportedID, businessFlow.Name);
-                            System.Diagnostics.Debug.WriteLine(" CreateExecutionRecordPerActivity :" + JsonConvert.SerializeObject(resultInfo));
-                            if (!currentActivity.ExportedTcExecutionRecId.Equals("0"))
+                            // check if executionRecordID exist in RQM but still was not updated in business flow XML
+
+
+                            if (string.IsNullOrEmpty(tsExportID) || tsExportID.Equals("0"))
                             {
-                                string atsID = GetExportedIDString(activGroup.ExternalID, "AtsID");
-                                if (atsID == "0")
+                                System.Diagnostics.Debug.WriteLine("in GetExeResultforAg currentExecutionRecord before in if loop");
+                                RQMExecutionRecord currentExecutionRecord = testPlan.RQMExecutionRecords.Where(y => y.RelatedTestCaseRqmID == txExportID).ToList().FirstOrDefault();
+                                System.Diagnostics.Debug.WriteLine("in GetExeResultforAg currentExecutionRecord" + JsonConvert.SerializeObject(currentExecutionRecord));
+                                if (currentExecutionRecord != null)
                                 {
-                                    atsID = string.Empty;
+                                    erExportID = currentExecutionRecord.RQMID;
                                 }
-                                erExportID = currentActivity.ExportedTcExecutionRecId.ToString();
-                                activGroup.ExternalID = "RQMID=" + txExportID + "|RQMScriptID=" + tsExportID + "|RQMRecordID=" + erExportID + "|AtsID=" + atsID;
-                                ;
+                                else
+                                {
+                                    System.Diagnostics.Debug.WriteLine("in GetExeResultforAg currentExecutionRecord before in else loop");
+                                    // if executionRecord not updated and not exists - so create one in RQM and update BussinesFlow object (this may be not saved due not existed "autosave" functionality)
+                                    resultInfo = RQMConnect.Instance.RQMRep.CreateExecutionRecordPerActivity(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, bfExportedID, testPlan.Name);
+                                    System.Diagnostics.Debug.WriteLine(" CreateExecutionRecordPerActivity :" + JsonConvert.SerializeObject(resultInfo));
+                                    if (!currentActivity.ExportedTcExecutionRecId.Equals("0"))
+                                    {
+                                        string atsID = GetExportedIDString(activGroup.ExternalID, "AtsID");
+                                        if (atsID == "0")
+                                        {
+                                            atsID = string.Empty;
+                                        }
+                                        erExportID = currentActivity.ExportedTcExecutionRecId.ToString();
+                                        activGroup.ExternalID = "RQMID=" + txExportID + "|RQMScriptID=" + tsExportID + "|RQMRecordID=" + erExportID + "|AtsID=" + atsID;
+                                        ;
+                                    }
+                                }
                             }
+                            else
+                            {
+                                RQMExecutionRecord currentExecutionRecord = testPlan.RQMExecutionRecords.Where(y => y.RelatedTestCaseRqmID == txExportID && y.RelatedTestScriptRqmID == tsExportID).ToList().FirstOrDefault();
+                                if (currentExecutionRecord != null)
+                                {
+                                    erExportID = currentExecutionRecord.RQMID;
+                                }
+                                else
+                                {
+                                    // if executionRecord not updated and not exists - so create one in RQM and update BussinesFlow object (this may be not saved due not existed "autosave" functionality)
+                                    resultInfo = RQMConnect.Instance.RQMRep.CreateExecutionRecordPerActivity(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, bfExportedID, testPlan.Name);
+                                    System.Diagnostics.Debug.WriteLine(" CreateExecutionRecordPerActivity :" + JsonConvert.SerializeObject(resultInfo));
+                                    if (!currentActivity.ExportedTcExecutionRecId.Equals("0"))
+                                    {
+                                        string atsID = GetExportedIDString(activGroup.ExternalID, "AtsID");
+                                        if (atsID == "0")
+                                        {
+                                            atsID = string.Empty;
+                                        }
+                                        erExportID = currentActivity.ExportedTcExecutionRecId.ToString();
+                                        activGroup.ExternalID = "RQMID=" + txExportID + "|RQMScriptID=" + tsExportID + "|RQMRecordID=" + erExportID + "|AtsID=" + atsID;
+                                    }
+                                }
+                            }
+
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to create Execution Record Per Activity - " + currentActivity.EntityName + " in if loop getExeResultforAg= " + ex.InnerException);
+                            System.Diagnostics.Debug.WriteLine(" in getExeResultforAg :" + JsonConvert.SerializeObject(ex));
                         }
                     }
                     catch(Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to create Execution Record Per Activity - " + currentActivity.EntityName + " in if loop getExeResultforAg= " +  ex.InnerException);
-                        System.Diagnostics.Debug.WriteLine(" in getExeResultforAg :" + JsonConvert.SerializeObject(ex));
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to create Execution Record Per Activity - " + ex.InnerException);
+                        System.Diagnostics.Debug.WriteLine(" in getExeResultforAg activity :" + JsonConvert.SerializeObject(ex));
                     }
                 }
-                if (string.IsNullOrEmpty(txExportID) || string.IsNullOrEmpty(tsExportID) || string.IsNullOrEmpty(erExportID) || txExportID.Equals("0") || tsExportID.Equals("0") || erExportID.Equals("0"))
+                //if (string.IsNullOrEmpty(txExportID) || string.IsNullOrEmpty(tsExportID) || string.IsNullOrEmpty(erExportID) || txExportID.Equals("0") || tsExportID.Equals("0") || erExportID.Equals("0"))
+                if (string.IsNullOrEmpty(txExportID) || string.IsNullOrEmpty(erExportID) || txExportID.Equals("0") || erExportID.Equals("0"))
                 {
                     result = "At " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + ", is missing ExternalID, cannot export RQM TestPlan execution results without Extrnal ID";
                     return null;
                 }
+                System.Diagnostics.Debug.WriteLine(" in getExeResultforAg after try catch of activity:");
                 exeResult.TestCaseExportID = txExportID;
                 exeResult.TestScriptExportID = tsExportID;
                 exeResult.ExecutionRecordExportID = erExportID;
@@ -436,6 +488,7 @@ namespace GingerCore.ALM.RQM
                     }
                     exeResult.ExecutionStep.Add(exeStep);
                 }
+                System.Diagnostics.Debug.WriteLine(" in getExeResultforAg exeResult :" + JsonConvert.SerializeObject(exeResult));
                 return exeResult;
 
             }
@@ -658,6 +711,7 @@ namespace GingerCore.ALM.RQM
 
         private ACL_Data_Contract.Activity GetTestCaseFromActivityGroup(ActivitiesGroup activityGroup)
         {
+            
             if (activityGroup.ActivitiesIdentifiers.Count == 0)
             {
                 throw new Exception("Each Activity Group must have at least one activity");
@@ -678,6 +732,8 @@ namespace GingerCore.ALM.RQM
                     testCase.ExportedTestScriptId = RQMScriptID;
                     testCase.ExportedTcExecutionRecId = RQMRecordID;
                     testCase.ShouldUpdated = true;
+                    testCase.StartDate = activityGroup.StartTimeStamp.ToString();
+                    testCase.EndDate = activityGroup.EndTimeStamp.ToString();
                 }
                 catch (Exception e)
                 {
@@ -800,9 +856,183 @@ namespace GingerCore.ALM.RQM
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Could not export to RQM, External Items Fields values are missing");
+                Reporter.ToLog(eLogLevel.INFO, "Could not export to RQM, External Items Fields values are missing");
             }
             return propertiesList;
+        }
+
+        public Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST)
+        {
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
+
+            Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
+            Dictionary<string, List<string>> defectsBFs = new Dictionary<string, List<string>>();
+            DefectData newDefect = new DefectData();
+            foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
+            {
+
+                if (defectForOpening.Value.ContainsKey("Summary"))
+                {
+
+                    newDefect.summary = defectForOpening.Value["Summary"];//screenshots,ActivityGroupExternalID,ActivityExternalID,BFExternalID1,BFExternalID2
+                }
+                if (defectForOpening.Value.ContainsKey("description"))
+                {
+
+                    newDefect.description = defectForOpening.Value["description"];
+                }
+
+
+                AddEntityFieldValues(defectsFields, newDefect, "defect");
+                ResultInfo resultInfo;
+                RQMConnect.Instance.RQMRep.GetConection();
+
+                resultInfo = RQMConnect.Instance.RQMRep.CreateDefectNew(loginData, newDefect, ALMCore.DefaultAlmConfig.ALMServerURL, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, null);
+                if (resultInfo.IsSuccess)
+                {
+                    defectsOpeningResults.Add(defectForOpening.Key, newDefect.WorkItemId);
+                }
+            }
+            return defectsOpeningResults;
+        }
+
+        private void AddEntityFieldValues(List<ExternalItemFieldBase> fields, DefectData newDefect, string entityType)
+        {
+
+
+            foreach (ExternalItemFieldBase field in fields)
+            {
+                try
+                {
+                    //if ((field.ToUpdate || field.Mandatory))
+                    //{
+                        if (!string.IsNullOrEmpty(field.SelectedValue) && field.SelectedValue != "Unassigned")
+                        {
+                            if (field.ItemType.ToLower() == "string" && field.ID.Contains("filedAgainst"))
+                            {
+                                newDefect.filedAgainst = field.SelectedValue;
+                            }
+                            else if (field.ItemType.Equals("string") && field.ID.Contains("attachment"))
+                            {
+                                
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("project"))
+                            {
+                                newDefect.projectArea = field.SelectedValue;
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("severity"))
+                            {
+                                newDefect.severity = field.SelectedValue;
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("priority"))
+                            {
+                                newDefect.priority = field.SelectedValue;
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("RootCauseCategory"))
+                            {
+                                newDefect.rootCauseCategorySting = field.SelectedValue;
+                                if (newDefect.rootCauseCategorySting != null)
+                                {
+                                    if (newDefect.rootCauseCategorySting.Contains(","))
+                                    {
+                                        newDefect.rootCauseCategory = newDefect.rootCauseCategorySting.Split(',').ToList();
+                                    }
+                                    else
+                                    {
+                                        newDefect.rootCauseCategory.Add(newDefect.rootCauseCategorySting);
+                                    }
+                                }
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("Environment"))
+                            {
+                                newDefect.environement = field.SelectedValue;
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("subscribers"))
+                            {
+                                newDefect.subcriptionsString = field.SelectedValue;
+                                if (newDefect.subcriptionsString != null)
+                                {
+                                    if(newDefect.subcriptionsString.Contains(","))
+                                    {
+                                        newDefect.subcriptions = newDefect.subcriptionsString.Split(',').ToList();
+                                    }
+                                    else
+                                    {
+                                        newDefect.subcriptions.Add(newDefect.subcriptionsString);
+                                    }
+                                }
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("subdomain"))
+                            {
+                                newDefect.subApplication = field.SelectedValue;
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("AllowNoProjectLink"))
+                            {
+                                newDefect.allowNoProjectLink = field.SelectedValue;
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("type"))
+                            {
+                                newDefect.workItemType = field.SelectedValue;
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("DefectSubType"))
+                            {
+                                newDefect.defectSubtype = field.SelectedValue;
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("CcTo"))
+                            {
+                                newDefect.ccToString = field.SelectedValue;
+                                if (newDefect.ccToString != null)
+                                {
+                                    if (newDefect.ccToString.Contains(","))
+                                    {
+                                        newDefect.ccTo = newDefect.ccToString.Split(',').ToList();
+                                    }
+                                    else
+                                    {
+                                        newDefect.ccTo.Add(newDefect.ccToString);
+                                    }
+                                }
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("ProblemSourceSub-Category"))
+                            {
+                                newDefect.problemSourceSubCategory = field.SelectedValue;
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("ProblemSourceCategory"))
+                            {
+                                newDefect.problemSourceCategory = field.SelectedValue;
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("AssignmentGroup"))
+                            {
+                                newDefect.assigenmentGroup = field.SelectedValue;
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("RiskAssessment"))
+                            {
+                                newDefect.riskAssessment = field.SelectedValue;
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("foundIn"))
+                            {
+                                newDefect.foundIn = field.SelectedValue;
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("due"))
+                            {
+                                newDefect.dueDate = field.SelectedValue;
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("productGroup"))
+                            {
+                                newDefect.productGroup = field.SelectedValue;
+                            }
+                            else if (field.ItemType == "string" && field.ID.Contains("ownedBy"))
+                            {
+                                newDefect.ownedBy = field.SelectedValue;
+                            }
+                        }
+                    //}
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "In AddEntityFieldValues function", ex);
+                }
+            }
         }
     }
 }

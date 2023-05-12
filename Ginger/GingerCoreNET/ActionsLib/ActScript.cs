@@ -121,7 +121,11 @@ namespace GingerCore.Actions
         {
             if (!string.IsNullOrEmpty(outLine))
             {
-                ErrorBuffer += outLine + "\n";
+                if (!(outLine.ToLower().Contains("warn") || outLine.ToLower().Contains("info")))
+                {
+                    ErrorBuffer += outLine + "\n";
+                }
+                    
             }
         }
 

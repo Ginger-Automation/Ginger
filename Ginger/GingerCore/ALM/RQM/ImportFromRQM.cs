@@ -56,6 +56,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace GingerCore.ALM.RQM
 {
@@ -842,6 +843,20 @@ namespace GingerCore.ALM.RQM
             }
         }
 
+        public static ObservableList<ExternalItemFieldBase> GetALMItemFieldsForDefect(BackgroundWorker bw, bool online)
+        {
+            if (online)
+            {
+                
+             return GetOnlineItemFieldsForDefect(bw);
+
+                   
+            }
+            else
+            {
+                return GetLocalSavedPossibleValues();
+            }
+        } 
         private static ObservableList<ExternalItemFieldBase> GetLocalSavedPossibleValues()
         {
             ObservableList<ExternalItemFieldBase> ItemFieldsPossibleValues = new ObservableList<ExternalItemFieldBase>();
@@ -948,6 +963,7 @@ namespace GingerCore.ALM.RQM
 
                 if (!string.IsNullOrEmpty(categoryType.responseText))
                 {
+
                     categoryTypeList.LoadXml(categoryType.responseText);
                 }
                 
@@ -1320,6 +1336,250 @@ namespace GingerCore.ALM.RQM
             SaveItemFields(fields);
             return fields;
         }
+
+
+        public static ObservableList<ExternalItemFieldBase> GetOnlineItemFieldsForDefect(BackgroundWorker bw)
+        {
+            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+
+            //TODO : receive as parameters:
+
+            RqmRepository rqmRep = new RqmRepository(RQMCore.ConfigPackageFolderPath);
+            List<IProjectDefinitions> rqmProjectsDataList;
+            string rqmSserverUrl = ALMCore.DefaultAlmConfig.ALMServerURL + "/";
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
+            //IProjectData rqmProjectsData = rqmRep.GetVisibleProjects(loginData);
+            //rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
+            //IProjectDefinitions currentProj = rqmProjectsDataList.Where(prj => prj.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName)).FirstOrDefault();
+            string rqmDomain = RQMCore.ALMProjectGroupName; //currentProj.Prefix;
+            string rqmProject = ALMCore.DefaultAlmConfig.ALMProjectName; //currentProj.ProjectName;
+            string rqmProjectGuid = ALMCore.DefaultAlmConfig.ALMProjectGUID; //currentProj.Guid;
+            //string defectProjectguid = "_PuljAIgqEe269t0S6uVJ-w";
+            //------------------------------- Improved solution
+
+            string baseUri_ = string.Empty;
+            string selfLink_ = string.Empty;
+            int maxPageNumber_ = 0;
+            int totalCategoryTypeCount = 0;
+
+
+            string categoryValue = string.Empty;  // --> itemfield.PossibleValues.Add(ccNode.Name);
+            //string categoryTypeID = string.Empty; //--> itemfield.ID
+            try
+            {
+                //TODO: Populate list fields with CategoryTypes
+                populatedValue = "Starting fields retrieve process... ";
+                if (bw != null)
+                {
+                    bw.ReportProgress(totalValues, populatedValue);
+                }
+                //string defectfieldurl = "https://jazz.net/sandbox01-ccm/oslc/context/_PuljAIgqEe269t0S6uVJ-w/shapes/workitems/com.ibm.team.workitem.workItemType.defect";
+                string defectfieldurl = ALMCore.DefaultAlmConfig.DefectFieldAPI; //"https://devrtcserver.etisalat.corp.ae:9443/ccm/oslc/context/_AB8f0D6OEeuvs9HgECIFpw/shapes/workitems/ae.corp.etisalat.workitem.workitemtype.defect";
+                RqmResponseData categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(defectfieldurl),true);
+                XmlDocument categoryTypeList = new XmlDocument();
+
+
+                if (!string.IsNullOrEmpty(categoryType.responseText))
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, $" GetOnlineItemFieldsForDefect categoryType.responseText : { categoryType.responseText }");
+                    categoryTypeList.LoadXml(categoryType.responseText);
+                }
+
+                //TODO: Get 'next' and 'last links
+                XmlNodeList linkList_ = categoryTypeList.GetElementsByTagName("rdf:Description");
+                if (linkList_.Count > 0)
+                {
+                    foreach (XmlNode entryNode in linkList_)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $" in  entryNode : { entryNode.InnerXml }");
+                        try
+                        {
+                            ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
+                            XmlNodeList innerNodes = entryNode.ChildNodes;
+
+
+                            string categoryTypeName = string.Empty; // -->itemfield.Name
+                            string categoryTypeItemType = string.Empty; //-->itemfield.ItemType
+                            string categoryTypeMandatory = string.Empty; // --> itemfield.Mandatory & initial value for : --> itemfield.ToUpdate
+                            string categorydefaultvaluelink = string.Empty;
+                            string categoryTypeID = string.Empty;
+                            foreach (XmlNode node in innerNodes)
+                            {
+                                if (node.Name.Equals("dcterms:title", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    categoryTypeName = node.InnerText;
+                                }
+                                if (node.Name.Equals("oslc:occurs", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    categoryTypeMandatory = node.Attributes["rdf:resource"].Value.Contains("#Exactly-one") ? "true" : "false";
+                                }
+                                if (node.Name.Equals("oslc:name", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    categoryTypeItemType = !string.IsNullOrEmpty(node.Attributes["rdf:datatype"].Value) ? node.Attributes["rdf:datatype"].Value.Split("#")[1] : "string";
+                                    categoryTypeID = node.InnerText;
+                                }
+                                //if(node.Name.Equals("oslc:range", StringComparison.OrdinalIgnoreCase))
+                                //{
+                                //    string RangeValue = string.Empty;
+                                //    string RangeValueLink = node.Attributes.Count > 0 ? node.Attributes["rdf:resource"].Value : string.Empty;
+                                //    if(!string.IsNullOrEmpty(RangeValueLink))
+                                //    {
+                                //        RqmResponseData RangeData = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData,new Uri(RangeValueLink),true);
+                                //        XmlDocument RangeDataValue = new XmlDocument();
+                                //        if(!string.IsNullOrEmpty(RangeData.responseText))
+                                //        {
+                                //            RangeDataValue.LoadXml(RangeData.responseText);
+                                //            XmlNodeList RangeDatalist = RangeDataValue.GetElementsByTagName("rdf:Description");
+                                //            foreach(XmlNode RangeDatalistItem in RangeDatalist)
+                                //            {
+                                //                XmlNodeList RangeinnerNodes = RangeDatalistItem.ChildNodes;
+                                //                foreach(XmlNode RangeinnerNode in RangeinnerNodes)
+                                //                {
+                                //                    string fieldValue = string.Empty;
+                                //                    string fieldValueId = string.Empty; 
+                                //                    if(RangeinnerNode.Name.Equals("dcterms:title", StringComparison.OrdinalIgnoreCase))
+                                //                    {
+                                //                        fieldValue = RangeinnerNode.InnerText;
+                                //                    }
+                                //                    if(RangeinnerNode.Name.Equals("dcterms:identifier", StringComparison.OrdinalIgnoreCase))
+                                //                    {
+                                //                        fieldValueId = RangeinnerNode.InnerText;
+                                //                    }
+                                //                    if (!string.IsNullOrEmpty(fieldValue))
+                                //                    {
+                                //                        itemfield.PossibleValues.Add(fieldValue);
+                                //                    }
+                                //                }
+                                //            }
+                                //        }
+                                //    }
+                                //}
+                                if (node.Name.Equals("oslc:defaultValue", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    Reporter.ToLog(eLogLevel.DEBUG, $" in  defaultValue : ");
+                                    string categorydefaultvalue = string.Empty;
+                                    categorydefaultvaluelink = node.Attributes.Count > 0 ? node.Attributes["rdf:resource"].Value : string.Empty;
+                                    Reporter.ToLog(eLogLevel.DEBUG, $" in  oslc:categorydefaultvaluelink :  { categorydefaultvaluelink } ");
+                                    if (!string.IsNullOrEmpty(categorydefaultvaluelink))
+                                    {
+                                        try
+                                        {
+                                            RqmResponseData categorydefault = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(categorydefaultvaluelink), true);
+                                            XmlDocument categorydefaultData = new XmlDocument();
+
+                                            if (!string.IsNullOrEmpty(categorydefault.responseText))
+                                            {
+                                                categorydefaultData.LoadXml(categorydefault.responseText);
+                                                try
+                                                {
+                                                    categorydefaultvalue = categorydefaultData.GetElementsByTagName("dcterms:title").Item(0).InnerText;
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    categorydefaultvalue = categorydefaultData.GetElementsByTagName("foaf:name").Item(0).InnerText;
+                                                }
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                                            Reporter.ToLog(eLogLevel.DEBUG, $"categorydefaultvaluelink : { categorydefaultvaluelink } ");
+                                        }
+                                    }
+
+                                    itemfield.SelectedValue = !string.IsNullOrEmpty(categorydefaultvalue) ? categorydefaultvalue : string.Empty;
+                                }
+                                if (node.Name.Equals("oslc:allowedValues", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    Reporter.ToLog(eLogLevel.DEBUG, $" in  allowedValues : ");
+                                    string allowedvalueslink = node.Attributes["rdf:resource"].Value;
+                                    Reporter.ToLog(eLogLevel.DEBUG, $" in  oslc:allowedValues :  { allowedvalueslink } "); 
+                                    RqmResponseData allowedValues = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(allowedvalueslink), true);
+                                    XmlDocument allowedValuesData = new XmlDocument();
+
+
+                                    if (!string.IsNullOrEmpty(allowedValues.responseText))
+                                    {
+                                        allowedValuesData.LoadXml(allowedValues.responseText);
+                                    }
+                                    XmlNodeList allowedValuesList = allowedValuesData.GetElementsByTagName("oslc:allowedValue");
+
+                                    foreach (XmlNode allowedValuData in allowedValuesList)
+                                    {
+                                        if (allowedValuData.Name.Equals("oslc:allowedValue", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            string singleallowedvaluelink = allowedValuData.Attributes["rdf:resource"].Value;
+                                            try
+                                            {
+                                                RqmResponseData singleallowedValue = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(singleallowedvaluelink), true);
+                                                XmlDocument singleallowedValueData = new XmlDocument();
+
+                                                if (!string.IsNullOrEmpty(singleallowedValue.responseText))
+                                                {
+                                                    singleallowedValueData.LoadXml(singleallowedValue.responseText);
+                                                    string fieldValue = string.Empty;
+                                                    try
+                                                    {
+                                                        fieldValue = singleallowedValueData.GetElementsByTagName("dcterms:title").Item(0).InnerText;
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        fieldValue = singleallowedValueData.GetElementsByTagName("foaf:name").Item(0).InnerText;
+                                                    }
+                                                    if (!string.IsNullOrEmpty(fieldValue))
+                                                    {
+                                                        itemfield.PossibleValues.Add(fieldValue);
+                                                    }
+                                                }
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                                                Reporter.ToLog(eLogLevel.DEBUG, $"singleallowedvaluelink : { singleallowedvaluelink } ");
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                            itemfield.ItemType = categoryTypeItemType;
+
+                            itemfield.ID = categoryTypeID;
+                            itemfield.Name = categoryTypeName;
+                            if (itemfield.SelectedValue == null)
+                            {
+                                itemfield.SelectedValue = "Unassigned";
+                            }
+
+                            if (categoryTypeMandatory == "true")
+                            {
+                                itemfield.ToUpdate = true;
+                                itemfield.Mandatory = true;
+                            }
+                            else
+                            {
+                                itemfield.ToUpdate = false;
+                                itemfield.Mandatory = false;
+                            }
+                            if (!string.IsNullOrEmpty(itemfield.Name))
+                            {
+                                fields.Add(itemfield);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, $"entryNode : { JsonConvert.SerializeObject(entryNode) } ");
+                        }
+                    }
+                }
+            }
+            catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
+
+            //SaveItemFields(fields);
+            return fields;
+        }
+
 
         public static XmlNodeList Readxmlfile(string fieldType, string solutionFolder)
         {

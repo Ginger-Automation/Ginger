@@ -109,12 +109,22 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType)
         {
-            return UpdatedAlmFields(ImportFromRQM.GetALMItemFields(bw, online));
+            if(resourceType == AlmDataContractsStd.Enums.ResourceType.DEFECT)
+            {
+                return UpdatedAlmFields(ImportFromRQM.GetALMItemFieldsForDefect(bw, online));
+            }
+            else
+            {
+                return UpdatedAlmFields(ImportFromRQM.GetALMItemFields(bw, online));
+            }
+            
         }
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST)
         {
-            return null;
+            return ExportToRQM.Instance.CreateNewALMDefects(defectsForOpening, defectsFields, useREST);
+            
+            //return null;
         }
 
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
@@ -161,6 +171,7 @@ namespace GingerCore.ALM
             AlmConfig.ALMProjectKey = ALMProjectKey;
             AlmConfig.AlmType = almType;
             AlmConfig.IsTestSuite = GetIsTestSuiteValueFromDict(GetDynamicServerConfigAndSetPaths());
+            AlmConfig.DefectFieldAPI = GetDefectFieldAPIValueFromDict(GetDynamicServerConfigAndSetPaths());
             AlmConfig.ALMConfigPackageFolderPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(ALMConfigPackageFolderPath);
             AlmConfig.JiraTestingALM = testingALMType;
 
@@ -188,9 +199,12 @@ namespace GingerCore.ALM
                     string serverURL = ServerURLNode.InnerText;
                     XmlNode IsTestSuiteNode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/IsTestSuite");
                     string IsTestSuite = IsTestSuiteNode.InnerText;
+                    XmlNode DefectFieldAPINode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/DefectFieldAPI");
+                    string DefectFieldAPI = DefectFieldAPINode.InnerText;
                     Dictionary<String, Object> dictionary = new Dictionary<string, object>();
                     dictionary.Add("ServerURL", serverURL);
                     dictionary.Add("IsTestSuite", IsTestSuite);
+                    dictionary.Add("DefectFieldAPI", DefectFieldAPI);
                     return dictionary;
                 }
                 catch (Exception e)
@@ -254,6 +268,18 @@ namespace GingerCore.ALM
             if (dic.ContainsKey("ServerURL"))
             {
                 return (string)dic["ServerURL"];
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        private string GetDefectFieldAPIValueFromDict(Dictionary<string, object> dic)
+        {
+            if (dic.ContainsKey("DefectFieldAPI"))
+            {
+                return (string)dic["DefectFieldAPI"];
             }
             else
             {

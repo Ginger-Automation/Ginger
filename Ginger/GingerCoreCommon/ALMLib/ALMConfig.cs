@@ -219,7 +219,6 @@ namespace GingerCoreNET.ALMLib
         }
 
         private string mIsTestSuite;
-        [IsSerializedForLocalRepository]
         public string IsTestSuite
         {
             get { return mIsTestSuite; }
@@ -229,6 +228,20 @@ namespace GingerCoreNET.ALMLib
                 {
                     mIsTestSuite = value;
                     OnPropertyChanged(nameof(IsTestSuite));
+                }
+            }
+        }
+
+        private string mDefectFieldAPI;
+        public string DefectFieldAPI
+        {
+            get { return mDefectFieldAPI; }
+            set
+            {
+                if (mDefectFieldAPI != value)
+                {
+                    mDefectFieldAPI = value;
+                    OnPropertyChanged(nameof(DefectFieldAPI));
                 }
             }
         }
