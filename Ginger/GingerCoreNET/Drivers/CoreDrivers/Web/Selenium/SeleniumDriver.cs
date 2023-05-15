@@ -364,6 +364,7 @@ namespace GingerCore.Drivers
                 mProxy.FtpProxy = Proxy;
                 mProxy.SslProxy = Proxy;
                 mProxy.SocksProxy = Proxy;
+                mProxy.SocksVersion = 5;
             }
             else if (string.IsNullOrEmpty(Proxy) && AutoDetect != true && string.IsNullOrEmpty(ProxyAutoConfigUrl))
             {
