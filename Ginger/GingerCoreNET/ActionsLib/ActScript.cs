@@ -99,6 +99,9 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string ScriptPath { get; set; }
 
+        [IsSerializedForLocalRepository]
+        public bool IgnoreStdOutErrors { get; set; }
+
         string DataBuffer = "";
         string ErrorBuffer = "";
         public override String ActionType
@@ -119,13 +122,17 @@ namespace GingerCore.Actions
 
         protected void AddError(string outLine)
         {
-            if (!string.IsNullOrEmpty(outLine))
+            if (IgnoreStdOutErrors)
             {
-                if (!(outLine.ToLower().Contains("warn") || outLine.ToLower().Contains("info")))
+                AddData(outLine);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(outLine))
                 {
-                    ErrorBuffer += outLine + "\n";
+                    if (!(outLine.Contains("warn") || outLine.Contains("info")))
+                        ErrorBuffer += outLine + "\n";
                 }
-                    
             }
         }
 
@@ -178,7 +185,14 @@ namespace GingerCore.Actions
                     break;
             }
             p.OutputDataReceived += (proc, outLine) => { AddData(outLine.Data); };
-            p.ErrorDataReceived += (proc, outLine) => { AddError(outLine.Data); };
+            if (IgnoreStdOutErrors)
+            {
+                p.ErrorDataReceived += (proc, outLine) => { AddData(outLine.Data); };
+            }
+            else
+            {
+                p.ErrorDataReceived += (proc, outLine) => { AddError(outLine.Data); };
+            }
             p.Exited += Process_Exited;
             if (string.IsNullOrEmpty(SolutionFolder))
             {
@@ -418,6 +432,6 @@ namespace GingerCore.Actions
                     }
                 }
             }
-        }
+        }        
     }
 }
