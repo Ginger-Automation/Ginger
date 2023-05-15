@@ -562,7 +562,7 @@ namespace Ginger.Run
                             GingerData.GingerName = "";
                         }
 
-                        if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(z => z.FailedActionGuid == action.Guid).ToList().Count == 0)
+                        if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(z => z!=null && z.FailedActionGuid == action.Guid).ToList().Count == 0)
                         {
                             WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Add(new DefectSuggestion(action.Guid, this.GingerData.GingerName, mContext.BusinessFlow.Name, currrentGroupName,
                                                                                            mContext.BusinessFlow.ExecutionLogActivityCounter, mCurrentActivity.ActivityName, mCurrentActivity.ExecutionLogActionCounter,
