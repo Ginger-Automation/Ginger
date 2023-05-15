@@ -910,7 +910,7 @@ namespace GingerCore
                         DataSource.RunQuery("INSERT INTO " + DSTable + "(GINGER_USED) VALUES ('False')");
                         dt = DataSource.GetQueryOutput(Query);
                     }
-                    if (dt.Rows.Count == 0)
+                    if (dt == null || dt.Rows.Count == 0)
                     {
                         mValueCalculated = "No Row Found";
                         return;
@@ -1567,8 +1567,11 @@ namespace GingerCore
                 {
                     if (vb is VariablePasswordString)
                     {
-                        string strValuetoPass;
-                        strValuetoPass = EncryptionHandler.DecryptwithKey(vb.Value);
+                        string strValuetoPass = String.Empty;
+                        if (DecryptFlag)
+                        {
+                            strValuetoPass = EncryptionHandler.DecryptwithKey(vb.Value);
+                        }
                         if (!string.IsNullOrEmpty(strValuetoPass))
                         {
                             VarValue = strValuetoPass;
