@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -85,7 +85,7 @@ namespace Amdocs.Ginger.Common
 
         bool Revert(string path, SourceControlBase SourceControl);
 
-        void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems);
+        void ShowRecoveryItemPage();
 
         SourceControlBase GetNewSVnRepo();
         void WaitForAutoRunWindowClose();

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -137,7 +137,7 @@ namespace GingerCore.Platforms
                 if (mAgent != null)
                 {
                     // check if the AgentName & Id is diff before setting the value to avoid dirty status to become modified when unnecessary
-                    if (AgentName != mAgent.Name)
+                    if (mAgentName != mAgent.Name)
                     {
                         AgentName = mAgent.Name;
                     }

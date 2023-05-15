@@ -239,7 +239,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             // NA for GingerConsole
         }
 
-        public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
+        public void ShowRecoveryItemPage()
         {
             throw new NotImplementedException();
         }
