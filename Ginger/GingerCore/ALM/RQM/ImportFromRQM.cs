@@ -83,7 +83,7 @@ namespace GingerCore.ALM.RQM
                 //Create Business Flow
                 BusinessFlow busFlow = new BusinessFlow();
                 busFlow.Name = testPlan.Name;
-                busFlow.ExternalID = "RQMID=" + testPlan.RQMID;
+                busFlow.ExternalID = $"RQMID={testPlan.RQMID}";
                 busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
                 busFlow.Activities = new ObservableList<Activity>();
                 busFlow.Variables = new ObservableList<VariableBase>();
@@ -112,7 +112,7 @@ namespace GingerCore.ALM.RQM
                     if (repoActivsGroup != null)
                     {
                         tcActivsGroup = (ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance(true);
-                        tcActivsGroup.ExternalID = tcActivsGroup.ExternalID.Replace("RQMRecordID=" + ExportToRQM.GetExportedIDString(tcActivsGroup.ExternalID, "RQMRecordID"), "RQMRecordID=");
+                        tcActivsGroup.ExternalID = tcActivsGroup.ExternalID.Replace($"RQMRecordID={ ExportToRQM.GetExportedIDString(tcActivsGroup.ExternalID, "RQMRecordID")}", "RQMRecordID=");
                         busFlow.AddActivitiesGroup(tcActivsGroup);
                         busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, ApplicationPlatforms, true);
                         busFlow.AttachActivitiesGroupsAndActivities();
@@ -123,8 +123,7 @@ namespace GingerCore.ALM.RQM
                         tcActivsGroup = new ActivitiesGroup
                         {
                             Name = tc.Name,
-                            ExternalID = "RQMID=" + tc.RQMID + "|RQMScriptID=" + selectedScript.RQMID +
-                                         "|RQMRecordID=" + RQMRecordID + "|AtsID=" + tc.BTSID,
+                            ExternalID = $"RQMID={tc.RQMID}|RQMScriptID={selectedScript.RQMID}|RQMRecordID={RQMRecordID}|AtsID={tc.BTSID}",
                             TestSuiteId = tc.TestSuiteId,
                             TestSuiteTitle = tc.TestSuiteTitle
                         };
@@ -179,11 +178,11 @@ namespace GingerCore.ALM.RQM
                             string currentStepATSId = string.Empty;
                             if (strBtsIDs.TryGetValue((selectedScript.Steps.IndexOf(step) + 1).ToString(), out currentStepATSId))
                             {
-                                stepActivity.ExternalID = "RQMID=" + step.RQMIndex + "|AtsID=" + currentStepATSId;
+                                stepActivity.ExternalID = $"RQMID={step.RQMIndex}|AtsID={currentStepATSId}";
                             }
                             else
                             {
-                                stepActivity.ExternalID = "RQMID=" + step.RQMIndex;
+                                stepActivity.ExternalID = $"RQMID={step.RQMIndex}";
                             }
 
                             toAddStepActivity = true;
@@ -303,7 +302,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to import QC test set and convert it into { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}", ex);
                 return null;
             }
         }
@@ -381,7 +380,7 @@ namespace GingerCore.ALM.RQM
                             {
                                 tcActivsGroup = new ActivitiesGroup();
                                 tcActivsGroup.Name = tc.Name;
-                                tcActivsGroup.ExternalID = "RQMID=" + tc.RQMID + "|RQMScriptID=" + selectedScript.RQMID + "|RQMRecordID=" + RQMRecordID + "|AtsID=" + tc.BTSID;
+                                tcActivsGroup.ExternalID = $"RQMID={tc.RQMID}|RQMScriptID={selectedScript.RQMID}|RQMRecordID={RQMRecordID}|AtsID={tc.BTSID}";
                                 busFlow.AddActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
                             }
 
@@ -433,11 +432,11 @@ namespace GingerCore.ALM.RQM
                                     string currentStepATSId = string.Empty;
                                     if (strBtsIDs.TryGetValue((selectedScript.Steps.IndexOf(step) + 1).ToString(), out currentStepATSId))
                                     {
-                                        stepActivity.ExternalID = "RQMID=" + step.RQMIndex + "|AtsID=" + currentStepATSId;
+                                        stepActivity.ExternalID = $"RQMID={step.RQMIndex}|AtsID={currentStepATSId}";
                                     }
                                     else
                                     {
-                                        stepActivity.ExternalID = "RQMID=" + step.RQMIndex;
+                                        stepActivity.ExternalID = $"RQMID={step.RQMIndex}";
                                     }
 
                                     toAddStepActivity = true;
@@ -557,7 +556,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to import QC test set and convert it into { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}", ex);
                 return;
             }
         }
@@ -608,7 +607,7 @@ namespace GingerCore.ALM.RQM
                     {
                         tcActivsGroup = new ActivitiesGroup();
                         tcActivsGroup.Name = tc.Name;
-                        tcActivsGroup.ExternalID = "RQMID=" + tc.RQMID + "|RQMScriptID=" + selectedScript.RQMID + "|RQMRecordID=" + RQMRecordID + "|AtsID=" + tc.BTSID;
+                        tcActivsGroup.ExternalID = $"RQMID={ tc.RQMID }|RQMScriptID={selectedScript.RQMID}|RQMRecordID={RQMRecordID}|AtsID={tc.BTSID}";
                         busFlow.AddActivitiesGroup(tcActivsGroup);
                     }
 
@@ -658,11 +657,11 @@ namespace GingerCore.ALM.RQM
                             string currentStepATSId = string.Empty;
                             if (strBtsIDs.TryGetValue((selectedScript.Steps.IndexOf(step) + 1).ToString(), out currentStepATSId))
                             {
-                                stepActivity.ExternalID = "RQMID=" + step.RQMIndex + "|AtsID=" + currentStepATSId;
+                                stepActivity.ExternalID = $"RQMID={step.RQMIndex }|AtsID={ currentStepATSId}";
                             }
                             else
                             {
-                                stepActivity.ExternalID = "RQMID=" + step.RQMIndex;
+                                stepActivity.ExternalID = $"RQMID={ step.RQMIndex}";
                             }
 
                             toAddStepActivity = true;
@@ -782,7 +781,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to import QC test set and convert it into { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}", ex);
                 return;
             }
         }
@@ -851,7 +850,7 @@ namespace GingerCore.ALM.RQM
                 string jsonItemsFieldsFile = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Fields", "ExternalItemsFields.json");
                 if (!File.Exists(jsonItemsFieldsFile))
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "ALM RQM, Restoring External Items Fields from ExternalItemsFields.json, file hasn't been found at: " + jsonItemsFieldsFile);
+                    Reporter.ToLog(eLogLevel.DEBUG, $"ALM RQM, Restoring External Items Fields from ExternalItemsFields.json, file hasn't been found at: { jsonItemsFieldsFile}");
                     return ItemFieldsPossibleValues;
                 }
 
@@ -948,7 +947,7 @@ namespace GingerCore.ALM.RQM
                 
                 //TODO: Get 'next' and 'last links
                 XmlNodeList linkList_ = categoryTypeList.GetElementsByTagName("link");
-                Reporter.ToLog(eLogLevel.DEBUG, "in if loop linkList_.Count : " + linkList_.Count);
+                Reporter.ToLog(eLogLevel.DEBUG, $"in if loop linkList_.Count : { linkList_.Count}");
                 if (linkList_.Count > 0)
                 {
                     XmlNode selfPage = linkList_.Item(1);
@@ -992,7 +991,7 @@ namespace GingerCore.ALM.RQM
 
                     //Parallel computing solution
                     List<XmlNode> entryList = new List<XmlNode>();
-                    Reporter.ToLog(eLogLevel.DEBUG, "in if loop categoryTypeUriPages.Count : " + categoryTypeUriPages.Count);
+                    Reporter.ToLog(eLogLevel.DEBUG, $"in if loop categoryTypeUriPages.Count : { categoryTypeUriPages.Count}");
                     if (categoryTypeUriPages.Count > 1)
                     {
                         Parallel.ForEach(categoryTypeUriPages.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, categoryTypeUri =>
@@ -1000,7 +999,7 @@ namespace GingerCore.ALM.RQM
 
                             //System.Diagnostics.Debug.WriteLine("parallel foreach #1");
                             newUri_ = categoryTypeUri;
-                            Reporter.ToLog(eLogLevel.DEBUG, "in if loop newUri_ : " + newUri_);
+                            Reporter.ToLog(eLogLevel.DEBUG, $"in if loop newUri_ : { newUri_}");
                             categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(newUri_));
                             if (!string.IsNullOrEmpty(categoryType.responseText))
                             {
@@ -1013,7 +1012,7 @@ namespace GingerCore.ALM.RQM
                             {
                                 entryList.Add(entryNode);
                             }
-                            Reporter.ToLog(eLogLevel.DEBUG, "in if loop categoryTypeUriPages entryList.Count : " + entryList.Count);
+                            Reporter.ToLog(eLogLevel.DEBUG, $"in if loop categoryTypeUriPages entryList.Count : { entryList.Count}");
                             ParallelLoopResult innerResult = Parallel.ForEach(entryList.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, singleEntry =>
                             {
 
@@ -1065,8 +1064,8 @@ namespace GingerCore.ALM.RQM
                                 }
 
                                 catTypeRsult.Add(itemfield);
-                                populatedValue = "Populating field :" + categoryTypeName + " \r\nNumber of fields populated :" + catTypeRsult.Count;
-                                Reporter.ToLog(eLogLevel.DEBUG, "in if loop Populating field :" + populatedValue);
+                                populatedValue = $"Populating field :{ categoryTypeName } \r\nNumber of fields populated :{catTypeRsult.Count}";
+                                Reporter.ToLog(eLogLevel.DEBUG, $"in if loop Populating field :{ populatedValue}");
                                 
                                 if (bw!= null)
                                 {
@@ -1097,7 +1096,7 @@ namespace GingerCore.ALM.RQM
                         {
                             entryList.Add(entryNode);
                         }
-                        Reporter.ToLog(eLogLevel.DEBUG, "in else loop entryList.count : " + entryList.Count);
+                        Reporter.ToLog(eLogLevel.DEBUG, $"in else loop entryList.count : { entryList.Count}");
                         ParallelLoopResult innerResult = Parallel.ForEach(entryList.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, singleEntry =>
                         {
 
@@ -1147,8 +1146,8 @@ namespace GingerCore.ALM.RQM
                             }
 
                             catTypeRsult.Add(itemfield);
-                            populatedValue = "Populating field :" + categoryTypeName + " \r\n Number of fields populated :" + catTypeRsult.Count;
-                            Reporter.ToLog(eLogLevel.DEBUG, "in else loop populatedValue : " + populatedValue);
+                            populatedValue = $"Populating field :{ categoryTypeName } \r\n Number of fields populated :{ catTypeRsult.Count}";
+                            Reporter.ToLog(eLogLevel.DEBUG, $"in else loop populatedValue : { populatedValue}");
                             
                             if (bw!= null)
                             {
@@ -1158,13 +1157,13 @@ namespace GingerCore.ALM.RQM
                         }
                         );
                     }
-                    Reporter.ToLog(eLogLevel.DEBUG, "in outer loop catTypeRsult.count : " + catTypeRsult.Count);
+                    Reporter.ToLog(eLogLevel.DEBUG, $"in outer loop catTypeRsult.count : { catTypeRsult.Count}");
                     foreach (ExternalItemFieldBase field in catTypeRsult)
                     {
-                        System.Diagnostics.Debug.WriteLine("in outer loop field name:" + field.Name + "field Id =" + field.ID + "field Type =" + field.Type + "field mandetory =" + field.Mandatory + "field ItemType=" + field.ItemType + "field toupdate="+field.ToUpdate);
+                        System.Diagnostics.Debug.WriteLine($"in outer loop field name:{ field.Name } field Id ={ field.ID } field Type ={ field.Type } field mandetory ={field.Mandatory } field ItemType={ field.ItemType } field toupdate= {field.ToUpdate}");
                         fields.Add(field);
                         totalCategoryTypeCount++;
-                        System.Diagnostics.Debug.WriteLine("Number of retrieved fields:" + totalCategoryTypeCount);                        
+                        System.Diagnostics.Debug.WriteLine($"Number of retrieved fields:{ totalCategoryTypeCount}");                        
                     }//TODO: Add Values to CategoryTypes Parallel
                     populatedValue = "Starting values retrieve process... ";
                     if(bw!= null)
@@ -1289,9 +1288,9 @@ namespace GingerCore.ALM.RQM
 
                                             totalValues++;
 
-                                            System.Diagnostics.Debug.WriteLine("Total number of populated values is :" + totalValues + "/" + iDCount * (categoryUriPages.Count + 1)); //TODO pass this to a string to print in the UI
+                                            System.Diagnostics.Debug.WriteLine($"Total number of populated values is :{ totalValues }/{ iDCount * (categoryUriPages.Count + 1)}"); //TODO pass this to a string to print in the UI
                                                                                                                                                                                       //bw.ReportProgress(totalValues);
-                                            populatedValue = "Populating value:" + categoryValue + " \r\n Total Values:" + totalValues;
+                                            populatedValue = $"Populating value:{categoryValue}\r\n Total Values:{ totalValues}";
                                             if(bw != null)
                                             {
                                                 bw.ReportProgress(totalValues, populatedValue);

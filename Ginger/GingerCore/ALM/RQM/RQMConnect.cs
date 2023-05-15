@@ -122,7 +122,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "RQM connection Failed" + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, $"RQM connection Failed{ ex.Message}");
             }
             return isUserAuthen;
         }
@@ -176,7 +176,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Project not found" + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, $"Project not found{ ex.Message}");
             }
             return RQMProjects.ToDictionary(x => x, x => x);
         }
@@ -499,7 +499,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Test Plan full data not found " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, $"Test Plan full data not found { ex.Message}");
             }
             return testPlan;
         }
@@ -626,7 +626,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Test Case list not found " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, $"Test Case list not found { ex.Message}");
             }
             return RQMTestCaseList;
         }
@@ -682,7 +682,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Execution Records by test plan not found " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, $"Execution Records by test plan not found { ex.Message}");
             }
             return RQMExecutionRecords;
         }
@@ -755,7 +755,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Test Suite result not found " + ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, $"Test Suite result not found { ex.Message}");
             }
             return RQMExecutionRecords;
         }
