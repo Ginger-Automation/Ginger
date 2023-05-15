@@ -4284,6 +4284,11 @@ namespace GingerCore.Drivers
                             count = Driver.CurrentWindowHandle.Count();
                             Reporter.ToLog(eLogLevel.DEBUG, "Null refrence exception occured when we are checking IsRunning", ex);
                         }
+                        catch (System.ObjectDisposedException ex)
+                        {                            
+                            ErrorMessageFromDriver = "Agent is closed. Action on closed agent is not allowed.";
+                            Reporter.ToLog(eLogLevel.DEBUG, "Driver object is already disposed ", ex);
+                        }
                         catch (Exception ex)
                         {
                             //throw exception to outer catch
@@ -9703,7 +9708,7 @@ namespace GingerCore.Drivers
             devTools = webDriver as IDevTools;
 
             //DevTool Session 
-            devToolsSession = devTools.GetDevToolsSession(101);
+            devToolsSession = devTools.GetDevToolsSession(110);
             devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V110.DevToolsSessionDomains>();
             devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V110.Network.EnableCommandSettings());
 
@@ -9741,7 +9746,7 @@ namespace GingerCore.Drivers
             interceptor = webDriver.Manage().Network;
 
             interceptor.NetworkRequestSent += OnNetworkRequestSent;
-            interceptor.NetworkResponseReceived += OnNetworkResponseReceived;
+            interceptor.NetworkResponseReceived += OnNetworkResponseReceived;                       
 
             await interceptor.StartMonitoring();
             isNetworkLogMonitoringStarted = true;
@@ -9853,18 +9858,21 @@ namespace GingerCore.Drivers
 
         private void OnNetworkRequestSent(object sender, NetworkRequestSentEventArgs e)
         {
-            if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() && mAct.UpdateOperationInputValues != null && mAct.UpdateOperationInputValues.Any(x => e.RequestUrl.ToLower().Equals(x.Param.ToLower())))
+            try
             {
-                networkRequestLogList.Add(new Tuple<string, object>("RequestUrl:" + e.RequestUrl, JsonConvert.SerializeObject(e)));
-
+                if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() && mAct.UpdateOperationInputValues != null && mAct.UpdateOperationInputValues.Any(x => e.RequestUrl.ToLower().Equals(x.Param.ToLower())))
+                {
+                    networkRequestLogList.Add(new Tuple<string, object>("RequestUrl:" + e.RequestUrl, JsonConvert.SerializeObject(e)));
+                }
+                else if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.AllUrl.ToString())
+                {
+                    networkRequestLogList.Add(new Tuple<string, object>("RequestUrl:" + e.RequestUrl, JsonConvert.SerializeObject(e)));
+                }
             }
-            else if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.AllUrl.ToString())
+            catch (Exception ex)
             {
-                networkRequestLogList.Add(new Tuple<string, object>("RequestUrl:" + e.RequestUrl, JsonConvert.SerializeObject(e)));
-
+                Reporter.ToLog(eLogLevel.ERROR, "Error in OnNetworkRequestSent ", ex);
             }
-
-
         }
 
         private void OnNetworkResponseReceived(object sender, NetworkResponseReceivedEventArgs e)
@@ -9884,7 +9892,6 @@ namespace GingerCore.Drivers
                     {
                         networkResponseLogList.Add(new Tuple<string, object>("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e)));
                     }
-
                 }
                 else if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.AllUrl.ToString())
                 {
@@ -9898,18 +9905,14 @@ namespace GingerCore.Drivers
                     }
                     else
                     {
-
                         networkResponseLogList.Add(new Tuple<string, object>("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e)));
                     }
-
                 }
-
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in OnNetworkResponseReceived ", ex);
             }
-
         }
     }
 }
