@@ -238,6 +238,7 @@ namespace GingerCore.ALM.RQM
 
         private ExecutionResult GetExeResultforAg(BusinessFlow businessFlow, string bfExportedID, ActivitiesGroup activGroup, ref string result, RQMTestPlan testPlan)
         {
+            System.Diagnostics.Debug.WriteLine("in GetExeResultforAg");
             try
             {
                 LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
@@ -259,6 +260,7 @@ namespace GingerCore.ALM.RQM
                 string erExportID = GetExportedIDString(activGroup.ExternalID, "RQMRecordID");
                 if ((activGroup.TestSuiteId != null) && (activGroup.TestSuiteId != string.Empty))
                 {
+                    System.Diagnostics.Debug.WriteLine($"in GetExeResultforAg activGroup.TestSuiteId :{ activGroup.TestSuiteId }");
                     // check if test suite execution record is exists per current Test Suite ID
                     // if not exists to create it and than procced to work on just created
                     RQMTestSuite testSuite = testPlan.TestSuites.Where(z => z.RQMID == activGroup.TestSuiteId).FirstOrDefault();
@@ -338,6 +340,7 @@ namespace GingerCore.ALM.RQM
                 }
                 else if (string.IsNullOrEmpty(erExportID) || erExportID.Equals("0") || !testPlan.RQMExecutionRecords.Select(z => z.RQMID).ToList().Contains(erExportID))
                 {
+                    System.Diagnostics.Debug.WriteLine($"in GetExeResultforAg erExportID :{ erExportID}");
                     ResultInfo resultInfo;
                     ACL_Data_Contract.Activity currentActivity = GetTestCaseFromActivityGroup(activGroup);
                     try
@@ -372,7 +375,7 @@ namespace GingerCore.ALM.RQM
                         System.Diagnostics.Debug.WriteLine(" in getExeResultforAg :" + JsonConvert.SerializeObject(ex));
                     }
                 }
-                if (string.IsNullOrEmpty(txExportID) || string.IsNullOrEmpty(tsExportID) || string.IsNullOrEmpty(erExportID) || txExportID.Equals("0") || tsExportID.Equals("0") || erExportID.Equals("0"))
+                if (string.IsNullOrEmpty(txExportID) || string.IsNullOrEmpty(tsExportID) || string.IsNullOrEmpty(erExportID) || erExportID.Equals("0"))
                 {
                     result = "At " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + ", is missing ExternalID, cannot export RQM TestPlan execution results without Extrnal ID";
                     return null;
