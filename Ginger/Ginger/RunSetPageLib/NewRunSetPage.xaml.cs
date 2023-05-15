@@ -415,7 +415,14 @@ namespace Ginger.Run
                     xRunRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
                     xRunRunsetBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
                     xRunRunsetBtn.IsEnabled = false;
-                    xStopRunsetBtn.Visibility = Visibility.Visible;
+                    if (RunSetConfig.GingerRunners.Any(x => x.Executor.IsRunning == true))
+                    {
+                        xStopRunsetBtn.ButtonText = "Stop";
+                        xStopRunsetBtn.ButtonImageType = eImageType.Stop;
+                        xStopRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionStop");
+                        xStopRunsetBtn.IsEnabled = true;
+                        xStopRunsetBtn.Visibility = Visibility.Visible;
+                    }
                     xContinueRunsetBtn.Visibility = Visibility.Collapsed;
                     xResetRunsetBtn.Visibility = Visibility.Collapsed;
                 }
@@ -1904,6 +1911,10 @@ namespace Ginger.Run
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "There are no Running Runners to Stop.");
                 return;
             }
+            xStopRunsetBtn.ButtonText = "Stopping...";
+            xStopRunsetBtn.ButtonImageType = eImageType.Running;
+            xStopRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionStop");
+            xStopRunsetBtn.IsEnabled = false;
 
             WorkSpace.Instance.RunsetExecutor.StopRun();//stops only running runners  
             xRunsetSaveBtn.IsEnabled = true;
