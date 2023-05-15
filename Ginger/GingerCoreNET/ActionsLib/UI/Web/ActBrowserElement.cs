@@ -149,6 +149,8 @@ namespace GingerCore.Actions
             CloseAll,
             [EnumValueDescription("Get Browser Logs")]
             GetBrowserLog,
+            [EnumValueDescription("Get Console Logs")]
+            GetConsoleLog,
             [EnumValueDescription("Refresh")]
             Refresh,
             [EnumValueDescription("Navigate Back")]

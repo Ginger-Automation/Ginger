@@ -157,6 +157,11 @@ namespace GingerCore.Drivers
         public bool BrowserMinimized { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("3")]
+        [UserConfiguredDescription("Set the minimum log level to read the console logs from the browser console. Valid values are from 0 to 4: All = 0, Debug = 1, Info = 2, Warning = 3, Severe = 4")]
+        public string BrowserLogLevel { get; set; }
+
+        [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Only for Edge: Open Edge browser in IE Mode")]
         public bool OpenIEModeInEdge { get; set; }
@@ -397,6 +402,7 @@ namespace GingerCore.Drivers
                     case eBrowserType.IE:
                         InternetExplorerOptions ieoptions = new InternetExplorerOptions();
                         SetCurrentPageLoadStrategy(ieoptions);
+                        SetBrowserLogLevel(ieoptions);
 
                         if (EnsureCleanSession == true)
                         {
@@ -446,6 +452,7 @@ namespace GingerCore.Drivers
                         FirefoxOptions FirefoxOption = new FirefoxOptions();
                         FirefoxOption.AcceptInsecureCertificates = true;
                         SetCurrentPageLoadStrategy(FirefoxOption);
+                        SetBrowserLogLevel(FirefoxOption);
 
                         if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                         {
@@ -483,6 +490,7 @@ namespace GingerCore.Drivers
                         ChromeOptions options = new ChromeOptions();
                         options.AddArgument("--start-maximized");
                         SetCurrentPageLoadStrategy(options);
+                        SetBrowserLogLevel(options);
 
                         if (IsUserProfileFolderPathValid())
                         {
@@ -597,6 +605,7 @@ namespace GingerCore.Drivers
                             var ieOptions = new InternetExplorerOptions();
                             ieOptions.AttachToEdgeChrome = true;
                             ieOptions.EdgeExecutablePath = EdgeExcutablePath;
+                            SetBrowserLogLevel(ieOptions);
 
                             if (EnsureCleanSession == true)
                             {
@@ -644,6 +653,7 @@ namespace GingerCore.Drivers
 
                         {
                             EdgeOptions EDOpts = new EdgeOptions();
+                            SetBrowserLogLevel(EDOpts);
                             //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
                             //EDOpts.UseChromium = true;
                             EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
@@ -4274,6 +4284,11 @@ namespace GingerCore.Drivers
                             count = Driver.CurrentWindowHandle.Count();
                             Reporter.ToLog(eLogLevel.DEBUG, "Null refrence exception occured when we are checking IsRunning", ex);
                         }
+                        catch (System.ObjectDisposedException ex)
+                        {                            
+                            ErrorMessageFromDriver = "Agent is closed. Action on closed agent is not allowed.";
+                            Reporter.ToLog(eLogLevel.DEBUG, "Driver object is already disposed ", ex);
+                        }
                         catch (Exception ex)
                         {
                             //throw exception to outer catch
@@ -7618,6 +7633,19 @@ namespace GingerCore.Drivers
                     }
 
                     break;
+                case ActBrowserElement.eControlAction.GetConsoleLog:
+                    string logs = Newtonsoft.Json.JsonConvert.SerializeObject(Driver.Manage().Logs.GetLog(OpenQA.Selenium.LogType.Browser));
+                    string filePath = act.GetInputParamCalculatedValue("Value");
+                    switch (CreateConsoleLogFile(filePath, logs, act))
+                    {
+                        case 1: // in case the file is created successfully, print a message
+                            act.ExInfo = "Created a Console Log file in the path: " + filePath;
+                            break;
+                        case 0: // in case the filePath is null or empty, output the logs in Ginger
+                            act.AddOrUpdateReturnParamActual("Console logs", logs);
+                            break;
+                    }
+                    break;
                 case ActBrowserElement.eControlAction.StartMonitoringNetworkLog:
                     mAct = act;
                     SetUPDevTools(Driver);
@@ -9618,6 +9646,26 @@ namespace GingerCore.Drivers
 
         }
 
+        private void SetBrowserLogLevel(DriverOptions options)
+        {
+            if (!BrowserLogLevel.Equals("3"))
+            {
+                int numberLogLevel;
+                if (int.TryParse(BrowserLogLevel, out numberLogLevel))
+                {
+                    if (numberLogLevel >= 0 && numberLogLevel <= 4)
+                    {
+                        options.SetLoggingPreference(OpenQA.Selenium.LogType.Browser, (OpenQA.Selenium.LogLevel)numberLogLevel);
+                    }
+                    else throw new Exception("Please enter a valid number in the BrowserLogLevel parameter in Agent Configuration");
+                }
+                else
+                {
+                    throw new Exception("Please enter a valid value in the BrowserLogLevel parameter in Agent Configurations");
+                }
+            }
+        }
+
 
         public string GetApplitoolServerURL()
         {
@@ -9660,7 +9708,7 @@ namespace GingerCore.Drivers
             devTools = webDriver as IDevTools;
 
             //DevTool Session 
-            devToolsSession = devTools.GetDevToolsSession(101);
+            devToolsSession = devTools.GetDevToolsSession(110);
             devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V110.DevToolsSessionDomains>();
             devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V110.Network.EnableCommandSettings());
 
@@ -9698,7 +9746,7 @@ namespace GingerCore.Drivers
             interceptor = webDriver.Manage().Network;
 
             interceptor.NetworkRequestSent += OnNetworkRequestSent;
-            interceptor.NetworkResponseReceived += OnNetworkResponseReceived;
+            interceptor.NetworkResponseReceived += OnNetworkResponseReceived;                       
 
             await interceptor.StartMonitoring();
             isNetworkLogMonitoringStarted = true;
@@ -9777,20 +9825,54 @@ namespace GingerCore.Drivers
             return FullFilePath;
         }
 
+        private int CreateConsoleLogFile(string filePath, string logs, ActBrowserElement act)
+        {
+            string calculatedFilePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(filePath);
+            string fileDictionary = Path.GetDirectoryName(calculatedFilePath);
+
+            if (!String.IsNullOrEmpty(calculatedFilePath))
+            {
+                try
+                {
+                    bool isRootedPath = Path.IsPathRooted(fileDictionary);
+                    if (!isRootedPath)
+                    {
+                        calculatedFilePath = new Uri(calculatedFilePath).LocalPath;
+                    }
+                    using (Stream fileStream = System.IO.File.Create(calculatedFilePath))
+                    {
+                        fileStream.Close();
+                    }
+                    System.IO.File.WriteAllText(calculatedFilePath, logs);
+                }
+                catch (Exception ex)
+                {
+                    act.Error = ex.Message;
+                    return -1;
+                }
+            }
+            else return 0;
+
+            return 1;
+        }
+
         private void OnNetworkRequestSent(object sender, NetworkRequestSentEventArgs e)
         {
-            if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() && mAct.UpdateOperationInputValues != null && mAct.UpdateOperationInputValues.Any(x => e.RequestUrl.ToLower().Equals(x.Param.ToLower())))
+            try
             {
-                networkRequestLogList.Add(new Tuple<string, object>("RequestUrl:" + e.RequestUrl, JsonConvert.SerializeObject(e)));
-
+                if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() && mAct.UpdateOperationInputValues != null && mAct.UpdateOperationInputValues.Any(x => e.RequestUrl.ToLower().Equals(x.Param.ToLower())))
+                {
+                    networkRequestLogList.Add(new Tuple<string, object>("RequestUrl:" + e.RequestUrl, JsonConvert.SerializeObject(e)));
+                }
+                else if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.AllUrl.ToString())
+                {
+                    networkRequestLogList.Add(new Tuple<string, object>("RequestUrl:" + e.RequestUrl, JsonConvert.SerializeObject(e)));
+                }
             }
-            else if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.AllUrl.ToString())
+            catch (Exception ex)
             {
-                networkRequestLogList.Add(new Tuple<string, object>("RequestUrl:" + e.RequestUrl, JsonConvert.SerializeObject(e)));
-
+                Reporter.ToLog(eLogLevel.ERROR, "Error in OnNetworkRequestSent ", ex);
             }
-
-
         }
 
         private void OnNetworkResponseReceived(object sender, NetworkResponseReceivedEventArgs e)
@@ -9810,7 +9892,6 @@ namespace GingerCore.Drivers
                     {
                         networkResponseLogList.Add(new Tuple<string, object>("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e)));
                     }
-
                 }
                 else if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.AllUrl.ToString())
                 {
@@ -9824,18 +9905,14 @@ namespace GingerCore.Drivers
                     }
                     else
                     {
-
                         networkResponseLogList.Add(new Tuple<string, object>("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e)));
                     }
-
                 }
-
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Error in OnNetworkResponseReceived ", ex);
             }
-
         }
     }
 }

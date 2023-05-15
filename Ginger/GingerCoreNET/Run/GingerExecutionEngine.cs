@@ -2446,6 +2446,7 @@ namespace Ginger.Run
             }
             // Verify the Agent for the action is running 
             Agent.eStatus agentStatus = ((AgentOperations)((Agent)AA.Agent).AgentOperations).Status;
+            CurrentBusinessFlow.CurrentActivity.CurrentAgent = ((Agent)AA.Agent);
             if (agentStatus != Agent.eStatus.Running && agentStatus != Agent.eStatus.Starting && agentStatus != Agent.eStatus.FailedToStart)
             {
                 // start the agent if one of the action s is not subclass of  ActWithoutDriver = driver action
@@ -2455,8 +2456,6 @@ namespace Ginger.Run
                     StartAgent((Agent)AA.Agent);
                 }
             }
-
-            CurrentBusinessFlow.CurrentActivity.CurrentAgent = ((Agent)AA.Agent);
         }
 
         private void ProcessStoretoValue(Act act)
@@ -4577,6 +4576,11 @@ namespace Ginger.Run
                 mExecutedActivityWhenStopped = (Activity)CurrentBusinessFlow.CurrentActivity;
                 mExecutedActionWhenStopped = (Act)CurrentBusinessFlow.CurrentActivity?.Acts.CurrentItem;
                 mExecutedBusinessFlowWhenStopped = (BusinessFlow)CurrentBusinessFlow;
+                Agent currentAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
+                if (currentAgent != null)
+                {
+                    ((AgentOperations)currentAgent.AgentOperations).Driver.cancelAgentLoading = true;
+                }
             }
         }
 
