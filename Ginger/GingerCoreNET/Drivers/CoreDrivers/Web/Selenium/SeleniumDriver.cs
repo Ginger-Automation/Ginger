@@ -254,6 +254,11 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Change to Iframe automatically in case of POM Element execution ")]
         public bool HandelIFramShiftAutomaticallyForPomElement { get; set; }
 
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Sample Value is 'localhost:9222'.This allows to Connect to existing browser session on specific debug port instead of Launching a new browser")]
+        public string DebugAddress { get; set; }
+
         protected IWebDriver Driver;
 
         protected eBrowserType mBrowserTpe;
@@ -543,7 +548,17 @@ namespace GingerCore.Drivers
                             options.AddArgument(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl);
                         }
 
-                        ChromeDriverService ChService = ChromeDriverService.CreateDefaultService(GetDriversPathPerOS());
+
+                        ChromeDriverService ChService;
+                        if(string.IsNullOrEmpty(DebugAddress))
+                        {
+                            ChService = ChromeDriverService.CreateDefaultService(GetDriversPathPerOS());
+                        }
+                        else
+                        {
+                            options.DebuggerAddress = DebugAddress.Trim();
+                            ChService = ChromeDriverService.CreateDefaultService();
+                        }
                         if (HideConsoleWindow)
                         {
                             ChService.HideCommandPromptWindow = HideConsoleWindow;
