@@ -23,6 +23,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.DataSource;
 using Newtonsoft.Json;
+using NUglify.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -198,11 +199,15 @@ namespace Ginger.Reports
                 if (inputValues == null)
                 {
                     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    inputValues = mAction.InputValues.Select(a => Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(a.Param + "_:_" + a.Value + "_:_" + GetValueForDriverWithoutDescrypting(a.Value))).ToList();
+                    inputValues = mAction.InputValues.Select(a => GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(                       
+                        $"{a.Param}_:_{a.Value}_:_{a.DisplayValue}")).ToList();
 
-                    if ((mAction.GetInputValueListForVEProcessing() != null) && (mAction.GetInputValueListForVEProcessing().Count > 0))
+                    if ((mAction.GetInputValueListForVEProcessing() != null) && (mAction.GetInputValueListForVEProcessing().Any()))
                     {
-                        mAction.GetInputValueListForVEProcessing().ForEach(x => x.Select(a => Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(a.Param + "_:_" + a.Value + "_:_" + GetValueForDriverWithoutDescrypting(a.Value))).ToList().ForEach(z => inputValues.Add(z)));
+                        mAction.GetInputValueListForVEProcessing().ForEach(x => 
+                        x.ForEach(a => 
+                        inputValues.Add(GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(
+                                $"{a.Param}_:_{a.Value}_:_{a.DisplayValue}"))));
                     }
                 }
                 return inputValues;
@@ -248,7 +253,7 @@ namespace Ginger.Reports
             {
                 if (outputValues == null)
                 {
-                    outputValues = mAction.ReturnValues.Select(a => a.Param + "_:_" + a.Actual + "_:_" + a.ExpectedCalculated + "_:_" + a.Status).ToList();
+                    outputValues = mAction.ReturnValues.Select(a => $"{a.Param}_:_{a.Actual}_:_{a.ExpectedCalculated}_:_{a.Status}").ToList();
                 }
                 return outputValues;
             }
@@ -296,7 +301,7 @@ namespace Ginger.Reports
             {
                 if (flowControls == null)
                 {
-                    flowControls = mAction.FlowControls.Select(a => a.Condition + "_:_" + a.ConditionCalculated + "_:_" + a.FlowControlAction + "_:_" + a.Status).ToList();
+                    flowControls = mAction.FlowControls.Select(a => $"{a.Condition}_:_{a.ConditionCalculated}_:_{a.FlowControlAction}_:_{a.Status}").ToList();
                 }
                 return flowControls;
             }
