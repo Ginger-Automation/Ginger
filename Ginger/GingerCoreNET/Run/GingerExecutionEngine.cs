@@ -266,7 +266,6 @@ namespace Ginger.Run
             ExecutedFrom = eExecutedFrom.Run;
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
-
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
 
             if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution)
@@ -1740,6 +1739,7 @@ namespace Ginger.Run
                     try
                     {
                         IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
+                        IV.DisplayValue = act.ValueExpression.EncryptedValue;
                     }
                     catch (Exception ex)
                     {
@@ -1765,6 +1765,7 @@ namespace Ginger.Run
                             try
                             {
                                 IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
+                                IV.DisplayValue = act.ValueExpression.EncryptedValue;
                             }
                             catch (Exception ex)
                             {
