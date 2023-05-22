@@ -34,7 +34,7 @@
 
         <StackPanel Grid.Row="2" x:Name="xPanelRunArguments">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Arguments:</Label>
-            <Actions:UCValueExpression x:Name="xRunArgumentsTextBox" Loaded="xRunArgumentsTextBox_Loaded"/>
+            <Actions:UCValueExpression x:Name="xRunArgumentsTextBox" />
         </StackPanel>
     </Grid>
 </Page>

@@ -35,7 +35,7 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = act;
             TextFileNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileOperations.Fields.SourceFilePath), true, true, UCValueExpression.eBrowserType.File);
-            DestinationFolderTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileOperations.Fields.DestinationFolder), true, true, UCValueExpression.eBrowserType.Folder);
+            DestinationFolderTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileOperations.Fields.DestinationFolder), true, true, UCValueExpression.eBrowserType.Folder);//eBrowserType.Folder is added to select the folder option while clicking on Browse button
             xRunArgumentsTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActFileOperations.Arguments)), true, false);
 
             mAct.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
@@ -87,9 +87,5 @@ namespace Ginger.Actions
 
         }
 
-        private void xRunArgumentsTextBox_Loaded(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }
