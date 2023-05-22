@@ -101,11 +101,7 @@ namespace Ginger.Functionalties
             //start Auto Save
             WorkSpace.Instance.AppSolutionAutoSave.SolutionAutoSaveStart();
 
-            //check if Recover is needed
-            if (!WorkSpace.Instance.UserProfile.DoNotAskToRecoverSolutions)
-            {
-                SolutionRecoverStart();
-            }
+            SolutionRecoverStart();
         }
     }
 }

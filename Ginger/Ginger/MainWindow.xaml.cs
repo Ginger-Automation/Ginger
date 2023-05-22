@@ -120,11 +120,6 @@ namespace Ginger
                 if (WorkSpace.Instance.UserProfile.GingerStatus == eGingerStatus.Active)
                 {
                     Reporter.ToStatus(eStatusMsgKey.ExitMode);
-                    WorkSpace.Instance.UserProfile.DoNotAskToRecoverSolutions = false;
-                }
-                else if (WorkSpace.Instance.UserProfile.GingerStatus == eGingerStatus.Closed)
-                {
-                    WorkSpace.Instance.UserProfile.DoNotAskToRecoverSolutions = true;
                 }
 
                 WorkSpace.Instance.UserProfile.GingerStatus = eGingerStatus.Active;

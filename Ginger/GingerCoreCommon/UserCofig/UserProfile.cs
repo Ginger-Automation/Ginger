@@ -113,6 +113,21 @@ namespace Ginger
             }
         }
 
+        private bool mShowSourceControlStatusIcon;
+        [IsSerializedForLocalRepository]
+        public bool ShowSourceControlStatusIcon
+        {
+            get => mShowSourceControlStatusIcon;
+            set
+            {
+                if (mShowSourceControlStatusIcon != value)
+                {
+                    mShowSourceControlStatusIcon = value;
+                    OnPropertyChanged(nameof(ShowSourceControlStatusIcon));
+                }
+            }
+        }
+
         public bool IsSharedUserProfile { get { return UserProfileOperations.IsSharedUserProfile; } }
 
         [IsSerializedForLocalRepository]
@@ -440,9 +455,6 @@ namespace Ginger
                 }
             }
         }
-
-        [IsSerializedForLocalRepository]
-        public bool DoNotAskToRecoverSolutions { get; set; }
 
         bool mAutoLoadLastRunSet;
         [IsSerializedForLocalRepository]
