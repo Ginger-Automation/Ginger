@@ -683,6 +683,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+
         public bool DoNotResetWorkspaceArgsOnClose { get; set; }
         public void CloseSolution()
         {
@@ -690,6 +691,7 @@ namespace amdocs.ginger.GingerCoreNET
             if (SolutionRepository != null)
             {
                 PlugInsManager.CloseAllRunningPluginProcesses();
+                WorkSpace.Instance.RunsetExecutor = null;
                 CloseAllRunningAgents();
                 CloseAllEnvironments();
                 SolutionRepository.StopAllRepositoryFolderWatchers();

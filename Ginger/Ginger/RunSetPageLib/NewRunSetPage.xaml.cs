@@ -210,6 +210,7 @@ namespace Ginger.Run
 
             if (WorkSpace.Instance.Solution != null)
             {
+                WorkSpace.Instance.RunsetExecutor = new RunsetExecutor();
                 Init();
 
                 //load Run Set
@@ -258,7 +259,7 @@ namespace Ginger.Run
         public NewRunSetPage(RunSetConfig runSetConfig, eEditMode editMode = eEditMode.ExecutionFlow)//when window opened automatically when running from command line
         {
             InitializeComponent();
-
+            WorkSpace.Instance.RunsetExecutor = new RunsetExecutor();
             //Init
             Init();
 
@@ -708,6 +709,10 @@ namespace Ginger.Run
                 {
                     xSealightsExpander.IsExpanded = false; //Sealight expand control should collapsed if all 3 Sealights' settings are in ‘Default’ mode.
                 }
+            }
+            if (WorkSpace.Instance.Solution.ContainingFolderFullPath.ToString() == "")
+            {
+                ResetALMDefectsSuggestions();
             }
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xALMDefectsOpening, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
@@ -1496,6 +1501,7 @@ namespace Ginger.Run
 
                     mRunSetConfig.StartDirtyTracking();
                     mRunSetConfig.AllowAutoSave = false;
+                    WorkSpace.Instance.RunsetExecutor = new RunsetExecutor();
                     WorkSpace.Instance.RunsetExecutor.RunSetConfig = RunSetConfig;
 
                     //Init Run Set Details Section
@@ -1520,6 +1526,9 @@ namespace Ginger.Run
 
                     // Init Runset Config Section
                     InitRunSetConfigurations();
+
+                    //init Defect Opeing section
+                    InitALMDefectsOpeningSection();
 
                     //Init Execution History Section
                     InitExecutionHistorySection();
