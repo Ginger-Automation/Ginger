@@ -456,6 +456,9 @@ namespace Ginger
             }
         }
 
+        [IsSerializedForLocalRepository]
+        public bool DoNotAskToRecoverSolutions { get; set; }
+
         bool mAutoLoadLastRunSet;
         [IsSerializedForLocalRepository]
         public bool AutoLoadLastRunSet
