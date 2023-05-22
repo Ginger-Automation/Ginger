@@ -285,8 +285,8 @@ namespace GingerCore.Actions
                     }
                     if (System.IO.File.Exists(calculatedSourceFilePath))
                     {
-                        String filename = Path.GetFileName(calculatedSourceFilePath);
-                        filename = filename.Substring(0,filename.Length-4);
+                        
+                        String filename = Path.GetFileNameWithoutExtension(calculatedSourceFilePath);                       
                         DestinationFolder = DestinationFolder + "\\" + filename + "\\";
                         if (!System.IO.Directory.Exists(DestinationFolder))                        {
                            
