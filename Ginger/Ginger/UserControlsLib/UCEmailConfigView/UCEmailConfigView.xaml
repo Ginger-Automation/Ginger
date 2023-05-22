@@ -267,8 +267,8 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Folder:"/>
-                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" x:Name="FolderNameLabel" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Folder:"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" x:Name="FoldersStackPanel">
                             <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderAllRadioButton" Content="All" Style="{StaticResource RadioButtonStyle}"/>
                             <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderSpecificRadioButton" Content="Specific" Style="{StaticResource RadioButtonStyle}"/>
                         </StackPanel>

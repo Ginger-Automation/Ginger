@@ -393,15 +393,19 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
             }
 
             if (xEmailReadMethodMSGraph.IsSelected)
-            {
+            { 
+                FolderNameLabel.Visibility = Visibility.Visible;
+                FoldersStackPanel.Visibility = Visibility.Visible;
                 xClientIdGrid.Visibility = Visibility.Visible;
-                xTenantIdGrid.Visibility= Visibility.Visible;
+                xTenantIdGrid.Visibility= Visibility.Visible;                
                 passwdLabel.Content = "User Password:";
             }
             else
             {
+                FolderNameLabel.Visibility = Visibility.Collapsed;
+                FoldersStackPanel.Visibility = Visibility.Collapsed;
                 xClientIdGrid.Visibility = Visibility.Collapsed;
-                xTenantIdGrid.Visibility = Visibility.Collapsed;
+                xTenantIdGrid.Visibility = Visibility.Collapsed;               
                 passwdLabel.Content = "User App Password:";
             }
         }

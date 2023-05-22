@@ -286,7 +286,7 @@ namespace GingerCore.Actions
                     if (System.IO.File.Exists(calculatedSourceFilePath))
                     {
                         if (!System.IO.Directory.Exists(DestinationFolder))
-                        {
+                        {                            
                             System.IO.Directory.CreateDirectory(DestinationFolder);
                         }
                         System.IO.Compression.ZipFile.ExtractToDirectory(calculatedSourceFilePath, DestinationFolder);

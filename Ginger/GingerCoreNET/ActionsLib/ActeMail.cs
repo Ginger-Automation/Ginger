@@ -31,6 +31,8 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using File = System.IO.File;
+using Microsoft.Graph;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 
 namespace GingerCore.Actions.Communication
 {
@@ -651,10 +653,27 @@ namespace GingerCore.Actions.Communication
         }
         private void ReadGmails()
         {
-           
-            
-
-
+           IEmailReadOperations gmailreadOperations = new EmailReadGmailOperations();
+           EmailReadFilters filters = CreateEmailReadFilters();
+           EmailReadConfig config =  CreateGmailConfig();
+            int index = 1;
+            gmailreadOperations.ReadEmails(filters,config, email =>
+            {
+                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.From), email.From, index.ToString());
+                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Subject), email.Subject, index.ToString());
+                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Body), email.Body, index.ToString());
+                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.HasAttachments), email.HasAttachments.ToString(), index.ToString());
+                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.ReceivedDateTime), email.ReceivedDateTime.ToString(), index.ToString());
+                if (DownloadAttachments && FilterHasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes)
+                {
+                    IEnumerable<(string filename, string filepath)> fileNamesAndPaths = DownloadAttachmentFiles(email);
+                    foreach ((string filename, string filepath) in fileNamesAndPaths)
+                    {
+                        AddOrUpdateReturnParamActualWithPath(filename, filepath, index.ToString());
+                    }
+                }
+                index++;
+            }).Wait();
         }
         private void ReadEmails()
         {
@@ -720,6 +739,29 @@ namespace GingerCore.Actions.Communication
 
             return filters;
         }
+        
+        private EmailReadConfig CreateGmailConfig()
+        {
+            String UserEmailId = GetInputParamCalculatedValue(nameof(ReadUserEmail));
+            String UserAppPassword = GetInputParamCalculatedValue(nameof(ReadUserPassword));
+            if (EncryptionHandler.IsStringEncrypted(UserAppPassword))
+            {
+                UserAppPassword = EncryptionHandler.DecryptwithKey(UserAppPassword);
+            }
+            String UserClientId = null;
+            String UsertenantId = null;
+            EmailReadConfig config = new()
+            {
+                UserEmail = UserEmailId,
+                UserPassword = UserAppPassword,
+                ClientId = UserClientId,
+                TenantId = UsertenantId
+            };
+
+            return config;
+
+        }
+
 
         private EmailReadConfig CreateMSGraphConfig()
         {
