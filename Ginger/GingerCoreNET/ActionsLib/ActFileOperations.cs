@@ -285,8 +285,11 @@ namespace GingerCore.Actions
                     }
                     if (System.IO.File.Exists(calculatedSourceFilePath))
                     {
-                        if (!System.IO.Directory.Exists(DestinationFolder))
-                        {
+                        String filename = Path.GetFileName(calculatedSourceFilePath);
+                        filename = filename.Substring(0,filename.Length-4);
+                        DestinationFolder = DestinationFolder + "\\" + filename + "\\";
+                        if (!System.IO.Directory.Exists(DestinationFolder))                        {
+                           
                             System.IO.Directory.CreateDirectory(DestinationFolder);
                         }
                         System.IO.Compression.ZipFile.ExtractToDirectory(calculatedSourceFilePath, DestinationFolder);
@@ -338,9 +341,9 @@ namespace GingerCore.Actions
 
         private void SetupDestinationfolders()
         {
-            string calculatedDestinationPath = GetInputParamCalculatedValue(Fields.DestinationFolder);
+            string calculatedDestinationPath = GetInputParamCalculatedValue(Fields.DestinationFolder)+"\\";
 
-            calculatedDestinationPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedDestinationPath);
+            //calculatedDestinationPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedDestinationPath);
             DestinationFolder = System.IO.Path.GetDirectoryName(calculatedDestinationPath);
             if (String.IsNullOrEmpty(DestinationFolder))
             {

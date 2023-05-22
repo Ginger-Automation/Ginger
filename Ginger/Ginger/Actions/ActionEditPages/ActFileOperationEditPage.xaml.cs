@@ -35,7 +35,7 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = act;
             TextFileNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileOperations.Fields.SourceFilePath), true, true, UCValueExpression.eBrowserType.File);
-            DestinationFolderTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileOperations.Fields.DestinationFolder), true, true, UCValueExpression.eBrowserType.File);
+            DestinationFolderTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileOperations.Fields.DestinationFolder), true, true, UCValueExpression.eBrowserType.Folder);
             xRunArgumentsTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActFileOperations.Arguments)), true, false);
 
             mAct.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
@@ -49,6 +49,10 @@ namespace Ginger.Actions
             if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()) is string fileName)
             {
                 TextFileNameTextBox.ValueTextBox.Text = fileName;
+            }
+            if (General.SetupBrowseFolder(new System.Windows.Forms.FolderBrowserDialog()) is string folderName)
+            {
+                TextFileNameTextBox.ValueTextBox.Text = folderName;
             }
         }
 
@@ -80,6 +84,11 @@ namespace Ginger.Actions
                 }
             }
 
+
+        }
+
+        private void xRunArgumentsTextBox_Loaded(object sender, RoutedEventArgs e)
+        {
 
         }
     }
