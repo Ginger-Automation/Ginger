@@ -691,7 +691,6 @@ namespace amdocs.ginger.GingerCoreNET
             if (SolutionRepository != null)
             {
                 PlugInsManager.CloseAllRunningPluginProcesses();
-                WorkSpace.Instance.RunsetExecutor = null;
                 CloseAllRunningAgents();
                 CloseAllEnvironments();
                 SolutionRepository.StopAllRepositoryFolderWatchers();
