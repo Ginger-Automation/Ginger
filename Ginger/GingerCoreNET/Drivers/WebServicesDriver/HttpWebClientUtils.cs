@@ -456,15 +456,13 @@ namespace GingerCore.Actions.WebAPI
                 }
                 else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "XwwwFormUrlEncoded"))
                 {
-                    HttpContent UrlEncoded = new FormUrlEncodedContent(ConstructURLEncoded((ActWebAPIRest)mAct));
                     RequestFileContent = CreateRawRequestAndResponse("request");
+
                     StringBuilder str = new StringBuilder();
                     foreach (KeyValuePair<string, string> keyValue in ConstructURLEncoded((ActWebAPIRest)mAct))
-                    {
-                        str.Append(keyValue.Key + "=" + keyValue.Value);
-                    }
-                    RequestFileContent += str;
-
+                        str.Append(keyValue.Key + "=" + keyValue.Value + "&");
+                    
+                    RequestFileContent += str.ToString().Trim('&');
                 }
                 else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "FormData"))
                 {
@@ -913,16 +911,9 @@ namespace GingerCore.Actions.WebAPI
         {
             List<KeyValuePair<string, string>> KeyValues = new List<KeyValuePair<string, string>>();
 
-            for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
+            for (int i = 0; i < act.RequestKeyValues.Count(); i++)
             {
-                if (i == mAct.RequestKeyValues.Count() - 1)
-                {
-                    KeyValues.Add(new KeyValuePair<string, string>(Uri.EscapeDataString(mAct.RequestKeyValues[i].ItemName.ToString()), Uri.EscapeDataString(mAct.RequestKeyValues[i].ValueForDriver)));
-                }
-                else
-                {
-                    KeyValues.Add(new KeyValuePair<string, string>(Uri.EscapeDataString(mAct.RequestKeyValues[i].ItemName.ToString()), Uri.EscapeDataString(mAct.RequestKeyValues[i].ValueForDriver) + "&"));
-                }
+                KeyValues.Add(new KeyValuePair<string, string>(act.RequestKeyValues[i].ItemName.ToString(), act.RequestKeyValues[i].ValueForDriver));
             }
 
             return KeyValues;
