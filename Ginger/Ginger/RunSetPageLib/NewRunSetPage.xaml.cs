@@ -1480,10 +1480,7 @@ namespace Ginger.Run
             {
                 bool isSolutionSame = mRunSetConfig != null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;
-                if(!isSolutionSame)
-                {
-                    WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList = new ObservableList<DefectSuggestion>();
-                }
+                WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList = new ObservableList<DefectSuggestion>();
                 if (bIsRunsetDirty && !IsCalledFromxUndoBtn)
                 {
                     UserSelectionSaveOrUndoRunsetChanges();
