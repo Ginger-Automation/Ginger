@@ -33,7 +33,7 @@ namespace Ginger.Actions
     public partial class ActScriptEditPage : Page
     {
         public ActionEditPage actp;
-        private ActScript f;
+        private ActScript actScript;
 
         string SHFilesPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\Scripts\");
 
@@ -41,20 +41,20 @@ namespace Ginger.Actions
         public ActScriptEditPage(GingerCore.Actions.ActScript Act)
         {
             InitializeComponent();
-            this.f = Act;            
+            this.actScript = Act;            
             GingerCore.General.FillComboFromEnumObj(ScriptActComboBox, Act.ScriptCommand);
             GingerCore.General.FillComboFromEnumObj(ScriptInterpreterComboBox, Act.ScriptInterpreterType);
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptInterpreterComboBox, ComboBox.SelectedValueProperty, Act, nameof(ActScript.ScriptInterpreterType));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptActComboBox, ComboBox.SelectedValueProperty, Act, nameof(ActScript.ScriptCommand));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, f, nameof(ActScript.ScriptName));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(chkIgnoreScriptErrors, CheckBox.IsCheckedProperty, f, nameof(ActScript.IgnoreStdOutErrors));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, actScript, nameof(ActScript.ScriptName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(chkIgnoreScriptErrors, CheckBox.IsCheckedProperty, actScript, nameof(ActScript.IgnoreStdOutErrors));
 
             ScriptNameComboBox.SelectionChanged += ScriptNameComboBox_SelectionChanged;
 
             ScriptInterPreter.FileExtensions.Add(".exe");
             ScriptInterPreter.Init(Act, nameof(ActScript.ScriptInterpreter), true);
-            f.ScriptPath = SHFilesPath;
+            actScript.ScriptPath = SHFilesPath;
 
             var comboEnumItem = ScriptInterpreterComboBox.Items.Cast<GingerCore.GeneralLib.ComboEnumItem>().Where(x => x.text == ActScript.eScriptInterpreterType.JS.ToString()).FirstOrDefault();
             ScriptInterpreterComboBox.Items.Remove(comboEnumItem);//Removed JS from UI
