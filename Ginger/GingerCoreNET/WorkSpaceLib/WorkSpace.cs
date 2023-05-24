@@ -58,6 +58,9 @@ namespace amdocs.ginger.GingerCoreNET
     // DO NOT ADD STATIC FIELDS
     public class WorkSpace
     {
+        public SolutionAutoSave AppSolutionAutoSave = new SolutionAutoSave();
+        public SolutionRecover AppSolutionRecover = new SolutionRecover();
+
         private static WorkSpace mWorkSpace;
         public static WorkSpace Instance
         {
@@ -198,6 +201,7 @@ namespace amdocs.ginger.GingerCoreNET
                     UserProfile.GingerStatus = eGingerStatus.Closed;
                     UserProfile.UserProfileOperations.SaveUserProfile();
                     AppSolutionAutoSave.CleanAutoSaveFolders();
+                    AppSolutionRecover.CleanUpRecoverFolder();
                 }
 
                 if (WorkSpace.Instance.LocalGingerGrid != null)
@@ -679,6 +683,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+
         public bool DoNotResetWorkspaceArgsOnClose { get; set; }
         public void CloseSolution()
         {
@@ -875,11 +880,6 @@ namespace amdocs.ginger.GingerCoreNET
                 }
             }
         }
-
-
-        public SolutionAutoSave AppSolutionAutoSave = new SolutionAutoSave();
-        public SolutionRecover AppSolutionRecover = new SolutionRecover();
-        public string RecoverFolderPath = null; //???  move to above ? !!!!!!!!!!!
 
         public BusinessFlow GetNewBusinessFlow(string Name, bool setTargetApp = false)
         {

@@ -202,18 +202,7 @@ namespace Ginger.Functionalties
                 {
                     Reporter.ToLog(eLogLevel.WARN, "Failed to delete Auto Save folder", ex);
                 }
-            }
-            if (Directory.Exists(WorkSpace.Instance.RecoverFolderPath))
-            {
-                try
-                {
-                    Directory.Delete(WorkSpace.Instance.RecoverFolderPath, true);
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.WARN, "Failed to delete Recover folder", ex);
-                }
-            }
+            }           
         }
 
     }

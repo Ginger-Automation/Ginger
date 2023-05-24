@@ -209,7 +209,7 @@ namespace GingerCore.ALM
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error reading ALM RQMConfigPackage at: " + Path.Combine(RQMCore.ConfigPackageFolderPath, "RQMSettings.xml"), e);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error reading ALM RQMConfigPackage at: { Path.Combine(RQMCore.ConfigPackageFolderPath, "RQMSettings.xml")}", e);
                 }
             }
             return new Dictionary<string, object>();
@@ -231,13 +231,13 @@ namespace GingerCore.ALM
                 else
                 {
                     //Missing RQMSettings.xml file
-                    Reporter.ToLog(eLogLevel.WARN, "RQM Configuration package not exist in solution, RqmSettings.xml not exist at: " + Path.Combine(CurrRQMConfigPath, "RQMSettings.xml"));
+                    Reporter.ToLog(eLogLevel.WARN, $"RQM Configuration package not exist in solution, RqmSettings.xml not exist at: { Path.Combine(CurrRQMConfigPath, "RQMSettings.xml")}");
                 }
             }
             else
             {
                 //Missing RQM Configurations Folder
-                Reporter.ToLog(eLogLevel.WARN, "RQMServerConfigurationsPackage folder not exist at: " + CurrRQMConfigPath);
+                Reporter.ToLog(eLogLevel.WARN, $"RQMServerConfigurationsPackage folder not exist at: {CurrRQMConfigPath}");
             }
 
             return false;

@@ -87,6 +87,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             browserActElementList.Add(ActBrowserElement.eControlAction.GetMessageBoxText);
             browserActElementList.Add(ActBrowserElement.eControlAction.SetAlertBoxText);
             browserActElementList.Add(ActBrowserElement.eControlAction.GetBrowserLog);
+            browserActElementList.Add(ActBrowserElement.eControlAction.GetConsoleLog);
             browserActElementList.Add(ActBrowserElement.eControlAction.StartMonitoringNetworkLog);
             browserActElementList.Add(ActBrowserElement.eControlAction.GetNetworkLog);
             browserActElementList.Add(ActBrowserElement.eControlAction.StopMonitoringNetworkLog);

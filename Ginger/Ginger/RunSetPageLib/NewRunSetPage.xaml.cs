@@ -258,7 +258,6 @@ namespace Ginger.Run
         public NewRunSetPage(RunSetConfig runSetConfig, eEditMode editMode = eEditMode.ExecutionFlow)//when window opened automatically when running from command line
         {
             InitializeComponent();
-
             //Init
             Init();
 
@@ -415,7 +414,14 @@ namespace Ginger.Run
                     xRunRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
                     xRunRunsetBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
                     xRunRunsetBtn.IsEnabled = false;
-                    xStopRunsetBtn.Visibility = Visibility.Visible;
+                    if (RunSetConfig.GingerRunners.Any(x => x.Executor.IsRunning == true))
+                    {
+                        xStopRunsetBtn.ButtonText = "Stop";
+                        xStopRunsetBtn.ButtonImageType = eImageType.Stop;
+                        xStopRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionStop");
+                        xStopRunsetBtn.IsEnabled = true;
+                        xStopRunsetBtn.Visibility = Visibility.Visible;
+                    }
                     xContinueRunsetBtn.Visibility = Visibility.Collapsed;
                     xResetRunsetBtn.Visibility = Visibility.Collapsed;
                 }
@@ -702,7 +708,6 @@ namespace Ginger.Run
                     xSealightsExpander.IsExpanded = false; //Sealight expand control should collapsed if all 3 Sealights' settings are in ‘Default’ mode.
                 }
             }
-
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xALMDefectsOpening, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
         }
 
@@ -1475,6 +1480,11 @@ namespace Ginger.Run
             {
                 bool isSolutionSame = mRunSetConfig != null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;
+                if(WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null)
+                {
+                    WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Clear();
+                }
+                
                 if (bIsRunsetDirty && !IsCalledFromxUndoBtn)
                 {
                     UserSelectionSaveOrUndoRunsetChanges();
@@ -1513,6 +1523,9 @@ namespace Ginger.Run
 
                     // Init Runset Config Section
                     InitRunSetConfigurations();
+
+                    //init Defect Opeing section
+                    InitALMDefectsOpeningSection();
 
                     //Init Execution History Section
                     InitExecutionHistorySection();
@@ -1904,6 +1917,10 @@ namespace Ginger.Run
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "There are no Running Runners to Stop.");
                 return;
             }
+            xStopRunsetBtn.ButtonText = "Stopping...";
+            xStopRunsetBtn.ButtonImageType = eImageType.Running;
+            xStopRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionStop");
+            xStopRunsetBtn.IsEnabled = false;
 
             WorkSpace.Instance.RunsetExecutor.StopRun();//stops only running runners  
             xRunsetSaveBtn.IsEnabled = true;
