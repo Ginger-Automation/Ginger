@@ -10,7 +10,6 @@ using MailKit.Net.Imap;
 using MailKit.Search;
 using MailKit;
 using MimeKit;
-//using Microsoft.Graph;
 using GingerCore;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
@@ -27,7 +26,7 @@ using System.Threading;
 
 namespace Amdocs.Ginger.CoreNET.GeneralLib
 {
-    public sealed class EmailReadGmailOperations : IEmailReadOperations
+    public sealed class EmailReadGmailOperations : IEmailReadOperations, IDisposable
     {
         MemoryStream ms = new MemoryStream();
         public Task ReadEmails(EmailReadFilters filters, EmailReadConfig config, Action<ReadEmail> emailProcessor)
@@ -97,32 +96,8 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             }
   
             return Task.CompletedTask;
-        }
-
-
-        /// /////////////////////////////////// 
-        
-
-
-        private async void DownloadAttachment(IEnumerable<MimeEntity> atchment, String id)
-        {
-            foreach (var attachment in atchment)
-            {
-
-                String downloadpath = "C:\\NP\\";
-               
-                HeaderList hlist = ((MimePart)attachment).Headers;             
-
-                if (attachment is MimePart)
-                {
-                    
-                    var file = File.Create(downloadpath + ((MimePart)attachment).FileName);
-
-                    await ((MimePart)attachment).Content.DecodeToAsync(ms);
-                }
-
-            }
-        }
+        }      
+       
                                                     
         private void ValidateIMapConfig(EmailReadConfig config)
         {
@@ -163,6 +138,11 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             };
 
 
+        }
+
+        public void Dispose()
+        {
+            this.ms.Dispose();
         }
     }
 }

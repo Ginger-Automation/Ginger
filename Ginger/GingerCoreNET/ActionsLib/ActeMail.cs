@@ -530,9 +530,14 @@ namespace GingerCore.Actions.Communication
             else if (eMailActionType == eEmailActionType.ReadEmail)
             {                
                 if(readMailActionType == ReadEmailActionType.MSGraphAPI)
+                {
                     ReadEmails();
+                }
                 else
+                {
                     ReadGmails();
+                }
+                    
             }
         }
            
