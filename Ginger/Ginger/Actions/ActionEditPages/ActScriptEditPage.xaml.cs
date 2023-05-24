@@ -69,14 +69,14 @@ namespace Ginger.Actions
                 case ActScript.eScriptAct.FreeCommand:
                     ScriptStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                     ScriptDescriptionPanel.Visibility = Visibility.Collapsed;
-                    f.RemoveAllButOneInputParam("Free Command");
-                    f.AddInputValueParam("Free Command");
+                    actScript.RemoveAllButOneInputParam("Free Command");
+                    actScript.AddInputValueParam("Free Command");
                     ScriptNameComboBox.SelectedItem = null;
                     break;
 
                 case ActScript.eScriptAct.Script:
                     ScriptStackPanel.Visibility = System.Windows.Visibility.Visible;
-                    f.RemoveInputParam("Free Command");
+                    actScript.RemoveInputParam("Free Command");
                     break;
             }
         }
@@ -91,17 +91,17 @@ namespace Ginger.Actions
                 {
                     Directory.CreateDirectory(SHFilesPath);
                 }
-                f.ReturnValues.Clear();
-                f.InputValues.Clear();
+                actScript.ReturnValues.Clear();
+                actScript.InputValues.Clear();
 
                 string[] script = File.ReadAllLines(ScriptFile);
                 ScriptDescriptionContent.Content = "";
                 parseScriptHeader(script);
             }
 
-            if (f.InputValues.Count == 0)
+            if (actScript.InputValues.Count == 0)
             {
-                f.AddInputValueParam("Value");
+                actScript.AddInputValueParam("Value");
             }
         }
 
@@ -115,7 +115,7 @@ namespace Ginger.Actions
                 }
                 if (line.Contains("GINGER_$"))
                 {
-                    f.AddOrUpdateInputParamValue(replaceStartWithInput(line), "");
+                    actScript.AddOrUpdateInputParamValue(replaceStartWithInput(line), "");
                 }
             }
             if (String.IsNullOrEmpty(ScriptDescriptionContent.Content.ToString()))
@@ -164,7 +164,7 @@ namespace Ginger.Actions
                 fileEntries = fileEntries.Select(q => q.Replace(SHFilesPath, "")).ToArray();
                 ScriptNameComboBox.ItemsSource = fileEntries;
 
-                if (f.ScriptName == null)
+                if (actScript.ScriptName == null)
                 {
                     ScriptNameComboBox.SelectedValue = fileEntries.FirstOrDefault();
                 }
@@ -172,14 +172,14 @@ namespace Ginger.Actions
         }
         private void chkIgnoreScriptErrorsChecked(object sender, RoutedEventArgs e)
         {
-            f.IgnoreStdOutErrors = true;
-            f.InvokPropertyChanngedForAllFields();
+            actScript.IgnoreStdOutErrors = true;
+            actScript.InvokPropertyChanngedForAllFields();
         }
 
         private void chkIgnoreScriptErrorsUnChecked(object sender, RoutedEventArgs e)
         {
-            f.IgnoreStdOutErrors = false;
-            f.InvokPropertyChanngedForAllFields();
+            actScript.IgnoreStdOutErrors = false;
+            actScript.InvokPropertyChanngedForAllFields();
         }
     }
 }
