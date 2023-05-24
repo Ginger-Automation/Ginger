@@ -345,11 +345,10 @@ namespace GingerCore.ALM.RQM
                 {
                     System.Diagnostics.Debug.WriteLine($"in GetExeResultforAg erExportID :{ erExportID}");
                     ResultInfo resultInfo;
-                    System.Diagnostics.Debug.WriteLine("in GetExeResultforAg before Acitity :" + erExportID);
                     try
                     {
                         ACL_Data_Contract.Activity currentActivity = GetTestCaseFromActivityGroup(activGroup);
-                        System.Diagnostics.Debug.WriteLine("in GetExeResultforAg currentActivity" + JsonConvert.SerializeObject(currentActivity));
+                        System.Diagnostics.Debug.WriteLine($"in GetExeResultforAg currentActivity {JsonConvert.SerializeObject(currentActivity)}");
                         try
                         {
                             // check if executionRecordID exist in RQM but still was not updated in business flow XML
@@ -359,7 +358,7 @@ namespace GingerCore.ALM.RQM
                             {
                                 System.Diagnostics.Debug.WriteLine("in GetExeResultforAg currentExecutionRecord before in if loop");
                                 RQMExecutionRecord currentExecutionRecord = testPlan.RQMExecutionRecords.Where(y => y.RelatedTestCaseRqmID == txExportID).ToList().FirstOrDefault();
-                                System.Diagnostics.Debug.WriteLine("in GetExeResultforAg currentExecutionRecord" + JsonConvert.SerializeObject(currentExecutionRecord));
+                                System.Diagnostics.Debug.WriteLine($"in GetExeResultforAg currentExecutionRecord { JsonConvert.SerializeObject(currentExecutionRecord) }");
                                 if (currentExecutionRecord != null)
                                 {
                                     erExportID = currentExecutionRecord.RQMID;
@@ -369,7 +368,7 @@ namespace GingerCore.ALM.RQM
                                     System.Diagnostics.Debug.WriteLine("in GetExeResultforAg currentExecutionRecord before in else loop");
                                     // if executionRecord not updated and not exists - so create one in RQM and update BussinesFlow object (this may be not saved due not existed "autosave" functionality)
                                     resultInfo = RQMConnect.Instance.RQMRep.CreateExecutionRecordPerActivity(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, bfExportedID, testPlan.Name);
-                                    System.Diagnostics.Debug.WriteLine(" CreateExecutionRecordPerActivity :" + JsonConvert.SerializeObject(resultInfo));
+                                    System.Diagnostics.Debug.WriteLine($" CreateExecutionRecordPerActivity :{ JsonConvert.SerializeObject(resultInfo)}");
                                     if (!currentActivity.ExportedTcExecutionRecId.Equals("0"))
                                     {
                                         string atsID = GetExportedIDString(activGroup.ExternalID, "AtsID");
@@ -378,7 +377,7 @@ namespace GingerCore.ALM.RQM
                                             atsID = string.Empty;
                                         }
                                         erExportID = currentActivity.ExportedTcExecutionRecId.ToString();
-                                        activGroup.ExternalID = "RQMID=" + txExportID + "|RQMScriptID=" + tsExportID + "|RQMRecordID=" + erExportID + "|AtsID=" + atsID;
+                                        activGroup.ExternalID = $"RQMID={txExportID}|RQMScriptID={tsExportID}|RQMRecordID={erExportID}|AtsID={atsID}";
                                         ;
                                     }
                                 }
@@ -394,7 +393,7 @@ namespace GingerCore.ALM.RQM
                                 {
                                     // if executionRecord not updated and not exists - so create one in RQM and update BussinesFlow object (this may be not saved due not existed "autosave" functionality)
                                     resultInfo = RQMConnect.Instance.RQMRep.CreateExecutionRecordPerActivity(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, bfExportedID, testPlan.Name);
-                                    System.Diagnostics.Debug.WriteLine(" CreateExecutionRecordPerActivity :" + JsonConvert.SerializeObject(resultInfo));
+                                    System.Diagnostics.Debug.WriteLine($" CreateExecutionRecordPerActivity :{ JsonConvert.SerializeObject(resultInfo)}");
                                     if (!currentActivity.ExportedTcExecutionRecId.Equals("0"))
                                     {
                                         string atsID = GetExportedIDString(activGroup.ExternalID, "AtsID");
@@ -403,7 +402,7 @@ namespace GingerCore.ALM.RQM
                                             atsID = string.Empty;
                                         }
                                         erExportID = currentActivity.ExportedTcExecutionRecId.ToString();
-                                        activGroup.ExternalID = "RQMID=" + txExportID + "|RQMScriptID=" + tsExportID + "|RQMRecordID=" + erExportID + "|AtsID=" + atsID;
+                                        activGroup.ExternalID = $"RQMID={txExportID}|RQMScriptID={tsExportID}|RQMRecordID={erExportID}|AtsID={atsID}";
                                     }
                                 }
                             }
@@ -412,20 +411,20 @@ namespace GingerCore.ALM.RQM
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to create Execution Record Per Activity - " + currentActivity.EntityName + " in if loop getExeResultforAg= " + ex.InnerException);
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to create Execution Record Per Activity - { currentActivity.EntityName } in if loop getExeResultforAg= { ex.InnerException}");
                             System.Diagnostics.Debug.WriteLine(" in getExeResultforAg :" + JsonConvert.SerializeObject(ex));
                         }
                     }
                     catch(Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to create Execution Record Per Activity - " + ex.InnerException);
-                        System.Diagnostics.Debug.WriteLine(" in getExeResultforAg activity :" + JsonConvert.SerializeObject(ex));
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to create Execution Record Per Activity - { ex.InnerException}");
+                        System.Diagnostics.Debug.WriteLine($" in getExeResultforAg activity :{ JsonConvert.SerializeObject(ex)}");
                     }
                 }
                 //if (string.IsNullOrEmpty(txExportID) || string.IsNullOrEmpty(tsExportID) || string.IsNullOrEmpty(erExportID) || txExportID.Equals("0") || tsExportID.Equals("0") || erExportID.Equals("0"))
                 if (string.IsNullOrEmpty(txExportID) || string.IsNullOrEmpty(erExportID) || txExportID.Equals("0") || erExportID.Equals("0"))
                 {
-                    result = "At " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + ", is missing ExternalID, cannot export RQM TestPlan execution results without Extrnal ID";
+                    result = $"At { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: { businessFlow.Name} { GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) }, is missing ExternalID, cannot export RQM TestPlan execution results without Extrnal ID";
                     return null;
                 }
                 System.Diagnostics.Debug.WriteLine(" in getExeResultforAg after try catch of activity:");
@@ -488,7 +487,7 @@ namespace GingerCore.ALM.RQM
                     }
                     exeResult.ExecutionStep.Add(exeStep);
                 }
-                System.Diagnostics.Debug.WriteLine(" in getExeResultforAg exeResult :" + JsonConvert.SerializeObject(exeResult));
+                System.Diagnostics.Debug.WriteLine($" in getExeResultforAg exeResult :{ JsonConvert.SerializeObject(exeResult)}");
                 return exeResult;
 
             }

@@ -972,7 +972,6 @@ namespace GingerCore.ALM.RQM
                     if (selfPage.Attributes["rel"].Value.ToString() == "self") //verify self link is present
                     {
                         selfLink_ = selfPage.Attributes["href"].Value.ToString();
-                        //baseUri_ = selfLink_.Substring(0, selfLink_.Length - 1);
                         baseUri_ = selfLink_;
                     }
 
@@ -1337,13 +1336,10 @@ namespace GingerCore.ALM.RQM
             List<IProjectDefinitions> rqmProjectsDataList;
             string rqmSserverUrl = ALMCore.DefaultAlmConfig.ALMServerURL + "/";
             LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
-            //IProjectData rqmProjectsData = rqmRep.GetVisibleProjects(loginData);
-            //rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
-            //IProjectDefinitions currentProj = rqmProjectsDataList.Where(prj => prj.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName)).FirstOrDefault();
-            string rqmDomain = RQMCore.ALMProjectGroupName; //currentProj.Prefix;
-            string rqmProject = ALMCore.DefaultAlmConfig.ALMProjectName; //currentProj.ProjectName;
-            string rqmProjectGuid = ALMCore.DefaultAlmConfig.ALMProjectGUID; //currentProj.Guid;
-            //string defectProjectguid = "_PuljAIgqEe269t0S6uVJ-w";
+            string rqmDomain = RQMCore.ALMProjectGroupName;
+            string rqmProject = ALMCore.DefaultAlmConfig.ALMProjectName; 
+            string rqmProjectGuid = ALMCore.DefaultAlmConfig.ALMProjectGUID;
+            
             //------------------------------- Improved solution
 
             string baseUri_ = string.Empty;
@@ -1362,8 +1358,8 @@ namespace GingerCore.ALM.RQM
                 {
                     bw.ReportProgress(totalValues, populatedValue);
                 }
-                //string defectfieldurl = "https://jazz.net/sandbox01-ccm/oslc/context/_PuljAIgqEe269t0S6uVJ-w/shapes/workitems/com.ibm.team.workitem.workItemType.defect";
-                string defectfieldurl = ALMCore.DefaultAlmConfig.DefectFieldAPI; //"https://devrtcserver.etisalat.corp.ae:9443/ccm/oslc/context/_AB8f0D6OEeuvs9HgECIFpw/shapes/workitems/ae.corp.etisalat.workitem.workitemtype.defect";
+                
+                string defectfieldurl = ALMCore.DefaultAlmConfig.DefectFieldAPI;
                 RqmResponseData categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(defectfieldurl),true);
                 XmlDocument categoryTypeList = new XmlDocument();
 
@@ -1407,42 +1403,7 @@ namespace GingerCore.ALM.RQM
                                     categoryTypeItemType = !string.IsNullOrEmpty(node.Attributes["rdf:datatype"].Value) ? node.Attributes["rdf:datatype"].Value.Split("#")[1] : "string";
                                     categoryTypeID = node.InnerText;
                                 }
-                                //if(node.Name.Equals("oslc:range", StringComparison.OrdinalIgnoreCase))
-                                //{
-                                //    string RangeValue = string.Empty;
-                                //    string RangeValueLink = node.Attributes.Count > 0 ? node.Attributes["rdf:resource"].Value : string.Empty;
-                                //    if(!string.IsNullOrEmpty(RangeValueLink))
-                                //    {
-                                //        RqmResponseData RangeData = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData,new Uri(RangeValueLink),true);
-                                //        XmlDocument RangeDataValue = new XmlDocument();
-                                //        if(!string.IsNullOrEmpty(RangeData.responseText))
-                                //        {
-                                //            RangeDataValue.LoadXml(RangeData.responseText);
-                                //            XmlNodeList RangeDatalist = RangeDataValue.GetElementsByTagName("rdf:Description");
-                                //            foreach(XmlNode RangeDatalistItem in RangeDatalist)
-                                //            {
-                                //                XmlNodeList RangeinnerNodes = RangeDatalistItem.ChildNodes;
-                                //                foreach(XmlNode RangeinnerNode in RangeinnerNodes)
-                                //                {
-                                //                    string fieldValue = string.Empty;
-                                //                    string fieldValueId = string.Empty; 
-                                //                    if(RangeinnerNode.Name.Equals("dcterms:title", StringComparison.OrdinalIgnoreCase))
-                                //                    {
-                                //                        fieldValue = RangeinnerNode.InnerText;
-                                //                    }
-                                //                    if(RangeinnerNode.Name.Equals("dcterms:identifier", StringComparison.OrdinalIgnoreCase))
-                                //                    {
-                                //                        fieldValueId = RangeinnerNode.InnerText;
-                                //                    }
-                                //                    if (!string.IsNullOrEmpty(fieldValue))
-                                //                    {
-                                //                        itemfield.PossibleValues.Add(fieldValue);
-                                //                    }
-                                //                }
-                                //            }
-                                //        }
-                                //    }
-                                //}
+                                
                                 if (node.Name.Equals("oslc:defaultValue", StringComparison.OrdinalIgnoreCase))
                                 {
                                     Reporter.ToLog(eLogLevel.DEBUG, $" in  defaultValue : ");
@@ -1564,8 +1525,6 @@ namespace GingerCore.ALM.RQM
                 }
             }
             catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
-
-            //SaveItemFields(fields);
             return fields;
         }
 
