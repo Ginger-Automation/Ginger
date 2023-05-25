@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Applitools;
 using GingerCore.Actions;
 using System.Windows;
 using System.Windows.Controls;
@@ -35,13 +36,16 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = act;
             TextFileNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileOperations.Fields.SourceFilePath), true, true, UCValueExpression.eBrowserType.File);
-            DestinationFolderTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileOperations.Fields.DestinationFolder), true, true, UCValueExpression.eBrowserType.Folder);//eBrowserType.Folder is added to select the folder option while clicking on Browse button
+
+            DestinationFolderTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileOperations.Fields.DestinationFolder), true, true, UCValueExpression.eBrowserType.Folder);
+
             xRunArgumentsTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActFileOperations.Arguments)), true, false);
 
             mAct.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
             GingerCore.General.FillComboFromEnumObj(FileActionMode, mAct.FileOperationMode);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FileActionMode, ComboBox.SelectedValueProperty, mAct, "FileOperationMode");
+            UpdateBrowserTypes();
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
@@ -58,6 +62,14 @@ namespace Ginger.Actions
 
         private void FileActionMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            UpdateBrowserTypes();
+        }
+
+        /// <summary>
+        /// Update browsertype according to selected file action. Some needs file browser and some needs folder browser
+        /// </summary>
+        private void UpdateBrowserTypes()
+        {
             if (FileActionMode.SelectedValue != null)
             {
                 if ((ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.Copy
@@ -66,11 +78,22 @@ namespace Ginger.Actions
                    || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.UnZip)
                 {
                     PanelToWrite.Visibility = Visibility.Visible;
+                    DestinationFolderTextBox.BrowserType = UCValueExpression.eBrowserType.Folder;
                 }
                 else
                 {
                     PanelToWrite.Visibility = Visibility.Collapsed;
+                    DestinationFolderTextBox.BrowserType = UCValueExpression.eBrowserType.File;
+                }
 
+                if ((ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.CheckFolderExists
+                  || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.DeleteDirectoryFiles)
+                {
+                    TextFileNameTextBox.BrowserType = UCValueExpression.eBrowserType.Folder;
+                }
+                else
+                {
+                    TextFileNameTextBox.BrowserType = UCValueExpression.eBrowserType.File;
                 }
 
                 if ((ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.RunCommand
@@ -82,10 +105,8 @@ namespace Ginger.Actions
                 {
                     xPanelRunArguments.Visibility = Visibility.Collapsed;
                 }
+
             }
-
-
         }
-
     }
 }
