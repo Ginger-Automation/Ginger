@@ -512,7 +512,7 @@ namespace Ginger.Run
                         {
                             if (doContinueRun == false)
                             {
-                                GR.Executor.RunRunner();
+                                GR.Executor.RunRunner(standAloneRunnerExecution: false);
                             }
                             else
                                 if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
@@ -542,7 +542,7 @@ namespace Ginger.Run
 
                             if (doContinueRun == false)
                             {
-                                GR.Executor.RunRunner();
+                                GR.Executor.RunRunner(standAloneRunnerExecution: false);
                             }
                             else
                             {
@@ -554,7 +554,7 @@ namespace Ginger.Run
                                 }
                                 else if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)//continue the runners flow
                                 {
-                                    GR.Executor.RunRunner();
+                                    GR.Executor.RunRunner(standAloneRunnerExecution: false);
                                 }
                             }
 

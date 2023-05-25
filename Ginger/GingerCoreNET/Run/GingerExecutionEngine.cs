@@ -402,11 +402,11 @@ namespace Ginger.Run
 
         public ObservableList<BusinessFlow> BusinessFlows { get; set; } = new ObservableList<BusinessFlow>();
 
-        public async Task<int> RunRunnerAsync()
+        public async Task<int> RunRunnerAsync(bool standAloneRunnerExecution = true)
         {
             var result = await Task.Run(() =>
             {
-                RunRunner();
+                RunRunner(standAloneRunnerExecution: standAloneRunnerExecution);
                 return 1;
             });
             return result;
@@ -415,7 +415,7 @@ namespace Ginger.Run
 
 
 
-        public void RunRunner(bool doContinueRun = false)
+        public void RunRunner(bool doContinueRun = false, bool standAloneRunnerExecution = true)
         {
             bool runnerExecutionSkipped = false;
             try
@@ -554,7 +554,7 @@ namespace Ginger.Run
                     if (!mStopRun)//not on stop run
                     {
                         CloseAgents();
-                        if (mGingerRunner.ProjEnvironment != null)
+                        if (mGingerRunner.ProjEnvironment != null && standAloneRunnerExecution)
                         {
                             //needed for db close connection
                             foreach (EnvApplication ea in mGingerRunner.ProjEnvironment.Applications)
