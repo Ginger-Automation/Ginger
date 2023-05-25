@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -23,6 +23,9 @@ namespace Amdocs.Ginger.Common
         string Value { get; set; }
         string ValueCalculated { get; }
         bool DecryptFlag { get; set; }
+
+        //only for password variables and encrypted variables, it will hold encrypted value
+        string EncryptedValue { get; }
 
         string Calculate(string expression);
     }

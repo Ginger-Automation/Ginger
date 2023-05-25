@@ -550,7 +550,7 @@ namespace GingerWPF.TreeViewItemsLib
             StackPanel stack = new StackPanel();
             stack.Orientation = Orientation.Horizontal;
 
-            if (WorkSpace.Instance.SourceControl != null)
+            if (WorkSpace.Instance.SourceControl != null && WorkSpace.Instance.UserProfile.ShowSourceControlStatusIcon)
             {
                 // Source control image
                 ImageMakerControl sourceControlImage = new ImageMakerControl();
@@ -623,7 +623,7 @@ namespace GingerWPF.TreeViewItemsLib
             StackPanel stack = new StackPanel();
             stack.Orientation = Orientation.Horizontal;
 
-            if (WorkSpace.Instance.SourceControl != null)
+            if (WorkSpace.Instance.SourceControl != null && WorkSpace.Instance.UserProfile.ShowSourceControlStatusIcon)
             {
                 // Source control image
                 ImageMakerControl sourceControlImage = new ImageMakerControl();

@@ -131,6 +131,21 @@ namespace GingerCore
 
 
         public bool DecryptFlag { get; set; } = false;
+
+        private string mEncryptedValue = null;
+
+
+        public string EncryptedValue
+        {
+            get
+            {
+                if (mEncryptedValue == null)
+                {
+                    return mValueCalculated;
+                }
+                return mEncryptedValue;
+            }
+        }
         private string mValueCalculated = null;
 
 
@@ -206,20 +221,21 @@ namespace GingerCore
                 return;
             }
             mValueCalculated = Value;
+            mEncryptedValue = null;
 
             //Do the operation based on order
             //First replace Vars - since they can appear in other func like VBS v1+v2 or VBS mid(v1,1,4);
-
-            ReplaceGlobalParameters();
-
-            //replace environment parameters which embedded into functions like VBS
-            ReplaceEnvVars();
-
-            CalculateComplexFormulas();
-            ReplaceDataSources();
-            ProcessGeneralFuncations();
-            EvaluateFlowDetails();
-            EvaluateCSharpFunctions();
+            if (mValueCalculated.Contains('{'))
+            {
+                ReplaceGlobalParameters();
+                //replace environment parameters which embedded into functions like VBS
+                ReplaceEnvVars();
+                CalculateComplexFormulas();
+                ReplaceDataSources();
+                ProcessGeneralFuncations();
+                EvaluateFlowDetails();
+                EvaluateCSharpFunctions();
+            }
             if (!string.IsNullOrEmpty(SolutionFolder))
             {
 
@@ -910,7 +926,7 @@ namespace GingerCore
                         DataSource.RunQuery("INSERT INTO " + DSTable + "(GINGER_USED) VALUES ('False')");
                         dt = DataSource.GetQueryOutput(Query);
                     }
-                    if (dt.Rows.Count == 0)
+                    if (dt == null || dt.Rows.Count == 0)
                     {
                         mValueCalculated = "No Row Found";
                         return;
@@ -1361,8 +1377,12 @@ namespace GingerCore
 
                     if (DecryptFlag == true && GP.Encrypt == true)
                     {
-                        String strValuetoPass = EncryptionHandler.DecryptwithKey(GP.Value);
-                        if (!string.IsNullOrEmpty(strValuetoPass)) { mValueCalculated = mValueCalculated.Replace(p, strValuetoPass); }
+                        string strValuetoPass = EncryptionHandler.DecryptwithKey(GP.Value);
+                        if (!string.IsNullOrEmpty(strValuetoPass))
+                        { 
+                            mValueCalculated = mValueCalculated.Replace(p, strValuetoPass);
+                            mEncryptedValue = GP.Value;
+                        }
                         else
                         {
                             mValueCalculated = mValueCalculated.Replace(p, ParamValue);
@@ -1567,8 +1587,12 @@ namespace GingerCore
                 {
                     if (vb is VariablePasswordString)
                     {
-                        string strValuetoPass;
-                        strValuetoPass = EncryptionHandler.DecryptwithKey(vb.Value);
+                        string strValuetoPass = String.Empty;
+                        if (DecryptFlag)
+                        {
+                            strValuetoPass = EncryptionHandler.DecryptwithKey(vb.Value);
+                            mEncryptedValue = vb.Value;
+                        }
                         if (!string.IsNullOrEmpty(strValuetoPass))
                         {
                             VarValue = strValuetoPass;

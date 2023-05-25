@@ -702,9 +702,16 @@ namespace GingerWPF.BusinessFlowsLib
                     xRunFlowBtn.ButtonText = "Running";
                     xRunFlowBtn.ToolTip = "Execution is in progress";
                     xRunFlowBtn.IsEnabled = false;
-                    xStopRunBtn.Visibility = Visibility.Visible;
                     xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
                     xRunFlowBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+
+                    xStopRunBtn.ButtonImageType = eImageType.Stop;
+                    xStopRunBtn.ButtonText = "Stop";
+                    xStopRunBtn.ToolTip = "Stop Execution";
+                    xStopRunBtn.IsEnabled = true;
+                    xStopRunBtn.Visibility = Visibility.Visible;
+                    xStopRunBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionStop");
+
                     xEnvironmentComboBox.IsEnabled = false;
                     if (mApplicationAgentsMapPage != null)
                     {
@@ -762,6 +769,31 @@ namespace GingerWPF.BusinessFlowsLib
             });
         }
 
+        private void xRunFlowBtn_UpdateDuringAnalyzing()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xRunFlowBtn.ButtonImageType = eImageType.Running;
+                xRunFlowBtn.ButtonText = "Analyzing...";
+                xRunFlowBtn.ToolTip = "Analyzing in progress";
+                xRunFlowBtn.IsEnabled = false;
+                xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
+                xRunFlowBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+            });
+        }
+
+        private void xStopRunBtn_UpdateDuringStopping()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xStopRunBtn.ButtonImageType = eImageType.Running;
+                xStopRunBtn.ButtonText = "Stopping...";
+                xStopRunBtn.ToolTip = "Stopping execution";
+                xStopRunBtn.IsEnabled = false;
+                xStopRunBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionStop");
+            });
+        }
+
         private bool CheckIfExecutionIsInProgress()
         {
             if (mExecutionIsInProgress)
@@ -778,6 +810,7 @@ namespace GingerWPF.BusinessFlowsLib
             try
             {
                 mExecutionEngine.StopRun();
+                xStopRunBtn_UpdateDuringStopping();
                 this.Dispatcher.Invoke(() =>
                 {
                     xContinueRunBtn.Visibility = Visibility.Visible;
@@ -881,6 +914,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     //Run Analyzer check if not including any High or Critical issues before execution
                     Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                    xRunFlowBtn_UpdateDuringAnalyzing();
                     try
                     {
                         AnalyzerPage analyzerPage = new AnalyzerPage();
@@ -897,6 +931,7 @@ namespace GingerWPF.BusinessFlowsLib
                     }
                     finally
                     {
+                        SetUIElementsBehaverDuringExecution();
                         Reporter.HideStatusMessage();
                     }
                 }
