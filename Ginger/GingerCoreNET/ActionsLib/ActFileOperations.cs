@@ -284,9 +284,12 @@ namespace GingerCore.Actions
                         return;
                     }
                     if (System.IO.File.Exists(calculatedSourceFilePath))
-                    {
-                        if (!System.IO.Directory.Exists(DestinationFolder))
+                    {                        
+                        string filename = Path.GetFileNameWithoutExtension(calculatedSourceFilePath);                       
+                        DestinationFolder = $"{ DestinationFolder}\\{filename}\\"; // Creating the destination folder name for the unzip operation
+                        if (!System.IO.Directory.Exists(DestinationFolder)) 
                         {
+                           
                             System.IO.Directory.CreateDirectory(DestinationFolder);
                         }
                         System.IO.Compression.ZipFile.ExtractToDirectory(calculatedSourceFilePath, DestinationFolder);
@@ -331,14 +334,14 @@ namespace GingerCore.Actions
                 else
                 {
                     base.ExInfo = e.Message;
-                    base.Error = "Failed to run File Operation on file " + fileName;
+                    base.Error = $"Failed to run File Operation on file {fileName}";
                 }
             }
         }
 
         private void SetupDestinationfolders()
         {
-            string calculatedDestinationPath = GetInputParamCalculatedValue(Fields.DestinationFolder);
+            string calculatedDestinationPath = $"{GetInputParamCalculatedValue(Fields.DestinationFolder)}\\";
 
             calculatedDestinationPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedDestinationPath);
             DestinationFolder = System.IO.Path.GetDirectoryName(calculatedDestinationPath);
