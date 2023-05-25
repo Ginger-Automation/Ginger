@@ -323,14 +323,14 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             string uname = name;
             try
             {
-                if (elements.Where(p => p.ElementName == name).Count() > 0)
+                if (elements.Where(p => p.ElementName == name).Any())
                 {
                     bool isFound = false;
                     int count = 2;
                     while (!isFound)
                     {
                         string postfix = string.Format("{0}_{1}", name, count);
-                        if (elements.Where(p => p.ElementName == postfix).Count() > 0)
+                        if (elements.Where(p => p.ElementName == postfix).Any())
                         {
                             count++;
                         }

@@ -447,7 +447,7 @@ namespace Ginger.Run
         private void Businessflow_ClickAutomate(object sender, RoutedEventArgs e)
         {
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
-            BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == bf.Guid).FirstOrDefault();
+            BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(bf.Guid);
             if (actualBf != null)
             {
                 actualBf.StartDirtyTracking();

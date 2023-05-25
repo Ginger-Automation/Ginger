@@ -69,7 +69,7 @@ namespace Ginger.Import
 
                 foreach (HtmlNode row in rows)
                 {
-                    if (row.Descendants("title").Count() > 0)
+                    if (row.Descendants("title").Any())
                     {
                         if (bf != null)
                         {

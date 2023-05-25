@@ -4532,7 +4532,7 @@ namespace GingerCore.Drivers
             htmlDoc.LoadHtml(documentContents);
             IEnumerable<HtmlNode> htmlElements = htmlDoc.DocumentNode.Descendants().Where(x => !x.Name.StartsWith("#"));
 
-            if (htmlElements.Count() != 0)
+            if (htmlElements.Any())
             {
                 foreach (HtmlNode htmlElemNode in htmlElements)
                 {
@@ -4660,7 +4660,7 @@ namespace GingerCore.Drivers
             }
 
             int pomActivityIndex = 1;
-            if (formElementsList.Count() != 0)
+            if (formElementsList.Any())
             {
                 foreach (HtmlNode formElement in formElementsList)
                 {
@@ -5281,7 +5281,7 @@ namespace GingerCore.Drivers
             {
                 string[] xpathSpliter = new string[] { "/" };
                 string[] elementsTypesPath = xpath.Split(xpathSpliter, StringSplitOptions.RemoveEmptyEntries);
-                if (elementsTypesPath.Count() == 0)
+                if (!elementsTypesPath.Any())
                 {
                     return;
                 }
@@ -7472,7 +7472,7 @@ namespace GingerCore.Drivers
 
                 case ActBrowserElement.eControlAction.OpenURLNewTab:
                     string url = "";
-                    if ((act.GetInputParamValue(ActBrowserElement.Fields.URLSrc).Equals(ActBrowserElement.eURLSrc.UrlPOM.ToString())))
+                    if (!string.IsNullOrEmpty(act.GetInputParamValue(ActBrowserElement.Fields.URLSrc)) && act.GetInputParamValue(ActBrowserElement.Fields.URLSrc).Equals(ActBrowserElement.eURLSrc.UrlPOM.ToString()))
                     {
                         string POMGuid = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.PomGUID);
 
@@ -7511,7 +7511,7 @@ namespace GingerCore.Drivers
 
                 case ActBrowserElement.eControlAction.GotoURL:
                     string gotoUrl = "";
-                    if ((act.GetInputParamValue(ActBrowserElement.Fields.URLSrc).Equals(ActBrowserElement.eURLSrc.UrlPOM.ToString())))
+                    if (!string.IsNullOrEmpty(act.GetInputParamValue(ActBrowserElement.Fields.URLSrc)) && act.GetInputParamValue(ActBrowserElement.Fields.URLSrc).Equals(ActBrowserElement.eURLSrc.UrlPOM.ToString()))
                     {
                         string POMGuid = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.PomGUID);
 
@@ -9430,7 +9430,7 @@ namespace GingerCore.Drivers
 
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
 
-                if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count() > 0)
+                if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Any())
                 {
                     return true;
                 }

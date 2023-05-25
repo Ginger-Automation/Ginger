@@ -144,7 +144,7 @@ namespace GingerCore.Actions.MainFrame
                             }
                         }
 
-                        if (CaretValueList.Any(av => av.Param == aiv.Param) || CaretValueList.Count() == 0)
+                        if (CaretValueList.Any(av => av.Param == aiv.Param) || !CaretValueList.Any())
                         {
                             mCaretValueList.Add(aiv);
                         }

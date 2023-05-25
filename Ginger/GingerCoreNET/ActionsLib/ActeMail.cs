@@ -732,7 +732,7 @@ namespace GingerCore.Actions.Communication
 
             foreach (ReadEmail.Attachment attachment in email.Attachments)
             {
-                if (expectedContentTypes != null && expectedContentTypes.Count() > 0 &&
+                if (expectedContentTypes != null && expectedContentTypes.Any() &&
                     !expectedContentTypes.Any(expectedContentType => expectedContentType.Equals(attachment.ContentType)))
                 {
                     continue;

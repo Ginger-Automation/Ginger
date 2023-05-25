@@ -82,7 +82,7 @@ namespace Ginger.AnalyzerLib
                     if (!checkedGuidList.Contains(BF.Guid))//check if it already was analyzed
                     {
                         checkedGuidList.Add(BF.Guid);
-                        BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == BF.Guid).FirstOrDefault();
+                        BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(BF.Guid);
                         if (actualBf != null)
                         {
                             RunBusinessFlowAnalyzer(actualBf, issuesList, includeMandatoryInputsAnalyze: false);
