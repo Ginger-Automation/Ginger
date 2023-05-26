@@ -91,6 +91,7 @@ namespace Ginger.Run
         public void ReloadData()
         {
             grdDefectSuggestions.DataSourceList = WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList;
+            DefectProfilesCombo_Binding();
         }
 
         private void RefreshGrid(object sender, RoutedEventArgs e)
