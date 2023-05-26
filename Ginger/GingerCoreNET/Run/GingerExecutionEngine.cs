@@ -554,7 +554,7 @@ namespace Ginger.Run
                     if (!mStopRun)//not on stop run
                     {
                         CloseAgents();
-                        if (mGingerRunner.ProjEnvironment != null)
+                        if (mGingerRunner.ProjEnvironment != null && RunLevel == eRunLevel.Runner)
                         {
                             //needed for db close connection
                             foreach (EnvApplication ea in mGingerRunner.ProjEnvironment.Applications)
