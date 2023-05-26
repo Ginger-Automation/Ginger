@@ -151,6 +151,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         }
         public override void StartDriver()
         {
+
             if (JavaAgentHost == null || JavaAgentHost.Length == 0)
             {
                 Reporter.ToLog(eLogLevel.WARN, "Missing JavaAgentHost config value- Please verify Agent config parameter JavaAgentHost is not empty");
@@ -252,6 +253,8 @@ namespace GingerCore.Drivers.JavaDriverLib
                         Thread.Sleep(500);
                     }
                 }
+                //if the agent loading was cancelled for some reason, we need to reset the flag so that next time the loading can continue normally
+                cancelAgentLoading = false;
                 //Connect Failed after x retry...   
                 IsTryingToConnect = false;
             });
@@ -460,11 +463,16 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             while (!response.IsOK())
             {
+                if (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)
+                {
+                    break;
+                }
                 response = Send(Request);
                 if (St.ElapsedMilliseconds > waitTime * 1000)
                 {
                     break;
                 }
+                Thread.Sleep(500);
             }
             St.Stop();
             return response;
@@ -820,7 +828,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     st.Start();
                     while (!(sResponse.Contains("True")))
                     {
-                        Thread.Sleep(100);
+                        Thread.Sleep(200);
                         PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
                         sResponse = PL.GetValueString();
 
@@ -843,7 +851,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                         st.Start();
                         while (!(sResponse.Contains("False")))
                         {
-                            Thread.Sleep(100);
+                            Thread.Sleep(200);
                             PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
                             sResponse = PL.GetValueString();
                             if (st.ElapsedMilliseconds > MaxTimeout * 1000)

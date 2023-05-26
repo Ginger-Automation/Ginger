@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -102,7 +102,7 @@ namespace Amdocs.Ginger.Common
         ReportTemplateNotFound, DriverNotSupportingWindowExplorer, AgentNotRunningAfterWaiting,
         FoundDuplicateAgentsInRunSet, StaticErrorMessage, StaticWarnMessage, StaticInfoMessage, StaticQuestionsMessage, ApplicationAgentNotMapped,
         ActivitiesGroupAlreadyMappedToTC, ExportItemToALMFailed, AskIfToSaveBFAfterExport,
-        BusinessFlowAlreadyMappedToTC, AskIfSureWantToClose, AskIfSureWantToRestart, WindowClosed, TargetWindowNotSelected,
+        BusinessFlowAlreadyMappedToTC, AskIfSureWantToClose, AskIfSureWantToCloseWithoutNote, AskIfSureWantToRestart, AskIfSureWantToRestartWithoutNote, WindowClosed, TargetWindowNotSelected,
         ChangingEnvironmentParameterValue, IFSaveChangesOfBF, AskIfToLoadExternalFields, WhetherToOpenSolution,
         AutomationTabExecResultsNotExists, FolderNamesAreTooLong, FolderSizeTooSmall, DefaultTemplateCantBeDeleted, FileNotExist, ExecutionsResultsProdIsNotOn, ExecutionsResultsNotExists, ExecutionsResultsToDelete, AllExecutionsResultsToDelete, FilterNotBeenSet, RetreivingAllElements, ClickElementAgain, CloseFilterPage,
         BusinessFlowNeedTargetApplication, HTMLReportAttachment, ImageSize,
@@ -163,7 +163,8 @@ namespace Amdocs.Ginger.Common
         UploadSolutionInfo,
         UploadSolutionToSourceControl,
         UploadSolutionFailed,
-        SourceControlBranchNameEmpty, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace
+        SourceControlBranchNameEmpty, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace,
+        DeleteRecoverFolderWarn
     }
 
     public static class UserMsgsPool
@@ -208,7 +209,9 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticInfoMessage, new UserMsg(eUserMsgType.INFO, "Info", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticQuestionsMessage, new UserMsg(eUserMsgType.QUESTION, "Question", "{0}", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToClose, new UserMsg(eUserMsgType.QUESTION, "Close Ginger", "Are you sure you want to close Ginger?" + Environment.NewLine + Environment.NewLine + "Notice: Unsaved changes won't be saved.", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToCloseWithoutNote, new UserMsg(eUserMsgType.QUESTION, "Close Ginger", "Are you sure you want to close Ginger?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToRestart, new UserMsg(eUserMsgType.QUESTION, "Restart Ginger", "Are you sure you want to Restart Ginger?" + Environment.NewLine + Environment.NewLine + "Notice: Unsaved changes won't be saved.", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToRestartWithoutNote, new UserMsg(eUserMsgType.QUESTION, "Restart Ginger", "Are you sure you want to Restart Ginger?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.BusinessFlowNeedTargetApplication, new UserMsg(eUserMsgType.WARN, "Target Application Not Selected", "Target Application Not Selected! Please Select at least one Target Application", eUserMsgOption.OK, eUserMsgSelection.None));
 
@@ -783,6 +786,11 @@ namespace Amdocs.Ginger.Common
                eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DataSourceSheetNameHasSpace, new UserMsg(eUserMsgType.ERROR, "Sheet Name Cannot Contain Space", " Sheet Name cannot contain space, please remove space and try again", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DataSourceColumnHasSpace, new UserMsg(eUserMsgType.ERROR, "Column Name Cannot Contain Space", " Column Name [ {0} ] cannot contain space, please remove space and try again", eUserMsgOption.OK, eUserMsgSelection.OK));
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.DeleteRecoverFolderWarn, new UserMsg(eUserMsgType.WARN, "Delete Unrecovered files?",
+   "Unerecovered items will be deleted. Do you want to continue?",
+   eUserMsgOption.YesNo, eUserMsgSelection.No));
+
         }
     }
 }
