@@ -163,7 +163,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     commandParam = commandParam + " -w" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.PasswordWSSType) + Quotationmark;
                 }
                 //Sets system property with name=value
-                if (mAct.SystemProperties.Count() > 0)
+                if (mAct.SystemProperties.Any())
                 {
                     foreach (ActInputValue row in mAct.SystemProperties)
                     {
@@ -171,7 +171,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     }
                 }
                 //Sets global property with name=value
-                if (mAct.GlobalProperties.Count() > 0)
+                if (mAct.GlobalProperties.Any())
                 {
                     foreach (ActInputValue row in mAct.GlobalProperties)
                     {

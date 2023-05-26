@@ -83,31 +83,31 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 switch (itemToCheck.ItemType)
                 {
                     case GlobalSolution.eImportItemType.Environments:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ProjEnvironment>(repositoryItem.Guid);
                         break;
                     case GlobalSolution.eImportItemType.DataSources:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<DataSourceBase>(repositoryItem.Guid);
                         break;
                     case GlobalSolution.eImportItemType.SharedRepositoryActivitiesGroup:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ActivitiesGroup>(repositoryItem.Guid);
                         break;
                     case GlobalSolution.eImportItemType.SharedRepositoryActivities:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(repositoryItem.Guid);
                         break;
                     case GlobalSolution.eImportItemType.SharedRepositoryActions:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Act>(repositoryItem.Guid);
                         break;
                     case GlobalSolution.eImportItemType.SharedRepositoryVariables:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<VariableBase>(repositoryItem.Guid);
                         break;
                     case GlobalSolution.eImportItemType.APIModels:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationAPIModel>(repositoryItem.Guid);
                         break;
                     case GlobalSolution.eImportItemType.POMModels:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(repositoryItem.Guid);
                         break;
                     case GlobalSolution.eImportItemType.Agents:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Agent>(repositoryItem.Guid);
                         break;
                     default:
                         //Nothing to do
@@ -118,7 +118,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     isDuplicate = true;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 isDuplicate = false;
             }
@@ -147,28 +147,28 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 switch (itemToCheck.ItemType)
                 {
                     case GlobalSolution.eImportItemType.Environments:
-                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Guid == repoItemToCheck.Guid).FirstOrDefault();
+                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ProjEnvironment>(repoItemToCheck.Guid);
                         break;
                     case GlobalSolution.eImportItemType.DataSources:
-                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().Where(x => x.Guid == repoItemToCheck.Guid).FirstOrDefault();
+                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<DataSourceBase>(repoItemToCheck.Guid);
                         break;
                     case GlobalSolution.eImportItemType.SharedRepositoryActivitiesGroup:
-                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>().Where(x => x.Guid == repoItemToCheck.Guid).FirstOrDefault();
+                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ActivitiesGroup>(repoItemToCheck.Guid);
                         break;
                     case GlobalSolution.eImportItemType.SharedRepositoryActivities:
-                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().Where(x => x.Guid == repoItemToCheck.Guid).FirstOrDefault();
+                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(repoItemToCheck.Guid);
                         break;
                     case GlobalSolution.eImportItemType.SharedRepositoryActions:
-                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>().Where(x => x.Guid == repoItemToCheck.Guid).FirstOrDefault();
+                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Act>(repoItemToCheck.Guid);
                         break;
                     case GlobalSolution.eImportItemType.SharedRepositoryVariables:
-                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>().Where(x => x.Guid == repoItemToCheck.Guid).FirstOrDefault();
+                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<VariableBase>(repoItemToCheck.Guid);
                         break;
                     case GlobalSolution.eImportItemType.APIModels:
-                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == repoItemToCheck.Guid).FirstOrDefault();
+                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationAPIModel>(repoItemToCheck.Guid);
                         break;
                     case GlobalSolution.eImportItemType.POMModels:
-                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(x => x.Guid == repoItemToCheck.Guid).FirstOrDefault();
+                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(repoItemToCheck.Guid);
                         break;
                 }
 

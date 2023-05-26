@@ -265,7 +265,7 @@ namespace Ginger.Run
         {
             try
             {
-                BusinessFlow originalBF = (from bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where bf.Guid == mBusinessFlow.Guid select bf).FirstOrDefault();
+                BusinessFlow originalBF = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(mBusinessFlow.Guid);
                 if (originalBF == null)
                 {
                     originalBF = (from bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where bf.Name == mBusinessFlow.Name select bf).FirstOrDefault();
@@ -498,7 +498,7 @@ namespace Ginger.Run
         }
         private void UpdateFlowControlTabVisual()
         {
-            bool b = mBusinessFlow.BFFlowControls.Count() > 0;
+            bool b = mBusinessFlow.BFFlowControls.Any();
             SetTabOnOffSign(FlowControlTab, b);
             if (b)
             {

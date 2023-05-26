@@ -326,7 +326,7 @@ namespace GingerCore.ALM.QCRestAPI
                                     }
 
                                     //update the TC general status based on the activities status collection.                                
-                                    if (stepsStatuses.Where(x => x == "Failed").Count() > 0)
+                                    if (stepsStatuses.Where(x => x == "Failed").Any())
                                     {
                                         currentRun.Status = "Failed";
                                         currentRun.ElementsField["status"] = "Failed";

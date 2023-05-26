@@ -619,7 +619,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (WorkSpace.Instance.Solution != null && mBusinessFlow != null)
             {
                 //First we check if biz flow have target apps if not add one based on solution, fast convert for old or deleted
-                if (mBusinessFlow.TargetApplications.Count() == 0)
+                if (!mBusinessFlow.TargetApplications.Any())
                 {
                     if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.MainApplication))
                     {
@@ -1037,7 +1037,7 @@ namespace GingerWPF.BusinessFlowsLib
             // set errorhandler execution status
             actionToExecute.ErrorHandlerExecuted = false;
 
-            if (parentActivity.Acts.Count() == 0 && !skipInternalValidations)
+            if (!parentActivity.Acts.Any() && !skipInternalValidations)
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to Run.");
                 return;
@@ -1260,7 +1260,7 @@ namespace GingerWPF.BusinessFlowsLib
                 }
             }
             var dirtyLinkedActivities = mBusinessFlow.Activities.Where(x => x.IsLinkedItem && x.EnableEdit);
-            if (dirtyLinkedActivities.Count() > 0)
+            if (dirtyLinkedActivities.Any())
             {
                 foreach (Activity dirtyLinkedActivity in dirtyLinkedActivities)
                 {

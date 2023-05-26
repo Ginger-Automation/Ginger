@@ -198,7 +198,7 @@ namespace GingerCore.SourceControl
 
                 using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
                 {
-                    if (Path == SolutionFolder && repo.RetrieveStatus().Count() != 0)
+                    if (Path == SolutionFolder && repo.RetrieveStatus().Any())
                     {
                         return SourceControlFileInfo.eRepositoryItemStatus.Modified;
                     }

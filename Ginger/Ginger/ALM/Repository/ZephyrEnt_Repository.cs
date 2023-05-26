@@ -438,7 +438,7 @@ namespace Ginger.ALM.Repository
 
         public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<object> selectedTestSets)
         {
-            if (selectedTestSets != null && selectedTestSets.Count() > 0)
+            if (selectedTestSets != null && selectedTestSets.Any())
             {
                 ObservableList<ZephyrEntPhaseTreeItem> testSetsItemsToImport = new ObservableList<ZephyrEntPhaseTreeItem>();
                 foreach (ZephyrEntPhaseTreeItem testSetItem in selectedTestSets)
