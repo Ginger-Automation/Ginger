@@ -27,7 +27,7 @@
         <StackPanel Orientation="Horizontal" Name="stkFileContents" Grid.Row="2">
             <Label x:Name="FileContent" Style="{StaticResource @InputFieldLabelStyle}"  Width="260" >Template File Content</Label>
             <StackPanel x:Name="stkXmlFileNameOrContents" Orientation="Horizontal" Grid.Column="1" >
-                <Actions:UCValueExpression x:Name="XMLFileTextBox" ToolTip="Excel file full/relative path" Width="600*"/>
+                <Actions:UCValueExpression x:Name="XMLFileTextBox" ToolTip="Excel file full/relative path" MinWidth="600"/>
                 <Button x:Name="BrowseFileButton" Style="{StaticResource @InputButtonStyle}" Content="Browse" Click="BrowseButton_Click" Visibility="Collapsed" />
             </StackPanel>
         </StackPanel>
