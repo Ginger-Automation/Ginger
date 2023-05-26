@@ -141,7 +141,7 @@ namespace Ginger.ApiModelsFolder
                             AIV.Param = AMDP.PlaceHolder;
                             AIV.Description = AMDP.Description;
                             string OldValue = string.Empty;
-                            if (OldList != null && OldList.Count() > 0)
+                            if (OldList != null && OldList.Any())
                             {
                                 EnhancedActInputValue oldAIV = OldList.Where(x => x.ParamGuid == AMDP.Guid).FirstOrDefault();
                                 if (oldAIV != null)

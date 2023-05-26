@@ -171,7 +171,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         public void AddAPIModelFromDocument(object sender, RoutedEventArgs e)
         {
-            if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(p => p.Platform == ePlatformType.WebServices).Count() > 0)
+            if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(p => p.Platform == ePlatformType.WebServices).Any())
             {
                 mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
                 WizardWindow.ShowWizard(new AddAPIModelWizard(mAPIModelFolder), 1000);

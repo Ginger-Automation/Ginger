@@ -615,7 +615,7 @@ namespace Ginger.Actions.WebServices
 
                 else
                 {
-                    if (mAct.DynamicElements.Where(x => x.Param.Equals(SoapSecurityContent.ElementAt(i))).Count() == 0)
+                    if (!mAct.DynamicElements.Where(x => x.Param.Equals(SoapSecurityContent.ElementAt(i))).Any())
                     {
                         mAct.DynamicElements.Add(new ActInputValue() { Param = SoapSecurityContent.ElementAt(i) });
                     }

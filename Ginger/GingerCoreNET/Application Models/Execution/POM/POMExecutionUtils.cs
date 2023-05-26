@@ -221,7 +221,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             var passedLocator = GetCurrentPOMElementInfo().Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed);
 
 
-            if (passedLocator == null || passedLocator.Count() == 0)
+            if (passedLocator == null || !passedLocator.Any())
             {
                 if (ExecutedFrom == eExecutedFrom.Run)
                 {
