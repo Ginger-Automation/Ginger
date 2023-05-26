@@ -850,7 +850,9 @@ namespace GingerCore.Actions
                     else
                     {
 
-                        var processlist = Process.GetProcesses().Where(x => processNames.Contains(x.ProcessName.ToLower()));
+                        var processlist = Process.GetProcesses()
+                            .Where(process => processNames.Any(name => process.ProcessName.Contains(name, StringComparison.OrdinalIgnoreCase)));
+
                         List<Process> matchingProcessList = new List<Process>();
 
                         foreach (Process process in processlist)
