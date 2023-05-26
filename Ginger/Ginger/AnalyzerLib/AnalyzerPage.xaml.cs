@@ -94,17 +94,17 @@ namespace Ginger.AnalyzerLib
         {
             IssuesCounterLabel.Content = "Total Issues: ";
             IssuesCountLabel.Content = mIssues.Count();
-            if ((mIssues.Where(x => (x.Severity.ToString() == "High")).Count()) > 0 || (mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count()) > 0)
+            if (mIssues.Where(x => x.Severity.ToString() == "High").Any()|| mIssues.Where(x => x.Severity.ToString() == "Critical").Any())
             {
                 CriticalAndHighIssuesLabel.Content = "Total High & Critical Issues: ";
                 CriticalAndHighIssuesLabelCounter.Content = (mIssues.Where(x => (x.Severity.ToString() == "High")).Count() + mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count());
                 CriticalAndHighIssuesLabelCounter.Foreground = new SolidColorBrush(Colors.Red);
                 CriticalAndHighIssuesLabel.Visibility = Visibility.Visible;
             }
-            if ((mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count()) > 0)
+            if (mIssues.Where(x => x.CanAutoFix.ToString() == "Yes").Any())
             {
                 CanAutoFixLable.Content = "Can be Auto Fixed: ";
-                CanAutoFixLableCounter.Content = mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count();
+                CanAutoFixLableCounter.Content = mIssues.Where(x => x.CanAutoFix.ToString() == "Yes").Count();
                 CanAutoFixLable.Visibility = Visibility.Visible;
             }
 

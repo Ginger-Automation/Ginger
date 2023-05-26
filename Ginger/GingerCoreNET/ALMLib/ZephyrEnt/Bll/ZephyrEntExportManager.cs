@@ -270,7 +270,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             {
                 return exportedCategories;
             }
-            if (exportedCategories.GetValue("categories").Count() > 0)
+            if (exportedCategories.GetValue("categories").Any())
             {
                 return findPhaseToExportDetails((JObject)exportedCategories.GetValue("categories").First, id);
             }

@@ -345,7 +345,7 @@ namespace GingerCoreNET.GeneralLib
 
         public static bool CreateDefaultEnvironment()
         {
-            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Count == 0)
+            if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Any())
             {
                 ProjEnvironment newEnv = new ProjEnvironment() { Name = "Default" };
 

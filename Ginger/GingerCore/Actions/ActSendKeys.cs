@@ -270,7 +270,7 @@ namespace Ginger.Actions
             Process[] p = Process.GetProcessesByName(processName);
 
             // Activate the first application we find with this name
-            if (p.Count() > 0)
+            if (p.Any())
             {
                 return p[0].MainWindowHandle;
             }

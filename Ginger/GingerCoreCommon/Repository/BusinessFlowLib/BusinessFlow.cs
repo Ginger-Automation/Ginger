@@ -1116,7 +1116,7 @@ namespace GingerCore
         {
             get
             {
-                if (TargetApplications != null && TargetApplications.Count() > 0)
+                if (TargetApplications != null && TargetApplications.Any())
                 {
                     return TargetApplications[0].Name;
                 }
@@ -1327,7 +1327,7 @@ namespace GingerCore
                 lst.Add(new StatItem() { Description = v.Status, Count = v.Count });
             }
 
-            if (groups.Count() > 0)
+            if (groups.Any())
                 isValidaionsExist = true;
             else
                 isValidaionsExist = false;

@@ -110,7 +110,7 @@ namespace GingerCore.Actions.WebAPI
 
         private void SetAutoDecompression()
         {
-            if (mAct.HttpHeaders.Count() > 0)
+            if (mAct.HttpHeaders.Any())
             {
                 var encodType = mAct.HttpHeaders.FirstOrDefault(x => (x != null && x.Param != null && x.Param.ToUpper() == "ACCEPT-ENCODING" && x.ValueForDriver.ToUpper() == "GZIP,DEFLATE"));
                 if (encodType != null)
@@ -123,7 +123,7 @@ namespace GingerCore.Actions.WebAPI
         private void AddHeadersToClient()
         {
             //Add request headers
-            if (mAct.HttpHeaders.Count() > 0)
+            if (mAct.HttpHeaders.Any())
             {
                 for (int i = 0; i < mAct.HttpHeaders.Count(); i++)
                 {
@@ -454,7 +454,7 @@ namespace GingerCore.Actions.WebAPI
                 {
                     RequestFileContent = CreateRawRequestAndResponse("request");
                 }
-                else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "XwwwFormUrlEncoded"))
+                else if ((mAct.RequestKeyValues.Any()) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "XwwwFormUrlEncoded"))
                 {
                     RequestFileContent = CreateRawRequestAndResponse("request");
 
@@ -464,7 +464,7 @@ namespace GingerCore.Actions.WebAPI
                     
                     RequestFileContent += str.ToString().Trim('&');
                 }
-                else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "FormData"))
+                else if ((mAct.RequestKeyValues.Any()) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "FormData"))
                 {
                     MultipartFormDataContent FormDataContent = new MultipartFormDataContent();
 
@@ -747,7 +747,7 @@ namespace GingerCore.Actions.WebAPI
                 if (eContentType == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded)
                 {
                     string GetRequest = "?";
-                    if (mAct.RequestKeyValues.Count() > 0)
+                    if (mAct.RequestKeyValues.Any())
                     {
                         for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
                         {
@@ -781,14 +781,14 @@ namespace GingerCore.Actions.WebAPI
                 switch (eContentType)
                 {
                     case ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded:
-                        if (mAct.RequestKeyValues.Count() > 0)
+                        if (mAct.RequestKeyValues.Any())
                         {
                             KeyValues = ConstructURLEncoded((ActWebAPIRest)mAct);
                             RequestMessage.Content = new FormUrlEncodedContent(KeyValues);
                         }
                         break;
                     case ApplicationAPIUtils.eContentType.FormData:
-                        if (mAct.RequestKeyValues.Count() > 0)
+                        if (mAct.RequestKeyValues.Any())
                         {
                             MultipartFormDataContent requestContent = new MultipartFormDataContent();
                             List<KeyValuePair<string, string>> FormDataKeyValues = new List<KeyValuePair<string, string>>();

@@ -370,7 +370,7 @@ namespace GingerCore.ALM
                                         }
 
                                         //update the TC general status based on the activities status collection.                                
-                                        if (stepsStatuses.Where(x => x.Name == "Failed").Count() > 0)
+                                        if (stepsStatuses.Where(x => x.Name == "Failed").Any())
                                         {
                                             testCaseStatus = statuses.Where(z => z.Name == "Failed").FirstOrDefault();
                                         }

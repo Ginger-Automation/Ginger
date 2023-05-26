@@ -128,7 +128,7 @@ namespace GingerCore.Actions
             {
                 string[] FileNameList = System.IO.Directory.GetFiles(Path.GetDirectoryName(calculatedSourceFilePath), Path.GetFileName(calculatedSourceFilePath));
 
-                if (FileNameList.Count() > 0)
+                if (FileNameList.Any())
                 {
                     calculatedSourceFilePath = System.IO.Directory.GetFiles(Path.GetDirectoryName(calculatedSourceFilePath), Path.GetFileName(calculatedSourceFilePath))[0];
                 }

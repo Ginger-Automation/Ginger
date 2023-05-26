@@ -513,8 +513,7 @@ namespace GingerCore.Actions
             if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
             {
                 RefreshActiveProcessesTitles();
-                if (lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)) == null ||
-                    lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).Count() == 0)
+                if (!lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).Any())
                 {
                     Error = "Target Application is not running";
                     return false;

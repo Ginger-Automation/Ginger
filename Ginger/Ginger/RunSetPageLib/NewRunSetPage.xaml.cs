@@ -1409,7 +1409,7 @@ namespace Ginger.Run
                             {
                                 Parallel.ForEach(Runner.Executor.BusinessFlows, businessFlow =>
                                 {
-                                    BusinessFlow originalBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == businessFlow.Guid).FirstOrDefault();
+                                    BusinessFlow originalBF = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(businessFlow.Guid);
                                     if (originalBF != null && System.IO.Path.GetFullPath(originalBF.FileName) == System.IO.Path.GetFullPath(e.FullPath))
                                     {
                                         mRunSetBusinessFlowWasChanged = true;
