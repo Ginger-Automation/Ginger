@@ -161,7 +161,7 @@ namespace UnitTests.NonUITests
             string actual = VE.ValueCalculated;
 
             //
-            string expected = DateTime.Now.ToString("dd/MM/yyyy");
+            string expected = DateTime.Now.ToString("M/d/yyyy");
 
             //Assert
             Assert.AreEqual(actual, expected);
@@ -177,7 +177,7 @@ namespace UnitTests.NonUITests
 
             //Act            
             string actual = VE.ValueCalculated;
-            string expected = DateTime.Now.AddDays(1).ToString("dd/MM/yyyy");
+            string expected = DateTime.Now.AddDays(1).ToString("M/d/yyyy");
             //Assert
             Assert.AreEqual(actual, expected);
         }
@@ -769,7 +769,7 @@ namespace UnitTests.NonUITests
             string v = VE.ValueCalculated;
 
             //Assert
-            string date = DateTime.Now.ToString("dd/MM/yyyy");
+            string date = DateTime.Now.ToString("M/d/yyyy");
             Assert.AreEqual(v, date);
         }
 
