@@ -51,7 +51,7 @@ namespace Ginger.Actions.ActionConversion
             mBusinessFlow = businessFlow;
             SetGridsView();
 
-            if (mBusinessFlow.Activities.Where(x => x.SelectedForConversion == true).Count() != 0)
+            if (mBusinessFlow.Activities.Where(x => x.SelectedForConversion == true).Any())
             {
                 mBusinessFlow.Activities.Where(x => x.SelectedForConversion == true).ToList().ForEach(x => { x.SelectedForConversion = false; });
             }

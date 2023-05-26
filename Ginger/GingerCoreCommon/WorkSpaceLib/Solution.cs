@@ -107,7 +107,7 @@ namespace Ginger.SolutionGeneral
         {
             get
             {
-                if (ApplicationPlatforms != null && ApplicationPlatforms.Count() > 0)
+                if (ApplicationPlatforms != null && ApplicationPlatforms.Any())
                 {
                     return ApplicationPlatforms[0].Platform;
                 }

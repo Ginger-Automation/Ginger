@@ -1617,7 +1617,7 @@ namespace GingerCore.Drivers.WindowsLib
 
                 LocateElementByLocators(EI.Locators, GetOutAfterFoundElement);
 
-                if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count() > 0)
+                if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Any())
                 {
                     return true;
                 }

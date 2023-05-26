@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -322,8 +322,7 @@ namespace Amdocs.Ginger.Repository
         public T GetRepositoryItemByGuid<T>(Guid repositoryItemGuid)
         {
             SolutionRepositoryItemInfo<T> SRII = GetSolutionRepositoryItemInfo<T>();
-            T RI = SRII.GetItemByGuid(repositoryItemGuid);
-            return RI;
+            return SRII.GetItemByGuid(repositoryItemGuid);
         }
 
         /// <summary>
@@ -356,7 +355,7 @@ namespace Amdocs.Ginger.Repository
         public dynamic GetFirstRepositoryItem<T>()
         {
             SolutionRepositoryItemInfo<T> SRII = GetSolutionRepositoryItemInfo<T>();
-            if (SRII.GetAllItemsCache().Count > 0)
+            if (SRII.GetAllItemsCache().Any())
             {
                 return (SRII.GetAllItemsCache()[0]);
             }

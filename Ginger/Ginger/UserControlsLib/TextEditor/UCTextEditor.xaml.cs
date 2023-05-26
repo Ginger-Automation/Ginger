@@ -124,7 +124,7 @@ namespace Ginger.UserControlsLib.TextEditor
             //TODO: fill the rest of the args
 
             List<ICompletionData> data = mTextEditor.GetCompletionData(e.Text, args);
-            if (data != null && data.Count() > 0)
+            if (data != null && data.Any())
             {
                 IList<ICompletionData> cdata = completionWindow.CompletionList.CompletionData;
 

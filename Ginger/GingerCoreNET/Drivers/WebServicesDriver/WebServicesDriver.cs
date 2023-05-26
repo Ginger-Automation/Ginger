@@ -235,7 +235,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             else if (act is ActWebAPIModel ActWAPIM)
             {
                 //pull pointed API Model
-                ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == ((ActWebAPIModel)act).APImodelGUID).FirstOrDefault();
+                ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationAPIModel>(((ActWebAPIModel)act).APImodelGUID);
                 if (AAMB == null)
                 {
                     act.Error = "Failed to find the pointed API Model";
@@ -310,7 +310,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 }
 
                 //pull pointed API Model
-                ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == ((ActWebAPIModel)act).APImodelGUID).FirstOrDefault();
+                ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationAPIModel>(((ActWebAPIModel)act).APImodelGUID);
                 if (AAMB == null)
                 {
                     act.Error = "Failed to find the pointed API Model";
@@ -517,7 +517,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             foreach (KeyValuePair<List<string>, List<string>> Kpr in dictValues)
             {
                 int index = 0;
-                if (Kpr.Key.Count() != 0 && Kpr.Value.Count() != 0)
+                if (Kpr.Key.Any() && Kpr.Value.Any())
                 {
                     foreach (string property in Kpr.Key)
                     {
