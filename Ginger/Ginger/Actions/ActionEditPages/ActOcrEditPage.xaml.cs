@@ -42,6 +42,10 @@ namespace Ginger.Actions
             GingerCore.General.FillComboFromEnumObj(xOcrFileTypeCombo, mAct.SelectedOcrFileType);
             BindingHandler.ObjFieldBinding(xOcrFileTypeCombo, ComboBox.SelectedValueProperty, mAct, nameof(ActOcr.SelectedOcrFileType), BindingMode.TwoWay);
 
+            GingerCore.General.FillComboFromEnumObj(xDPIComboBox, mAct.SelectedOcrDPIOperation);
+            BindingHandler.ObjFieldBinding(xDPIComboBox, ComboBox.SelectedValueProperty, mAct, nameof(ActOcr.SelectedOcrDPIOperation), BindingMode.TwoWay);
+
+
             xFilePathTextBox.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.OcrFilePath), string.Empty),
                                true, false);
             xSetPdfPasswordTextBox.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.OcrPassword), string.Empty),
