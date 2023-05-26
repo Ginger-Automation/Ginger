@@ -853,16 +853,12 @@ namespace GingerCore.ALM.RQM
 
                 if (defectForOpening.Value.ContainsKey("Summary"))
                 {
-
                     newDefect.summary = defectForOpening.Value["Summary"];
                 }
                 if (defectForOpening.Value.ContainsKey("description"))
                 {
-
-                    newDefect.description = defectForOpening.Value["description"];
+                    newDefect.description = defectForOpening.Value["description"].TrimEnd(' ').Trim('\n');
                 }
-
-
                 AddEntityFieldValues(defectsFields, newDefect, "defect");
                 ResultInfo resultInfo;
                 RQMConnect.Instance.RQMRep.GetConection();
@@ -997,13 +993,23 @@ namespace GingerCore.ALM.RQM
                                 break;
                             case string str when str.Contains("due")
                                 :
-                                newDefect.dueDate = field.SelectedValue;
+                                try
+                                {
+                                    DateTime duedate = Convert.ToDateTime(field.SelectedValue);
+                                    newDefect.dueDate = new DateTimeOffset(duedate).ToUnixTimeMilliseconds().ToString(); //duedate.Millisecond.ToString();
+                                }
+                                catch(Exception ex)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, "due date entered incorrect formate Please enter in 'yyyy-mm-dd'",ex.InnerException);
+                                    Reporter.ToUser(eUserMsgKey.WrongDateValueInserted);
+                                }
+                                
                                 break;
                             case string str when str.Contains("Product")
                                 :
                                 newDefect.productGroup = field.SelectedValue;
                                 break;
-                            case string str when str.Contains("ownedBy")
+                            case string str when str.Contains("contributor")
                                 :
                                 newDefect.ownedBy = field.SelectedValue;
                                 break;

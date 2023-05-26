@@ -963,7 +963,6 @@ namespace GingerCore.ALM.RQM
                 
                 //TODO: Get 'next' and 'last links
                 XmlNodeList linkList_ = categoryTypeList.GetElementsByTagName("link");
-                Reporter.ToLog(eLogLevel.DEBUG, $"in if loop linkList_.Count : { linkList_.Count}");
                 if (linkList_.Count > 0)
                 {
                     XmlNode selfPage = linkList_.Item(1);
@@ -1006,15 +1005,11 @@ namespace GingerCore.ALM.RQM
 
                     //Parallel computing solution
                     List<XmlNode> entryList = new List<XmlNode>();
-                    Reporter.ToLog(eLogLevel.DEBUG, $"in if loop categoryTypeUriPages.Count : { categoryTypeUriPages.Count}");
                     if (categoryTypeUriPages.Count > 1)
                     {
                         Parallel.ForEach(categoryTypeUriPages.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, categoryTypeUri =>
                         {
-
-                            //System.Diagnostics.Debug.WriteLine("parallel foreach #1");
                             newUri_ = categoryTypeUri;
-                            Reporter.ToLog(eLogLevel.DEBUG, $"in if loop newUri_ : { newUri_}");
                             categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(newUri_));
                             if (!string.IsNullOrEmpty(categoryType.responseText))
                             {
@@ -1027,7 +1022,6 @@ namespace GingerCore.ALM.RQM
                             {
                                 entryList.Add(entryNode);
                             }
-                            Reporter.ToLog(eLogLevel.DEBUG, $"in if loop categoryTypeUriPages entryList.Count : { entryList.Count}");
                             ParallelLoopResult innerResult = Parallel.ForEach(entryList.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, singleEntry =>
                             {
 
@@ -1080,7 +1074,6 @@ namespace GingerCore.ALM.RQM
 
                                 catTypeRsult.Add(itemfield);
                                 populatedValue = $"Populating field :{ categoryTypeName } \r\nNumber of fields populated :{catTypeRsult.Count}";
-                                Reporter.ToLog(eLogLevel.DEBUG, $"in if loop Populating field :{ populatedValue}");
                                 
                                 if (bw!= null)
                                 {
@@ -1111,7 +1104,6 @@ namespace GingerCore.ALM.RQM
                         {
                             entryList.Add(entryNode);
                         }
-                        Reporter.ToLog(eLogLevel.DEBUG, $"in else loop entryList.count : { entryList.Count}");
                         ParallelLoopResult innerResult = Parallel.ForEach(entryList.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, singleEntry =>
                         {
 
@@ -1162,7 +1154,6 @@ namespace GingerCore.ALM.RQM
 
                             catTypeRsult.Add(itemfield);
                             populatedValue = $"Populating field :{ categoryTypeName } \r\n Number of fields populated :{ catTypeRsult.Count}";
-                            Reporter.ToLog(eLogLevel.DEBUG, $"in else loop populatedValue : { populatedValue}");
                             
                             if (bw!= null)
                             {
@@ -1172,13 +1163,11 @@ namespace GingerCore.ALM.RQM
                         }
                         );
                     }
-                    Reporter.ToLog(eLogLevel.DEBUG, $"in outer loop catTypeRsult.count : { catTypeRsult.Count}");
                     foreach (ExternalItemFieldBase field in catTypeRsult)
                     {
-                        System.Diagnostics.Debug.WriteLine($"in outer loop field name:{ field.Name } field Id ={ field.ID } field Type ={ field.Type } field mandetory ={field.Mandatory } field ItemType={ field.ItemType } field toupdate= {field.ToUpdate}");
+                        System.Diagnostics.Debug.WriteLine($"field name:{ field.Name } field Id ={ field.ID } field Type ={ field.Type } field mandetory ={field.Mandatory } field ItemType={ field.ItemType } field toupdate= {field.ToUpdate}");
                         fields.Add(field);
-                        totalCategoryTypeCount++;
-                        System.Diagnostics.Debug.WriteLine($"Number of retrieved fields:{ totalCategoryTypeCount}");                        
+                        totalCategoryTypeCount++;                       
                     }//TODO: Add Values to CategoryTypes Parallel
                     populatedValue = "Starting values retrieve process... ";
                     if(bw!= null)
@@ -1366,7 +1355,7 @@ namespace GingerCore.ALM.RQM
 
                 if (!string.IsNullOrEmpty(categoryType.responseText))
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, $" GetOnlineItemFieldsForDefect categoryType.responseText : { categoryType.responseText }");
+                    Reporter.ToLog(eLogLevel.DEBUG, $"ImportFromRQM GetOnlineItemFieldsForDefect categoryType.responseText : { categoryType.responseText }");
                     categoryTypeList.LoadXml(categoryType.responseText);
                 }
 
@@ -1376,7 +1365,6 @@ namespace GingerCore.ALM.RQM
                 {
                     foreach (XmlNode entryNode in linkList_)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, $" in  entryNode : { entryNode.InnerXml }");
                         try
                         {
                             ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
@@ -1406,10 +1394,8 @@ namespace GingerCore.ALM.RQM
                                 
                                 if (node.Name.Equals("oslc:defaultValue", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    Reporter.ToLog(eLogLevel.DEBUG, $" in  defaultValue : ");
                                     string categorydefaultvalue = string.Empty;
                                     categorydefaultvaluelink = node.Attributes.Count > 0 ? node.Attributes["rdf:resource"].Value : string.Empty;
-                                    Reporter.ToLog(eLogLevel.DEBUG, $" in  oslc:categorydefaultvaluelink :  { categorydefaultvaluelink } ");
                                     if (!string.IsNullOrEmpty(categorydefaultvaluelink))
                                     {
                                         try
@@ -1433,7 +1419,6 @@ namespace GingerCore.ALM.RQM
                                         catch (Exception ex)
                                         {
                                             Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                                            Reporter.ToLog(eLogLevel.DEBUG, $"categorydefaultvaluelink : { categorydefaultvaluelink } ");
                                         }
                                     }
 
@@ -1441,9 +1426,7 @@ namespace GingerCore.ALM.RQM
                                 }
                                 if (node.Name.Equals("oslc:allowedValues", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    Reporter.ToLog(eLogLevel.DEBUG, $" in  allowedValues : ");
                                     string allowedvalueslink = node.Attributes["rdf:resource"].Value;
-                                    Reporter.ToLog(eLogLevel.DEBUG, $" in  oslc:allowedValues :  { allowedvalueslink } "); 
                                     RqmResponseData allowedValues = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(allowedvalueslink), true);
                                     XmlDocument allowedValuesData = new XmlDocument();
 
@@ -1485,7 +1468,6 @@ namespace GingerCore.ALM.RQM
                                             catch (Exception ex)
                                             {
                                                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                                                Reporter.ToLog(eLogLevel.DEBUG, $"singleallowedvaluelink : { singleallowedvaluelink } ");
                                             }
                                         }
                                     }
@@ -1519,7 +1501,6 @@ namespace GingerCore.ALM.RQM
                         catch (Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                            Reporter.ToLog(eLogLevel.DEBUG, $"entryNode : { JsonConvert.SerializeObject(entryNode) } ");
                         }
                     }
                 }
