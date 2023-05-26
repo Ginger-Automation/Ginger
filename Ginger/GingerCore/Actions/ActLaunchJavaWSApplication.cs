@@ -370,10 +370,10 @@ namespace GingerCore.Actions
         private CancellationTokenSource mAttachAgentCancellationToken = null;
         private Task mAttachAgentTask = null;
         private bool mWaitForWindowTimeOut = false;
-        ArrayList processNames;
+        private readonly List<string> processNames = new();
         public override void Execute()
         {
-            processNames = new();
+            processNames.Clear();
             processNames.Add("java");
             processNames.Add("jp2");
 
