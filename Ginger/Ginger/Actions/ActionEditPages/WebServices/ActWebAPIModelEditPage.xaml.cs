@@ -222,8 +222,7 @@ namespace Ginger.Actions.WebServices
 
         private bool ChangeAPIMapping(bool showNewMappingMessage = false)
         {
-            ObservableList<ApplicationAPIModel> APIModelsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>();
-            if (APIModelsList.Count == 0)
+            if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Any())
             {
                 Reporter.ToUser(eUserMsgKey.NoAPIExistToMappedTo);
                 return false;
@@ -234,8 +233,6 @@ namespace Ginger.Actions.WebServices
                 Reporter.ToUser(eUserMsgKey.APIMappedToActionIsMissing);
             }
 
-            //if (apiModelPage == null)
-            //{
             RepositoryFolder<ApplicationAPIModel> APIModelsFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
             AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(APIModelsFolder);
             if (AAMB != null && AAMB.TargetApplicationKey != null)
@@ -247,7 +244,7 @@ namespace Ginger.Actions.WebServices
             {
                 apiModelPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
             }
-            //}
+
             List<object> selectedList = apiModelPage.ShowAsWindow();
 
             if (selectedList != null && selectedList.Count == 1)
@@ -315,7 +312,7 @@ namespace Ginger.Actions.WebServices
             if (mAct is ActWebAPIModel ActWAPIM)
             {
                 //pull pointed API Model
-                ApplicationAPIModel AAMB1 = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == mAct.APImodelGUID).FirstOrDefault();
+                ApplicationAPIModel AAMB1 = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationAPIModel>(mAct.APImodelGUID);
                 if (AAMB1 != null)
                 {
                     //init matching real WebAPI Action

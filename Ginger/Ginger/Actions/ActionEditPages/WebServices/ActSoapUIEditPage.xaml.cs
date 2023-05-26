@@ -684,7 +684,7 @@ namespace Ginger.Actions.WebServices
             {
                 foreach (var item in mAct.AllProperties)
                 {
-                    if (mAct.TempProperties.Count() > 0)
+                    if (mAct.TempProperties.Any())
                     {
                         var result = mAct.TempProperties.Where(x => x.Type.ToString() == item.Type.ToString() && x.Param == item.Param && x.Value == item.Value).FirstOrDefault();
                         if (result == null)

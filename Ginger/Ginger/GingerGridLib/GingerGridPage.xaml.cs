@@ -289,8 +289,8 @@ namespace Ginger.GingerGridLib
                 {
                     // using repeated function calls below instead of usual iteration
                     //because list changes every time delete is called
-                    WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>()[0]);
-                } while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>().Count != 0);
+                    WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<RemoteServiceGrid>());
+                } while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>().Any());
                 WorkSpace.Instance.CurrentSelectedItem = null;
             }
         }

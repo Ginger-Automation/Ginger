@@ -95,8 +95,12 @@ namespace GingerCoreNET.RosLynLib
                 System.Collections.Generic.List<String> Refrences = typeof(System.DateTime).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>();
                 Refrences.AddRange(typeof(string).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>());
                 object result = CSharpScript.EvaluateAsync(expression, ScriptOptions.Default.WithImports(Refrences)).Result;
-                //c# generate True/False for bool.tostring which fails in subsequent expressions 
-                if (result.GetType() == typeof(Boolean))
+                //c# generate True/False for bool.tostring which fails in subsequent expressions
+                if (result == null)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, $"{expression} evaluation returned null value");
+                }
+                else if (result.GetType() == typeof(Boolean))
                 {
                     evalresult = result.ToString().ToLower();
                 }

@@ -79,7 +79,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
             AddAPIModelWizard.DeltaModelsList = new ObservableList<DeltaAPIModel>(APIDeltaUtils.DoAPIModelsCompare(selectedAPIModels).OrderBy(d => d.comparisonStatus));
 
-            if (AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)).Count() != 0)
+            if (AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)).Any())
             {
                 foreach (DeltaAPIModel deltaAPIMod in AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)))
                 {
@@ -142,7 +142,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                                                                 m.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)
                                                                         .GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)).ToList();
 
-                    bool matchingModelsReplacementIssue = repeatingMatchingModels.Count() != 0;
+                    bool matchingModelsReplacementIssue = repeatingMatchingModels.Any();
                     int apiCount = 0;
                     if (matchingModelsReplacementIssue)
                     {

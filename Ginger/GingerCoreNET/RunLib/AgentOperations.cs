@@ -499,7 +499,7 @@ namespace GingerCore
 
             foreach (var config in PSI.Configs)
             {
-                if (Agent.DriverConfiguration.Where(x => x.Parameter == config.Name).Count() == 0)
+                if (!Agent.DriverConfiguration.Where(x => x.Parameter == config.Name).Any())
                 {
                     DriverConfigParam DI = new DriverConfigParam();
                     DI.Parameter = config.Name;
@@ -520,7 +520,7 @@ namespace GingerCore
         /// <param name="PSI"></param>
         private void SetPlatformParameters(PluginServiceInfo PSI)
         {
-            if (PSI.Interfaces.Where(x => x == "IWebPlatform").Count() > 0)
+            if (PSI.Interfaces.Where(x => x == "IWebPlatform").Any())
             {
                 DriverConfigParam DI = new DriverConfigParam();
                 DI.Parameter = "Max Agent Load Time";
@@ -543,7 +543,7 @@ namespace GingerCore
 
 
             }
-            else if (PSI.Interfaces.Where(x => x == "IWebServicePlatform").Count() > 0)
+            else if (PSI.Interfaces.Where(x => x == "IWebServicePlatform").Any())
             {
                 DriverConfigParam DI = new DriverConfigParam();
                 DI.Parameter = "Save Request";

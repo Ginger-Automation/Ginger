@@ -79,7 +79,7 @@ namespace GingerCore.UserControls
 
             IEnumerable<HtmlNode> htmlElements = _htmldocument.DocumentNode.Descendants().Where(x => !x.Name.StartsWith("#") && x.NodeType == HtmlNodeType.Element && !ElementsToSkip.Contains(x.Name));
 
-            if (htmlElements.Count() != 0)
+            if (htmlElements.Any())
             {
                 TreeViewItem TVRoot = new TreeViewItem() { IsExpanded = true };
                 //TVRoot.Tag = _htmldocument.DocumentNode;

@@ -302,7 +302,7 @@ namespace Ginger.ALM.Repository
 
         public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<object> selectedTestSets)
         {
-            if (selectedTestSets != null && selectedTestSets.Count() > 0)
+            if (selectedTestSets != null && selectedTestSets.Any())
             {
                 ObservableList<QCTestSetTreeItem> testSetsItemsToImport = new ObservableList<QCTestSetTreeItem>();
                 foreach (QCTestSetTreeItem testSetItem in selectedTestSets)

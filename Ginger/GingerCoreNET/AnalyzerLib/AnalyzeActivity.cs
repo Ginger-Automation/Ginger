@@ -52,7 +52,7 @@ namespace Ginger.AnalyzerLib
             }
 
             // Check Activity have actions
-            if (Activity.Acts.Count() == 0)
+            if (!Activity.Acts.Any())
             {
                 AnalyzeActivity AA = CreateNewIssue(BusinessFlow, Activity);
                 AA.Description = GingerDicser.GetTermResValue(eTermResKey.Activity) + " is missing Actions";

@@ -1403,7 +1403,7 @@ namespace Ginger.Actions
         {
             this.Dispatcher.Invoke(() =>
             {
-                if (mAction.ReturnValues.Count() > 0)
+                if (mAction.ReturnValues.Any())
                 {
                     xOutputValuesTabHeaderTextBlock.Text = string.Format("Output Values ({0})", mAction.ReturnValues.Count());
                 }
@@ -1419,7 +1419,7 @@ namespace Ginger.Actions
             public object Convert(object value, Type targetType, object parameter,
                     System.Globalization.CultureInfo culture)
             {
-                string status = value.ToString();
+                string status = value == null ? "": value.ToString();
                 if (status.Equals(ActReturnValue.eStatus.Passed.ToString()))
                 {
                     return System.Windows.Media.Brushes.Green;//System.Drawing.Brushes.Green;
@@ -1454,7 +1454,7 @@ namespace Ginger.Actions
         {
             this.Dispatcher.Invoke(() =>
             {
-                if (mAction.FlowControls.Count() > 0)
+                if (mAction.FlowControls.Any())
                 {
                     xFlowControlTabHeaderTextBlock.Text = string.Format("Flow Control ({0})", mAction.FlowControls.Count());
                 }

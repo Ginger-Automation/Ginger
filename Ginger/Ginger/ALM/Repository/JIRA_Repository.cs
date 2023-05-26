@@ -265,7 +265,7 @@ namespace Ginger.ALM.Repository
 
         public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<object> selectedTests)
         {
-            if (selectedTests != null && selectedTests.Count() > 0)
+            if (selectedTests != null && selectedTests.Any())
             {
                 ObservableList<JiraTestSet> testSetsItemsToImport = new ObservableList<JiraTestSet>();
                 foreach (GingerCore.ALM.JIRA.JiraTestSet selectedTS in selectedTests)
@@ -299,7 +299,7 @@ namespace Ginger.ALM.Repository
 
         public bool ImportSelectedZephyrCyclesAndFolders(string importDestinationPath, IEnumerable<object> selectedObjects)
         {
-            if (selectedObjects != null && selectedObjects.Count() > 0)
+            if (selectedObjects != null && selectedObjects.Any())
             {
                 foreach (JiraZephyrTreeItem obj in selectedObjects)
                 {

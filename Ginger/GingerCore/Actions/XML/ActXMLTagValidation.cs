@@ -205,7 +205,7 @@ namespace GingerCore.Actions.XML
                 if (Tokenfound != null)
                 {
                     AddOrUpdateReturnParamActualWithPath("InnerText", Tokenfound.ToString(), VE.ValueCalculated);
-                    if (Tokenfound.Children().Count() > 0)
+                    if (Tokenfound.Children().Any())
                     {
                         JsonExtended JE = new JsonExtended(Tokenfound.ToString());
                         foreach (JsonExtended item in JE.GetEndingNodes())
