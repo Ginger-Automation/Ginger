@@ -1323,7 +1323,7 @@ namespace GingerCore.ALM.RQM
 
             RqmRepository rqmRep = new RqmRepository(RQMCore.ConfigPackageFolderPath);
             List<IProjectDefinitions> rqmProjectsDataList;
-            string rqmSserverUrl = ALMCore.DefaultAlmConfig.ALMServerURL + "/";
+            string rqmSserverUrl = ALMCore.DefaultAlmConfig.ALMServerURL.EndsWith("/") ? ALMCore.DefaultAlmConfig.ALMServerURL : Path.Combine(ALMCore.DefaultAlmConfig.ALMServerURL, "/");
             LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
             string rqmDomain = RQMCore.ALMProjectGroupName;
             string rqmProject = ALMCore.DefaultAlmConfig.ALMProjectName; 
