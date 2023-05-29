@@ -137,7 +137,7 @@ namespace GingerCoreNET.DataSource
             {
                 var table = db.GetCollection(tableName);
 
-                string[] List = columnList.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] List = columnList.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 var doc = new BsonDocument();
                 if (columnList.Contains("KEY_VAL"))
                 {
@@ -1302,8 +1302,8 @@ namespace GingerCoreNET.DataSource
 
         public override string UpdateDSReturnValues(string Name, string sColList, string sColVals)
         {
-            string[] collist = sColList.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            string[] vallist = sColVals.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] collist = sColList.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] vallist = sColVals.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             string query = null;
             string colvalues = null;
 

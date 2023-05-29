@@ -1614,7 +1614,12 @@ namespace Ginger.Run
                             {
                                 sColList = sColList + ADSC.TableColumn + ",";
                                 string valActual = outReturnPath[0].Actual == null ? "" : outReturnPath[0].Actual.ToString();
-                                sColVals = sColVals + "'" + valActual.Replace("'", "''") + "',";
+                                //Replace from value like [,] and [']  as this break liteDB insertion query 
+
+                                string valActualReplace1 = valActual.Replace(",", "%2C");
+                                string valActualReplace2 = valActualReplace1.Replace("'", "%27");
+
+                                sColVals = sColVals + "'" + valActualReplace2.Replace("'", "''") + "',";
                             }
                         }
                         if (sColList == "")
@@ -1626,7 +1631,11 @@ namespace Ginger.Run
                         int rowCount = DataSource.GetRowCount(DataSourceTable.Name);
                         sColVals = sColVals + (rowCount + 1) + ", 'False',";
                         sQuery = DataSource.UpdateDSReturnValues(DataSourceTable.Name, sColList, sColVals);
-                        DataSource.RunQuery(sQuery);
+
+                        //ReplaceBack to value like [,] and [']  
+                        string sQueryReplace = sQuery.Replace("%27", "'");
+                        DataSource.RunQuery(sQueryReplace.Replace("%2C", ","));
+
                         //Next Path
                         iPathCount++;
                         mOutRVs = (from arc in act.ReturnValues where arc.Path == iPathCount.ToString() select arc).ToList();
