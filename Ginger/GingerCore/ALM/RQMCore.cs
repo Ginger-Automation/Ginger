@@ -162,7 +162,8 @@ namespace GingerCore.ALM
                 AlmConfig = new GingerCoreNET.ALMLib.ALMConfig();
                 AlmConfigs.Add(AlmConfig);
             }
-            AlmConfig.ALMServerURL = GetServerValueFromDict(GetDynamicServerConfigAndSetPaths());
+            Dictionary<string, object> dic = GetDynamicServerConfigAndSetPaths();
+            AlmConfig.ALMServerURL = GetServerValueFromDict(dic);
             AlmConfig.UseRest = UseRest;
             AlmConfig.ALMUserName = CurrentAlmUserConfigurations.ALMUserName;
             AlmConfig.ALMPassword = CurrentAlmUserConfigurations.ALMPassword;
@@ -170,8 +171,8 @@ namespace GingerCore.ALM
             AlmConfig.ALMProjectName = ALMProject;
             AlmConfig.ALMProjectKey = ALMProjectKey;
             AlmConfig.AlmType = almType;
-            AlmConfig.IsTestSuite = GetIsTestSuiteValueFromDict(GetDynamicServerConfigAndSetPaths());
-            AlmConfig.DefectFieldAPI = GetDefectFieldAPIValueFromDict(GetDynamicServerConfigAndSetPaths());
+            AlmConfig.IsTestSuite = GetIsTestSuiteValueFromDict(dic);
+            AlmConfig.DefectFieldAPI = GetDefectFieldAPIValueFromDict(dic);
             AlmConfig.ALMConfigPackageFolderPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(ALMConfigPackageFolderPath);
             AlmConfig.JiraTestingALM = testingALMType;
 

@@ -89,7 +89,7 @@ namespace Ginger.ALM
             loaderElement.Height = 30;
             loaderElement.Width = 30;
             loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
-            loaderElement.Visibility = Visibility.Visible;
+            loaderElement.Visibility = Visibility.Collapsed;
             if (mAlmConfigType == eALMConfigType.MainMenu)
             {
                 Button saveButton = new Button();
