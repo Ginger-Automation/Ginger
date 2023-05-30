@@ -26,7 +26,7 @@ namespace Amdocs.Ginger.CoreNET.ALMLib.DataContract
         public static IEnumerable<XElement> GetFieldsElements(XElement fields)
         {
             var fieldsElements = fields.Elements("Fields").Elements();
-            if (fields.Elements("Fields").Elements().Count() == 0)
+            if (!fields.Elements("Fields").Elements().Any())
             {
                 fieldsElements = fields.Elements();
             }

@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using GingerCore.DataSource;
@@ -232,6 +233,10 @@ namespace Ginger.UserControlsLib
             if (control != null)
             {
                 control.MappedValuePropertyChanged((string)args.NewValue);
+                if (!(Equals((string)args.OldValue, ((string)args.NewValue))))
+                {
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.DirtyStatus = eDirtyStatus.Modified;
+                }
             }
         }
         private void MappedValuePropertyChanged(string mappedValueProperty)
@@ -526,7 +531,7 @@ namespace Ginger.UserControlsLib
         #region DataSource
         private void SetDataSourceValues()
         {
-            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().Count > 0)
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().Any())
             {
                 GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.DataSource);
                 xDSConfigBtn.IsEnabled = true;

@@ -268,7 +268,14 @@ namespace Ginger.AnalyzerLib
                                     break;
 
                                 case ActReturnValue.eStoreTo.ApplicationModelParameter:
-                                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Where(x => x.Guid.ToString() == ARV.StoreToValue).FirstOrDefault() == null)
+                                    if (Guid.TryParse(ARV.StoreToValue, out Guid gampGuid))
+                                    {
+                                        if (WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<GlobalAppModelParameter>(gampGuid) == null)
+                                        {
+                                            issueFound = true;
+                                        }
+                                    }
+                                    else 
                                     {
                                         issueFound = true;
                                     }

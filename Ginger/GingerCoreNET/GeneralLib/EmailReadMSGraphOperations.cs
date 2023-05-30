@@ -113,7 +113,7 @@ namespace GingerCore.GeneralLib
             {
                 expectedContentTypes = filters.AttachmentContentType.Split(";", StringSplitOptions.RemoveEmptyEntries);
             }
-            if (expectedContentTypes != null && expectedContentTypes.Count() == 0)
+            if (expectedContentTypes != null && !expectedContentTypes.Any())
             {
                 return true;
             }
@@ -519,7 +519,7 @@ namespace GingerCore.GeneralLib
                 Subject = message.Subject,
                 Body = message.Body.Content,
                 ReceivedDateTime = message.ReceivedDateTime?.DateTime.ToLocalTime() ?? DateTime.MinValue,
-                HasAttachments = (message.HasAttachments ?? false) && attachments != null && attachments.Count() > 0,
+                HasAttachments = (message.HasAttachments ?? false) && attachments != null && attachments.Any(),
                 Attachments = attachments
             };
         }

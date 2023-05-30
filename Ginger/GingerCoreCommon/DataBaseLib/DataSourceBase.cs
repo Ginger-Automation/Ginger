@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -260,7 +260,7 @@ namespace GingerCore.DataSource
                         {
                             try
                             {
-                                if (PI.CanWrite)
+                                if (PI != null && PI.CanWrite)
                                 {
                                     string stringValue = value.ToString();
                                     string variablePlaceHoler = "{Var Name=xx}";

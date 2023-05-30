@@ -259,6 +259,11 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Change to Iframe automatically in case of POM Element execution ")]
         public bool HandelIFramShiftAutomaticallyForPomElement { get; set; }
 
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Sample Value is 'localhost:9222'.This allows to Connect to existing browser session on specific debug port instead of Launching a new browser")]
+        public string DebugAddress { get; set; }
+
         protected IWebDriver Driver;
 
         protected eBrowserType mBrowserTpe;
@@ -552,7 +557,17 @@ namespace GingerCore.Drivers
                             options.AddArgument(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl);
                         }
 
-                        ChromeDriverService ChService = ChromeDriverService.CreateDefaultService(GetDriversPathPerOS());
+
+                        ChromeDriverService ChService;
+                        if (string.IsNullOrEmpty(DebugAddress))
+                        {
+                            ChService = ChromeDriverService.CreateDefaultService(GetDriversPathPerOS());
+                        }
+                        else
+                        {
+                            options.DebuggerAddress = DebugAddress.Trim();
+                            ChService = ChromeDriverService.CreateDefaultService();
+                        }
                         if (HideConsoleWindow)
                         {
                             ChService.HideCommandPromptWindow = HideConsoleWindow;
@@ -1113,6 +1128,12 @@ namespace GingerCore.Drivers
 
         private void GotoURL(Act act, string sURL)
         {
+            if (string.IsNullOrEmpty(sURL))
+            {
+                act.Error = "Error: Provided URL is empty. Please provide valid URL.";
+                return;
+            }
+
             if (sURL.ToLower().StartsWith("www"))
             {
                 sURL = "http://" + sURL;
@@ -1128,8 +1149,7 @@ namespace GingerCore.Drivers
                 {
                     act.Error = "Error: Invalid URL. Give valid URL(Complete URL)";
                 }
-                string winTitle = Driver.Title;
-                if (Driver.GetType() == typeof(InternetExplorerDriver) && winTitle.IndexOf("Certificate Error", StringComparison.CurrentCultureIgnoreCase) >= 0)
+                if (Driver.GetType() == typeof(InternetExplorerDriver) && Driver.Title.Contains("Certificate Error", StringComparison.CurrentCultureIgnoreCase))
                 {
                     Thread.Sleep(100);
                     try
@@ -1140,14 +1160,15 @@ namespace GingerCore.Drivers
                     catch { }
                     Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)ImplicitWait);
                 }
+
+                //just to be sure the page is fully loaded
+                CheckifPageLoaded();
             }
             catch (Exception ex)
             {
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 act.Error += ex.Message;
             }
-            //just to be sure the page is fully loaded
-            CheckifPageLoaded();
         }
 
         public override string GetURL()
@@ -4286,7 +4307,7 @@ namespace GingerCore.Drivers
                             Reporter.ToLog(eLogLevel.DEBUG, "Null refrence exception occured when we are checking IsRunning", ex);
                         }
                         catch (System.ObjectDisposedException ex)
-                        {                            
+                        {
                             ErrorMessageFromDriver = "Agent is closed. Action on closed agent is not allowed.";
                             Reporter.ToLog(eLogLevel.DEBUG, "Driver object is already disposed ", ex);
                         }
@@ -4511,7 +4532,7 @@ namespace GingerCore.Drivers
             htmlDoc.LoadHtml(documentContents);
             IEnumerable<HtmlNode> htmlElements = htmlDoc.DocumentNode.Descendants().Where(x => !x.Name.StartsWith("#"));
 
-            if (htmlElements.Count() != 0)
+            if (htmlElements.Any())
             {
                 foreach (HtmlNode htmlElemNode in htmlElements)
                 {
@@ -4639,7 +4660,7 @@ namespace GingerCore.Drivers
             }
 
             int pomActivityIndex = 1;
-            if (formElementsList.Count() != 0)
+            if (formElementsList.Any())
             {
                 foreach (HtmlNode formElement in formElementsList)
                 {
@@ -5260,7 +5281,7 @@ namespace GingerCore.Drivers
             {
                 string[] xpathSpliter = new string[] { "/" };
                 string[] elementsTypesPath = xpath.Split(xpathSpliter, StringSplitOptions.RemoveEmptyEntries);
-                if (elementsTypesPath.Count() == 0)
+                if (!elementsTypesPath.Any())
                 {
                     return;
                 }
@@ -7450,64 +7471,90 @@ namespace GingerCore.Drivers
                     break;
 
                 case ActBrowserElement.eControlAction.OpenURLNewTab:
-                    OpenUrlNewTab();
-
-                    if ((act.GetInputParamValue(ActBrowserElement.Fields.URLSrc) == ActBrowserElement.eURLSrc.UrlPOM.ToString()))
+                    string url = "";
+                    if (!string.IsNullOrEmpty(act.GetInputParamValue(ActBrowserElement.Fields.URLSrc)) && act.GetInputParamValue(ActBrowserElement.Fields.URLSrc).Equals(ActBrowserElement.eURLSrc.UrlPOM.ToString()))
                     {
                         string POMGuid = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.PomGUID);
-                        string POMUrl = "";
-                        if (!string.IsNullOrEmpty(POMGuid))
+
+                        if (!string.IsNullOrEmpty(POMGuid) && Guid.TryParse(POMGuid, out Guid parsedPOMGuid))
                         {
-                            ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(p => p.Guid.ToString() == POMGuid).FirstOrDefault();
+                            ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(parsedPOMGuid);
                             if (SelectedPOM != null)
                             {
-                                POMUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);             // SelectedPOM.PageURL;
-                            }
-                        }
-                        GotoURL(act, POMUrl);
-                    }
-                    else
-                    {
-                        GotoURL(act, act.GetInputParamCalculatedValue("Value"));
-                    }
-                    break;
-
-                case ActBrowserElement.eControlAction.GotoURL:
-
-                    if ((act.GetInputParamValue(ActBrowserElement.Fields.GotoURLType) == ActBrowserElement.eGotoURLType.NewTab.ToString()))
-                    {
-                        OpenUrlNewTab();
-                    }
-                    else if ((act.GetInputParamValue(ActBrowserElement.Fields.GotoURLType) == ActBrowserElement.eGotoURLType.NewWindow.ToString()))
-                    {
-                        IJavaScriptExecutor javaScriptExecutor = (IJavaScriptExecutor)Driver;
-                        javaScriptExecutor.ExecuteScript("newwindow=window.open('about:blank','newWindow','height=250,width=350');if (window.focus) { newwindow.focus()}return false; ");
-                        Driver.SwitchTo().Window(Driver.WindowHandles[Driver.WindowHandles.Count - 1]);
-                        Driver.Manage().Window.Maximize();
-                    }
-
-                    if ((act.GetInputParamValue(ActBrowserElement.Fields.URLSrc) == ActBrowserElement.eURLSrc.UrlPOM.ToString()))
-                    {
-                        string POMGuid = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.PomGUID);
-                        string POMUrl = "";
-                        if (!string.IsNullOrEmpty(POMGuid))
-                        {
-                            ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(p => p.Guid.ToString() == POMGuid).FirstOrDefault();
-                            if (SelectedPOM != null)
-                            {
-                                POMUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);
-                                GotoURL(act, POMUrl);
+                                url = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);
                             }
                             else
                             {
-                                act.Error = "Error: Selected POM was not found.";
+                                act.Error = "Error: Selected POM not found. Please select valid POM.";
+                                return;
                             }
+                        }
+                        else
+                        {
+                            act.Error = "Error: Selected POM not found (Empty or Invalid POM Guid). Please select valid POM.";
+                            return;
                         }
                     }
                     else
                     {
-                        GotoURL(act, act.GetInputParamCalculatedValue("Value"));
+                        url = act.GetInputParamCalculatedValue("Value");
                     }
+
+                    if (string.IsNullOrEmpty(url))
+                    {
+                        act.Error = "Error: Provided URL is empty. Please provide valid URL.";
+                        return;
+                    }
+                    OpenNewTab();
+                    GotoURL(act, url);
+                    break;
+
+                case ActBrowserElement.eControlAction.GotoURL:
+                    string gotoUrl = "";
+                    if (!string.IsNullOrEmpty(act.GetInputParamValue(ActBrowserElement.Fields.URLSrc)) && act.GetInputParamValue(ActBrowserElement.Fields.URLSrc).Equals(ActBrowserElement.eURLSrc.UrlPOM.ToString()))
+                    {
+                        string POMGuid = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.PomGUID);
+
+                        if (!string.IsNullOrEmpty(POMGuid) && Guid.TryParse(POMGuid, out Guid parsedPOMGuid))
+                        {
+                            ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(parsedPOMGuid);
+                            if (SelectedPOM != null)
+                            {
+                                gotoUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);
+                            }
+                            else
+                            {
+                                act.Error = "Error: Selected POM not found. Please select valid POM.";
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            act.Error = "Error: Selected POM not found (Empty or Invalid POM Guid). Please select valid POM.";
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        gotoUrl = act.GetInputParamCalculatedValue("Value");
+                    }
+
+                    if (string.IsNullOrEmpty(gotoUrl))
+                    {
+                        act.Error = "Error: Provided URL is empty. Please provide valid URL.";
+                        return;
+                    }
+
+                    if ((act.GetInputParamValue(ActBrowserElement.Fields.GotoURLType) == ActBrowserElement.eGotoURLType.NewTab.ToString()))
+                    {
+                        OpenNewTab();
+                    }
+                    else if ((act.GetInputParamValue(ActBrowserElement.Fields.GotoURLType) == ActBrowserElement.eGotoURLType.NewWindow.ToString()))
+                    {
+                        OpenNewWindow();
+                    }
+
+                    GotoURL(act, gotoUrl);
                     break;
                 case ActBrowserElement.eControlAction.Close:
                     Driver.Close();
@@ -7563,10 +7610,10 @@ namespace GingerCore.Drivers
 
                 case ActBrowserElement.eControlAction.GetPageURL:
                     act.AddOrUpdateReturnParamActual("PageURL", Driver.Url);
-                    Uri url = new Uri(Driver.Url);
-                    act.AddOrUpdateReturnParamActual("Host", url.Host);
-                    act.AddOrUpdateReturnParamActual("Path", url.LocalPath);
-                    act.AddOrUpdateReturnParamActual("PathWithQuery", url.PathAndQuery);
+                    Uri currentUrl = new Uri(Driver.Url);
+                    act.AddOrUpdateReturnParamActual("Host", currentUrl.Host);
+                    act.AddOrUpdateReturnParamActual("Path", currentUrl.LocalPath);
+                    act.AddOrUpdateReturnParamActual("PathWithQuery", currentUrl.PathAndQuery);
                     break;
                 case ActBrowserElement.eControlAction.InjectJS:
                     AddJavaScriptToPage(act.ActInputValues[0].Value);
@@ -7720,7 +7767,15 @@ namespace GingerCore.Drivers
             }
         }
 
-        private void OpenUrlNewTab()
+        private void OpenNewWindow()
+        {
+            IJavaScriptExecutor javaScriptExecutor = (IJavaScriptExecutor)Driver;
+            javaScriptExecutor.ExecuteScript("newwindow=window.open('about:blank','newWindow','height=250,width=350');if (window.focus) { newwindow.focus()}return false; ");
+            Driver.SwitchTo().Window(Driver.WindowHandles[Driver.WindowHandles.Count - 1]);
+            Driver.Manage().Window.Maximize();
+        }
+
+        private void OpenNewTab()
         {
             IJavaScriptExecutor javaScriptExecutor = (IJavaScriptExecutor)Driver;
             javaScriptExecutor.ExecuteScript("window.open();");
@@ -9375,7 +9430,7 @@ namespace GingerCore.Drivers
 
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
 
-                if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count() > 0)
+                if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Any())
                 {
                     return true;
                 }
@@ -9747,7 +9802,7 @@ namespace GingerCore.Drivers
             interceptor = webDriver.Manage().Network;
 
             interceptor.NetworkRequestSent += OnNetworkRequestSent;
-            interceptor.NetworkResponseReceived += OnNetworkResponseReceived;                       
+            interceptor.NetworkResponseReceived += OnNetworkResponseReceived;
 
             await interceptor.StartMonitoring();
             isNetworkLogMonitoringStarted = true;

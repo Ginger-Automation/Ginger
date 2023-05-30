@@ -127,7 +127,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
 
         public PlatformAction GetAsPlatformAction()
         {
-            ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == APImodelGUID).FirstOrDefault();
+            ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationAPIModel>(APImodelGUID);
             if (AAMB == null)
             {
                 Error = "Failed to find the pointed API Model";

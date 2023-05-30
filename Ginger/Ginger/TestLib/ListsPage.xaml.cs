@@ -66,7 +66,7 @@ namespace GingerWPF.TestLib
             EnvsComboBox.DisplayMemberPath = nameof(ProjEnvironment.Name);
 
             // Go get first env Guid
-            Guid guid = mSolutionRepository.GetAllRepositoryItems<ProjEnvironment>()[0].Guid;
+            Guid guid = mSolutionRepository.GetFirstRepositoryItem<ProjEnvironment>().Guid;
             ProjEnvironment env1 = mSolutionRepository.GetRepositoryItemByGuid<ProjEnvironment>(guid);
             EnvNameTextBox.BindControl(env1, nameof(ProjEnvironment.Name));
 
