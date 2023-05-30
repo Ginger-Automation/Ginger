@@ -36,7 +36,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             client.Connect("imap.gmail.com", 993, true);
             String UserName = config.UserEmail;
             String UserPassword = config.UserPassword;            
-            client.Authenticate(UserName, UserPassword);
+                client.Authenticate(config.UserEmail, UserPassword);
             var inbox = client.Inbox;
             inbox.Open(FolderAccess.ReadOnly);
             CancellationToken cancellationToken = default(CancellationToken);
