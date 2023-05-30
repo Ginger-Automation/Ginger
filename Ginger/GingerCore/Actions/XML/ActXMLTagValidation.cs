@@ -43,7 +43,7 @@ namespace GingerCore.Actions.XML
         {
             public static string InputFile = "InputFile";
             public static string ReqisFromFile = "ReqisFromFile";
-            public static string DocumentType = "DocumentType";
+            public static string DocumentType = "DocumentType";            
         }
 
 
@@ -83,9 +83,7 @@ namespace GingerCore.Actions.XML
                 return GetOrCreateInputParam(Fields.InputFile);
 
             }
-        }
-
-
+        }        
 
         [IsSerializedForLocalRepository(true)]
         public bool ReqisFromFile
@@ -126,8 +124,11 @@ namespace GingerCore.Actions.XML
                 return "XML Tag Validation";
             }
         }
-
-
+        [IsSerializedForLocalRepository]
+        public bool ReadJustXMLAttributeValues
+        {
+            get;set;
+        }
         public override eImageType Image { get { return eImageType.CodeFile; } }
 
 
@@ -236,10 +237,12 @@ namespace GingerCore.Actions.XML
                     // var.Value = VE.ValueCalculated;
 
                     XmlNode node = ReadNodeFromXmlDoc(xmlReqDoc, VE.ValueCalculated);
-
-                    if (node.InnerText != null)
+                    if (!this.ReadJustXMLAttributeValues)
                     {
-                        AddOrUpdateReturnParamActualWithPath("InnerText", node.InnerText.ToString(), VE.ValueCalculated);
+                        if (node.InnerText != null)
+                        {
+                            AddOrUpdateReturnParamActualWithPath("InnerText", node.InnerText.ToString(), VE.ValueCalculated);
+                        }
                     }
 
                     if (aiv.Value == null || aiv.Value == String.Empty)

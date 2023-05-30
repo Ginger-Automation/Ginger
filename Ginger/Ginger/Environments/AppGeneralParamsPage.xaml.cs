@@ -69,10 +69,10 @@ namespace Ginger.Environments
                 if (changedParam.Name != changedParam.NameBeforeEdit)
                 {
                     //ask user if want us to update the parameter name in all BF's
-                    if (Reporter.ToUser(eUserMsgKey.ChangingEnvironmentParameterValue) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-                    {
+                    if (Reporter.ToUser(eUserMsgKey.ChangingEnvironmentParameterValue) == eUserMsgSelection.Yes)
                         UpdateVariableNameChange(changedParam);
-                    }
+                    else
+                        changedParam.Name = changedParam.NameBeforeEdit; // Restore Variable Name
                 }
             }
             else if (e.Column.Header.ToString() == GeneralParam.Fields.Value)

@@ -19,10 +19,12 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.UserControls;
 using Ginger.UserControls;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
@@ -37,9 +39,9 @@ namespace Ginger.ALM
         ObservableList<ExternalItemFieldBase> mItemsFields;
 
         GenericWindow genWin = null;
-
+        ImageMakerControl loaderElement;
         BackgroundWorker fieldsWorker = new BackgroundWorker();
-
+        bool isReferFields = true;
         public static string LoadFieldsState = "aa";
         eALMConfigType mAlmConfigType = eALMConfigType.MainMenu;
 
@@ -49,22 +51,12 @@ namespace Ginger.ALM
             mAlmConfigType = configType;
             mItemsFields = WorkSpace.Instance.Solution.ExternalItemsFields;
 
-            if (mAlmConfigType.ToString().Equals(eALMConfigType.MainMenu.ToString()))
-            {
-                ALMIntegration.Instance.RefreshALMItemFields(WorkSpace.Instance.Solution.ExternalItemsFields, true, null);
-                if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-                {
-                    RunWorker(true);
-                }
-
-                grdQCFields.DataSourceList = mItemsFields;
-                SetFieldsGrid();
-            }
-            else
+            if (!mAlmConfigType.ToString().Equals(eALMConfigType.MainMenu.ToString()))
             {
                 grdQCFields.DataSourceList = selectedItemsFields;
                 SetFieldsGrid();
             }
+            
         }
 
         private void SetFieldsGrid()
@@ -91,22 +83,24 @@ namespace Ginger.ALM
 
         public void ShowAsWindow(bool refreshFields = true, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
+            isReferFields = refreshFields;
+               loaderElement = new ImageMakerControl();
+            loaderElement.Name = "xProcessingImage";
+            loaderElement.Height = 30;
+            loaderElement.Width = 30;
+            loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
+            loaderElement.Visibility = Visibility.Collapsed;
             if (mAlmConfigType == eALMConfigType.MainMenu)
             {
                 Button saveButton = new Button();
                 saveButton.Content = "Save";
                 saveButton.ToolTip = "Save 'To Update' fields";
                 saveButton.Click += new RoutedEventHandler(Save);
-                if (refreshFields)
-                {
-                    ALMIntegration.Instance.RefreshALMItemFields(WorkSpace.Instance.Solution.ExternalItemsFields, true, null);
-                }
-                grdQCFields.DataSourceList = WorkSpace.Instance.Solution.ExternalItemsFields;
-                GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { saveButton });
+                GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { saveButton }, true, "Close", null, false, loaderElement);
             }
             else
             {
-                GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this);
+                GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this,null, true, "Close", null, false, loaderElement);
             }
         }
 
@@ -124,6 +118,7 @@ namespace Ginger.ALM
         #region BackgroundWorker Thread
         public void RunWorker(Boolean refreshFlag)
         {
+            this.ShowLoader();
             fieldsWorker.WorkerReportsProgress = true;
             fieldsWorker.DoWork += new DoWorkEventHandler(fieldsWorker_DoWork);
             fieldsWorker.ProgressChanged += new ProgressChangedEventHandler(FieldsWorker_ProgressChanged);
@@ -133,6 +128,7 @@ namespace Ginger.ALM
             grdQCFields.Visibility = Visibility.Collapsed;
 
             fieldsWorker.RunWorkerAsync(refreshFlag);
+            this.HideLoader();
         }
 
         private void fieldsWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -143,7 +139,6 @@ namespace Ginger.ALM
 
             fieldsWorker.ReportProgress(GingerCore.ALM.RQM.ImportFromRQM.totalValues);
             e.Result = GingerCore.ALM.RQM.ImportFromRQM.totalValues;
-            System.Diagnostics.Debug.WriteLine("values = " + e.Result);
         }
 
         private void FieldsWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -165,5 +160,38 @@ namespace Ginger.ALM
             Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "ALM Item Fields population is complete");
         }
         #endregion
+
+        private void ShowLoader()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                loaderElement.Visibility = Visibility.Visible;
+            });
+        }
+
+        private void HideLoader()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                loaderElement.Visibility = Visibility.Collapsed;
+            });
+        }
+
+        private async void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (mAlmConfigType == eALMConfigType.MainMenu)
+            {
+                if (isReferFields)
+                {
+                        if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                        {
+                            RunWorker(true);
+                        }
+
+                        grdQCFields.DataSourceList = mItemsFields;
+                        SetFieldsGrid();
+                }
+            }
+        }
     }
 }
