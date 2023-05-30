@@ -4,101 +4,92 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using MailKit.Net.Imap;
 using MailKit.Search;
 using MailKit;
 using MimeKit;
-using GingerCore;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
-using Ginger.Run;
-using Amdocs.Ginger.CoreNET.GeneralLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using DocumentFormat.OpenXml.Spreadsheet;
-using System.Diagnostics;
-using VisualRegressionTracker;
 using Applitools.Utils;
-using NPOI.SS.Formula.Functions;
-using NUglify.Helpers;
 using System.Threading;
+using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.CoreNET.GeneralLib
 {
     public sealed class EmailReadGmailOperations : IEmailReadOperations, IDisposable
     {
-        MemoryStream ms = new MemoryStream();
         public Task ReadEmails(EmailReadFilters filters, EmailReadConfig config, Action<ReadEmail> emailProcessor)
         {
-            ValidateIMapConfig(config);
-            ImapClient client = new ImapClient();            
-            client.Connect("imap.gmail.com", 993, true);
-            String UserName = config.UserEmail;
-            String UserPassword = config.UserPassword;            
-                client.Authenticate(config.UserEmail, UserPassword);
-            var inbox = client.Inbox;
-            inbox.Open(FolderAccess.ReadOnly);
-            CancellationToken cancellationToken = default(CancellationToken);
-            
-
-            SearchQuery query = new SearchQuery();
-            SearchQuery subquery = new SearchQuery();
-            BinarySearchQuery combinedquery = new BinarySearchQuery(SearchTerm.All,query,subquery);
-
-            if (!string.IsNullOrEmpty(filters.From))
+            ImapClient client = new ImapClient();
+            try
             {
-                subquery = SearchQuery.FromContains(filters.From);      
-                combinedquery = SearchQuery.And(combinedquery, subquery);
-            }
-            if(!string.IsNullOrEmpty(filters.To))
-            {
-                if (filters.To.Contains(","))
+                client.Connect("imap.gmail.com", 993, true);
+                client.Authenticate(config.UserEmail, config.UserPassword);
+                var inbox = client.Inbox;
+                inbox.Open(FolderAccess.ReadOnly);
+                CancellationToken cancellationToken = default(CancellationToken);
+
+                var queryToImap = new SearchQuery();
+
+                if (!string.IsNullOrEmpty(filters.From))
                 {
-                    IEnumerable<string> actualRecipients = filters.To.Split(',',StringSplitOptions.TrimEntries);
-                    foreach (string expectedRecipient in actualRecipients)
+                    queryToImap = queryToImap.And(SearchQuery.FromContains(filters.From));
+                }
+                if (!string.IsNullOrEmpty(filters.To))
+                {
+                    if (filters.To.Contains(","))
                     {
-                        subquery = SearchQuery.ToContains(expectedRecipient);
-                        combinedquery = SearchQuery.And(combinedquery, subquery);
+                        IEnumerable<string> actualRecipients = filters.To.Split(',', StringSplitOptions.TrimEntries);
+                        foreach (string expectedRecipient in actualRecipients)
+                        {
+                            queryToImap = queryToImap.And(SearchQuery.ToContains(expectedRecipient));
+                        }
+                    }
+                    else
+                    {
+                        queryToImap = queryToImap.And(SearchQuery.ToContains(filters.To));
                     }
                 }
-                else
+                if (!string.IsNullOrEmpty(filters.Subject))
                 {
-                    subquery = SearchQuery.ToContains(filters.To);
-                    combinedquery = SearchQuery.And(combinedquery, subquery);
+                    queryToImap = queryToImap.And(SearchQuery.SubjectContains(filters.Subject));
                 }
-                
-            }
-            if (!string.IsNullOrEmpty(filters.Subject))
-            {
-                combinedquery = SearchQuery.And(combinedquery, subquery);
-            }
-            if (!string.IsNullOrEmpty(filters.Body))
-            {
-                subquery = SearchQuery.BodyContains(filters.Body);
-                combinedquery = SearchQuery.And(combinedquery, subquery);
-            }
-            if(!((filters.ReceivedStartDate.Equals(DateTime.MinValue)) && (filters.ReceivedEndDate.Equals(DateTime.Today))))
-            {
-                subquery = SearchQuery.DeliveredAfter(filters.ReceivedStartDate);
-                combinedquery = SearchQuery.And(combinedquery, subquery);
-                subquery = SearchQuery.DeliveredBefore(filters.ReceivedEndDate);
-                combinedquery = SearchQuery.And(combinedquery, subquery);
-            }
-            var matched = new UniqueIdSet();
+                if (!string.IsNullOrEmpty(filters.Body))
+                {
+                    queryToImap = queryToImap.And(SearchQuery.SubjectContains(filters.Body));
+                }
+                if (!(filters.ReceivedStartDate.Equals(DateTime.MinValue)) && (filters.ReceivedEndDate.Equals(DateTime.Today)))
+                {
+                    queryToImap = queryToImap.And(SearchQuery.DeliveredAfter(filters.ReceivedStartDate)).And(SearchQuery.DeliveredBefore(filters.ReceivedEndDate));
+                }
+                var query = new SearchQuery();
 
-            IList<UniqueId> list = inbox.Search(combinedquery, cancellationToken);
-            foreach (var item in list)
-            {
-                MimeMessage message = inbox.GetMessage(item);               
-                emailProcessor(ConvertMessageToReadEmail(message, filters));
-                
+                // Add a condition to the search query.
+                IList<UniqueId> list = inbox.Search(queryToImap, cancellationToken);
+
+                foreach (var item in list)
+                {
+                    MimeMessage message = inbox.GetMessage(item);
+                    emailProcessor(ConvertMessageToReadEmail(message, filters));
+                }
+
             }
-  
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error while reading emails using IMAP client.", ex);
+                throw ex;
+            }
+            finally
+            {
+                if (client.IsConnected)
+                {
+                    client.Disconnect(true);
+                }
+                client.DisposeIfNotNull();
+            }
             return Task.CompletedTask;
-        }      
-       
-                                                    
+        }
+
+
         private void ValidateIMapConfig(EmailReadConfig config)
         {
             if (string.IsNullOrEmpty(config.UserEmail))
@@ -111,22 +102,31 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             }
         }
 
+        public static byte[] ReadFully(IMimeContent input)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                input.DecodeTo(ms);
+                return ms.ToArray();
+            }
+        }
+
         private ReadEmail ConvertMessageToReadEmail(MimeMessage message, EmailReadFilters filters)
         {
-                IEnumerable<ReadEmail.Attachment> attachments = new List<ReadEmail.Attachment>();      
-           
-                if (message.Attachments != null && message.Attachments.Count() > 0)
-                {
-                    attachments = message.Attachments
-                        .Where(attachment => attachment.ContentType.Equals(filters.AttachmentContentType))
-                        .Select(attachment => new ReadEmail.Attachment()
-                        {
-                            Name = ((MimePart)attachment).ContentType.ToString().Split(";", StringSplitOptions.RemoveEmptyEntries)[1],
-                            ContentType = ((MimePart)attachment).ContentType.ToString().Split(";", StringSplitOptions.RemoveEmptyEntries)[0].Split(":", StringSplitOptions.RemoveEmptyEntries)[1].Trim(),
-                            ContentBytes = ms.ToArray()
-                        }).ToList();
-                }                                                         
-                
+            IEnumerable<ReadEmail.Attachment> attachments = null ;
+
+            if (message.Attachments != null && message.Attachments.Count() > 0)
+            {
+                attachments = message.Attachments
+                    .Where(attachment => attachment.ContentType.MimeType.Equals(filters.AttachmentContentType))
+                    .Select(attachment => new ReadEmail.Attachment()
+                    {
+                        Name = ((MimePart)attachment).ContentType.Name,
+                        ContentType = ((MimePart)attachment).ContentType.MimeType,
+                        ContentBytes = ReadFully(((MimePart)attachment).Content)
+                    });
+            }
+
             return new ReadEmail()
             {
                 From = message.From.ToString(),
@@ -142,7 +142,6 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
 
         public void Dispose()
         {
-            this.ms.Dispose();
         }
     }
 }
