@@ -683,6 +683,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+
         public bool DoNotResetWorkspaceArgsOnClose { get; set; }
         public void CloseSolution()
         {

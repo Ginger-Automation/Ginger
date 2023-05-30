@@ -36,7 +36,7 @@ namespace Ginger.AnalyzerLib
         {
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
             // check that we have Runners
-            if (RSC.GingerRunners.Count() == 0)
+            if (!RSC.GingerRunners.Any())
             {
                 RunSetConfigAnalyzer AGR = CreateNewIssue(IssuesList, RSC);
                 AGR.Description = "Missing Runners";
@@ -129,7 +129,7 @@ namespace Ginger.AnalyzerLib
                                 break;
                             case VariableBase.eOutputType.ApplicationModelParameter:
                                 Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);
-                                issueExist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Where(x => x.Guid == mappedGuid).FirstOrDefault() == null;
+                                issueExist = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<GlobalAppModelParameter>(mappedGuid) == null;
                                 break;
                             case VariableBase.eOutputType.DataSource:
                                 issueExist = string.IsNullOrEmpty(inputVar.MappedOutputValue);

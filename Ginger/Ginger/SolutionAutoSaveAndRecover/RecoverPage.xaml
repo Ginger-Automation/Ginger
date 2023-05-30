@@ -38,8 +38,6 @@
             
             <usercontrols:ucButton x:Name="xCloseButton" ButtonType="RoundTextAndImageButton" ButtonText="Close" ButtonImageType="Close" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Click="CloseButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"  DockPanel.Dock="Right" />
             
-            <usercontrols:ucButton x:Name="xDeleteButton" ButtonType="RoundTextAndImageButton" ButtonText="Delete Selected" ButtonImageType="Delete" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="DeleteButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" DockPanel.Dock="Right" />
-
             <usercontrols:ucButton x:Name="xRecoverButton" ButtonType="RoundTextAndImageButton" ButtonText="Recover Selected" ButtonImageType="Reset" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="RecoverButton_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"  DockPanel.Dock="Right" HorizontalAlignment="Right" />
             
         </DockPanel>

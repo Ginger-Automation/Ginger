@@ -258,7 +258,6 @@ namespace Ginger.Run
         public NewRunSetPage(RunSetConfig runSetConfig, eEditMode editMode = eEditMode.ExecutionFlow)//when window opened automatically when running from command line
         {
             InitializeComponent();
-
             //Init
             Init();
 
@@ -709,7 +708,6 @@ namespace Ginger.Run
                     xSealightsExpander.IsExpanded = false; //Sealight expand control should collapsed if all 3 Sealights' settings are in ‘Default’ mode.
                 }
             }
-
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xALMDefectsOpening, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
         }
 
@@ -1411,7 +1409,7 @@ namespace Ginger.Run
                             {
                                 Parallel.ForEach(Runner.Executor.BusinessFlows, businessFlow =>
                                 {
-                                    BusinessFlow originalBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == businessFlow.Guid).FirstOrDefault();
+                                    BusinessFlow originalBF = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(businessFlow.Guid);
                                     if (originalBF != null && System.IO.Path.GetFullPath(originalBF.FileName) == System.IO.Path.GetFullPath(e.FullPath))
                                     {
                                         mRunSetBusinessFlowWasChanged = true;
@@ -1482,6 +1480,11 @@ namespace Ginger.Run
             {
                 bool isSolutionSame = mRunSetConfig != null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;
+                if(WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null)
+                {
+                    WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Clear();
+                }
+                
                 if (bIsRunsetDirty && !IsCalledFromxUndoBtn)
                 {
                     UserSelectionSaveOrUndoRunsetChanges();
@@ -1520,6 +1523,9 @@ namespace Ginger.Run
 
                     // Init Runset Config Section
                     InitRunSetConfigurations();
+
+                    //init Defect Opeing section
+                    InitALMDefectsOpeningSection();
 
                     //Init Execution History Section
                     InitExecutionHistorySection();

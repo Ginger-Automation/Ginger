@@ -469,7 +469,7 @@ namespace GingerCore.Drivers.Common
                         {
                             relxpath = "(" + path + ")[" + i + "]";
                             List<object> newElem = mDriver.GetAllElementsByLocator(eLocateBy.ByRelXPath, relxpath);
-                            if (newElem != null && newElem.Count() > 0 && newElem[0].Equals(elemInfo.ElementObject))
+                            if (newElem != null && newElem.Any() && newElem[0].Equals(elemInfo.ElementObject))
                             {
                                 break;
                             }

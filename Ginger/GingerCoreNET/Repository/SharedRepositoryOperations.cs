@@ -219,7 +219,7 @@ namespace Ginger.Repository
         {
             bool linkIsByExternalID = false;
             bool linkIsByParentID = false;
-            if (items != null && items.Count() > 0)
+            if (items != null && items.Any())
             {
                 foreach (RepositoryItemBase item in items)
                 {

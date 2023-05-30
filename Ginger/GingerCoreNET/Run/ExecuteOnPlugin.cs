@@ -244,7 +244,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             // !!!!
 
             // TODO: loop over all remote grid !!!!!!!!!!!!!!!
-            RemoteServiceGrid remoteServiceGrid = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>().FirstOrDefault();  // !!!!!!!!!!!!!!
+            RemoteServiceGrid remoteServiceGrid = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<RemoteServiceGrid>();  // !!!!!!!!!!!!!!
             string remoteGridHost = remoteServiceGrid.Host;
             int RemoteGridPort = remoteServiceGrid.HostPort;
             return remoteServiceGrid;
@@ -573,7 +573,7 @@ namespace Amdocs.Ginger.CoreNET.Run
         {
             // If we have remote grid(s) then we go for remote run
             ObservableList<RemoteServiceGrid> remoteServiceGrids = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
-            if (remoteServiceGrids.Count > 0)
+            if (remoteServiceGrids.Any())
             {
                 ExecuteActionOnRemotePlugin(act);
             }
