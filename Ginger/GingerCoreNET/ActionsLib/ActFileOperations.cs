@@ -284,12 +284,9 @@ namespace GingerCore.Actions
                         return;
                     }
                     if (System.IO.File.Exists(calculatedSourceFilePath))
-                    {                        
-                        string filename = Path.GetFileNameWithoutExtension(calculatedSourceFilePath);                       
-                        DestinationFolder = $"{ DestinationFolder}\\{filename}\\"; // Creating the destination folder name for the unzip operation
-                        if (!System.IO.Directory.Exists(DestinationFolder)) 
-                        {
-                           
+                    {
+                        if (!System.IO.Directory.Exists(DestinationFolder))
+                        {                            
                             System.IO.Directory.CreateDirectory(DestinationFolder);
                         }
                         System.IO.Compression.ZipFile.ExtractToDirectory(calculatedSourceFilePath, DestinationFolder);

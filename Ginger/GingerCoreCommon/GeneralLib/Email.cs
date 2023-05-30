@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -35,6 +35,11 @@ namespace GingerCore.GeneralLib
         public enum eEmailMethod
         {
             SMTP, OUTLOOK
+        }
+
+        public enum readEmailMethod
+        {
+            MSGraphAPI, IMAP
         }
 
         [IsSerializedForLocalRepository]
@@ -188,6 +193,8 @@ namespace GingerCore.GeneralLib
 
         [IsSerializedForLocalRepository]
         public eEmailMethod EmailMethod { get; set; }
+
+        public readEmailMethod ReadEmailMethod { get; set; }
 
         private bool mEnableSSL = true;
         [IsSerializedForLocalRepository(true)]
