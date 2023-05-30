@@ -265,7 +265,7 @@ namespace GingerCore.Actions.XML
                         if (node.Attributes != null)
                         {
                             var nameAttribute = node.Attributes[@aiv.Value];
-                            ActReturnValue rv = ReturnValues.FirstOrDefault(x => x.Path == aiv.Value);
+                            ActReturnValue rv = ReturnValues.FirstOrDefault(x => x.Path == aiv.Value && x.FilePath == aiv.FilePath);
                             if (rv == null)
                             {
                                 AddOrUpdateReturnParamActualWithPath(aiv.Param, nameAttribute.Value.ToString(), aiv.Value);
