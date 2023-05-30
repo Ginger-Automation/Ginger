@@ -371,7 +371,7 @@ namespace GingerCoreNET.GeneralLib
         public static void SetUniqueNameToRepoItem(ObservableList<RepositoryItemBase> itemsList, RepositoryItemBase item, string suffix = "")
         {
             string originalName = item.ItemName;
-            if (itemsList.Where(x => x.ItemName == item.ItemName).FirstOrDefault() == null)
+            if (itemsList.FirstOrDefault(x => x.ItemName == item.ItemName) == null)
             {
                 return;//name is unique
             }
@@ -379,14 +379,14 @@ namespace GingerCoreNET.GeneralLib
             if (!string.IsNullOrEmpty(suffix))
             {
                 item.ItemName = item.ItemName + suffix;
-                if (itemsList.Where(x => x.ItemName == item.ItemName).FirstOrDefault() == null)
+                if (itemsList.FirstOrDefault(x => x.ItemName == item.ItemName) == null)
                 {
                     return;//name with Suffix is unique
                 }
             }
 
             int counter = 1;
-            while (itemsList.Where(x => x.ItemName == item.ItemName).FirstOrDefault() != null)
+            while (itemsList.FirstOrDefault(x => x.ItemName == item.ItemName) != null)
             {
                 counter++;
                 if (!string.IsNullOrEmpty(suffix))
@@ -448,10 +448,10 @@ namespace GingerCoreNET.GeneralLib
 
         public static string GetSolutionCategoryValue(SolutionCategoryDefinition solutionCategoryDefinition)
         {
-            SolutionCategory cat = WorkSpace.Instance.Solution.SolutionCategories.Where(x => x.Category == solutionCategoryDefinition.Category).FirstOrDefault();
+            SolutionCategory cat = WorkSpace.Instance.Solution.SolutionCategories.FirstOrDefault(x => x.Category == solutionCategoryDefinition.Category);
             if (cat != null)
             {
-                SolutionCategoryValue catValue = cat.CategoryOptionalValues.Where(x => x.Guid == solutionCategoryDefinition.SelectedValueID).FirstOrDefault();
+                SolutionCategoryValue catValue = cat.CategoryOptionalValues.FirstOrDefault(x => x.Guid == solutionCategoryDefinition.SelectedValueID);
                 if (catValue != null)
                 {
                     return catValue.Value;

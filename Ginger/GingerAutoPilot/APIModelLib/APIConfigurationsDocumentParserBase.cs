@@ -50,7 +50,7 @@ namespace Amdocs.Ginger.Repository
         {
             foreach (string Value in OptionalValuesPerParameterDict[tuple])
             {
-                OptionalValue OptionalValueExist = AMP.OptionalValuesList.Where(x => x.Value == Value).FirstOrDefault();
+                OptionalValue OptionalValueExist = AMP.OptionalValuesList.FirstOrDefault(x => x.Value == Value);
                 if (OptionalValueExist == null)
                 {
                     OptionalValue OptionalValue = new OptionalValue() { Value = Value };

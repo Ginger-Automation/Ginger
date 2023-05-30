@@ -42,7 +42,7 @@ namespace Ginger.Reports
 
         private void Init()
         {
-            mHTMLReportConfiguration = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            mHTMLReportConfiguration = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             mHTMLReportConfiguration.StartDirtyTracking();
             CurrentItemToSave = WorkSpace.Instance.Solution;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(LimitReportFolder, CheckBox.IsCheckedProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.LimitReportFolderSize));
@@ -146,7 +146,7 @@ namespace Ginger.Reports
             }
 
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            mDefualtConfig = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+            mDefualtConfig = HTMLReportConfigurations.FirstOrDefault(x => (x.IsDefault == true));
             if (mDefualtConfig != null)
             {
                 DefaultTemplatePickerCbx.SelectionChanged -= DefaultTemplatePickerCbx_SelectionChanged;

@@ -74,7 +74,7 @@ namespace Ginger.Run.RunSetActions
                 EmailOperations emailOperations = new EmailOperations(RunSetActionHTMLReportSendEmail.Email);
                 RunSetActionHTMLReportSendEmail.Email.EmailOperations = emailOperations;
 
-                HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+                HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
                 //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email Staring execute");
                 mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
                 string extraInformationCalculated = string.Empty;
@@ -134,7 +134,7 @@ namespace Ginger.Run.RunSetActions
 
                 //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: runSetFolder=" + runSetFolder);
 
-                var ReportItem = RunSetActionHTMLReportSendEmail.EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report).FirstOrDefault();
+                var ReportItem = RunSetActionHTMLReportSendEmail.EmailAttachments.FirstOrDefault(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report);
 
                 if (RunSetActionHTMLReportSendEmail.HTMLReportTemplate == RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport)
                 {
@@ -237,7 +237,7 @@ namespace Ginger.Run.RunSetActions
                                         ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
                                         reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
                                                                                                                                                   false,
-                                                                                                                                                  HTMLReportConfigurations.Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault());
+                                                                                                                                                  HTMLReportConfigurations.FirstOrDefault(x => (x.ID == rReport.SelectedHTMLReportTemplateID)));
                                     }
                                 }
                             }
@@ -467,15 +467,15 @@ namespace Ginger.Run.RunSetActions
             reportTimeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff");
             HTMLReportConfiguration currentTemplate = new HTMLReportConfiguration();
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            currentTemplate = HTMLReportConfigurations.Where(x => (x.ID == RunSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID)).FirstOrDefault();
+            currentTemplate = HTMLReportConfigurations.FirstOrDefault(x => (x.ID == RunSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID));
             if (currentTemplate == null && RunSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID == 100)// for supporting dynamic runset report
             {
-                currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+                currentTemplate = HTMLReportConfigurations.FirstOrDefault(x => (x.IsDefault == true));
             }
             TargetFrameworkHelper.Helper.CreateCustomerLogo(currentTemplate, tempFolder);
             if (currentTemplate == null)
             {
-                currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+                currentTemplate = HTMLReportConfigurations.FirstOrDefault(x => (x.IsDefault == true));
             }
             if (liteDbRunSet == null || (liteDbRunSet.GetType() == typeof(Object)))
             {
@@ -1110,17 +1110,17 @@ namespace Ginger.Run.RunSetActions
             reportTimeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff");
             HTMLReportConfiguration currentTemplate = new HTMLReportConfiguration();
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            currentTemplate = HTMLReportConfigurations.Where(x => (x.ID == RunSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID)).FirstOrDefault();
+            currentTemplate = HTMLReportConfigurations.FirstOrDefault(x => (x.ID == RunSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID));
             if (currentTemplate == null && RunSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID == 100)// for supporting dynamic runset report
             {
-                currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+                currentTemplate = HTMLReportConfigurations.FirstOrDefault(x => (x.IsDefault == true));
             }
             TargetFrameworkHelper.Helper.CreateCustomerLogo(currentTemplate, tempFolder);
             //System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
             //CustomerLogo.Save(tempFolder + "/CustomerLogo.png");
             if (currentTemplate == null)
             {
-                currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+                currentTemplate = HTMLReportConfigurations.FirstOrDefault(x => (x.IsDefault == true));
             }
             //Ginger.Reports.HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(currentTemplate);
             if ((RI.ReportInfoRootObject == null) || (RI.ReportInfoRootObject.GetType() == typeof(Object)))

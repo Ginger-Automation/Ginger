@@ -809,7 +809,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 }
                 else
                 {
-                    if (!page.ParamsList.Where(x => x.PlaceHolder.Equals(SoapSecurityContent.ElementAt(i))).Any())
+                    if (!page.ParamsList.Any(x => x.PlaceHolder.Equals(SoapSecurityContent.ElementAt(i))))
                     {
                         newAppModelParam.PlaceHolder = SoapSecurityContent.ElementAt(i);
                     }

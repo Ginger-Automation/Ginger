@@ -55,7 +55,7 @@ namespace Ginger.Actions
             ScriptInterPreter.Init(Act, nameof(ActScript.ScriptInterpreter), true);
             f.ScriptPath = SHFilesPath;
 
-            var comboEnumItem = ScriptInterpreterComboBox.Items.Cast<GingerCore.GeneralLib.ComboEnumItem>().Where(x => x.text == ActScript.eScriptInterpreterType.JS.ToString()).FirstOrDefault();
+            var comboEnumItem = ScriptInterpreterComboBox.Items.Cast<GingerCore.GeneralLib.ComboEnumItem>().FirstOrDefault(x => x.text == ActScript.eScriptInterpreterType.JS.ToString());
             ScriptInterpreterComboBox.Items.Remove(comboEnumItem);//Removed JS from UI
         }
 

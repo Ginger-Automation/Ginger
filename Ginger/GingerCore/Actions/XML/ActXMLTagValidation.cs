@@ -246,7 +246,7 @@ namespace GingerCore.Actions.XML
                     {
                         foreach (XmlAttribute XA in node.Attributes)
                         {
-                            ActReturnValue rv = ReturnValues.Where(x => x.Path == XA.Name).FirstOrDefault();
+                            ActReturnValue rv = ReturnValues.FirstOrDefault(x => x.Path == XA.Name);
                             if (rv == null)
                             {
                                 AddOrUpdateReturnParamActualWithPath(aiv.Param, XA.Value.ToString(), XA.Name);
@@ -262,7 +262,7 @@ namespace GingerCore.Actions.XML
                         if (node.Attributes != null)
                         {
                             var nameAttribute = node.Attributes[@aiv.Value];
-                            ActReturnValue rv = ReturnValues.Where(x => x.Path == aiv.Value).FirstOrDefault();
+                            ActReturnValue rv = ReturnValues.FirstOrDefault(x => x.Path == aiv.Value);
                             if (rv == null)
                             {
                                 AddOrUpdateReturnParamActualWithPath(aiv.Param, nameAttribute.Value.ToString(), aiv.Value);

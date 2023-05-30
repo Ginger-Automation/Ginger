@@ -43,11 +43,11 @@ namespace GingerCore.ALM
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = null;
             if (isOperationAlmType)
             {
-                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == this.ALMType).FirstOrDefault();
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.AlmType == this.ALMType);
             }
             else
             {
-                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault();
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm);
             }
             if (AlmConfig != null)
             {
@@ -290,7 +290,7 @@ namespace GingerCore.ALM
 
         public static GingerCoreNET.ALMLib.ALMConfig GetDefaultAlmConfig()
         {
-            GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault();
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm);
             if (AlmConfig == null)
             {
                 AlmConfig = new GingerCoreNET.ALMLib.ALMConfig();
@@ -305,7 +305,7 @@ namespace GingerCore.ALM
             ObservableList<ExternalItemFieldBase> mergedFields = new ObservableList<ExternalItemFieldBase>();
             foreach (ExternalItemFieldBase latestField in latestALMFields)
             {
-                ExternalItemFieldBase currentField = exitingFields.Where(x => x.ID == latestField.ID && x.ItemType == latestField.ItemType).FirstOrDefault();
+                ExternalItemFieldBase currentField = exitingFields.FirstOrDefault(x => x.ID == latestField.ID && x.ItemType == latestField.ItemType);
                 if (currentField != null)
                 {
                     currentField.Name = latestField.Name;

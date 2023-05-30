@@ -104,7 +104,7 @@ namespace Ginger.Repository
                 {
                     xActionListView.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
 
-                    Act dragedItemInGrid = ((IEnumerable<Act>)xActionListView.DataSourceList).Where(x => x.Guid == dragedItem.Guid).FirstOrDefault();
+                    Act dragedItemInGrid = ((IEnumerable<Act>)xActionListView.DataSourceList).FirstOrDefault(x => x.Guid == dragedItem.Guid);
                     if (dragedItemInGrid != null)
                     {
                         xActionListView.List.SelectedItem = dragedItemInGrid;

@@ -58,7 +58,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
             }
             else
             {
-                HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+                HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
                 reportsResultFolder = Path.Combine(ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder), "Reports", "Ginger-Web-Client");
             }
             string ReportrootPath = Path.Combine(reportsResultFolder, "WebReport");
@@ -110,7 +110,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
 
         private void RemoveSkippedItems(LiteDbRunSet liteDbRunSet)
         {
-            HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Where(x => (x.IsDefault == true)).FirstOrDefault();
+            HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().FirstOrDefault(x => (x.IsDefault == true));
 
             if (!_HTMLReportConfig.IgnoreSkippedEntities)
             {
@@ -187,7 +187,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
         private void PopulateMissingFields(LiteDbRunSet liteDbRunSet, string clientAppPath)
         {
             //select template 
-            HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Where(x => (x.IsDefault == true)).FirstOrDefault();
+            HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().FirstOrDefault(x => (x.IsDefault == true));
 
             //populate data based on level
             if (string.IsNullOrEmpty(_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()))

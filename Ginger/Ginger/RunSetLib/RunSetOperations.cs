@@ -57,7 +57,7 @@ namespace Amdocs.Ginger
                         return null;
                     }
                 }
-                while (string.IsNullOrEmpty(runSetName.Trim()) || WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>().Where(r => r.ItemName.ToLower() == runSetName.ToLower()).FirstOrDefault() != null);
+                while (string.IsNullOrEmpty(runSetName.Trim()) || WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>().FirstOrDefault(r => r.ItemName.ToLower() == runSetName.ToLower()) != null);
             }
 
             RunSetConfig runSetConfig = new RunSetConfig();

@@ -119,7 +119,7 @@ namespace Ginger.UserControlsLib.InputVariableRule
         {
             bool isValid = true;
 
-            if(!TargeteVariables.Where(x=> x.Guid == guid).Any())
+            if(!TargeteVariables.Any(x => x.Guid == guid))
             {
                 isValid = false;
             }

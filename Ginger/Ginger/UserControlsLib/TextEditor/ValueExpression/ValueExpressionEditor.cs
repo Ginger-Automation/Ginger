@@ -207,14 +207,14 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
         {
             string[] var = rxVarFormulaParams.Match(VarName).Value.Split('=');
             VarName = var[1].Trim();
-            VariableBase vb = WorkSpace.Instance.Solution.Variables.Where<VariableBase>(var => var.Name == VarName).FirstOrDefault();
+            VariableBase vb = WorkSpace.Instance.Solution.Variables.FirstOrDefault(var => var.Name == VarName);
             if (vb == null && mContext.BusinessFlow != null && mContext.BusinessFlow.Variables.Any(var => var.Name == VarName))
             {
-                vb = mContext.BusinessFlow.Variables.Where<VariableBase>(var => var.Name == VarName).FirstOrDefault();
+                vb = mContext.BusinessFlow.Variables.FirstOrDefault(var => var.Name == VarName);
             }
             else if (vb == null && mContext.BusinessFlow != null && mContext.BusinessFlow.CurrentActivity != null)
             {
-                vb = mContext.BusinessFlow.CurrentActivity.Variables.Where<VariableBase>(var => var.Name == VarName).FirstOrDefault();
+                vb = mContext.BusinessFlow.CurrentActivity.Variables.FirstOrDefault(var => var.Name == VarName);
             }
             return vb;
         }

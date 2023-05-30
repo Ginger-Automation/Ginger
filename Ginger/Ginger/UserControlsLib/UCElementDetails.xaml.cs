@@ -791,7 +791,7 @@ namespace Ginger
 
         public void CustomElementLocatorsCheck(ElementInfo matchingOriginalElement, ElementInfo selectedElement)
         {
-            if (matchingOriginalElement.Locators.Count != selectedElement.Locators.Count && matchingOriginalElement.Locators.Where(l => l.Help.Contains("Custom Locator")).Any())
+            if (matchingOriginalElement.Locators.Count != selectedElement.Locators.Count && matchingOriginalElement.Locators.Any(l => l.Help.Contains("Custom Locator")))
             {
                 foreach (ElementLocator customLocator in matchingOriginalElement.Locators.Where(l => l.Help.Contains("Custom Locator")))
                 {
@@ -845,7 +845,7 @@ namespace Ginger
             string elementVal = string.Empty;
             if (SelectedElement.OptionalValuesObjectsList.Count > 0)
             {
-                elementVal = Convert.ToString(SelectedElement.OptionalValuesObjectsList.Where(v => v.IsDefault).FirstOrDefault().Value);
+                elementVal = Convert.ToString(SelectedElement.OptionalValuesObjectsList.FirstOrDefault(v => v.IsDefault).Value);
             }
 
             ElementActionCongifuration actConfigurations;

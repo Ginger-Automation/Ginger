@@ -1025,7 +1025,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             if (AllNameSpaces.ContainsKey(Element.TypeNameSpace))
             {
                 List<string> ComplexElementSource = AllNameSpaces[Element.TypeNameSpace];
-                ComplexType ComplexType = ComplexTypesList.Where(x => x.Name == Element.Type && ComplexElementSource.Contains(x.Source)).FirstOrDefault();
+                ComplexType ComplexType = ComplexTypesList.FirstOrDefault(x => x.Name == Element.Type && ComplexElementSource.Contains(x.Source));
 
                 return ComplexType;
             }
@@ -1046,16 +1046,16 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             ComplexType ComplexType = null;
             if (ComplexElementSource.Count != 0)
             {
-                ComplexType = ComplexTypesList.Where(x => x.Name == ComplexTypeName && ComplexElementSource.Contains(x.Source.Replace("%20", " "))).FirstOrDefault();
+                ComplexType = ComplexTypesList.FirstOrDefault(x => x.Name == ComplexTypeName && ComplexElementSource.Contains(x.Source.Replace("%20", " ")));
             }
             else
             {
-                ComplexType = ComplexTypesList.Where(x => x.Name == ComplexTypeName && x.TargetNameSpace == ComplexTypeNameSpace).FirstOrDefault();
+                ComplexType = ComplexTypesList.FirstOrDefault(x => x.Name == ComplexTypeName && x.TargetNameSpace == ComplexTypeNameSpace);
             }
 
             if (ComplexType == null)
             {
-                ComplexType = ComplexTypesList.Where(x => x.Name == ComplexTypeName).FirstOrDefault();
+                ComplexType = ComplexTypesList.FirstOrDefault(x => x.Name == ComplexTypeName);
             }
 
             return ComplexType;
@@ -1072,16 +1072,16 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             Element Element = null;
             if (ElementSource.Count != 0)
             {
-                Element = ElementsList.Where(x => x.Name == ElementName && ElementSource.Contains(x.Source.Replace("%20", " "))).FirstOrDefault();
+                Element = ElementsList.FirstOrDefault(x => x.Name == ElementName && ElementSource.Contains(x.Source.Replace("%20", " ")));
             }
             else
             {
-                Element = ElementsList.Where(x => x.Name == ElementName).FirstOrDefault();
+                Element = ElementsList.FirstOrDefault(x => x.Name == ElementName);
             }
 
             if (Element == null)
             {
-                Element = ElementsList.Where(x => x.Name == ElementName && string.IsNullOrEmpty(x.Source)).FirstOrDefault();
+                Element = ElementsList.FirstOrDefault(x => x.Name == ElementName && string.IsNullOrEmpty(x.Source));
             }
             return Element;
         }
@@ -1237,7 +1237,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         else if (schema.TargetNamespace != null && AllNameSpaces.ContainsKey(schema.TargetNamespace))
                         {
                             AllNameSpaces[schema.TargetNamespace].Add(CompleteURL);
-                            KeyValuePair<List<string>, string> KeyValue = AllSourcesNameSpaces.Where(x => x.Value == schema.TargetNamespace).FirstOrDefault();
+                            KeyValuePair<List<string>, string> KeyValue = AllSourcesNameSpaces.FirstOrDefault(x => x.Value == schema.TargetNamespace);
                             KeyValue.Key.Add(CompleteURL);
                         }
                         GetAllElementsAndComplexTypesFromImportedSchema(schema);
@@ -1539,7 +1539,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         string CompleteSourceUri = GetPathWithoutFileConvention(XmlSchemaElement.SourceUri);
                         if (!string.IsNullOrEmpty(XmlSchemaElement.SourceUri))
                         {
-                            KeyValuePair<List<string>, string> KeyValue = AllSourcesNameSpaces.Where(x => x.Key.Contains(CompleteSourceUri)).FirstOrDefault();
+                            KeyValuePair<List<string>, string> KeyValue = AllSourcesNameSpaces.FirstOrDefault(x => x.Key.Contains(CompleteSourceUri));
                             ((Element)ComplexTypeChild).TypeNameSpace = KeyValue.Value;
                         }
 

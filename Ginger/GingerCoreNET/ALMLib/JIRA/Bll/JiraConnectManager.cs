@@ -48,7 +48,7 @@ namespace GingerCore.ALM.JIRA
         {
             GetJiraDomainProjects();
             List<ProjectArea> currentProjects = jiraDomainsProjectsDataList.Where(x => x.DomainName.Equals(ALMCore.DefaultAlmConfig.ALMDomain)).Select(prjs => prjs.Projects).FirstOrDefault();
-            IProjectDefinitions selectedProj = currentProjects.Where(prj => prj.ProjectId.ToString() == ALMCore.DefaultAlmConfig.ALMProjectKey).FirstOrDefault();
+            IProjectDefinitions selectedProj = currentProjects.FirstOrDefault(prj => prj.ProjectId.ToString() == ALMCore.DefaultAlmConfig.ALMProjectKey);
             if (selectedProj != null)
             {
                 //Save selected project details

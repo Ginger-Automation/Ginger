@@ -172,7 +172,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             //Act
             Agent windowsAgent = (Agent)RS.DeserializeFromFile(fileName);
 
-            DriverConfigParam actionTimeoutParameter = windowsAgent.DriverConfiguration.Where(x => x.Parameter == nameof(DriverBase.ActionTimeout)).FirstOrDefault();
+            DriverConfigParam actionTimeoutParameter = windowsAgent.DriverConfiguration.FirstOrDefault(x => x.Parameter == nameof(DriverBase.ActionTimeout));
 
             //Assert
             Assert.AreEqual("30", actionTimeoutParameter.Value, "ActionTimeout = 30");

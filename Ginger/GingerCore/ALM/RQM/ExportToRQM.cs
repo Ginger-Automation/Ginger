@@ -93,7 +93,7 @@ namespace GingerCore.ALM.RQM
                 RQMProject currentRQMProjectMapping;
                 if (RQMProjectList.RQMProjects.Count > 0)
                 {
-                    currentRQMProjectMapping = RQMProjectList.RQMProjects.Where(x => x.Name == ALMCore.DefaultAlmConfig.ALMProjectName || x.Name == "DefaultProjectName").FirstOrDefault();
+                    currentRQMProjectMapping = RQMProjectList.RQMProjects.FirstOrDefault(x => x.Name == ALMCore.DefaultAlmConfig.ALMProjectName || x.Name == "DefaultProjectName");
                     if (currentRQMProjectMapping != null)
                     {
                         testPlan = RQMConnect.Instance.GetRQMTestPlanByIdByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName, GetExportedIDString(businessFlow.ExternalID, "RQMID"));
@@ -263,7 +263,7 @@ namespace GingerCore.ALM.RQM
                     System.Diagnostics.Debug.WriteLine($"in GetExeResultforAg activGroup.TestSuiteId :{ activGroup.TestSuiteId }");
                     // check if test suite execution record is exists per current Test Suite ID
                     // if not exists to create it and than procced to work on just created
-                    RQMTestSuite testSuite = testPlan.TestSuites.Where(z => z.RQMID == activGroup.TestSuiteId).FirstOrDefault();
+                    RQMTestSuite testSuite = testPlan.TestSuites.FirstOrDefault(z => z.RQMID == activGroup.TestSuiteId);
                     if ((testSuite != null) && (testSuite.RQMID != null) && (testSuite.URLPathVersioned != null) &&
                           (testSuite.RQMID != string.Empty) && (testSuite.URLPathVersioned != string.Empty))
                     {
