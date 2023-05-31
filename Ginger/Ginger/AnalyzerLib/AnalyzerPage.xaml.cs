@@ -94,14 +94,14 @@ namespace Ginger.AnalyzerLib
         {
             IssuesCounterLabel.Content = "Total Issues: ";
             IssuesCountLabel.Content = mIssues.Count();
-            if (mIssues.Where(x => x.Severity.ToString() == "High").Any()|| mIssues.Where(x => x.Severity.ToString() == "Critical").Any())
+            if (mIssues.Any(x => x.Severity.ToString() == "High") || mIssues.Any(x => x.Severity.ToString() == "Critical"))
             {
                 CriticalAndHighIssuesLabel.Content = "Total High & Critical Issues: ";
                 CriticalAndHighIssuesLabelCounter.Content = (mIssues.Where(x => (x.Severity.ToString() == "High")).Count() + mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count());
                 CriticalAndHighIssuesLabelCounter.Foreground = new SolidColorBrush(Colors.Red);
                 CriticalAndHighIssuesLabel.Visibility = Visibility.Visible;
             }
-            if (mIssues.Where(x => x.CanAutoFix.ToString() == "Yes").Any())
+            if (mIssues.Any(x => x.CanAutoFix.ToString() == "Yes"))
             {
                 CanAutoFixLable.Content = "Can be Auto Fixed: ";
                 CanAutoFixLableCounter.Content = mIssues.Where(x => x.CanAutoFix.ToString() == "Yes").Count();

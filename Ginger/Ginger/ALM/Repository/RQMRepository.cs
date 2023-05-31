@@ -105,7 +105,7 @@ namespace Ginger.ALM.Repository
 
                     try
                     {
-                        BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == RQMID + "=" + testPlan.RQMID).FirstOrDefault();
+                        BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().FirstOrDefault(x => x.ExternalID == RQMID + "=" + testPlan.RQMID);
                         if (existedBF != null)
                         {
                             eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, testPlan.Name);
@@ -127,9 +127,9 @@ namespace Ginger.ALM.Repository
                             {
                                 if (string.IsNullOrEmpty(activ.TargetApplication) == false)
                                 {
-                                    if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
+                                    if (tsBusFlow.TargetApplications.FirstOrDefault(x => x.Name == activ.TargetApplication) == null)
                                     {
-                                        ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                                        ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == activ.TargetApplication);
                                         if (appAgent != null)
                                         {
                                             tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });

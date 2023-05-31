@@ -54,7 +54,7 @@ namespace Ginger.AnalyzerLib
             {
                 if (string.IsNullOrEmpty(AA.AgentName))
                 {
-                    if (GR.Executor.SolutionApplications.Where(x => (x.AppName == AA.AppName && x.Platform == ePlatformType.NA)).FirstOrDefault() != null)
+                    if (GR.Executor.SolutionApplications.FirstOrDefault(x => (x.AppName == AA.AppName && x.Platform == ePlatformType.NA)) != null)
                     {
                         continue;
                     }

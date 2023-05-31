@@ -137,7 +137,7 @@ namespace Ginger.Agents
 
             if (mOptionalAgentsList != null && mOptionalAgentsList.Count > 0)
             {
-                Agent defAgent = mOptionalAgentsList.Where(x => x.Guid == defualtAgent).FirstOrDefault();
+                Agent defAgent = mOptionalAgentsList.FirstOrDefault(x => x.Guid == defualtAgent);
                 if (defAgent != null)
                 {
                     SelectedAgent = defAgent;

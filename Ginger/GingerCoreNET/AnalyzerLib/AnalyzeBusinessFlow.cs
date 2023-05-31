@@ -126,8 +126,8 @@ namespace Ginger.AnalyzerLib
             {
                 if (ivr.Active)
                 {
-                    VariableBase sVariable = bfInputVariables.Where(v => v.Guid == ivr.SourceVariableGuid).FirstOrDefault();
-                    VariableBase tVariable = bfInputVariables.Where(v => v.Guid == ivr.TargetVariableGuid).FirstOrDefault();
+                    VariableBase sVariable = bfInputVariables.FirstOrDefault(v => v.Guid == ivr.SourceVariableGuid);
+                    VariableBase tVariable = bfInputVariables.FirstOrDefault(v => v.Guid == ivr.TargetVariableGuid);
                     if (sVariable == null || tVariable == null)
                     {
                         string vtype = string.Empty;

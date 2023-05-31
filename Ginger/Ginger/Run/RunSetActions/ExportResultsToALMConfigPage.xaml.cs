@@ -104,7 +104,7 @@ namespace Ginger.Run
         public bool Init(ObservableList<BusinessFlow> bfs, ValueExpression VE)
         {
             this.Title = "Export Results To ALM";
-            GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault();
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm);
             if (AlmConfig != null)
             {
                 xALMTypeCbx.Init(AlmConfig.AlmType, nameof(RunSetActionPublishToQC.PublishALMType), Enum.GetValues(typeof(eALMType)).Cast<eALMType>().ToList(), ComboBox.SelectedValueProperty);
@@ -184,7 +184,7 @@ namespace Ginger.Run
             }
             else
             {
-                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(alm => alm.AlmType.ToString().Equals(xALMTypeCbx.ComboBoxSelectedValue.ToString())).FirstOrDefault();
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(alm => alm.AlmType.ToString().Equals(xALMTypeCbx.ComboBoxSelectedValue.ToString()));
             }
             if (AlmConfig is null)
             {

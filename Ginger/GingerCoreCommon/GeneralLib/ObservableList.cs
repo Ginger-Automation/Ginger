@@ -112,7 +112,7 @@ namespace Amdocs.Ginger.Common
         public bool MoveNext()
         {
 
-            int index = Items.Select((x, i) => object.Equals(x, mCurrentItem) ? i + 1 : -1).Where(x => x != -1).FirstOrDefault();
+            int index = Items.Select((x, i) => Equals(x, mCurrentItem) ? i + 1 : -1).FirstOrDefault(x => x != -1);
             if (index > 0 && index <= Count)
             {
                 // Make sure last item remains active, do NOT put code to return null or alike, as all visible list need to have item mark in grid or it doesn't look good.
@@ -130,7 +130,7 @@ namespace Amdocs.Ginger.Common
 
         public bool MoveNext(object Current)
         {
-            int index = Items.Select((x, i) => object.Equals(x, Current) ? i + 1 : -1).Where(x => x != -1).FirstOrDefault();
+            int index = Items.Select((x, i) => Equals(x, Current) ? i + 1 : -1).FirstOrDefault(x => x != -1);
             if (index > 0 && index <= Count)
             {
                 // Make sure last item remains active, do NOT put code to return null or alike, as all visible list need to have item mark in grid or it doesn't look good.
@@ -149,7 +149,7 @@ namespace Amdocs.Ginger.Common
         public bool MovePrev()
         {
 
-            int index = Items.Select((x, i) => object.Equals(x, mCurrentItem) ? i - 1 : -1).Where(x => x != -1).FirstOrDefault();
+            int index = Items.Select((x, i) => Equals(x, mCurrentItem) ? i - 1 : -1).FirstOrDefault(x => x != -1);
             if (index >= 0)
             {
                 CurrentItem = Items[index];

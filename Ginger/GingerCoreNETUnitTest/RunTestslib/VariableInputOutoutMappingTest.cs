@@ -99,7 +99,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             //Arrange         
             ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            BusinessFlow targetBusinessFlow = businessFlows.Where(b => b.Name.Contains("Check Variables")).FirstOrDefault();
+            BusinessFlow targetBusinessFlow = businessFlows.FirstOrDefault(b => b.Name.Contains("Check Variables"));
             ObservableList<GingerCore.Variables.VariableBase> lstVariables = targetBusinessFlow.Activities[0].Variables;
             //Act
             RunSetConfig runSetConfig = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>() where x.Name == "Check Variables Run Set" select x).SingleOrDefault();

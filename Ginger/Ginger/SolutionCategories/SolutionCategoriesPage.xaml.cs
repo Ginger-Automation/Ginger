@@ -100,7 +100,7 @@ namespace Ginger.SolutionCategories
         {
             foreach (SolutionCategoryDefinition cat in mCategoriesDefinitions)
             {
-                SolutionCategory solCat = mSolutionCategories.Where(x => x.Category == cat.Category).FirstOrDefault();
+                SolutionCategory solCat = mSolutionCategories.FirstOrDefault(x => x.Category == cat.Category);
                 if (cat != null)
                 {
                     cat.CategoryName = solCat.CategoryName;

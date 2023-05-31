@@ -72,7 +72,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 {
                     xLiveSpy.SetLableStatusText("Element found in new added list");
                     xLiveSpy.mWinExplorer.LearnElementInfoDetails(elementInfo);
-                    var deltaElement = mDeltaElements.Where(x => x.ElementInfo.XPath.Equals(elementInfo.XPath)).FirstOrDefault();
+                    var deltaElement = mDeltaElements.FirstOrDefault(x => x.ElementInfo.XPath.Equals(elementInfo.XPath));
                     if (deltaElement != null)
                     {
                         mDeltaElements.CurrentItem = deltaElement;
