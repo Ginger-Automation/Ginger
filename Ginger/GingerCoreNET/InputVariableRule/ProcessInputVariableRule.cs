@@ -38,8 +38,8 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     if (variableRule.Active)
                     {
-                        VariableBase sourceVariable = variables.Where(x => x.Guid == variableRule.SourceVariableGuid).FirstOrDefault();
-                        VariableBase targetVariable = variables.Where(x => x.Guid == variableRule.TargetVariableGuid).FirstOrDefault();
+                        VariableBase sourceVariable = variables.FirstOrDefault(x => x.Guid == variableRule.SourceVariableGuid);
+                        VariableBase targetVariable = variables.FirstOrDefault(x => x.Guid == variableRule.TargetVariableGuid);
                         string originalFormula = targetVariable.Formula;
                         string originalValue = targetVariable.Value;
                         if (sourceVariable !=null && targetVariable!=null)
@@ -48,7 +48,7 @@ namespace Amdocs.Ginger.CoreNET
                             {
                                 if (targetVariable.GetType() == typeof(VariableSelectionList))
                                 {
-                                    OptionalValue optionalValue = ((VariableSelectionList)targetVariable).OptionalValuesList.Where(x => x.Value == variableRule.OperationValue).FirstOrDefault();
+                                    OptionalValue optionalValue = ((VariableSelectionList)targetVariable).OptionalValuesList.FirstOrDefault(x => x.Value == variableRule.OperationValue);
                                     if (optionalValue !=null)
                                     {
                                         targetVariable.Value = variableRule.OperationValue;
@@ -84,7 +84,7 @@ namespace Amdocs.Ginger.CoreNET
                                         }
                                         if (((VariableSelectionList)targetVariable).OptionalValuesList != null && ((VariableSelectionList)targetVariable).OptionalValuesList.Count > 0)
                                         {
-                                           OptionalValue op = ((VariableSelectionList)targetVariable).OptionalValuesList.Where(x => x.Value == ((VariableSelectionList)targetVariable).Value).FirstOrDefault();
+                                           OptionalValue op = ((VariableSelectionList)targetVariable).OptionalValuesList.FirstOrDefault(x => x.Value == ((VariableSelectionList)targetVariable).Value);
                                             if(op == null)
                                             {
                                                 ((VariableSelectionList)targetVariable).Value = ((VariableSelectionList)targetVariable).OptionalValuesList[0].Value;                                                                                              
@@ -98,14 +98,14 @@ namespace Amdocs.Ginger.CoreNET
                                 if (variableRule.OperationValue == eVisibilityOptions.Hide.ToString())
                                 {
                                     variables.Remove(targetVariable);
-                                    if (removedbfInputVariables.Where(x => x.Guid != targetVariable.Guid).FirstOrDefault() == null)
+                                    if (removedbfInputVariables.FirstOrDefault(x => x.Guid != targetVariable.Guid) == null)
                                     {
                                         removedbfInputVariables.Add(targetVariable);
                                     }
                                 }
                                 else if (variableRule.OperationValue == eVisibilityOptions.Show.ToString())
                                 {
-                                    VariableBase variable = removedbfInputVariables.Where(x => x.Guid == variableRule.TargetVariableGuid).FirstOrDefault();
+                                    VariableBase variable = removedbfInputVariables.FirstOrDefault(x => x.Guid == variableRule.TargetVariableGuid);
                                     if(variable != null)
                                     {
                                         variables.Add(variable);

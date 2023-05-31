@@ -681,7 +681,7 @@ namespace Ginger.GherkinLib
                     BFName = Path.GetFileName(BFName).Replace(".Ginger.BusinessFlow.xml", "");
                 }
 
-                mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == featureFileName)).SingleOrDefault();
+                mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().FirstOrDefault(x => x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == featureFileName));
                 if (mBizFlow == null)
                 {
                     CreateNewBF(FeatureName);
@@ -713,7 +713,7 @@ namespace Ginger.GherkinLib
             }
 
             string externalID = FileName.Replace(WorkSpace.Instance.Solution.Folder, "~");
-            mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == FileName)).SingleOrDefault();
+            mBizFlow = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().FirstOrDefault(x => x.Source == BusinessFlow.eSource.Gherkin && (x.ExternalID == externalID || x.ExternalID == FileName));
 
             ARP = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), new Context() { BusinessFlow = mBizFlow }, mSolTags, ArrowButtonHandler);
             //ARP.xActivitiesRepositoryListView.EnableTagsPanel = false;

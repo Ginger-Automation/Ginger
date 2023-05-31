@@ -69,7 +69,7 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
         {
             //Arrange
             ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            BusinessFlow originalFlow = businessFlows.Where(x => x.Name == "Flow 1").FirstOrDefault();
+            BusinessFlow originalFlow = businessFlows.FirstOrDefault(x => x.Name == "Flow 1");
 
             //Act
             BusinessFlow businessFlowCopy = (BusinessFlow)originalFlow.CreateCopy(true);
@@ -86,7 +86,7 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
         {
             //Arrange
             ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            BusinessFlow originalFlow = businessFlows.Where(x => x.Name == "Flow 2").FirstOrDefault();
+            BusinessFlow originalFlow = businessFlows.FirstOrDefault(x => x.Name == "Flow 2");
 
             //Act
             BusinessFlow businessFlowCopy = (BusinessFlow)originalFlow.CreateCopy(true);
@@ -104,7 +104,7 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
         {
             //Arrange
             ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            Activity originalActivity = businessFlows.Where(x => x.Name == "Flow 1").FirstOrDefault().Activities[0];
+            Activity originalActivity = businessFlows.FirstOrDefault(x => x.Name == "Flow 1").Activities[0];
 
             //Act
             Activity duplicatedActivity = (Activity)originalActivity.CreateCopy(true);
@@ -120,7 +120,7 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
         {
             //Arrange
             ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            Activity originalActivity = businessFlows.Where(x => x.Name == "Flow 2").FirstOrDefault().Activities[0];
+            Activity originalActivity = businessFlows.FirstOrDefault(x => x.Name == "Flow 2").Activities[0];
 
             //Act
             Activity duplicatedActivity = (Activity)originalActivity.CreateCopy(true);

@@ -489,17 +489,17 @@ namespace GingerCore
                 pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
             }
             IEnumerable<PluginServiceInfo> Services = Plugins.SelectMany(x => ((PluginPackageOperations)x.PluginPackageOperations).Services);
-            PluginServiceInfo PSI = Services.Where(x => x.ServiceId == Agent.ServiceId).FirstOrDefault();
+            PluginServiceInfo PSI = Services.FirstOrDefault(x => x.ServiceId == Agent.ServiceId);
 
-            PluginPackage PP = Plugins.Where(x => ((PluginPackageOperations)x.PluginPackageOperations).Services.Contains(PSI)).First();
+            PluginPackage PP = Plugins.First(x => ((PluginPackageOperations)x.PluginPackageOperations).Services.Contains(PSI));
             PP.PluginPackageOperations = new PluginPackageOperations(PP);
 
             PP.PluginPackageOperations.LoadServicesFromJSON();
-            PSI = ((PluginPackageOperations)PP.PluginPackageOperations).Services.Where(x => x.ServiceId == Agent.ServiceId).FirstOrDefault();
+            PSI = ((PluginPackageOperations)PP.PluginPackageOperations).Services.FirstOrDefault(x => x.ServiceId == Agent.ServiceId);
 
             foreach (var config in PSI.Configs)
             {
-                if (!Agent.DriverConfiguration.Where(x => x.Parameter == config.Name).Any())
+                if (!Agent.DriverConfiguration.Any(x => x.Parameter == config.Name))
                 {
                     DriverConfigParam DI = new DriverConfigParam();
                     DI.Parameter = config.Name;
@@ -520,7 +520,7 @@ namespace GingerCore
         /// <param name="PSI"></param>
         private void SetPlatformParameters(PluginServiceInfo PSI)
         {
-            if (PSI.Interfaces.Where(x => x == "IWebPlatform").Any())
+            if (PSI.Interfaces.Any(x => x == "IWebPlatform"))
             {
                 DriverConfigParam DI = new DriverConfigParam();
                 DI.Parameter = "Max Agent Load Time";
@@ -543,7 +543,7 @@ namespace GingerCore
 
 
             }
-            else if (PSI.Interfaces.Where(x => x == "IWebServicePlatform").Any())
+            else if (PSI.Interfaces.Any(x => x == "IWebServicePlatform"))
             {
                 DriverConfigParam DI = new DriverConfigParam();
                 DI.Parameter = "Save Request";
@@ -619,7 +619,7 @@ namespace GingerCore
 
                 DriverConfigParam configParam = GetDriverConfigParam(mi);
 
-                if (Agent.DriverConfiguration.Where(x => x.Parameter == configParam.Parameter).FirstOrDefault() == null)
+                if (Agent.DriverConfiguration.FirstOrDefault(x => x.Parameter == configParam.Parameter) == null)
                 {
                     Agent.DriverConfiguration.Add(configParam);
                 }

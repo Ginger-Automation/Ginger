@@ -96,7 +96,7 @@ namespace Ginger.BusinessFlowPages
             {
                 if (!string.IsNullOrEmpty(groupName))
                 {
-                    if (mWizard.Context.BusinessFlow.ActivitiesGroups.Where(x => x.Name.Trim() == groupName.Trim()).FirstOrDefault() == null)
+                    if (mWizard.Context.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name.Trim() == groupName.Trim()) == null)
                     {
                         ActivitiesGroup activitiesGroup = new ActivitiesGroup() { Name = groupName.Trim() };
                         mWizard.Context.BusinessFlow.AddActivitiesGroup(activitiesGroup);
@@ -114,7 +114,7 @@ namespace Ginger.BusinessFlowPages
         {
             if (mWizard.ParentActivitiesGroup.ActivitiesIdentifiers.Count > 0)
             {
-                ActivityIdentifiers activityIdnt = mWizard.ParentActivitiesGroup.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity != null && string.IsNullOrEmpty(x.IdentifiedActivity.TargetApplication) == false).FirstOrDefault();
+                ActivityIdentifiers activityIdnt = mWizard.ParentActivitiesGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.IdentifiedActivity != null && string.IsNullOrEmpty(x.IdentifiedActivity.TargetApplication) == false);
                 if (activityIdnt != null)
                 {
                     return activityIdnt.IdentifiedActivity.TargetApplication;

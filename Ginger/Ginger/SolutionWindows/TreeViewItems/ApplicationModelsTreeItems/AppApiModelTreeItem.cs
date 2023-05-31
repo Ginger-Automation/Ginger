@@ -121,7 +121,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         {
             foreach (GlobalAppModelParameter gAMPara in (copiedItem as ApplicationAPIModel).GlobalAppModelParameters)
             {
-                gAMPara.Guid = (item as ApplicationAPIModel).GlobalAppModelParameters.Where(m => m.ElementName == gAMPara.ElementName).FirstOrDefault().Guid;
+                gAMPara.Guid = (item as ApplicationAPIModel).GlobalAppModelParameters.FirstOrDefault(m => m.ElementName == gAMPara.ElementName).Guid;
             }
         }
     }

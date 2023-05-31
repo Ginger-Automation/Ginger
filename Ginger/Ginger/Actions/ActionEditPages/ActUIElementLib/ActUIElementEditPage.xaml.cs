@@ -708,7 +708,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 if (currentPOM != null)
                 {
                     Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                    selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                    selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
                 }
             }
             return selectedPOMElement;
@@ -742,7 +742,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             ElementInfo selectedPOMElement = GetElementInfoFromCurerentPOMSelected();
             if (selectedPOMElement != null && selectedPOMElement.OptionalValuesObjectsList.Count > 0)        //For new implementation
             {
-                OptionalValue defValue = selectedPOMElement.OptionalValuesObjectsList.Where(s => s.IsDefault == true).FirstOrDefault();
+                OptionalValue defValue = selectedPOMElement.OptionalValuesObjectsList.FirstOrDefault(s => s.IsDefault == true);
                 if (defValue != null)
                 {
                     if (valuesType == ePomElementValuesType.Values)

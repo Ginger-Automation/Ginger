@@ -138,7 +138,7 @@ namespace Ginger.Actions.ActionConversion
             ObservableList<ConvertableActionDetails> list = new ObservableList<ConvertableActionDetails>();
             foreach (var act in actionToBeConverted)
             {
-                ConvertableActionDetails det = list.Where(x => x.SourceActionTypeName == act.SourceActionTypeName && x.TargetActionTypeName == act.TargetActionTypeName).FirstOrDefault();
+                ConvertableActionDetails det = list.FirstOrDefault(x => x.SourceActionTypeName == act.SourceActionTypeName && x.TargetActionTypeName == act.TargetActionTypeName);
                 if (det == null)
                 {
                     list.Add(act);

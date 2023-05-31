@@ -123,9 +123,9 @@ namespace GingerCore.Platforms.PlatformsInfo
                         etd.ElementOperationsList.Add(ActUIElement.eElementAction.Click);
                     }
                 }
-                if (mPlatformElementTypeOperations.Where(x => x.ElementType == eElementType.Window).FirstOrDefault() != null)
+                if (mPlatformElementTypeOperations.FirstOrDefault(x => x.ElementType == eElementType.Window) != null)
                 {
-                    mPlatformElementTypeOperations.Remove(mPlatformElementTypeOperations.Where(x => x.ElementType == eElementType.Window).FirstOrDefault());
+                    mPlatformElementTypeOperations.Remove(mPlatformElementTypeOperations.FirstOrDefault(x => x.ElementType == eElementType.Window));
                 }
                 //ElementTypeData List = mPlatformElementTypeOperations.Where(x => x.ElementType == eElementType.List).FirstOrDefault();
                 //if (List != null)

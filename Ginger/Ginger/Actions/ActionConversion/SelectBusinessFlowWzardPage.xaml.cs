@@ -192,8 +192,7 @@ namespace Ginger.Actions.ActionConversion
         /// <returns></returns>
         private bool IsBusinessFlowAdded(Guid bfGuid)
         {
-            bool isExists = ListOfBusinessFlow.Where(x => x.BusinessFlow.Guid == bfGuid).FirstOrDefault() == null ? false : true;
-            return isExists;
+            return ListOfBusinessFlow.Any(x => x.BusinessFlow.Guid == bfGuid);
         }
 
         /// <summary>

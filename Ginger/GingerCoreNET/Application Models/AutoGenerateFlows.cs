@@ -69,7 +69,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                         string elementVal = string.Empty;
                         if (foundElemntInfo.OptionalValuesObjectsList.Count > 0)
                         {
-                            elementVal = Convert.ToString(foundElemntInfo.OptionalValuesObjectsList.Where(v => v.IsDefault).FirstOrDefault().Value);
+                            elementVal = Convert.ToString(foundElemntInfo.OptionalValuesObjectsList.FirstOrDefault(v => v.IsDefault).Value);
                         }
                         actConfigurations = new ElementActionCongifuration
                         {

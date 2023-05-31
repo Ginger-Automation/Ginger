@@ -170,7 +170,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             bool isPresent = false;
             if (PomModels != null && PomModels.Count > 0)
             {
-                var obj = PomModels.Where(x => x.ItemName == itemName).FirstOrDefault();
+                var obj = PomModels.FirstOrDefault(x => x.ItemName == itemName);
                 if (obj != null)
                 {
                     isPresent = !string.IsNullOrEmpty(Convert.ToString(obj.ItemName));

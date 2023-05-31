@@ -29,7 +29,7 @@ namespace GingerCoreNETUnitTest.RunListeners
             //mExecutionLogger.ExecutionLogfolder = @"c:\temp\koko1";
             //mExecutionLogger.Configuration.ExecutionLoggerConfigurationIsEnabled = true; // !!!!!!!!!!!!!!!!!!!!! remove this flag            
             //mGingerRunner.RunListeners.Add(mExecutionLogger);
-            mExecutionLogger = (ExecutionLoggerManager)((GingerExecutionEngine)mGingerRunner.Executor).RunListeners.Where(x => x.GetType() == typeof(ExecutionLoggerManager)).FirstOrDefault();   // !!!!!!!!!!!!!!!!
+            mExecutionLogger = (ExecutionLoggerManager)((GingerExecutionEngine)mGingerRunner.Executor).RunListeners.FirstOrDefault(x => x.GetType() == typeof(ExecutionLoggerManager));   // !!!!!!!!!!!!!!!!
         }
 
         [ClassCleanup]

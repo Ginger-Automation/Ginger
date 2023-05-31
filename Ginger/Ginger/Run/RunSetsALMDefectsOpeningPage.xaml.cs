@@ -84,7 +84,7 @@ namespace Ginger.Run
                 DefectProfiles_cbx.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
                 DefectProfiles_cbx.DisplayMemberPath = nameof(ALMDefectProfile.Name).ToString();
                 DefectProfiles_cbx.SelectedValuePath = nameof(ALMDefectProfile.ID).ToString();
-                DefectProfiles_cbx.SelectedIndex = DefectProfiles_cbx.Items.IndexOf(((ObservableList<ALMDefectProfile>)DefectProfiles_cbx.ItemsSource).Where(x => (x.IsDefault == true)).FirstOrDefault());
+                DefectProfiles_cbx.SelectedIndex = DefectProfiles_cbx.Items.IndexOf(((ObservableList<ALMDefectProfile>)DefectProfiles_cbx.ItemsSource).FirstOrDefault(x => (x.IsDefault == true)));
             }
         }
 

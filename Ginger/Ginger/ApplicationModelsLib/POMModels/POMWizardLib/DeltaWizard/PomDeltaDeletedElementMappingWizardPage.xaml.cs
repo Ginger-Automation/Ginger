@@ -111,7 +111,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 }
                 if (item.MappedElementInfo != null && item.MappedElementInfo.ToLower() != "none")
                 {
-                    var removeItem = NewAddedElementComboList.IndexOf(NewAddedElementComboList.Where(x => x.InternalValue == item.MappedElementInfo).FirstOrDefault());
+                    var removeItem = NewAddedElementComboList.IndexOf(NewAddedElementComboList.FirstOrDefault(x => x.InternalValue == item.MappedElementInfo));
 
                     if (removeItem != -1)
                     {

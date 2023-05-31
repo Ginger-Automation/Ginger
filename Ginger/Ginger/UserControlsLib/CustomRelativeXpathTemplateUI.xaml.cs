@@ -68,7 +68,7 @@ namespace Ginger.UserControlsLib.POMLearnig
 
             CustomRelativeXpathTemplate iOSTemplate = new CustomRelativeXpathTemplate() { Value = "type == '{type}' AND value BEGINSWITH[c] '{value}' AND visible == {visible}", Status = CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed };
 
-            if (RelativeXpathTemplateList.Where(t => t.Value == iOSTemplate.Value).FirstOrDefault() == null)
+            if (RelativeXpathTemplateList.FirstOrDefault(t => t.Value == iOSTemplate.Value) == null)
             {
                 RelativeXpathTemplateList.Insert(0, iOSTemplate);
                 RelativeXpathTemplateList.RemoveAt(2);

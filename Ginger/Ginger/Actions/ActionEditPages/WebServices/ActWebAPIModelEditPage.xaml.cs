@@ -114,7 +114,7 @@ namespace Ginger.Actions.WebServices
                     if (AMDP.RequiredAsInput == true)
                     {
                         numOfAPIParams++;
-                        EnhancedActInputValue paramToUpdate = OldAPIModelParamsValue.Where(x => x.ParamGuid == AMDP.Guid).FirstOrDefault();
+                        EnhancedActInputValue paramToUpdate = OldAPIModelParamsValue.FirstOrDefault(x => x.ParamGuid == AMDP.Guid);
                         if (paramToUpdate != null) //Param already been in the action list, just update his values
                         {
                             string OVDefaultValue = string.Empty;
@@ -150,9 +150,9 @@ namespace Ginger.Actions.WebServices
                         paramToUpdate.Param = AMDP.PlaceHolder;
                         paramToUpdate.Description = AMDP.Description;
                         //re-use selected value
-                        if (OldAPIModelParamsValue.Where(x => x.Param == paramToUpdate.Param).FirstOrDefault() != null)
+                        if (OldAPIModelParamsValue.FirstOrDefault(x => x.Param == paramToUpdate.Param) != null)
                         {
-                            paramToUpdate.Value = OldAPIModelParamsValue.Where(x => x.Param == paramToUpdate.Param).FirstOrDefault().Value;
+                            paramToUpdate.Value = OldAPIModelParamsValue.FirstOrDefault(x => x.Param == paramToUpdate.Param).Value;
                         }
                         mAct.APIModelParamsValue.Add(paramToUpdate);
                     }
@@ -176,7 +176,7 @@ namespace Ginger.Actions.WebServices
             {
                 string value = EIV.Value;
                 EIV.OptionalValues.Clear();
-                AppModelParameter AMP = AAMB.AppModelParameters.Where(x => x.Guid == EIV.ParamGuid).FirstOrDefault();
+                AppModelParameter AMP = AAMB.AppModelParameters.FirstOrDefault(x => x.Guid == EIV.ParamGuid);
                 if (AMP != null)
                 {
                     foreach (OptionalValue OV in AMP.OptionalValuesList)
@@ -186,7 +186,7 @@ namespace Ginger.Actions.WebServices
                 }
                 else
                 {
-                    AppModelParameter AGMP = AAMB.GlobalAppModelParameters.Where(x => x.Guid == EIV.ParamGuid).FirstOrDefault();
+                    AppModelParameter AGMP = AAMB.GlobalAppModelParameters.FirstOrDefault(x => x.Guid == EIV.ParamGuid);
                     if (AGMP != null)
                     {
                         foreach (OptionalValue OV in AGMP.OptionalValuesList)

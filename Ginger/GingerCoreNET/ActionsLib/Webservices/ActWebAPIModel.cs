@@ -261,7 +261,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
         private void SetExecutionValue<T>(T param, ActWebAPIModel actWebAPIModel)
         {
             AppModelParameter p = param as AppModelParameter;
-            EnhancedActInputValue enhanceInput = actWebAPIModel.APIModelParamsValue.Where(x => x.ParamGuid == p.Guid).FirstOrDefault();
+            EnhancedActInputValue enhanceInput = actWebAPIModel.APIModelParamsValue.FirstOrDefault(x => x.ParamGuid == p.Guid);
             if (enhanceInput != null)
             {
                 p.ExecutionValue = enhanceInput.ValueForDriver;

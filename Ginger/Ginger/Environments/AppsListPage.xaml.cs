@@ -111,7 +111,7 @@ namespace Ginger.Environments
                     {
                         if (env != AppEnvironmnet)
                         {
-                            if (env.Applications.Where(x => x.Name == ((EnvApplication)obj).Name).FirstOrDefault() == null)
+                            if (env.Applications.FirstOrDefault(x => x.Name == ((EnvApplication)obj).Name) == null)
                             {
                                 EnvApplication app = (EnvApplication)(((RepositoryItemBase)obj).CreateCopy());
                                 env.Applications.Add(app);

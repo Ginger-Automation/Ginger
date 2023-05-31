@@ -62,7 +62,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                             for (int activityIndex = 0; activityIndex < bf.BusinessFlow.Activities.Count(); activityIndex++)
                             {
                                 Activity activity = bf.BusinessFlow.Activities[activityIndex];
-                                RepositoryItemKey ta = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.ItemName == activity.TargetApplication).FirstOrDefault().Key;
+                                RepositoryItemKey ta = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.ItemName == activity.TargetApplication).Key;
                                 if (activity != null && activity.Active && WorkSpace.Instance.Solution.GetApplicationPlatformForTargetApp(ta.ItemName) == ePlatformType.WebServices)
                                 {
                                     bf.ConvertedActionsCount += ConvertActivity(parameterizeRequestBody, pullValidations, activity, ta, apiModelFolder);
@@ -195,7 +195,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                     if (string.IsNullOrEmpty(actAPIModelParam.Value))
                     {
                         //set defualt value
-                        OptionalValue ov = apiModelParam.OptionalValuesList.Where(x => x.IsDefault == true).FirstOrDefault();
+                        OptionalValue ov = apiModelParam.OptionalValuesList.FirstOrDefault(x => x.IsDefault == true);
                         if (ov != null)
                         {
                             actAPIModelParam.Value = ov.Value;
@@ -381,7 +381,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                     isExists = true;
                     foreach (var val in param.OptionalValuesList)
                     {
-                        var paramOptionalValue = item.OptionalValuesList.Where(x => x.Value == val.Value).FirstOrDefault();
+                        var paramOptionalValue = item.OptionalValuesList.FirstOrDefault(x => x.Value == val.Value);
                         if (!string.IsNullOrEmpty(Convert.ToString(val.Value)) && Convert.ToString(val.Value) != "?" && (paramOptionalValue == null || paramOptionalValue.Value != val.Value))
                         {
                             item.OptionalValuesList.Add(val);
@@ -557,11 +557,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
             ApplicationAPIUtils.eWebApiType apiType = act.GetType().Name.Equals(typeof(ActWebAPISoap).Name) ? ApplicationAPIUtils.eWebApiType.SOAP : ApplicationAPIUtils.eWebApiType.REST;
             if (!string.IsNullOrEmpty(soapAction))
             {
-                aPIModel = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.EndpointURL == endPointURL && x.SOAPAction == soapAction && x.APIType == apiType).FirstOrDefault();
+                aPIModel = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().FirstOrDefault(x => x.EndpointURL == endPointURL && x.SOAPAction == soapAction && x.APIType == apiType);
             }
             else
             {
-                aPIModel = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.EndpointURL == endPointURL && x.APIType == apiType).FirstOrDefault();
+                aPIModel = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().FirstOrDefault(x => x.EndpointURL == endPointURL && x.APIType == apiType);
             }
             return aPIModel;
         }

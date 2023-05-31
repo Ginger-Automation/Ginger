@@ -67,15 +67,15 @@ namespace Ginger.Run.RunSetActions
                 CurrentTemplatePickerCbx.SelectedValuePath = HTMLReportConfiguration.Fields.ID;
                 if ((runSetActionSendData.selectedHTMLReportTemplateID != 0))
                 {
-                    CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => (x.ID == runSetActionSendData.selectedHTMLReportTemplateID)).FirstOrDefault());
+                    CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.FirstOrDefault(x => (x.ID == runSetActionSendData.selectedHTMLReportTemplateID)));
                     if (CurrentTemplatePickerCbx.SelectedIndex == -1)
                     {
-                        CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => x.IsDefault).FirstOrDefault());
+                        CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.FirstOrDefault(x => x.IsDefault));
                     }
                 }
                 else
                 {
-                    CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => x.IsDefault).FirstOrDefault());
+                    CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.FirstOrDefault(x => x.IsDefault));
                 }
             }
         }

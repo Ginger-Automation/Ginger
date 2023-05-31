@@ -51,7 +51,7 @@ namespace Ginger.Run.RunSetActions
         public void Execute(IReportInfo RI)
         {
             string reportsResultFolder = string.Empty;
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 ProduceLiteDBReportFolder(currentConf);
@@ -97,7 +97,7 @@ namespace Ginger.Run.RunSetActions
 
                     reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
                                                                                                                                 false,
-                                                                                                                                HTMLReportConfigurations.Where(x => (x.ID == RunSetActionHTMLReport.selectedHTMLReportTemplateID)).FirstOrDefault(),
+                                                                                                                                HTMLReportConfigurations.FirstOrDefault(x => (x.ID == RunSetActionHTMLReport.selectedHTMLReportTemplateID)),
                                                                                                                                 currentHTMLFolderName,
                                                                                                                                 RunSetActionHTMLReport.isHTMLReportPermanentFolderNameUsed, currentConf.HTMLReportConfigurationMaximalFolderSize);
                 }

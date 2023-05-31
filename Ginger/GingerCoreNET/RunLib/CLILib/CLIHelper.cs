@@ -291,7 +291,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             Reporter.ToLog(eLogLevel.INFO, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), Runset));
             ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-            mRunSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == Runset.ToLower().Trim()).FirstOrDefault();
+            mRunSetConfig = RunSets.FirstOrDefault(x => x.Name.ToLower().Trim() == Runset.ToLower().Trim());
             if (mRunSetConfig != null)
             {
                 mRunsetExecutor.RunSetConfig = mRunSetConfig;
@@ -310,7 +310,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             Reporter.ToLog(eLogLevel.INFO, "Selected Environment: '" + Env + "'");
             if (String.IsNullOrEmpty(Env) == false)
             {
-                ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == Env.ToLower().Trim()).FirstOrDefault();
+                ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault(x => x.Name.ToLower().Trim() == Env.ToLower().Trim());
                 if (env != null)
                 {
                     mRunsetExecutor.RunsetExecutionEnvironment = env;

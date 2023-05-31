@@ -137,7 +137,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
             mAnalyzerUtils.RunBusinessFlowAnalyzer(businessFlow, mIssues);
             //Asert
             Assert.AreEqual(4, mIssues.Count);
-            AnalyzerItemBase missingVariableIssue = mIssues.Where(x => x.IssueCategory == AnalyzerItemBase.eIssueCategory.MissingVariable).FirstOrDefault();
+            AnalyzerItemBase missingVariableIssue = mIssues.FirstOrDefault(x => x.IssueCategory == AnalyzerItemBase.eIssueCategory.MissingVariable);
 
             Assert.AreEqual(AnalyzerItemBase.eSeverity.High, missingVariableIssue.Severity);
             Assert.AreEqual("The Variable 'username' is missing", missingVariableIssue.Description);

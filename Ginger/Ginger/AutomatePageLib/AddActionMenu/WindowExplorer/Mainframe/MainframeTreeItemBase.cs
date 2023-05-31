@@ -53,7 +53,7 @@ namespace Ginger.WindowExplorer.Mainframe
         {
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
             //TODO: improve below to use really automate page used mainfram driver
-            Agent agent = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.DriverType == Agent.eDriverType.MainFrame3270 && ((AgentOperations)x.AgentOperations).Status == Agent.eStatus.Running).FirstOrDefault();
+            Agent agent = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().FirstOrDefault(x => x.DriverType == Agent.eDriverType.MainFrame3270 && ((AgentOperations)x.AgentOperations).Status == Agent.eStatus.Running);
             if (agent != null)
             {
                 MFDriver = (MainFrameDriver)((AgentOperations)agent.AgentOperations).Driver;

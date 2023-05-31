@@ -161,7 +161,7 @@ namespace GingerCore
                 case eFilterBy.Tags:
                     foreach (Guid tagGuid in Tags)
                     {
-                        Guid guid = ((List<Guid>)obj).Where(x => tagGuid.Equals(x) == true).FirstOrDefault();
+                        Guid guid = ((List<Guid>)obj).FirstOrDefault(x => tagGuid.Equals(x) == true);
                         if (!guid.Equals(Guid.Empty))
                         {
                             return true;
@@ -441,7 +441,7 @@ namespace GingerCore
 
         public DriverConfigParam GetOrCreateParam(string parameter, string defaultValue = null)
         {
-            DriverConfigParam configParam = DriverConfiguration.Where(x => x.Parameter == parameter).FirstOrDefault();
+            DriverConfigParam configParam = DriverConfiguration.FirstOrDefault(x => x.Parameter == parameter);
             if (configParam != null)
             {
                 return configParam;
@@ -532,7 +532,7 @@ namespace GingerCore
             if (DriverType == eDriverType.WindowsAutomation)
             {
                 //Upgrading Action timeout for windows driver from default 10 secs to 30 secs
-                DriverConfigParam actionTimeoutParameter = DriverConfiguration.Where(x => x.Parameter == "ActionTimeout").FirstOrDefault();
+                DriverConfigParam actionTimeoutParameter = DriverConfiguration.FirstOrDefault(x => x.Parameter == "ActionTimeout");
 
                 if (actionTimeoutParameter != null && actionTimeoutParameter.Value == "10" && actionTimeoutParameter.Description.Contains("10"))
                 {

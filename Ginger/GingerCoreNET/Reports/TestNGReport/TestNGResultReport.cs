@@ -158,14 +158,14 @@ namespace Ginger.Reports
             eRunStatus status = eRunStatus.Skipped;
 
             //if there is one fail then Activity status is fail
-            if (activityList.Where(x => x.Status == eRunStatus.Failed).FirstOrDefault() != null)
+            if (activityList.FirstOrDefault(x => x.Status == eRunStatus.Failed) != null)
             {
                 status = eRunStatus.Failed;
             }
             else
             {
                 // If we have at least 1 pass then it passed, otherwise will remain Skipped
-                if (activityList.Where(x => x.Status == eRunStatus.Passed).FirstOrDefault() != null)
+                if (activityList.FirstOrDefault(x => x.Status == eRunStatus.Passed) != null)
                 {
                     status = eRunStatus.Passed;
                 }
@@ -175,10 +175,10 @@ namespace Ginger.Reports
             {
                 elapsed += item.Elapsed;
             }
-            if (activityList.Where(x => (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed)).Any())
+            if (activityList.Any(x => (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed)))
             {
-                startedAt = activityList.Where(x => (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed)).FirstOrDefault().StartTimeStamp;
-                finishedAt = activityList.Where(x => (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed)).LastOrDefault().EndTimeStamp;
+                startedAt = activityList.FirstOrDefault(x => (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed)).StartTimeStamp;
+                finishedAt = activityList.LastOrDefault(x => (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed)).EndTimeStamp;
             }
 
             return status;

@@ -606,7 +606,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     try
                     {
                         WorkbookPart workbookPart = spreadSheetDocument.WorkbookPart;
-                        Sheet sheet = workbookPart.Workbook.Descendants<Sheet>().Where(s => s.Name == shName).FirstOrDefault();
+                        Sheet sheet = workbookPart.Workbook.Descendants<Sheet>().FirstOrDefault(s => s.Name == shName);
                         if (sheet != null)
                         {
                             string relId = sheet.Id;

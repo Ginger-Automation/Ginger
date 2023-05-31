@@ -96,7 +96,7 @@ namespace Amdocs.Ginger.Repository
                 case eFilterBy.Tags:
                     foreach (RepositoryItemKey tagKey in TagsKeys)
                     {
-                        Guid guid = ((List<Guid>)obj).Where(x => tagKey.Guid.Equals(x) == true).FirstOrDefault();
+                        Guid guid = ((List<Guid>)obj).FirstOrDefault(x => tagKey.Guid.Equals(x) == true);
                         if (!guid.Equals(Guid.Empty))
                             return true;
                     }

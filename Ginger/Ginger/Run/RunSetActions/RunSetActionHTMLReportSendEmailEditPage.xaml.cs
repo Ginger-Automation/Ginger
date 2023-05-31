@@ -235,9 +235,9 @@ namespace Ginger.Run.RunSetActions
                 DefaultTemplatePickerCbx.SelectedValuePath = HTMLReportConfiguration.Fields.ID;
                 if (runSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID == 0)
                 {
-                    DefaultTemplatePickerCbx.SelectedIndex = DefaultTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault());
+                    DefaultTemplatePickerCbx.SelectedIndex = DefaultTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.FirstOrDefault(x => (x.IsDefault == true)));
                 }
-                DefaultTemplatePickerCbx.SelectedIndex = DefaultTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => (x.ID == runSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID)).FirstOrDefault());
+                DefaultTemplatePickerCbx.SelectedIndex = DefaultTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.FirstOrDefault(x => (x.ID == runSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID)));
             }
         }
         private void GridParamVEButton_Click(object sender, RoutedEventArgs e)

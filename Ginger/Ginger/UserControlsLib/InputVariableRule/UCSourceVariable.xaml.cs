@@ -99,7 +99,7 @@ namespace Ginger.UserControlsLib
         {
             bool isValid = true;
 
-            if (!SourceVariables.Where(x => x.Guid == guid).Any())
+            if (!SourceVariables.Any(x => x.Guid == guid))
             {
                 isValid = false;
             }

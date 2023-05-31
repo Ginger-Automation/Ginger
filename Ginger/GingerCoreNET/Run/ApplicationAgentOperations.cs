@@ -40,7 +40,7 @@ namespace GingerCore.Platforms
                 List<IAgent> possibleAgents = new List<IAgent>();
 
                 //find out the target application platform
-                ApplicationPlatform ap = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == ApplicationAgent.AppName).FirstOrDefault();//todo: make it be based on AppID and not name
+                ApplicationPlatform ap = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == ApplicationAgent.AppName);//todo: make it be based on AppID and not name
                 if (ap != null)
                 {
                     ePlatformType appPlatform = ap.Platform;
@@ -67,7 +67,7 @@ namespace GingerCore.Platforms
                         {
                             foreach (IAgent mobileAgent in mobileAgents)
                             {
-                                if (((Agent)mobileAgent).DriverConfiguration.Where(x => x.ItemName == "AppType" && x.Value == "Web").FirstOrDefault() != null)
+                                if (((Agent)mobileAgent).DriverConfiguration.FirstOrDefault(x => x.ItemName == "AppType" && x.Value == "Web") != null)
                                 {
                                     if (((Agent)mobileAgent).AgentOperations == null)
                                     {

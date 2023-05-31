@@ -70,7 +70,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
 
             for (int indx = 0; indx < usedVariables.Count; indx++)
             {
-                if (activity.Variables.Where(x => x.Name == usedVariables[indx]).FirstOrDefault() != null)
+                if (activity.Variables.FirstOrDefault(x => x.Name == usedVariables[indx]) != null)
                 {
                     usedVariables.RemoveAt(indx);
                     indx--;

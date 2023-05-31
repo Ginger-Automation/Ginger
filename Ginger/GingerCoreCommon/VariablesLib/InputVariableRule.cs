@@ -97,7 +97,7 @@ namespace Ginger.Variables
         {
             get
             {
-                return SourceVariableList.Where(x=> x.Guid == SourceVariableGuid).FirstOrDefault();
+                return SourceVariableList.FirstOrDefault(x => x.Guid == SourceVariableGuid);
             }           
         }
 
@@ -106,7 +106,7 @@ namespace Ginger.Variables
         {
             get
             {
-                return TargetVariableList.Where(x => x.Guid== TargetVariableGuid).FirstOrDefault();                
+                return TargetVariableList.FirstOrDefault(x => x.Guid== TargetVariableGuid);                
             }
             set
             {

@@ -2040,7 +2040,7 @@ namespace Ginger
             List<ComboEnumItem> itemsList = GingerCore.General.GetEnumValuesForCombo(enumType);
             if (defaultOptionText != null)
             {
-                ComboEnumItem existingDefaultItem = itemsList.Where(x => x.text == defaultOptionText).FirstOrDefault();
+                ComboEnumItem existingDefaultItem = itemsList.FirstOrDefault(x => x.text == defaultOptionText);
                 if (existingDefaultItem != null)
                 {
                     comboBox.ItemsSource = itemsList;

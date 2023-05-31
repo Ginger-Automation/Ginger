@@ -58,7 +58,7 @@ namespace Ginger.Actions.PlugIns
 
             foreach (ActInputValue param in mAct.InputValues)
             {
-                ActionInputValueInfo actionInputValueInfo = (from x in actionInputsDetails where x.Param == param.Param select x).SingleOrDefault();
+                ActionInputValueInfo actionInputValueInfo = actionInputsDetails.FirstOrDefault(x=> x.Param == param.Param);
                 // update the type based on the info json of the plugin
                 param.ParamType = actionInputValueInfo.ParamType;
 

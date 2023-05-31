@@ -420,7 +420,7 @@ namespace Ginger.Run
             bool runnerExecutionSkipped = false;
             try
             {
-                if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || BusinessFlows.Where(x => x.Active).FirstOrDefault() == null)
+                if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || BusinessFlows.FirstOrDefault(x => x.Active) == null)
                 {
                     runnerExecutionSkipped = true;
                     return;
@@ -688,7 +688,7 @@ namespace Ginger.Run
                                     agent.AgentOperations = agentOperations;
                                 }
                                 //logic for if need to assign virtual agent
-                                if (agent.SupportVirtualAgent() && runSetConfig.ActiveAgentList.Where(y => y != null).Where(x => ((Agent)x).Guid == agent.Guid || (((Agent)x).ParentGuid != null && ((Agent)x).ParentGuid == agent.Guid)).Any())
+                                if (agent.SupportVirtualAgent() && runSetConfig.ActiveAgentList.Where(y => y != null).Any(x => ((Agent)x).Guid == agent.Guid || (((Agent)x).ParentGuid != null && ((Agent)x).ParentGuid == agent.Guid)))
                                 {
                                     var virtualagent = agent.CreateCopy(true) as Agent;
                                     virtualagent.AgentOperations = new AgentOperations(virtualagent);
@@ -769,7 +769,7 @@ namespace Ginger.Run
                         {
                             variables = GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, CurrentBusinessFlow, includeGlobalVars: true, includePrevRunnersVars: false);
                         }
-                        VariableBase var = variables.Where(x => x.Name == inputVar.MappedOutputValue).FirstOrDefault();
+                        VariableBase var = variables.FirstOrDefault(x => x.Name == inputVar.MappedOutputValue);
                         if (var != null)
                         {
                             mappedValue = string.IsNullOrEmpty(var.Value) ? string.Empty : var.Value;
@@ -781,7 +781,7 @@ namespace Ginger.Run
                         {
                             outputVariables = GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, CurrentBusinessFlow, includeGlobalVars: false, includePrevRunnersVars: true);
                         }
-                        VariableBase outputVar = outputVariables.Where(x => x.VariableInstanceInfo == inputVar.MappedOutputValue).FirstOrDefault();
+                        VariableBase outputVar = outputVariables.FirstOrDefault(x => x.VariableInstanceInfo == inputVar.MappedOutputValue);
                         if (outputVar != null)
                         {
                             mappedValue = string.IsNullOrEmpty(outputVar.Value) ? string.Empty : outputVar.Value;
@@ -792,7 +792,7 @@ namespace Ginger.Run
                         Guid mappedVarGuid = Guid.Empty;
                         if (Guid.TryParse(inputVar.MappedOutputValue, out mappedVarGuid))
                         {
-                            VariableBase globalVar = WorkSpace.Instance.Solution.Variables.Where(x => x.Guid == mappedVarGuid).FirstOrDefault();
+                            VariableBase globalVar = WorkSpace.Instance.Solution.Variables.FirstOrDefault(x => x.Guid == mappedVarGuid);
                             if (globalVar != null)
                             {
                                 mappedValue = string.IsNullOrEmpty(globalVar.Value) ? string.Empty : globalVar.Value;
@@ -1425,7 +1425,7 @@ namespace Ginger.Run
                 foreach (Guid _guid in CurrentBusinessFlow.CurrentActivity.MappedErrorHandlers)
                 {
                     // check if mapped error handlers are PRESENT in the current list of error handlers in the business flow i.e. allCurrentBusinessFlowErrorHandlers (checking for deletion, inactive etc.)
-                    if (allCurrentBusinessFlowErrorHandlers.Where(x => x.Guid == _guid).Any()) //.ToList().Exists(x => x.Guid == _guid))
+                    if (allCurrentBusinessFlowErrorHandlers.Any(x => x.Guid == _guid)) //.ToList().Exists(x => x.Guid == _guid))
                     {
                         ErrorHandler _activity = CurrentBusinessFlow.Activities.Where(x => x.Guid == _guid).Cast<ErrorHandler>().FirstOrDefault();
                         lstMappedErrorHandler.Add(_activity);
@@ -2408,7 +2408,7 @@ namespace Ginger.Run
             //For unit test cases, solution applications will be always null
             if (SolutionApplications != null)
             {
-                if (SolutionApplications.Where(x => x.AppName == AppName && x.Platform == ePlatformType.NA).FirstOrDefault() != null)
+                if (SolutionApplications.FirstOrDefault(x => x.AppName == AppName && x.Platform == ePlatformType.NA) != null)
                 {
                     return;
                 }
@@ -2474,12 +2474,12 @@ namespace Ginger.Run
                             {
                                 optionalVars = CurrentBusinessFlow.GetAllVariables(CurrentBusinessFlow.CurrentActivity).Where(a => a.SupportSetValue == true).ToList();
                             }
-                            VariableBase storeToVar = optionalVars.Where(x => x.Name == item.StoreToValue).FirstOrDefault();
+                            VariableBase storeToVar = optionalVars.FirstOrDefault(x => x.Name == item.StoreToValue);
                             if (storeToVar != null)
                             {
                                 if (!string.IsNullOrEmpty(storeToVar.LinkedVariableName))
                                 {
-                                    storeToVar = optionalVars.Where(x => x.Name == storeToVar.LinkedVariableName).FirstOrDefault();
+                                    storeToVar = optionalVars.FirstOrDefault(x => x.Name == storeToVar.LinkedVariableName);
                                 }
                                 if (storeToVar != null)
                                 {
@@ -2489,7 +2489,7 @@ namespace Ginger.Run
                             break;
 
                         case ActReturnValue.eStoreTo.GlobalVariable:
-                            VariableBase globalVar = WorkSpace.Instance.Solution.Variables.Where(x => x.SupportSetValue).ToList().Where(x => x.Guid.ToString() == item.StoreToValue).FirstOrDefault();
+                            VariableBase globalVar = WorkSpace.Instance.Solution.Variables.Where(x => x.SupportSetValue).ToList().FirstOrDefault(x => x.Guid.ToString() == item.StoreToValue);
                             if (globalVar != null)
                             {
                                 succeedToPerform = globalVar.SetValue(item.Actual);
@@ -2934,11 +2934,11 @@ namespace Ginger.Run
             a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
 
             //if there is one fail then Activity status is fail
-            if (a.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped).FirstOrDefault() != null)   //
+            if (a.Acts.FirstOrDefault(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped) != null)   //
             {
                 a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
             }
-            else if (a.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).FirstOrDefault() != null)
+            else if (a.Acts.FirstOrDefault(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) != null)
             {
                 a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             }
@@ -2949,7 +2949,7 @@ namespace Ginger.Run
             else
             {
                 // If we have at least 1 pass then it passed, otherwise will remain Skipped
-                if (a.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed).FirstOrDefault() != null)
+                if (a.Acts.FirstOrDefault(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed) != null)
                 {
                     a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                 }
@@ -2961,7 +2961,7 @@ namespace Ginger.Run
             //find activity            
             string activityName = fc.GetNameFromValue().ToUpper();
             ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-            Activity sharedActivity = (Activity)activities.Where(x => x.ActivityName.ToUpper() == activityName).FirstOrDefault();
+            Activity sharedActivity = (Activity)activities.FirstOrDefault(x => x.ActivityName.ToUpper() == activityName);
 
             if (sharedActivity != null)
             {
@@ -2974,7 +2974,7 @@ namespace Ginger.Run
 
 
                 int index = CurrentBusinessFlow.Activities.IndexOf(CurrentBusinessFlow.CurrentActivity) + 1;
-                ActivitiesGroup activitiesGroup = CurrentBusinessFlow.ActivitiesGroups.Where(x => x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID).FirstOrDefault();
+                ActivitiesGroup activitiesGroup = CurrentBusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID);
                 CurrentBusinessFlow.AddActivity(sharedActivityInstance, activitiesGroup, index);
 
                 NotifyDynamicActivityWasAddedToBusinessflow(CurrentBusinessFlow);
@@ -3428,7 +3428,7 @@ namespace Ginger.Run
                     }
 
                     // handling ActivityGroup execution
-                    currentActivityGroup = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
+                    currentActivityGroup = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid));
                     if (currentActivityGroup != null)
                     {
                         currentActivityGroup.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
@@ -3492,7 +3492,7 @@ namespace Ginger.Run
                         NotifyActivityStart(CurrentBusinessFlow.CurrentActivity);
                     }
 
-                    if (SolutionApplications != null && SolutionApplications.Where(x => (x.AppName == activity.TargetApplication && x.Platform == ePlatformType.NA)).FirstOrDefault() == null)
+                    if (SolutionApplications != null && SolutionApplications.FirstOrDefault(x => (x.AppName == activity.TargetApplication && x.Platform == ePlatformType.NA)) == null)
                     {
                         //load Agent only if Activity includes Actions which needs it
                         List<IAct> driverActs = activity.Acts.Where(x => (x is ActWithoutDriver && x.GetType() != typeof(ActAgentManipulation)) == false && x.Active == true).ToList();
@@ -4705,7 +4705,7 @@ namespace Ginger.Run
                             continue;//FIX ME: workaround to avoid adding Plugin mapping till dev of it will be completed
                         }
 
-                        if (bfsTargetApplications.Where(x => x.Name == TA.Name).FirstOrDefault() == null)
+                        if (bfsTargetApplications.FirstOrDefault(x => x.Name == TA.Name) == null)
                         {
                             bfsTargetApplications.Add(TA);
                         }
@@ -4718,7 +4718,7 @@ namespace Ginger.Run
             {
                 foreach (TargetBase TA in CurrentBusinessFlow.TargetApplications)
                 {
-                    if (bfsTargetApplications.Where(x => x.Name == TA.Name).FirstOrDefault() == null)
+                    if (bfsTargetApplications.FirstOrDefault(x => x.Name == TA.Name) == null)
                     {
                         bfsTargetApplications.Add(TA);
                     }
@@ -4728,7 +4728,7 @@ namespace Ginger.Run
             //Remove the non relevant ApplicationAgents
             for (int indx = 0; indx < mGingerRunner.ApplicationAgents.Count;)
             {
-                if (bfsTargetApplications.Where(x => x.Name == mGingerRunner.ApplicationAgents[indx].AppName).FirstOrDefault() == null || ((ApplicationAgent)mGingerRunner.ApplicationAgents[indx]).Agent == null)
+                if (bfsTargetApplications.FirstOrDefault(x => x.Name == mGingerRunner.ApplicationAgents[indx].AppName) == null || ((ApplicationAgent)mGingerRunner.ApplicationAgents[indx]).Agent == null)
                 {
                     bTargetAppListModified = true;
                     mGingerRunner.ApplicationAgents.RemoveAt(indx);
@@ -4747,7 +4747,7 @@ namespace Ginger.Run
                 {
                     if (mGingerRunner.ApplicationAgents[indx].Agent != null)
                     {
-                        if (SolutionAgents.Where(x => ((RepositoryItemBase)x).Guid == ((RepositoryItemBase)mGingerRunner.ApplicationAgents[indx].Agent).Guid).FirstOrDefault() == null)
+                        if (SolutionAgents.FirstOrDefault(x => ((RepositoryItemBase)x).Guid == ((RepositoryItemBase)mGingerRunner.ApplicationAgents[indx].Agent).Guid) == null)
                         {
                             bTargetAppListModified = true;
                             mGingerRunner.ApplicationAgents.RemoveAt(indx);
@@ -4759,7 +4759,7 @@ namespace Ginger.Run
                 //mark the already used Agents
                 foreach (Agent solAgent in SolutionAgents)
                 {
-                    if (mGingerRunner.ApplicationAgents.Where(x => x.Agent == solAgent).FirstOrDefault() != null)
+                    if (mGingerRunner.ApplicationAgents.FirstOrDefault(x => x.Agent == solAgent) != null)
                     {
                         solAgent.UsedForAutoMapping = true;
                     }
@@ -4774,7 +4774,7 @@ namespace Ginger.Run
             foreach (TargetBase TA in bfsTargetApplications)
             {
                 // make sure GR got it covered
-                if (mGingerRunner.ApplicationAgents.Where(x => x.AppName == TA.Name).FirstOrDefault() == null)
+                if (mGingerRunner.ApplicationAgents.FirstOrDefault(x => x.AppName == TA.Name) == null)
                 {
                     ApplicationAgent ag = new ApplicationAgent();
                     ag.AppName = TA.Name;
@@ -4783,7 +4783,7 @@ namespace Ginger.Run
                     ApplicationPlatform ap = null;
                     if (CurrentSolution != null && CurrentSolution.ApplicationPlatforms != null)
                     {
-                        ap = CurrentSolution.ApplicationPlatforms.Where(x => x.AppName == ag.AppName).FirstOrDefault();
+                        ap = CurrentSolution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == ag.AppName);
                     }
                     if (ap != null)
                     {
@@ -4793,7 +4793,7 @@ namespace Ginger.Run
                         if (string.IsNullOrEmpty(ap.LastMappedAgentName) == false)
                         {
                             //check if the saved agent still valid for this application platform                          
-                            Agent mathingAgent = platformAgents.Where(x => x.Name == ap.LastMappedAgentName).FirstOrDefault();
+                            Agent mathingAgent = platformAgents.FirstOrDefault(x => x.Name == ap.LastMappedAgentName);
                             if (mathingAgent != null)
                             {
                                 ag.Agent = mathingAgent;
@@ -4808,7 +4808,7 @@ namespace Ginger.Run
                             {
                                 if (ap.Platform == ePlatformType.Web)
                                 {
-                                    ag.Agent = platformAgents.Where(x => x.DriverType == Agent.eDriverType.SeleniumIE).FirstOrDefault();
+                                    ag.Agent = platformAgents.FirstOrDefault(x => x.DriverType == Agent.eDriverType.SeleniumIE);
                                 }
 
                                 if (ag.Agent == null)
@@ -4876,7 +4876,7 @@ namespace Ginger.Run
         {
             get
             {
-                ExecutionLoggerManager ExecutionLoggerManager = (ExecutionLoggerManager)(from x in mRunListeners where x.GetType() == typeof(ExecutionLoggerManager) select x).SingleOrDefault();
+                ExecutionLoggerManager ExecutionLoggerManager = (ExecutionLoggerManager)mRunListeners.FirstOrDefault(x=> x.GetType() == typeof(ExecutionLoggerManager));
                 return ExecutionLoggerManager;
             }
         }
@@ -4885,7 +4885,7 @@ namespace Ginger.Run
         {
             get
             {
-                AccountReportExecutionLogger centeralized_Logger = (AccountReportExecutionLogger)(from x in mRunListeners where x.GetType() == typeof(AccountReportExecutionLogger) select x).SingleOrDefault();
+                AccountReportExecutionLogger centeralized_Logger = (AccountReportExecutionLogger)mRunListeners.FirstOrDefault(x=> x.GetType() == typeof(AccountReportExecutionLogger));
                 return centeralized_Logger;
             }
         }
@@ -4894,7 +4894,7 @@ namespace Ginger.Run
         {
             get
             {
-                SealightsReportExecutionLogger sealights_Logger = (SealightsReportExecutionLogger)(from x in mRunListeners where x.GetType() == typeof(SealightsReportExecutionLogger) select x).SingleOrDefault();
+                SealightsReportExecutionLogger sealights_Logger = (SealightsReportExecutionLogger)mRunListeners.FirstOrDefault(x=> x.GetType() == typeof(SealightsReportExecutionLogger));
                 return sealights_Logger;
             }
         }
@@ -4909,7 +4909,7 @@ namespace Ginger.Run
             //first check Activity
             foreach (Guid tagGuid in CurrentBusinessFlow.CurrentActivity.Tags)
             {
-                if (mGingerRunner.FilterExecutionTags.Where(x => Guid.Equals(x, tagGuid) == true).FirstOrDefault() != Guid.Empty)
+                if (mGingerRunner.FilterExecutionTags.FirstOrDefault(x => Guid.Equals(x, tagGuid) == true) != Guid.Empty)
                 {
                     return true;
                 }
@@ -4918,12 +4918,12 @@ namespace Ginger.Run
             //check in Activity Group
             if (string.IsNullOrEmpty(CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID) == false)
             {
-                ActivitiesGroup group = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.Where(x => x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID).FirstOrDefault();
+                ActivitiesGroup group = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID);
                 if (group != null)
                 {
                     foreach (Guid tagGuid in group.Tags)
                     {
-                        if (mGingerRunner.FilterExecutionTags.Where(x => Guid.Equals(x, tagGuid) == true).FirstOrDefault() != Guid.Empty)
+                        if (mGingerRunner.FilterExecutionTags.FirstOrDefault(x => Guid.Equals(x, tagGuid) == true) != Guid.Empty)
                         {
                             return true;
                         }
@@ -5079,7 +5079,7 @@ namespace Ginger.Run
             }
             else//we have more than 1
             {
-                BusinessFlow firstActive = (BusinessFlow)lstBusinessFlow.Where(x => x.Active == true).FirstOrDefault();
+                BusinessFlow firstActive = (BusinessFlow)lstBusinessFlow.FirstOrDefault(x => x.Active == true);
                 if (firstActive != null)
                 {
                     bf = firstActive;
@@ -5381,7 +5381,7 @@ namespace Ginger.Run
                 BF.OffilinePropertiesPrep(logFolderPath);
                 foreach (Activity activity in BF.Activities)
                 {
-                    ActivitiesGroup currentActivityGroup = BF.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
+                    ActivitiesGroup currentActivityGroup = BF.ActivitiesGroups.FirstOrDefault(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid));
                     if (currentActivityGroup != null)
                     {
                         currentActivityGroup.ExecutionLogFolder = logFolderPath;

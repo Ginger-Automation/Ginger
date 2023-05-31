@@ -103,7 +103,7 @@ namespace UnitTests.NonUITests
             XTA.Execute();
 
             Assert.AreEqual(2, XTA.ActReturnValues.Count);
-            Assert.AreEqual("Sales Channel\n", XTA.ActReturnValues.Where(x => x.Param == "InnerText" && x.Path == ".parameters.query-salesChannel.description").FirstOrDefault().Actual);
+            Assert.AreEqual("Sales Channel\n", XTA.ActReturnValues.FirstOrDefault(x => x.Param == "InnerText" && x.Path == ".parameters.query-salesChannel.description").Actual);
             //
 
             // TODO: Add test logic here
@@ -128,7 +128,7 @@ namespace UnitTests.NonUITests
             XTA.Execute();
 
             Assert.AreEqual(4, XTA.ActReturnValues.Count);
-            Assert.AreEqual("amdocs", XTA.ActReturnValues.Where(x => x.Param == "//book[@publisher='amdocs']" && x.Path == "publisher").FirstOrDefault().Actual);
+            Assert.AreEqual("amdocs", XTA.ActReturnValues.FirstOrDefault(x => x.Param == "//book[@publisher='amdocs']" && x.Path == "publisher").Actual);
         }
 
         [TestMethod]

@@ -119,7 +119,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void GoToGherkinBusinessFlow(object sender, RoutedEventArgs e)
         {
             ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            BusinessFlow BF = businessFlows.Where(x => x.ExternalID != null ? System.IO.Path.GetFullPath(x.ExternalID.Replace("~", WorkSpace.Instance.Solution.Folder)) == System.IO.Path.GetFullPath(Path) : false).FirstOrDefault();
+            BusinessFlow BF = businessFlows.FirstOrDefault(x => x.ExternalID != null ? System.IO.Path.GetFullPath(x.ExternalID.Replace("~", WorkSpace.Instance.Solution.Folder)) == System.IO.Path.GetFullPath(Path) : false);
             if (BF == null)
             {
                 Reporter.ToUser(eUserMsgKey.GherkinNotifyBFIsNotExistForThisFeatureFile, FileName);

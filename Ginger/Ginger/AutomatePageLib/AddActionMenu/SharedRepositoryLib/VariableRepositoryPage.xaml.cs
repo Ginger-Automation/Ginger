@@ -179,7 +179,7 @@ namespace Ginger.Repository
                 //refresh and select the item
                 try
                 {
-                    VariableBase dragedItemInGrid = ((IEnumerable<VariableBase>)xVariablesGrid.DataSourceList).Where(x => x.Guid == dragedItem.Guid).FirstOrDefault();
+                    VariableBase dragedItemInGrid = ((IEnumerable<VariableBase>)xVariablesGrid.DataSourceList).FirstOrDefault(x => x.Guid == dragedItem.Guid);
                     if (dragedItemInGrid != null)
                     {
                         xVariablesGrid.Grid.SelectedItem = dragedItemInGrid;

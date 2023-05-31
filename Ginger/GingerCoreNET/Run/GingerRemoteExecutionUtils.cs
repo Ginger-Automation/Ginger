@@ -77,7 +77,7 @@ namespace Amdocs.Ginger.CoreNET
         }
         private static string GetReportDataServiceUrl()
         {
-            var baseURI = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().CentralizedReportDataServiceURL;
+            var baseURI = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true)).CentralizedReportDataServiceURL;
 
             if (!string.IsNullOrEmpty(baseURI) && !baseURI.EndsWith("/"))
             {
@@ -124,7 +124,7 @@ namespace Amdocs.Ginger.CoreNET
         }
         private static string GetReportHTMLServiceUrl()
         {
-            var baseURI = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().CentralizedHtmlReportServiceURL;
+            var baseURI = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true)).CentralizedHtmlReportServiceURL;
 
             if (!string.IsNullOrEmpty(baseURI))
             {

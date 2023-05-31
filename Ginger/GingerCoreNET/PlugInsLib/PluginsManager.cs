@@ -344,7 +344,7 @@ namespace Amdocs.Ginger.Repository
                     }
 
 
-                    OnlinePluginPackage OnlinePlugin = OnlinePlugins.Where(x => x.Id == SolutionPlugin.PluginId).FirstOrDefault();
+                    OnlinePluginPackage OnlinePlugin = OnlinePlugins.FirstOrDefault(x => x.Id == SolutionPlugin.PluginId);
                     if (OnlinePlugin == null)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Plugin not found in online!");
@@ -352,7 +352,7 @@ namespace Amdocs.Ginger.Repository
                     }
 
                     Reporter.ToLog(eLogLevel.INFO, "Checking plugin release: version=" + SolutionPlugin.PluginPackageVersion);
-                    OnlinePluginPackageRelease OPR = OnlinePlugin.Releases.Where(x => x.Version == SolutionPlugin.PluginPackageVersion).FirstOrDefault();
+                    OnlinePluginPackageRelease OPR = OnlinePlugin.Releases.FirstOrDefault(x => x.Version == SolutionPlugin.PluginPackageVersion);
 
                     if (OPR != null)
                     {

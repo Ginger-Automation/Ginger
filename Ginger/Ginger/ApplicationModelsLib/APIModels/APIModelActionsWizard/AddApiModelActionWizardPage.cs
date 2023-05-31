@@ -159,7 +159,7 @@ namespace Ginger.ApiModelsFolder
                     }
 
                     EnhancedActInputValue EAIV = null;
-                    EAIV = EnhancedInputValueList.Where(x => x.Param == ADP.PlaceHolder).FirstOrDefault();
+                    EAIV = EnhancedInputValueList.FirstOrDefault(x => x.Param == ADP.PlaceHolder);
                     if (EAIV != null)
                     {
                         AIV.Value = EAIV.Value;
@@ -167,7 +167,7 @@ namespace Ginger.ApiModelsFolder
                     else
                     {
                         OptionalValue ov = null;
-                        ov = ADP.OptionalValuesList.Where(x => x.IsDefault == true).FirstOrDefault();
+                        ov = ADP.OptionalValuesList.FirstOrDefault(x => x.IsDefault == true);
                         if (ov != null)
                         {
                             AIV.Value = ov.Value;

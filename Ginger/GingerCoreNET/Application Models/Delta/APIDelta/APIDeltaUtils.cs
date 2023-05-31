@@ -111,7 +111,7 @@ namespace GingerCoreNET.Application_Models
                 ApplicationAPIModel apiMod = existingAPIs[i];
                 foreach (APIModelKeyValue headerPair in apiMod.HttpHeaders)
                 {
-                    APIModelKeyValue apiHeaderExistings = learnedModel.HttpHeaders.Where(h => h.Param == headerPair.Param && h.Value == headerPair.Value).FirstOrDefault();
+                    APIModelKeyValue apiHeaderExistings = learnedModel.HttpHeaders.FirstOrDefault(h => h.Param == headerPair.Param && h.Value == headerPair.Value);
                     if (apiHeaderExistings != null)
                     {
                         continue;

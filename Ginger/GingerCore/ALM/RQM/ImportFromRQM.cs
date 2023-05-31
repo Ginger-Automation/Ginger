@@ -99,7 +99,7 @@ namespace GingerCore.ALM.RQM
                         continue;
                     }
 
-                    RQMExecutionRecord selectedExecutionRecord = testPlan.RQMExecutionRecords.Where(x => x.RelatedTestCaseRqmID == tc.RQMID && x.RelatedTestScriptRqmID == selectedScript.RQMID).FirstOrDefault();
+                    RQMExecutionRecord selectedExecutionRecord = testPlan.RQMExecutionRecords.FirstOrDefault(x => x.RelatedTestCaseRqmID == tc.RQMID && x.RelatedTestScriptRqmID == selectedScript.RQMID);
                     string RQMRecordID = selectedExecutionRecord == null ? string.Empty : selectedExecutionRecord.RQMID.ToString();
 
                     //check if the TC is already exist in repository
@@ -107,7 +107,7 @@ namespace GingerCore.ALM.RQM
                     ActivitiesGroup repoActivsGroup = null;
                     if (repoActivsGroup == null)
                     {
-                        repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
+                        repoActivsGroup = GingerActivitiesGroupsRepo.FirstOrDefault(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false);
                     }
 
                     if (repoActivsGroup != null)
@@ -152,16 +152,16 @@ namespace GingerCore.ALM.RQM
                         bool toAddStepActivity = false;
 
                         // check if mapped activity exist in repository
-                        Activity repoStepActivity = (Activity)GingerActivitiesRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false).FirstOrDefault();
+                        Activity repoStepActivity = (Activity)GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false);
                         if (repoStepActivity != null)
                         {
                             //check if it is part of the Activities Group
                             //ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.RQMIndex).FirstOrDefault();
-                            ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID != null ? x.ActivityExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false).FirstOrDefault();
+                            ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID != null ? x.ActivityExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false);
                             if (groupStepActivityIdent != null)
                             {
                                 //already in Activities Group so get link to it
-                                stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                                stepActivity = (Activity)busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                             }
                             else // not in ActivitiesGroup so get instance from repo
                             {
@@ -215,7 +215,7 @@ namespace GingerCore.ALM.RQM
                             }
 
                             //check if already exist param with that name
-                            VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.Name.ToUpper()).FirstOrDefault();
+                            VariableBase stepActivityVar = stepActivity.Variables.FirstOrDefault(x => x.Name.ToUpper() == param.Name.ToUpper());
                             if (stepActivityVar == null)
                             {
                                 //#Param not exist so add it
@@ -269,7 +269,7 @@ namespace GingerCore.ALM.RQM
                             //add the variable selected value                          
                             if (stepActivityVar is VariableSelectionList)
                             {
-                                OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.Where(x => x.Value == param.Value).FirstOrDefault();
+                                OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.FirstOrDefault(x => x.Value == param.Value);
                                 if (stepActivityVarOptionalVar == null)
                                 {
                                     //no such variable value option so add it
@@ -358,7 +358,7 @@ namespace GingerCore.ALM.RQM
                                 continue;
                             }
 
-                            RQMExecutionRecord selectedExecutionRecord = testPlan.RQMExecutionRecords.Where(x => x.RelatedTestCaseRqmID == tc.RQMID && x.RelatedTestScriptRqmID == selectedScript.RQMID).FirstOrDefault();
+                            RQMExecutionRecord selectedExecutionRecord = testPlan.RQMExecutionRecords.FirstOrDefault(x => x.RelatedTestCaseRqmID == tc.RQMID && x.RelatedTestScriptRqmID == selectedScript.RQMID);
                             string RQMRecordID = selectedExecutionRecord == null ? string.Empty : selectedExecutionRecord.RQMID.ToString();
 
                             //check if the TC is already exist in repository
@@ -366,7 +366,7 @@ namespace GingerCore.ALM.RQM
                             ActivitiesGroup repoActivsGroup = null;
                             if (repoActivsGroup == null)
                             {
-                                repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
+                                repoActivsGroup = GingerActivitiesGroupsRepo.FirstOrDefault(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false);
                             }
 
                             if (repoActivsGroup != null)
@@ -405,15 +405,15 @@ namespace GingerCore.ALM.RQM
                                 bool toAddStepActivity = false;
 
                                 // check if mapped activity exist in repository
-                                Activity repoStepActivity = (Activity)GingerActivitiesRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false).FirstOrDefault();
+                                Activity repoStepActivity = (Activity)GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false);
                                 if (repoStepActivity != null)
                                 {
                                     //check if it is part of the Activities Group
-                                    ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.RQMIndex).FirstOrDefault();
+                                    ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.RQMIndex);
                                     if (groupStepActivityIdent != null)
                                     {
                                         //already in Activities Group so get link to it
-                                        stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                                        stepActivity = (Activity)busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                                     }
                                     else // not in ActivitiesGroup so get instance from repo
                                     {
@@ -469,7 +469,7 @@ namespace GingerCore.ALM.RQM
                                     }
 
                                     //check if already exist param with that name
-                                    VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.Name.ToUpper()).FirstOrDefault();
+                                    VariableBase stepActivityVar = stepActivity.Variables.FirstOrDefault(x => x.Name.ToUpper() == param.Name.ToUpper());
                                     if (stepActivityVar == null)
                                     {
                                         //#Param not exist so add it
@@ -521,7 +521,7 @@ namespace GingerCore.ALM.RQM
                                     //add the variable selected value                          
                                     if (stepActivityVar is VariableSelectionList)
                                     {
-                                        OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.Where(x => x.Value == param.Value).FirstOrDefault();
+                                        OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.FirstOrDefault(x => x.Value == param.Value);
                                         if (stepActivityVarOptionalVar == null)
                                         {
                                             //no such variable value option so add it
@@ -585,7 +585,7 @@ namespace GingerCore.ALM.RQM
                         continue;
                     }
 
-                    RQMExecutionRecord selectedExecutionRecord = testPlan.RQMExecutionRecords.Where(x => x.RelatedTestCaseRqmID == tc.RQMID && x.RelatedTestScriptRqmID == selectedScript.RQMID).FirstOrDefault();
+                    RQMExecutionRecord selectedExecutionRecord = testPlan.RQMExecutionRecords.FirstOrDefault(x => x.RelatedTestCaseRqmID == tc.RQMID && x.RelatedTestScriptRqmID == selectedScript.RQMID);
                     string RQMRecordID = selectedExecutionRecord == null ? string.Empty : selectedExecutionRecord.RQMID.ToString();
 
                     //check if the TC is already exist in repository
@@ -593,7 +593,7 @@ namespace GingerCore.ALM.RQM
                     ActivitiesGroup repoActivsGroup = null;
                     if (repoActivsGroup == null)
                     {
-                        repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
+                        repoActivsGroup = GingerActivitiesGroupsRepo.FirstOrDefault(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false);
                     }
 
                     if (repoActivsGroup != null)
@@ -632,15 +632,15 @@ namespace GingerCore.ALM.RQM
                         bool toAddStepActivity = false;
 
                         // check if mapped activity exist in repository
-                        Activity repoStepActivity = (Activity)GingerActivitiesRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false).FirstOrDefault();
+                        Activity repoStepActivity = (Activity)GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false);
                         if (repoStepActivity != null)
                         {
                             //check if it is part of the Activities Group
-                            ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.RQMIndex).FirstOrDefault();
+                            ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.RQMIndex);
                             if (groupStepActivityIdent != null)
                             {
                                 //already in Activities Group so get link to it
-                                stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                                stepActivity = (Activity)busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                             }
                             else // not in ActivitiesGroup so get instance from repo
                             {
@@ -694,7 +694,7 @@ namespace GingerCore.ALM.RQM
                             }
 
                             //check if already exist param with that name
-                            VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.Name.ToUpper()).FirstOrDefault();
+                            VariableBase stepActivityVar = stepActivity.Variables.FirstOrDefault(x => x.Name.ToUpper() == param.Name.ToUpper());
                             if (stepActivityVar == null)
                             {
                                 //#Param not exist so add it
@@ -748,7 +748,7 @@ namespace GingerCore.ALM.RQM
                             //add the variable selected value                          
                             if (stepActivityVar is VariableSelectionList)
                             {
-                                OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.Where(x => x.Value == param.Value).FirstOrDefault();
+                                OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.FirstOrDefault(x => x.Value == param.Value);
                                 if (stepActivityVarOptionalVar == null)
                                 {
                                     //no such variable value option so add it

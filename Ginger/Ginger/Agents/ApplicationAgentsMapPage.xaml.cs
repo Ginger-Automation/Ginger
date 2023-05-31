@@ -92,7 +92,7 @@ namespace Ginger.Agents
                     {
                         Apag.ApplicationAgentOperations = new ApplicationAgentOperations(Apag);
                     }
-                    if (mRunner.SolutionApplications.Where(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() == null)
+                    if (mRunner.SolutionApplications.FirstOrDefault(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA) == null)
                     {
                         ApplicationAgents.Add(Apag);
                     }
@@ -157,10 +157,10 @@ namespace Ginger.Agents
         private void XAgentNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //save last used agent on the Solution Target Applications
-            ApplicationAgent ag = ApplicationAgents.Where(x => x.Agent == (Agent)((ComboBox)sender).SelectedValue).FirstOrDefault();
+            ApplicationAgent ag = ApplicationAgents.FirstOrDefault(x => x.Agent == (Agent)((ComboBox)sender).SelectedValue);
             if (ag != null)
             {
-                ApplicationPlatform ap = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == ag.AppName).FirstOrDefault();
+                ApplicationPlatform ap = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == ag.AppName);
                 if (ap != null)
                 {
                     ap.LastMappedAgentName = ag.AgentName;

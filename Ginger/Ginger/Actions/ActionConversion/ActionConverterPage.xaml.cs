@@ -51,7 +51,7 @@ namespace Ginger.Actions.ActionConversion
             mBusinessFlow = businessFlow;
             SetGridsView();
 
-            if (mBusinessFlow.Activities.Where(x => x.SelectedForConversion == true).Any())
+            if (mBusinessFlow.Activities.Any(x => x.SelectedForConversion == true))
             {
                 mBusinessFlow.Activities.Where(x => x.SelectedForConversion == true).ToList().ForEach(x => { x.SelectedForConversion = false; });
             }
@@ -244,11 +244,11 @@ namespace Ginger.Actions.ActionConversion
 
                                 foreach (Act oldAct in oldActivity.Acts.ToList())
                                 {
-                                    if (oldAct is IObsoleteAction && lstActionToBeConverted.Where(act => act.SourceActionType == oldAct.GetType() && act.Selected && act.TargetActionType == ((IObsoleteAction)oldAct).TargetAction()).FirstOrDefault() != null)
+                                    if (oldAct is IObsoleteAction && lstActionToBeConverted.FirstOrDefault(act => act.SourceActionType == oldAct.GetType() && act.Selected && act.TargetActionType == ((IObsoleteAction)oldAct).TargetAction()) != null)
                                     {
                                         // convert the old action
                                         Act newAct = ((IObsoleteAction)oldAct).GetNewAction();
-                                        int oldActionIndex = newActivity.Acts.IndexOf(newActivity.Acts.Where(x => x.Guid == oldAct.Guid).FirstOrDefault());
+                                        int oldActionIndex = newActivity.Acts.IndexOf(newActivity.Acts.FirstOrDefault(x => x.Guid == oldAct.Guid));
                                         newActivity.Acts.RemoveAt(oldActionIndex);
                                         newActivity.Acts.Add(newAct);
                                         newActivity.Acts.Move(newActivity.Acts.Count() - 1, oldActionIndex);
@@ -289,7 +289,7 @@ namespace Ginger.Actions.ActionConversion
 
                                 foreach (Act act in activity.Acts.ToList())
                                 {
-                                    if (act.Active && act is IObsoleteAction && lstActionToBeConverted.Where(a => a.SourceActionType == act.GetType() && a.Selected && a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
+                                    if (act.Active && act is IObsoleteAction && lstActionToBeConverted.FirstOrDefault(a => a.SourceActionType == act.GetType() && a.Selected && a.TargetActionType == ((IObsoleteAction)act).TargetAction()) != null)
                                     {
                                         // get the index of the action that is being converted 
                                         int selectedActIndex = activity.Acts.IndexOf(act);
@@ -357,7 +357,7 @@ namespace Ginger.Actions.ActionConversion
                         if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
                             (act.Active))
                         {
-                            ConvertableActionDetails existingConvertibleActionType = lstActionToBeConverted.Where(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName()).FirstOrDefault();
+                            ConvertableActionDetails existingConvertibleActionType = lstActionToBeConverted.FirstOrDefault(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName());
                             if (existingConvertibleActionType == null)
                             {
                                 ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails();

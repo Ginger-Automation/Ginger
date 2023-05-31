@@ -90,7 +90,7 @@ namespace Ginger.ALM.MapToALMWizard
                     ChangeTestSetPageVisibility();
                     mWizard.UpdateMappedTestCasesCollections();
                     mWizard.RemapTestCasesLists();
-                    WizardPage nextPage = mWizard.Pages.Where(p => p.Page is TestCasesMappingPage).FirstOrDefault();
+                    WizardPage nextPage = mWizard.Pages.FirstOrDefault(p => p.Page is TestCasesMappingPage);
                     (nextPage.Page as TestCasesMappingPage).xUnMapTestCaseGrid.Title = $"ALM '{mWizard.AlmTestSetData.TestSetName}' Test Cases";
                 }
             }

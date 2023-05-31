@@ -980,9 +980,9 @@ namespace UnitTests.NonUITests
             //Act
             BusinessFlow bfCopy = (BusinessFlow)bf.CreateCopy();
 
-            Guid newGuidOfActivity2 = bfCopy.Activities.Where(x => x.ItemName == "Test_New").FirstOrDefault().Guid;
+            Guid newGuidOfActivity2 = bfCopy.Activities.FirstOrDefault(x => x.ItemName == "Test_New").Guid;
 
-            Guid newGuidOfAct2 = bfCopy.Activities[0].Acts.Where(x => x.ItemName == "WaitForApp").FirstOrDefault().Guid;
+            Guid newGuidOfAct2 = bfCopy.Activities[0].Acts.FirstOrDefault(x => x.ItemName == "WaitForApp").Guid;
 
 
             //Assert
@@ -1003,9 +1003,9 @@ namespace UnitTests.NonUITests
             //Act
             BusinessFlow bfCopy = (BusinessFlow)bf.CreateCopy(false);
 
-            Guid newGuidOfActivity2 = bfCopy.Activities.Where(x => x.ItemName == "Test_New").FirstOrDefault().Guid;
+            Guid newGuidOfActivity2 = bfCopy.Activities.FirstOrDefault(x => x.ItemName == "Test_New").Guid;
 
-            Guid newGuidOfAct2 = bfCopy.Activities[0].Acts.Where(x => x.ItemName == "WaitForApp").FirstOrDefault().Guid;
+            Guid newGuidOfAct2 = bfCopy.Activities[0].Acts.FirstOrDefault(x => x.ItemName == "WaitForApp").Guid;
 
 
             //Assert
@@ -1047,7 +1047,7 @@ namespace UnitTests.NonUITests
 
             //Act
             Activity copyActivity = (Activity)activity.CreateInstance();
-            Guid newGuidOfAct2 = copyActivity.Acts.Where(x => x.ItemName == "WaitForApp_Copy").FirstOrDefault().Guid;
+            Guid newGuidOfAct2 = copyActivity.Acts.FirstOrDefault(x => x.ItemName == "WaitForApp_Copy").Guid;
 
             //Assert
             Assert.AreEqual(copyActivity.Acts[0].FlowControls[0].GetGuidFromValue(), newGuidOfAct2);
@@ -1161,7 +1161,7 @@ namespace UnitTests.NonUITests
             bf.FilePath = tempFile;
             BusinessFlow bfCopy = (BusinessFlow)bf.CreateInstance();
 
-            Guid newBFVarGuid = bfCopy.Variables.Where(x => x.Name == "bfVariable1").FirstOrDefault().Guid;
+            Guid newBFVarGuid = bfCopy.Variables.FirstOrDefault(x => x.Name == "bfVariable1").Guid;
             Guid newActivityVarGuid = bfCopy.Activities[0].Variables[0].Guid;
 
             //Assert
@@ -1218,11 +1218,11 @@ namespace UnitTests.NonUITests
             Assert.IsTrue(bf.Activities.Contains(activity3));
             Assert.IsFalse(copiedItem.Activities.Contains(activity3));
 
-            Assert.IsNotNull(bf.Activities.Where(a => a.ActivityName == activity2.ActivityName).FirstOrDefault());
-            Assert.IsNull(copiedItem.Activities.Where(a => a.ActivityName == activity2.ActivityName).FirstOrDefault());
+            Assert.IsNotNull(bf.Activities.FirstOrDefault(a => a.ActivityName == activity2.ActivityName));
+            Assert.IsNull(copiedItem.Activities.FirstOrDefault(a => a.ActivityName == activity2.ActivityName));
 
-            Assert.IsNotNull(copiedItem.Activities.Where(a => a.ActivityName == "Test").FirstOrDefault());
-            Assert.IsNull(bf.Activities.Where(a => a.ActivityName == "Test").FirstOrDefault());
+            Assert.IsNotNull(copiedItem.Activities.FirstOrDefault(a => a.ActivityName == "Test"));
+            Assert.IsNull(bf.Activities.FirstOrDefault(a => a.ActivityName == "Test"));
         }
 
         [TestMethod]

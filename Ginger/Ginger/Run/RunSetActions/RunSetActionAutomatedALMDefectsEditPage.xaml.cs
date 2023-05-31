@@ -60,15 +60,15 @@ namespace Ginger.Run.RunSetActions
                 CurrentProfilePickerCbx.SelectedValuePath = nameof(ALMDefectProfile.ID).ToString();
                 if (runSetActionAutomatedALMDefects.SelectedDefectsProfileID != 0)
                 {
-                    CurrentProfilePickerCbx.SelectedIndex = CurrentProfilePickerCbx.Items.IndexOf(((ObservableList<ALMDefectProfile>)CurrentProfilePickerCbx.ItemsSource).Where(x => (x.ID == runSetActionAutomatedALMDefects.SelectedDefectsProfileID)).FirstOrDefault());
+                    CurrentProfilePickerCbx.SelectedIndex = CurrentProfilePickerCbx.Items.IndexOf(((ObservableList<ALMDefectProfile>)CurrentProfilePickerCbx.ItemsSource).FirstOrDefault(x => (x.ID == runSetActionAutomatedALMDefects.SelectedDefectsProfileID)));
                     if (CurrentProfilePickerCbx.SelectedIndex == -1)
                     {
-                        CurrentProfilePickerCbx.SelectedIndex = CurrentProfilePickerCbx.Items.IndexOf(((ObservableList<ALMDefectProfile>)CurrentProfilePickerCbx.ItemsSource).Where(x => (x.IsDefault == true)).FirstOrDefault());
+                        CurrentProfilePickerCbx.SelectedIndex = CurrentProfilePickerCbx.Items.IndexOf(((ObservableList<ALMDefectProfile>)CurrentProfilePickerCbx.ItemsSource).FirstOrDefault(x => (x.IsDefault == true)));
                     }
                 }
                 else
                 {
-                    CurrentProfilePickerCbx.SelectedIndex = CurrentProfilePickerCbx.Items.IndexOf(((ObservableList<ALMDefectProfile>)CurrentProfilePickerCbx.ItemsSource).Where(x => (x.IsDefault == true)).FirstOrDefault());
+                    CurrentProfilePickerCbx.SelectedIndex = CurrentProfilePickerCbx.Items.IndexOf(((ObservableList<ALMDefectProfile>)CurrentProfilePickerCbx.ItemsSource).FirstOrDefault(x => (x.IsDefault == true)));
                 }
             }
         }

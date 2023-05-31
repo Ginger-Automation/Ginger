@@ -551,7 +551,7 @@ namespace Ginger
                 {
                     foreach (Guid tagID in tagsIDsList)
                     {
-                        RepositoryItemTag tag = WorkSpace.Instance.Solution.Tags.Where(x => x.Guid == tagID).FirstOrDefault();
+                        RepositoryItemTag tag = WorkSpace.Instance.Solution.Tags.FirstOrDefault(x => x.Guid == tagID);
                         if (tag != null)
                         {
                             tagsDesc += "#" + tag.Name;

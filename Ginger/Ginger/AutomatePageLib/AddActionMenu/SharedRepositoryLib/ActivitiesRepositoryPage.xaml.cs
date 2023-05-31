@@ -265,7 +265,7 @@ namespace Ginger.Repository
                 //refresh and select the item
                 try
                 {
-                    Activity dragedItemInGrid = ((IEnumerable<Activity>)xActivitiesRepositoryListView.DataSourceList).Where(x => x.Guid == dragedItem.Guid).FirstOrDefault();
+                    Activity dragedItemInGrid = ((IEnumerable<Activity>)xActivitiesRepositoryListView.DataSourceList).FirstOrDefault(x => x.Guid == dragedItem.Guid);
                     if (dragedItemInGrid != null)
                     {
                         xActivitiesRepositoryListView.List.SelectedItem = dragedItemInGrid;

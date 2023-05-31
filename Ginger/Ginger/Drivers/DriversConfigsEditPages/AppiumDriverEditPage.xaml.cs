@@ -266,7 +266,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void AddOrUpdateCapability(DriverConfigParam capability)
         {
-            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.Where(x => x.Parameter == capability.Parameter).FirstOrDefault();
+            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.FirstOrDefault(x => x.Parameter == capability.Parameter);
             if (existingCap != null)
             {
                 existingCap.Value = capability.Value;
@@ -280,7 +280,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private bool IsUFTCapabilityExist()
         {
-            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.Where(x => x.Parameter == "uftm:oauthClientSecret").FirstOrDefault();
+            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.FirstOrDefault(x => x.Parameter == "uftm:oauthClientSecret");
             if (existingCap != null)
             {
                 return true;
@@ -293,7 +293,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void SetCurrentCapabilityValue(DriverConfigParam capability)
         {
-            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.Where(x => x.Parameter == capability.Parameter).FirstOrDefault();
+            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.FirstOrDefault(x => x.Parameter == capability.Parameter);
             if (existingCap != null && string.IsNullOrEmpty(existingCap.Value) == false)
             {
                 capability.Value = existingCap.Value;
@@ -302,7 +302,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void DeleteCapabilityIfExist(string capabilityName)
         {
-            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.Where(x => x.Parameter == capabilityName).FirstOrDefault();
+            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.FirstOrDefault(x => x.Parameter == capabilityName);
             if (existingCap != null)
             {
                 mAppiumCapabilities.MultiValues.Remove(existingCap);

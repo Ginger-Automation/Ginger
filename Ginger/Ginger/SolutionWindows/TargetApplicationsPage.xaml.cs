@@ -86,7 +86,7 @@ namespace Ginger.SolutionWindows
         }
         public bool NameAlreadyExists(string value)
         {
-            if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(obj => obj.AppName == value).FirstOrDefault() == null)
+            if (WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(obj => obj.AppName == value) == null)
             {
                 return false; //no name like it in the group 
             }

@@ -115,17 +115,17 @@ namespace Ginger.Actions
 
         private void RemoveOldInputParams()
         {
-            if (mAct.InputValues.Where(x => x.Param == "Value" && x.Value == string.Empty).FirstOrDefault() != null)
+            if (mAct.InputValues.FirstOrDefault(x => x.Param == "Value" && x.Value == string.Empty) != null)
             {
                 mAct.RemoveInputParam("Value");
             }
 
-            if (mAct.InputValues.Where(x => x.Param == "Port").FirstOrDefault() != null)
+            if (mAct.InputValues.FirstOrDefault(x => x.Param == "Port") != null)
             {
                 mAct.RemoveInputParam("Port");
             }
 
-            if (mAct.InputValues.Where(x => x.Param == "URL").FirstOrDefault() != null)
+            if (mAct.InputValues.FirstOrDefault(x => x.Param == "URL") != null)
             {
                 mAct.RemoveInputParam("URL");
             }

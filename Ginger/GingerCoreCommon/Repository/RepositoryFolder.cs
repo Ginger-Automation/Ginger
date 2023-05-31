@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -478,7 +478,7 @@ namespace Amdocs.Ginger.Repository
                 {
                     if (e.ChangeType == WatcherChangeTypes.Deleted)
                     {
-                        if ((from x in mSubFoldersCache where x.FolderName == e.Name select x).SingleOrDefault() != null)
+                        if (mSubFoldersCache.Any(x=> x.FolderName == e.Name))
                         {
                             HandleDirecortyChange(e);
                         }

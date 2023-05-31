@@ -137,7 +137,7 @@ namespace Ginger.Repository
                 }
                 else if (((DragInfo)sender).Data is CollectionViewGroup)
                 {
-                    dragedItem = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((DragInfo)sender).Header).FirstOrDefault();
+                    dragedItem = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == ((DragInfo)sender).Header);
                 }
 
                 if (dragedItem != null)
@@ -152,7 +152,7 @@ namespace Ginger.Repository
                     WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, list));
 
                     //refresh and select the item
-                    ActivitiesGroup dragedItemInGrid = ((IEnumerable<ActivitiesGroup>)xActivitiesGroupsRepositoryListView.DataSourceList).Where(x => x.Guid == dragedItem.Guid).FirstOrDefault();
+                    ActivitiesGroup dragedItemInGrid = ((IEnumerable<ActivitiesGroup>)xActivitiesGroupsRepositoryListView.DataSourceList).FirstOrDefault(x => x.Guid == dragedItem.Guid);
                     if (dragedItemInGrid != null)
                     {
                         xActivitiesGroupsRepositoryListView.List.SelectedItem = dragedItemInGrid;

@@ -79,7 +79,7 @@ namespace Ginger
             try
             {
                 string selectedSolFolder = ((Hyperlink)sender).ToolTip.ToString().ToUpper();
-                Solution selectedSol = ((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects.Where(x => x.Folder.ToUpper() == selectedSolFolder).FirstOrDefault();
+                Solution selectedSol = ((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects.FirstOrDefault(x => x.Folder.ToUpper() == selectedSolFolder);
 
                 if (selectedSol != null)
                 {

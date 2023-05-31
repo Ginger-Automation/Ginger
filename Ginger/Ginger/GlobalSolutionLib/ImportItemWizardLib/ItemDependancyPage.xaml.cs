@@ -187,7 +187,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             GlobalSolutionItem solutionItem = (GlobalSolutionItem)sender;
             if (!string.IsNullOrEmpty(solutionItem.RequiredFor))
             {
-                if (wiz.SelectedItemsListToImport.Where(x => x.ItemName == solutionItem.RequiredFor).FirstOrDefault().Selected && solutionItem.ItemImportSetting == GlobalSolution.eImportSetting.New)
+                if (wiz.SelectedItemsListToImport.FirstOrDefault(x => x.ItemName == solutionItem.RequiredFor).Selected && solutionItem.ItemImportSetting == GlobalSolution.eImportSetting.New)
                 {
                     solutionItem.Selected = true;
                     xInfoMessageLabel.Content = "Dependant items with import setting as 'New' can not be unchecked as it must be imported.";

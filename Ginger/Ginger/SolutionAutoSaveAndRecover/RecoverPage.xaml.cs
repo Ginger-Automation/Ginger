@@ -130,12 +130,12 @@ namespace Ginger.SolutionAutoSaveAndRecover
                     if (ri.RecoveredItemObject is BusinessFlow)
                     {
                         ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                        originalItem = businessFlows.Where(x => x.Guid == ri.RecoveredItemObject.Guid).FirstOrDefault();
+                        originalItem = businessFlows.FirstOrDefault(x => x.Guid == ri.RecoveredItemObject.Guid);
                     }
                     else if (ri.RecoveredItemObject is Run.RunSetConfig)
                     {
                         ObservableList<RunSetConfig> Runsets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-                        originalItem = Runsets.Where(x => x.Guid == ri.RecoveredItemObject.Guid).FirstOrDefault();
+                        originalItem = Runsets.FirstOrDefault(x => x.Guid == ri.RecoveredItemObject.Guid);
                     }
                     if (originalItem == null)
                     {

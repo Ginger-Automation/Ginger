@@ -226,7 +226,7 @@ namespace Amdocs.Ginger.Repository
             {
                 repoItemList = repositoryFolderBase.GetFolderRepositoryItems();
             }
-            repoItem = repoItemList.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(filePath)).FirstOrDefault();
+            repoItem = repoItemList.FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(filePath));
             return repoItem;
         }
 

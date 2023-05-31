@@ -230,12 +230,12 @@ namespace Ginger.ALM.QC
                         ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
                         if (tc.LinkedTestID != null && tc.LinkedTestID != string.Empty)
                         {
-                            repoActivsGroup = activitiesGroup.Where(x => x.ExternalID == tc.LinkedTestID).FirstOrDefault();
+                            repoActivsGroup = activitiesGroup.FirstOrDefault(x => x.ExternalID == tc.LinkedTestID);
                         }
 
                         if (repoActivsGroup == null)
                         {
-                            repoActivsGroup = activitiesGroup.Where(x => x.ExternalID == tc.TestID).FirstOrDefault();
+                            repoActivsGroup = activitiesGroup.FirstOrDefault(x => x.ExternalID == tc.TestID);
                         }
 
                         if (repoActivsGroup != null)
@@ -246,7 +246,7 @@ namespace Ginger.ALM.QC
                             foreach (ALMTSTestStep step in tc.Steps)
                             {
                                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                                Activity repoStepActivity = activities.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
+                                Activity repoStepActivity = activities.FirstOrDefault(x => x.ExternalID == step.StepID);
                                 if (repoStepActivity != null)
                                 {
                                     if (repoStepActivity.AutomationStatus == eActivityAutomationStatus.Automated)
@@ -311,7 +311,7 @@ namespace Ginger.ALM.QC
             mPassedRunsPrecentage = 0;
             foreach (QCManagerReportTestCaseDetails tcDetails in mTestCaseDetailsList)
             {
-                CalculateTCExecutionDetails(mQcTestCasesList.Where(x => x.LinkedTestID == tcDetails.TestCaseID).FirstOrDefault(), tcDetails);
+                CalculateTCExecutionDetails(mQcTestCasesList.FirstOrDefault(x => x.LinkedTestID == tcDetails.TestCaseID), tcDetails);
             }
         }
 

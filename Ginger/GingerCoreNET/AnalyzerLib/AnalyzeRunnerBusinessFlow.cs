@@ -66,7 +66,7 @@ namespace Ginger.AnalyzerLib
                             }
                             else//we have more than 1
                             {
-                                BusinessFlow firstActive = (BusinessFlow)lstBusinessFlow.Where(x => x.Active == true).FirstOrDefault();
+                                BusinessFlow firstActive = (BusinessFlow)lstBusinessFlow.FirstOrDefault(x => x.Active == true);
                                 if (firstActive != null)
                                 {
                                     bf = firstActive;

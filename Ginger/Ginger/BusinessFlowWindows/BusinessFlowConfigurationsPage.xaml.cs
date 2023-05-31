@@ -98,7 +98,7 @@ namespace GingerWPF.BusinessFlowsLib
                 Activity changedActivity = (Activity)sender;
                 if (string.IsNullOrEmpty(changedActivity.ActivitiesGroupID) == false)
                 {
-                    ActivitiesGroup actGroup = mBusinessFlow.ActivitiesGroups.Where(x => x.Name == changedActivity.ActivitiesGroupID).FirstOrDefault();
+                    ActivitiesGroup actGroup = mBusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == changedActivity.ActivitiesGroupID);
                     if (actGroup != null)
                     {
                         actGroup.OnPropertyChanged(nameof(ActivitiesGroup.AutomationPrecentage));
@@ -216,7 +216,7 @@ namespace GingerWPF.BusinessFlowsLib
             //make sure all Activities mapped to Application after change
             foreach (Activity activity in mBusinessFlow.Activities)
             {
-                if (mBusinessFlow.TargetApplications.Where(x => x.Name == activity.TargetApplication).FirstOrDefault() == null)
+                if (mBusinessFlow.TargetApplications.FirstOrDefault(x => x.Name == activity.TargetApplication) == null)
                 {
                     activity.TargetApplication = mBusinessFlow.TargetApplications[0].Name;
                 }

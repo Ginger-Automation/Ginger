@@ -131,7 +131,7 @@ namespace GingerCoreCommonTest
             Assert.IsTrue(busFlow.ActivitiesGroups.Count == 3, "Validate 1 extra groups were added");
             Assert.IsTrue(group1.ActivitiesIdentifiers.Count == 2, "Validate only 2 Activities are attached to first group");
             Assert.IsTrue(group2.ActivitiesIdentifiers.Count == 1, "Validate 1 Activities were attached to second group");
-            Assert.IsTrue(busFlow.ActivitiesGroups.Where(x => x.Name == group1.Name + "_2").FirstOrDefault() != null, "Validate new added group name");
+            Assert.IsTrue(busFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == group1.Name + "_2") != null, "Validate new added group name");
             Assert.IsTrue(activity4.ActivitiesGroupID == group1.Name + "_2", "Validate Activity was re-grouped to new added group");
             Assert.IsTrue(activity5.ActivitiesGroupID == group1.Name + "_2", "Validate Activity was re-grouped to new added group");
         }
@@ -413,10 +413,10 @@ namespace GingerCoreCommonTest
             busFlow.MoveActivityBetweenGroups(activity2, group2);
 
             //Assert
-            Assert.IsTrue(group1.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity == activity2).FirstOrDefault() == null, "Validate Activity removed from original group");
+            Assert.IsTrue(group1.ActivitiesIdentifiers.FirstOrDefault(x => x.IdentifiedActivity == activity2) == null, "Validate Activity removed from original group");
             Assert.IsTrue(activity2.ActivitiesGroupID == group2.Name, "Validate Activity moved to target group");
             Assert.IsTrue(busFlow.Activities.IndexOf(activity2) == 3, "Validate Activity moved to correct index in Activities list");
-            Assert.IsTrue(group2.ActivitiesIdentifiers.IndexOf(group2.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity == activity2).First()) == 2, "Validate Activity moved to correct indx in target group");
+            Assert.IsTrue(group2.ActivitiesIdentifiers.IndexOf(group2.ActivitiesIdentifiers.First(x => x.IdentifiedActivity == activity2)) == 2, "Validate Activity moved to correct indx in target group");
         }
 
         [TestMethod]
@@ -453,10 +453,10 @@ namespace GingerCoreCommonTest
             busFlow.MoveActivityBetweenGroups(activity2, group2, 2);
 
             //Assert
-            Assert.IsTrue(group1.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity == activity2).FirstOrDefault() == null, "Validate Activity removed from original group");
+            Assert.IsTrue(group1.ActivitiesIdentifiers.FirstOrDefault(x => x.IdentifiedActivity == activity2) == null, "Validate Activity removed from original group");
             Assert.IsTrue(activity2.ActivitiesGroupID == group2.Name, "Validate Activity moved to target group");
             Assert.IsTrue(busFlow.Activities.IndexOf(activity2) == 1, "Validate Activity moved to correct index in Activities list");
-            Assert.IsTrue(group2.ActivitiesIdentifiers.IndexOf(group2.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity == activity2).First()) == 0, "Validate Activity moved to correct indx in target group");
+            Assert.IsTrue(group2.ActivitiesIdentifiers.IndexOf(group2.ActivitiesIdentifiers.First(x => x.IdentifiedActivity == activity2)) == 0, "Validate Activity moved to correct indx in target group");
         }
 
         [TestMethod]
@@ -493,10 +493,10 @@ namespace GingerCoreCommonTest
             busFlow.MoveActivityBetweenGroups(activity6, group2, 2);
 
             //Assert
-            Assert.IsTrue(group3.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity == activity6).FirstOrDefault() == null, "Validate Activity removed from original group");
+            Assert.IsTrue(group3.ActivitiesIdentifiers.FirstOrDefault(x => x.IdentifiedActivity == activity6) == null, "Validate Activity removed from original group");
             Assert.IsTrue(activity6.ActivitiesGroupID == group2.Name, "Validate Activity moved to target group");
             Assert.IsTrue(busFlow.Activities.IndexOf(activity6) == 2, "Validate Activity moved to correct index in Activities list");
-            Assert.IsTrue(group2.ActivitiesIdentifiers.IndexOf(group2.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity == activity6).First()) == 0, "Validate Activity moved to correct indx in target group");
+            Assert.IsTrue(group2.ActivitiesIdentifiers.IndexOf(group2.ActivitiesIdentifiers.First(x => x.IdentifiedActivity == activity6)) == 0, "Validate Activity moved to correct indx in target group");
         }
 
 
@@ -535,7 +535,7 @@ namespace GingerCoreCommonTest
 
             //Assert
             Assert.IsTrue(busFlow.Activities.IndexOf(activity2) == 3, "Validate Activity moved to correct index in Activities list");
-            Assert.IsTrue(group2.ActivitiesIdentifiers.IndexOf(group2.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity == activity2).First()) == 2, "Validate Activity moved to correct indx in target group");
+            Assert.IsTrue(group2.ActivitiesIdentifiers.IndexOf(group2.ActivitiesIdentifiers.First(x => x.IdentifiedActivity == activity2)) == 2, "Validate Activity moved to correct indx in target group");
         }
 
         [TestMethod]
@@ -573,7 +573,7 @@ namespace GingerCoreCommonTest
 
             //Assert
             Assert.IsTrue(busFlow.Activities.IndexOf(activity5) == 1, "Validate Activity moved to correct index in Activities list");
-            Assert.IsTrue(group2.ActivitiesIdentifiers.IndexOf(group2.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity == activity5).First()) == 0, "Validate Activity moved to correct indx in target group");
+            Assert.IsTrue(group2.ActivitiesIdentifiers.IndexOf(group2.ActivitiesIdentifiers.First(x => x.IdentifiedActivity == activity5)) == 0, "Validate Activity moved to correct indx in target group");
         }
     }
 }

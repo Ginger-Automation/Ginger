@@ -245,7 +245,7 @@ namespace GingerCore.ALM.QCRestAPI
                                         {
                                             break;
                                         }
-                                        Activity matchingActivity = activities.Where(x => x.ExternalID == runStep.ElementsField["desstep-id"].ToString()).FirstOrDefault();
+                                        Activity matchingActivity = activities.FirstOrDefault(x => x.ExternalID == runStep.ElementsField["desstep-id"].ToString());
                                         if (matchingActivity != null)
                                         {
                                             switch (matchingActivity.Status)
@@ -326,7 +326,7 @@ namespace GingerCore.ALM.QCRestAPI
                                     }
 
                                     //update the TC general status based on the activities status collection.                                
-                                    if (stepsStatuses.Where(x => x == "Failed").Any())
+                                    if (stepsStatuses.Any(x => x == "Failed"))
                                     {
                                         currentRun.Status = "Failed";
                                         currentRun.ElementsField["status"] = "Failed";
@@ -596,7 +596,7 @@ namespace GingerCore.ALM.QCRestAPI
                 //skip already existing instances
                 foreach (QCTestInstance testInstance in testInstances)
                 {
-                    ActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == testInstance.TestId.ToString() && x.ExternalID2 == testInstance.Id.ToString())).FirstOrDefault();
+                    ActivitiesGroup ag = businessFlow.ActivitiesGroups.FirstOrDefault(x => (x.ExternalID == testInstance.TestId.ToString() && x.ExternalID2 == testInstance.Id.ToString()));
                     if (ag != null)
                     {
                         existingActivitiesGroupsList.Add(ag);
@@ -691,7 +691,7 @@ namespace GingerCore.ALM.QCRestAPI
 
             foreach (QCTestCaseStep step in testCaseDesignStep)
             {
-                Activity identifiedActivity = (Activity)activitiesGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.Id).FirstOrDefault().IdentifiedActivity;
+                Activity identifiedActivity = (Activity)activitiesGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.Id).IdentifiedActivity;
                 //set item fields
                 foreach (ExternalItemFieldBase field in designStepsFields)
                 {
@@ -851,7 +851,7 @@ namespace GingerCore.ALM.QCRestAPI
 
             foreach (QCTestInstance testInstance in testInstances)
             {
-                ActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == testInstance.TestId.ToString() && x.ExternalID2 == testInstance.Id.ToString())).FirstOrDefault();
+                ActivitiesGroup ag = businessFlow.ActivitiesGroups.FirstOrDefault(x => (x.ExternalID == testInstance.TestId.ToString() && x.ExternalID2 == testInstance.Id.ToString()));
                 if (ag == null)
                 {
                     QCRestAPIConnect.DeleteEntity(ResourceType.TEST_CYCLE, testInstance.Id);
