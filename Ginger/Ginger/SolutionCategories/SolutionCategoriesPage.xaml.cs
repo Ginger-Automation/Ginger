@@ -98,10 +98,11 @@ namespace Ginger.SolutionCategories
 
         private void SetOptionalValues()
         {
+            if (mSolutionCategories == null || !mSolutionCategories.Any()) return;
             foreach (SolutionCategoryDefinition cat in mCategoriesDefinitions)
             {
                 SolutionCategory solCat = mSolutionCategories.Where(x => x.Category == cat.Category).FirstOrDefault();
-                if (cat != null)
+                if (cat != null && solCat!=null)
                 {
                     cat.CategoryName = solCat.CategoryName;
                     cat.Description = solCat.Description;
