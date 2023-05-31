@@ -67,24 +67,28 @@ namespace Ginger.Environments
             {
                 GeneralParam changedParam = (GeneralParam)grdAppParams.CurrentItem;
 
-                if (!changedParam.Name.Equals(changedParam.NameBeforeEdit))
+                if (changedParam != null && !changedParam.Name.Equals(changedParam.NameBeforeEdit))
                 {
-                    if (String.IsNullOrWhiteSpace(changedParam.Name))
+                    if (string.IsNullOrWhiteSpace(changedParam.Name))
                     {
-                        Reporter.ToUser(eUserMsgKey.EnvironmentParameterNameCannotBeEmpty);
+                        Reporter.ToUser(eUserMsgKey.EnvParamNameEmpty);
                         RestoreVariableName(changedParam);
                     }
-                    else if (IsParamNameAlreadyExists(changedParam.Name, false))
+                    else if (IsParamNameAlreadyExists(changedParam.Name, true))
                     {
-                        Reporter.ToUser(eUserMsgKey.EnvironmentParameterNameAlreadyExists);
+                        Reporter.ToUser(eUserMsgKey.EnvParamNameExists);
                         RestoreVariableName(changedParam);
                     }
-                    else if (IsParameterBeingUsed(changedParam))
+                    else if (IsParameterBeingUsed(changedParam.NameBeforeEdit))
                     {
                         if (Reporter.ToUser(eUserMsgKey.ChangingEnvironmentParameterValue) == eUserMsgSelection.Yes)
+                        {
                             UpdateVariableNameChange(changedParam);
+                        }
                         else
+                        {
                             RestoreVariableName(changedParam);
+                        }
                     }
                 }
             }
@@ -92,7 +96,7 @@ namespace Ginger.Environments
             {
                 GeneralParam selectedEnvParam = (GeneralParam)grdAppParams.CurrentItem;
 
-                String intialValue = selectedEnvParam.Value;
+                string intialValue = selectedEnvParam.Value;
 
                 if (!string.IsNullOrEmpty(intialValue))
                 {
@@ -122,14 +126,14 @@ namespace Ginger.Environments
 
         private static void RestoreVariableName(GeneralParam changedParam)
         {
-            changedParam.Name = String.IsNullOrWhiteSpace(changedParam.NameBeforeEdit) ? string.Empty : changedParam.NameBeforeEdit;
+            changedParam.Name = string.IsNullOrWhiteSpace(changedParam.NameBeforeEdit) ? string.Empty : changedParam.NameBeforeEdit;
         }
 
-        private bool IsParamNameAlreadyExists(string name, bool checkInAllItems)
+        private bool IsParamNameAlreadyExists(string name, bool ignoreCurrentSelectedItem)
         {
             foreach (var item in grdAppParams.DataSourceList.ListItems)
             {
-                if (!checkInAllItems && ((GeneralParam)item).Guid.Equals(((GeneralParam)grdAppParams.CurrentItem).Guid))
+                if (ignoreCurrentSelectedItem && ((GeneralParam)item).Guid.Equals(((GeneralParam)grdAppParams.CurrentItem).Guid))
                     continue;
 
                 if (((GeneralParam)item).Name == name)
@@ -137,7 +141,7 @@ namespace Ginger.Environments
             }
             return false;
         }
-
+        
         public void UpdateVariableNameChange(GeneralParam parameter)
         {
             if (parameter == null)
@@ -162,26 +166,24 @@ namespace Ginger.Environments
             }
             parameter.NameBeforeEdit = parameter.Name;
         }
-        public bool IsParameterBeingUsed(GeneralParam parameter)
+        private bool IsParameterBeingUsed(string paramName)
         {
-            if (parameter == null)
-            {
-                return false;
-            }
-            else
-            {
-                ObservableList<BusinessFlow> bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+            ObservableList<BusinessFlow> bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
-                foreach (BusinessFlow bf in bfs)
+            foreach (BusinessFlow bf in bfs)
+            {
+                foreach (Activity activity in bf.Activities)
                 {
-                    foreach (Activity activity in bf.Activities)
+                    foreach (Act action in activity.Acts)
                     {
-                        foreach (Act action in activity.Acts)
-                            if (GeneralParam.IsParamBeingUsedInBFs(action, AppOwner.Name, parameter.NameBeforeEdit))
-                                return true;
+                        if (GeneralParam.IsParamBeingUsedInBFs(action, AppOwner.Name, paramName))
+                        {
+                            return true;
+                        }
                     }
                 }
             }
+
             return false;
         }
 
@@ -196,8 +198,10 @@ namespace Ginger.Environments
 
         private string GenerateParamName(int count)
         {
-            while (IsParamNameAlreadyExists("Parameter " + ++count, true))
+            while (IsParamNameAlreadyExists("Parameter " + ++count, false))
+            {
                 continue;
+            }
 
             return "Parameter " + count;
         }

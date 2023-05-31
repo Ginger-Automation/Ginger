@@ -165,8 +165,8 @@ namespace Amdocs.Ginger.Common
         UploadSolutionFailed,
         SourceControlBranchNameEmpty, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace,
         DeleteRecoverFolderWarn,
-        EnvironmentParameterNameAlreadyExists,
-        EnvironmentParameterNameCannotBeEmpty
+        EnvParamNameExists,
+        EnvParamNameEmpty
     }
 
     public static class UserMsgsPool
@@ -363,9 +363,9 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.WindowClosed, new UserMsg(eUserMsgType.WARN, "Invalid target window", "Target window is either closed or no longer available. \n\n Please Add switch Window action by selecting correct target window on Window Explorer", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.TargetWindowNotSelected, new UserMsg(eUserMsgType.WARN, "Target Window not Selected", "Please choose the target window from available list", eUserMsgOption.OK, eUserMsgSelection.None));
 
-            Reporter.UserMsgsPool.Add(eUserMsgKey.ChangingEnvironmentParameterValue, new UserMsg(eUserMsgType.WARN, "Changing Environment Variable Name", "Changing the Environment variable name will cause rename this environment variable name in every " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", do you want to continue?", eUserMsgOption.YesNo, eUserMsgSelection.No));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.EnvironmentParameterNameAlreadyExists, new UserMsg(eUserMsgType.WARN, "Changing Environment Variable Name", "Environment variable name already exists, give different name !", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.EnvironmentParameterNameCannotBeEmpty, new UserMsg(eUserMsgType.WARN, "Changing Environment Variable Name", "Environment variable name cannot be Empty !", eUserMsgOption.OK, eUserMsgSelection.None));            
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ChangingEnvironmentParameterValue, new UserMsg(eUserMsgType.WARN, "Changing Parameter Name", "Changing the Parameter name will cause rename this parameter name in every " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", do you want to continue?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.EnvParamNameExists, new UserMsg(eUserMsgType.WARN, "Changing Parameter Name", "Parameter name already exists, provide different name.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.EnvParamNameEmpty, new UserMsg(eUserMsgType.WARN, "Changing Parameter Name", "Parameter name cannot be Empty.", eUserMsgOption.OK, eUserMsgSelection.None));            
             Reporter.UserMsgsPool.Add(eUserMsgKey.SaveLocalChanges, new UserMsg(eUserMsgType.QUESTION, "Save Local Changes?", "Your Local Changes will be saved. Do you want to Continue?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.LooseLocalChanges, new UserMsg(eUserMsgType.WARN, "Loose Local Changes?", "Your Local Changes will be Lost. Do you want to Continue?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.IFSaveChangesOfBF, new UserMsg(eUserMsgType.WARN, "Save Current" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Before Change?", "Do you want to save the changes made in the '{0}' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "?", eUserMsgOption.YesNo, eUserMsgSelection.No));
