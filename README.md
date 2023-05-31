@@ -1,6 +1,7 @@
 
 
 #  <img src="https://github.com/Ginger-Automation/Ginger/blob/master/GingerLogo.png" width="64"> Ginger Automation 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/774a48b9f6f34f2a89869384e558fe4d)](https://app.codacy.com/gh/Ginger-Automation/Ginger?utm_source=github.com&utm_medium=referral&utm_content=Ginger-Automation/Ginger&utm_campaign=Badge_Grade)
 [![Build status](https://ci.appveyor.com/api/projects/status/1wcp41xf6q49988m/branch/master?svg=true)](https://ci.appveyor.com/project/ginger/ginger/branch/master)
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/Ginger-Automation/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
