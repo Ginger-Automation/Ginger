@@ -16,16 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
-using static Amdocs.Ginger.Repository.CustomRelativeXpathTemplate;
 
 namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib
 {

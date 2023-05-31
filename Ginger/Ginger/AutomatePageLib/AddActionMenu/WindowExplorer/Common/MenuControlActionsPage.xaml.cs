@@ -17,18 +17,18 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions;
 using Ginger.UserControls;
 using GingerCore.Actions;
+using Interop.UIAutomationClient;
 using System;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using Interop.UIAutomationClient;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace Ginger.WindowExplorer.Common
 {

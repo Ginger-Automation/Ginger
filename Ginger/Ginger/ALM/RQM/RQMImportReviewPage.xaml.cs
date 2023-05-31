@@ -17,12 +17,12 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using GingerCore.ALM.RQM;
 using Ginger.UserControls;
+using GingerCore.ALM.RQM;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Linq;
 
 namespace Ginger.ALM.RQM
 {
@@ -49,12 +49,15 @@ namespace Ginger.ALM.RQM
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = RQMTestCase.Fields.RQMID, Header = "Test Case ID", WidthWeight = 7, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RQMTestCase.Fields.Name, Header = "Test Case Name", WidthWeight = 30,  ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = RQMTestCase.Fields.Name, Header = "Test Case Name", WidthWeight = 30, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RQMTestCase.Fields.Name, Header = "Test Case Name", WidthWeight = 30, ReadOnly = true });
             if (mTestPlan.TestCases.Where(z => z.TestSuiteId != null && z.TestSuiteId != string.Empty).ToList().Count > 0)
+            {
                 view.GridColsView.Add(new GridColView() { Field = RQMTestCase.Fields.TestSuiteTitle, Header = "RQM Test Suite", WidthWeight = 30, ReadOnly = true });
+            }
+
             view.GridColsView.Add(new GridColView() { Field = RQMTestCase.Fields.TestScriptsQuantity, Header = "Test Scripts Quantity", WidthWeight = 10, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RQMTestCase.Fields.SelectedTestScriptName, Header = "Selected Test Script", WidthWeight = 40, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(RQMTestCase.Fields.TestScriptsNamesList, RQMTestCase.Fields.SelectedTestScriptName, true, true)});
+            view.GridColsView.Add(new GridColView() { Field = RQMTestCase.Fields.SelectedTestScriptName, Header = "Selected Test Script", WidthWeight = 40, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(RQMTestCase.Fields.TestScriptsNamesList, RQMTestCase.Fields.SelectedTestScriptName, true, true) });
             grdRQMTestPlaneImportReview.SetAllColumnsDefaultView(view);
             grdRQMTestPlaneImportReview.InitViewItems();
 
@@ -91,7 +94,7 @@ namespace Ginger.ALM.RQM
             rqmTestPlanList.Add(mTestPlan);
 
             if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, rqmTestPlanList) == true)
-                {
+            {
                 _pageGenericWin.Close();
             }
         }

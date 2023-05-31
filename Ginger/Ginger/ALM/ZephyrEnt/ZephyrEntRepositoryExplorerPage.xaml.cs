@@ -17,15 +17,15 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCore.ALM;
+using GingerCore.ALM.ZephyrEnt.Bll;
+using GingerWPF.UserControlsLib.UCTreeView;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore.ALM;
 using System.Windows.Input;
-using System.Collections.Generic;
-using GingerCore.ALM.ZephyrEnt.Bll;
-using Newtonsoft.Json.Linq;
 using ZephyrEntStdSDK.Models.Base;
 
 namespace Ginger.ALM.ZephyrEnt.TreeViewItems
@@ -78,7 +78,7 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
                 tvv.entityType = EntityFolderType.Module;
                 tvv.Path = ((TestRepositoryFolderTreeItem)folder).Path + '\\' + tvv.Name;
                 tvv.Folder = tvv.Name;
-                if(((JArray)item["categories"]).Count > 0)
+                if (((JArray)item["categories"]).Count > 0)
                 {
                     tvv.CurrentChildrens = new List<ITreeViewItem>();
                     GetFolderChilds(tvv, item["categories"]);

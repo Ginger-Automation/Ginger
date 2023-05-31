@@ -630,7 +630,8 @@ public class SwingHelper implements IXPath {
     	String actualTitle = "";
 		int actualIndex=0;
     	int numOfFoundWins=0;  
-    	
+    	boolean partialTitleFound = false;
+    	boolean appletsTitleFound = false;
     	//Get actual window title and index
     	if (Title.contains("[Index:"))
     	{
@@ -678,48 +679,63 @@ public class SwingHelper implements IXPath {
     				CurrentWindow = w;
     				return true;
     			}
-    		}    			
-    	}
-    	//if  user specify partial window text the find window using contains
-    	for(Window w:windows2)
-    	{
-    		String Wtitle="";
-    		if (w instanceof JDialog && w.isShowing() == true )
-    		{
-    			Wtitle = ((JDialog) w).getTitle(); 
-    			if (Wtitle == "" || Wtitle == null)
-    			{
-    				Wtitle = "NoTitleDialog";
-    			}
     		}
-			else if (w instanceof JFrame)
-    		{
-				Wtitle = ((JFrame) w).getTitle();
-				if (Wtitle == "" || Wtitle == null)
-    			{
-    				Wtitle = "NoTitleFrame";
-    			}
-    		}			
-    		
-    		//checking if it the same
-    		if(Wtitle.contains(actualTitle))
+    		else if(Wtitle.contains(actualTitle))
     		{  
     			CurrentWindow = w;
-    			return true;    			
-    		}    
-    	}
-    	
-		//temp solution to be able to see it in Win Explorer
-    	// for applets we might have only name
-    	for(Window w:windows2)
-    	{
-    		if (Title.equals(w.getName()))
+    			partialTitleFound =  true;    			
+    		}
+    		else if (Title.equals(w.getName()))
 			{
     			CurrentWindow = w;
-    			return true;    	
+    			appletsTitleFound = true;    	
 			}
+    	}
     	
-    	}    	
+    	if(partialTitleFound || appletsTitleFound)
+    	{
+    		return true;
+    	}
+    	//if  user specify partial window text the find window using contains
+//    	for(Window w:windows2)
+//    	{
+//    		String Wtitle="";
+//    		if (w instanceof JDialog && w.isShowing() == true )
+//    		{
+//    			Wtitle = ((JDialog) w).getTitle(); 
+//    			if (Wtitle == "" || Wtitle == null)
+//    			{
+//    				Wtitle = "NoTitleDialog";
+//    			}
+//    		}
+//			else if (w instanceof JFrame)
+//    		{
+//				Wtitle = ((JFrame) w).getTitle();
+//				if (Wtitle == "" || Wtitle == null)
+//    			{
+//    				Wtitle = "NoTitleFrame";
+//    			}
+//    		}			
+//    		
+//    		//checking if it the same
+//    		if(Wtitle.contains(actualTitle))
+//    		{  
+//    			CurrentWindow = w;
+//    			return true;    			
+//    		}    
+//    	}
+//    	
+		//temp solution to be able to see it in Win Explorer
+    	// for applets we might have only name
+//    	for(Window w:windows2)
+//    	{
+//    		if (Title.equals(w.getName()))
+//			{
+//    			CurrentWindow = w;
+//    			return true;    	
+//			}
+//    	
+//    	}    	
     	return false;
     }
 	

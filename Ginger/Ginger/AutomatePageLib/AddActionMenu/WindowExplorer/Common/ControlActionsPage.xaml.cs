@@ -42,9 +42,9 @@ namespace Ginger.WindowExplorer
         public Act mAction; // If we come here from EditAction page to update the locator
         public ObservableList<Act> mActions; // List of available actions to choose from
         public ObservableList<ElementLocator> mLocators;
-        private IWindowExplorer mWindowExplorerDriver;        
+        private IWindowExplorer mWindowExplorerDriver;
         private ObservableList<ActInputValue> mActInputValues;
-        ElementInfo mElementInfo = null;        
+        ElementInfo mElementInfo = null;
         Page mDataPage = null;
         double mLastDataGridRowHeight = 50;
         Context mContext;
@@ -55,7 +55,7 @@ namespace Ginger.WindowExplorer
             InitializeComponent();
 
             mElementInfo = ElementInfo;
-            mWindowExplorerDriver = ElementInfo.WindowExplorer;         
+            mWindowExplorerDriver = ElementInfo.WindowExplorer;
             mActInputValues = actInputValues;
             mActions = Actions;
             mLocators = mWindowExplorerDriver.GetElementLocators(mElementInfo);
@@ -65,7 +65,7 @@ namespace Ginger.WindowExplorer
             InitActionsGrid();
             InitLocatorsGrid();
             InitDataPage();
-             
+
             SelectLocatorButton.Visibility = System.Windows.Visibility.Collapsed;
         }
 
@@ -94,7 +94,7 @@ namespace Ginger.WindowExplorer
         {
             InitializeComponent();
             mAction = Act;
-            if (mAction==null)
+            if (mAction == null)
             {
                 SelectLocatorButton.Visibility = System.Windows.Visibility.Collapsed;
             }
@@ -136,7 +136,7 @@ namespace Ginger.WindowExplorer
             {
                 ObservableList<ElementInfo> list = mWindowExplorerDriver.GetElements(EL);
                 EL.Count = list.Count;
-            }            
+            }
         }
 
         private void TestSelectedLocator(object sender, RoutedEventArgs e)
@@ -161,7 +161,7 @@ namespace Ginger.WindowExplorer
         private void AddActionButton_Click(object sender, RoutedEventArgs e)
         {
             if (mActions.CurrentItem == null)
-            {                
+            {
                 Reporter.ToUser(eUserMsgKey.AskToSelectAction);
                 return;
             }
@@ -172,7 +172,7 @@ namespace Ginger.WindowExplorer
         }
 
         private Act SetActionDetails(Act act)
-        {           
+        {
             act.Active = true;
             act.AddNewReturnParams = true;
             act.Value = ValueTextBox.Text;
@@ -181,11 +181,11 @@ namespace Ginger.WindowExplorer
             {
                 foreach (ActInputValue iv in mActInputValues)
                 {
-                    if(iv.Value != null)
+                    if (iv.Value != null)
                     {
                         act.AddOrUpdateInputParamValue(iv.Param, iv.Value);
                     }
-                    
+
                 }
             }
 
@@ -198,27 +198,27 @@ namespace Ginger.WindowExplorer
                 actUI.ElementLocateBy = EL.LocateBy;
                 actUI.ElementLocateValue = EL.LocateValue;
                 //TODO: Remove below  if once one of the field from Value and Value to select is removed
-                if (actUI.ElementAction == ActUIElement.eElementAction.Click 
-                    || actUI.ElementAction == ActUIElement.eElementAction.Select 
+                if (actUI.ElementAction == ActUIElement.eElementAction.Click
+                    || actUI.ElementAction == ActUIElement.eElementAction.Select
                     || actUI.ElementAction == ActUIElement.eElementAction.GetControlProperty
                     || actUI.ElementAction == ActUIElement.eElementAction.AsyncSelect
                     || actUI.ElementAction == ActUIElement.eElementAction.SelectByIndex)
                 {
                     actUI.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, act.Value);
                 }
-                else if(actUI.ElementAction.Equals(ActUIElement.eElementAction.TableCellAction))
+                else if (actUI.ElementAction.Equals(ActUIElement.eElementAction.TableCellAction))
                 {
                     actUI.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlActionValue, act.Value);
                 }
-                
+
                 act = actUI;
             }
             else
             {
                 //Set action locator
                 act.LocateBy = EL.LocateBy;
-                act.LocateValue = EL.LocateValue;                
-            }            
+                act.LocateValue = EL.LocateValue;
+            }
             return act;
         }
 
@@ -239,20 +239,28 @@ namespace Ginger.WindowExplorer
 
             SetActionDetails(act);
             mContext.Runner.PrepActionValueExpression(act);
-            ApplicationAgent ag =(ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.Where(x => x.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
+            ApplicationAgent ag = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.FirstOrDefault(x => x.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication);
             if (ag != null)
             {
                 mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
-               ((Agent) ag.Agent).AgentOperations.RunAction(act);
+                ((Agent)ag.Agent).AgentOperations.RunAction(act);
             }
-            
+
             TestStatusTextBlock.Text = string.Empty;
             if (act.Status != null)
+            {
                 TestStatusTextBlock.Text += act.Status + System.Environment.NewLine;
+            }
+
             if (string.IsNullOrEmpty(act.Error) == false)
+            {
                 TestStatusTextBlock.Text += act.Error + System.Environment.NewLine;
+            }
+
             if (string.IsNullOrEmpty(act.ExInfo) == false)
+            {
                 TestStatusTextBlock.Text += act.ExInfo + System.Environment.NewLine;
+            }
 
             string retval = GetAllRetVals(act);
             if (retval != null)
@@ -278,19 +286,22 @@ namespace Ginger.WindowExplorer
 
         private void AvailableControlActionsGrid_RowChangedEvent(object sender, EventArgs e)
         {
-            if (mActions.CurrentItem == null) return;
+            if (mActions.CurrentItem == null)
+            {
+                return;
+            }
 
-             string ActValue = ((Act)mActions.CurrentItem).Value;
-             if (!string.IsNullOrEmpty(ActValue))
-             {
-                 ValueTextBox.Text = ActValue;
-             }
+            string ActValue = ((Act)mActions.CurrentItem).Value;
+            if (!string.IsNullOrEmpty(ActValue))
+            {
+                ValueTextBox.Text = ActValue;
+            }
         }
 
         private void SelectLocatorButton_Click(object sender, RoutedEventArgs e)
         {
             //Copy the selected locator to the action Locator we edit
-            ElementLocator EL = (ElementLocator)mLocators.CurrentItem;                        
+            ElementLocator EL = (ElementLocator)mLocators.CurrentItem;
             mAction.LocateBy = EL.LocateBy;
             mAction.LocateValue = EL.LocateValue;
         }

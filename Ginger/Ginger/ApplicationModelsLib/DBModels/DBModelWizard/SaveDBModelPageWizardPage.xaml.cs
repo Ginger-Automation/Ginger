@@ -16,11 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using GingerWPF.WizardLib;
-using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Ginger.ApplicationModels.DBModels.DBModelWizard

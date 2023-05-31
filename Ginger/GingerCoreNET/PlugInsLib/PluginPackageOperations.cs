@@ -16,19 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Actions;
+using Amdocs.Ginger.Common.Repository.PlugInsLib;
+using Amdocs.Ginger.Plugin.Core;
+using Amdocs.Ginger.Plugin.Core.Attributes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Actions;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.Repository.PlugInsLib;
-using Amdocs.Ginger.Plugin.Core;
-using Amdocs.Ginger.Plugin.Core.Attributes;
-using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -295,7 +293,7 @@ namespace Amdocs.Ginger.Repository
 
         public PluginServiceInfo GetService(string serviceId)
         {
-            return (from x in Services where x.ServiceId == serviceId select x).SingleOrDefault();
+            return Services.FirstOrDefault(x=>x.ServiceId == serviceId);
         }
 
         private void LoadGingerPluginsDLL()

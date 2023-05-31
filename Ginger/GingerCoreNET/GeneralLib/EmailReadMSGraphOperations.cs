@@ -1,20 +1,15 @@
-﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
+﻿using Amdocs.Ginger.Common.InterfacesLib;
 using Azure.Identity;
-using GingerCore.DataSource;
-using GingerCore.Environments;
 using Microsoft.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static GingerCore.Actions.Communication.ActeMail;
 
 namespace GingerCore.GeneralLib
 {
-    public sealed class EmailReadOperations : IEmailReadOperations
+    public sealed class EmailReadMSGraphOperations : IEmailReadOperations
     {
         private static readonly IEnumerable<string> Scopes = new[]
         {
@@ -34,7 +29,7 @@ namespace GingerCore.GeneralLib
         };
         private const int MessageRequestPageSize = 10;
 
-        public async Task ReadEmails(EmailReadFilters filters, MSGraphConfig config, Action<ReadEmail> emailProcessor)
+        public async Task ReadEmails(EmailReadFilters filters, EmailReadConfig config, Action<ReadEmail> emailProcessor)
         {
             GraphServiceClient graphServiceClient = CreateGraphServiceClient(config);
             IEnumerable<ICollectionPage<Message>> messageCollections;
@@ -50,7 +45,7 @@ namespace GingerCore.GeneralLib
             await IterateMessages(messageCollections, filters, graphServiceClient, emailProcessor);
         }
 
-        private async Task IterateMessages(IEnumerable<ICollectionPage<Message>> messageCollections, EmailReadFilters filters, 
+        private async Task IterateMessages(IEnumerable<ICollectionPage<Message>> messageCollections, EmailReadFilters filters,
             GraphServiceClient graphServiceClient, Action<ReadEmail> emailProcessor)
         {
             IEnumerable<string> expectedRecipients = null;
@@ -118,7 +113,7 @@ namespace GingerCore.GeneralLib
             {
                 expectedContentTypes = filters.AttachmentContentType.Split(";", StringSplitOptions.RemoveEmptyEntries);
             }
-            if (expectedContentTypes != null && expectedContentTypes.Count() == 0)
+            if (expectedContentTypes != null && !expectedContentTypes.Any())
             {
                 return true;
             }
@@ -207,7 +202,7 @@ namespace GingerCore.GeneralLib
         {
             foreach (string expectedRecipient in expectedRecipients)
             {
-                bool hasExpectedRecipient = actualRecipients.Any(actualRecipient => 
+                bool hasExpectedRecipient = actualRecipients.Any(actualRecipient =>
                     actualRecipient.Equals(expectedRecipient, StringComparison.OrdinalIgnoreCase));
                 if (!hasExpectedRecipient)
                 {
@@ -222,7 +217,7 @@ namespace GingerCore.GeneralLib
             return message.Body.Content.Contains(expectedBody, StringComparison.OrdinalIgnoreCase);
         }
 
-        private GraphServiceClient CreateGraphServiceClient(MSGraphConfig config)
+        private GraphServiceClient CreateGraphServiceClient(EmailReadConfig config)
         {
             ValidateMSGraphConfig(config);
             TokenCredentialOptions options = new()
@@ -236,9 +231,9 @@ namespace GingerCore.GeneralLib
             return new GraphServiceClient(userNamePasswordCredential, Scopes);
         }
 
-        private void ValidateMSGraphConfig(MSGraphConfig config)
+        private void ValidateMSGraphConfig(EmailReadConfig config)
         {
-            if(string.IsNullOrEmpty(config.UserEmail))
+            if (string.IsNullOrEmpty(config.UserEmail))
             {
                 throw new ArgumentException("user email is required");
             }
@@ -274,12 +269,12 @@ namespace GingerCore.GeneralLib
                     .Top(MessageRequestPageSize)
                     .GetAsync();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                if(e.InnerException != null)
+                if (e.InnerException != null)
                 {
                     throw e.InnerException;
-                }    
+                }
                 throw;
             }
         }
@@ -288,7 +283,7 @@ namespace GingerCore.GeneralLib
         {
             IEnumerable<string> folderNames = filters.FolderNames.Split(";", StringSplitOptions.RemoveEmptyEntries);
             List<IMailFolderMessagesCollectionPage> foldersMessages = new();
-            foreach(string folderName in folderNames)
+            foreach (string folderName in folderNames)
             {
                 foldersMessages.Add(await GetFolderMessages(folderName, graphServiceClient, filters));
             }
@@ -296,7 +291,7 @@ namespace GingerCore.GeneralLib
             return foldersMessages;
         }
 
-        private async Task<IMailFolderMessagesCollectionPage> GetFolderMessages(string folderName, GraphServiceClient graphServiceClient, 
+        private async Task<IMailFolderMessagesCollectionPage> GetFolderMessages(string folderName, GraphServiceClient graphServiceClient,
             EmailReadFilters filters)
         {
             (string filterParameter, string orderByParameter) = BuildReadRequestFilterAndOrderParameters(filters);
@@ -346,12 +341,12 @@ namespace GingerCore.GeneralLib
             IEnumerable<string> folderNames = SplitFolderNames(aggregatedFolderName);
 
             MailFolder currentFolder = null;
-            for(int index = 0; index < folderNames.Count(); index++)
+            for (int index = 0; index < folderNames.Count(); index++)
             {
                 currentFolder = await GetFolderByName(graphServiceClient, folderNames.ElementAt(index), currentFolder);
             }
 
-            if(currentFolder == null)
+            if (currentFolder == null)
             {
                 throw new InvalidOperationException($"No user folder found by name {aggregatedFolderName}");
             }
@@ -382,7 +377,7 @@ namespace GingerCore.GeneralLib
                 .Top(1)
                 .GetAsync();
 
-            if(mailFolders.Count == 0)
+            if (mailFolders.Count == 0)
             {
                 throw new InvalidOperationException($"No user folder found by name {folderName}");
             }
@@ -402,7 +397,7 @@ namespace GingerCore.GeneralLib
                 .Top(1)
                 .GetAsync();
 
-            if(childFolders.Count == 0)
+            if (childFolders.Count == 0)
             {
                 throw new InvalidOperationException($"No child folder found by name {folderName}");
             }
@@ -524,7 +519,7 @@ namespace GingerCore.GeneralLib
                 Subject = message.Subject,
                 Body = message.Body.Content,
                 ReceivedDateTime = message.ReceivedDateTime?.DateTime.ToLocalTime() ?? DateTime.MinValue,
-                HasAttachments = (message.HasAttachments ?? false) && attachments != null && attachments.Count() > 0,
+                HasAttachments = (message.HasAttachments ?? false) && attachments != null && attachments.Any(),
                 Attachments = attachments
             };
         }

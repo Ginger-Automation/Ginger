@@ -34,11 +34,11 @@ namespace GingerTest
     {
         private void TakeVisualScreenShot(Visual visual, string FileName)
         {
-            int width=0;
-            int height=0;
+            int width = 0;
+            int height = 0;
             if (visual is Window)
-            {                
-                width = (int)((Window)visual).Width;                
+            {
+                width = (int)((Window)visual).Width;
                 height = (int)((Window)visual).Height;
 
                 System.Windows.Point p = Mouse.GetPosition((Window)visual);
@@ -55,15 +55,18 @@ namespace GingerTest
             // TODO: handle other types or throw 
 
             // Remove the mouse so it will not impact
-            
+
 
             RenderTargetBitmap bmp = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
             bmp.Render(visual);
             var encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(bmp));
-            using (Stream stream = File.Create(FileName)) encoder.Save(stream);
+            using (Stream stream = File.Create(FileName))
+            {
+                encoder.Save(stream);
+            }
         }
-       
+
 
         //We do visual compare using ImageMagick
         public bool IsVisualEquel(Visual visual, string VisualID)

@@ -20,8 +20,6 @@ using GingerTestHelper;
 using GingerUtils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GingerUtilsTest
 {

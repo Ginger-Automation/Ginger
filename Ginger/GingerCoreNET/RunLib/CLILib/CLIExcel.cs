@@ -58,7 +58,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
 
         void func1(string fileName, string sheetName)
-        {            
+        {
             List<string> list = new List<string>();
 
             // Open the spreadsheet document for read-only access.

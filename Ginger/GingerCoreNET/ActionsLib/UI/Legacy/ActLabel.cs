@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -39,7 +38,7 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddText("To use this action,select property type of label from Locate By drop down and then enter label property value and then the url and run the action.");
-        }        
+        }
 
         public override string ActionEditPage { get { return null; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
@@ -64,7 +63,7 @@ namespace GingerCore.Actions
         public enum eLabelAction
         {
             IsVisible = 0,
-            GetInnerText=2,
+            GetInnerText = 2,
             GetWidth = 22,
             GetHeight = 23,
             GetStyle = 24,
@@ -149,9 +148,15 @@ namespace GingerCore.Actions
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
             if (!string.IsNullOrEmpty(this.LocateValue))
+            {
                 newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            }
+
             if (!uIElementTypeAssigned)
+            {
                 newAct.ElementType = eElementType.Label;
+            }
+
             newAct.Active = true;
 
             return newAct;

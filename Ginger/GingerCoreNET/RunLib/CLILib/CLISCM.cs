@@ -99,11 +99,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
 
         public void LoadGeneralConfigurations(string args, CLIHelper cliHelper)
-        {                        
+        {
         }
 
         public void LoadRunsetConfigurations(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
-        {            
+        {
         }
     }
 }

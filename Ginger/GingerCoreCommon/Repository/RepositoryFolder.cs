@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -16,8 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.IO;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -28,6 +26,8 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.IO;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -478,7 +478,7 @@ namespace Amdocs.Ginger.Repository
                 {
                     if (e.ChangeType == WatcherChangeTypes.Deleted)
                     {
-                        if ((from x in mSubFoldersCache where x.FolderName == e.Name select x).SingleOrDefault() != null)
+                        if (mSubFoldersCache.Any(x=> x.FolderName == e.Name))
                         {
                             HandleDirecortyChange(e);
                         }

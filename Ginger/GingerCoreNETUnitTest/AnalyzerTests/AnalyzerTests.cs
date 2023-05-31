@@ -16,17 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using Amdocs.Ginger.Repository;
+using Ginger.AnalyzerLib;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Ginger.SolutionGeneral;
-using Ginger.AnalyzerLib;
-using System.Linq;
-using Amdocs.Ginger.Common;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UnitTests.NonUITests
 {
@@ -41,8 +39,8 @@ namespace UnitTests.NonUITests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-             Solution = new Solution();           
-             BF = new BusinessFlow();
+            Solution = new Solution();
+            BF = new BusinessFlow();
 
             VariableString VarString = new VariableString();
             VarString.Name = "BF_VarString";
@@ -50,7 +48,7 @@ namespace UnitTests.NonUITests
             VarString.MandatoryInput = true;
             BF.Variables.Add(VarString);
 
-            VariableSelectionList VarList= new VariableSelectionList();
+            VariableSelectionList VarList = new VariableSelectionList();
             VarList.Name = "BF_VarList";
             VarList.SetAsInputValue = true;
             VarList.MandatoryInput = true;
@@ -102,9 +100,9 @@ namespace UnitTests.NonUITests
             DummyAction.ReturnValues.Add(ARV1);
 
 
-            
+
             //ActReturnValue with static value and variable
-           
+
             ActReturnValue ARV2 = new ActReturnValue
             {
                 Param = "Value2",
@@ -134,9 +132,9 @@ namespace UnitTests.NonUITests
             };
             DummyAction.ReturnValues.Add(ARV5);
 
-            ABF =  (AnalyzeBusinessFlow)AnalyzeBusinessFlow.Analyze(Solution, BF).Where(x=>x.Description.Equals(AnalyzeBusinessFlow.LegacyOutPutValidationDescription)).First();
+            ABF = (AnalyzeBusinessFlow)AnalyzeBusinessFlow.Analyze(Solution, BF).First(x => x.Description.Equals(AnalyzeBusinessFlow.LegacyOutPutValidationDescription));
         }
-        
+
 
         [TestMethod]
         public void ValidateOutPutValidationPostFixeValues()
@@ -144,20 +142,20 @@ namespace UnitTests.NonUITests
             ABF.FixItHandler.Invoke(ABF, null);
             var ReturnValues = ABF.ReturnValues;
 
-            ActReturnValue ARV1 = ReturnValues.Where(x => x.Param.Equals("Value1")).FirstOrDefault();
+            ActReturnValue ARV1 = ReturnValues.FirstOrDefault(x => x.Param.Equals("Value1"));
             Assert.AreEqual(Amdocs.Ginger.Common.Expressions.eOperator.Equals, ARV1.Operator);
 
 
-            ActReturnValue ARV2 = ReturnValues.Where(x => x.Param.Equals("Value2")).FirstOrDefault();
+            ActReturnValue ARV2 = ReturnValues.FirstOrDefault(x => x.Param.Equals("Value2"));
             Assert.AreEqual(Amdocs.Ginger.Common.Expressions.eOperator.Legacy, ARV2.Operator);
 
-            ActReturnValue ARV3 = ReturnValues.Where(x => x.Param.Equals("Value3")).FirstOrDefault();
+            ActReturnValue ARV3 = ReturnValues.FirstOrDefault(x => x.Param.Equals("Value3"));
             Assert.AreEqual(Amdocs.Ginger.Common.Expressions.eOperator.Legacy, ARV3.Operator);
 
-            ActReturnValue ARV4 = ReturnValues.Where(x => x.Param.Equals("Value4")).FirstOrDefault();
+            ActReturnValue ARV4 = ReturnValues.FirstOrDefault(x => x.Param.Equals("Value4"));
             Assert.AreEqual(Amdocs.Ginger.Common.Expressions.eOperator.Legacy, ARV4.Operator);
 
-            ActReturnValue ARV5 = ReturnValues.Where(x => x.Param.Equals("Value5")).FirstOrDefault();
+            ActReturnValue ARV5 = ReturnValues.FirstOrDefault(x => x.Param.Equals("Value5"));
             Assert.AreEqual(Amdocs.Ginger.Common.Expressions.eOperator.Equals, ARV5.Operator);
 
         }
@@ -173,7 +171,7 @@ namespace UnitTests.NonUITests
 
             //Assert
             List<AnalyzerItemBase> valIssuesList = issuesList.Where(x => x.UTDescription == "MissingMandatoryInputValue").ToList();
-            Assert.AreEqual(valIssuesList.Count, 3); 
+            Assert.AreEqual(valIssuesList.Count, 3);
             Assert.AreEqual(valIssuesList[0].ItemName, "BF_VarString");
             Assert.AreEqual(valIssuesList[1].ItemName, "BF_VarList");
             Assert.AreEqual(valIssuesList[2].ItemName, "NewVarString6");

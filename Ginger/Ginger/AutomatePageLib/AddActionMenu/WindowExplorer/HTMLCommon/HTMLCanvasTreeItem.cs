@@ -17,9 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
-using GingerWPF.UserControlsLib.UCTreeView;
 using Amdocs.Ginger.Repository;
+using GingerWPF.UserControlsLib.UCTreeView;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.HTMLCommon
 {
@@ -34,15 +34,15 @@ namespace Ginger.WindowExplorer.HTMLCommon
         HTMLCanvasElementPage mHTMLCanvasElementPage;
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
-                if (mHTMLCanvasElementPage == null)
-                {
-                    mHTMLCanvasElementPage = new HTMLCanvasElementPage(ElementInfo);
-                }
-                return mHTMLCanvasElementPage;
+            if (mHTMLCanvasElementPage == null)
+            {
+                mHTMLCanvasElementPage = new HTMLCanvasElementPage(ElementInfo);
+            }
+            return mHTMLCanvasElementPage;
         }
-           
+
         ObservableList<ActInputValue> IWindowExplorerTreeItem.GetItemSpecificActionInputValues()
-        {           
+        {
             return mHTMLCanvasElementPage.GetTableRelatedInputValues();
         }
     }

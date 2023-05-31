@@ -17,16 +17,14 @@ limitations under the License.
 #endregion
 
 using Ginger.Repository.ItemToRepositoryWizard;
-using GingerCore;
-using GingerCore.Variables;
 
 namespace Ginger.Repository.AddItemToRepositoryWizard
 {
     public class VariableValidation : ItemValidationBase
-    { 
+    {
         public new static void Validate(UploadItemSelection selectedItem)
         {
-        
+
         }
     }
 }

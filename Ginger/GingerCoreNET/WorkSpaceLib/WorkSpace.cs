@@ -19,21 +19,25 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.OS;
+using Amdocs.Ginger.Common.SelfHealingLib;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
-using Amdocs.Ginger.CoreNET.Utility;
 using Amdocs.Ginger.CoreNET.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using Ginger;
+using Ginger.Configurations;
 using Ginger.Functionalties;
+using Ginger.Reports;
+using Ginger.Repository;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Platforms;
-
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
@@ -45,14 +49,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Amdocs.Ginger.Common.OS;
-using Amdocs.Ginger.CoreNET.RunLib.CLILib;
-using Ginger.Run.RunSetActions;
-using Amdocs.Ginger.Common.SelfHealingLib;
-using Amdocs.Ginger.Common.WorkSpaceLib;
-using Ginger.Reports;
-using Ginger.Configurations;
-using Ginger.Repository;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -62,6 +58,9 @@ namespace amdocs.ginger.GingerCoreNET
     // DO NOT ADD STATIC FIELDS
     public class WorkSpace
     {
+        public SolutionAutoSave AppSolutionAutoSave = new SolutionAutoSave();
+        public SolutionRecover AppSolutionRecover = new SolutionRecover();
+
         private static WorkSpace mWorkSpace;
         public static WorkSpace Instance
         {
@@ -202,6 +201,7 @@ namespace amdocs.ginger.GingerCoreNET
                     UserProfile.GingerStatus = eGingerStatus.Closed;
                     UserProfile.UserProfileOperations.SaveUserProfile();
                     AppSolutionAutoSave.CleanAutoSaveFolders();
+                    AppSolutionRecover.CleanUpRecoverFolder();
                 }
 
                 if (WorkSpace.Instance.LocalGingerGrid != null)
@@ -277,7 +277,11 @@ namespace amdocs.ginger.GingerCoreNET
         /// </summary>
         void InitClassTypesDictionary()
         {
-            if (bDone) return;
+            if (bDone)
+            {
+                return;
+            }
+
             bDone = true;
 
             // Add all RI classes from GingerCoreCommon
@@ -397,7 +401,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
 
             // General Report Configurations
-            HTMLReportsConfiguration mHTMLReportConfiguration = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration mHTMLReportConfiguration = Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             if (!string.IsNullOrEmpty(mHTMLReportConfiguration?.CentralizedReportDataServiceURL))
             {
                 WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
@@ -483,8 +487,11 @@ namespace amdocs.ginger.GingerCoreNET
                             // To support existing solutions, 
                             solution.EncryptionKey = EncryptionHandler.GetDefaultKey();
                             solution.NeedVariablesReEncryption = true;
-                            solution.SolutionOperations.SaveEncryptionKey();
-                            solution.SolutionOperations.SaveSolution(false);
+                            if (!WorkSpace.Instance.UserProfile.IsSharedUserProfile)//do not auto save the encryption key for shared user profile to avoid asking for password
+                            {
+                                solution.SolutionOperations.SaveEncryptionKey();
+                                solution.SolutionOperations.SaveSolution(false);
+                            }
                         }
                         else if (!Instance.EventHandler.OpenEncryptionKeyHandler(solution))
                         {
@@ -531,7 +538,7 @@ namespace amdocs.ginger.GingerCoreNET
                 //Solution items upgrade
                 SolutionUpgrade.CheckSolutionItemsUpgrade(solutionFolder, solution.Name, solutionFiles.ToList());
 
-                if (!RunningInExecutionMode && mSolution.NeedVariablesReEncryption)
+                if (!RunningInExecutionMode && mSolution.NeedVariablesReEncryption && !WorkSpace.Instance.UserProfile.IsSharedUserProfile)
                 {
                     string msg = "Going forward each solution needs to have its own key for encrypting password values\n"
                         + "Please make a note of Default key updated on Solution details page. This key is mandatory for accessing solution";
@@ -640,9 +647,13 @@ namespace amdocs.ginger.GingerCoreNET
                         catch (Exception ex)
                         {
                             if (agent.Name != null)
+                            {
                                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Close the '{0}' Agent", agent.Name), ex);
+                            }
                             else
+                            {
                                 Reporter.ToLog(eLogLevel.ERROR, "Failed to Close the Agent", ex);
+                            }
                         }
                         ((AgentOperations)agent.AgentOperations).IsFailedToStart = false;
                     }
@@ -671,6 +682,7 @@ namespace amdocs.ginger.GingerCoreNET
                 }
             }
         }
+
 
         public bool DoNotResetWorkspaceArgsOnClose { get; set; }
         public void CloseSolution()
@@ -797,7 +809,7 @@ namespace amdocs.ginger.GingerCoreNET
             for (int i = 0; i < AppModel.GlobalAppModelParameters.Count; i++)
             {
                 GlobalAppModelParameter apiGlobalParamInstance = AppModel.GlobalAppModelParameters[i];
-                GlobalAppModelParameter globalParamInstance = allGlobalParams.Where(x => x.Guid == apiGlobalParamInstance.Guid).FirstOrDefault();
+                GlobalAppModelParameter globalParamInstance = allGlobalParams.FirstOrDefault(x => x.Guid == apiGlobalParamInstance.Guid);
                 //If the param still exist in the global list
                 if (globalParamInstance != null)
                 {
@@ -816,7 +828,7 @@ namespace amdocs.ginger.GingerCoreNET
                         //Save current default
                         if (apiGlobalParamInstance.OptionalValuesList.Count > 0)
                         {
-                            currentDefaultOVGuid = apiGlobalParamInstance.OptionalValuesList.Where(x => x.IsDefault == true).FirstOrDefault().Guid;
+                            currentDefaultOVGuid = apiGlobalParamInstance.OptionalValuesList.FirstOrDefault(x => x.IsDefault == true).Guid;
                             recoverSavedOV = true;
                         }
 
@@ -828,21 +840,29 @@ namespace amdocs.ginger.GingerCoreNET
                             newOV.Guid = ov.Guid;
                             newOV.Value = ov.Value;
                             if (ov.IsDefault)
+                            {
                                 newDefaultOV = ov.Guid.ToString();
+                            }
+
                             apiGlobalParamInstance.OptionalValuesList.Add(newOV);
                         }
 
                         if (recoverSavedOV)
                         {
-                            OptionalValue savedOV = apiGlobalParamInstance.OptionalValuesList.Where(x => x.Guid == currentDefaultOVGuid).FirstOrDefault();
+                            OptionalValue savedOV = apiGlobalParamInstance.OptionalValuesList.FirstOrDefault(x => x.Guid == currentDefaultOVGuid);
                             if (savedOV != null)
+                            {
                                 savedOV.IsDefault = true;
+                            }
                             else
-                                apiGlobalParamInstance.OptionalValuesList.Where(x => x.Guid.ToString() == newDefaultOV).FirstOrDefault().IsDefault = true;
+                            {
+                                apiGlobalParamInstance.OptionalValuesList.FirstOrDefault(x => x.Guid.ToString() == newDefaultOV).IsDefault = true;
+                            }
                         }
                         else
-                            apiGlobalParamInstance.OptionalValuesList.Where(x => x.Guid.ToString() == newDefaultOV).FirstOrDefault().IsDefault = true;
-
+                        {
+                            apiGlobalParamInstance.OptionalValuesList.FirstOrDefault(x => x.Guid.ToString() == newDefaultOV).IsDefault = true;
+                        }
 
                         apiGlobalParamInstance.OnPropertyChanged(nameof(AppModelParameter.OptionalValuesString));
                     }
@@ -860,11 +880,6 @@ namespace amdocs.ginger.GingerCoreNET
                 }
             }
         }
-
-
-        public SolutionAutoSave AppSolutionAutoSave = new SolutionAutoSave();
-        public SolutionRecover AppSolutionRecover = new SolutionRecover();
-        public string RecoverFolderPath = null; //???  move to above ? !!!!!!!!!!!
 
         public BusinessFlow GetNewBusinessFlow(string Name, bool setTargetApp = false)
         {

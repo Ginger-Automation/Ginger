@@ -85,7 +85,7 @@ namespace Ginger.ALM
                 }
             }
             //Remove Rally
-            var comboEnumItem = ALMTypes.Cast<GingerCore.GeneralLib.ComboEnumItem>().Where(x => x.text == ALMIntegrationEnums.eALMType.RALLY.ToString()).FirstOrDefault();
+            var comboEnumItem = ALMTypes.Cast<GingerCore.GeneralLib.ComboEnumItem>().FirstOrDefault(x => x.text == ALMIntegrationEnums.eALMType.RALLY.ToString());
             ALMTypes.Remove(comboEnumItem);
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -217,9 +217,14 @@ namespace Ginger.ALM
                 {
                     List<ALMDefectProfile> selectedItemsToDelete = new List<ALMDefectProfile>();
                     foreach (ALMDefectProfile selectedProfile in grdDefectsProfiles.Grid.SelectedItems)
+                    {
                         selectedItemsToDelete.Add(selectedProfile);
+                    }
+
                     foreach (ALMDefectProfile profileToDelete in selectedItemsToDelete)
+                    {
                         WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(profileToDelete);
+                    }
                 }
             }
         }
@@ -243,7 +248,7 @@ namespace Ginger.ALM
                     {
                         aLMDefectProfileFieldExisted.ExternalID = string.Copy(aLMDefectProfileField.ExternalID);
                     }
-                    ExternalItemFieldBase field = AlmDefectProfile.ALMDefectProfileFields.Where(x => x.ID == aLMDefectProfileField.ID).FirstOrDefault();
+                    ExternalItemFieldBase field = AlmDefectProfile.ALMDefectProfileFields.FirstOrDefault(x => x.ID == aLMDefectProfileField.ID);
                     if (field != null)
                     {
                         aLMDefectProfileFieldExisted.SelectedValue = field.SelectedValue;
@@ -262,20 +267,17 @@ namespace Ginger.ALM
         }
         private void Save(object sender, RoutedEventArgs e)
         {
-            if (mALMDefectProfiles.Where(x => x.IsDefault == true).ToList().Count == 0)
+            if (!mALMDefectProfiles.Any(x => x.IsDefault == true))
             {
                 Reporter.ToUser(eUserMsgKey.NoDefaultDefectProfileSelected);
                 return;
             }
 
-            //
             // Validation section
             foreach (ALMDefectProfile _ALMDefectProfile in mALMDefectProfiles.Where(x => x.ToUpdate == true).ToList())
             {
                 // Mandatory fields validation
-                ExternalItemFieldBase notPopulatedMandatoryField = _ALMDefectProfile.ALMDefectProfileFields.Where(x => x.Mandatory == true && x.ExternalID != "description"
-                                                                                                                                            && x.ExternalID != "name"
-                                                                                                                                            && x.ExternalID != "Summary" && (x.SelectedValue == null || x.SelectedValue == string.Empty)).FirstOrDefault();
+                ExternalItemFieldBase notPopulatedMandatoryField = _ALMDefectProfile.ALMDefectProfileFields.FirstOrDefault(x => x.Mandatory == true && x.ExternalID != "description" && x.ExternalID != "name" && x.ExternalID != "Summary" && (x.SelectedValue == null || x.SelectedValue == string.Empty));
                 if (notPopulatedMandatoryField != null)
                 {
                     Reporter.ToUser(eUserMsgKey.MissedMandatotryFields, notPopulatedMandatoryField.Name, _ALMDefectProfile.Name);
@@ -283,9 +285,7 @@ namespace Ginger.ALM
                 }
 
                 // Wrong list selection validation
-                ExternalItemFieldBase wrongSelectedField = _ALMDefectProfile.ALMDefectProfileFields.Where(x => ((string.Equals(x.Type, "LookupList", StringComparison.OrdinalIgnoreCase) || string.Equals(x.Type, "UserList", StringComparison.OrdinalIgnoreCase))) &&
-                                                                                                                 x.SelectedValue != null && x.SelectedValue != string.Empty && 
-                                                                                                                 x.PossibleValues.Count > 0 && (!x.PossibleValues.Contains(x.SelectedValue))).FirstOrDefault();    
+                ExternalItemFieldBase wrongSelectedField = _ALMDefectProfile.ALMDefectProfileFields.FirstOrDefault(x => ((string.Equals(x.Type, "LookupList", StringComparison.OrdinalIgnoreCase) || string.Equals(x.Type, "UserList", StringComparison.OrdinalIgnoreCase))) && x.SelectedValue != null && x.SelectedValue != string.Empty && x.PossibleValues.Count > 0 && (!x.PossibleValues.Contains(x.SelectedValue)));
                 if (wrongSelectedField != null)
                 {
                     Reporter.ToUser(eUserMsgKey.WrongValueSelectedFromTheList, wrongSelectedField.Name, _ALMDefectProfile.Name);
@@ -294,9 +294,7 @@ namespace Ginger.ALM
 
                 // Numeric selection validation
                 int numeric = 0;
-                ExternalItemFieldBase wrongNonNumberValueField = _ALMDefectProfile.ALMDefectProfileFields.Where(x => (string.Equals(x.Type, "Number", StringComparison.OrdinalIgnoreCase)) &&
-                                                                                                                      x.SelectedValue != null && x.SelectedValue != string.Empty && 
-                                                                                                                      !(int.TryParse(x.SelectedValue, out numeric))).FirstOrDefault();
+                ExternalItemFieldBase wrongNonNumberValueField = _ALMDefectProfile.ALMDefectProfileFields.FirstOrDefault(x => (string.Equals(x.Type, "Number", StringComparison.OrdinalIgnoreCase)) && x.SelectedValue != null && x.SelectedValue != string.Empty && !(int.TryParse(x.SelectedValue, out numeric)));
                 if (wrongNonNumberValueField != null)
                 {
                     Reporter.ToUser(eUserMsgKey.WrongNonNumberValueInserted, wrongNonNumberValueField.Name, _ALMDefectProfile.Name);
@@ -305,9 +303,7 @@ namespace Ginger.ALM
 
                 // Date selection validation (QC receiving date in format yyyy-mm-dd)
                 DateTime dt;
-                ExternalItemFieldBase wrongDateValueField = _ALMDefectProfile.ALMDefectProfileFields.Where(x => (string.Equals(x.Type, "Date", StringComparison.OrdinalIgnoreCase)) &&
-                                                                                                                      x.SelectedValue != null && x.SelectedValue != string.Empty &&
-                                                                                                                      !(DateTime.TryParseExact(x.SelectedValue, "yyyy-mm-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out dt))).FirstOrDefault();
+                ExternalItemFieldBase wrongDateValueField = _ALMDefectProfile.ALMDefectProfileFields.FirstOrDefault(x => (string.Equals(x.Type, "Date", StringComparison.OrdinalIgnoreCase)) && x.SelectedValue != null && x.SelectedValue != string.Empty && !(DateTime.TryParseExact(x.SelectedValue, "yyyy-mm-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out dt)));
                 if (wrongDateValueField != null)
                 {
                     Reporter.ToUser(eUserMsgKey.WrongDateValueInserted, wrongDateValueField.Name, _ALMDefectProfile.Name);
@@ -315,12 +311,12 @@ namespace Ginger.ALM
                 }
             }
 
-            foreach (ALMDefectProfile _ALMDefectProfile in mALMDefectProfiles.Where(x => x.ToUpdate == true).ToList())
+            foreach (ALMDefectProfile _ALMDefectProfile in mALMDefectProfiles.Where(x => x.ToUpdate == true))
             {
                 Reporter.ToStatus(eStatusMsgKey.SaveItem, null, _ALMDefectProfile.GetNameForFileName(), "item");
                 if ((_ALMDefectProfile.ContainingFolder == null) || (_ALMDefectProfile.ContainingFolder == string.Empty))
                 {
-                    _ALMDefectProfile.ContainingFolder = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, _ALMDefectProfile.ObjFolderName);
+                    _ALMDefectProfile.ContainingFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, _ALMDefectProfile.ObjFolderName);
                     _ALMDefectProfile.FilePath = _ALMDefectProfile.ContainingFolder + @"\" + _ALMDefectProfile.FilePath;
                 }
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(_ALMDefectProfile);
@@ -333,7 +329,7 @@ namespace Ginger.ALM
         public static ALMDefectProfile SetALMDefectProfileWithDefaultValues(string name = null)
         {
             ALMDefectProfile newALMDefectProfile = new ALMDefectProfile();
-            if ((WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>() != null) && (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>().Count > 0))
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>().Any())
             {
                 newALMDefectProfile.ID = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>().Max(x => x.ALMDefectProfilesSeq) + 1;
             }

@@ -50,7 +50,7 @@ limitations under the License.
 //            }
 //            Console.WriteLine("------------------------------------------------");
 //        }
-        
+
 //        private void InitActions()
 //        {
 //            if (ActionHandlers != null) return;
@@ -109,7 +109,7 @@ limitations under the License.
 //        /// </summary>
 //        public abstract void StartDriver();
 //        public abstract void CloseDriver();
-        
+
 //        public virtual void BeforeRunAction(GingerAction GA)
 //        {
 //            // If the driver want to do something before the action run start then override

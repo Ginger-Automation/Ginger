@@ -35,8 +35,8 @@ namespace GingerCore.Actions
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("Use this action to open a url in ginger.To open an url,just put url in value and run the action.");            
-        }        
+            TBH.AddText("Use this action to open a url in ginger.To open an url,just put url in value and run the action.");
+        }
 
         public override string ActionEditPage { get { return null; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }

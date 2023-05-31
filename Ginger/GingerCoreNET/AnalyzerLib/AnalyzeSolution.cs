@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Ginger.SolutionGeneral;
 using System.Collections.Generic;
 using System.Linq;
-using Ginger.SolutionGeneral;
 
 namespace Ginger.AnalyzerLib
 {
@@ -29,7 +29,7 @@ namespace Ginger.AnalyzerLib
             // Put all tests on Solution here
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
 
-            if (Solution.ApplicationPlatforms == null || Solution.ApplicationPlatforms.Count() == 0)
+            if (Solution.ApplicationPlatforms == null || !Solution.ApplicationPlatforms.Any())
             {
                 AnalyzeSolution AS = new AnalyzeSolution();
                 AS.Details = "Solution doesn't have Applications/Platforms defined";

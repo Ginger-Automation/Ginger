@@ -19,13 +19,12 @@ limitations under the License.
 using Amdocs.Ginger.Common.GeneralLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json.Linq;
 using System.IO;
 
 namespace GingerCoreNETUnitTest.GeneralLib.JSON
 {
     [TestClass]
-   public class JSONExtendedTests
+    public class JSONExtendedTests
     {
         private static JsonExtended XDE = null;
 
@@ -37,7 +36,8 @@ namespace GingerCoreNETUnitTest.GeneralLib.JSON
         }
 
         [Level2]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void XMLDocGetAllNodesTest()
         {
             //Arrange
@@ -45,14 +45,14 @@ namespace GingerCoreNETUnitTest.GeneralLib.JSON
             string JSOnText = System.IO.File.ReadAllText(jsonfilepath);
 
             //Act
-            XDE = new JsonExtended(JSOnText);            
+            XDE = new JsonExtended(JSOnText);
             int nodesCount = XDE.GetAllNodes().Count;
-            var endingNodes = XDE.GetEndingNodes();            
+            var endingNodes = XDE.GetEndingNodes();
 
             //Assert
-            Assert.AreEqual(12, nodesCount);            
+            Assert.AreEqual(12, nodesCount);
         }
 
-        
+
     }
 }

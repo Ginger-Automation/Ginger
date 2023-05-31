@@ -17,18 +17,13 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
-using GingerCore.Drivers;
 using GingerCore.GeneralLib;
 using GingerCoreNET.Application_Models;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -38,11 +33,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
     /// <summary>
     /// Interaction logic for PomDeltaDeletedElementMappingWizardPage.xaml
     /// </summary>
-    public partial class PomDeltaDeletedElementMappingWizardPage : Page,IWizardPage
+    public partial class PomDeltaDeletedElementMappingWizardPage : Page, IWizardPage
     {
         PomDeltaWizard mPomWizard;
         List<NewAddedComboboxItem> NewAddedElementComboList = new List<NewAddedComboboxItem>();
-       
+
         ObservableList<DeltaElementInfo> DeletedDeltaElementInfos = new ObservableList<DeltaElementInfo>();
 
         private PomNewAddedElementSelectionPage mPomNewAddedElementSelectionPage;
@@ -79,7 +74,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
             GetNewAddedElementComboBoxItem();
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.MappedElementInfo), Header = "New Added Element", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = NewAddedElementComboList, ComboboxDisplayMemberField = nameof(NewAddedComboboxItem.DisplayValue), ComboboxSelectedValueField = nameof(NewAddedComboboxItem.InternalValue), BindingMode = BindingMode.TwoWay });
-            view.GridColsView.Add(new GridColView() { Field = " ", Header = " ",WidthWeight=15, BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xMatchingElementTemplate"] });
+            view.GridColsView.Add(new GridColView() { Field = " ", Header = " ", WidthWeight = 15, BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xMatchingElementTemplate"] });
 
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.MappingElementStatus), Header = "Element Status", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GetElementStatusComoList() });
 
@@ -104,7 +99,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             RemoveSelectedElementFromCombobox(currentSelected);
         }
 
-        private void RemoveSelectedElementFromCombobox(DeltaElementInfo currentSelected=null)
+        private void RemoveSelectedElementFromCombobox(DeltaElementInfo currentSelected = null)
         {
             NewAddedElementComboList.Clear();
             GetNewAddedElementComboBoxItem();
@@ -116,7 +111,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 }
                 if (item.MappedElementInfo != null && item.MappedElementInfo.ToLower() != "none")
                 {
-                    var removeItem = NewAddedElementComboList.IndexOf(NewAddedElementComboList.Where(x => x.InternalValue == item.MappedElementInfo).FirstOrDefault());
+                    var removeItem = NewAddedElementComboList.IndexOf(NewAddedElementComboList.FirstOrDefault(x => x.InternalValue == item.MappedElementInfo));
 
                     if (removeItem != -1)
                     {
@@ -131,7 +126,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         private List<ComboEnumItem> GetElementStatusComoList()
         {
             List<ComboEnumItem> elementStatus = new List<ComboEnumItem>();
-            elementStatus.Add(new ComboEnumItem() { text = "Deleted Element", Value =DeltaElementInfo.eMappingStatus.DeletedElement });
+            elementStatus.Add(new ComboEnumItem() { text = "Deleted Element", Value = DeltaElementInfo.eMappingStatus.DeletedElement });
             elementStatus.Add(new ComboEnumItem() { text = "Replace Existing Element", Value = DeltaElementInfo.eMappingStatus.ReplaceExistingElement });
             return elementStatus;
         }
@@ -168,7 +163,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             //filtering mapped added element
             var filteredAddedList = new ObservableList<DeltaElementInfo>(deltaAddedList.Where(x => NewAddedElementComboList.Any(y => y.InternalValue == x.ElementInfo.Guid.ToString())));
 
-            mPomNewAddedElementSelectionPage = new PomNewAddedElementSelectionPage(filteredAddedList, mPomWizard.mPomDeltaUtils, Convert.ToString(currentItem.ElementTypeEnum),new GridColView() { Field = "Compare", Header = "Compare", BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, ReadOnly = false, CellTemplate = (DataTemplate)this.MainGrid.Resources["xCompareElementPropTemplate"] });
+            mPomNewAddedElementSelectionPage = new PomNewAddedElementSelectionPage(filteredAddedList, mPomWizard.mPomDeltaUtils, Convert.ToString(currentItem.ElementTypeEnum), new GridColView() { Field = "Compare", Header = "Compare", BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, ReadOnly = false, CellTemplate = (DataTemplate)this.MainGrid.Resources["xCompareElementPropTemplate"] });
 
             var selectedElement = mPomNewAddedElementSelectionPage.ShowAsWindow("Added Elements");
             if (selectedElement != null)
@@ -184,7 +179,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             var currentItem = (DeltaElementInfo)xDeletedElementsMappingGrid.CurrentItem;
             var newAddedElement = mPomNewAddedElementSelectionPage.mPomDeltaViewPage.mSelectedElement;
 
-            new PomDeltaMappingElementsComparePage(currentItem,newAddedElement).ShowAsWindow("Element Details Comparison");
+            new PomDeltaMappingElementsComparePage(currentItem, newAddedElement).ShowAsWindow("Element Details Comparison");
         }
     }
 

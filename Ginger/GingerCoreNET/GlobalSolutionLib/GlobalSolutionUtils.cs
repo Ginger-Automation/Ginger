@@ -39,7 +39,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
@@ -84,31 +83,31 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 switch (itemToCheck.ItemType)
                 {
                     case GlobalSolution.eImportItemType.Environments:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ProjEnvironment>(repositoryItem.Guid);
                         break;
                     case GlobalSolution.eImportItemType.DataSources:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<DataSourceBase>(repositoryItem.Guid);
                         break;
                     case GlobalSolution.eImportItemType.SharedRepositoryActivitiesGroup:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ActivitiesGroup>(repositoryItem.Guid);
                         break;
                     case GlobalSolution.eImportItemType.SharedRepositoryActivities:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(repositoryItem.Guid);
                         break;
                     case GlobalSolution.eImportItemType.SharedRepositoryActions:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Act>(repositoryItem.Guid);
                         break;
                     case GlobalSolution.eImportItemType.SharedRepositoryVariables:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<VariableBase>(repositoryItem.Guid);
                         break;
                     case GlobalSolution.eImportItemType.APIModels:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationAPIModel>(repositoryItem.Guid);
                         break;
                     case GlobalSolution.eImportItemType.POMModels:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(repositoryItem.Guid);
                         break;
                     case GlobalSolution.eImportItemType.Agents:
-                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.Guid == repositoryItem.Guid).FirstOrDefault();
+                        duplicateItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Agent>(repositoryItem.Guid);
                         break;
                     default:
                         //Nothing to do
@@ -119,7 +118,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     isDuplicate = true;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 isDuplicate = false;
             }
@@ -148,28 +147,28 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 switch (itemToCheck.ItemType)
                 {
                     case GlobalSolution.eImportItemType.Environments:
-                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Guid == repoItemToCheck.Guid).FirstOrDefault();
+                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ProjEnvironment>(repoItemToCheck.Guid);
                         break;
                     case GlobalSolution.eImportItemType.DataSources:
-                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().Where(x => x.Guid == repoItemToCheck.Guid).FirstOrDefault();
+                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<DataSourceBase>(repoItemToCheck.Guid);
                         break;
                     case GlobalSolution.eImportItemType.SharedRepositoryActivitiesGroup:
-                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>().Where(x => x.Guid == repoItemToCheck.Guid).FirstOrDefault();
+                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ActivitiesGroup>(repoItemToCheck.Guid);
                         break;
                     case GlobalSolution.eImportItemType.SharedRepositoryActivities:
-                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().Where(x => x.Guid == repoItemToCheck.Guid).FirstOrDefault();
+                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(repoItemToCheck.Guid);
                         break;
                     case GlobalSolution.eImportItemType.SharedRepositoryActions:
-                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>().Where(x => x.Guid == repoItemToCheck.Guid).FirstOrDefault();
+                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Act>(repoItemToCheck.Guid);
                         break;
                     case GlobalSolution.eImportItemType.SharedRepositoryVariables:
-                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>().Where(x => x.Guid == repoItemToCheck.Guid).FirstOrDefault();
+                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<VariableBase>(repoItemToCheck.Guid);
                         break;
                     case GlobalSolution.eImportItemType.APIModels:
-                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == repoItemToCheck.Guid).FirstOrDefault();
+                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationAPIModel>(repoItemToCheck.Guid);
                         break;
                     case GlobalSolution.eImportItemType.POMModels:
-                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Where(x => x.Guid == repoItemToCheck.Guid).FirstOrDefault();
+                        repositoryItem = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(repoItemToCheck.Guid);
                         break;
                 }
 
@@ -232,7 +231,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     fileFullPath = fileFullPath.Replace(newName + ext, OriginalName + ext);
                     continue;
                 }
-                else 
+                else
                 {
                     break;
                 }
@@ -260,7 +259,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 File.Copy(filePath, bkpFilePath + "." + bkpDateTime + ".bak");
                 File.Delete(filePath);
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 return false;
             }
@@ -288,7 +287,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     try
                     {
                         Activity activity = (Activity)newRepositorySerializer.DeserializeFromFile(activityFile);
-                        ActivityIdentifiers actIdent = activitiesGroup.ActivitiesIdentifiers.Where(x => x.ActivityGuid == activity.Guid).FirstOrDefault();
+                        ActivityIdentifiers actIdent = activitiesGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityGuid == activity.Guid);
                         if (actIdent != null)
                         {
                             GlobalSolutionItem newItem = new GlobalSolutionItem(GlobalSolution.eImportItemType.SharedRepositoryActivities, activity.FilePath, ConvertToRelativePath(activity.FilePath), true, "", activitiesGroup.Name);
@@ -331,7 +330,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             AddDependaciesForDocuments(itemActivity.ItemFullPath, ref SelectedItemsListToImport);
         }
 
-        public void AddDependaciesForActivity(Activity importedActivity, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, ref List<VariableBase> VariableListToImport, ref List<EnvApplication> EnvAppListToImport, string dependacyFor="")
+        public void AddDependaciesForActivity(Activity importedActivity, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport, ref List<VariableBase> VariableListToImport, ref List<EnvApplication> EnvAppListToImport, string dependacyFor = "")
         {
             foreach (Act act in importedActivity.Acts)
             {
@@ -619,7 +618,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                                     break;
                                 }
                                 //Check any mapped FlowControl with "RunSharedRepositoryActivity"
-                                FlowControl flowControl = act.FlowControls.Where(x => x.FlowControlAction == eFlowControlAction.RunSharedRepositoryActivity).FirstOrDefault();
+                                FlowControl flowControl = act.FlowControls.FirstOrDefault(x => x.FlowControlAction == eFlowControlAction.RunSharedRepositoryActivity);
                                 if (flowControl != null)
                                 {
                                     string activityName = flowControl.GetNameFromValue().ToUpper();
@@ -687,7 +686,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             }
             //check if the action has StoreTo as Variable/GlobalVariable
             var list = act.ActReturnValues.Where(x => x.StoreTo == ActReturnValue.eStoreTo.Variable || x.StoreTo == ActReturnValue.eStoreTo.GlobalVariable);
-            foreach(ActReturnValue arv in list)
+            foreach (ActReturnValue arv in list)
             {
                 AddVariableToList(arv.StoreToValue, dependancyFor, VariableListToImport, ref SelectedItemsListToImport);
             }
@@ -695,7 +694,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
         void AddVariableToList(string varName, string dependancyFor, List<VariableBase> VariableListToImport, ref ObservableList<GlobalSolutionItem> SelectedItemsListToImport)
         {
             Solution solution = GetSolution();
-            VariableBase isAlreadyAddedVB = VariableListToImport.Where(x => x.Name == varName).FirstOrDefault();
+            VariableBase isAlreadyAddedVB = VariableListToImport.FirstOrDefault(x => x.Name == varName);
             if (isAlreadyAddedVB == null)
             {
                 VariableBase vb = (from v1 in solution.Variables where v1.Name == varName select v1).FirstOrDefault();
@@ -742,7 +741,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             {
                 Solution solution = GetSolution();
                 Agent agent = (Agent)newRepositorySerializer.DeserializeFromFile(itemAgent.ItemFullPath);
-                ApplicationPlatform ap = solution.ApplicationPlatforms.Where(x => x.Platform == agent.Platform).FirstOrDefault();
+                ApplicationPlatform ap = solution.ApplicationPlatforms.FirstOrDefault(x => x.Platform == agent.Platform);
                 if (ap != null)
                 {
                     GlobalSolutionItem item = new GlobalSolutionItem(GlobalSolution.eImportItemType.TargetApplication, Path.Combine(itemAgent.ItemFullPath), ConvertToRelativePath(itemAgent.ItemFullPath), true, ap.AppName, agent.Name);
@@ -806,7 +805,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                                         gp.Value = EncryptValueWithCurrentSolutionKey(gp.Value);
                                     }
 
-                                    EnvApplication isAlreadyAddedApp = EnvAppListToImport.Where(x => x.Name == AppName).FirstOrDefault();
+                                    EnvApplication isAlreadyAddedApp = EnvAppListToImport.FirstOrDefault(x => x.Name == AppName);
                                     if (isAlreadyAddedApp == null)
                                     {
                                         EnvApplication envApp = new EnvApplication() { Name = AppName };
@@ -854,7 +853,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     {
                         string VarName = match.Replace("{Var Name=", "");
                         VarName = VarName.Replace("}", "");
-                        VariableBase isAlreadyAddedVB = VariableListToImport.Where(x => x.Name == VarName).FirstOrDefault();
+                        VariableBase isAlreadyAddedVB = VariableListToImport.FirstOrDefault(x => x.Name == VarName);
                         if (isAlreadyAddedVB != null)
                         {
                             continue;
@@ -965,13 +964,13 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             if (itemToAdd.ItemType == GlobalSolution.eImportItemType.Variables)
             {
                 //Remove the variables row before add, to avoid duplicate rows in grid
-                GlobalSolutionItem varItem = SelectedItemsListToImport.Where(x => x.ItemType == itemToAdd.ItemType).FirstOrDefault();
+                GlobalSolutionItem varItem = SelectedItemsListToImport.FirstOrDefault(x => x.ItemType == itemToAdd.ItemType);
                 if (varItem != null)
                 {
                     SelectedItemsListToImport.Remove(varItem);
                 }
             }
-            GlobalSolutionItem listItem = SelectedItemsListToImport.Where(x => x.ItemFullPath == itemToAdd.ItemFullPath && x.ItemType == itemToAdd.ItemType && x.ItemName == itemToAdd.ItemName).FirstOrDefault();
+            GlobalSolutionItem listItem = SelectedItemsListToImport.FirstOrDefault(x => x.ItemFullPath == itemToAdd.ItemFullPath && x.ItemType == itemToAdd.ItemType && x.ItemName == itemToAdd.ItemName);
             if (listItem != null)
             {
                 if (string.IsNullOrEmpty(listItem.RequiredFor))
@@ -983,7 +982,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     skipAdd = true;
                 }
             }
-            
+
             //Check if GUID is already exist
             bool isDuplicateGUID = GlobalSolutionUtils.Instance.CheckForItemWithDuplicateGUID(itemToAdd);
             if (isDuplicateGUID)
@@ -1027,8 +1026,8 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                     }
                 }
             }
-            
-            
+
+
             if (!skipAdd)
             {
                 SelectedItemsListToImport.Add(itemToAdd);
@@ -1045,7 +1044,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                 {
                     foreach (EnvApplication envApplicationToImport in EnvAppListToImport)
                     {
-                        EnvApplication envApp = projEnv.Applications.Where(x => x.Name == envApplicationToImport.Name).FirstOrDefault();
+                        EnvApplication envApp = projEnv.Applications.FirstOrDefault(x => x.Name == envApplicationToImport.Name);
                         if (envApp == null)
                         {
                             projEnv.Applications.Add(envApplicationToImport);
@@ -1055,7 +1054,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                             //add env params
                             foreach (GeneralParam gpToImport in envApplicationToImport.GeneralParams)
                             {
-                                GeneralParam gp = envApp.GeneralParams.Where(x => x.Name == gpToImport.Name).FirstOrDefault();
+                                GeneralParam gp = envApp.GeneralParams.FirstOrDefault(x => x.Name == gpToImport.Name);
                                 if (gp == null)
                                 {
                                     envApp.GeneralParams.Add(gpToImport);
@@ -1064,7 +1063,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
                             //add db
                             foreach (Database dbToImport in envApplicationToImport.Dbs)
                             {
-                                Database db = (Database)envApp.Dbs.Where(x => x.Name == dbToImport.Name).FirstOrDefault();
+                                Database db = (Database)envApp.Dbs.FirstOrDefault(x => x.Name == dbToImport.Name);
                                 if (db == null)
                                 {
                                     envApp.Dbs.Add(db);

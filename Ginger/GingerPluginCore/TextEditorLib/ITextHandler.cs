@@ -16,14 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core
 {
     public interface ITextHandler
-    {        
+    {
         /// <summary>
         /// The full text of the document being edited
         /// </summary>
@@ -34,7 +31,7 @@ namespace Amdocs.Ginger.Plugin.Core
         /// </summary>
         int CaretLocation { get; set; }
 
-        
+
         /// <summary>
         /// Add text at the end 
         /// </summary>

@@ -16,22 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GlobalSolutionLib;
 using Amdocs.Ginger.CoreNET.GlobalSolutionLib;
 using Amdocs.Ginger.Repository;
-using Ginger.Actions;
 using Ginger.UserControls;
-using GingerCore.DataSource;
-using GingerCore.Environments;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -104,7 +97,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 wiz.ProcessStarted();
                 await Task.Run(() =>
                 {
-                    if (wiz.ItemsListToImport.Where(x => x.Selected).ToList().Count > 0 )
+                    if (wiz.ItemsListToImport.Where(x => x.Selected).ToList().Count > 0)
                     {
                         foreach (GlobalSolutionItem item in wiz.ItemsListToImport.Where(x => x.Selected).ToList())
                         {
@@ -194,7 +187,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             GlobalSolutionItem solutionItem = (GlobalSolutionItem)sender;
             if (!string.IsNullOrEmpty(solutionItem.RequiredFor))
             {
-                if (wiz.SelectedItemsListToImport.Where(x => x.ItemName == solutionItem.RequiredFor).FirstOrDefault().Selected && solutionItem.ItemImportSetting == GlobalSolution.eImportSetting.New)
+                if (wiz.SelectedItemsListToImport.FirstOrDefault(x => x.ItemName == solutionItem.RequiredFor).Selected && solutionItem.ItemImportSetting == GlobalSolution.eImportSetting.New)
                 {
                     solutionItem.Selected = true;
                     xInfoMessageLabel.Content = "Dependant items with import setting as 'New' can not be unchecked as it must be imported.";
@@ -205,7 +198,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     CheckUncheckDependantItems(solutionItem);
                 }
             }
-            else 
+            else
             {
                 CheckUncheckDependantItems(solutionItem);
             }

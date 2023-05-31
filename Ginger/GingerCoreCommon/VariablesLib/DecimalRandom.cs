@@ -21,28 +21,28 @@ using System.Threading;
 
 namespace GingerCore.Variables
 {
-    public class DecimalRandom 
+    public class DecimalRandom
     {
         Random rnd = new Random(Guid.NewGuid().GetHashCode());
-    
+
         public decimal NextDecimal(bool ZeroToOne = false)
         {
             // Improve fare distribution as rnd is not really random
-            Thread.Sleep(1);          
+            Thread.Sleep(1);
             //The low 32 bits of a 96-bit integer. 
             int lo = rnd.Next(int.MinValue, int.MaxValue);
 
-            Thread.Sleep(1);          
+            Thread.Sleep(1);
             //The middle 32 bits of a 96-bit integer. 
             int mid = rnd.Next(int.MinValue, int.MaxValue);
 
-            Thread.Sleep(1);          
+            Thread.Sleep(1);
             //The high 32 bits of a 96-bit integer. 
             int hi = rnd.Next(int.MinValue, int.MaxValue);
             //The sign of the number; 1 is negative, 0 is positive. 
             bool isNegative;
             //A power of 10 ranging from 0 to 28.      
-            byte scale;            
+            byte scale;
             // Can have fraction up to 28 digits after the .
             if (ZeroToOne)
             {
@@ -58,8 +58,8 @@ namespace GingerCore.Variables
             Decimal randomDecimal = new Decimal(lo, mid, hi, isNegative, scale);
             if (ZeroToOne)
             {
-                while (randomDecimal > 1) { randomDecimal--; };                
-            }            
+                while (randomDecimal > 1) { randomDecimal--; };
+            }
             return randomDecimal;
         }
 
@@ -69,16 +69,16 @@ namespace GingerCore.Variables
             decimal d1 = NextDecimal(true);
 
             //Make sure it is a decimal between 0-1
-            decimal d0_1 = Math.Abs(d1);            
+            decimal d0_1 = Math.Abs(d1);
             while (d0_1 > 1)
             {
-                d0_1 = d0_1 /10M;
+                d0_1 = d0_1 / 10M;
             }
-            
-            decimal d = d0_1 * (decimal)Math.Abs(Max-Min) + Min;
+
+            decimal d = d0_1 * (decimal)Math.Abs(Max - Min) + Min;
             if (integer)
             {
-                d = Math.Round(d,0);
+                d = Math.Round(d, 0);
             }
             return d;
         }

@@ -37,7 +37,7 @@ using System.IO;
 using System.Linq;
 
 namespace UnitTests.UITests.JavaDriverTest
-{    
+{
     [Ignore]  // temp
     [TestClass]
     [Level3]
@@ -855,7 +855,7 @@ namespace UnitTests.UITests.JavaDriverTest
 
         }
 
-        
+
         [TestMethod]
         [Timeout(60000)]
         public void ClickTreeNodeSingleNodeValueTest()
@@ -981,11 +981,11 @@ namespace UnitTests.UITests.JavaDriverTest
             mGR.Executor.RunAction(actJavaElement, false);
 
             //Assert
-            Assert.AreEqual(eRunStatus.Failed, actJavaElement.Status, "Action Status");           
+            Assert.AreEqual(eRunStatus.Failed, actJavaElement.Status, "Action Status");
             Assert.IsTrue(actJavaElement.Error.Contains("Node: Ontario was not found under: [Root, US]"), "Node not found validation");
 
         }
-               
+
         /**
          * Menu Item Test Cases  
         */

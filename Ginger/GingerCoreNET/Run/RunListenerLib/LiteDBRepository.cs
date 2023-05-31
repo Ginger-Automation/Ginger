@@ -96,9 +96,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                         if (File.Exists(completeSSPath))
                         {
                             continue;
-                        }
-                        File.Move(action.ScreenShots[s], completeSSPath);
-                        action.ScreenShots[s] = completeSSPath;
+                        }                        
+                        File.Move(action.ScreenShots[s], completeSSPath, true);
+                        action.ScreenShots[s] = completeSSPath; 
                     }
                 }
                 catch (Exception ex)
@@ -125,7 +125,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
 
             //change the paths to Defect suggestion list
-            var defectSuggestion = WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.FirstOrDefault(z => z.FailedActionGuid == action.Guid);
+            var defectSuggestion = WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.FirstOrDefault(z => z!=null && z.FailedActionGuid == action.Guid);
             if (defectSuggestion != null)
             {
                 defectSuggestion.ScreenshotFileNames = action.ScreenShots.ToList();
@@ -223,7 +223,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             LiteDbBusinessFlow BFR = new LiteDbBusinessFlow();
             if (executedFrom == eExecutedFrom.Automation)
+            {
                 ClearSeq();
+            }
 
             if (liteDbBFList.Count > context.Runner.BusinessFlows.Count)
             {
@@ -306,7 +308,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     SaveObjToReporsitory(BFR, liteDbManager.NameInDb<LiteDbBusinessFlow>());
                     this.lastBfObjId = BFR._id;
                     if (liteDbBFList.Exists(bf => bf._id == this.lastBfObjId))
+                    {
                         liteDbBFList.RemoveAll(bf => bf._id == this.lastBfObjId);
+                    }
+
                     liteDbBFList.Add(BFR);
                     liteDbActivityList.Clear();
                     liteDbAGList.Clear();
@@ -406,12 +411,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 businessFlow.ChildPassedItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString(), out count);
                 ChildPassedItemsCountAction = ChildPassedItemsCountAction + count;
             }
-            foreach(BusinessFlow BF in businessFlows)
+            foreach (BusinessFlow BF in businessFlows)
             {
-                if(BF.RunStatus == eRunStatus.Blocked)
+                if (BF.RunStatus == eRunStatus.Blocked)
                 {
                     ChildExecutableItemsCountActivity = ChildExecutableItemsCountActivity + BF.Activities.Count;
-                    foreach(Activity activity in BF.Activities)
+                    foreach (Activity activity in BF.Activities)
                     {
                         ChildExecutableItemsCountAction = ChildExecutableItemsCountActivity + activity.Acts.Count;
                     }
@@ -480,14 +485,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 runner.ChildPassedItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString(), out count);
                 ChildPassedItemsCountAction = ChildPassedItemsCountAction + count;
             }
-            foreach(GingerRunner runner in runners)
+            foreach (GingerRunner runner in runners)
             {
                 if (runner.Status == eRunStatus.Blocked)
                 {
-                    foreach(BusinessFlow BF in runner.Executor.BusinessFlows)
+                    foreach (BusinessFlow BF in runner.Executor.BusinessFlows)
                     {
                         ChildExecutableItemsCountActivity = ChildExecutableItemsCountActivity + BF.Activities.Count;
-                        foreach(Activity activity in BF.Activities)
+                        foreach (Activity activity in BF.Activities)
                         {
                             ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.Acts.Count;
                         }
@@ -689,7 +694,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             List<string> allScreenshots = new List<string>();
             //select template 
-            HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Where(x => x.IsDefault).FirstOrDefault();
+            HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().FirstOrDefault(x => x.IsDefault);
 
             //populate data based on level
             if (string.IsNullOrEmpty(_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()))
@@ -817,7 +822,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
 
             //RunnersCollection
-            HTMLReportConfigFieldToSelect runnerField = reportTemplate.RunSetSourceFieldsToSelect.Where(x => x.IsSelected && x.FieldKey == "RunnersColl").FirstOrDefault();
+            HTMLReportConfigFieldToSelect runnerField = reportTemplate.RunSetSourceFieldsToSelect.FirstOrDefault(x => x.IsSelected && x.FieldKey == "RunnersColl");
             if (runnerField != null)
             {
                 if (reportTemplate.GingerRunnerSourceFieldsToSelect.Select(x => x.IsSelected).ToList().Count > 0)
@@ -830,7 +835,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                             jRunnerObject.Property(GetFieldToRemove(runnerFieldToRemove.FieldKey)).Remove();
                         }
                         //BusinessFlowsCollection
-                        HTMLReportConfigFieldToSelect bfField = reportTemplate.GingerRunnerSourceFieldsToSelect.Where(x => x.IsSelected && x.FieldKey == "BusinessFlowsColl").FirstOrDefault();
+                        HTMLReportConfigFieldToSelect bfField = reportTemplate.GingerRunnerSourceFieldsToSelect.FirstOrDefault(x => x.IsSelected && x.FieldKey == "BusinessFlowsColl");
                         if (bfField != null)
                         {
                             if (reportTemplate.BusinessFlowSourceFieldsToSelect.Select(x => x.IsSelected).ToList().Count > 0)
@@ -843,7 +848,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                                         jBFObject.Property(GetFieldToRemove(bfFieldToRemove.FieldKey)).Remove();
                                     }
                                     //ActivityGroupsCollection
-                                    HTMLReportConfigFieldToSelect activityGroupField = reportTemplate.BusinessFlowSourceFieldsToSelect.Where(x => x.IsSelected && x.FieldKey == "ActivitiesGroupsColl").FirstOrDefault();
+                                    HTMLReportConfigFieldToSelect activityGroupField = reportTemplate.BusinessFlowSourceFieldsToSelect.FirstOrDefault(x => x.IsSelected && x.FieldKey == "ActivitiesGroupsColl");
                                     if (activityGroupField != null)
                                     {
                                         if (reportTemplate.ActivityGroupSourceFieldsToSelect.Select(x => x.IsSelected).ToList().Count > 0)
@@ -856,7 +861,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                                                     jActivityGroupObject.Property(GetFieldToRemove(activityGroupFieldToRemove.FieldKey)).Remove();
                                                 }
                                                 //ActivitiesCollection
-                                                HTMLReportConfigFieldToSelect activityFieldCheck = reportTemplate.ActivityGroupSourceFieldsToSelect.Where(x => x.IsSelected && x.FieldKey == "ActivitiesColl").FirstOrDefault();
+                                                HTMLReportConfigFieldToSelect activityFieldCheck = reportTemplate.ActivityGroupSourceFieldsToSelect.FirstOrDefault(x => x.IsSelected && x.FieldKey == "ActivitiesColl");
                                                 if (activityFieldCheck != null)
                                                 {
                                                     if (reportTemplate.ActivitySourceFieldsToSelect.Select(x => x.IsSelected).ToList().Count > 0)
@@ -895,7 +900,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                                                                 jActivityObject.Property(GetFieldToRemove(activityFieldToRemove.FieldKey)).Remove();
                                                             }
                                                             //ActionsColl
-                                                            HTMLReportConfigFieldToSelect actionField = reportTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected && x.FieldKey == "ActionsColl").FirstOrDefault();
+                                                            HTMLReportConfigFieldToSelect actionField = reportTemplate.ActivitySourceFieldsToSelect.FirstOrDefault(x => x.IsSelected && x.FieldKey == "ActionsColl");
                                                             if (actionField != null)
                                                             {
                                                                 if (reportTemplate.ActionSourceFieldsToSelect.Select(x => x.IsSelected).ToList().Count > 0)

@@ -16,14 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Ginger.SolutionWindows.TreeViewItems;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.IO;
 
 namespace Ginger.ALM.QC.TreeViewItems
 {
@@ -97,7 +96,7 @@ namespace Ginger.ALM.QC.TreeViewItems
                     {
                         AlreadyImported = true;
                         MappedBusinessFlow = bf;
-                        MappedBusinessFlowPath = bf.ContainingFolder +'\\'+ bf.Name;                       
+                        MappedBusinessFlowPath = bf.ContainingFolder + '\\' + bf.Name;
                         break;
                     }
                 }

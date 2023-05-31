@@ -35,25 +35,18 @@ limitations under the License.
 //#endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using GingerCore.Activities;
 using GingerCore.ALM.RQM;
-using Ginger;
+using GingerCoreNET.ALMLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using GingerCore.Activities;
-using TDAPIOLELib;
-using AlmDataContractsStd.Enums;
-using GingerCore.ALM.QC;
 using System.ComponentModel;
 using System.IO;
-using System.Xml;
 using System.IO.Compression;
-using Newtonsoft.Json;
-using GingerCore.External;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.InterfacesLib;
 using System.Linq;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNET.ALMLib;
+using System.Xml;
 
 namespace GingerCore.ALM
 {
@@ -116,12 +109,22 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType)
         {
-            return UpdatedAlmFields(ImportFromRQM.GetALMItemFields(bw, online));
+            if(resourceType == AlmDataContractsStd.Enums.ResourceType.DEFECT)
+            {
+                return UpdatedAlmFields(ImportFromRQM.GetALMItemFieldsForDefect(bw, online));
+            }
+            else
+            {
+                return UpdatedAlmFields(ImportFromRQM.GetALMItemFields(bw, online));
+            }
+            
         }
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST)
         {
-            return null;
+            return ExportToRQM.Instance.CreateNewALMDefects(defectsForOpening, defectsFields, useREST);
+            
+            //return null;
         }
 
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo
@@ -159,7 +162,8 @@ namespace GingerCore.ALM
                 AlmConfig = new GingerCoreNET.ALMLib.ALMConfig();
                 AlmConfigs.Add(AlmConfig);
             }
-            AlmConfig.ALMServerURL = GetServerValueFromDict(GetDynamicServerConfigAndSetPaths());
+            Dictionary<string, object> dic = GetDynamicServerConfigAndSetPaths();
+            AlmConfig.ALMServerURL = GetServerValueFromDict(dic);
             AlmConfig.UseRest = UseRest;
             AlmConfig.ALMUserName = CurrentAlmUserConfigurations.ALMUserName;
             AlmConfig.ALMPassword = CurrentAlmUserConfigurations.ALMPassword;
@@ -167,6 +171,8 @@ namespace GingerCore.ALM
             AlmConfig.ALMProjectName = ALMProject;
             AlmConfig.ALMProjectKey = ALMProjectKey;
             AlmConfig.AlmType = almType;
+            AlmConfig.IsTestSuite = GetIsTestSuiteValueFromDict(dic);
+            AlmConfig.DefectFieldAPI = GetDefectFieldAPIValueFromDict(dic);
             AlmConfig.ALMConfigPackageFolderPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(ALMConfigPackageFolderPath);
             AlmConfig.JiraTestingALM = testingALMType;
 
@@ -192,13 +198,19 @@ namespace GingerCore.ALM
                     //Extract end return ServerURL value from RQM/GeneralData/ServerURL node
                     XmlNode ServerURLNode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/ServerURL");
                     string serverURL = ServerURLNode.InnerText;
+                    XmlNode IsTestSuiteNode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/IsTestSuite");
+                    string IsTestSuite = IsTestSuiteNode.InnerText;
+                    XmlNode DefectFieldAPINode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/DefectFieldAPI");
+                    string DefectFieldAPI = DefectFieldAPINode.InnerText;
                     Dictionary<String, Object> dictionary = new Dictionary<string, object>();
                     dictionary.Add("ServerURL", serverURL);
+                    dictionary.Add("IsTestSuite", IsTestSuite);
+                    dictionary.Add("DefectFieldAPI", DefectFieldAPI);
                     return dictionary;
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error reading ALM RQMConfigPackage at: " + Path.Combine(RQMCore.ConfigPackageFolderPath, "RQMSettings.xml"), e);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error reading ALM RQMConfigPackage at: { Path.Combine(RQMCore.ConfigPackageFolderPath, "RQMSettings.xml")}", e);
                 }
             }
             return new Dictionary<string, object>();
@@ -220,13 +232,13 @@ namespace GingerCore.ALM
                 else
                 {
                     //Missing RQMSettings.xml file
-                    Reporter.ToLog(eLogLevel.WARN, "RQM Configuration package not exist in solution, RqmSettings.xml not exist at: " + Path.Combine(CurrRQMConfigPath, "RQMSettings.xml"));
+                    Reporter.ToLog(eLogLevel.WARN, $"RQM Configuration package not exist in solution, RqmSettings.xml not exist at: { Path.Combine(CurrRQMConfigPath, "RQMSettings.xml")}");
                 }
             }
             else
             {
                 //Missing RQM Configurations Folder
-                Reporter.ToLog(eLogLevel.WARN, "RQMServerConfigurationsPackage folder not exist at: " + CurrRQMConfigPath);
+                Reporter.ToLog(eLogLevel.WARN, $"RQMServerConfigurationsPackage folder not exist at: {CurrRQMConfigPath}");
             }
 
             return false;
@@ -240,11 +252,13 @@ namespace GingerCore.ALM
                 using (ZipArchive zipArchive = new ZipArchive(configPackageZipFile))
                 {
                     foreach (ZipArchiveEntry entry in zipArchive.Entries)
+                    {
                         if (entry.Name == "RQMSettings.xml")
                         {
                             containRQMSettingsFile = true;
                             break;
                         }
+                    }
                 }
             }
             return containRQMSettingsFile;
@@ -253,8 +267,37 @@ namespace GingerCore.ALM
         private string GetServerValueFromDict(Dictionary<string, object> dic)
         {
             if (dic.ContainsKey("ServerURL"))
+            {
                 return (string)dic["ServerURL"];
-            else return "";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        private string GetDefectFieldAPIValueFromDict(Dictionary<string, object> dic)
+        {
+            if (dic.ContainsKey("DefectFieldAPI"))
+            {
+                return (string)dic["DefectFieldAPI"];
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        private string GetIsTestSuiteValueFromDict(Dictionary<string, object> dic)
+        {
+            if (dic.ContainsKey("IsTestSuite"))
+            {
+                return (string)dic["IsTestSuite"];
+            }
+            else
+            {
+                return "";
+            }
         }
         #endregion
 

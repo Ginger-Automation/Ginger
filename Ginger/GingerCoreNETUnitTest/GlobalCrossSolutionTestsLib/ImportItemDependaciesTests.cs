@@ -151,14 +151,14 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
 
             //Assert
             Assert.AreEqual(SelectedItemsListToImport.Count, 12);
-            Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\Applications Models\\POM Models\\SeleniumDemoValid.Ginger.ApplicationPOMModel.xml"));
-            Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\SharedRepository\\Actions\\Browser Action.Ginger.Action.xml"));
-            Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\SharedRepository\\Actions\\UIElement Action.Ginger.Action.xml"));
-            Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\SharedRepository\\Activities\\Activity 2.Ginger.Activity.xml"));
-            Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\DataSources\\AccessDS.Ginger.DataSource.xml"));
-            Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\Documents\\bankCode3.xml"));
-            Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\Documents\\Multiple Values.xlsx"));
-            Assert.IsNotNull(SelectedItemsListToImport.Where(x=>x.ItemExtraInfo == "~\\\\Environments\\Test.Ginger.Environment.xml"));
+            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\Applications Models\\POM Models\\SeleniumDemoValid.Ginger.ApplicationPOMModel.xml"));
+            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\SharedRepository\\Actions\\Browser Action.Ginger.Action.xml"));
+            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\SharedRepository\\Actions\\UIElement Action.Ginger.Action.xml"));
+            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\SharedRepository\\Activities\\Activity 2.Ginger.Activity.xml"));
+            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\DataSources\\AccessDS.Ginger.DataSource.xml"));
+            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\Documents\\bankCode3.xml"));
+            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\Documents\\Multiple Values.xlsx"));
+            Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "~\\\\Environments\\Test.Ginger.Environment.xml"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "NewVarString"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "MyWebApp"));
             Assert.IsNotNull(SelectedItemsListToImport.Where(x => x.ItemExtraInfo == "MyWebServicesApp"));
@@ -167,9 +167,9 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
             Assert.AreEqual(VariableListToImport.Count, 2);
             Assert.IsNotNull(VariableListToImport.Where(x => x.Name == "NewVarString"));
             Assert.IsNotNull(VariableListToImport.Where(x => x.Name == "NewVarPasswordString"));
-            string strValuetoPass = EncryptionHandler.DecryptwithKey(VariableListToImport.Where(x => x.Name == "NewVarPasswordString").FirstOrDefault().Value, EncryptionHandler.GetDefaultKey());
+            string strValuetoPass = EncryptionHandler.DecryptwithKey(VariableListToImport.FirstOrDefault(x => x.Name == "NewVarPasswordString").Value, EncryptionHandler.GetDefaultKey());
             Assert.AreEqual(strValuetoPass, "ABCD");
-            
+
             Assert.AreEqual(EnvAppListToImport.Count, 1);
             Assert.IsNotNull(EnvAppListToImport.Where(x => x.Name == "MyWebApp"));
 
@@ -187,7 +187,7 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
             //Assert
             Assert.AreEqual(EnvAppListToImport.Count, 1);
             Assert.IsNotNull(EnvAppListToImport.Where(x => x.Name == "MyWebApp"));
-            string strValuetoPass = EncryptionHandler.DecryptwithKey(EnvAppListToImport[0].GeneralParams.Where(x => x.Name == "Password").FirstOrDefault().Value, EncryptionHandler.GetDefaultKey());
+            string strValuetoPass = EncryptionHandler.DecryptwithKey(EnvAppListToImport[0].GeneralParams.FirstOrDefault(x => x.Name == "Password").Value, EncryptionHandler.GetDefaultKey());
             Assert.AreEqual(strValuetoPass, "ABCD");
 
         }
@@ -205,7 +205,7 @@ namespace GingerCoreNETUnitTest.GlobalCrossSolutionTestsLib
             Assert.AreEqual(VariableListToImport.Count, 2);
             Assert.IsNotNull(VariableListToImport.Where(x => x.Name == "NewVarString"));
             Assert.IsNotNull(VariableListToImport.Where(x => x.Name == "NewVarPasswordString"));
-            string strValuetoPass = EncryptionHandler.DecryptwithKey(VariableListToImport.Where(x => x.Name == "NewVarPasswordString").FirstOrDefault().Value, EncryptionHandler.GetDefaultKey());
+            string strValuetoPass = EncryptionHandler.DecryptwithKey(VariableListToImport.FirstOrDefault(x => x.Name == "NewVarPasswordString").Value, EncryptionHandler.GetDefaultKey());
             Assert.AreEqual(strValuetoPass, "ABCD");
 
         }

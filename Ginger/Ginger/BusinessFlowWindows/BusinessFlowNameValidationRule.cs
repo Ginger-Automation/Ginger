@@ -28,7 +28,7 @@ namespace Ginger.BusinessFlowWindows
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
             return IsBusinessFlowNameValid(value.ToString()) ?
-                new ValidationResult(false, "Business Flow Name cannot be empty"):
+                new ValidationResult(false, "Business Flow Name cannot be empty") :
                 IsBusinessFlowNameExists(value.ToString()) ?
                 new ValidationResult(false, "Business Flow Name already exists")
                 : new ValidationResult(true, null);
@@ -40,7 +40,7 @@ namespace Ginger.BusinessFlowWindows
         }
         private bool IsBusinessFlowNameExists(string value)
         {
-            return (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where x.Name == value select x).SingleOrDefault() != null;
+            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Any(x=>x.Name == value );
         }
     }
 }

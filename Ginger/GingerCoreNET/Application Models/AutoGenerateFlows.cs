@@ -16,20 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Plugin.Core;
-using GingerCore.Actions;
-using GingerCore.Drivers.Common;
-using GingerCore.Platforms.PlatformsInfo;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Amdocs.Ginger.Repository;
 using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Platforms.PlatformsInfo;
+using System;
+using System.Linq;
 
 namespace Amdocs.Ginger.CoreNET.Application_Models
 {
@@ -66,14 +62,14 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 activity.Acts.Add(gotoAction);
 
                 //generate the action from found element
-                foreach (ElementInfo foundElemntInfo in POM.MappedUIElements.Where(ele => ele.Properties.Any(p=>p.Name== ElementProperty.ParentFormId && p.Value == metaData.Guid.ToString())))                
+                foreach (ElementInfo foundElemntInfo in POM.MappedUIElements.Where(ele => ele.Properties.Any(p => p.Name == ElementProperty.ParentFormId && p.Value == metaData.Guid.ToString())))
                 {
                     if (foundElemntInfo != null)
                     {
                         string elementVal = string.Empty;
                         if (foundElemntInfo.OptionalValuesObjectsList.Count > 0)
                         {
-                            elementVal = Convert.ToString(foundElemntInfo.OptionalValuesObjectsList.Where(v => v.IsDefault).FirstOrDefault().Value);
+                            elementVal = Convert.ToString(foundElemntInfo.OptionalValuesObjectsList.FirstOrDefault(v => v.IsDefault).Value);
                         }
                         actConfigurations = new ElementActionCongifuration
                         {

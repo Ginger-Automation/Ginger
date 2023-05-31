@@ -34,7 +34,7 @@ namespace Amdocs.Ginger.Plugin.Core
         List<string> Extensions { get; }
 
         List<ITextEditorToolBarItem> Tools { get; }
-        
+
         byte[] HighlightingDefinition { get; }
 
         IFoldingStrategy FoldingStrategy { get; }

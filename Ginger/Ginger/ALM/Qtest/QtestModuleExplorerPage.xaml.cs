@@ -17,22 +17,20 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Ginger.ALM.Qtest.TreeViewItems;
+using GingerCore.ALM;
+using GingerCore.ALM.Qtest;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using GingerWPF.UserControlsLib.UCTreeView;
-using Ginger.ALM.Qtest.TreeViewItems;
-using GingerCore.ALM.Qtest;
-using GingerCore.ALM.QC;
-using GingerCore.ALM.QCRestAPI;
-using GingerCore.ALM;
 using System.Windows.Input;
 
 namespace Ginger.ALM.Qtest
 {
     public partial class QtestModuleExplorerPage : Page
     {
-        public string SelectedPath {get;set;}
+        public string SelectedPath { get; set; }
 
         GenericWindow genWin = null;
 
@@ -95,7 +93,7 @@ namespace Ginger.ALM.Qtest
             SelectedPath = null;
             genWin.Close();
         }
-        
-        
+
+
     }
 }

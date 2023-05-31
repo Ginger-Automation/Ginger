@@ -22,11 +22,8 @@ using Amdocs.Ginger.Repository;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UnitTests.NonUITests.AutoPilot
 {
@@ -63,7 +60,8 @@ namespace UnitTests.NonUITests.AutoPilot
         }
 
         [Level2]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SwaggerParseCheckHeaderAndParamsCount()
         {
             //Arrange
@@ -79,12 +77,12 @@ namespace UnitTests.NonUITests.AutoPilot
             Assert.AreEqual(1, RequestToTest.HttpHeaders.Count());
 
 
-             RequestToTest = requests.Where(x => x.Name == @"Find purchase order by ID").ElementAt(0);
+            RequestToTest = requests.Where(x => x.Name == @"Find purchase order by ID").ElementAt(0);
             Assert.AreEqual(6, RequestToTest.ReturnValues.Count(), "SwaggerCheckResponseParameterCount");
 
 
             RequestToTest = requests.Where(x => x.Name == @"Place an order for a pet").ElementAt(0);
-            string requestBody= @"{"+ Environment.NewLine+"\"id\": <ID>,"+ Environment.NewLine+"\"petId\": <PETID>,"+ Environment.NewLine+"\"quantity\": <QUANTITY>,"+Environment.NewLine+"\"shipDate\": \"<SHIPDATE>\","+ Environment.NewLine + "\"status\": \"<STATUS>\","+ Environment.NewLine+"\"complete\": <COMPLETE>"+ Environment.NewLine+"}";
+            string requestBody = @"{" + Environment.NewLine + "\"id\": <ID>," + Environment.NewLine + "\"petId\": <PETID>," + Environment.NewLine + "\"quantity\": <QUANTITY>," + Environment.NewLine + "\"shipDate\": \"<SHIPDATE>\"," + Environment.NewLine + "\"status\": \"<STATUS>\"," + Environment.NewLine + "\"complete\": <COMPLETE>" + Environment.NewLine + "}";
             Assert.AreEqual(requestBody.Replace(" ", ""), RequestToTest.RequestBody.Replace(" ", ""), "CheckResponseBody");
         }
 

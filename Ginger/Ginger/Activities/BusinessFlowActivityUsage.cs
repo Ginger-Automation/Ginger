@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore;
 using System;
 using System.ComponentModel;
-using GingerCore;
 
 namespace Ginger.Activities
 {

@@ -52,19 +52,29 @@ namespace Ginger.AnalyzerLib
 
                             List<BusinessFlow> lstBusinessFlow = null;
                             if (guidToLookBy != Guid.Empty)
-                                lstBusinessFlow =  GR.BusinessFlows.Where(x => x.InstanceGuid == guidToLookBy).ToList();
+                            {
+                                lstBusinessFlow = GR.BusinessFlows.Where(x => x.InstanceGuid == guidToLookBy).ToList();
+                            }
 
                             if (lstBusinessFlow == null || lstBusinessFlow.Count == 0)
+                            {
                                 bf = null;
+                            }
                             else if (lstBusinessFlow.Count == 1)
-                                bf =(BusinessFlow) lstBusinessFlow[0];
+                            {
+                                bf = (BusinessFlow)lstBusinessFlow[0];
+                            }
                             else//we have more than 1
                             {
-                                BusinessFlow firstActive =(BusinessFlow) lstBusinessFlow.Where(x => x.Active == true).FirstOrDefault();
+                                BusinessFlow firstActive = (BusinessFlow)lstBusinessFlow.FirstOrDefault(x => x.Active == true);
                                 if (firstActive != null)
+                                {
                                     bf = firstActive;
+                                }
                                 else
-                                    bf =(BusinessFlow) lstBusinessFlow[0];//no one is Active so returning the first one
+                                {
+                                    bf = (BusinessFlow)lstBusinessFlow[0];//no one is Active so returning the first one
+                                }
                             }
                             if (bf == null)
                             {

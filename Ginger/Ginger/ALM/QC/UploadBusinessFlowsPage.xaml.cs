@@ -16,14 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Ginger.UserControls;
+using GingerCore;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Amdocs.Ginger.Common;
-using GingerCore;
-using GingerCore.Actions;
-using Ginger.UserControls;
 
 namespace Ginger.ALM.QC
 {
@@ -39,9 +38,9 @@ namespace Ginger.ALM.QC
             public static partial class Fields
             {
                 public static string Selected = "Selected";
-                public static string Name = "Name";                
+                public static string Name = "Name";
                 public static string Status = "Status";
-                public static string ExternalID = "ExternalID";                
+                public static string ExternalID = "ExternalID";
             }
 
             private bool mSelected { get; set; }
@@ -106,11 +105,11 @@ namespace Ginger.ALM.QC
             QCFolderTextBox.Text = win.SelectedPath;
 
         }
-        
+
         private void SetBusinessFlowsGridView()
         {
             grdBusinessFlows.Title = "Upload " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: "s");
-            
+
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = BusinessFlowUpload.Fields.Selected, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox, BindingMode = BindingMode.TwoWay });
@@ -127,7 +126,7 @@ namespace Ginger.ALM.QC
         {
             UpdateBFGrid();
         }
-        
+
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
             Button UploadButton = new Button();
@@ -160,14 +159,14 @@ namespace Ginger.ALM.QC
                 {
                     selectUnselectItems(false);
                 }
-            }          
+            }
         }
 
         private void selectUnselectItems(bool selectBox = true)
         {
             foreach (BusinessFlowUpload BFU in BFUs)
             {
-                BFU.Selected = selectBox; 
+                BFU.Selected = selectBox;
             }
         }
     }

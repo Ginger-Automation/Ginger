@@ -16,14 +16,13 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Ginger.SolutionGeneral;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Amdocs.Ginger
 {
     public class ConsoleWorkspaceEventHandler : IWorkSpaceEventHandler
     {
-       
+
 
         public void OpenAddAPIModelWizard()
         {

@@ -21,7 +21,7 @@ using System.Xml.Serialization;
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
     [XmlInclude(typeof(ProduceHTML))]
-    [XmlInclude(typeof(MailReport))]    
+    [XmlInclude(typeof(MailReport))]
     [XmlInclude(typeof(JsonReport))]
     public class AddRunsetOperation
     {

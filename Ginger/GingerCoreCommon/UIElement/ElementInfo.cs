@@ -17,15 +17,12 @@ limitations under the License.
 #endregion
 
 //---------
-using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Common.Enums;
 using System.Text;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
-using System.Linq;
-using System.Drawing;
+using Amdocs.Ginger.Repository;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
@@ -80,23 +77,23 @@ namespace Amdocs.Ginger.Common.UIElement
         private string mLastUpdatedTime;
         [IsSerializedForLocalRepository]
         public string LastUpdatedTime
-        { 
-            get 
+        {
+            get
             {
                 return mLastUpdatedTime;
-            } 
+            }
             set
             {
                 DateTime result;
-                if(DateTime.TryParse(value, out result))
+                if (DateTime.TryParse(value, out result))
                 {
                     mLastUpdatedTime = result.ToString("MM/dd/yyyy HH:mm:ss");
                 }
-            } 
+            }
         }
 
         private SelfHealingInfoEnum mSelfHealingInfo;
-        public string GetSelfHealingInfo 
+        public string GetSelfHealingInfo
         {
             get
             {

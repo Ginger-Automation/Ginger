@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using GingerCore.Variables;
+using System.Windows.Controls;
 
 namespace Ginger.Variables
 {
@@ -27,7 +27,7 @@ namespace Ginger.Variables
     public partial class VariableStringPage : Page
     {
         public VariableStringPage(VariableString var)
-        {            
+        {
             InitializeComponent();
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtStringValue, TextBox.TextProperty, var, nameof(VariableString.InitialStringValue));
         }

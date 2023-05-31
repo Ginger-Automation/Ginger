@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
+using System.Windows.Controls;
 
 namespace Ginger.Actions
 {
@@ -30,13 +30,13 @@ namespace Ginger.Actions
     {
         ActWebSitePerformanceTiming mAct;
         public ActWebSitePerformanceTimingPage(ActWebSitePerformanceTiming act)
-        {            
+        {
             InitializeComponent();
 
             mAct = act;
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CSVFileNameTextBox, TextBox.TextProperty, mAct, ActWebSitePerformanceTiming.Fields.CSVFileName);
-            DetailsUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebSitePerformanceTiming.Fields.Detail ), nameof(ActInputValue.Value));
+            DetailsUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebSitePerformanceTiming.Fields.Detail), nameof(ActInputValue.Value));
         }
     }
 }

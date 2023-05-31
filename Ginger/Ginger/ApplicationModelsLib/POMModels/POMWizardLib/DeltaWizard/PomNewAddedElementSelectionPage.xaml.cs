@@ -19,7 +19,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore;
 using GingerCoreNET.Application_Models;
-using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -73,13 +72,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 {
                     xLiveSpy.SetLableStatusText("Element found in new added list");
                     xLiveSpy.mWinExplorer.LearnElementInfoDetails(elementInfo);
-                    var deltaElement = mDeltaElements.Where(x => x.ElementInfo.XPath.Equals(elementInfo.XPath)).FirstOrDefault();
+                    var deltaElement = mDeltaElements.FirstOrDefault(x => x.ElementInfo.XPath.Equals(elementInfo.XPath));
                     if (deltaElement != null)
                     {
                         mDeltaElements.CurrentItem = deltaElement;
                         mPomDeltaViewPage.xMainElementsGrid.ScrollToViewCurrentItem();
                     }
-                   
+
                 }
                 else
                 {
@@ -88,7 +87,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             }
         }
 
- 
+
         internal DeltaElementInfo ShowAsWindow(string winTitle)
         {
             ObservableList<Button> windowButtons = new ObservableList<Button>();

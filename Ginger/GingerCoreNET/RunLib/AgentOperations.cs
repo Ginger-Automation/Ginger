@@ -18,21 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Run;
-using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
-using GingerCore.DataSource;
 using GingerCore.Drivers;
-using GingerCore.Environments;
 using GingerCoreNET.RunLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -60,18 +53,28 @@ namespace GingerCore
         {
             get
             {
-                if (Driver != null) return Driver.IsWindowExplorerSupportReady();
-
-                else return false;
+                if (Driver != null)
+                {
+                    return Driver.IsWindowExplorerSupportReady();
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
         public bool IsShowWindowExplorerOnStart
         {
             get
             {
-                if (Driver != null) return Driver.IsShowWindowExplorerOnStart();
-
-                else return false;
+                if (Driver != null)
+                {
+                    return Driver.IsShowWindowExplorerOnStart();
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
@@ -205,7 +208,7 @@ namespace GingerCore
                         }
                         else
                         {
-                                Driver.StartDriver();
+                            Driver.StartDriver();
                         }
                         if (VirtualDriver != null)
                         {
@@ -275,7 +278,11 @@ namespace GingerCore
                 while (gingerNodeInfo == null && st.ElapsedMilliseconds < 30000) // max 30 seconds to wait
                 {
                     gingerNodeInfo = FindFreeNode(Agent.ServiceId);
-                    if (gingerNodeInfo != null) break;
+                    if (gingerNodeInfo != null)
+                    {
+                        break;
+                    }
+
                     Thread.Sleep(100);
                 }
 
@@ -422,7 +429,10 @@ namespace GingerCore
                                 }
                                 break;
                             case "Int32":
-                                Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, int.Parse(value));
+                                if (!string.IsNullOrEmpty(value))
+                                {
+                                    Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, int.Parse(value));
+                                }
                                 break;
                             default:
                                 Reporter.ToUser(eUserMsgKey.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
@@ -479,17 +489,17 @@ namespace GingerCore
                 pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
             }
             IEnumerable<PluginServiceInfo> Services = Plugins.SelectMany(x => ((PluginPackageOperations)x.PluginPackageOperations).Services);
-            PluginServiceInfo PSI = Services.Where(x => x.ServiceId == Agent.ServiceId).FirstOrDefault();
+            PluginServiceInfo PSI = Services.FirstOrDefault(x => x.ServiceId == Agent.ServiceId);
 
-            PluginPackage PP = Plugins.Where(x => ((PluginPackageOperations)x.PluginPackageOperations).Services.Contains(PSI)).First();
+            PluginPackage PP = Plugins.First(x => ((PluginPackageOperations)x.PluginPackageOperations).Services.Contains(PSI));
             PP.PluginPackageOperations = new PluginPackageOperations(PP);
 
             PP.PluginPackageOperations.LoadServicesFromJSON();
-            PSI = ((PluginPackageOperations)PP.PluginPackageOperations).Services.Where(x => x.ServiceId == Agent.ServiceId).FirstOrDefault();
+            PSI = ((PluginPackageOperations)PP.PluginPackageOperations).Services.FirstOrDefault(x => x.ServiceId == Agent.ServiceId);
 
             foreach (var config in PSI.Configs)
             {
-                if (Agent.DriverConfiguration.Where(x => x.Parameter == config.Name).Count() == 0)
+                if (!Agent.DriverConfiguration.Any(x => x.Parameter == config.Name))
                 {
                     DriverConfigParam DI = new DriverConfigParam();
                     DI.Parameter = config.Name;
@@ -510,7 +520,7 @@ namespace GingerCore
         /// <param name="PSI"></param>
         private void SetPlatformParameters(PluginServiceInfo PSI)
         {
-            if (PSI.Interfaces.Where(x => x == "IWebPlatform").Count() > 0)
+            if (PSI.Interfaces.Any(x => x == "IWebPlatform"))
             {
                 DriverConfigParam DI = new DriverConfigParam();
                 DI.Parameter = "Max Agent Load Time";
@@ -533,7 +543,7 @@ namespace GingerCore
 
 
             }
-            else if (PSI.Interfaces.Where(x => x == "IWebServicePlatform").Count() > 0)
+            else if (PSI.Interfaces.Any(x => x == "IWebServicePlatform"))
             {
                 DriverConfigParam DI = new DriverConfigParam();
                 DI.Parameter = "Save Request";
@@ -579,7 +589,10 @@ namespace GingerCore
                 token = Attribute.GetCustomAttribute(mi, typeof(UserConfiguredAttribute), false) as UserConfiguredAttribute;
 
                 if (token == null)
+                {
                     continue;
+                }
+
                 DriverConfigParam configParam = GetDriverConfigParam(mi);
 
                 Agent.DriverConfiguration.Add(configParam);
@@ -600,10 +613,13 @@ namespace GingerCore
                 token = Attribute.GetCustomAttribute(mi, typeof(UserConfiguredAttribute), false) as UserConfiguredAttribute;
 
                 if (token == null)
+                {
                     continue;
+                }
+
                 DriverConfigParam configParam = GetDriverConfigParam(mi);
 
-                if (Agent.DriverConfiguration.Where(x => x.Parameter == configParam.Parameter).FirstOrDefault() == null)
+                if (Agent.DriverConfiguration.FirstOrDefault(x => x.Parameter == configParam.Parameter) == null)
                 {
                     Agent.DriverConfiguration.Add(configParam);
                 }
@@ -713,7 +729,10 @@ namespace GingerCore
                         }
                     }
                 }
-                if (Driver == null) return;
+                if (Driver == null)
+                {
+                    return;
+                }
 
                 Driver.IsDriverRunning = false;
                 if (Driver is IDriverWindow && ((IDriverWindow)Driver).ShowWindow)
@@ -787,7 +806,7 @@ namespace GingerCore
 
 
         public void WaitForAgentToBeReady()
-        {            
+        {
             int Counter = 0;
             while (Status != Agent.eStatus.Running && String.IsNullOrEmpty(Driver.ErrorMessageFromDriver))
             {
@@ -798,7 +817,10 @@ namespace GingerCore
 
                 int waitingTime = 30;// 30 seconds
                 if (Driver.DriverLoadWaitingTime > 0)
+                {
                     waitingTime = Driver.DriverLoadWaitingTime;
+                }
+
                 Double waitingTimeInMilliseconds = waitingTime * 10;
                 if (Counter > waitingTimeInMilliseconds)
                 {
@@ -833,7 +855,7 @@ namespace GingerCore
                 {
                     Reporter.ToUser(eUserMsgKey.TestagentSucceed);
                 }
-                else if (Driver.ErrorMessageFromDriver!=null && Driver.ErrorMessageFromDriver.Contains("Chrome driver version mismatch"))
+                else if (Driver.ErrorMessageFromDriver != null && Driver.ErrorMessageFromDriver.Contains("Chrome driver version mismatch"))
                 {
                     Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Agent.Name, "Chrome driver version mismatch. Please run Ginger as Admin to Auto update the chrome driver.");
                 }

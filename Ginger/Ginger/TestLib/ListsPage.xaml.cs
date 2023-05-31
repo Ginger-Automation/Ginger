@@ -66,10 +66,10 @@ namespace GingerWPF.TestLib
             EnvsComboBox.DisplayMemberPath = nameof(ProjEnvironment.Name);
 
             // Go get first env Guid
-            Guid guid = mSolutionRepository.GetAllRepositoryItems<ProjEnvironment>()[0].Guid;
+            Guid guid = mSolutionRepository.GetFirstRepositoryItem<ProjEnvironment>().Guid;
             ProjEnvironment env1 = mSolutionRepository.GetRepositoryItemByGuid<ProjEnvironment>(guid);
             EnvNameTextBox.BindControl(env1, nameof(ProjEnvironment.Name));
-            
+
             AllBFsListBox.ItemsSource = mSolutionRepository.GetAllRepositoryItems<BusinessFlow>();
             AllBFsListBox.DisplayMemberPath = nameof(BusinessFlow.Name);
         }
@@ -99,7 +99,7 @@ namespace GingerWPF.TestLib
 
 
             RepositoryFolder<BusinessFlow> BFRF = mSolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>();
-            RepositoryFolder<BusinessFlow> SubFolder1 = (RepositoryFolder < BusinessFlow > )BFRF.AddSubFolder("SubFolder1");
+            RepositoryFolder<BusinessFlow> SubFolder1 = (RepositoryFolder<BusinessFlow>)BFRF.AddSubFolder("SubFolder1");
 
             BusinessFlow BF4 = new BusinessFlow("BF4");
             SubFolder1.AddRepositoryItem(BF4);
@@ -124,7 +124,10 @@ namespace GingerWPF.TestLib
         {
             string name = letters.Substring(letterIndex, 1);
             letterIndex++;
-            if (letterIndex >= letters.Length) letterIndex = 0;
+            if (letterIndex >= letters.Length)
+            {
+                letterIndex = 0;
+            }
 
             name += " New BF " + DateTime.Now;
             BusinessFlow BF1 = new BusinessFlow(name);
@@ -158,9 +161,9 @@ namespace GingerWPF.TestLib
 
         private void AddBftoSubFolderButton_Click(object sender, RoutedEventArgs e)
         {
-            RepositoryFolder<BusinessFlow> root =  mSolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>();
-            RepositoryFolder <BusinessFlow> subfolder = root.GetSubFolders()[0];
-            BusinessFlow BF = new BusinessFlow("BFSF BF " + DateTime.Now);            
+            RepositoryFolder<BusinessFlow> root = mSolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>();
+            RepositoryFolder<BusinessFlow> subfolder = root.GetSubFolders()[0];
+            BusinessFlow BF = new BusinessFlow("BFSF BF " + DateTime.Now);
             subfolder.AddRepositoryItem(BF);
         }
 
@@ -179,7 +182,7 @@ namespace GingerWPF.TestLib
         }
 
         public string Title { get; set; }
-        
+
         public ObservableList<MenuItem> Items { get; set; }
     }
 }

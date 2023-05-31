@@ -21,8 +21,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
-using GingerCoreNET.SolutionRepositoryLib;
-using GingerWPF.UserControlsLib;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -46,9 +44,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void SetAPIModelGridData()
         {
             if (mApisFolder.IsRootFolder)
+            {
                 xAPIModelsGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>();
+            }
             else
+            {
                 xAPIModelsGrid.DataSourceList = mApisFolder.GetFolderItems();
+            }
         }
 
         private void SetAPIModelsGridView()
@@ -58,7 +60,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationAPIModel.Name), Header = "Name", ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationAPIModel.Description), Header = "Description", ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItem.RelativeFilePath), Header = "Local File Path", ReadOnly=true, BindingMode=BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItem.RelativeFilePath), Header = "Local File Path", ReadOnly = true, BindingMode = BindingMode.OneWay });
 
             xAPIModelsGrid.SetAllColumnsDefaultView(view);
             xAPIModelsGrid.InitViewItems();

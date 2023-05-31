@@ -18,38 +18,27 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
-using Ginger.SolutionAutoSaveAndRecover;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-
+using System.Threading.Tasks;
 
 namespace Ginger.Functionalties
 {
     public class SolutionRecover
     {
-        public string mRecoverFolderPath = null;
-        public string RecoverFolderPath
-        {
-            get
-            {
-                return mRecoverFolderPath;
-
-            }
-            set
-            {
-                WorkSpace.Instance.RecoverFolderPath = mRecoverFolderPath;
-            }
-        }
+        private string mRecoverFolderPath = null;
 
         public object NewrepositorySerializer { get; private set; }
 
         string RecoverFolderContianerWithTS = null;
 
         string mSolutionFolderPath;
-        
+
+        public string RecoverFolderPath
+        {
+            get { return mRecoverFolderPath; }
+        }
+
         public void SolutionInit(string solutionFolderPath)
         {
             mSolutionFolderPath = solutionFolderPath;
@@ -67,7 +56,7 @@ namespace Ginger.Functionalties
             RecoverFolderContianerWithTS = "AutoSave" + DateTime.Now.ToString("_dd-MMM-yy_HH-mm");
             RecoverFolderContianerWithTS = Path.Combine(mRecoverFolderPath, RecoverFolderContianerWithTS);
             System.IO.Directory.CreateDirectory(RecoverFolderContianerWithTS);
-           
+
             //Move files
             if (Directory.Exists(AutoSavePath))
             {
@@ -76,78 +65,35 @@ namespace Ginger.Functionalties
                     string itemtoSaveToRecover = file.FullName.Replace(AutoSavePath, RecoverFolderContianerWithTS);
                     file.MoveTo(Path.Combine(itemtoSaveToRecover));
                 }
-            }            
+            }
         }
 
-        public void SolutionRecoverStart(bool showRecoverPageAnyway=false)
+        public void SolutionRecoverStart(bool showRecoverPageAnyway = false)
         {
-            ObservableList<RecoveredItem> recovredItems = new ObservableList<RecoveredItem>();
-
-            if (Directory.Exists(mRecoverFolderPath))
-            {                                
-                NewRepositorySerializer serializer = new NewRepositorySerializer();
-               
-                foreach (var directory in new DirectoryInfo(mRecoverFolderPath).GetDirectories())
-                {
-                    string timestamp = directory.Name.ToString().Replace("AutoSave_", string.Empty);
-
-                    IEnumerable<FileInfo> files = directory.GetFiles("*", SearchOption.AllDirectories);
-
-                    foreach (FileInfo file in files)
-                    {
-                        try
-                        {
-                            RecoveredItem recoveredItem = new RecoveredItem();
-                            recoveredItem.RecoveredItemObject = serializer.DeserializeFromFile(file.FullName);
-                            recoveredItem.RecoverDate = timestamp;
-                            recoveredItem.RecoveredItemObject.FileName = file.FullName;
-                            recoveredItem.RecoveredItemObject.ContainingFolder = file.FullName.Replace(directory.FullName, "~");
-                            recoveredItem.Status = eRecoveredItemStatus.PendingRecover;
-                            recovredItems.Add(recoveredItem);
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to fetch recover item : " + file.FullName, ex);
-                        }
-                    }                    
-                }
-              
-                if(recovredItems.Count == 0)
-                {                                    
-                    CleanUp(); //have empty folders
-                }
-            }
-
-            if (recovredItems.Count > 0 || showRecoverPageAnyway)                
+            if (Directory.Exists(WorkSpace.Instance.AppSolutionRecover.RecoverFolderPath)
+                && Directory.GetFiles(WorkSpace.Instance.AppSolutionRecover.RecoverFolderPath, "*.xml", SearchOption.AllDirectories).Length > 0)
             {
-                TargetFrameworkHelper.Helper.ShowRecoveryItemPage(recovredItems);
+                TargetFrameworkHelper.Helper.ShowRecoveryItemPage();
             }
         }
-        public void CleanUp()
+        public void CleanUpRecoverFolder()
         {
             if (Directory.Exists(mRecoverFolderPath))
             {
-                foreach (var directory in new DirectoryInfo(mRecoverFolderPath).GetDirectories())
+                try
                 {
-                    long size = directory.GetFiles("*", SearchOption.AllDirectories).Sum(t => t.Length);
-                    if (size == 0)
-                    {
-                        try
-                        {
-                            directory.Delete(true);
-                        }
-                        catch
-                        {
-
-                        }
-                    }
+                    Directory.Delete(mRecoverFolderPath, true);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to delete Recover folder", ex);
                 }
             }
         }
 
-        
+
         public void DoSolutionAutoSaveAndRecover()
-        {            
+        {
             //Init
             WorkSpace.Instance.AppSolutionAutoSave.SolutionInit(WorkSpace.Instance.Solution.Folder);
             SolutionInit(WorkSpace.Instance.Solution.Folder);

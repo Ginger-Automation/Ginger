@@ -16,26 +16,26 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.ALM.Repository;
+using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
+using GingerCore.ALM.QC;
+using GingerCoreNET.ALMLib;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Input;
 using System.Linq;
 using System.Reflection;
-using Amdocs.Ginger.Repository;
-using GingerCore.ALM.QC;
-using amdocs.ginger.GingerCoreNET;
-using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
-using GingerCoreNET.ALMLib;
-using GingerWPF.WizardLib;
-using System.Windows.Controls;
 using System.Threading.Tasks;
-using Ginger.Run.RunSetActions;
+using System.Windows.Controls;
+using System.Windows.Input;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.ALM
 {
@@ -85,7 +85,7 @@ namespace Ginger.ALM
                     AlmRepo = new QtestRepository();
                     break;
                 case eALMType.Octane:
-                    if(!(AlmCore is OctaneCore && AlmRepo is OctaneRepository))
+                    if (!(AlmCore is OctaneCore && AlmRepo is OctaneRepository))
                     {
                         AlmCore = new OctaneCore();
                         AlmRepo = new OctaneRepository(AlmCore);
@@ -103,7 +103,7 @@ namespace Ginger.ALM
 
         public void SetALMCoreConfigurations(eALMType almType)
         {
-            ALMCore.SetALMCoreConfigurations(almType, AlmCore);           
+            ALMCore.SetALMCoreConfigurations(almType, AlmCore);
         }
         public ALMConfig GetDefaultAlmConfig()
         {
@@ -111,7 +111,7 @@ namespace Ginger.ALM
             {
                 if (WorkSpace.Instance.Solution.ALMConfigs != null && WorkSpace.Instance.Solution.ALMConfigs.Count > 0)
                 {
-                    return WorkSpace.Instance.Solution.ALMConfigs.Where(alm => alm.DefaultAlm).FirstOrDefault();
+                    return WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(alm => alm.DefaultAlm);
                 }
                 else
                 {
@@ -160,7 +160,7 @@ namespace Ginger.ALM
             return AlmUserConfig;
 
         }
-        
+
         #region SingleTon
         private static readonly ALMIntegration _instance = new ALMIntegration();
         public static ALMIntegration Instance
@@ -179,7 +179,9 @@ namespace Ginger.ALM
             bool connResult = false;
             connResult = AlmRepo.ConnectALMServer(almConectStyle);
             if (connResult)
+            {
                 DisconnectALMServer(almConectStyle);
+            }
 
             Mouse.OverrideCursor = null;
             return connResult;
@@ -215,13 +217,19 @@ namespace Ginger.ALM
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error connecting to ALM project", e);
                 if (almConectStyle == eALMConnectType.Manual)
+                {
                     Reporter.ToUser(eUserMsgKey.ALMLoginFailed, e.Message);
+                }
                 else if (almConectStyle == eALMConnectType.Auto)
+                {
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, e.Message);
+                }
             }
 
-            if(connResult)
+            if (connResult)
+            {
                 DisconnectALMServer(almConectStyle);
+            }
 
             Mouse.OverrideCursor = null;
             return connResult;
@@ -243,7 +251,9 @@ namespace Ginger.ALM
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error disconnecting from ALM", e);
                 if (almConectStyle == eALMConnectType.Manual)
+                {
                     Reporter.ToUser(eUserMsgKey.ALMOperationFailed, "disconnect server", e.Message);
+                }
             }
         }
 
@@ -278,23 +288,23 @@ namespace Ginger.ALM
             {
                 Reporter.ToStatus(eStatusMsgKey.ALMTestSetMap);
                 bool isConnected = false;
-                
+
                 isConnected = AutoALMProjectConnect(eALMConnectType.Auto);
-                
+
                 if (isConnected)
+                {
+                    if (GetALMType().Equals(eALMType.ZephyrEnterprise))
                     {
-                        if (GetALMType().Equals(eALMType.ZephyrEnterprise))
-                        {
-                            WizardWindow.ShowWizard(new MapToALMWizard.AddMapToALMWizard(businessFlow), 1200);
-                            isMapSucc = true;
-                            DisconnectALMServer();
-                        }
-                        else
-                        {
-                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"'Map To ALM' - not Supporting {GetALMType()}.");
-                        }
+                        WizardWindow.ShowWizard(new MapToALMWizard.AddMapToALMWizard(businessFlow), 1200);
+                        isMapSucc = true;
+                        DisconnectALMServer();
                     }
-                
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"'Map To ALM' - not Supporting {GetALMType()}.");
+                    }
+                }
+
             }
             finally
             {
@@ -312,7 +322,7 @@ namespace Ginger.ALM
         {
             return ((JiraCore)AlmCore).GetZephyrCyclesWithFolders(getFolders);
         }
-        
+
         public Dictionary<string, string> GetALMDomainProjects(string ALMDomain, eALMConnectType almConectStyle)
         {
             Mouse.OverrideCursor = Cursors.Wait;
@@ -399,8 +409,8 @@ namespace Ginger.ALM
         public void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups)
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            Reporter.ToLog(eLogLevel.INFO, ("Exporting "+ GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " of " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
-            ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+            Reporter.ToLog(eLogLevel.INFO, ("Exporting " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " of " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
+            ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
                 AlmRepo.ExportBfActivitiesGroupsToALM(businessFlow, grdActivitiesGroups);
@@ -412,12 +422,12 @@ namespace Ginger.ALM
         public bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, bool performSaveAfterExport = false)
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+            ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
             bool isExportSucc = false;
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
-                isExportSucc = AlmRepo.ExportActivitiesGroupToALM(activtiesGroup, null , performSaveAfterExport);
+                isExportSucc = AlmRepo.ExportActivitiesGroupToALM(activtiesGroup, null, performSaveAfterExport);
                 DisconnectALMServer();
             }
 
@@ -430,7 +440,7 @@ namespace Ginger.ALM
         {
             Mouse.OverrideCursor = Cursors.Wait;
             //Passing Solution Folder path to GingerCore
-            ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+            ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
             bool isExportSucc = true;
             if (AutoALMProjectConnect(eALMConnectType.Auto))
@@ -441,20 +451,30 @@ namespace Ginger.ALM
                 {
                     testPlanUploadPath = AlmRepo.SelectALMTestPlanPath();
                     if (testPlanUploadPath == null)
+                    {
                         return false;
+                    }
+
                     testLabUploadPath = AlmRepo.SelectALMTestLabPath();
                     if (testLabUploadPath == null)
+                    {
                         return false;
+                    }
                 }
-                
+
                 foreach (BusinessFlow bf in bfToExport)
                 {
                     if (!AlmRepo.ExportBusinessFlowToALM(bf, performSaveAfterExport, almConectStyle, testPlanUploadPath, testLabUploadPath))
+                    {
                         isExportSucc = false;
+                    }
                 }
                 DisconnectALMServer();
             }
-            else isExportSucc = false;
+            else
+            {
+                isExportSucc = false;
+            }
 
             Mouse.OverrideCursor = null;
             return isExportSucc;
@@ -467,7 +487,7 @@ namespace Ginger.ALM
 
             Reporter.ToLog(eLogLevel.INFO, ("Exporting " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
             //Passing Solution Folder path to GingerCore
-            ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+            ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
             bool isExportSucc = false;
             if (AutoALMProjectConnect(eALMConnectType.Auto))
@@ -497,10 +517,10 @@ namespace Ginger.ALM
         public void ImportALMTests(string importDestinationFolderPath = null)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            Reporter.ToLog(eLogLevel.DEBUG, "Importing "+ GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " from ALM");
+            Reporter.ToLog(eLogLevel.DEBUG, "Importing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " from ALM");
             if (AutoALMProjectConnect(eALMConnectType.Auto, true, true))
             {
-                ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+                ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
                 AlmRepo.ImportALMTests(importDestinationFolderPath);
                 DisconnectALMServer();
             }
@@ -512,7 +532,7 @@ namespace Ginger.ALM
             Reporter.ToLog(eLogLevel.DEBUG, "Importing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " from ALM By Id");
             if (AutoALMProjectConnect(eALMConnectType.Auto, true, true))
             {
-                ALMCore.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+                ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
                 AlmRepo.ImportALMTestsById(importDestinationFolderPath);
                 DisconnectALMServer();
             }
@@ -531,12 +551,12 @@ namespace Ginger.ALM
             ObservableList<ExternalItemFieldBase> latestALMFieldsREST = new ObservableList<ExternalItemFieldBase>();
             if (ALMIntegration.Instance.AutoALMProjectConnect())
             {
-                latestALMFieldsREST = AlmCore.GetALMItemFields(null ,online, (AlmDataContractsStd.Enums.ResourceType)resourceType);
+                latestALMFieldsREST = AlmCore.GetALMItemFields(null, online, (AlmDataContractsStd.Enums.ResourceType)resourceType);
             }
             return latestALMFieldsREST;
         }
 
-        public Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening,List<ExternalItemFieldBase> defectsFields)
+        public Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
         {
             Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
             if (ALMIntegration.Instance.AutoALMProjectConnect())
@@ -562,7 +582,7 @@ namespace Ginger.ALM
             {
                 foreach (ExternalItemFieldBase defaultField in ALMCore.AlmItemFields)
                 {
-                    ExternalItemFieldBase currentField = mItemsFields.Where(x => x.ID == defaultField.ID && x.ItemType == defaultField.ItemType).FirstOrDefault();
+                    ExternalItemFieldBase currentField = mItemsFields.FirstOrDefault(x => x.ID == defaultField.ID && x.ItemType == defaultField.ItemType);
                     if (currentField != null)
                     {
                         currentField.ToUpdate = false;
@@ -626,6 +646,7 @@ namespace Ginger.ALM
                 retryConnect++;
             }
             if (!isConnected && almConnectStyle != eALMConnectType.Silence)
+            {
                 if (showConnWin)
                 {
                     App.MainWindow.Dispatcher.Invoke(() =>
@@ -636,6 +657,7 @@ namespace Ginger.ALM
                     try { isConnected = ConnectALMProject(); }
                     catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
                 }
+            }
 
             return isConnected;
         }
@@ -653,7 +675,7 @@ namespace Ginger.ALM
             }
             AlmRepo.OpenALMItemsFieldsPage(configType, type, almItemsFields);
         }
-        
+
         public bool LoadALMConfigurations()
         {
             return AlmRepo.LoadALMConfigurations();
@@ -718,7 +740,7 @@ namespace Ginger.ALM
                 }
                 return isExportSucc;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return isExportSucc;
             }

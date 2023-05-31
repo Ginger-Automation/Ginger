@@ -153,7 +153,7 @@ namespace GingerCore.ALM
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
             bool IsExecute = zephyrEntExportManager.ExportExceutionDetailsToALM(bizFlow, ref result, null, exectutedFromAutomateTab, publishToALMConfig);
-            if(!IsExecute)
+            if (!IsExecute)
             {
                 CreateActivitiesGroupsExecution(bizFlow);
             }
@@ -180,7 +180,7 @@ namespace GingerCore.ALM
                     ExecuteTestCases(assignsList, testerId, bizFlow.ActivitiesGroups);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, $"Failed Create mapped activities Groups Zephyr Ent. Execution Ids. Error: {ex.Message}");
             }
@@ -191,7 +191,7 @@ namespace GingerCore.ALM
             {
                 return zephyrEntRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
             }).Result;
-            return domains.DataResult.Where(f => f.DomainName.Equals(ALMDomainName)).FirstOrDefault().Projects.ToDictionary(project => project.ProjectId.ToString(), project => project.ProjectName);
+            return domains.DataResult.FirstOrDefault(f => f.DomainName.Equals(ALMDomainName)).Projects.ToDictionary(project => project.ProjectId.ToString(), project => project.ProjectName);
         }
 
         public long GetCurrentUser()

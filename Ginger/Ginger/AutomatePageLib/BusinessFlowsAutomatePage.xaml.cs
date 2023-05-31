@@ -35,7 +35,7 @@ namespace Ginger.BusinessFlowWindows
     /// </summary>
     public partial class BusinessFlowsAutomatePage : Page
     {
-        SingleItemTreeViewExplorerPage mBusFlowsPage;      
+        SingleItemTreeViewExplorerPage mBusFlowsPage;
         NewAutomatePage mNewAutomatePage;
 
         public BusinessFlowsAutomatePage()
@@ -59,9 +59,9 @@ namespace Ginger.BusinessFlowWindows
                     Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Loading Automate Page...");
                     if (mNewAutomatePage == null)
                     {
-                        mNewAutomatePage = new NewAutomatePage((BusinessFlow)args.Object);                        
+                        mNewAutomatePage = new NewAutomatePage((BusinessFlow)args.Object);
                     }
-                    xContentFrame.Content = mNewAutomatePage;                    
+                    xContentFrame.Content = mNewAutomatePage;
                     await mNewAutomatePage.LoadBusinessFlowToAutomate((BusinessFlow)args.Object);
                 }
                 finally
@@ -74,8 +74,8 @@ namespace Ginger.BusinessFlowWindows
             {
                 ShiftToBusinessFlowView((BusinessFlow)args.Object);
             }
-        }    
-         
+        }
+
 
         private void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -87,13 +87,13 @@ namespace Ginger.BusinessFlowWindows
 
         private void Reset()
         {
-            mBusFlowsPage = null;                      
+            mBusFlowsPage = null;
             ShiftToBusinessFlowView(null);
         }
 
         private void ShiftToBusinessFlowView(BusinessFlow bf)
         {
-            if(mBusFlowsPage == null &&  WorkSpace.Instance.Solution != null)
+            if (mBusFlowsPage == null && WorkSpace.Instance.Solution != null)
             {
                 BusinessFlowsFolderTreeItem busFlowsRootFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
                 mBusFlowsPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.BusinessFlows), eImageType.BusinessFlow, busFlowsRootFolder, busFlowsRootFolder.SaveAllTreeFolderItemsHandler, busFlowsRootFolder.AddItemHandler, treeItemDoubleClickHandler: BusinessFlowsTree_ItemDoubleClick, true);

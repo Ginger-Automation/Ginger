@@ -16,12 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger;
-using GingerCoreNET.GeneralLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -33,17 +29,17 @@ namespace GingerWPF.AgentsLib
     public partial class NewAgentPage : Page
     {
         //NewAgent mNewAgent = new NewAgent();
-        GenericWindow mGenericWindow = null;        
+        GenericWindow mGenericWindow = null;
         public NewAgentPage()
         {
-            InitializeComponent();            
+            InitializeComponent();
 
             //AgentNameTextBox.BindControl(mNewAgent, nameof(NewAgent.Name));
             //DriverTypeComboBox.BindControl(mNewAgent, nameof(NewAgent.PluginDriverName));
-            
+
             //AgentNameTextBox.Focus();
         }
-      
+
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             //WorkSpace.Instance.SolutionRepository.AddRepositoryItem(mNewAgent);
@@ -51,7 +47,7 @@ namespace GingerWPF.AgentsLib
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
-        {            
+        {
             Button okBtn = new Button();
             okBtn.Content = "OK";
             okBtn.Click += new RoutedEventHandler(OKButton_Click);

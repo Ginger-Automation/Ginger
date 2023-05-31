@@ -20,7 +20,7 @@ using System.ComponentModel;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
-    public class UIElementFilter: INotifyPropertyChanged
+    public class UIElementFilter : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public UIElementFilter(eElementType elementType, string elementExtraInfo, bool isSelected = false)

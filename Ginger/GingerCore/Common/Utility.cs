@@ -17,11 +17,10 @@ limitations under the License.
 #endregion
 
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using GingerCore.Actions;
 namespace GingerCore.Common
 {
     public class Utility

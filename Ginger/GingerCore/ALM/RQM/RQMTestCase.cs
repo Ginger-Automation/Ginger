@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using System;
-using System.Linq;
 using System.ComponentModel;
 
 namespace GingerCore.ALM.RQM
@@ -54,7 +53,7 @@ namespace GingerCore.ALM.RQM
             BTSID = string.Empty;
             TestSuiteTitle = testSuiteTitle;
             TestSuiteId = testSuiteId;
-    }
+        }
         public string Seq { get; set; }
 
         public string Name { get; set; }

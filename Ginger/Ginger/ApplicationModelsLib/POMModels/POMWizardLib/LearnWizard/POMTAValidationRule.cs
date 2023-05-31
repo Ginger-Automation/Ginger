@@ -16,15 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
+using System.Linq;
+using System.Windows.Controls;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
@@ -33,7 +28,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
-            if(WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList().Count() == 0)
+            if (!WorkSpace.Instance.Solution.ApplicationPlatforms.Any(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)))
             {
                 return new ValidationResult(false, "POM supported Target Application platform is required");
             }

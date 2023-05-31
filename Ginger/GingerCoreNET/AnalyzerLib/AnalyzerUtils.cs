@@ -27,7 +27,6 @@ using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Ginger.AnalyzerLib
@@ -83,10 +82,10 @@ namespace Ginger.AnalyzerLib
                     if (!checkedGuidList.Contains(BF.Guid))//check if it already was analyzed
                     {
                         checkedGuidList.Add(BF.Guid);
-                        BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == BF.Guid).FirstOrDefault();
+                        BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(BF.Guid);
                         if (actualBf != null)
                         {
-                            RunBusinessFlowAnalyzer(actualBf, issuesList, includeMandatoryInputsAnalyze:false);
+                            RunBusinessFlowAnalyzer(actualBf, issuesList, includeMandatoryInputsAnalyze: false);
                         }
                     }
                 });

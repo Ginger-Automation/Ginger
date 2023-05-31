@@ -19,24 +19,15 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.OS;
-using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore;
-using GingerCore.Platforms;
 using GingerCore.Variables;
-using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNET.SourceControl;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Ginger.SolutionGeneral
 {
@@ -65,8 +56,7 @@ namespace Ginger.SolutionGeneral
 
         public void SaveSolution(bool showWarning = true, Solution.eSolutionItemToSave solutionItemToSave = Solution.eSolutionItemToSave.GeneralDetails)
         {
-            bool doSave = false;
-
+            bool doSave;
             if (!showWarning)
             {
                 doSave = true;
@@ -179,19 +169,12 @@ namespace Ginger.SolutionGeneral
                     }
                 }
                 extraChangedItems = bldExtraChangedItems.ToString();
-                if (string.IsNullOrEmpty(extraChangedItems))
-                {
-                    doSave = true;
-                }
-                else
+                if (!string.IsNullOrEmpty(extraChangedItems))
                 {
                     extraChangedItems = extraChangedItems.TrimEnd();
-                    extraChangedItems = extraChangedItems.TrimEnd(new char[] { ',' });
-                    if (Reporter.ToUser(eUserMsgKey.SolutionSaveWarning, extraChangedItems) == eUserMsgSelection.Yes)
-                    {
-                        doSave = true;
-                    }
+                    extraChangedItems = extraChangedItems.TrimEnd(new char[] { ',' });                   
                 }
+                doSave = true;
             }
 
             if (doSave)

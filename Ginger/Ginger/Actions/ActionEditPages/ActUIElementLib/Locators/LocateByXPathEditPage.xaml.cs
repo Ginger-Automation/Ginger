@@ -16,14 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore.Actions.Common;
+using GingerCore.XPathParser;
 using System;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
 using System.Xml.Linq;
-using GingerCore.Actions.Common;
-using GingerCore.XPathParser;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -49,11 +49,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             string Xpath = mAction.ElementLocateValue;
             try
-            {                
+            {
                 XPathParser<XElement> xpp = new XPathParser<XElement>();
                 XElement xe1 = xpp.Parse(Xpath, new XPathTreeBuilder());
                 xpp.GetOKPath();
-                                              
+
                 XElement xe = new XPathParser<XElement>().Parse(Xpath, new XPathTreeBuilder());
 
                 XmlWriterSettings ws = new XmlWriterSettings();
@@ -65,20 +65,20 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 using (XmlWriter w = XmlWriter.Create(sb, ws))
                 {
                     xe.WriteTo(w);
-                }  
+                }
 
                 ResultLabel.Content = sb.ToString();
             }
             catch (Exception e)
             {
-                
+
                 ResultLabel.Content = e.Message;
-            }       
+            }
         }
 
         private void VerifyButton_Click(object sender, RoutedEventArgs e)
         {
-            VerifyXPath();            
-        }        
+            VerifyXPath();
+        }
     }
 }

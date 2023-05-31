@@ -16,18 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCoreNET.Application_Models
 {
-   
-    public class DeltaControlProperty : DeltaItemBase 
+
+    public class DeltaControlProperty : DeltaItemBase
     {
         public enum ePropertiesChangesToAvoid
         {
@@ -40,7 +34,7 @@ namespace GingerCoreNET.Application_Models
 
         public string Name { get { return ElementProperty.Name; } }
         public string Value { get { return ElementProperty.Value; } }
-        
+
         //public string UpdatedValue { get; set; }        
 
     }

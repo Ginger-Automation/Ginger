@@ -16,21 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Ginger.Reports;
-using Amdocs.Ginger;
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Logger;
+using Ginger.Reports;
 using GingerCore;
 using GingerCore.DataSource;
-using Ginger.Reports.GingerExecutionReport;
-using Amdocs.Ginger.CoreNET.Logger;
+using System;
 using System.IO;
-using Amdocs.Ginger.CoreNET.Utility;
+using System.Linq;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -57,7 +51,7 @@ namespace Ginger.Run.RunSetActions
         public void Execute(IReportInfo RI)
         {
             string reportsResultFolder = string.Empty;
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 ProduceLiteDBReportFolder(currentConf);
@@ -103,7 +97,7 @@ namespace Ginger.Run.RunSetActions
 
                     reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
                                                                                                                                 false,
-                                                                                                                                HTMLReportConfigurations.Where(x => (x.ID == RunSetActionHTMLReport.selectedHTMLReportTemplateID)).FirstOrDefault(),
+                                                                                                                                HTMLReportConfigurations.FirstOrDefault(x => (x.ID == RunSetActionHTMLReport.selectedHTMLReportTemplateID)),
                                                                                                                                 currentHTMLFolderName,
                                                                                                                                 RunSetActionHTMLReport.isHTMLReportPermanentFolderNameUsed, currentConf.HTMLReportConfigurationMaximalFolderSize);
                 }

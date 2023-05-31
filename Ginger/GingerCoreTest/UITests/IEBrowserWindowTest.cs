@@ -16,21 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GingerUnitTests.Documents.IEBrowser;
 using GingerTestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.UITests.IEBrowserWindowTest
 {
     [Level3]
     [TestClass]
-    public class IEBrowserWindowTest 
+    public class IEBrowserWindowTest
     {/*
         [TestInitialize]
         public void TestInitialize()

@@ -22,8 +22,8 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.DataSource;
-using GingerCore.Environments;
 using Newtonsoft.Json;
+using NUglify.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -57,7 +57,7 @@ namespace Ginger.Reports
             public static string ScreenShot = "ScreenShot";
             public static string ScreenShots = "ScreenShots";
         }
-        
+
         private IAct mAction;
         Context mContext;
         //private ProjEnvironment mExecutionEnviroment;
@@ -142,7 +142,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public int CurrentRetryIteration { get { return mAction != null ? mAction.RetryMechanismCount : currentRetryIteration; } set { currentRetryIteration = value; } }        
+        public int CurrentRetryIteration { get { return mAction != null ? mAction.RetryMechanismCount : currentRetryIteration; } set { currentRetryIteration = value; } }
 
         [JsonProperty]
         public long? Elapsed { get { return mAction != null ? mAction.Elapsed : elapsed; } set { elapsed = value; } }
@@ -153,13 +153,13 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public string Status 
+        public string Status
         {
             get
             {
                 if (mAction != null)
                 {
-                    if (mAction.StatusConverter == eStatusConverterOptions.IgnoreFail && mAction.Status==Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                    if (mAction.StatusConverter == eStatusConverterOptions.IgnoreFail && mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
                     {
                         return Amdocs.Ginger.CoreNET.Execution.eRunStatus.FailIgnored.ToString();
                     }
@@ -182,8 +182,8 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public string Error { get { return mAction != null ? mAction.Error : error; } set { error = value; } } 
-                                                                                                                 
+        public string Error { get { return mAction != null ? mAction.Error : error; } set { error = value; } }
+
         [JsonProperty]
         [FieldParams]
         [FieldParamsNameCaption("Extra Details")]
@@ -193,23 +193,27 @@ namespace Ginger.Reports
         public string ExInfo { get { return mAction != null ? mAction.ExInfo : exInfo; } set { exInfo = value; } }
         [JsonProperty]
         public List<string> InputValues
-         {
-             get
-             {
-                 if (inputValues == null)
-                 {
+        {
+            get
+            {
+                if (inputValues == null)
+                {
                     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                     inputValues = mAction.InputValues.Select(a => Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(a.Param + "_:_" + a.Value + "_:_" + GetValueForDriverWithoutDescrypting(a.Value))).ToList();
+                    inputValues = mAction.InputValues.Select(a => GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(                       
+                        $"{a.Param}_:_{a.Value}_:_{a.DisplayValue}")).ToList();
 
-                     if ((mAction.GetInputValueListForVEProcessing() != null) && (mAction.GetInputValueListForVEProcessing().Count > 0))
-                     {
-                         mAction.GetInputValueListForVEProcessing().ForEach(x => x.Select(a => Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(a.Param + "_:_" + a.Value + "_:_" + GetValueForDriverWithoutDescrypting(a.Value))).ToList().ForEach(z => inputValues.Add(z)));
-                     }
-                 }
-                 return inputValues;
-             }
-             set { inputValues = value; }
-         }
+                    if ((mAction.GetInputValueListForVEProcessing() != null) && (mAction.GetInputValueListForVEProcessing().Any()))
+                    {
+                        mAction.GetInputValueListForVEProcessing().ForEach(x => 
+                        x.ForEach(a => 
+                        inputValues.Add(GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(
+                                $"{a.Param}_:_{a.Value}_:_{a.DisplayValue}"))));
+                    }
+                }
+                return inputValues;
+            }
+            set { inputValues = value; }
+        }
         private List<string> inputValues;
 
         [FieldParams]
@@ -244,12 +248,12 @@ namespace Ginger.Reports
 
         [JsonProperty]
         public List<string> OutputValues
-        {            
+        {
             get
             {
                 if (outputValues == null)
                 {
-                    outputValues = mAction.ReturnValues.Select(a => a.Param + "_:_" + a.Actual + "_:_" + a.ExpectedCalculated + "_:_" + a.Status).ToList();
+                    outputValues = mAction.ReturnValues.Select(a => $"{a.Param}_:_{a.Actual}_:_{a.ExpectedCalculated}_:_{a.Status}").ToList();
                 }
                 return outputValues;
             }
@@ -265,7 +269,7 @@ namespace Ginger.Reports
         public DataTable OutputValuesDT
         {
             get
-            {               
+            {
                 DataTable dt = new DataTable();
                 dt.Columns.Add("ParameterName");
                 dt.Columns["ParameterName"].Caption = "Parameter Name";
@@ -281,7 +285,7 @@ namespace Ginger.Reports
                     String[] elementsAfter = outputValues.Split(new string[] { "_:_" }, StringSplitOptions.None);
                     DataRow dr = dt.NewRow();
                     dr["ParameterName"] = elementsAfter[0];
-                    dr["ActualValue"] = elementsAfter[1];                    
+                    dr["ActualValue"] = elementsAfter[1];
                     dr["ExpectedValue"] = elementsAfter[2];
                     dr["Status"] = elementsAfter[3];
                     dt.Rows.Add(dr);
@@ -297,7 +301,7 @@ namespace Ginger.Reports
             {
                 if (flowControls == null)
                 {
-                    flowControls = mAction.FlowControls.Select(a => a.Condition + "_:_" + a.ConditionCalculated + "_:_" + a.FlowControlAction + "_:_" + a.Status).ToList();
+                    flowControls = mAction.FlowControls.Select(a => $"{a.Condition}_:_{a.ConditionCalculated}_:_{a.FlowControlAction}_:_{a.Status}").ToList();
                 }
                 return flowControls;
             }
@@ -371,7 +375,7 @@ namespace Ginger.Reports
         private long? elapsed = 0;
         public string screenShots = string.Empty;
         public List<string> screenShotsList = new List<string>();
-        
+
         public bool IsPassed { get { return mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed; } }
         public bool IsFailed { get { return mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed; } }
         public bool IsPending { get { return mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending; } }
@@ -379,7 +383,7 @@ namespace Ginger.Reports
         public bool IsStopped { get { return mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped; } }
         public bool IsSkipped { get { return mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped; } }
         public bool IsBlocked { get { return mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked; } }
-   
+
         public ActionReport(IAct Act, Context context)
         {
             this.mAction = Act;
@@ -433,13 +437,13 @@ namespace Ginger.Reports
                 return list;
             }
         }
-    
+
         //todo !!!!!!!!!!!!!!!!!!!! Why??
 
         private string GetValueForDriverWithoutDescrypting(string value)
         {
             if (mContext != null)
-            {               
+            {
                 ValueExpression VE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
                 VE.DecryptFlag = false;
                 VE.Value = value;
@@ -451,7 +455,6 @@ namespace Ginger.Reports
                 return value;
             }
         }
-  
+
     }
 }
- 

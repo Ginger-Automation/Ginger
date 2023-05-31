@@ -16,22 +16,22 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerCore.DataSource;
+using GingerCore.FlowControlLib;
+using GingerCore.Variables;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Variables;
-using GingerCore.FlowControlLib;
-using GingerCore.DataSource;
 using System.Text.RegularExpressions;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.AnalyzerLib
 {
@@ -104,7 +104,7 @@ namespace Ginger.AnalyzerLib
                                 AA.Details = "'" + GoToActionName + "' Action does not exist in '" + parentActivity.ActivityName + "' " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                                 AA.HowToFix = "Remap the Flow Control Action";
 
-                                if (parentActivity.Acts.Where(x => x.Description == f.GetNameFromValue()).FirstOrDefault() != null)
+                                if (parentActivity.Acts.FirstOrDefault(x => x.Description == f.GetNameFromValue()) != null)
                                 {
                                     //can be auto fix
                                     AA.HowToFix = "Remap Flow Control Action. Auto fix found other Action with the same name so it will fix the mapping to this Action.";
@@ -113,7 +113,9 @@ namespace Ginger.AnalyzerLib
                                     AA.FixItHandler = FixFlowControlWrongActionMapping;
                                 }
                                 else
+                                {
                                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                                }
 
                                 AA.IssueType = eType.Error;
                                 AA.Impact = "Flow Control will fail on run time";
@@ -133,7 +135,7 @@ namespace Ginger.AnalyzerLib
                                 AA.Details = "'" + GoToActivity + "' " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " does not exist in the '" + BusinessFlow.Name + " ' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                                 AA.HowToFix = "Remap the Flow Control Action";
 
-                                if (BusinessFlow.Activities.Where(x => x.ActivityName == f.GetNameFromValue()).FirstOrDefault() != null)
+                                if (BusinessFlow.Activities.FirstOrDefault(x => x.ActivityName == f.GetNameFromValue()) != null)
                                 {
                                     //can be auto fix
                                     AA.HowToFix = "Remap Flow Control " + GingerDicser.GetTermResValue(eTermResKey.Activity) + ". Auto fix found other " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " with the same name so it will fix the mapping to this " + GingerDicser.GetTermResValue(eTermResKey.Activity) + ".";
@@ -142,7 +144,9 @@ namespace Ginger.AnalyzerLib
                                     AA.FixItHandler = FixFlowControlWrongActivityMapping;
                                 }
                                 else
+                                {
                                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                                }
 
                                 AA.IssueType = eType.Error;
                                 AA.Impact = "Flow Control will fail on run time";
@@ -195,7 +199,7 @@ namespace Ginger.AnalyzerLib
                                 //f.CalcualtedValue(BusinessFlow, App.ProjEnvironment, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
                                 string RunSharedRepositoryActivity = f.GetNameFromValue();
                                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                                if (activities.Where(x => x.ActivityName == RunSharedRepositoryActivity).FirstOrDefault() == null)
+                                if (activities.FirstOrDefault(x => x.ActivityName == RunSharedRepositoryActivity) == null)
                                 {
                                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
                                     AA.Description = "Flow control mapped to Shared Repository " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " which does not exist";
@@ -215,7 +219,7 @@ namespace Ginger.AnalyzerLib
                             if (string.IsNullOrEmpty(f.Value) || ValueExpression.IsThisDynamicVE(f.Value) == false)
                             {
                                 string activityToGoTo = f.GetNameFromValue();
-                                if (BusinessFlow.Activities.Where(x => x.ActivityName == activityToGoTo).FirstOrDefault() == null)
+                                if (BusinessFlow.Activities.FirstOrDefault(x => x.ActivityName == activityToGoTo) == null)
                                 {
                                     AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
                                     AA.Description = "Flow control mapped to " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " which does not exist";
@@ -250,21 +254,28 @@ namespace Ginger.AnalyzerLib
                             switch (ARV.StoreTo)
                             {
                                 case ActReturnValue.eStoreTo.Variable:
-                                    if (BusinessFlow.GetAllVariables(parentActivity).Where(x => x.SupportSetValue && x.Name == ARV.StoreToValue).FirstOrDefault() == null)
+                                    if (BusinessFlow.GetAllVariables(parentActivity).FirstOrDefault(x => x.SupportSetValue && x.Name == ARV.StoreToValue) == null)
                                     {
                                         issueFound = true;
                                     }
                                     break;
 
                                 case ActReturnValue.eStoreTo.GlobalVariable:
-                                    if (WorkSpace.Instance.Solution.Variables.Where(x => x.SupportSetValue && x.Guid.ToString() == ARV.StoreToValue).FirstOrDefault() == null)
+                                    if (WorkSpace.Instance.Solution.Variables.FirstOrDefault(x => x.SupportSetValue && x.Guid.ToString() == ARV.StoreToValue) == null)
                                     {
                                         issueFound = true;
                                     }
                                     break;
 
                                 case ActReturnValue.eStoreTo.ApplicationModelParameter:
-                                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Where(x => x.Guid.ToString() == ARV.StoreToValue).FirstOrDefault() == null)
+                                    if (Guid.TryParse(ARV.StoreToValue, out Guid gampGuid))
+                                    {
+                                        if (WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<GlobalAppModelParameter>(gampGuid) == null)
+                                        {
+                                            issueFound = true;
+                                        }
+                                    }
+                                    else 
                                     {
                                         issueFound = true;
                                     }
@@ -356,7 +367,7 @@ namespace Ginger.AnalyzerLib
             {
                 foreach (string Param in mUsedGlobalParameters)
                 {
-                    GlobalAppModelParameter globalParam = mModelsGlobalParamsList.Where(x => x.PlaceHolder == Param).FirstOrDefault();
+                    GlobalAppModelParameter globalParam = mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == Param);
                     if (globalParam == null)
                     {
                         AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
@@ -442,7 +453,7 @@ namespace Ginger.AnalyzerLib
                     else
                     {
                         Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                        ElementInfo selectedPOMElement = (ElementInfo)POM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                        ElementInfo selectedPOMElement = (ElementInfo)POM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
                         if (selectedPOMElement == null)
                         {
                             AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
@@ -506,7 +517,7 @@ namespace Ginger.AnalyzerLib
             List<ActReturnValue> ReturnValuesStoredToGlobalParameter = ReturnValues.Where(x => x.StoreTo == ActReturnValue.eStoreTo.ApplicationModelParameter).ToList();
             foreach (ActReturnValue returnValue in ReturnValuesStoredToGlobalParameter)
             {
-                GlobalAppModelParameter ExistGlobalParam = modelsGlobalParamsList.Where(x => x.Guid.ToString() == returnValue.StoreToValue).FirstOrDefault();
+                GlobalAppModelParameter ExistGlobalParam = modelsGlobalParamsList.FirstOrDefault(x => x.Guid.ToString() == returnValue.StoreToValue);
                 if (ExistGlobalParam == null)
                 {
                     missingStoreToGlobalParameters.Add(returnValue.Param);
@@ -534,7 +545,7 @@ namespace Ginger.AnalyzerLib
             FlowControl flowControl = (FlowControl)AA.ErrorInfoObject;
             if (AA.mActivity.GetAct(flowControl.GetGuidFromValue(true), flowControl.GetNameFromValue(true)) == null)
             {
-                Act similarNameAct = (Act)AA.mActivity.Acts.Where(x => x.Description == flowControl.GetNameFromValue()).FirstOrDefault();
+                Act similarNameAct = (Act)AA.mActivity.Acts.FirstOrDefault(x => x.Description == flowControl.GetNameFromValue());
                 if (similarNameAct != null)
                 {
                     string updatedMappingValue = similarNameAct.Guid + flowControl.GUID_NAME_SEPERATOR + similarNameAct.Description;
@@ -561,7 +572,7 @@ namespace Ginger.AnalyzerLib
             FlowControl flowControl = (FlowControl)AA.ErrorInfoObject;
             if (AA.mBusinessFlow.GetActivity(flowControl.GetGuidFromValue(true), flowControl.GetNameFromValue(true)) == null)
             {
-                Activity similarNameActivity = (Activity)AA.mBusinessFlow.Activities.Where(x => x.ActivityName == flowControl.GetNameFromValue()).FirstOrDefault();
+                Activity similarNameActivity = (Activity)AA.mBusinessFlow.Activities.FirstOrDefault(x => x.ActivityName == flowControl.GetNameFromValue());
                 if (similarNameActivity != null)
                 {
                     string updatedMappingValue = similarNameActivity.Guid + flowControl.GUID_NAME_SEPERATOR + similarNameActivity.Description;

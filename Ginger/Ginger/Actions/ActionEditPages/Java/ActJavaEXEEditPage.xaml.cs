@@ -32,7 +32,7 @@ namespace Ginger.Actions.Java
     {
         private ActJavaEXE mAct;
 
-        string JarFilesPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\Java\");
+        string JarFilesPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\Java\");
 
         public ActJavaEXEEditPage(ActJavaEXE act)
         {
@@ -63,27 +63,40 @@ namespace Ginger.Actions.Java
         {
             JavaPathHomeRdb.Content = "Use JAVA HOME Environment Variable (" + CommonLib.GetJavaHome() + ")";
             if (string.IsNullOrEmpty(mAct.JavaWSEXEPath))
+            {
                 JavaPathHomeRdb.IsChecked = true;
+            }
             else
+            {
                 JavaPathOtherRdb.IsChecked = true;
+            }
 
             if (string.IsNullOrEmpty(mAct.ScriptDecription))
+            {
                 ScriptDescriptionLabel.Visibility = System.Windows.Visibility.Collapsed;
+            }
             else
+            {
                 ScriptDescriptionLabel.Visibility = System.Windows.Visibility.Visible;
+            }
         }
 
         private void RemoveOldInputParams()
         {
-            if (mAct.InputValues.Where(x => x.Param == "Value" && x.Value == string.Empty).FirstOrDefault() != null)
+            if (mAct.InputValues.FirstOrDefault(x => x.Param == "Value" && x.Value == string.Empty) != null)
+            {
                 mAct.RemoveInputParam("Value");
+            }
         }
 
         private void FillScriptNameCombo()
         {
             ScriptNameComboBox.Items.Clear();
             if (!Directory.Exists(JarFilesPath))
+            {
                 Directory.CreateDirectory(JarFilesPath);
+            }
+
             string[] fileEntries = Directory.EnumerateFiles(JarFilesPath, "*.*", SearchOption.AllDirectories)
                 .Where(s => s.EndsWith(".jar")).ToArray();
 
@@ -103,13 +116,17 @@ namespace Ginger.Actions.Java
 
             string JarFile = System.IO.Path.Combine(JarFilesPath, ScriptNameComboBox.SelectedValue.ToString());
             if (!Directory.Exists(JarFilesPath))
+            {
                 Directory.CreateDirectory(JarFilesPath);
+            }
 
             if (ScriptNameComboBox.SelectedValue == null)
+            {
                 return;
+            }
             else
             {
-                string[] a = mAct.GetParamsWithGingerHelp();               
+                string[] a = mAct.GetParamsWithGingerHelp();
                 ParseParams(a);
             }
         }
@@ -142,7 +159,10 @@ namespace Ginger.Actions.Java
             else
             {
                 if (JavaPathOtherRdb.IsVisible)
+                {
                     mAct.JavaWSEXEPath = string.Empty;
+                }
+
                 JavaPathTextBox.IsEnabled = false;
                 BrowseJavaPath.IsEnabled = false;
             }
@@ -154,7 +174,10 @@ namespace Ginger.Actions.Java
             dlg.Description = desc;
             dlg.RootFolder = rootFolder;
             if (currentFolder != "")
+            {
                 dlg.SelectedPath = currentFolder;
+            }
+
             System.Windows.Forms.DialogResult result = dlg.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)
             {
@@ -167,7 +190,9 @@ namespace Ginger.Actions.Java
         {
             string selectedFolder = OpenFolderDialog("Select Java Version Bin Folder", Environment.SpecialFolder.ProgramFilesX86, mAct.JavaWSEXEPath);
             if (string.IsNullOrEmpty(selectedFolder) == false)
+            {
                 mAct.JavaWSEXEPath = selectedFolder;
+            }
         }
     }
 }

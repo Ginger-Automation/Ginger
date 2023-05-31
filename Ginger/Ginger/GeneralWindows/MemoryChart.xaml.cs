@@ -20,9 +20,8 @@ using System;
 using System.ComponentModel;
 using System.Management;
 using System.Windows.Threading;
-using System.Windows.Forms.DataVisualization;
 
-namespace Ginger    
+namespace Ginger
 {
     /// <summary>
     /// Interaction logic for MemoryChart.xaml
@@ -34,7 +33,7 @@ namespace Ginger
         public MemoryChart()
         {
             InitializeComponent();
-            InitMemoryWatch();       
+            InitMemoryWatch();
             DataContext = this;
         }
 
@@ -42,10 +41,10 @@ namespace Ginger
         {
             // keep 60 samples worth of memory by default
             const int memorySamples = 60;
-            MemoryStats = new RingBuffer <MemorySample> (memorySamples);
+            MemoryStats = new RingBuffer<MemorySample>(memorySamples);
 
             var dateTime = DateTime.Now - TimeSpan.FromSeconds(memorySamples);
-            
+
             // create blank past memory samples
             for (var i = 0; i < memorySamples - 1; i++)
             {
@@ -118,7 +117,7 @@ namespace Ginger
                 get
                 {
                     long workingSet = System.Diagnostics.Process.GetCurrentProcess().WorkingSet64;
-                    var megaBytes = workingSet/(1024*1024);
+                    var megaBytes = workingSet / (1024 * 1024);
                     return string.Format("{0}MB", megaBytes);
                 }
             }
@@ -130,7 +129,7 @@ namespace Ginger
                     ManagementObjectSearcher searcher = new ManagementObjectSearcher(wql);
                     ManagementObjectCollection results = searcher.Get();
 
-                    string st="?";
+                    string st = "?";
                     foreach (ManagementObject result in results)
                     {
                         long freePhizMemory = long.Parse(result["FreePhysicalMemory"].ToString());
@@ -142,7 +141,7 @@ namespace Ginger
             public long ByteCount { get; set; }
             public DateTime Timestamp { get; set; }
         }
-        
+
         #region INotifyPropertyChanged Interface
 
         public event PropertyChangedEventHandler PropertyChanged;

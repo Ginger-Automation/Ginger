@@ -45,8 +45,11 @@ namespace GingerCore.Actions.VisualTesting
 
         public void Save(string FileName)
         {
-            if (mJsonSerializer == null) initJSon();
-            
+            if (mJsonSerializer == null)
+            {
+                initJSon();
+            }
+
             //TODO: for speed we can do it async on another thread...
 
             using (StreamWriter SW = new StreamWriter(FileName))
@@ -59,7 +62,10 @@ namespace GingerCore.Actions.VisualTesting
         //constructor which load the data from file
         public static VisualElementsInfo Load(string FileName)
         {
-            if (mJsonSerializer == null) initJSon();
+            if (mJsonSerializer == null)
+            {
+                initJSon();
+            }
 
             using (StreamReader SR = new StreamReader(FileName))
             using (JsonReader reader = new JsonTextReader(SR))
@@ -79,11 +85,12 @@ namespace GingerCore.Actions.VisualTesting
                 //TODO: add to config
                 int offset = 100;  // up to +/- 100 pixels move is allowed
 
-                VisualElement VE1 = (from x in VEI.Elements where 
-                                     x.ElementType == VE.ElementType 
-                                     && x.Text == VE.Text 
-                                     && (Math.Abs(x.X - VE.X) < offset)
-                                     && Math.Abs(x.Y - VE.Y) < offset
+                VisualElement VE1 = (from x in VEI.Elements
+                                     where
+              x.ElementType == VE.ElementType
+              && x.Text == VE.Text
+              && (Math.Abs(x.X - VE.X) < offset)
+              && Math.Abs(x.Y - VE.Y) < offset
                                      select x
                                      ).FirstOrDefault();
                 if (VE1 != null)

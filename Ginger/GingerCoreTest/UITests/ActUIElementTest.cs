@@ -16,12 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
 using Ginger;
-using Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
@@ -45,7 +43,7 @@ namespace UnitTests.UITests
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {            
+        {
             TargetFrameworkHelper.Helper = new DotNetFrameworkHelper();
 
             mBF = new BusinessFlow();
@@ -53,7 +51,7 @@ namespace UnitTests.UITests
             mBF.Name = "BF Test Chrome";
             mBF.Active = true;
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;            
+            p.PlatformType = ePlatformType.Web;
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "WebApp" });
 
             VariableString v1 = new VariableString() { Name = "v1", InitialStringValue = "1" };
@@ -75,8 +73,9 @@ namespace UnitTests.UITests
             mGR.Executor.BusinessFlows.Add(mBF);
         }
 
-        
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void DragAndDropSelenium()
         {
             // Arrange
@@ -114,8 +113,9 @@ namespace UnitTests.UITests
 
         }
 
-        
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void DragAndDropJS()
         {
             ResetBusinessFlow();
@@ -147,9 +147,10 @@ namespace UnitTests.UITests
 
         }
 
-        
-        [TestMethod]  [Timeout(60000)]
-        public  void DoDragAndDropByOffSet()
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void DoDragAndDropByOffSet()
         {
             ResetBusinessFlow();
 
@@ -165,7 +166,7 @@ namespace UnitTests.UITests
             act3.ElementLocateBy = eLocateBy.ByXPath;
             act3.GetOrCreateInputParam(ActUIElement.Fields.ElementLocateValue, "//*[@id='draggable']");
             act3.ElementAction = ActUIElement.eElementAction.DragDrop;
-  
+
             act3.TargetLocateBy = eLocateBy.ByXY;
             // act3.GetOrCreateInputParam(ActUIElement.Fields.TargetLocateValue, "1102,463");
             act3.GetOrCreateInputParam(ActUIElement.Fields.XCoordinate, "1102");
@@ -180,8 +181,9 @@ namespace UnitTests.UITests
             Assert.AreEqual(act3.Status, eRunStatus.Passed);
         }
 
-        
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void DrawObject()
         {
             ResetBusinessFlow();
@@ -192,7 +194,7 @@ namespace UnitTests.UITests
             mBF.Activities.Add(a1);
 
             ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "http://szimek.github.io/signature_pad/", Active = true };
-           // ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://www.youidraw.com/apps/painter/", Active = true };
+            // ActGotoURL act1 = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = "https://www.youidraw.com/apps/painter/", Active = true };
             a1.Acts.Add(act1);
 
 
@@ -200,7 +202,7 @@ namespace UnitTests.UITests
 
             act3.ElementLocateBy = eLocateBy.ByXPath;
             act3.GetOrCreateInputParam(ActUIElement.Fields.ElementLocateValue, "//*[@id='signature-pad']/div[1]/canvas");
-           // act3.GetOrCreateInputParam(ActUIElement.Fields.ElementLocateValue, "//*[@id='painter']");
+            // act3.GetOrCreateInputParam(ActUIElement.Fields.ElementLocateValue, "//*[@id='painter']");
             act3.ElementAction = ActUIElement.eElementAction.DrawObject;
 
             act3.Active = true;

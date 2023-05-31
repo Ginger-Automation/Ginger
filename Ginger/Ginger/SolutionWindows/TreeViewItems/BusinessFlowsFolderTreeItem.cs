@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
-using DocumentFormat.OpenXml.Wordprocessing;
 using Ginger.Actions.ActionConversion;
 using Ginger.ALM;
 using Ginger.BusinessFlowWindows;
@@ -49,16 +48,16 @@ namespace Ginger.SolutionWindows.TreeViewItems
     public enum eBusinessFlowsTreeViewMode
     {
         ReadWrite = 0,
-        ReadOnly = 1        
+        ReadOnly = 1
     }
 
     public class BusinessFlowsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         RepositoryFolder<BusinessFlow> mBusFlowsFolder;
-        private ExplorerBusinessFlowsPage mExplorerBusinessFlowsPage;        
+        private ExplorerBusinessFlowsPage mExplorerBusinessFlowsPage;
         public eBusinessFlowsTreeViewMode mViewMode;
 
-        public BusinessFlowsFolderTreeItem(RepositoryFolder<BusinessFlow> repositoryFolder,  eBusinessFlowsTreeViewMode viewMode = eBusinessFlowsTreeViewMode.ReadWrite)
+        public BusinessFlowsFolderTreeItem(RepositoryFolder<BusinessFlow> repositoryFolder, eBusinessFlowsTreeViewMode viewMode = eBusinessFlowsTreeViewMode.ReadWrite)
         {
             mBusFlowsFolder = repositoryFolder;
             mViewMode = viewMode;
@@ -79,7 +78,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-           return NewTVItemFolderHeaderStyle(mBusFlowsFolder);
+            return NewTVItemFolderHeaderStyle(mBusFlowsFolder);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -166,8 +165,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(exportMenu, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
             }
             else
-            {   
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), false, false, false, false, false, false, false, false, false, false, true);                               
+            {
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), false, false, false, false, false, false, false, false, false, false, true);
             }
         }
 
@@ -209,7 +208,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 DefaultExt = ".html",
                 Filter = "Recorded Selenium Scripts (*.html)|*.html"
-            },false) is string fileName)
+            }, false) is string fileName)
             {
                 BusinessFlow BF = SeleniumToGinger.ConvertSeleniumScript(fileName);
                 mBusFlowsFolder.AddRepositoryItem(BF);
@@ -246,7 +245,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 DefaultExt = ".Ginger.BusinessFlow.xml",
                 Filter = "Ginger Business Flow File|*.Ginger.BusinessFlow.xml"
-            },false) is string fileName)
+            }, false) is string fileName)
             {
                 try
                 {
@@ -261,7 +260,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     importedBF.Guid = Guid.NewGuid();
                     for (int i = 0; i < importedBF.TargetApplications.Count; i++)
                     {
-                        if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == importedBF.TargetApplications[i].Name).FirstOrDefault() == null)
+                        if (WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == importedBF.TargetApplications[i].Name) == null)
                         {
                             importedBF.TargetApplications.RemoveAt(i);//No such Application so Delete it
                             i--;
@@ -270,14 +269,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     if (importedBF.TargetApplications.Count == 0)
                     {
                         TargetApplication ta = new TargetApplication();
-                        ta.AppName =  WorkSpace.Instance.Solution.ApplicationPlatforms[0].AppName;
+                        ta.AppName = WorkSpace.Instance.Solution.ApplicationPlatforms[0].AppName;
                         importedBF.TargetApplications.Add(ta);
                     }
 
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(importedBF);
                     mBusFlowsFolder.AddRepositoryItem(importedBF);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to copy and load the selected " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " file." + System.Environment.NewLine + "Error: " + System.Environment.NewLine + ex.Message);
                     return;
@@ -289,13 +288,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             //TODO: change to wizard
             string BizFlowName = string.Empty;
-            BusinessFlow BizFlow = WorkSpace.Instance.GetNewBusinessFlow(BizFlowName);            
-            if (GingerCore.General.GetInputWithValidation("Add " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name:", ref BizFlowName, null, false , BizFlow))
+            BusinessFlow BizFlow = WorkSpace.Instance.GetNewBusinessFlow(BizFlowName);
+            if (GingerCore.General.GetInputWithValidation("Add " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name:", ref BizFlowName, null, false, BizFlow))
             {
                 BizFlow = WorkSpace.Instance.GetNewBusinessFlow(BizFlowName);
                 if (WorkSpace.Instance.Solution.ApplicationPlatforms.Count != 1)
                 {
-                    EditBusinessFlowAppsPage EBFP = new EditBusinessFlowAppsPage(BizFlow,true);
+                    EditBusinessFlowAppsPage EBFP = new EditBusinessFlowAppsPage(BizFlow, true);
                     EBFP.ResetPlatformSelection();
                     EBFP.Title = "Configure " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Target Application(s)";
                     EBFP.ShowAsWindow(eWindowShowStyle.Dialog, false);
@@ -306,22 +305,22 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     BizFlow.CurrentActivity.TargetApplication = BizFlow.TargetApplications[0].Name;
                 }
 
-                mBusFlowsFolder.AddRepositoryItem(BizFlow);                
+                mBusFlowsFolder.AddRepositoryItem(BizFlow);
             }
-        }        
+        }
 
         private void ImportGherkinFeature(object sender, RoutedEventArgs e)
-        {            
+        {
             ImportGherkinFeatureWizard mWizard = new ImportGherkinFeatureWizard(this, ImportGherkinFeatureFilePage.eImportGherkinFileContext.BusinessFlowFolder);
-            WizardWindow.ShowWizard(mWizard);                
-         
-                if (mWizard.BizFlow != null)
-                {
-                    //Select Business Folder
-                    mTreeView.Tree.SelectItem(this);
-                    mTreeView.Tree.RefreshSelectedTreeNodeChildrens();                    
-                    mTreeView.Tree.GetChildItembyNameandSelect(mWizard.BizFlow.Name, this);
-                }            
+            WizardWindow.ShowWizard(mWizard);
+
+            if (mWizard.BizFlow != null)
+            {
+                //Select Business Folder
+                mTreeView.Tree.SelectItem(this);
+                mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
+                mTreeView.Tree.GetChildItembyNameandSelect(mWizard.BizFlow.Name, this);
+            }
         }
 
         private void ExportAllToALM(object sender, System.Windows.RoutedEventArgs e)

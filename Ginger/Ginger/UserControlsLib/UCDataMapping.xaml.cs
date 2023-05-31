@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using GingerCore.DataSource;
@@ -68,13 +69,13 @@ namespace Ginger.UserControlsLib
 
         public Guid MappedValueGUID
         {
-            get 
+            get
             {
                 Guid convertedGUID = Guid.Empty;
                 Guid.TryParse(MappedValue, out convertedGUID);
                 return convertedGUID;
             }
-            set 
+            set
             {
                 MappedValue = value.ToString();
             }
@@ -106,12 +107,12 @@ namespace Ginger.UserControlsLib
         }
 
         public UCDataMapping()
-        {           
+        {
             InitializeComponent();
 
             this.IsEnabled = false;
             InitTypeOptions();
-            InitValuesOptions();                        
+            InitValuesOptions();
         }
 
         #region Global
@@ -126,14 +127,14 @@ namespace Ginger.UserControlsLib
 
         private void InitTypeOptions()
         {
-            GingerCore.General.FillComboItemsFromEnumType(xMappedTypeComboBox, typeof(eDataType));            
+            GingerCore.General.FillComboItemsFromEnumType(xMappedTypeComboBox, typeof(eDataType));
             BindingHandler.ObjFieldBinding(xMappedTypeComboBox, ComboBox.SelectedValueProperty, this, nameof(MappedType));
 
-            DisableAllTypeOptions();                                     
+            DisableAllTypeOptions();
         }
 
         private static void OnMappedTypePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {            
+        {
             var control = (UCDataMapping)sender;
             control.MappedTypePropertyChanged();
         }
@@ -173,7 +174,7 @@ namespace Ginger.UserControlsLib
 
         private void SetValueControlsView()
         {
-             if (MappedType == null)
+            if (MappedType == null)
             {
                 return;
             }
@@ -183,7 +184,7 @@ namespace Ginger.UserControlsLib
                 {
                     xMappedTypeColumn.Width = new GridLength(50, GridUnitType.Star);
                     xMappedTypeColumn.MaxWidth = double.MaxValue;
-                    xMappedValueColumn.Width = new GridLength(0);                   
+                    xMappedValueColumn.Width = new GridLength(0);
                 }
                 else
                 {
@@ -232,6 +233,10 @@ namespace Ginger.UserControlsLib
             if (control != null)
             {
                 control.MappedValuePropertyChanged((string)args.NewValue);
+                if (!(Equals((string)args.OldValue, ((string)args.NewValue))))
+                {
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.DirtyStatus = eDirtyStatus.Modified;
+                }
             }
         }
         private void MappedValuePropertyChanged(string mappedValueProperty)
@@ -246,7 +251,7 @@ namespace Ginger.UserControlsLib
             {
                 OnPropertyChanged(nameof(MappedValue));
             }
-            
+
             MarkMappedValueValidation();
         }
 
@@ -258,7 +263,7 @@ namespace Ginger.UserControlsLib
                 || (MappedType == eDataType.Variable.ToString() && !GingerCore.General.CheckComboItemExist(xVariablesComboBox, MappedValue))
                 || ((MappedType == eDataType.OutputVariable.ToString() && !GingerCore.General.CheckComboItemExist(xOptionalValuesComboBox, MappedValue, nameof(VariableBase.VariableInstanceInfo)))
                 || (MappedType == eDataType.GlobalVariable.ToString() || MappedType == eDataType.ApplicationModelParameter.ToString()) && !GingerCore.General.CheckComboItemExist(xOptionalValuesComboBox, MappedValue, "Guid"))
-                || (MappedType == eDataType.DataSource.ToString() && GingerCoreNET.GeneralLib.General.CheckDataSource(MappedValue, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>()) != string.Empty))               
+                || (MappedType == eDataType.DataSource.ToString() && GingerCoreNET.GeneralLib.General.CheckDataSource(MappedValue, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>()) != string.Empty))
             {
                 isValid = false;
             }
@@ -309,7 +314,7 @@ namespace Ginger.UserControlsLib
             {
                 this.IsEnabled = true;
             }
-        }  
+        }
 
         private void SetValueControlsData()
         {
@@ -338,7 +343,7 @@ namespace Ginger.UserControlsLib
 
             MarkMappedValueValidation();
         }
-        
+
         private void DisableAllTypeOptions()
         {
             GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.Variable);
@@ -348,8 +353,8 @@ namespace Ginger.UserControlsLib
             GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.DataSource);
             xDSConfigBtn.IsEnabled = false;
         }
-        
-        public static DataTemplate GetTemplate(string dataTypeProperty, string dataValueProperty, string enableDataMappingProperty = "", string variabelsSourceProperty = "", ObservableList<string> variabelsSourceList=null, string outputVariabelsSourceProperty = "")
+
+        public static DataTemplate GetTemplate(string dataTypeProperty, string dataValueProperty, string enableDataMappingProperty = "", string variabelsSourceProperty = "", ObservableList<string> variabelsSourceList = null, string outputVariabelsSourceProperty = "")
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory ucDataMapping = new FrameworkElementFactory(typeof(UCDataMapping));
@@ -361,7 +366,7 @@ namespace Ginger.UserControlsLib
                 variablesSourceBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                 ucDataMapping.SetBinding(UCDataMapping.VariabelsSourceProperty, variablesSourceBinding);
             }
-            else if(variabelsSourceList != null)
+            else if (variabelsSourceList != null)
             {
                 ucDataMapping.SetValue(UCDataMapping.VariabelsSourceProperty, variabelsSourceList);
             }
@@ -398,7 +403,7 @@ namespace Ginger.UserControlsLib
 
             template.VisualTree = ucDataMapping;
             return template;
-        }       
+        }
         #endregion Global
 
         #region Variables
@@ -416,7 +421,7 @@ namespace Ginger.UserControlsLib
             {
                 GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.Variable);
             }
-            if (variabelsSourceList != null && variabelsSourceList.Where(x=>string.IsNullOrEmpty(x)==false).ToList().Count > 0)
+            if (variabelsSourceList != null && variabelsSourceList.Where(x => string.IsNullOrEmpty(x) == false).ToList().Count > 0)
             {
                 if (EnableDataMapping)
                 {
@@ -448,7 +453,7 @@ namespace Ginger.UserControlsLib
             {
                 GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.OutputVariable);
             }
-           
+
             if (outputVariabelsSourceList != null && outputVariabelsSourceList.Count > 0)
             {
                 if (EnableDataMapping)
@@ -458,7 +463,7 @@ namespace Ginger.UserControlsLib
                 mOutputVariablesList = outputVariabelsSourceList;
                 mOutputVariablesList.CollectionChanged += OutputVariabelsSourceList_CollectionChanged;
                 SetValueControlsData();
-            }            
+            }
         }
         private void OutputVariabelsSourceList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
@@ -492,7 +497,7 @@ namespace Ginger.UserControlsLib
                     mGlobalVariablesList.Add(var);
                 }
             }
-            for (int indx=0; indx < mGlobalVariablesList.Count; indx++)
+            for (int indx = 0; indx < mGlobalVariablesList.Count; indx++)
             {
                 if (WorkSpace.Instance.Solution.Variables.Contains(mGlobalVariablesList[indx]) == false)
                 {
@@ -526,7 +531,7 @@ namespace Ginger.UserControlsLib
         #region DataSource
         private void SetDataSourceValues()
         {
-            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().Count > 0)
+            if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().Any())
             {
                 GingerCore.General.EnableComboItem(xMappedTypeComboBox, eDataType.DataSource);
                 xDSConfigBtn.IsEnabled = true;

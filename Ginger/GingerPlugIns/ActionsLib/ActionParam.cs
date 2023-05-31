@@ -34,7 +34,7 @@ namespace GingerPlugIns.ActionsLib
         public string Name { get; set; }
 
         public eParamType ParamType { get; set; }
-        
+
         private object mValue;
         public object Value
         {
@@ -73,7 +73,7 @@ namespace GingerPlugIns.ActionsLib
 
         public void SetValueFromString(string s)
         {
-            
+
         }
     }
 }

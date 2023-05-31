@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -16,6 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
@@ -26,12 +30,6 @@ using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
-using GingerCore;
-using GingerCore.GeneralLib;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace Ginger.Run
 {
@@ -86,7 +84,7 @@ namespace Ginger.Run
             }
         }
 
-        
+
         private string mSealightsTestStage;
         [IsSerializedForLocalRepository]
         public string SealightsTestStage
@@ -230,15 +228,15 @@ namespace Ginger.Run
             get
             {
 
-                if ((from x in GingerRunners.ToList() where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed select x).Count() > 0)
+                if ((from x in GingerRunners.ToList() where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed select x).Any())
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 }
-                else if ((from x in GingerRunners.ToList() where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked select x).Count() > 0)
+                else if ((from x in GingerRunners.ToList() where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked select x).Any())
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
                 }
-                else if ((from x in GingerRunners.ToList() where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped select x).Count() > 0)
+                else if ((from x in GingerRunners.ToList() where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped select x).Any())
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
                 }

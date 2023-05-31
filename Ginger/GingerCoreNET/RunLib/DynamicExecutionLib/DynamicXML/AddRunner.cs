@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public string Environment { get; set; }
 
-        public string RunMode{ get; set; }        
+        public string RunMode { get; set; }
 
         public List<SetAgent> SetAgents { get; set; } = new List<SetAgent>();
 

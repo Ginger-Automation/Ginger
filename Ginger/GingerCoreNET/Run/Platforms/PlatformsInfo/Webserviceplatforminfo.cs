@@ -24,14 +24,13 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.WebServices;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Platform
 {
-  public  class Webserviceplatforminfo : IPlatformPluginPostRun
+    public class Webserviceplatforminfo : IPlatformPluginPostRun
     {
         private static readonly Object thisObj = new object();
         private bool SaveRequest;
@@ -42,12 +41,12 @@ namespace Amdocs.Ginger.CoreNET.Platform
 
 
             foreach (DriverConfigParam DCP in agent.DriverConfiguration)
-           {
+            {
                 switch (DCP.Parameter)
                 {
 
                     case "Save Request":
-                        Boolean.TryParse(DCP.Value,out SaveRequest);
+                        Boolean.TryParse(DCP.Value, out SaveRequest);
                         break;
                     case "Save Response":
                         Boolean.TryParse(DCP.Value, out SaveResponse);
@@ -57,21 +56,21 @@ namespace Amdocs.Ginger.CoreNET.Platform
                         break;
                 }
             }
-            if(PathToSave.StartsWith(@"~\"))
+            if (PathToSave.StartsWith(@"~\"))
             {
                 PathToSave = Path.Combine(WorkSpace.Instance.Solution.ContainingFolderFullPath, PathToSave.Remove(0, 2));
             }
 
             String FileContent;
-            if(SaveRequest)
+            if (SaveRequest)
             {
-                FileContent= actPlugin.ReturnValues.Where(x => x.Param == "Request:").FirstOrDefault().Actual;
-                SaveToFile("Request", FileContent, PathToSave,(ActWebAPIBase) actPlugin);
+                FileContent = actPlugin.ReturnValues.FirstOrDefault(x => x.Param == "Request:").Actual;
+                SaveToFile("Request", FileContent, PathToSave, (ActWebAPIBase)actPlugin);
             }
-            if(SaveResponse)
+            if (SaveResponse)
             {
 
-                FileContent = actPlugin.ReturnValues.Where(x => x.Param == "Response:").FirstOrDefault().Actual;
+                FileContent = actPlugin.ReturnValues.FirstOrDefault(x => x.Param == "Response:").Actual;
                 SaveToFile("Response", FileContent, PathToSave, (ActWebAPIBase)actPlugin);
             }
 

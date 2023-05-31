@@ -21,7 +21,7 @@ namespace GingerCore.Drivers.Common
 {
     public class ComboBoxElementItem
     {
-        public string Value { get; set;}
+        public string Value { get; set; }
         public string Text { get; set; }
     }
 }

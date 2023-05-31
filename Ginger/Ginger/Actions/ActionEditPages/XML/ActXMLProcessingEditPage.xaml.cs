@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
@@ -38,10 +37,10 @@ namespace Ginger.Actions.XML
         public ActXMLProcessingEditPage(Act act)
         {
             InitializeComponent();
-            this.mAct = (ActXMLProcessing)act;            
+            this.mAct = (ActXMLProcessing)act;
 
             //// Bind Controls
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(XMLTemplateFileTextBox , TextBox.TextProperty, mAct.TemplateFileName , nameof(ActInputValue.Value));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(XMLTemplateFileTextBox, TextBox.TextProperty, mAct.TemplateFileName, nameof(ActInputValue.Value));
             TargetFileNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.TargetFileName);
 
             SetGridView();
@@ -54,28 +53,28 @@ namespace Ginger.Actions.XML
             mAct.DynamicElements.Add(AIV);
         }
 
-         private void SetGridView()
-         {
-             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-             view.GridColsView = new ObservableList<GridColView>();
+        private void SetGridView()
+        {
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
 
-             view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Parameter", WidthWeight = 150 });
-             view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Value", WidthWeight = 150 });
-             view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.Resources["InputValueExpressionButton"] });
-             view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Parameter", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Value", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.Resources["InputValueExpressionButton"] });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
 
-             DynamicParametersGrid.SetAllColumnsDefaultView(view);
-             DynamicParametersGrid.InitViewItems();
+            DynamicParametersGrid.SetAllColumnsDefaultView(view);
+            DynamicParametersGrid.InitViewItems();
 
-             DynamicParametersGrid.DataSourceList = mAct.DynamicElements ;
+            DynamicParametersGrid.DataSourceList = mAct.DynamicElements;
         }
 
-         private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
-         {
-             ActInputValue AIV = (ActInputValue)DynamicParametersGrid.CurrentItem;
-             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), Context.GetAsContext(mAct.Context));
-             VEEW.ShowAsWindow();
-         }
+        private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
+        {
+            ActInputValue AIV = (ActInputValue)DynamicParametersGrid.CurrentItem;
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), Context.GetAsContext(mAct.Context));
+            VEEW.ShowAsWindow();
+        }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {

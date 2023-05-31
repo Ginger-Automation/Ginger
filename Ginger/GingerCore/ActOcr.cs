@@ -18,15 +18,10 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.GingerOCR;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GingerCore
 {
@@ -127,6 +122,25 @@ namespace GingerCore
             ReadTextFromPDFSinglePage = 2,
             [EnumValueDescription("Read Text From Table In Pdf")]
             ReadTextFromTableInPdf = 3
+        }
+
+        public enum eDPILevel
+        {
+            [EnumValueDescription("150")]
+            e150 = 150,
+            [EnumValueDescription("300")]
+            e300 = 300,
+            [EnumValueDescription("450")]
+            e450 = 450,
+            [EnumValueDescription("600")]
+            e600 = 600,
+            [EnumValueDescription("750")]
+            e750 = 750,
+        }
+        public eDPILevel SelectedOcrDPIOperation
+        {
+            get => GetOrCreateInputParam(nameof(SelectedOcrDPIOperation), eDPILevel.e300);
+            set => AddOrUpdateInputParamValue(nameof(SelectedOcrDPIOperation), value.ToString());
         }
         public eActOcrImageOperations SelectedOcrImageOperation
         {
@@ -322,7 +336,7 @@ namespace GingerCore
             switch (SelectedOcrPdfOperation)
             {
                 case eActOcrPdfOperations.ReadTextAfterLabel:
-                    resultText = GingerOcrOperations.ReadTextAfterLabelPdf(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString), ValueExpression.Calculate(PageNumber), ValueExpression.Calculate(OcrPassword));
+                    resultText = GingerOcrOperations.ReadTextAfterLabelPdf(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString), (int)SelectedOcrDPIOperation, ValueExpression.Calculate(PageNumber), ValueExpression.Calculate(OcrPassword));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
@@ -334,7 +348,7 @@ namespace GingerCore
                     break;
                 case eActOcrPdfOperations.ReadTextBetweenTwoStrings:
                     resultText = GingerOcrOperations.ReadTextBetweenLabelsPdf(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString),
-                        ValueExpression.Calculate(SecondString), ValueExpression.Calculate(PageNumber), ValueExpression.Calculate(OcrPassword));
+                        ValueExpression.Calculate(SecondString), ValueExpression.Calculate(PageNumber), (int)SelectedOcrDPIOperation, ValueExpression.Calculate(OcrPassword));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
@@ -345,7 +359,7 @@ namespace GingerCore
                     }
                     break;
                 case eActOcrPdfOperations.ReadTextFromPDFSinglePage:
-                    resultText = GingerOcrOperations.ReadTextFromPdfSinglePage(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(PageNumber), ValueExpression.Calculate(OcrPassword));
+                    resultText = GingerOcrOperations.ReadTextFromPdfSinglePage(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(PageNumber), (int)SelectedOcrDPIOperation, ValueExpression.Calculate(OcrPassword));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);

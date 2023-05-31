@@ -18,10 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
-using Amdocs.Ginger.Repository;
 using System;
 using System.Drawing;
 using System.IO;
@@ -54,11 +51,11 @@ namespace Ginger.Reports
         {
             if (isAddTemplate)
             {
-                return WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq + 1;
+                return WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true)).HTMLReportTemplatesSeq = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true)).HTMLReportTemplatesSeq + 1;
             }
             else
             {
-                return WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq - 1;
+                return WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true)).HTMLReportTemplatesSeq = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true)).HTMLReportTemplatesSeq - 1;
             }
         }
         public void SetHTMLReportConfigurationWithDefaultValues(HTMLReportConfiguration reportConfiguraion)
@@ -142,7 +139,7 @@ namespace Ginger.Reports
             // swap should be done between two below lists. Previose saved selection should be performed on the referenceFieldSelections
             foreach (var saved_item in savedFieldSelections)
             {
-                var savedref_item = referenceFieldSelections.Where(x => x.FieldKey == saved_item.FieldKey).FirstOrDefault();
+                var savedref_item = referenceFieldSelections.FirstOrDefault(x => x.FieldKey == saved_item.FieldKey);
                 if (savedref_item != null)
                 {
                     if (!savedref_item.IsNotMandatory)     // if field is mandatory
@@ -157,7 +154,7 @@ namespace Ginger.Reports
             //adding missing fields
             foreach (var reference_item in referenceFieldSelections)
             {
-                var savedref_item = savedFieldSelections.Where(x => x.FieldKey == reference_item.FieldKey).FirstOrDefault();
+                var savedref_item = savedFieldSelections.FirstOrDefault(x => x.FieldKey == reference_item.FieldKey);
                 if (savedref_item == null)
                 {
                     savedFieldSelections.Add(reference_item);

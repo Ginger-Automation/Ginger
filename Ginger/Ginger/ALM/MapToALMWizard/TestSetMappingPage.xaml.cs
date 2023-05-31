@@ -53,7 +53,7 @@ namespace Ginger.ALM.MapToALMWizard
                     }
                     break;
                 case EventType.LeavingForNextPage:
-                    if(mIsBusinessFlowMapped)
+                    if (mIsBusinessFlowMapped)
                     {
                         return;
                     }
@@ -61,14 +61,14 @@ namespace Ginger.ALM.MapToALMWizard
                     break;
             }
         }
-        
+
         #region Binds
         /// <summary>
         /// Bind ALM Test Set Tree.
         /// </summary>
         private void BindTestSet()
         {
-                load_frame.Content = GetALMTree();
+            load_frame.Content = GetALMTree();
         }
         #endregion
         #region Functions
@@ -90,7 +90,7 @@ namespace Ginger.ALM.MapToALMWizard
                     ChangeTestSetPageVisibility();
                     mWizard.UpdateMappedTestCasesCollections();
                     mWizard.RemapTestCasesLists();
-                    WizardPage nextPage = mWizard.Pages.Where(p => p.Page is TestCasesMappingPage).FirstOrDefault();
+                    WizardPage nextPage = mWizard.Pages.FirstOrDefault(p => p.Page is TestCasesMappingPage);
                     (nextPage.Page as TestCasesMappingPage).xUnMapTestCaseGrid.Title = $"ALM '{mWizard.AlmTestSetData.TestSetName}' Test Cases";
                 }
             }

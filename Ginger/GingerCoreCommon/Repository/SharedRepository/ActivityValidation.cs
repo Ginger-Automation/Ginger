@@ -19,24 +19,21 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Amdocs.Ginger.Common;
-using Ginger.Repository.AddItemToRepositoryWizard;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Activities;
 using GingerCore.Variables;
 
 namespace Ginger.Repository.ItemToRepositoryWizard
 {
     public class ValidateActivity : ItemValidationBase
     {
-        public  static void Validate(Activity activity)
-        {          
+        public static void Validate(Activity activity)
+        {
             if (activity == null)
                 return;
 
             List<string> missingVariables = CheckMissingVariables(activity);
-            if (missingVariables.Count>0)
+            if (missingVariables.Count > 0)
             {
                 ItemValidationBase VA = CreateNewIssue(activity);
                 VA.IssueDescription = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables) + ":" + GetListNameString(missingVariables) + "  is/are missing";
@@ -45,20 +42,20 @@ namespace Ginger.Repository.ItemToRepositoryWizard
                 VA.IssueResolution = "Missing " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " will be auto added to " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                 VA.Selected = true;
                 mIssuesList.Add(VA);
-            }            
+            }
         }
 
         private static string GetListNameString(List<string> list)
         {
             string str = string.Empty;
 
-            foreach(string s in list)
+            foreach (string s in list)
             {
-                str += s+",";
+                str += s + ",";
             }
 
-            if(!String.IsNullOrEmpty(str))
-                str= str.Remove(str.LastIndexOf(','));
+            if (!String.IsNullOrEmpty(str))
+                str = str.Remove(str.LastIndexOf(','));
 
             return str;
         }
@@ -73,7 +70,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
 
             for (int indx = 0; indx < usedVariables.Count; indx++)
             {
-                if (activity.Variables.Where(x => x.Name == usedVariables[indx]).FirstOrDefault() != null)
+                if (activity.Variables.FirstOrDefault(x => x.Name == usedVariables[indx]) != null)
                 {
                     usedVariables.RemoveAt(indx);
                     indx--;

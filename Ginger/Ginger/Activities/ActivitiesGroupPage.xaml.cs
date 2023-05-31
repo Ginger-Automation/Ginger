@@ -75,7 +75,9 @@ namespace Ginger.Activities
             TagsViewer.Init(mActivitiesGroup.Tags);
 
             if (mEditMode == eEditMode.ExecutionFlow)
+            {
                 SharedRepoInstanceUC.Init(mActivitiesGroup, mBusinessFlow);
+            }
             else
             {
                 SharedRepoInstanceUC.Visibility = Visibility.Collapsed;
@@ -135,7 +137,10 @@ namespace Ginger.Activities
             defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ActivityDescription), Header = "Description", WidthWeight = 30, ReadOnly = true });
             defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ActivityAutomationStatus), Header = "Auto. Status", WidthWeight = 20, ReadOnly = true });
             if (mEditMode == eEditMode.SharedRepository)
+            {
                 defView2.GridColsView.Add(new GridColView() { Field = nameof(ActivityIdentifiers.ExistInRepository), Header = "Exist In Repository", WidthWeight = 20, ReadOnly = true });
+            }
+
             grdGroupedActivities.SetAllColumnsDefaultView(defView2);
             grdGroupedActivities.InitViewItems();
         }
@@ -145,27 +150,43 @@ namespace Ginger.Activities
             ObservableList<Activity> activitiesRepository = new ObservableList<Activity>();
 
             if (mEditMode == eEditMode.ExecutionFlow)
+            {
                 activitiesRepository = mBusinessFlow.Activities;
+            }
             else if (mEditMode == eEditMode.SharedRepository)
+            {
                 activitiesRepository = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            }
 
             foreach (ActivityIdentifiers actIdent in mActivitiesGroup.ActivitiesIdentifiers)
             {
-                Activity repoAct = (Activity)activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                Activity repoAct = (Activity)activitiesRepository.FirstOrDefault(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid);
                 if (repoAct == null)
-                    repoAct = (Activity)activitiesRepository.Where(x => x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                {
+                    repoAct = (Activity)activitiesRepository.FirstOrDefault(x => x.Guid == actIdent.ActivityGuid);
+                }
+
                 if (repoAct == null)
-                    repoAct = (Activity)activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName).FirstOrDefault();
+                {
+                    repoAct = (Activity)activitiesRepository.FirstOrDefault(x => x.ActivityName == actIdent.ActivityName);
+                }
+
                 if (repoAct != null)
                 {
                     actIdent.IdentifiedActivity = repoAct;
                     if (mEditMode == eEditMode.SharedRepository)
+                    {
                         actIdent.ExistInRepository = true;
+                    }
                     else
+                    {
                         actIdent.ExistInRepository = false;
+                    }
                 }
                 else
+                {
                     actIdent.ExistInRepository = false;
+                }
             }
         }
 

@@ -173,7 +173,10 @@ namespace Ginger.GingerGridLib
         private void BuildUIGrid()
         {
             int total = mGingerGrid.NodeList.Count;
-            if (total == 0) return;
+            if (total == 0)
+            {
+                return;
+            }
             //TODO: verify the display UI per below algorithm, if good use it also in RunSet
 
             //First we decide how many rows columns
@@ -286,8 +289,8 @@ namespace Ginger.GingerGridLib
                 {
                     // using repeated function calls below instead of usual iteration
                     //because list changes every time delete is called
-                    WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>()[0]);
-                } while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>().Count != 0);
+                    WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<RemoteServiceGrid>());
+                } while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>().Any());
                 WorkSpace.Instance.CurrentSelectedItem = null;
             }
         }
@@ -317,7 +320,7 @@ namespace Ginger.GingerGridLib
             RemoteServiceGrid remoteServiceGrid = new RemoteServiceGrid() { Name = "Remote Grid " + remoteGridCount, Host = SocketHelper.GetLocalHostIP(), HostPort = 15555, Active = true };
             StartTrackingRemoteServiceGrid(remoteServiceGrid);
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(remoteServiceGrid);
-            xRemoteServiceGrid.Grid.SelectedIndex = xRemoteServiceGrid.Grid.Items.Count-1;
+            xRemoteServiceGrid.Grid.SelectedIndex = xRemoteServiceGrid.Grid.Items.Count - 1;
         }
 
         private void SetRemoteGridView()

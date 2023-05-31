@@ -130,12 +130,12 @@ namespace Ginger.Plugin.Platform.Web.Execution
         //string ElementLocateBy = string.Empty;
         //string LocateByValue = string.Empty;
 
-            // Move from here !!!!!
+        // Move from here !!!!!
 
-         eElementAction ElementAction;
-        
+        eElementAction ElementAction;
+
         //#endregion
-  
+
 
         string Value
         {
@@ -153,7 +153,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
         internal List<NodeActionOutputValue> AOVs = new List<NodeActionOutputValue>();
 
         // Remove !!!!!!!!!!!
-        public string ExecutionInfo { get ; set; }
+        public string ExecutionInfo { get; set; }
 
         // Remove !!!!!!!!!!!
         public string Error { get; set; }
@@ -175,16 +175,16 @@ namespace Ginger.Plugin.Platform.Web.Execution
         NodePlatformAction mPlatformAction;
 
         public void ExecuteAction(ref NodePlatformAction platformAction)
-        {         
+        {
             try
             {
                 mPlatformAction = platformAction;
 
                 InputParams = platformAction.InputParams;
-           
+
                 // convert the JArray to list of locators
-                JObject Locators =(JObject) InputParams["Locators"];
-            
+                JObject Locators = (JObject)InputParams["Locators"];
+
                 eElementType ElementType = (eElementType)Enum.Parse(typeof(eElementType), (string)InputParams["ElementType"]);
                 IGingerWebElement uiElement = null;
                 JArray Frames = null;
@@ -192,7 +192,8 @@ namespace Ginger.Plugin.Platform.Web.Execution
                 {
                     Frames = (JArray)InputParams["Frames"];
 
-                    if (Frames != null && Frames.Children().Count() > 0) {
+                    if (Frames != null && Frames.Children().Any())
+                    {
 
                         mPlatformService.BrowserActions.SwitchToDefaultContent();
                         foreach (JToken jf in Frames.Children())
@@ -203,10 +204,10 @@ namespace Ginger.Plugin.Platform.Web.Execution
                         }
                     }
                 }
-             
+
                 foreach (JProperty locator in Locators.Children())
                 {
-                    uiElement = WebPlatformActionHandler.LocateElement(ref ElementType, locator.Name, locator.Value.ToString(),mPlatformService);
+                    uiElement = WebPlatformActionHandler.LocateElement(ref ElementType, locator.Name, locator.Value.ToString(), mPlatformService);
                     if (uiElement != null)
                     {
                         platformAction.exInfo += "UI Element Located using: " + locator.Name + "=" + locator.Value;
@@ -216,14 +217,14 @@ namespace Ginger.Plugin.Platform.Web.Execution
                 if (uiElement == null)
                 {
                     platformAction.error += "Element not found";
-            
+
                     return;
                 }
 
                 ElementAction = (eElementAction)Enum.Parse(typeof(eElementAction), (string)platformAction.InputParams["ElementAction"]);
 
 
-          
+
 
                 RunActionOnUIElement(uiElement, ElementType);
 
@@ -243,7 +244,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
         private void RunActionOnUIElement(IGingerWebElement uiElement, eElementType ElementType)
         {
-        // Try if it is common action first
+            // Try if it is common action first
             bool ActionPerformed = PerformCommonActions(uiElement);
 
             if (!ActionPerformed)
@@ -251,7 +252,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                 switch (ElementType)
                 {
                     case eElementType.Button:
-                        ButtonActions((IButton)uiElement);                            
+                        ButtonActions((IButton)uiElement);
                         break;
                     case eElementType.Canvas:
                         CanvasAction(uiElement);
@@ -296,7 +297,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
         }
 
 
-   
+
 
         private void HyperLinkActions(IGingerWebElement element, eElementAction mElementAction)
         {
@@ -304,7 +305,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
             {
                 if (element is IClick ClickElement)
                 {
-                    ClickActions(ClickElement,ElementAction);
+                    ClickActions(ClickElement, ElementAction);
                 }
                 else
                 {
@@ -312,7 +313,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     {
                         case eElementAction.GetValue:
                             AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = Hyperlink.GetValue() });
-                            break;                       
+                            break;
                     }
                 }
             }
@@ -320,10 +321,10 @@ namespace Ginger.Plugin.Platform.Web.Execution
         IGingerWebElement GetValidationElement()
         {
             string ValidationElementLocateBy = (string)InputParams["ValidationElementLocateBy"];
-            string ValidationElementLocatorValue = (string)InputParams["ValidationElementLocatorValue"]; 
+            string ValidationElementLocatorValue = (string)InputParams["ValidationElementLocatorValue"];
             string mValidationElement = (string)InputParams["ValidationElement"];
             eElementType validationElementType = (eElementType)Enum.Parse(typeof(eElementType), mValidationElement);
-            IGingerWebElement ValidationElement = WebPlatformActionHandler.LocateElement(ref validationElementType, ValidationElementLocateBy, ValidationElementLocatorValue,mPlatformService);
+            IGingerWebElement ValidationElement = WebPlatformActionHandler.LocateElement(ref validationElementType, ValidationElementLocateBy, ValidationElementLocatorValue, mPlatformService);
             return ValidationElement;
         }
 
@@ -350,7 +351,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
         }
 
         private void TextBoxActions(ITextBox TextBox)
-        {            
+        {
             switch (ElementAction)
             {
                 case eElementAction.SetValue:
@@ -360,7 +361,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = TextBox.GetValue() });
                     break;
                 case eElementAction.GetTextLength:
-                    AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = TextBox.GetTextLength() });                    
+                    AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = TextBox.GetTextLength() });
                     break;
                 case eElementAction.SendKeys:
                     TextBox.SendKeys(Value);
@@ -387,7 +388,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
         }
 
-            private void SpanActions(IGingerWebElement element)
+        private void SpanActions(IGingerWebElement element)
         {
             throw new NotImplementedException();
         }
@@ -456,15 +457,15 @@ namespace Ginger.Plugin.Platform.Web.Execution
                 {
 
                     case eElementAction.GetFont:
-                       
 
-                        AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = Label.GetFont()    });
+
+                        AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = Label.GetFont() });
 
                         break;
                     case eElementAction.GetText:
 
                         AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = Label.GetText() });
-                
+
                         break;
 
                     case eElementAction.GetValue:
@@ -515,7 +516,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     case eElementAction.SetValue:
                         Element.SelectByText(Value);
 
-                        
+
                         break;
 
                 }
@@ -548,7 +549,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
         {
             if (element is ICanvas E)
             {
-              
+
                 switch (ElementAction)
                 {
                     case eElementAction.DrawObject:
@@ -559,22 +560,22 @@ namespace Ginger.Plugin.Platform.Web.Execution
                 }
 
 
-                
+
             }
         }
 
         private void ButtonActions(IButton element)
-        {                            
+        {
             switch (ElementAction)
             {
                 case eElementAction.Click:
-                    element.Click();                    
+                    element.Click();
                     break;
                 case eElementAction.Submit: // !!!!!!!!!!! remove from here need special handling ??!!
                     element.Submit();
                     break;
                 case eElementAction.GetValue:
-                
+
                     AOVs.Add(new NodeActionOutputValue() { Param = "Actual", Value = element.GetValue() });
                     break;
 
@@ -582,7 +583,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     ClickActions(element, eElementAction.ClickAndValidate);
                     break;
             }
-            
+
         }
 
         private void ClickActions(IClick Element, eElementAction ClickElementAction)
@@ -605,7 +606,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     Element.DoubleClick();
                     break;
                 case eElementAction.ClickAndValidate:
-                 
+
                     string ValidationType = (string)InputParams["ValidationType"];
                     string mClickType = (string)InputParams["ClickType"];
                     eElementAction ClickType = (eElementAction)Enum.Parse(typeof(eElementAction), mClickType);
@@ -616,8 +617,8 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
                     if ("IsVisible".Equals(ValidationType))
                     {
-                     
-                        if(ValidationElement.IsVisible())
+
+                        if (ValidationElement.IsVisible())
                         {
                             ExecutionInfo = "Validation element is Visible";
                         }
@@ -658,7 +659,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
         private bool PerformCommonActions(IGingerWebElement Element)
         {
             bool performed = true;
-            
+
             switch (ElementAction)
             {
                 case eElementAction.DragDrop:
@@ -679,17 +680,17 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     break;
 
                 case eElementAction.GetItemCount:
-         
-                    throw new  NotImplementedException("Get Item count is not implementd");
-             
+
+                    throw new NotImplementedException("Get Item count is not implementd");
+
                 case eElementAction.GetSize:
-                   Size s= Element.GetSize();
-                    AOVs.Add(new NodeActionOutputValue() { Param = "Height", Value = s.Height});
+                    Size s = Element.GetSize();
+                    AOVs.Add(new NodeActionOutputValue() { Param = "Height", Value = s.Height });
                     AOVs.Add(new NodeActionOutputValue() { Param = "Width", Value = s.Width });
 
                     break;
                 case eElementAction.GetStyle:
-              
+
                     AOVs.Add(new NodeActionOutputValue() { Param = "Style", Value = Element.GetStyle() });
                     break;
                 case eElementAction.GetWidth:

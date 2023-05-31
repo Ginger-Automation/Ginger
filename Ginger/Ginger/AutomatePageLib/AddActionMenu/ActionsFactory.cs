@@ -24,13 +24,11 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.ApiModelsFolder;
-using Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
 using GingerCore.Activities;
-using GingerCore.Drivers.Common;
 using GingerCore.Environments;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -238,7 +236,7 @@ namespace Ginger.BusinessFlowPages
 
                     //Check if target already exist else add it
                     // TODO: search only in targetplugin type
-                    TargetPlugin targetPlugin = (TargetPlugin)(from x in mContext.BusinessFlow.TargetApplications where x.Name == p.ServiceId select x).SingleOrDefault();
+                    TargetPlugin targetPlugin = (TargetPlugin)mContext.BusinessFlow.TargetApplications.FirstOrDefault(x=>  x.Name == p.ServiceId);
                     if (targetPlugin == null)
                     {
                         // check if interface add it
@@ -271,7 +269,7 @@ namespace Ginger.BusinessFlowPages
             string elementVal = string.Empty;
             if (elementInfo.OptionalValuesObjectsList.Count > 0)
             {
-                elementVal = Convert.ToString(elementInfo.OptionalValuesObjectsList.Where(v => v.IsDefault).FirstOrDefault().Value);
+                elementVal = Convert.ToString(elementInfo.OptionalValuesObjectsList.FirstOrDefault(v => v.IsDefault).Value);
             }
 
             ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
@@ -301,7 +299,7 @@ namespace Ginger.BusinessFlowPages
             bool copyAsLink = true;
             if (!string.IsNullOrWhiteSpace(ActivitiesGroupID))
             {
-                parentGroup = businessFlow.ActivitiesGroups.Where(g => g.Name == ActivitiesGroupID).FirstOrDefault();
+                parentGroup = businessFlow.ActivitiesGroups.FirstOrDefault(g => g.Name == ActivitiesGroupID);
             }
 
             var activitiesGroupSelectionPage = new ActivitiesGroupSelectionPage(businessFlow, parentGroup, IsPomActivity);
@@ -335,7 +333,7 @@ namespace Ginger.BusinessFlowPages
                     //map activities target application to BF if missing in BF
                     userSelection = businessFlow.MapTAToBF(userSelection, activityIns, WorkSpace.Instance.Solution.ApplicationPlatforms);
                     businessFlow.SetActivityTargetApplication(activityIns);
-                    if(insertIndex >= 0)
+                    if (insertIndex >= 0)
                     {
                         businessFlow.ActivitiesGroups.Move(businessFlow.ActivitiesGroups.IndexOf(parentGroup), insertIndex);
                     }

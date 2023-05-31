@@ -31,8 +31,6 @@ using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Drivers;
-using GingerCore.Drivers.Appium;
-using GingerCore.Drivers.Mobile.Perfecto;
 using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
@@ -151,10 +149,10 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
             switch (zAgent.DriverType)
             {
-                case Agent.eDriverType.SeleniumFireFox:                
-                case Agent.eDriverType.SeleniumChrome:                    
-                case Agent.eDriverType.SeleniumIE:                   
-                case Agent.eDriverType.SeleniumRemoteWebDriver:                    
+                case Agent.eDriverType.SeleniumFireFox:
+                case Agent.eDriverType.SeleniumChrome:
+                case Agent.eDriverType.SeleniumIE:
+                case Agent.eDriverType.SeleniumRemoteWebDriver:
                 case Agent.eDriverType.SeleniumEdge:
                     return (typeof(SeleniumDriver));
 
@@ -194,7 +192,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                     {
                         throw new Exception("Matching Driver was not found.");
                     }
-            }        
+            }
         }
 
         public bool GetLatest(string path, SourceControlBase SourceControl)
@@ -221,7 +219,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
             reportsResultFolder = ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
                                                                                                                     false,
-                                                                                                                    HTMLReportConfigurations.Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault(),
+                                                                                                                    HTMLReportConfigurations.FirstOrDefault(x => (x.ID == rReport.SelectedHTMLReportTemplateID)),
                                                                                                                     extraInformationCalculated + System.IO.Path.DirectorySeparatorChar + System.IO.Path.GetFileName(runSetFolder), false, currentConf.HTMLReportConfigurationMaximalFolderSize);
 
         }
@@ -241,7 +239,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             // NA for GingerConsole
         }
 
-        public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
+        public void ShowRecoveryItemPage()
         {
             throw new NotImplementedException();
         }
@@ -268,7 +266,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
         public string GetALMConfig()
         {
-            return WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType.ToString();
+            return WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm).AlmType.ToString();
         }
 
         public IWebserviceDriverWindow GetWebserviceDriverWindow(BusinessFlow businessFlow)

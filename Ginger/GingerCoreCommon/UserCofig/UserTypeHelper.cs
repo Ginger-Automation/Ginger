@@ -16,10 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using GingerCore;
 using System;
 using System.Xml;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.UserConfig
 {
@@ -54,7 +53,7 @@ namespace Ginger.UserConfig
             else
             {
                 IsSupportAutomate = true;
-                IsSupportExecution = 
+                IsSupportExecution =
                 IsSupportReports = true;
                 IsSupportSourceControl = true;
                 IsSupportALM = true;

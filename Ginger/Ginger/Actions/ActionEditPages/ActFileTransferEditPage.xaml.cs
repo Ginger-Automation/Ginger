@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -28,40 +27,40 @@ namespace Ginger.Actions
     /// <summary>
     /// Interaction logic for XLSReadDataToVariablesPage.xaml
     /// </summary>
-    public partial class ActFileTransferEditPage:Page
+    public partial class ActFileTransferEditPage : Page
     {
-         ActFileTransfer mAct{get;set;}
-        
-         public ActFileTransferEditPage(Act act)
+        ActFileTransfer mAct { get; set; }
+
+        public ActFileTransferEditPage(Act act)
         {
             InitializeComponent();
 
             this.mAct = (ActFileTransfer)act;
-            
-            GingerCore.General.FillComboFromEnumObj(FileTransferActionComboBox, mAct.FileTransferAction);            
+
+            GingerCore.General.FillComboFromEnumObj(FileTransferActionComboBox, mAct.FileTransferAction);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FileTransferActionComboBox, ComboBox.TextProperty, mAct, "FileTransferAction");
-            
-             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PCPath, TextBox.TextProperty, mAct, ActFileTransfer.Fields.PCPath);
-             PCPath.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.PCPath),nameof( ActInputValue.Value));
-            
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PCPath, TextBox.TextProperty, mAct, ActFileTransfer.Fields.PCPath);
+            PCPath.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.PCPath), nameof(ActInputValue.Value));
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UnixPath, TextBox.TextProperty, mAct, ActFileTransfer.Fields.UnixPath);
-            UnixPath.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.UnixPath), nameof (ActInputValue.Value));
+            UnixPath.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.UnixPath), nameof(ActInputValue.Value));
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UserName, TextBox.TextProperty, mAct, ActFileTransfer.Fields.UserName);
             UserName.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.UserName), nameof(ActInputValue.Value));
-            
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(Password, TextBox.TextProperty, mAct, ActFileTransfer.Fields.Password);
-            Password.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.Password),nameof( ActInputValue.Value));
-            
+            Password.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.Password), nameof(ActInputValue.Value));
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PrivateKey, TextBox.TextProperty, mAct, ActFileTransfer.Fields.PrivateKey);
-            PrivateKey.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.PrivateKey), nameof (ActInputValue.Value));
-            
+            PrivateKey.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.PrivateKey), nameof(ActInputValue.Value));
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(KeyPassPhrase, TextBox.TextProperty, mAct, ActFileTransfer.Fields.PrivateKeyPassPhrase);
             KeyPassPhrase.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.PrivateKeyPassPhrase), nameof(ActInputValue.Value));
-            
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(Port, TextBox.TextProperty, mAct, ActFileTransfer.Fields.Port);
             Port.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.Port), nameof(ActInputValue.Value));
-            
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(Host, TextBox.TextProperty, mAct, ActFileTransfer.Fields.Host);
             Host.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.Host), nameof(ActInputValue.Value));
 
@@ -82,7 +81,7 @@ namespace Ginger.Actions
 
         private void FileTransferActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(FileTransferActionComboBox.SelectedValue.ToString().Equals("GetFile"))
+            if (FileTransferActionComboBox.SelectedValue.ToString().Equals("GetFile"))
             {
                 pcPath.Content = "PC Target directory path";
                 unixPath.Content = "Unix Source file path";

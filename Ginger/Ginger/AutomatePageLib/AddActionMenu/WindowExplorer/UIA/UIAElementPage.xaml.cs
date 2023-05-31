@@ -17,18 +17,17 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
+using Amdocs.Ginger.Common;
+using Ginger.Drivers.WindowsAutomation;
+using GingerCore.Actions;
+using GingerCore.Actions.UIAutomation;
+using GingerCore.Drivers.Common;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
-using Amdocs.Ginger.Common;
-using Ginger.Drivers.WindowsAutomation;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Actions.UIAutomation;
-using GingerCore.Drivers.Common;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace Ginger.Drivers.UIA
 {
@@ -42,13 +41,13 @@ namespace Ginger.Drivers.UIA
 
         public UIAElementPage(UIAElementInfo EI)
         {
-            InitializeComponent();  
+            InitializeComponent();
             mUIAElementInfo = EI;
             ShowInfo();
         }
 
         private void ShowInfo()
-        {            
+        {
             ShowAESupportedPatterns();
         }
 
@@ -74,28 +73,31 @@ namespace Ginger.Drivers.UIA
         {
             int selCount = SupportedPatternsGrid.SelectedItems.Count;
             if (selCount == 0)
-            {                
+            {
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "No Pattern selected for testing");
                 return;
             }
 
             // Call the selected pattern
             object AP = ((ControlAutomationPatterm)SupportedPatternsGrid.SelectedItem).Pattern;
-            ((UIAutomationDriverBase) mUIAElementInfo.WindowExplorer).mUIAutomationHelper.TestPattern(
+            ((UIAutomationDriverBase)mUIAElementInfo.WindowExplorer).mUIAutomationHelper.TestPattern(
                 mUIAElementInfo.ElementObject, AP);
         }
 
         private const UInt32 MOUSEEVENTF_LEFTDOWN = 0x0002;
-            private const UInt32 MOUSEEVENTF_LEFTUP = 0x0004;
+        private const UInt32 MOUSEEVENTF_LEFTUP = 0x0004;
 
         [DllImport("user32.dll")]
         private static extern void mouse_event(UInt32 dwFlags, UInt32 dx, UInt32 dy, UInt32 dwData, IntPtr dwExtraInfo);
-        
+
         private void MouseClickElement(UIAuto.AutomationElement AE)
         {
             System.Drawing.Point clickpoint;
             bool b = AE.TryGetClickablePoint(out clickpoint);
-            if (!b) return;
+            if (!b)
+            {
+                return;
+            }
 
             System.Windows.Forms.Cursor.Position = new System.Drawing.Point((int)clickpoint.X, (int)clickpoint.Y);
 

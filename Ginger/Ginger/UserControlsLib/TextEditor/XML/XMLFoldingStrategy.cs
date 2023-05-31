@@ -21,15 +21,15 @@ using ICSharpCode.AvalonEdit.Folding;
 
 namespace Ginger.UserControlsLib.TextEditor.XML
 {
-	/// <summary>
-	/// Allows producing foldings from a document based on Gherkin -> Scenario.
-	/// </summary>
-	public class XMLFoldingStrategy : IFoldingStrategy
+    /// <summary>
+    /// Allows producing foldings from a document based on Gherkin -> Scenario.
+    /// </summary>
+    public class XMLFoldingStrategy : IFoldingStrategy
     {
         XmlFoldingStrategy foldingStrategy = new XmlFoldingStrategy();
 
         public void UpdateFolding(FoldingManager manager, TextDocument document)
-        {                        
+        {
             foldingStrategy.UpdateFoldings(manager, document);
         }
     }

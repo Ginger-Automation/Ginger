@@ -16,11 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Threading;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.Threading;
 
 namespace GingerCore.Drivers.ScriptDriverLib
 {
@@ -30,20 +30,20 @@ namespace GingerCore.Drivers.ScriptDriverLib
         {
             DataBuffer = "";
             ErrorBuffer = "";
-  
+
             System.Diagnostics.Process p = new System.Diagnostics.Process();
             p.StartInfo.CreateNoWindow = true;
             p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = true;
             p.StartInfo.RedirectStandardError = true;
-            p.StartInfo.FileName = @"cscript"; 
+            p.StartInfo.FileName = @"cscript";
             p.OutputDataReceived += (proc, outLine) => { AddData(outLine.Data); };
             p.ErrorDataReceived += (proc, outLine) => { AddError(outLine.Data); };
             p.Exited += Process_Exited;
             p.StartInfo.WorkingDirectory = mActVBS.ScriptPath;
             try
             {
-                p.StartInfo.Arguments =  mActVBS.ScriptName+" " + vbscmd;;
+                p.StartInfo.Arguments = mActVBS.ScriptName + " " + vbscmd; ;
             }
             catch (Exception e)
             {
@@ -63,18 +63,23 @@ namespace GingerCore.Drivers.ScriptDriverLib
 
         public override string GetCommandText(ActScript act)
         {
-            string cmd="";
+            string cmd = "";
             switch (act.ScriptCommand)
             {
                 case ActScript.eScriptAct.FreeCommand:
                     return act.GetInputParamCalculatedValue("p1");
-              
+
                 case ActScript.eScriptAct.Script:
                     {
                         foreach (var p in act.InputValues)
+                        {
                             if (!string.IsNullOrEmpty(p.Value))
+                            {
                                 cmd += " " + p.ValueForDriver;
-                     return cmd; 
+                            }
+                        }
+
+                        return cmd;
                     }
                 default:
                     Reporter.ToUser(eUserMsgKey.UnknownConsoleCommand, act.ScriptCommand);
@@ -83,7 +88,7 @@ namespace GingerCore.Drivers.ScriptDriverLib
         }
 
         public override ePlatformType Platform { get { return ePlatformType.VBScript; } }
-        
+
         public override bool IsRunning()
         {
             return true;

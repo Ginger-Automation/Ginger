@@ -70,21 +70,21 @@ namespace Ginger.BusinessFlowPages
             {
                 if (mWizard.ActivityToAdd == null || (mWizard.ActivityToAdd is ErrorHandler) || (mWizard.ActivityToAdd is CleanUpActivity))
                 {
-                    mWizard.ActivityToAdd = new Activity() { ActivityName = "New " + GingerDicser.GetTermResValue(eTermResKey.Activity), TargetApplication=SetTargetApp(), Active = true };
-                }                
+                    mWizard.ActivityToAdd = new Activity() { ActivityName = "New " + GingerDicser.GetTermResValue(eTermResKey.Activity), TargetApplication = SetTargetApp(), Active = true };
+                }
             }
             else if (xErrorHandlerType.IsChecked == true)
             {
-                if (mWizard.ActivityToAdd == null || (mWizard.ActivityToAdd is ErrorHandler)==false)
+                if (mWizard.ActivityToAdd == null || (mWizard.ActivityToAdd is ErrorHandler) == false)
                 {
-                    mWizard.ActivityToAdd = new ErrorHandler() { ActivityName = "New Error Handler" , TargetApplication = SetTargetApp(), Active = true };
+                    mWizard.ActivityToAdd = new ErrorHandler() { ActivityName = "New Error Handler", TargetApplication = SetTargetApp(), Active = true };
                 }
             }
             else if (xCleanActivityType.IsChecked == true)
             {
-                if (mWizard.ActivityToAdd == null || (mWizard.ActivityToAdd is CleanUpActivity)==false)
+                if (mWizard.ActivityToAdd == null || (mWizard.ActivityToAdd is CleanUpActivity) == false)
                 {
-                    mWizard.ActivityToAdd = new CleanUpActivity() { ActivityName = "New Clean Up "+ GingerDicser.GetTermResValue(eTermResKey.Activity), TargetApplication = SetTargetApp(), Active=true};
+                    mWizard.ActivityToAdd = new CleanUpActivity() { ActivityName = "New Clean Up " + GingerDicser.GetTermResValue(eTermResKey.Activity), TargetApplication = SetTargetApp(), Active = true };
                 }
             }
         }
@@ -92,11 +92,11 @@ namespace Ginger.BusinessFlowPages
         private void XAddGroupBtn_Click(object sender, RoutedEventArgs e)
         {
             string groupName = string.Empty;
-            if (InputBoxWindow.GetInputWithValidation(GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup,"New"), GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "New", "Name:"), ref groupName))
+            if (InputBoxWindow.GetInputWithValidation(GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "New"), GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "New", "Name:"), ref groupName))
             {
                 if (!string.IsNullOrEmpty(groupName))
                 {
-                    if (mWizard.Context.BusinessFlow.ActivitiesGroups.Where(x => x.Name.Trim() == groupName.Trim()).FirstOrDefault() == null)
+                    if (mWizard.Context.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name.Trim() == groupName.Trim()) == null)
                     {
                         ActivitiesGroup activitiesGroup = new ActivitiesGroup() { Name = groupName.Trim() };
                         mWizard.Context.BusinessFlow.AddActivitiesGroup(activitiesGroup);
@@ -114,7 +114,7 @@ namespace Ginger.BusinessFlowPages
         {
             if (mWizard.ParentActivitiesGroup.ActivitiesIdentifiers.Count > 0)
             {
-                ActivityIdentifiers activityIdnt = mWizard.ParentActivitiesGroup.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity != null && string.IsNullOrEmpty(x.IdentifiedActivity.TargetApplication) == false).FirstOrDefault();
+                ActivityIdentifiers activityIdnt = mWizard.ParentActivitiesGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.IdentifiedActivity != null && string.IsNullOrEmpty(x.IdentifiedActivity.TargetApplication) == false);
                 if (activityIdnt != null)
                 {
                     return activityIdnt.IdentifiedActivity.TargetApplication;

@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using GingerCore;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common;
 namespace Ginger.Actions
 {
     /// <summary>
@@ -35,9 +35,20 @@ namespace Ginger.Actions
         private string initialDirectory;
         eBrowserType mBrowserType;
 
-                
-        public static DependencyProperty ContextProperty =DependencyProperty.Register("Context", typeof(Context), typeof(UCValueExpression), new PropertyMetadata(ContextChanged));
-  
+        public eBrowserType BrowserType
+        {
+            get
+            {
+                return mBrowserType;
+            }
+            set
+            {
+                mBrowserType = value;
+            }
+        }
+
+        public static DependencyProperty ContextProperty = DependencyProperty.Register("Context", typeof(Context), typeof(UCValueExpression), new PropertyMetadata(ContextChanged));
+
 
         public Context mContext
         {
@@ -77,7 +88,7 @@ namespace Ginger.Actions
             this.obj = obj;
             this.AttrName = AttrName;
             mContext = context;
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);       
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
         }
 
         public void Init(Context context, object obj, string AttrName, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler = null)
@@ -96,7 +107,9 @@ namespace Ginger.Actions
 
                 BrowseButton.AddHandler(Button.ClickEvent, new RoutedEventHandler(BrowseButton_Click));
                 if (extraBrowserSelectionHandler != null)
+                {
                     BrowseButton.Click += extraBrowserSelectionHandler;
+                }
             }
 
             if (!isVENeeded)
@@ -115,7 +128,7 @@ namespace Ginger.Actions
         /// <param name="browserType">Can be eBrowserType.File or eBrowserType.Folder</param>
         /// <param name="fileType">Type of the files for filter the Browser Dialog</param>
         /// <param name="extraBrowserSelectionHandler">To be used whenever extra functionality is needed after clicking OK or cancel at the Dialog window</param>
-        public void Init(Context context, ActInputValue AIV, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler= null, string initialDirectory=null)
+        public void Init(Context context, ActInputValue AIV, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler = null, string initialDirectory = null)
         {
             // If the VE is on stand alone form:
             this.obj = AIV;
@@ -134,7 +147,9 @@ namespace Ginger.Actions
                 BrowseButton.AddHandler(Button.ClickEvent, new RoutedEventHandler(BrowseButton_Click));
 
                 if (extraBrowserSelectionHandler != null)
+                {
                     BrowseButton.Click += extraBrowserSelectionHandler;
+                }
             }
             if (!isVENeeded)
             {
@@ -154,7 +169,7 @@ namespace Ginger.Actions
             switch (mBrowserType)
             {
                 case eBrowserType.File:
-                    String filePath = string.Empty;
+                    string filePath = string.Empty;
                     string upperFileType = fileType.ToUpper();
                     if (string.IsNullOrEmpty(initialDirectory) == false)
                     {

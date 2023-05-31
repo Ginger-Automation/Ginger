@@ -36,9 +36,9 @@ namespace GingerHelper
 
         public void Init()
         {
-            IgnoreExtensionsTextBox.Text= ".docx,.doc,.mp4,.db";
+            IgnoreExtensionsTextBox.Text = ".docx,.doc,.mp4,.db";
             SourceTextBox.Text = @"\\ilrnaGinger01\Share\Ginger Support\Help\Library Under Work";
-            DestinationTextBox.Text= @"\\ilrnaGinger01\Share\Ginger Support\Help\Library";
+            DestinationTextBox.Text = @"\\ilrnaGinger01\Share\Ginger Support\Help\Library";
         }
 
         private void SourcBrowsbtn_Click(object sender, RoutedEventArgs e)
@@ -47,10 +47,15 @@ namespace GingerHelper
             dlg.Description = "Select Source Folder";
             dlg.RootFolder = Environment.SpecialFolder.MyComputer;
             if (SourceTextBox.Text != string.Empty)
+            {
                 dlg.SelectedPath = SourceTextBox.Text;
+            }
             else
+            {
                 dlg.SelectedPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            dlg.ShowNewFolderButton = true;           
+            }
+
+            dlg.ShowNewFolderButton = true;
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 SourceTextBox.Text = dlg.SelectedPath;
@@ -63,9 +68,14 @@ namespace GingerHelper
             dlg.Description = "Select Destination Folder";
             dlg.RootFolder = Environment.SpecialFolder.MyComputer;
             if (DestinationTextBox.Text != string.Empty)
+            {
                 dlg.SelectedPath = DestinationTextBox.Text;
+            }
             else
+            {
                 dlg.SelectedPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            }
+
             dlg.ShowNewFolderButton = true;
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -77,12 +87,16 @@ namespace GingerHelper
         {
             Runbtn.Content = "Working...";
             string error = string.Empty;
-            List<string> extenationsToIgnore = IgnoreExtensionsTextBox.Text.Split(new char[] { ',' },StringSplitOptions.RemoveEmptyEntries).ToList<string>();
+            List<string> extenationsToIgnore = IgnoreExtensionsTextBox.Text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList<string>();
 
-            if (GingerHelperHandler.CreateLibrary(SourceTextBox.Text, DestinationTextBox.Text, extenationsToIgnore, DeleteExitingTargetCheckbox.IsChecked, ref error))                            
-                MessageBox.Show("Library creation ended successfully!");            
+            if (GingerHelperHandler.CreateLibrary(SourceTextBox.Text, DestinationTextBox.Text, extenationsToIgnore, DeleteExitingTargetCheckbox.IsChecked, ref error))
+            {
+                MessageBox.Show("Library creation ended successfully!");
+            }
             else
+            {
                 MessageBox.Show("Library creation ended with error." + System.Environment.NewLine + System.Environment.NewLine + "Details: " + error);
+            }
 
             Runbtn.Content = "Run";
         }

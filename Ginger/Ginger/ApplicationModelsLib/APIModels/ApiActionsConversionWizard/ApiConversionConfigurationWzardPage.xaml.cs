@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using GingerWPF.WizardLib;
 using System.Windows.Controls;
 
@@ -57,7 +56,7 @@ namespace Ginger.Actions.ApiActionsConversion
                     break;
             }
         }
-        
+
         /// <summary>
         /// This method is used to init the configuration settings page
         /// </summary>
@@ -66,6 +65,6 @@ namespace Ginger.Actions.ApiActionsConversion
         {
             ((WizardWindow)((WizardBase)mConversionProcess).mWizardWindow).ShowFinishButton(false);
             DataContext = mConversionProcess;
-        }        
+        }
     }
 }

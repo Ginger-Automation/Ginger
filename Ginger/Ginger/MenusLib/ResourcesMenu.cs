@@ -26,7 +26,6 @@ using Ginger.PlugInsWindows;
 using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.TwoLevelMenuLib;
-using Ginger.Variables;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -55,7 +54,7 @@ namespace Ginger.MenusLib
                 if (mMenusPage == null)
                 {
                     mMenusPage = new TwoLevelMenuPage(GetMenu());
-                     WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+                    WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
                 }
                 return mMenusPage;
             }
@@ -80,23 +79,23 @@ namespace Ginger.MenusLib
             SharedRepositoryMenu.Add(eImageType.Variable, GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.Variables), SharedVariables, ConsoleKey.S, GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.Variables, "Shared "), "SR Variables AID");
             twoLevelMenu.Add(SharedRepositoryMenu);
 
-            TopMenuItem ApplicationModelsMenu = new TopMenuItem(eImageType.ApplicationModel, "Applications Models", ConsoleKey.A, "Application Models AID", "Applications Layers Templates" );
+            TopMenuItem ApplicationModelsMenu = new TopMenuItem(eImageType.ApplicationModel, "Applications Models", ConsoleKey.A, "Application Models AID", "Applications Layers Templates");
             ApplicationModelsMenu.Add(eImageType.APIModel, "API Models", APIModels, ConsoleKey.A, "API Templates Repository", "API Models AID");
-            ApplicationModelsMenu.Add(eImageType.ApplicationPOMModel, "Page Objects Models", POMModels, ConsoleKey.P, "Page UI Elements Repository", "POM Menu AID");         
+            ApplicationModelsMenu.Add(eImageType.ApplicationPOMModel, "Page Objects Models", POMModels, ConsoleKey.P, "Page UI Elements Repository", "POM Menu AID");
             ApplicationModelsMenu.Add(eImageType.Parameter, "Models Global Parameters", ModelsGlobalParameters, ConsoleKey.P, "Add or Edit Models Global Parameters", "Global Params AID");
             twoLevelMenu.Add(ApplicationModelsMenu);
 
             TopMenuItem environemntsMenu = new TopMenuItem(eImageType.Environment, "Environments", ConsoleKey.E, "Environemnts_AID", "Environments are been used for storing environment level parameters and DB/Unix connections details");
-            environemntsMenu.Add(eImageType.Environment, "Environments", GetEnvsPage, ConsoleKey.E, "Environments are been used for storing environment level parameters and DB / Unix connections details", "Envs List");            
+            environemntsMenu.Add(eImageType.Environment, "Environments", GetEnvsPage, ConsoleKey.E, "Environments are been used for storing environment level parameters and DB / Unix connections details", "Envs List");
             twoLevelMenu.Add(environemntsMenu);
 
-            TopMenuItem GlobalVariabelsMenu = new TopMenuItem(eImageType.Variable, GingerDicser.GetTermResValue(eTermResKey.Variables,"Global "), ConsoleKey.G, "Global Variables AID", GingerDicser.GetTermResValue(eTermResKey.Variables, suffixString:" which can be used cross " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)));
+            TopMenuItem GlobalVariabelsMenu = new TopMenuItem(eImageType.Variable, GingerDicser.GetTermResValue(eTermResKey.Variables, "Global "), ConsoleKey.G, "Global Variables AID", GingerDicser.GetTermResValue(eTermResKey.Variables, suffixString: " which can be used cross " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)));
             GlobalVariabelsMenu.Add(eImageType.Variable, "", GetGlobalVariabelsPage, ConsoleKey.G, "", "Global Variable AID");
             twoLevelMenu.Add(GlobalVariabelsMenu);
 
             TopMenuItem DataSourceMenu = new TopMenuItem(eImageType.DataSource, "Data Sources", ConsoleKey.D, "Data Sources AID", "Add and Edit Data Sources");
-                DataSourceMenu.Add(eImageType.DataSource, "", DataSources, ConsoleKey.D, "", "DS AID");
-                twoLevelMenu.Add(DataSourceMenu);
+            DataSourceMenu.Add(eImageType.DataSource, "", DataSources, ConsoleKey.D, "", "DS AID");
+            twoLevelMenu.Add(DataSourceMenu);
 
             TopMenuItem DocumentsMenu = new TopMenuItem(eImageType.File, "Documents", ConsoleKey.D, "Documents AID", "Solution documents like: text, excel, js scripts and any type of file");
             DocumentsMenu.Add(eImageType.File, "", Documents, ConsoleKey.D, "", "Documents AID");
@@ -161,7 +160,7 @@ namespace Ginger.MenusLib
             documentsFolderRoot.IsGingerDefualtFolder = true;
             documentsFolderRoot.Path = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Documents");
             documentsFolderRoot.Folder = "Documents";
-            SingleItemTreeViewExplorerPage dataSourcesRootPage = new SingleItemTreeViewExplorerPage("Documents", eImageType.File, documentsFolderRoot, saveAllHandler:null, addHandler:null);
+            SingleItemTreeViewExplorerPage dataSourcesRootPage = new SingleItemTreeViewExplorerPage("Documents", eImageType.File, documentsFolderRoot, saveAllHandler: null, addHandler: null);
             return dataSourcesRootPage;
         }
 
@@ -170,12 +169,12 @@ namespace Ginger.MenusLib
             DataSourceFolderTreeItem dataSourcesRoot = new DataSourceFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>());
             dataSourcesRoot.IsGingerDefualtFolder = true;
             SingleItemTreeViewExplorerPage dataSourcesRootPage = new SingleItemTreeViewExplorerPage("Data Sources", eImageType.DataSource, dataSourcesRoot, dataSourcesRoot.SaveAllTreeFolderItemsHandler, dataSourcesRoot.AddDataSource);
-            return dataSourcesRootPage;            
+            return dataSourcesRootPage;
         }
 
         private static Page ModelsGlobalParameters()
         {
-            return new ModelsGlobalParamsPage();            
+            return new ModelsGlobalParamsPage();
         }
 
         private static Page POMModels()
@@ -199,7 +198,7 @@ namespace Ginger.MenusLib
                 return null;
             }
 
-            PlugInsFolderTreeItem pluginsRoot = new PlugInsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<PluginPackage>());          
+            PlugInsFolderTreeItem pluginsRoot = new PlugInsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<PluginPackage>());
             SingleItemTreeViewExplorerPage PluginsRootPage = new SingleItemTreeViewExplorerPage("Plugins", eImageType.PluginPackage, pluginsRoot, saveAllHandler: pluginsRoot.SaveAllTreeFolderItemsHandler, addHandler: pluginsRoot.AddPlugIn, isSaveButtonHidden: true);
             return PluginsRootPage;
         }

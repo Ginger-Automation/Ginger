@@ -23,7 +23,6 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -32,14 +31,14 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         [UserConfigured]
         [UserConfiguredDefault(@"C:\windows\system32\cmd.exe")]  // file to open dos console
         [UserConfiguredDescription("Location of cmd.exe which open a DOS console")]
-        public string CMDFileName {get; set;}
+        public string CMDFileName { get; set; }
 
         ProcessStartInfo processStartInfo;
         System.IO.StreamWriter writer;
         Process process;
         string mOutputs = string.Empty;
         int mlastOutputsLength = 0;
-  
+
         public DOSConsoleDriver(BusinessFlow BusinessFlow)
         {
             this.BusinessFlow = BusinessFlow;
@@ -49,20 +48,20 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         {
             RestartOutputs();
             if (CMDFileName == null || CMDFileName.Length == 0)
-            {               
+            {
                 Reporter.ToLog(eLogLevel.WARN, "DOS Console Agent missing CMD FileName");
                 ErrorMessageFromDriver = "DOS Console Agent missing CMD FileName";
                 return false;
             }
 
             processStartInfo = new ProcessStartInfo
-            {                
+            {
                 //TODO: driver config
-                FileName = CMDFileName,             
+                FileName = CMDFileName,
                 RedirectStandardOutput = true,
                 RedirectStandardInput = true,
                 RedirectStandardError = true,
-                UseShellExecute = false, 
+                UseShellExecute = false,
                 CreateNoWindow = true,
                 ErrorDialog = false
             };
@@ -73,23 +72,23 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 return false;
             }
             writer = process.StandardInput;
-           
+
             process.OutputDataReceived += Process_OutputDataReceivedAsync;
             process.BeginOutputReadLine();
 
             process.ErrorDataReceived += Process_ErrorDataReceivedAsync;
             process.BeginErrorReadLine();
-            
+
             WriteOutputsToConsole();
             return true;
         }
 
         private void Process_ErrorDataReceivedAsync(object sender, DataReceivedEventArgs e)
         {
-              mOutputs += e.Data + System.Environment.NewLine;
+            mOutputs += e.Data + System.Environment.NewLine;
         }
 
-        private  void Process_OutputDataReceivedAsync(object sender, DataReceivedEventArgs e)
+        private void Process_OutputDataReceivedAsync(object sender, DataReceivedEventArgs e)
         {
 
             mOutputs += e.Data + System.Environment.NewLine;
@@ -109,7 +108,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         public override string ConsoleWindowTitle()
         {
             return "DOS Console Driver - " + CMDFileName;
-        }        
+        }
 
         public override bool IsBusy()
         {
@@ -127,24 +126,32 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         {
             RestartOutputs();
             DateTime startingTime = DateTime.Now;
-            
+
             writer.Write(command);
 
             if (mWait == null)
+            {
                 mWait = 5;
+            }
 
             //waiting for expected output
             if (string.IsNullOrEmpty(mExpString) == false && mWait != null)
             {
                 while (mOutputs.Contains(mExpString) == false && ((DateTime.Now - startingTime).TotalSeconds <= mWait))
                 {
-                    if (!mConsoleDriverWindow.mConsoleDriver.IsDriverRunning) break;
+                    if (!mConsoleDriverWindow.mConsoleDriver.IsDriverRunning)
+                    {
+                        break;
+                    }
+
                     Thread.Sleep(500);
-                }                                            
-                WriteOutputsToConsole(false);                
+                }
+                WriteOutputsToConsole(false);
             }
             else
-                WriteOutputsToConsole();            
+            {
+                WriteOutputsToConsole();
+            }
         }
 
         private void RestartOutputs()
@@ -153,12 +160,16 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             mlastOutputsLength = 0;
         }
 
-        private void WriteOutputsToConsole(bool waitForRestOfOutputs=true)
+        private void WriteOutputsToConsole(bool waitForRestOfOutputs = true)
         {
             Thread.Sleep(1000);
             while (mOutputs.Length > mlastOutputsLength)
             {
-                if (!mConsoleDriverWindow.mConsoleDriver.IsDriverRunning) break;
+                if (!mConsoleDriverWindow.mConsoleDriver.IsDriverRunning)
+                {
+                    break;
+                }
+
                 mConsoleDriverWindow.ConsoleWriteText(mOutputs.Substring(mlastOutputsLength, (mOutputs.Length - mlastOutputsLength)));//get the output addition to console
 
                 if (waitForRestOfOutputs)
@@ -172,7 +183,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 }
             }
         }
-        
+
         public override string GetCommandText(ActConsoleCommand act)
         {
             //TODO: Enhance Handling for commands copyfile, dir
@@ -182,25 +193,29 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     return GetParameterizedCommand(act);
                 case ActConsoleCommand.eConsoleCommand.CopyFile:
                     return "copy " + GetParameterizedCommand(act);
-                case ActConsoleCommand.eConsoleCommand.IsFileExist:      
-                    return "dir " + GetParameterizedCommand(act);                   
-                default:                    
+                case ActConsoleCommand.eConsoleCommand.IsFileExist:
+                    return "dir " + GetParameterizedCommand(act);
+                default:
                     Reporter.ToLog(eLogLevel.DEBUG, "Unknown Console command");
                     ErrorMessageFromDriver = "Unknown Console command";
-                    return "Error - unknown command";                    
+                    return "Error - unknown command";
             }
         }
 
         private string GetParameterizedCommand(ActConsoleCommand act)
         {
             string s = act.Command;
-                        
+
             foreach (ActInputValue AIV in act.InputValues)
             {
                 if (s != null)
+                {
                     s = s + " " + AIV.ValueForDriver;
+                }
                 else
+                {
                     s = AIV.ValueForDriver;
+                }
             }
             return s;
         }

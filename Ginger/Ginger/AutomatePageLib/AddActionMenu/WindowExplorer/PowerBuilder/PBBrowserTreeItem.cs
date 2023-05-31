@@ -17,18 +17,18 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using GingerCore.Actions;
-using System.Windows.Controls;
-using Ginger.Drivers.PowerBuilder;
-using GingerWPF.UserControlsLib.UCTreeView;
 using Amdocs.Ginger.Common.UIElement;
+using Ginger.Drivers.PowerBuilder;
+using GingerCore.Actions;
+using GingerWPF.UserControlsLib.UCTreeView;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.PowerBuilder
 {
     class PBBrowserTreeItem : PBControlTreeItemBase, ITreeViewItem, IWindowExplorerTreeItem
     {
         StackPanel ITreeViewItem.Header()
-        {            
+        {
             return TreeViewUtils.CreateItemHeader(UIAElementInfo.ElementTitle, ElementInfo.GetElementTypeImage(eElementType.Browser));
         }
 
@@ -38,10 +38,10 @@ namespace Ginger.WindowExplorer.PowerBuilder
 
             list.Add(new ActBrowserElement()
             {
-                Description = "Initialize Browser - " +UIAElementInfo.ElementTitle,
+                Description = "Initialize Browser - " + UIAElementInfo.ElementTitle,
                 ControlAction = ActBrowserElement.eControlAction.InitializeBrowser
             });
-            
+
             return list;
         }
     }

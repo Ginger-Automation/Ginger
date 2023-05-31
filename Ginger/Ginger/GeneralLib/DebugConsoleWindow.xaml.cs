@@ -16,15 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.GeneralLib;
 using Ginger;
 using GingerCore.Helpers;
 using System;
 using System.IO;
 using System.Text;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -48,7 +45,7 @@ namespace GingerWPF
             InitializeComponent();
 
             mOutput = new ConsoleTextWriter(xConsoleTextBlock);
-            mErrors = new ConsoleTextWriter(xConsoleTextBlock, Brushes.Red);           
+            mErrors = new ConsoleTextWriter(xConsoleTextBlock, Brushes.Red);
         }
 
         private void ClearButton_Click(object sender, RoutedEventArgs e)
@@ -84,7 +81,7 @@ namespace GingerWPF
             onTopButton.Click += new RoutedEventHandler(OnTopButton_Click);
 
             Amdocs.Ginger.Common.ObservableList<Button> winButtons = new Amdocs.Ginger.Common.ObservableList<Button>();
-                                   
+
             winButtons.Add(onTopButton);
             winButtons.Add(clearConsoleButton);
             winButtons.Add(CopyToClipboradBtn);
@@ -111,7 +108,7 @@ namespace GingerWPF
 
     //TODO: Move to separate class
     public class ConsoleTextWriter : TextWriter
-    {        
+    {
         TextBlockHelper mTextBlockHelper;
         TextBlock mTextBlock = null;
         int ErrorsCounter = 0;

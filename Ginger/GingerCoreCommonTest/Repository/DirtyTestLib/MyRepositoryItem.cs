@@ -41,7 +41,7 @@ namespace GingerCoreCommonTest.Repository
             set
             {
                 Thread.Sleep(10); // 10ms cause a delay to simulate heavy data load
-                mBigStringHolderSlowSet = value;                    
+                mBigStringHolderSlowSet = value;
             }
         }
 
@@ -51,7 +51,7 @@ namespace GingerCoreCommonTest.Repository
 
         //TODO: remove - we use property
         public override string ItemName { get { return Name; } set { Name = value; } }
-        
+
         public MyRepositoryItem()
         {
 

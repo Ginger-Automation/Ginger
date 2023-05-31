@@ -59,7 +59,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
             mPlatform = PlatformInfoBase.GetPlatformImpl(act.Platform);
             List<eLocateBy> LocateByList = mPlatform.GetPlatformUIElementLocatorsList();
-            ElementLocateByComboBox.BindControl(mAction, nameof(ActUIElement.ElementLocateBy), LocateByList,false);
+            ElementLocateByComboBox.BindControl(mAction, nameof(ActUIElement.ElementLocateBy), LocateByList, false);
 
             //if widgets element, only supported to java platform now.
             if (act.Platform.Equals(ePlatformType.Java))
@@ -93,7 +93,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private void ShowWidgetsElementCheckBox()
         {
             xWidgetElementCheckBox.Visibility = Visibility.Visible;
-            BindingHandler.ActInputValueBinding(xWidgetElementCheckBox,CheckBox.IsCheckedProperty, mAction.GetOrCreateInputParam(Fields.IsWidgetsElement, "false"),new InputValueToBoolConverter());           
+            BindingHandler.ActInputValueBinding(xWidgetElementCheckBox, CheckBox.IsCheckedProperty, mAction.GetOrCreateInputParam(Fields.IsWidgetsElement, "false"), new InputValueToBoolConverter());
         }
 
         private ePlatformType GetActionPlatform()
@@ -279,7 +279,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 case eElementAction.DoubleClick:
                 case eElementAction.WinClick:
                 case eElementAction.MouseClick:
-                case eElementAction.MousePressRelease:               
+                case eElementAction.MousePressRelease:
                     pageContent = null;
                     if ((mAction.Platform.Equals(ePlatformType.Java) && (mAction.ElementType.Equals(eElementType.RadioButton)
                                                                || mAction.ElementType.Equals(eElementType.CheckBox))
@@ -299,7 +299,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             {
                 pageContent = GetDefaultPageContent();
             }
-            
+
             return pageContent;
         }
 
@@ -422,12 +422,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     elementList.Add(GetElementConfigControl("Property_Name", Fields.ValueToSelect, eElementType.ComboBox, propertyListString));
                     break;
                 case eElementAction.Switch:
-                    if(mAction.ElementType.Equals(eElementType.Window))
+                    if (mAction.ElementType.Equals(eElementType.Window))
                     {
                         possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(Fields.SyncTime)) ? new List<string>() { "30" } :
                            new List<string>() { mAction.GetInputParamValue(Fields.SyncTime) };
 
-                        elementList.Add(GetElementConfigControl("Sync Time", Fields.SyncTime, eElementType.TextBox, possibleValues,null,"Sync time in seconds."));
+                        elementList.Add(GetElementConfigControl("Sync Time", Fields.SyncTime, eElementType.TextBox, possibleValues, null, "Sync time in seconds."));
                     }
                     break;
 
@@ -448,7 +448,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private List<string> GetJavaScriptEventList()
         {
             var eventList = new List<string>();
-            
+
             if (Convert.ToBoolean(mAction.GetInputParamValue(Fields.IsMouseEvent)))
             {
                 eventList.Add("onmousedown");
@@ -465,7 +465,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 eventList.Add("onfocus");
                 eventList.Add("onchange");
             }
- 
+
             return eventList;
         }
 
@@ -511,7 +511,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     dyanamicCheckBox.VerticalAlignment = VerticalAlignment.Center;
                     dyanamicCheckBox.IsChecked = false;
                     dyanamicCheckBox.Width = 100;
-                    dyanamicCheckBox.Margin = new Thickness() { Left = 5};
+                    dyanamicCheckBox.Margin = new Thickness() { Left = 5 };
 
                     if (element.ElementEvent != null)
                     {
@@ -564,11 +564,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 Content = element.Title + ":",
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
-                MinWidth= 150,
+                MinWidth = 150,
             };
         }
 
-        private ElementConfigControl GetElementConfigControl(string title, string bindedString, eElementType elementType, List<string> possibleValue, RoutedEventHandler routedEvent=null,string toolTip = "")
+        private ElementConfigControl GetElementConfigControl(string title, string bindedString, eElementType elementType, List<string> possibleValue, RoutedEventHandler routedEvent = null, string toolTip = "")
         {
             return new ElementConfigControl()
             {
@@ -708,7 +708,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 if (currentPOM != null)
                 {
                     Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                    selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                    selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
                 }
             }
             return selectedPOMElement;
@@ -742,7 +742,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             ElementInfo selectedPOMElement = GetElementInfoFromCurerentPOMSelected();
             if (selectedPOMElement != null && selectedPOMElement.OptionalValuesObjectsList.Count > 0)        //For new implementation
             {
-                OptionalValue defValue = selectedPOMElement.OptionalValuesObjectsList.Where(s => s.IsDefault == true).FirstOrDefault();
+                OptionalValue defValue = selectedPOMElement.OptionalValuesObjectsList.FirstOrDefault(s => s.IsDefault == true);
                 if (defValue != null)
                 {
                     if (valuesType == ePomElementValuesType.Values)
@@ -760,7 +760,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void XWidgetsElementType_Click(object sender, RoutedEventArgs e)
         {
-            BindElementTypeComboBox();            
+            BindElementTypeComboBox();
             ShowPlatformSpecificPage();
         }
     }

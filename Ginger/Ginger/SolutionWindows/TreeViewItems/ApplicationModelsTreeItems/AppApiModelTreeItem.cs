@@ -20,13 +20,12 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
-using System.Windows.Controls;
 using System.Linq;
+using System.Windows.Controls;
 
 namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 {
@@ -64,10 +63,14 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         public Page EditPage(Context mContext)
         {
-            if(mAPIModelPage == null)
+            if (mAPIModelPage == null)
+            {
                 mAPIModelPage = new APIModelPage(mApiModel);
+            }
             else
+            {
                 mAPIModelPage.BindUiControls();
+            }
 
             return mAPIModelPage;
         }
@@ -118,7 +121,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         {
             foreach (GlobalAppModelParameter gAMPara in (copiedItem as ApplicationAPIModel).GlobalAppModelParameters)
             {
-                gAMPara.Guid = (item as ApplicationAPIModel).GlobalAppModelParameters.Where(m => m.ElementName == gAMPara.ElementName).FirstOrDefault().Guid;
+                gAMPara.Guid = (item as ApplicationAPIModel).GlobalAppModelParameters.FirstOrDefault(m => m.ElementName == gAMPara.ElementName).Guid;
             }
         }
     }

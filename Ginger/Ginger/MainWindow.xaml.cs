@@ -56,6 +56,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger
@@ -69,6 +70,7 @@ namespace Ginger
 
         ObservableList<HelpLayoutArgs> mHelpLayoutList = new ObservableList<HelpLayoutArgs>();
         private bool mRestartApplication = false;
+        private bool mLaunchInAdminMode = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -118,7 +120,13 @@ namespace Ginger
                 if (WorkSpace.Instance.UserProfile.GingerStatus == eGingerStatus.Active)
                 {
                     Reporter.ToStatus(eStatusMsgKey.ExitMode);
+                    WorkSpace.Instance.UserProfile.DoNotAskToRecoverSolutions = false;
                 }
+                else if (WorkSpace.Instance.UserProfile.GingerStatus == eGingerStatus.Closed)
+                {
+                    WorkSpace.Instance.UserProfile.DoNotAskToRecoverSolutions = true;
+                }
+
                 WorkSpace.Instance.UserProfile.GingerStatus = eGingerStatus.Active;
                 WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
                 ((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
@@ -155,6 +163,12 @@ namespace Ginger
                     WorkSpace.Instance.UserProfile.NewHelpLibraryMessgeShown = true;
                 }
 
+                if (General.IsAdmin())
+                {
+                    xAdminModeIcon.ImageType = eImageType.AdminUser;
+                    xAdminModeIcon.ToolTip = "Ginger Running In Admin Mode";
+                    xAdminModeIcon.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#109717");
+                }
 
                 Reporter.ReporterData.PropertyChanged += ReporterDataChanged;
 
@@ -421,7 +435,14 @@ namespace Ginger
             eUserMsgSelection userSelection;
             if (mRestartApplication)
             {
-                userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestart);
+                if (WorkSpace.Instance.SolutionRepository != null && WorkSpace.Instance.SolutionRepository.ModifiedFiles.Any())
+                {
+                    userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestart);
+                }
+                else
+                {
+                    userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestartWithoutNote);
+                }
             }
             else if (!mAskUserIfToClose)
             {
@@ -429,7 +450,14 @@ namespace Ginger
             }
             else
             {
-                userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToClose);
+                if (WorkSpace.Instance.SolutionRepository != null && WorkSpace.Instance.SolutionRepository.ModifiedFiles.Any())
+                {
+                    userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToClose);
+                }
+                else
+                {
+                    userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToCloseWithoutNote);
+                }
             }
 
 
@@ -440,6 +468,7 @@ namespace Ginger
             else
             {
                 mRestartApplication = false;
+                mLaunchInAdminMode = false;
                 e.Cancel = true;
             }
         }
@@ -548,7 +577,7 @@ namespace Ginger
             s1.SolutionOperations = solutionOperations;
             AddSolutionPage addSol = new AddSolutionPage(s1);
             addSol.ShowAsWindow();
-            if(addSol.IsUploadSolutionToSourceControl)
+            if (addSol.IsUploadSolutionToSourceControl)
             {
                 UploadSolutionMenuItem_Click(sender, e);
             }
@@ -676,7 +705,11 @@ namespace Ginger
 
         private void btnSourceControlCheckIn_Click(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No) return;
+            if (Reporter.ToUser(eUserMsgKey.LoseChangesWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+            {
+                return;
+            }
+
             App.CheckIn(WorkSpace.Instance.Solution.Folder);
         }
 
@@ -885,7 +918,14 @@ namespace Ginger
             base.OnClosed(e);
             if (mRestartApplication)
             {
-                Process.Start(new ProcessStartInfo() { FileName = System.AppDomain.CurrentDomain.FriendlyName, UseShellExecute = true });
+                if (mLaunchInAdminMode)
+                {
+                    Process.Start(new ProcessStartInfo() { FileName = System.AppDomain.CurrentDomain.FriendlyName, UseShellExecute = true, Verb = "runas" });
+                }
+                else
+                {
+                    Process.Start(new ProcessStartInfo() { FileName = System.AppDomain.CurrentDomain.FriendlyName, UseShellExecute = true });
+                }
             }
 
             Application.Current.Shutdown();
@@ -939,7 +979,9 @@ namespace Ginger
                 WorkSpace.Instance.OpenSolution(selectedSol.Folder);
             }
             else
+            {
                 Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Selected Solution was not found");
+            }
 
             e.Handled = true;
         }
@@ -1409,7 +1451,7 @@ namespace Ginger
         }
         public async Task SaveCurrentItemAsync()
         {
-            if(WorkSpace.Instance.CurrentSelectedItem == null || WorkSpace.Instance.CurrentSelectedItem.DirtyStatus != eDirtyStatus.Modified)
+            if (WorkSpace.Instance.CurrentSelectedItem == null || WorkSpace.Instance.CurrentSelectedItem.DirtyStatus != eDirtyStatus.Modified)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Nothing found to Save.");
                 return;
@@ -1523,6 +1565,16 @@ namespace Ginger
         private void xSaveCurrentBtn_MouseLeave(object sender, MouseEventArgs e)
         {
             xSaveCurrentBtn.ButtonImageType = eImageType.SaveLightGrey;
+        }
+
+        private void xAdminModeIcon_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!General.IsAdmin())
+            {
+                mLaunchInAdminMode = true;
+                mRestartApplication = true;
+                App.MainWindow.Close();
+            }
         }
     }
 }

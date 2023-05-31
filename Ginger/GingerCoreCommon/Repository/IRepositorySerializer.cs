@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using System;
+using Amdocs.Ginger.Common;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -33,7 +33,7 @@ namespace Amdocs.Ginger.Repository
 
         string SerializeToString(RepositoryItemBase RI);
 
-        object DeserializeFromText(Type t, string s, string filePath="");
-      
+        object DeserializeFromText(Type t, string s, string filePath = "");
+
     }
 }

@@ -17,8 +17,6 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core.Reporter
 {
@@ -36,7 +34,7 @@ namespace Amdocs.Ginger.Plugin.Core.Reporter
     }
     public interface IReporter
     {
-         void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null);
-        
+        void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null);
+
     }
 }

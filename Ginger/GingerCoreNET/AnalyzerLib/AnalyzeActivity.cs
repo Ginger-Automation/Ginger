@@ -16,12 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore;
+using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GingerCore;
-using GingerCore.Variables;
-using GingerCore.Actions;
 
 namespace Ginger.AnalyzerLib
 {
@@ -53,7 +52,7 @@ namespace Ginger.AnalyzerLib
             }
 
             // Check Activity have actions
-            if (Activity.Acts.Count() == 0)
+            if (!Activity.Acts.Any())
             {
                 AnalyzeActivity AA = CreateNewIssue(BusinessFlow, Activity);
                 AA.Description = GingerDicser.GetTermResValue(eTermResKey.Activity) + " is missing Actions";
@@ -110,7 +109,7 @@ namespace Ginger.AnalyzerLib
             AA.ItemParent = BusinessFlow.Name;
             AA.mBusinessFlow = BusinessFlow;
             AA.ItemClass = "Activity";
-           
+
             return AA;
         }
         public static List<string> GetUsedVariableFromActivity(Activity activity)

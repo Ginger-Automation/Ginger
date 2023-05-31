@@ -20,18 +20,13 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger;
-using Ginger.ApplicationModelsLib;
 using Ginger.UserControls;
-using GingerCore;
-using GingerCore.Drivers.Common;
-using GingerWPF.UserControlsLib;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
 namespace GingerWPF.ApplicationModelsLib.APIModelWizard
@@ -105,7 +100,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             }
             return child;
         }
-               
+
         private void SetOptionalValuesGridView()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -139,7 +134,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         {
             OptionalValue CurrentOP = null;
             if (e.Column.Header.ToString() == nameof(OptionalValue.Value))
+            {
                 CurrentOP = (OptionalValue)OptionalValuesGrid.CurrentItem;
+            }
 
             if (CurrentOP != null)
             {
@@ -180,7 +177,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         private void BtnCopyClicked(object sender, RoutedEventArgs e)
         {
             SavedDefaultOV = null;
-            OptionalValue defaultOptionalValue = OptionalValuesGrid.Grid.SelectedItems.Cast<OptionalValue>().ToList().Where(x => x.IsDefault == true).FirstOrDefault();
+            OptionalValue defaultOptionalValue = OptionalValuesGrid.Grid.SelectedItems.Cast<OptionalValue>().ToList().FirstOrDefault(x => x.IsDefault == true);
             if (defaultOptionalValue != null)
             { SavedDefaultOV = defaultOptionalValue; }
         }
@@ -244,7 +241,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 }
             }
         }
-        
+
         public bool ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
             Button OKButton = new Button();
@@ -265,7 +262,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             RadioButton isDefaultRb = (RadioButton)sender;
 
-            OptionalValue clickedOv = mParentObject.OptionalValuesList.Where(x => x.Guid == (Guid)isDefaultRb.Tag).FirstOrDefault();
+            OptionalValue clickedOv = mParentObject.OptionalValuesList.FirstOrDefault(x => x.Guid == (Guid)isDefaultRb.Tag);
             if (clickedOv != null && clickedOv.IsDefault != true)
             { clickedOv.IsDefault = true; }
 

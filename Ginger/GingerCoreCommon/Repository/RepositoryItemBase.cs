@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections;
+
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -83,7 +84,7 @@ namespace Amdocs.Ginger.Repository
         protected ConcurrentDictionary<string, object> mBackupDic;
         protected bool mBackupInProgress = false;
 
-        public bool IsBackupExist 
+        public bool IsBackupExist
         {
             get
             {
@@ -539,7 +540,7 @@ namespace Amdocs.Ginger.Repository
             // make sure we cleared all bak items = full restore
             if (isLocalBackup)
             {
-                if (mLocalBackupDic.Count() != 0)
+                if (mLocalBackupDic.Any())
                 {
                     // TODO: err handler
                     return false;
@@ -547,7 +548,7 @@ namespace Amdocs.Ginger.Repository
             }
             else
             {
-                if (mBackupDic.Count() != 0)
+                if (mBackupDic.Any())
                 {
                     // TODO: err handler 
                     return false;

@@ -17,16 +17,15 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Freeware;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Tabula;
 using Tabula.Detectors;
 using Tabula.Extractors;
-using UglyToad.PdfPig;
 using Tesseract;
-using Freeware;
-using System.IO;
-using System.Text;
+using UglyToad.PdfPig;
 using PageIterator = Tabula.PageIterator;
 
 namespace GingerCore.GingerOCR
@@ -142,34 +141,34 @@ namespace GingerCore.GingerOCR
             return txtOutput;
         }
 
-        private static List<byte[]> GetPngByteArrayFromPdf(string pdfFilePath, string pageNum, string password = null)
+        private static List<byte[]> GetPngByteArrayFromPdf(string pdfFilePath, string pageNum, int dpi, string password = null)
         {
             List<byte[]> lstPngByte = new List<byte[]>();
             byte[] pdfByteArray = File.ReadAllBytes(pdfFilePath);
             List<string> lstPageNum = GetListOfPageNos(pageNum);
             foreach (string pgNum in lstPageNum)
             {
-                byte[] pngByte = Pdf2Png.Convert(pdfByteArray, int.Parse(pgNum), 300, password);
+                byte[] pngByte = Pdf2Png.Convert(pdfByteArray, int.Parse(pgNum), dpi, password);
                 lstPngByte.Add(pngByte);
             }
             return lstPngByte;
         }
 
-        private static List<byte[]> GetListOfPngByteArrayFromPdf(string pdfFilePath, string password = null)
+        private static List<byte[]> GetListOfPngByteArrayFromPdf(string pdfFilePath, int dpi, string password = null)
         {
             byte[] pdfByteArray = File.ReadAllBytes(pdfFilePath);
-            List<byte[]> pngByte = Pdf2Png.ConvertAllPages(pdfByteArray, 300, password);
+            List<byte[]> pngByte = Pdf2Png.ConvertAllPages(pdfByteArray, dpi, password);
             return pngByte;
         }
 
-        public static string ReadTextFromPdfSinglePage(string pdfFilePath, string pageNum, string password = null)
+        public static string ReadTextFromPdfSinglePage(string pdfFilePath, string pageNum, int dpi, string password = null)
         {
             string txtOutput = string.Empty;
             try
             {
                 if (!string.IsNullOrEmpty(pageNum))
                 {
-                    List<byte[]> lstPngByte = GetPngByteArrayFromPdf(pdfFilePath, pageNum, password);
+                    List<byte[]> lstPngByte = GetPngByteArrayFromPdf(pdfFilePath, pageNum, dpi, password);
 
                     foreach (byte[] pngByte in lstPngByte)
                     {
@@ -181,7 +180,7 @@ namespace GingerCore.GingerOCR
                 }
                 else
                 {
-                    List<byte[]> lstByteArray = GetListOfPngByteArrayFromPdf(pdfFilePath, password);
+                    List<byte[]> lstByteArray = GetListOfPngByteArrayFromPdf(pdfFilePath, dpi, password);
                     foreach (byte[] byteArray in lstByteArray)
                     {
                         using (Page pageObj = GetPageObjectFromByteArray(byteArray))
@@ -231,12 +230,12 @@ namespace GingerCore.GingerOCR
             return null;
         }
 
-        public static string ReadTextAfterLabelPdf(string pdfFilePath, string label, string pageNum = "", string password = null)
+        public static string ReadTextAfterLabelPdf(string pdfFilePath, string label, int dpi, string pageNum = "", string password = null)
         {
             string resultTxt = string.Empty;
             if (!string.IsNullOrEmpty(pageNum))
             {
-                List<byte[]> lstPngByte = GetPngByteArrayFromPdf(pdfFilePath, pageNum, password);
+                List<byte[]> lstPngByte = GetPngByteArrayFromPdf(pdfFilePath, pageNum, dpi, password);
 
                 foreach (byte[] pngByte in lstPngByte)
                 {
@@ -249,7 +248,7 @@ namespace GingerCore.GingerOCR
             }
             else
             {
-                List<byte[]> lstByteArray = GetListOfPngByteArrayFromPdf(pdfFilePath, password);
+                List<byte[]> lstByteArray = GetListOfPngByteArrayFromPdf(pdfFilePath, dpi, password);
                 foreach (byte[] byteArray in lstByteArray)
                 {
                     resultTxt = GetResultTextFromByteArray(label, resultTxt, byteArray);
@@ -306,14 +305,14 @@ namespace GingerCore.GingerOCR
             return resultTxt;
         }
 
-        public static string ReadTextBetweenLabelsPdf(string pdfFilePath, string firstLabel, string secondLabel, string pageNum, string password = null)
+        public static string ReadTextBetweenLabelsPdf(string pdfFilePath, string firstLabel, string secondLabel, string pageNum, int dpi, string password = null)
         {
             string resultTxt = string.Empty;
             int firstIndexOf = -1;
             int secondIndexOf = -1;
             if (!string.IsNullOrEmpty(pageNum))
             {
-                List<byte[]> lstPngByte = GetPngByteArrayFromPdf(pdfFilePath, pageNum, password);
+                List<byte[]> lstPngByte = GetPngByteArrayFromPdf(pdfFilePath, pageNum, dpi, password);
                 foreach (byte[] pngByte in lstPngByte)
                 {
                     Page pageObj = GetPageObjectFromByteArray(pngByte);
@@ -326,7 +325,7 @@ namespace GingerCore.GingerOCR
             }
             else
             {
-                List<byte[]> lstByteArray = GetListOfPngByteArrayFromPdf(pdfFilePath, password);
+                List<byte[]> lstByteArray = GetListOfPngByteArrayFromPdf(pdfFilePath, dpi, password);
                 foreach (byte[] byteArray in lstByteArray)
                 {
                     Page pageObj = GetPageObjectFromByteArray(byteArray);
@@ -390,14 +389,14 @@ namespace GingerCore.GingerOCR
             }
         }
 
-        public static Dictionary<string, object> ReadTextFromPdfAllPages(string pdfFilePath, string password = null)
+        public static Dictionary<string, object> ReadTextFromPdfAllPages(string pdfFilePath, int dpi, string password = null)
         {
             Dictionary<string, object> dctOutput = new Dictionary<string, object>();
 
             try
             {
                 byte[] pdfByteArray = File.ReadAllBytes(pdfFilePath);
-                List<byte[]> pngArray = Pdf2Png.ConvertAllPages(pdfByteArray, 300, password);
+                List<byte[]> pngArray = Pdf2Png.ConvertAllPages(pdfByteArray, dpi, password);
                 for (int i = 0; i < pngArray.Count; i++)
                 {
                     string output = ReadTextFromByteArray(pngArray[i]);

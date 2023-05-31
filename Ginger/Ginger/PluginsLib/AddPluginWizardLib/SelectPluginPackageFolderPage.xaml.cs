@@ -16,11 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Ginger;
 using Ginger.Actions;
 using GingerWPF.WizardLib;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace GingerWPF.PluginsLib.AddPluginWizardLib

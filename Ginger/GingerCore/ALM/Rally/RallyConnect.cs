@@ -63,7 +63,7 @@ limitations under the License.
 //            }
 //        }
 //        #endregion singlton
-        
+
 //        public ObservableList<RallyTestPlan> GetRallyTestPlansByProject(string RallyServerUrl, string RallyUserName, string RallyPassword, string RallyProject, string solutionFolder, string projName)
 //        {
 //            ObservableList<RallyTestPlan> rallyTestPlanList = new ObservableList<RallyTestPlan>();

@@ -16,9 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core.ActionsLib
 {
@@ -66,11 +63,11 @@ namespace Amdocs.Ginger.Plugin.Core.ActionsLib
 
         public enum eElementDragDropType
         {
-        
+
             DragDropJS,
-            
+
             DragDropSelenium,
-           
+
             MouseDragDrop,
         }
         public enum eElementAction
@@ -204,13 +201,13 @@ namespace Amdocs.Ginger.Plugin.Core.ActionsLib
 
             Submit,
             RunJavaScript,
-           
+
         }
 
 
         public enum eElementType
         {
-            
+
             Unknown,
             TextBox,
             Button,
@@ -225,7 +222,7 @@ namespace Amdocs.Ginger.Plugin.Core.ActionsLib
             CheckBox,
             Image,
             Label,
-            MenuItem,           
+            MenuItem,
             MenuBar,
             TreeView,
             Window,
@@ -245,59 +242,59 @@ namespace Amdocs.Ginger.Plugin.Core.ActionsLib
 
         public enum eControlAction
         {
-         
+
             InitializeBrowser,
-            
+
             GetPageSource,
-          
+
             GetPageURL,
-           
+
             SwitchFrame,
-           
+
             SwitchToDefaultFrame,
-         
+
             SwitchToParentFrame,
-           
+
             Maximize,
-            
+
             Close,
-            
+
             SwitchWindow,
-            
+
             SwitchToDefaultWindow,
-           
+
             InjectJS,
-        
+
             CheckPageLoaded,
-            
+
             OpenURLNewTab,
-           
+
             GotoURL,
-           
+
             CloseTabExcept,
-            
+
             CloseAll,
-        
+
             Refresh,
-            
-           
+
+
             DismissMessageBox,
-          
+
             DeleteAllCookies,
-           
+
             AcceptMessageBox,
-           
+
             GetWindowTitle,
-            
+
             GetMessageBoxText,
-           
+
             SetAlertBoxText,
-           
+
             RunJavaScript,
             NavigateBack
         }
 
-     
+
 
         public enum eGotoURLType
         {

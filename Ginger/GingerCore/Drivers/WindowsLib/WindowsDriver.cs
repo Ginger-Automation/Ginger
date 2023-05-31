@@ -17,9 +17,11 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -31,27 +33,24 @@ using GingerCore.Drivers.Common;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using mshtml;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Threading;
-using System.Threading.Tasks;
-
 using System.Linq;
 using System.Reflection;
-using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
-using OpenQA.Selenium;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
+using System.Threading;
+using System.Threading.Tasks;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace GingerCore.Drivers.WindowsLib
 {
-    public class WindowsDriver : UIAutomationDriverBase, IWindowExplorer, IVisualTestingDriver,IVirtualDriver
+    public class WindowsDriver : UIAutomationDriverBase, IWindowExplorer, IVisualTestingDriver, IVirtualDriver
     {
         int mActionTimeout = 10;
 
         [UserConfigured]
-        [UserConfiguredDefault("150")] 
+        [UserConfiguredDefault("150")]
         [UserConfiguredDescription("Action Timeout - default is 150 seconds")]
         public override int ActionTimeout
         {
@@ -68,7 +67,7 @@ namespace GingerCore.Drivers.WindowsLib
         [UserConfigured]
         [UserConfiguredDefault("30")]
         [UserConfiguredDescription("Amount of time the driver should wait when searching for an element if it is not immediately present")]
-        public int ImplicitWait 
+        public int ImplicitWait
         {
             get
             {
@@ -109,7 +108,7 @@ namespace GingerCore.Drivers.WindowsLib
         protected IWebDriver Driver;
 
 
-        public WindowsDriver(BusinessFlow BF, eUIALibraryType type= eUIALibraryType.ComWrapper)
+        public WindowsDriver(BusinessFlow BF, eUIALibraryType type = eUIALibraryType.ComWrapper)
         {
             LibraryType = type;
             BusinessFlow = BF;
@@ -119,9 +118,9 @@ namespace GingerCore.Drivers.WindowsLib
         {
             switch (LibraryType)
             {
-                    
+
                 case eUIALibraryType.ComWrapper:
-                    mUIAutomationHelper= new UIAComWrapperHelper();
+                    mUIAutomationHelper = new UIAComWrapperHelper();
                     ((UIAComWrapperHelper)mUIAutomationHelper).WindowExplorer = this;
                     ((UIAComWrapperHelper)mUIAutomationHelper).BusinessFlow = BusinessFlow;
                     ((UIAComWrapperHelper)mUIAutomationHelper).mPlatform = ePlatformType.Windows;
@@ -162,7 +161,7 @@ namespace GingerCore.Drivers.WindowsLib
             if (!actClass.Equals(typeof(ActSwitchWindow)) || (actClass.Equals(typeof(ActWindow)) && ((ActWindow)act).WindowActionType != ActWindow.eWindowActionType.Switch))
             {
                 var checkWindow = true;
-                if(actClass.Equals(typeof(ActUIElement)) && ((ActUIElement)act).ElementAction.Equals(ActUIElement.eElementAction.Switch))
+                if (actClass.Equals(typeof(ActUIElement)) && ((ActUIElement)act).ElementAction.Equals(ActUIElement.eElementAction.Switch))
                 {
                     checkWindow = false;
                 }
@@ -170,7 +169,7 @@ namespace GingerCore.Drivers.WindowsLib
                 {
                     CheckRetrySwitchWindowIsNeeded();
                 }
-                
+
             }
 
             if (act.Timeout != null)
@@ -200,7 +199,7 @@ namespace GingerCore.Drivers.WindowsLib
                     case "ActSwitchWindow":
                         mUIAutomationHelper.SmartSwitchWindow((ActSwitchWindow)act);
                         break;
-                  
+
                     case "ActGenElement":
                         ActGenElement AGE = (ActGenElement)act;
                         HandleWindowsGenericWidgetControlAction(AGE);
@@ -333,7 +332,7 @@ namespace GingerCore.Drivers.WindowsLib
 
                     break;
                 case ActBrowserElement.eControlAction.SwitchFrame:
-                    result=mUIAutomationHelper.GetHTMLHelper().SwitchFrame(actWBE.LocateBy, actWBE.LocateValueCalculated);
+                    result = mUIAutomationHelper.GetHTMLHelper().SwitchFrame(actWBE.LocateBy, actWBE.LocateValueCalculated);
                     if (result.Equals("true"))
                     {
                         actWBE.AddOrUpdateReturnParamActual("Actual", result);
@@ -342,7 +341,7 @@ namespace GingerCore.Drivers.WindowsLib
                     else
                     {
                         actWBE.Error = "Unable Switch frame";
-                    }                    
+                    }
                     break;
                 case ActBrowserElement.eControlAction.SwitchToDefaultFrame:
                     mUIAutomationHelper.GetHTMLHelper().SwitchToDefaultFrame();
@@ -359,7 +358,7 @@ namespace GingerCore.Drivers.WindowsLib
         {
             ActUIElement actUIElement = (ActUIElement)act;
             UIAuto.AutomationElement automationElement = null;
-            eElementType elementType=eElementType.Unknown;
+            eElementType elementType = eElementType.Unknown;
 
             if (actUIElement.ElementLocateBy.Equals(eLocateBy.POMElement))
             {
@@ -370,7 +369,7 @@ namespace GingerCore.Drivers.WindowsLib
                     return;
                 }
             }
-            else if (actUIElement.ElementType!= eElementType.Window && actUIElement.ElementAction !=ActUIElement.eElementAction.IsExist)
+            else if (actUIElement.ElementType != eElementType.Window && actUIElement.ElementAction != ActUIElement.eElementAction.IsExist)
             {
                 automationElement = (UIAuto.AutomationElement)mUIAutomationHelper.FindElementByLocator(actUIElement.ElementLocateBy, actUIElement.ElementLocateValueForDriver);
 
@@ -442,7 +441,7 @@ namespace GingerCore.Drivers.WindowsLib
                     {
                         actionResult = mUIElementOperationsHelper.GetTitle((UIAuto.AutomationElement)windowElement);
                     }
-                    else 
+                    else
                     {
                         actionResult = mUIElementOperationsHelper.GetTitle(automationElement);
                     }
@@ -560,10 +559,12 @@ namespace GingerCore.Drivers.WindowsLib
                     break;
             }
 
-            if(string.IsNullOrEmpty(actionResult.errorMessage))
+            if (string.IsNullOrEmpty(actionResult.errorMessage))
             {
-                if(isoutputvalue)
+                if (isoutputvalue)
+                {
                     actUIElement.AddOrUpdateReturnParamActual("Actual", actionResult.outputValue);
+                }
 
                 actUIElement.ExInfo = actionResult.executionInfo;
             }
@@ -641,7 +642,7 @@ namespace GingerCore.Drivers.WindowsLib
         private UIAuto.AutomationElement HandlePOMElememnt(ActUIElement act)
         {
             ObservableList<ElementLocator> locators = new ObservableList<ElementLocator>();
-            var pomExcutionUtil = new POMExecutionUtils(act,act.ElementLocateValue);
+            var pomExcutionUtil = new POMExecutionUtils(act, act.ElementLocateValue);
             var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
             ElementInfo currentPOMElementInfo = null;
@@ -656,7 +657,7 @@ namespace GingerCore.Drivers.WindowsLib
             {
                 if (pomExcutionUtil.AutoUpdateCurrentPOM(this.BusinessFlow.CurrentActivity.CurrentAgent) != null)
                 {
-                    windowElement = LocateElementByLocators(currentPOMElementInfo.Locators,true);
+                    windowElement = LocateElementByLocators(currentPOMElementInfo.Locators, true);
                     if (windowElement != null)
                     {
                         act.ExInfo += "Broken element was auto updated by Self healing operation";
@@ -818,7 +819,10 @@ namespace GingerCore.Drivers.WindowsLib
                             actWC.Error += status;
                         }
                         else
+                        {
                             actWC.ExInfo += status;
+                        }
+
                         break;
 
                     case ActWindowsControl.eControlAction.AsyncClick:
@@ -828,7 +832,10 @@ namespace GingerCore.Drivers.WindowsLib
                             actWC.Error += status;
                         }
                         else
+                        {
                             actWC.ExInfo += status;
+                        }
+
                         break;
 
                     case ActWindowsControl.eControlAction.ClickXY:
@@ -836,11 +843,11 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
 
                     case ActWindowsControl.eControlAction.RightClick:
-                        mUIAutomationHelper.DoRightClick(AE,actWC.ValueForDriver);
+                        mUIAutomationHelper.DoRightClick(AE, actWC.ValueForDriver);
                         break;
 
                     case ActWindowsControl.eControlAction.DoubleClick:
-                        mUIAutomationHelper.DoDoubleClick(AE,actWC.ValueForDriver);
+                        mUIAutomationHelper.DoDoubleClick(AE, actWC.ValueForDriver);
                         break;
 
                     case ActWindowsControl.eControlAction.Maximize:
@@ -852,7 +859,10 @@ namespace GingerCore.Drivers.WindowsLib
                             actWC.Error = status;
                         }
                         else
+                        {
                             actWC.ExInfo += status;
+                        }
+
                         break;
                     case ActWindowsControl.eControlAction.Resize:
                         status = mUIAutomationHelper.SetElementSize(AE, actWC.ValueForDriver);
@@ -861,10 +871,13 @@ namespace GingerCore.Drivers.WindowsLib
                             actWC.Error = status;
                         }
                         else
+                        {
                             actWC.ExInfo += status;
+                        }
+
                         break;
                     case ActWindowsControl.eControlAction.GetText:
-                        string valText=mUIAutomationHelper.GetControlText(AE,actWC.ValueForDriver);
+                        string valText = mUIAutomationHelper.GetControlText(AE, actWC.ValueForDriver);
                         actWC.AddOrUpdateReturnParamActual("Actual", valText);
                         actWC.ExInfo = valText;
                         break;
@@ -923,18 +936,23 @@ namespace GingerCore.Drivers.WindowsLib
                         actWC.AddOrUpdateReturnParamActual("Actual", propValue);
                         actWC.ExInfo = propValue;
                         break;
-                    
+
                     case ActWindowsControl.eControlAction.Repaint:
                         mUIAutomationHelper.HandlePaintWindow(AE);
                         break;
                     case ActWindowsControl.eControlAction.SelectContextMenuItem:
                         bool result = false;
-                        result=mUIAutomationHelper.ClickContextMenuItem(AE, actWC.Value);
-                        
+                        result = mUIAutomationHelper.ClickContextMenuItem(AE, actWC.Value);
+
                         if (result)
+                        {
                             actWC.ExInfo += "Element Clicked";
+                        }
                         else
-                            actWC.Error="Unable to Click Element";
+                        {
+                            actWC.Error = "Unable to Click Element";
+                        }
+
                         break;
                     case ActWindowsControl.eControlAction.Expand:
                         mUIAutomationHelper.ExpandComboboxByUIA(AE);
@@ -949,7 +967,7 @@ namespace GingerCore.Drivers.WindowsLib
                 throw e;
             }
         }
-        
+
         private void HandleMenuControlAction(ActMenuItem actMenuItem)
         {
             object AE;
@@ -969,7 +987,7 @@ namespace GingerCore.Drivers.WindowsLib
 
                     case ActMenuItem.eMenuAction.Collapse:
                         AE = mUIAutomationHelper.GetActElement(actMenuItem);
-                        if(AE==null)
+                        if (AE == null)
                         {
                             actMenuItem.Error = "Unable to locate Menu Item";
                             return;
@@ -1036,7 +1054,7 @@ namespace GingerCore.Drivers.WindowsLib
         {
             return ((IWindowExplorer)this).GetActiveWindow().Title;
         }
-        
+
 
         public override void HighlightActElement(Act act)
         {
@@ -1054,7 +1072,7 @@ namespace GingerCore.Drivers.WindowsLib
 
         public override bool IsRunning()
         {
-                return true;
+            return true;
         }
 
         //TODO: dup with PB Driver - move to UIAuto and pass param window type: All, Windows, PB etc...
@@ -1069,7 +1087,7 @@ namespace GingerCore.Drivers.WindowsLib
         }
 
 
-        
+
         string IWindowExplorer.GetFocusedControl()
         {
             return null;
@@ -1114,12 +1132,12 @@ namespace GingerCore.Drivers.WindowsLib
 
                 foreach (UIAElementInfo foundElemntInfo in elementInfoList)
                 {
-                    if(StopProcess)
+                    if (StopProcess)
                     {
                         break;
                     }
 
-                    ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo,pomSetting);
+                    ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo, pomSetting);
 
                     bool learnElement = true;
                     if (pomSetting.filteredElementType != null)
@@ -1143,14 +1161,14 @@ namespace GingerCore.Drivers.WindowsLib
 
         List<ElementInfo> IWindowExplorer.GetElementChildren(ElementInfo ElementInfo)
         {
-            return GetElementChildren(ElementInfo);           
+            return GetElementChildren(ElementInfo);
         }
 
         ObservableList<ControlProperty> IWindowExplorer.GetElementProperties(ElementInfo ElementInfo)
         {
             //only return necessery properties
             ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
-            UIAElementInfo uIAElement  = (UIAElementInfo)ElementInfo;
+            UIAElementInfo uIAElement = (UIAElementInfo)ElementInfo;
             if (!string.IsNullOrWhiteSpace(ElementInfo.ElementType))
             {
                 list.Add(new ControlProperty() { Name = ElementProperty.PlatformElementType, Value = ElementInfo.ElementType });
@@ -1195,7 +1213,7 @@ namespace GingerCore.Drivers.WindowsLib
             {
                 list.Add(new ControlProperty() { Name = ElementProperty.Value, Value = ElementInfo.Value });
             }
-            
+
             list.Add(new ControlProperty() { Name = ElementProperty.Height, Value = ElementInfo.Height.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.Width, Value = ElementInfo.Width.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.X, Value = ElementInfo.X.ToString() });
@@ -1207,7 +1225,7 @@ namespace GingerCore.Drivers.WindowsLib
             list.Add(new ControlProperty() { Name = ElementProperty.IsOffscreen, Value = uIAElement.IsOffscreen.ToString() });
             list.Add(new ControlProperty() { Name = ElementProperty.IsSelected, Value = uIAElement.IsSelected.ToString() });
 
-            return list;       
+            return list;
         }
 
         ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
@@ -1242,12 +1260,20 @@ namespace GingerCore.Drivers.WindowsLib
         AppWindow IWindowExplorer.GetActiveWindow()
         {
             AppWindow aw = new AppWindow();
-            if (mUIAutomationHelper.GetCurrentWindow() == null) return null;
-            if (!mUIAutomationHelper.IsWindowValid(mUIAutomationHelper.GetCurrentWindow())) return null;
+            if (mUIAutomationHelper.GetCurrentWindow() == null)
+            {
+                return null;
+            }
+
+            if (!mUIAutomationHelper.IsWindowValid(mUIAutomationHelper.GetCurrentWindow()))
+            {
+                return null;
+            }
+
             aw.Title = mUIAutomationHelper.GetWindowInfo(mUIAutomationHelper.GetCurrentWindow());
             return aw;
         }
-        
+
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
             if (ElementInfo.ElementObject == null || locateElementByItLocators)
@@ -1258,7 +1284,7 @@ namespace GingerCore.Drivers.WindowsLib
                     ElementInfo.ElementObject = (object)windowElement;
                 }
             }
-            HighLightElement(ElementInfo);           
+            HighLightElement(ElementInfo);
         }
 
         private void HandleWindowsGenericWidgetControlAction(ActGenElement actWinC)
@@ -1281,39 +1307,59 @@ namespace GingerCore.Drivers.WindowsLib
 
                         result = mUIAutomationHelper.GetHTMLHelper().SetValue(element, ValDrv);
                         if (result)
+                        {
                             actWinC.ExInfo = ValDrv + " set";
+                        }
                         else
+                        {
                             actWinC.Error = "Unable to set value to " + ValDrv;
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.SetAttributeValue:
                         string attrName = "value";
                         string attValue = ValDrv;
-                        if(ValDrv.IndexOf("=") > 0)
+                        if (ValDrv.IndexOf("=") > 0)
                         {
                             attrName = ValDrv.Split('=')[0];
                             attValue = ValDrv.Split('=')[1];
                         }
                         result = mUIAutomationHelper.GetHTMLHelper().SetValue(element, attValue, attrName);
                         if (result)
+                        {
                             actWinC.ExInfo = ValDrv + " set";
+                        }
                         else
+                        {
                             actWinC.Error = "Unable to set attribute " + ValDrv;
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.FireSpecialEvent:
 
                         value = mUIAutomationHelper.GetHTMLHelper().FireSpecialEvent(element, ValDrv);
                         if (value.StartsWith("Error"))
+                        {
                             actWinC.Error = "Unable to fire special event. " + value;
+                        }
                         else
+                        {
                             actWinC.ExInfo = "Fire special event " + value;
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.SendKeys:
 
                         result = mUIAutomationHelper.GetHTMLHelper().SendKeys(element, ValDrv);
                         if (result)
+                        {
                             actWinC.ExInfo = ValDrv + " Keys Sent";
+                        }
                         else
+                        {
                             actWinC.Error = "Unable to Send Keys " + ValDrv;
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.GetValue:
                         value = mUIAutomationHelper.GetHTMLHelper().GetValue(element, "value");
@@ -1328,20 +1374,41 @@ namespace GingerCore.Drivers.WindowsLib
                         }
                         break;
                     case ActGenElement.eGenElementAction.ClickAt:
-                        result = mUIAutomationHelper.GetHTMLHelper().ClickAt(element,ValDrv);
-                        if (result) actWinC.ExInfo = "Element Clicked";
-                        else actWinC.Error = "Element Unable to Clicked";
-                        break;                    
+                        result = mUIAutomationHelper.GetHTMLHelper().ClickAt(element, ValDrv);
+                        if (result)
+                        {
+                            actWinC.ExInfo = "Element Clicked";
+                        }
+                        else
+                        {
+                            actWinC.Error = "Element Unable to Clicked";
+                        }
+
+                        break;
                     case ActGenElement.eGenElementAction.Click:
                     case ActGenElement.eGenElementAction.AsyncClick:
                         result = mUIAutomationHelper.GetHTMLHelper().Click(element);
-                        if (result) actWinC.ExInfo = "Element Clicked";
-                        else actWinC.Error = "Element Unable to Clicked";
+                        if (result)
+                        {
+                            actWinC.ExInfo = "Element Clicked";
+                        }
+                        else
+                        {
+                            actWinC.Error = "Element Unable to Clicked";
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.RightClick:
                         result = mUIAutomationHelper.GetHTMLHelper().RightClick(element, ValDrv);
-                        if (result) actWinC.ExInfo = "Element Right Click Done";
-                        else actWinC.Error = "Element Unable to Right Click";
+                        if (result)
+                        {
+                            actWinC.ExInfo = "Element Right Click Done";
+                        }
+                        else
+                        {
+                            actWinC.Error = "Element Unable to Right Click";
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.Enabled:
                         value = mUIAutomationHelper.GetHTMLHelper().GetValue(element, "disabled");
@@ -1351,13 +1418,27 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
                     case ActGenElement.eGenElementAction.Hover:
                         result = mUIAutomationHelper.GetHTMLHelper().MouseHover(element, ValDrv);
-                        if (result) actWinC.ExInfo = "Element Hover Done";
-                        else actWinC.Error = "Unable to Hover the Element";
+                        if (result)
+                        {
+                            actWinC.ExInfo = "Element Hover Done";
+                        }
+                        else
+                        {
+                            actWinC.Error = "Unable to Hover the Element";
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.ScrollToElement:
                         result = mUIAutomationHelper.GetHTMLHelper().scrolltoElement(element);
-                        if (result) actWinC.ExInfo = "Scroll to Element Done";
-                        else actWinC.Error = "Unable to Scroll to Element";
+                        if (result)
+                        {
+                            actWinC.ExInfo = "Scroll to Element Done";
+                        }
+                        else
+                        {
+                            actWinC.Error = "Unable to Scroll to Element";
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.Visible:
                         value = mUIAutomationHelper.GetHTMLHelper().GetValue(element, "type");
@@ -1381,8 +1462,15 @@ namespace GingerCore.Drivers.WindowsLib
                     case ActGenElement.eGenElementAction.SelectFromDropDownByIndex:
 
                         result = mUIAutomationHelper.GetHTMLHelper().SetValue(element, ValDrv);
-                        if (result) actWinC.ExInfo = ValDrv + " set";
-                        else actWinC.Error = "Unable to Set Value " + ValDrv;
+                        if (result)
+                        {
+                            actWinC.ExInfo = ValDrv + " set";
+                        }
+                        else
+                        {
+                            actWinC.Error = "Unable to Set Value " + ValDrv;
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.GetInnerText:
                         value = mUIAutomationHelper.GetHTMLHelper().GetValue(element, "innerText");
@@ -1462,11 +1550,11 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.StackTrace);
             }
-         }
+        }
 
         public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null, bool IsFullPageScreenshot = false)
         {
@@ -1475,7 +1563,7 @@ namespace GingerCore.Drivers.WindowsLib
         }
 
         ObservableList<ElementInfo> IWindowExplorer.GetElements(ElementLocator EL)
-        {            
+        {
             return mUIAutomationHelper.GetElements(EL);
         }
 
@@ -1488,10 +1576,10 @@ namespace GingerCore.Drivers.WindowsLib
             List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls().Result;
 
             VisualElementsInfo VEI = new VisualElementsInfo();
-            foreach(ElementInfo EI in list)
+            foreach (ElementInfo EI in list)
             {
-                VisualElement VE = new VisualElement() { ElementType =EI.ElementType, Text = EI.ElementName , X = EI.X, Y = EI.Y, Width = EI.Width, Height = EI.Height };
-                VEI.Elements.Add(VE);                
+                VisualElement VE = new VisualElement() { ElementType = EI.ElementType, Text = EI.ElementName, X = EI.X, Y = EI.Y, Width = EI.Width, Height = EI.Height };
+                VEI.Elements.Add(VE);
             }
             return VEI;
         }
@@ -1529,7 +1617,7 @@ namespace GingerCore.Drivers.WindowsLib
 
                 LocateElementByLocators(EI.Locators, GetOutAfterFoundElement);
 
-                if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count() > 0)
+                if (activesElementLocators.Any(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed))
                 {
                     return true;
                 }
@@ -1607,7 +1695,9 @@ namespace GingerCore.Drivers.WindowsLib
                     return AE;
                 }
                 else
+                {
                     throw;
+                }
             }
             return AE;
         }
@@ -1671,7 +1761,7 @@ namespace GingerCore.Drivers.WindowsLib
         public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
         {
             //try by type and Xpath comparison
-            ElementInfo OriginalElementInfo = originalElements.Where(x => (x.ElementTypeEnum == latestElement.ElementTypeEnum)
+            ElementInfo OriginalElementInfo = originalElements.FirstOrDefault(x => (x.ElementTypeEnum == latestElement.ElementTypeEnum)
                                                                 && (x.XPath == latestElement.XPath)
                                                                 && (x.Path == latestElement.Path || (string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(latestElement.Path)))
                                                                 && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) == null
@@ -1679,7 +1769,7 @@ namespace GingerCore.Drivers.WindowsLib
                                                                         && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue == latestElement.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue)
                                                                         )
                                                                     )
-                                                                ).FirstOrDefault();
+);
             return OriginalElementInfo;
         }
 
@@ -1702,19 +1792,19 @@ namespace GingerCore.Drivers.WindowsLib
                 {
                     ((UIAuto.ExpandCollapsePattern)expandPattern).Expand();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Failed To Expand Element while POM Learning...", ex);
                 }
             }
 
             UIAuto.AutomationElementCollection itemList = automationElement.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants,
-                new UIAuto.PropertyCondition( UIAuto.AutomationElement.LocalizedControlTypeProperty, "list item"));
+                new UIAuto.PropertyCondition(UIAuto.AutomationElement.LocalizedControlTypeProperty, "list item"));
             foreach (UIAuto.AutomationElement ae in itemList)
             {
                 optionalValues.Add(new OptionalValue { Value = ae.Current.Name, IsDefault = false });
             }
-            
+
             return optionalValues;
         }
         public bool CanStartAnotherInstance(out string errorMessage)
@@ -1732,7 +1822,11 @@ namespace GingerCore.Drivers.WindowsLib
         {
             object elem = mUIAutomationHelper.GetElementAtPoint(new System.Drawing.Point((int)ptX, (int)ptY));
 
-            if (elem == null) return null;
+            if (elem == null)
+            {
+                return null;
+            }
+
             ElementInfo EI = null;
 
             if (elem.GetType().Equals(typeof(UIAuto.AutomationElement)))

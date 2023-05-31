@@ -34,39 +34,40 @@ namespace GingerWPFUnitTest.POMs
         {
             get
             {
-                return ucButton; 
+                return ucButton;
             }
         }
 
         public void Click()
-        {            
-            Task.Factory.StartNew(() => { 
+        {
+            Task.Factory.StartNew(() =>
+            {
                 Dispatcher.Invoke(() =>
-                {                                                                         
+                {
                     Execute(() =>
-                    {                    
+                    {
                         mButton.DoClick();
                     });
                 });
             });
-            
-             SleepWithDoEvents(500);            
+
+            SleepWithDoEvents(500);
         }
 
-     
+
         public bool IsEnabled
         {
             get
             {
                 bool b = false;
                 Execute(() =>
-                {                    
+                {
                     b = mButton.IsEnabled;
                 });
                 return b;
             }
         }
-        
-        public string Text { get { return mButton.ButtonText;  }  }
+
+        public string Text { get { return mButton.ButtonText; } }
     }
 }

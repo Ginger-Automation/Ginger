@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -26,7 +26,6 @@ using Ginger.SolutionAutoSaveAndRecover;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;
-using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
@@ -86,7 +85,7 @@ namespace Amdocs.Ginger.Common
 
         bool Revert(string path, SourceControlBase SourceControl);
 
-        void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems);
+        void ShowRecoveryItemPage();
 
         SourceControlBase GetNewSVnRepo();
         void WaitForAutoRunWindowClose();

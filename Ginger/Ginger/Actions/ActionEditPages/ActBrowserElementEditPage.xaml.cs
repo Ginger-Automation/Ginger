@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using Ginger.Actions._Common.ActUIElementLib;
 using Ginger.UserControls;
 using GingerCore.Actions;
@@ -29,8 +30,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Amdocs.Ginger.Repository;
-using System.Windows.Data;
 
 namespace Ginger.Actions
 {
@@ -69,7 +68,7 @@ namespace Ginger.Actions
             xGotoURLTypeRadioButton.Init(typeof(ActBrowserElement.eGotoURLType), xGotoURLTypeRadioButtonPnl, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString()));
             xURLSrcRadioButton.Init(typeof(ActBrowserElement.eURLSrc), xURLSrcRadioButtonPnl, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString()), URLSrcRadioButton_Clicked);
             xMonitorURLRadioButton.Init(typeof(ActBrowserElement.eMonitorUrl), xMonitorURLRadioButtonPnl, mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl), ActBrowserElement.eMonitorUrl.AllUrl.ToString()), MonitorURLRadioButton_Clicked);
-            xRequestTypeRadioButton.Init(typeof(ActBrowserElement.eRequestTypes), xRequestTypeRadioButtonPnl, mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes), ActBrowserElement.eRequestTypes.All.ToString()), RequestTypeRadioButton_Clicked);
+            xRequestTypeRadioButton.Init(typeof(ActBrowserElement.eRequestTypes), xRequestTypeRadioButtonPnl, mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes), ActBrowserElement.eRequestTypes.FetchOrXHR.ToString()), RequestTypeRadioButton_Clicked);
             xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy);
             xImplicitWaitVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.ImplicitWait);
             SetGridView();
@@ -173,6 +172,12 @@ namespace Ginger.Actions
                     xUpdateNetworkUrlGridPnl.Visibility = System.Windows.Visibility.Visible;
                 }
             }
+            else if (mAct.ControlAction == ActBrowserElement.eControlAction.GetConsoleLog)
+            {
+                ResetPOMView();
+                xValueGrid.Visibility = System.Windows.Visibility.Visible;
+                xValueLabel.Content = "Text File Path:";
+            }
             else
             {
                 if (mAct.ControlAction == ActBrowserElement.eControlAction.InitializeBrowser)
@@ -222,7 +227,7 @@ namespace Ginger.Actions
         {
             RadioButton rbSender = sender as RadioButton;
 
-            if(rbSender.Content.ToString() == ActBrowserElement.eURLSrc.Static.ToString())
+            if (rbSender.Content.ToString() == ActBrowserElement.eURLSrc.Static.ToString())
             {
                 ValueUC.Visibility = System.Windows.Visibility.Visible;
                 xPOMUrlFrame.Visibility = System.Windows.Visibility.Collapsed;

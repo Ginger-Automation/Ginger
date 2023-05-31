@@ -16,12 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows;
-using System.Windows.Controls;
-using GingerCore;
-using GingerCore.GeneralLib;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using GingerCore.GeneralLib;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -49,10 +48,10 @@ namespace Ginger.Run.RunSetActions
             SubjectTextBox.Init(context, mRunSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Subject));
             BodyTextBox.Init(context, mRunSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Bodytext));
             BodyTextBox.AdjustHight(100);
-            
+
             if (string.IsNullOrEmpty(mRunSetActionSendFreeEmail.MailTo))
             {
-                mRunSetActionSendFreeEmail.MailFrom =  WorkSpace.Instance.UserProfile.UserEmail;
+                mRunSetActionSendFreeEmail.MailFrom = WorkSpace.Instance.UserProfile.UserEmail;
             }
 
             if (mRunSetActionSendFreeEmail.Email.EmailMethod == Email.eEmailMethod.SMTP)
@@ -85,4 +84,3 @@ namespace Ginger.Run.RunSetActions
         }
     }
 }
- 

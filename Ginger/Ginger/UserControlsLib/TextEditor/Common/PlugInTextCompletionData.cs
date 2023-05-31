@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Windows.Media;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
+using System;
 using System.Collections.Generic;
+using System.Windows.Media;
 
 namespace Ginger.UserControlsLib.TextEditor.Common
 {

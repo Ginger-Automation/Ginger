@@ -176,7 +176,9 @@ namespace Ginger.Run
             object AGR = mExecutionLogger.SetReportActivityGroup(activityGroup, mContext.BusinessFlow, offlineMode);
 
             if (!offlineMode)
+            {
                 ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), string.Format("{0} (ID:{1}, ParentID:{2})", activityGroup.Name, activityGroup.Guid, activityGroup.ExecutionParentGuid), AGR);
+            }
         }
 
         public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
@@ -480,7 +482,9 @@ namespace Ginger.Run
                 string executionLogFolder = string.Empty;
                 //if offline mode then execution logger path exists in action object so making executionLogFolder empty to avoid duplication of path.
                 if (!offlineMode)
+                {
                     executionLogFolder = mExecutionLogger.ExecutionLogfolder;
+                }
                 //ActionReport AR = new ActionReport(action, mContext);  
 
                 //if action call the Shared actvity then mContext.Activity and mCurrentActivity will be different,so keeping the shared activity in temp variable
@@ -503,10 +507,12 @@ namespace Ginger.Run
                         //    return;
 
                         //
-                        ActivitiesGroup currrentGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == mCurrentActivity.ActivitiesGroupID).FirstOrDefault();
+                        ActivitiesGroup currrentGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == mCurrentActivity.ActivitiesGroupID);
                         string currrentGroupName = string.Empty;
                         if (currrentGroup != null)
+                        {
                             currrentGroupName = currrentGroup.Name;
+                        }
 
                         //
                         List<string> screenShotsPathes = new List<string>();
@@ -519,7 +525,9 @@ namespace Ginger.Run
                         // 
                         bool automatedOpeningFlag = false;
                         if (action.FlowControls.Where(x => x.FlowControlAction == eFlowControlAction.FailureIsAutoOpenedDefect && action.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList().Count > 0)
+                        {
                             automatedOpeningFlag = true;
+                        }
 
                         // OMG !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -554,7 +562,7 @@ namespace Ginger.Run
                             GingerData.GingerName = "";
                         }
 
-                        if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(z => z.FailedActionGuid == action.Guid).ToList().Count == 0)
+                        if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(z => z!=null && z.FailedActionGuid == action.Guid).ToList().Count == 0)
                         {
                             WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Add(new DefectSuggestion(action.Guid, this.GingerData.GingerName, mContext.BusinessFlow.Name, currrentGroupName,
                                                                                            mContext.BusinessFlow.ExecutionLogActivityCounter, mCurrentActivity.ActivityName, mCurrentActivity.ExecutionLogActionCounter,
@@ -646,7 +654,7 @@ namespace Ginger.Run
         {
             try
             {
-                HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+                HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
                 string exec_folder = GetRunSetLastExecutionLogFolderOffline();
                 string reportsResultFolder = string.Empty;
                 reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), false, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
@@ -676,7 +684,7 @@ namespace Ginger.Run
         //Move to GingerRunnerLogger
         public void GenerateBusinessFlowOfflineReport(Context context, string reportsResultFolder, string RunsetName = null)
         {
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             string exec_folder = string.Empty;
             exec_folder = GenerateBusinessflowOfflineExecutionLogger(context, RunsetName);
             if (string.IsNullOrEmpty(exec_folder))
@@ -773,16 +781,21 @@ namespace Ginger.Run
             {
                 //handle root directory
                 if (Directory.Exists(logFolderPath))
+                {
                     executionLoggerHelper.CleanDirectory(logFolderPath);
+                }
                 else
+                {
                     Directory.CreateDirectory(logFolderPath);
+                }
+
                 GingerExecutionEngine Gr = new GingerExecutionEngine(new GingerRunner());
                 mCurrentBusinessFlow = businessFlow;
                 businessFlow.OffilinePropertiesPrep(logFolderPath);
                 System.IO.Directory.CreateDirectory(businessFlow.ExecutionLogFolder);
                 foreach (Activity activity in businessFlow.Activities)
                 {
-                    ActivitiesGroup currentActivityGroup = businessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
+                    ActivitiesGroup currentActivityGroup = businessFlow.ActivitiesGroups.FirstOrDefault(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid));
                     if (currentActivityGroup != null)
                     {
                         currentActivityGroup.ExecutionLogFolder = logFolderPath;

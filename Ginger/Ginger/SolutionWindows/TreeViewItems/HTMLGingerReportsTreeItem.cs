@@ -20,9 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using Ginger.Environments;
 using Ginger.Reports;
-using Ginger.Repository;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -38,7 +36,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     {
         public RepositoryFolder<HTMLReportConfiguration> mHtmlReportsFolder;
         private HTMLReportTemplatesListPage mHTMLReportTemplatesListPage;
-       
+
 
         public HTMLGingerReportsTreeItem(RepositoryFolder<HTMLReportConfiguration> htmlReportsFolder)
         {
@@ -61,7 +59,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {           
+        {
             return NewTVItemFolderHeaderStyle(mHtmlReportsFolder);
         }
 
@@ -78,14 +76,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             //Add direct children's 
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
-            ObservableList<HTMLReportConfiguration> templates = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();                   
+            ObservableList<HTMLReportConfiguration> templates = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
             templates.CollectionChanged -= TreeFolderItems_CollectionChanged;
             templates.CollectionChanged += TreeFolderItems_CollectionChanged;//adding event handler to add/remove tree items automatically based on folder items collection changes
             foreach (HTMLReportConfiguration template in templates.OrderBy(nameof(HTMLReportConfiguration.Name)))
             {
-                HTMLGingerReportTreeItem RTTI = new HTMLGingerReportTreeItem(template);               
+                HTMLGingerReportTreeItem RTTI = new HTMLGingerReportTreeItem(template);
                 Childrens.Add(RTTI);
-            }            
+            }
 
             return Childrens;
         }
@@ -130,15 +128,19 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mContextMenu = new ContextMenu();
 
             if (mHtmlReportsFolder.IsRootFolder)
+            {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "HTML Report Template", allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowPaste: false, allowCutItems: false, allowCopyItems: false, allowAddSubFolder: false, allowDeleteAllItems: true);
+            }
             else//Not supposed to have sub folders
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "HTML Report Template", allowRefresh: false, allowPaste: false, allowCutItems: false, allowCopyItems: false, allowRenameFolder: false, allowAddSubFolder: false, allowDeleteFolder: false);          
+            {
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "HTML Report Template", allowRefresh: false, allowPaste: false, allowCutItems: false, allowCopyItems: false, allowRenameFolder: false, allowAddSubFolder: false, allowDeleteFolder: false);
+            }
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Open HTML Reports Default Folder", OpenHTMLReportsFolder, null, eImageType.OpenFolder);
 
             AddSourceControlOptions(mContextMenu, false, false);
         }
-        
+
 
         public override void AddTreeItem()
         {
@@ -159,19 +161,19 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             else
             {
-                WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().HTMLReportTemplatesSeq - 1;
+                WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true)).HTMLReportTemplatesSeq = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true)).HTMLReportTemplatesSeq - 1;
             }
         }
 
         private void OpenHTMLReportsFolder(object sender, RoutedEventArgs e)
         {
-            HTMLReportsConfiguration _selectedHTMLReportConfiguration =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration _selectedHTMLReportConfiguration = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             if (_selectedHTMLReportConfiguration != null)
             {
                 string path = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetReportDirectory(_selectedHTMLReportConfiguration.HTMLReportsFolder);
                 if (System.IO.Directory.Exists(path))
                 {
-                    Process.Start(new ProcessStartInfo() { FileName = Path, UseShellExecute = true }); 
+                    Process.Start(new ProcessStartInfo() { FileName = Path, UseShellExecute = true });
                 }
             }
         }

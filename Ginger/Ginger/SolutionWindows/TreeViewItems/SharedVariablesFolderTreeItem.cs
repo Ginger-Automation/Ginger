@@ -17,17 +17,16 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.Repository;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore;
 using GingerCore.Variables;
+using GingerWPF.TreeViewItemsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Windows.Controls;
-using Amdocs.Ginger.Repository;
-using GingerWPF.TreeViewItemsLib;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -36,10 +35,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public enum eVariablesItemsShowMode { ReadWrite, ReadOnly }
 
         readonly RepositoryFolder<VariableBase> mVariablesFolder;
-        private VariablesRepositoryPage mVariablesRepositoryPage;        
+        private VariablesRepositoryPage mVariablesRepositoryPage;
         private eVariablesItemsShowMode mShowMode;
 
-        public SharedVariablesFolderTreeItem(RepositoryFolder<VariableBase> variablesFolder,  eVariablesItemsShowMode showMode = eVariablesItemsShowMode.ReadWrite)
+        public SharedVariablesFolderTreeItem(RepositoryFolder<VariableBase> variablesFolder, eVariablesItemsShowMode showMode = eVariablesItemsShowMode.ReadWrite)
         {
             mVariablesFolder = variablesFolder;
             mShowMode = showMode;
@@ -120,11 +119,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (mShowMode == eVariablesItemsShowMode.ReadWrite)
             {
                 if (mVariablesFolder.IsRootFolder)
-                { 
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.Variable), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh:false, allowDeleteAllItems: true);
+                {
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.Variable), allowAddNew: false, allowRenameFolder: false, allowDeleteFolder: false, allowRefresh: false, allowDeleteAllItems: true);
                 }
                 else
-                { 
+                {
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.Variable), allowAddNew: false, allowRefresh: false);
                 }
                 AddSourceControlOptions(mContextMenu, false, false);
@@ -133,6 +132,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.Variable), false, false, false, false, false, false, false, false, false, false);
             }
-        }       
+        }
     }
 }

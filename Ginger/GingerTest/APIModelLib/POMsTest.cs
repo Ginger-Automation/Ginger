@@ -82,7 +82,8 @@ namespace GingerTest.APIModelLib
             GingerAutomator.EndSession();
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ValidatePOMWasAddedToPOMsTree()
         {
             //Act
@@ -120,10 +121,10 @@ namespace GingerTest.APIModelLib
         [TestMethod]
         [Timeout(60000)]
         public void ValidateLearnedItems()
-         {
+        {
             //Act
-            ElementInfo EI1 = mLearnedPOM.MappedUIElements.Where(x => x.ElementName == "input radio country Mexico" && x.ElementTypeEnum == eElementType.RadioButton).FirstOrDefault();
-            ElementInfo EI2 = mLearnedPOM.MappedUIElements.Where(x => x.ElementName == "input text id123" && x.ElementTypeEnum == eElementType.TextBox).FirstOrDefault();
+            ElementInfo EI1 = mLearnedPOM.MappedUIElements.FirstOrDefault(x => x.ElementName == "input radio country Mexico" && x.ElementTypeEnum == eElementType.RadioButton);
+            ElementInfo EI2 = mLearnedPOM.MappedUIElements.FirstOrDefault(x => x.ElementName == "input text id123" && x.ElementTypeEnum == eElementType.TextBox);
 
             //Assert  
             Assert.AreEqual(mLearnedPOM.MappedUIElements.Count, 25, "POM.MappedUIElements.Count check");
@@ -137,33 +138,33 @@ namespace GingerTest.APIModelLib
         public void ValidateElementsProperties()
         {
             //Act  
-            ElementInfo ButtonEI = mLearnedPOM.MappedUIElements.Where(x => x.ElementTypeEnum == eElementType.Button).FirstOrDefault();
-            ElementInfo ComboBoxEI = mLearnedPOM.MappedUIElements.Where(x => x.ElementTypeEnum == eElementType.ComboBox).FirstOrDefault();
+            ElementInfo ButtonEI = mLearnedPOM.MappedUIElements.FirstOrDefault(x => x.ElementTypeEnum == eElementType.Button);
+            ElementInfo ComboBoxEI = mLearnedPOM.MappedUIElements.FirstOrDefault(x => x.ElementTypeEnum == eElementType.ComboBox);
 
             //Assert  
             Assert.AreEqual(ButtonEI.Properties.Count, 14, "POM.properties check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "Platform Element Type", "input"),"POM.property 0 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "Platform Element Type", "input"), "POM.property 0 check");
             //Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Parent IFrame", ""), "POM.property 1 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"XPath", "/html[1]/body[1]/div[1]/input[1]"), "POM.property 2 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Relative XPath", "//input[@id='button1']"), "POM.property 3 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Height", "21"), "POM.property 4 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Width", "64"), "POM.property 5 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"X", "346"), "POM.property 6 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"Y", "67"), "POM.property 7 check");
-            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties,"id", "button1"), "POM.property 9 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "XPath", "/html[1]/body[1]/div[1]/input[1]"), "POM.property 2 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "Relative XPath", "//input[@id='button1']"), "POM.property 3 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "Height", "21"), "POM.property 4 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "Width", "64"), "POM.property 5 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "X", "346"), "POM.property 6 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "Y", "67"), "POM.property 7 check");
+            Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "id", "button1"), "POM.property 9 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "name", "btnnnnn1"), "POM.property 10 check");
             Assert.IsTrue(IsPropertyExist(ButtonEI.Properties, "type", "button"), "POM.property 11 check");
 
             Assert.AreEqual(ComboBoxEI.Properties.Count, 12, "POM.properties check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "Platform Element Type", "select"), "POM.property 0 check");
             //Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Parent IFrame", ""), "POM.property 1 check");
-            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"XPath", "/html[1]/body[1]/div[9]/select[1]"), "POM.property 2 check");
-            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Relative XPath", "//select[@id='sel1']"), "POM.property 3 check");
-            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Height", "19"), "POM.property 4 check");
-            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Width", "74"), "POM.property 5 check");
-            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"X", "631"), "POM.property 6 check");
-            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Y", "226"), "POM.property 7 check");
-            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties,"Optional Values", "Ahhhh...,Got It!,Too far,OMG"), "POM.property 9 check");
+            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "XPath", "/html[1]/body[1]/div[9]/select[1]"), "POM.property 2 check");
+            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "Relative XPath", "//select[@id='sel1']"), "POM.property 3 check");
+            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "Height", "19"), "POM.property 4 check");
+            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "Width", "74"), "POM.property 5 check");
+            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "X", "631"), "POM.property 6 check");
+            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "Y", "226"), "POM.property 7 check");
+            Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "Optional Values", "Ahhhh...,Got It!,Too far,OMG"), "POM.property 9 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "id", "sel1"), "POM.property 9 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "name", "sel1"), "POM.property 10 check");
             Assert.IsTrue(IsPropertyExist(ComboBoxEI.Properties, "onchange", "if ($('#sel1').val() == 'Got It!') $('#test9').addClass('TestPass');"), "POM.property 11 check");
@@ -174,7 +175,7 @@ namespace GingerTest.APIModelLib
 
         private bool IsPropertyExist(ObservableList<ControlProperty> Properties, string PropName, string PropValue)
         {
-            ControlProperty property = Properties.Where(x => x.Name == PropName && x.Value == PropValue).FirstOrDefault();
+            ControlProperty property = Properties.FirstOrDefault(x => x.Name == PropName && x.Value == PropValue);
 
             if (property != null)
             {
@@ -189,7 +190,7 @@ namespace GingerTest.APIModelLib
 
         private bool IsLocatorExist(ObservableList<ElementLocator> locators, eLocateBy locateBy, string locateValue)
         {
-            ElementLocator locator = locators.Where(x => x.LocateBy == locateBy && x.LocateValue == locateValue).FirstOrDefault();
+            ElementLocator locator = locators.FirstOrDefault(x => x.LocateBy == locateBy && x.LocateValue == locateValue);
 
             if (locator != null)
             {
@@ -203,7 +204,7 @@ namespace GingerTest.APIModelLib
 
         private bool CheckLocatorPriority(ObservableList<ElementLocator> locators, eLocateBy locateBy, string locateValue, bool isActive, int priorityIndexValue)
         {
-            ElementLocator locator = locators.Where(x => x.LocateBy == locateBy && x.LocateValue == locateValue).FirstOrDefault();
+            ElementLocator locator = locators.FirstOrDefault(x => x.LocateBy == locateBy && x.LocateValue == locateValue);
 
             if (locator != null && locator.Active == isActive && locators.IndexOf(locator) == priorityIndexValue)
             {
@@ -215,16 +216,17 @@ namespace GingerTest.APIModelLib
             }
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ValidateElementsLocators()
         {
             //Act
-            ElementInfo ButtonEI = mLearnedPOM.MappedUIElements.Where(x => x.ElementTypeEnum == eElementType.Button).FirstOrDefault();
-            ElementInfo ComboBoxEI = mLearnedPOM.MappedUIElements.Where(x => x.ElementTypeEnum == eElementType.ComboBox).FirstOrDefault();
+            ElementInfo ButtonEI = mLearnedPOM.MappedUIElements.FirstOrDefault(x => x.ElementTypeEnum == eElementType.Button);
+            ElementInfo ComboBoxEI = mLearnedPOM.MappedUIElements.FirstOrDefault(x => x.ElementTypeEnum == eElementType.ComboBox);
 
             //Assert
             Assert.AreEqual(ButtonEI.Locators.Count, 4, "POM.Locators check");
-            Assert.IsTrue(IsLocatorExist(ButtonEI.Locators,eLocateBy.ByID, "button1"), "POM.Locator 0 .LocateBy check");
+            Assert.IsTrue(IsLocatorExist(ButtonEI.Locators, eLocateBy.ByID, "button1"), "POM.Locator 0 .LocateBy check");
             Assert.IsTrue(IsLocatorExist(ButtonEI.Locators, eLocateBy.ByName, "btnnnnn1"), "POM.Locator 1 .LocateBy check");
             Assert.IsTrue(IsLocatorExist(ButtonEI.Locators, eLocateBy.ByRelXPath, "//input[@id='button1']"), "POM.Locator 2 .LocateBy check");
             Assert.IsTrue(IsLocatorExist(ButtonEI.Locators, eLocateBy.ByXPath, "/html[1]/body[1]/div[1]/input[1]"), "POM.Locator 3 .LocateBy check");
@@ -241,8 +243,8 @@ namespace GingerTest.APIModelLib
         public void ValidateLocatorsPriority()
         {
             //Act
-            ElementInfo ButtonEI = mLearnedPOM.MappedUIElements.Where(x => x.ElementTypeEnum == eElementType.Button).FirstOrDefault();
-            ElementInfo ComboBoxEI = mLearnedPOM.MappedUIElements.Where(x => x.ElementTypeEnum == eElementType.ComboBox).FirstOrDefault();
+            ElementInfo ButtonEI = mLearnedPOM.MappedUIElements.FirstOrDefault(x => x.ElementTypeEnum == eElementType.Button);
+            ElementInfo ComboBoxEI = mLearnedPOM.MappedUIElements.FirstOrDefault(x => x.ElementTypeEnum == eElementType.ComboBox);
 
             #region Assert #1 Element : ButtonEI | POM.LocatorsPriority Check
             Assert.AreEqual(ButtonEI.Locators.Count, 4, "POM.LocatorsPriority check");

@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.ConflictResolve;
-using Ginger.Reports;
 using Ginger.Run;
 using Ginger.UserControls;
 using GingerCore;
@@ -127,31 +126,74 @@ namespace Ginger.SourceControl
                                  SCFI.Name = item.ItemName;
                              }
                              else
+                             {
                                  SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
+                             }
                          }
                          catch (Exception ex)
                          {
 
                              //TODO: fix the path changes 
                              if (SCFI.Path.Contains('\\') && (SCFI.Path.LastIndexOf('\\') + 1 < SCFI.Path.Length - 1))
+                             {
                                  SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
+                             }
+
                              Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                          }
 
-                         if (string.IsNullOrEmpty(SCFI.Path)) SCFI.FileType = "";
-                         else if (SCFI.Path.ToUpper().Contains("AGENTS")) SCFI.FileType = "Agent";
-                         else if (SCFI.Path.ToUpper().Contains("BUSINESSFLOWS")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
-                         else if (SCFI.Path.ToUpper().Contains("DOCUMENTS")) SCFI.FileType = "Document";
-                         else if (SCFI.Path.ToUpper().Contains("ENVIRONMENTS")) SCFI.FileType = "Environment";
-                         else if (SCFI.Path.ToUpper().Contains("EXECUTIONRESULTS")) SCFI.FileType = "Execution Result";
-                         else if (SCFI.Path.ToUpper().Contains("RUNSET")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.RunSet);
-                         else if (SCFI.Path.ToUpper().Contains("ACTIONS")) SCFI.FileType = "Action";
-                         else if (SCFI.Path.ToUpper().Contains("ACTIVITIESGROUPS")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
-                         else if (SCFI.Path.ToUpper().Contains("ACTIVITIES")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Activity);
-                         else if (SCFI.Path.ToUpper().Contains("VARIABLES")) SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Variable);
-
-                         else if (SCFI.Path.Contains("ApplicationAPIModel")) SCFI.FileType = "Application API Model";
-                         else if (SCFI.Path.Contains("GlobalAppModelParameter")) SCFI.FileType = "Global Applications Model Parameter";
+                         if (string.IsNullOrEmpty(SCFI.Path))
+                         {
+                             SCFI.FileType = "";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("AGENTS"))
+                         {
+                             SCFI.FileType = "Agent";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("BUSINESSFLOWS"))
+                         {
+                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("DOCUMENTS"))
+                         {
+                             SCFI.FileType = "Document";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("ENVIRONMENTS"))
+                         {
+                             SCFI.FileType = "Environment";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("EXECUTIONRESULTS"))
+                         {
+                             SCFI.FileType = "Execution Result";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("RUNSET"))
+                         {
+                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.RunSet);
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("ACTIONS"))
+                         {
+                             SCFI.FileType = "Action";
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("ACTIVITIESGROUPS"))
+                         {
+                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("ACTIVITIES"))
+                         {
+                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Activity);
+                         }
+                         else if (SCFI.Path.ToUpper().Contains("VARIABLES"))
+                         {
+                             SCFI.FileType = GingerDicser.GetTermResValue(eTermResKey.Variable);
+                         }
+                         else if (SCFI.Path.Contains("ApplicationAPIModel"))
+                         {
+                             SCFI.FileType = "Application API Model";
+                         }
+                         else if (SCFI.Path.Contains("GlobalAppModelParameter"))
+                         {
+                             SCFI.FileType = "Global Applications Model Parameter";
+                         }
                      });
                 });
 
@@ -166,7 +208,11 @@ namespace Ginger.SourceControl
         }
         private void SelectAll(object sender, RoutedEventArgs e)
         {
-            if (mFiles == null) return;
+            if (mFiles == null)
+            {
+                return;
+            }
+
             foreach (SourceControlFileInfo SCFI in mFiles)
             {
                 SCFI.Selected = true;
@@ -176,7 +222,11 @@ namespace Ginger.SourceControl
 
         private void UnSelectAll(object sender, RoutedEventArgs e)
         {
-            if (mFiles == null) return;
+            if (mFiles == null)
+            {
+                return;
+            }
+
             foreach (SourceControlFileInfo SCFI in mFiles)
             {
                 SCFI.Selected = false;
@@ -215,7 +265,10 @@ namespace Ginger.SourceControl
                     return;
                 }
                 if (Reporter.ToUser(eUserMsgKey.SourceControlChkInConfirmtion, SelectedFiles.Count) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                {
                     return;
+                }
+
                 string Comments = CommentsTextBox.Text.ToString();
                 // performing on the another thread 
                 await Task.Run(() =>
@@ -305,21 +358,34 @@ namespace Ginger.SourceControl
                     {
                         ResolveConflictWindow resConfPage = new ResolveConflictWindow(conflictsPaths);
                         if (WorkSpace.Instance.RunningInExecutionMode == true)
+                        {
                             conflictsPaths.ForEach(cPath => SourceControlIntegration.ResolveConflicts(WorkSpace.Instance.Solution.SourceControl, cPath, eResolveConflictsSide.Server));
+                        }
                         else
+                        {
                             resConfPage.ShowAsWindow();
+                        }
+
                         result = resConfPage.IsResolved;
                         conflict = true;
                         SourceControlIntegration.conflictFlag = conflict;
                         if (SourceControl.GetSourceControlmConflict != null)
+                        {
                             SourceControl.GetSourceControlmConflict.Clear();
+                        }
                     });
                     if (!conflict)
                     {
                         if (error.Contains("too many redirects or authentication replays"))
+                        {
                             error = "Commit failed because of wrong credentials error, please enter valid Username and Password and try again";
+                        }
+
                         if (error.Contains("is locked in another working copy"))
+                        {
                             error = "This file has been locked by other user. Please remove lock and then try to Check in.";
+                        }
+
                         App.MainWindow.Dispatcher.Invoke(() =>
                         {
                             Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
@@ -389,7 +455,7 @@ namespace Ginger.SourceControl
             if (!parentFolders.Contains(standardPath))
             {
                 //check if not already covered with exsting folder path(
-                if (parentFolders.Where(x => x.Contains(standardPath)).FirstOrDefault() == null)
+                if (parentFolders.FirstOrDefault(x => x.Contains(standardPath)) == null)
                 {
                     parentFolders.Add(standardPath);
                 }
@@ -435,16 +501,16 @@ namespace Ginger.SourceControl
 
                 if (SCFI.FileType == "Agent")
                 {
-                    obj = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    obj = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path));
                 }
                 else if (SCFI.FileType == "Business Flow")
                 {
                     ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                    obj = businessFlows.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    obj = businessFlows.FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path));
                 }
                 else if (SCFI.FileType == "Environment")
                 {
-                    obj = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    obj = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path));
                 }
                 else if (SCFI.FileType == "Execution Result")
                 {
@@ -454,27 +520,27 @@ namespace Ginger.SourceControl
                 else if (SCFI.FileType == "Run Set")
                 {
                     ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-                    obj = RunSets.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    obj = RunSets.FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path));
                 }
                 else if (SCFI.FileType == "Action")
                 {
                     ObservableList<Act> SharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
-                    obj = SharedActions.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    obj = SharedActions.FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path));
                 }
                 else if (SCFI.FileType == "Activities Group")
                 {
                     ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
-                    obj = activitiesGroup.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    obj = activitiesGroup.FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path));
                 }
                 else if (SCFI.FileType == "Activity")
                 {
                     ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                    obj = activities.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    obj = activities.FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path));
                 }
                 else if (SCFI.FileType == "Variable")
                 {
                     ObservableList<VariableBase> variables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
-                    obj = variables.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    obj = variables.FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path));
                 }
 
                 if (obj != null && ((RepositoryItemBase)obj).DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)

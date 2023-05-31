@@ -16,12 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.CoreNET.Execution;
 using System;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
-   public class SyncRunnerItemEventArgs
+    public class SyncRunnerItemEventArgs
     {
         public enum eSyncItem
         {
@@ -33,7 +32,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         public eSyncItem EventType;
         public Object Object;
 
-        
+
         public SyncRunnerItemEventArgs(eSyncItem EventType, object Object)
         {
             this.EventType = EventType;

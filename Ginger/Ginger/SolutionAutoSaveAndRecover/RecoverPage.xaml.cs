@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -36,48 +37,78 @@ namespace Ginger.SolutionAutoSaveAndRecover
     /// <summary>
     /// Interaction logic for RecoverPage.xaml
     /// </summary>
-    public partial class RecoverPage : Page
+    public partial class RecoverPage : Page, IDisposable
     {
-        GenericWindow _pageGenericWin = null;
-
+        GenericWindow? _pageGenericWin = null;
         ObservableList<RecoveredItem> mRecoveredItems;
         bool selected = false;
 
-        public RecoverPage(ObservableList<RecoveredItem> recoveredItems)
+        public RecoverPage()
         {
             InitializeComponent();
-            this.mRecoveredItems = recoveredItems;
             SetGridView();
         }
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this);
+            mRecoveredItems = new ObservableList<RecoveredItem>();
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, null, false);
         }
 
-        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+
+        private async Task LoadFiles()
         {
-            List<RecoveredItem> SelectedFiles = mRecoveredItems.Where(x => x.Selected == true && (x.Status != eRecoveredItemStatus.Deleted && x.Status != eRecoveredItemStatus.Recovered)).ToList();
-
-            if (SelectedFiles == null || SelectedFiles.Count == 0)
+            if (Directory.Exists(WorkSpace.Instance.AppSolutionRecover.RecoverFolderPath))
             {
-                //TODO: please select valid Recover items to delete
-                Reporter.ToUser(eUserMsgKey.RecoverItemsMissingSelectionToRecover, "delete");
-                return;
-            }
+                await Task.Run(() =>
+                {
+                    this.ShowLoader();
+                    NewRepositorySerializer serializer = new NewRepositorySerializer();
 
-            foreach (RecoveredItem Ri in SelectedFiles)
+                    foreach (var directory in new DirectoryInfo(WorkSpace.Instance.AppSolutionRecover.RecoverFolderPath).GetDirectories())
+                    {
+                        string timestamp = directory.Name.Replace("AutoSave_", string.Empty);
+
+                        IEnumerable<FileInfo> files = directory.GetFiles("*", SearchOption.AllDirectories);
+
+                        foreach (var file in files)
+                        {
+                            try
+                            {
+                                RecoveredItem recoveredItem = new RecoveredItem();
+                                recoveredItem.RecoveredItemObject = serializer.DeserializeFromFile(file.FullName);
+                                recoveredItem.RecoverDate = timestamp;
+                                recoveredItem.RecoveredItemObject.FileName = file.FullName;
+                                recoveredItem.RecoveredItemObject.ContainingFolder = file.FullName.Replace(directory.FullName, "~");
+                                recoveredItem.Status = eRecoveredItemStatus.PendingRecover;
+                                this.mRecoveredItems.Add(recoveredItem);
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, "Failed to fetch recover item : " + file.FullName, ex);
+                            }
+                        }
+                    }
+                    this.HideLoader();
+                    xRecoveredItemsGrid.DataSourceList = this.mRecoveredItems;
+                });
+
+            }
+        }
+
+        private void HideLoader()
+        {
+            this.Dispatcher.Invoke(() =>
             {
-                try
-                {
-                    File.Delete(Ri.RecoveredItemObject.FileName);
-                    Ri.Status = eRecoveredItemStatus.Deleted;
-                }
-                catch
-                {
-                    Ri.Status = eRecoveredItemStatus.DeleteFailed;
-                }
-            }
+                xProcessingImage.Visibility = Visibility.Collapsed;
+            });
+        }
 
+        private void ShowLoader()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                xProcessingImage.Visibility = Visibility.Visible;
+            });
         }
 
         private void RecoverButton_Click(object sender, RoutedEventArgs e)
@@ -99,12 +130,12 @@ namespace Ginger.SolutionAutoSaveAndRecover
                     if (ri.RecoveredItemObject is BusinessFlow)
                     {
                         ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                        originalItem = businessFlows.Where(x => x.Guid == ri.RecoveredItemObject.Guid).FirstOrDefault();
+                        originalItem = businessFlows.FirstOrDefault(x => x.Guid == ri.RecoveredItemObject.Guid);
                     }
                     else if (ri.RecoveredItemObject is Run.RunSetConfig)
                     {
                         ObservableList<RunSetConfig> Runsets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-                        originalItem = Runsets.Where(x => x.Guid == ri.RecoveredItemObject.Guid).FirstOrDefault();
+                        originalItem = Runsets.FirstOrDefault(x => x.Guid == ri.RecoveredItemObject.Guid);
                     }
                     if (originalItem == null)
                     {
@@ -113,7 +144,6 @@ namespace Ginger.SolutionAutoSaveAndRecover
                     }
                     File.Delete(originalItem.FileName);
                     File.Move(ri.RecoveredItemObject.FileName, originalItem.FileName);
-
 
                     ri.Status = eRecoveredItemStatus.Recovered;
                 }
@@ -126,8 +156,22 @@ namespace Ginger.SolutionAutoSaveAndRecover
 
         }
 
-        private void SetGridView()
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
+            if (mRecoveredItems != null && mRecoveredItems.Any(x => x.Status == eRecoveredItemStatus.PendingRecover))
+            {
+                if (Reporter.ToUser(eUserMsgKey.DeleteRecoverFolderWarn) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                {
+                    return;
+                }
+            }
+            WorkSpace.Instance.AppSolutionRecover.CleanUpRecoverFolder();
+            _pageGenericWin.Close();
+        }
+
+        private async Task SetGridView()
+        {
+
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;
@@ -140,12 +184,11 @@ namespace Ginger.SolutionAutoSaveAndRecover
             view.GridColsView.Add(new GridColView() { Field = nameof(RecoveredItem.Status), Header = "Status", WidthWeight = 15, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = "View Details", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.RecoveredItems.Resources["ViewDetailsButton"] });
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDoNotAskAgainChkbox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));
-
             xRecoveredItemsGrid.SetAllColumnsDefaultView(view);
             xRecoveredItemsGrid.InitViewItems();
             xRecoveredItemsGrid.SetTitleLightStyle = true;
             xRecoveredItemsGrid.DataSourceList = this.mRecoveredItems;
+            await LoadFiles();
             xRecoveredItemsGrid.Grid.MouseDoubleClick += xRecoveredItemsGrid_MouseDoubleClick;
             xRecoveredItemsGrid.AddToolbarTool("@CheckAllColumn_16x16.png", "Select All", new RoutedEventHandler(SelectAll));
 
@@ -183,16 +226,39 @@ namespace Ginger.SolutionAutoSaveAndRecover
 
         private void SelectAll(object sender, RoutedEventArgs e)
         {
-            if (mRecoveredItems == null) return;
+            if (mRecoveredItems == null)
+            {
+                return;
+            }
+
             if (selected == false)
+            {
                 selected = true;
+            }
             else
+            {
                 selected = false;
+            }
+
             foreach (RecoveredItem RI in mRecoveredItems)
             {
                 RI.Selected = selected;
             }
             xRecoveredItemsGrid.DataSourceList = mRecoveredItems;
+            xRecoveredItemsGrid.DataSourceList = mRecoveredItems;
+        }
+
+        public void Dispose()
+        {
+            mRecoveredItems?.ClearAll();
+            _pageGenericWin.ClearControlsBindings();
+            _pageGenericWin = null;
+            GC.SuppressFinalize(this);
+        }
+
+        ~RecoverPage()
+        {
+            Dispose();
         }
     }
 }

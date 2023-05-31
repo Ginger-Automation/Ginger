@@ -1,12 +1,9 @@
 ﻿using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Plugin.Core;
 using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using System.Timers;
 
 namespace GingerCoreNETUnitTest.RecordingLibTest
 {

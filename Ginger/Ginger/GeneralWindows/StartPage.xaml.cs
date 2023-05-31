@@ -16,18 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.SolutionGeneral;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Navigation;
-using GingerCore;
-using Ginger.Environments;
-using System.Diagnostics;
-using Ginger.SolutionGeneral;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger
 {
@@ -39,11 +37,11 @@ namespace Ginger
         public StartPage()
         {
             InitializeComponent();
-            
+
             //TODO: load from external - so easier to update
             lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
-                                  
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(autoLoadLastSolCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(autoLoadLastSolCheckBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
             SetRecentSolutions();
         }
 
@@ -52,7 +50,7 @@ namespace Ginger
             try
             {
                 ObservableList<Hyperlink> recentSolutionsLinksList = new ObservableList<Hyperlink>();
-                foreach (Solution sol in  ((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects)
+                foreach (Solution sol in ((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects)
                 {
                     Hyperlink solLink = new Hyperlink();
                     solLink.Tag = sol.Name;
@@ -70,7 +68,7 @@ namespace Ginger
                     recentSolutionsLabel.Visibility = System.Windows.Visibility.Hidden;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to set the latest solutions links", ex);
             }
@@ -81,18 +79,20 @@ namespace Ginger
             try
             {
                 string selectedSolFolder = ((Hyperlink)sender).ToolTip.ToString().ToUpper();
-                Solution selectedSol = ((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects.Where(x=>x.Folder.ToUpper() == selectedSolFolder).FirstOrDefault();
+                Solution selectedSol = ((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects.FirstOrDefault(x => x.Folder.ToUpper() == selectedSolFolder);
 
                 if (selectedSol != null)
                 {
-                    WorkSpace.Instance.OpenSolution(selectedSol.Folder);                    
+                    WorkSpace.Instance.OpenSolution(selectedSol.Folder);
                 }
                 else
+                {
                     Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Selected Solution was not found");
+                }
 
                 e.Handled = true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKey.SolutionLoadError, ex);
             }

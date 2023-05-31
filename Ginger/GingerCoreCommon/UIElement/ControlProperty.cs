@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public string Value { get; set; }
         [IsSerializedForLocalRepository(true)]
         public bool ShowOnUI { get; set; } = true;
-        public override string ItemName { get { return Name; } set { Name = value;  } }
+        public override string ItemName { get { return Name; } set { Name = value; } }
 
     }
 }

@@ -17,8 +17,6 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core
 {
@@ -41,7 +39,7 @@ namespace Amdocs.Ginger.Plugin.Core
             mDescription = Description;
         }
 
-      
+
 
         public string Id { get { return mID; } set { mID = value; } }
         public string Description { get { return mDescription; } set { mDescription = value; } }

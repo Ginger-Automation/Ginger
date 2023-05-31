@@ -16,6 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.WorkSpaceLib;
@@ -23,20 +29,11 @@ using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Configurations;
 using Ginger.Reports;
-using GingerCore;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNET.SourceControl;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ginger.SolutionGeneral
 {
@@ -110,7 +107,7 @@ namespace Ginger.SolutionGeneral
         {
             get
             {
-                if (ApplicationPlatforms != null && ApplicationPlatforms.Count() > 0)
+                if (ApplicationPlatforms != null && ApplicationPlatforms.Any())
                 {
                     return ApplicationPlatforms[0].Platform;
                 }
@@ -193,7 +190,7 @@ namespace Ginger.SolutionGeneral
 
         public void SetUniqueApplicationName(ApplicationPlatform app)
         {
-            if (this.ApplicationPlatforms.Where(obj => obj.AppName == app.AppName).FirstOrDefault() == null) return; //no name like it in the group
+            if (ApplicationPlatforms.FirstOrDefault(obj => obj.AppName == app.AppName) == null) return; //no name like it in the group
 
             List<ApplicationPlatform> sameNameObjList =
                 this.ApplicationPlatforms.Where(obj => obj.AppName == app.AppName).ToList<ApplicationPlatform>();
@@ -201,7 +198,7 @@ namespace Ginger.SolutionGeneral
 
             //Set unique name
             int counter = 2;
-            while ((this.ApplicationPlatforms.Where(obj => obj.AppName == app.AppName + counter).FirstOrDefault()) != null)
+            while ((ApplicationPlatforms.FirstOrDefault(obj => obj.AppName == app.AppName + counter)) != null)
                 counter++;
             app.AppName += counter.ToString();
         }
@@ -327,7 +324,7 @@ namespace Ginger.SolutionGeneral
         public void SetUniqueVariableName(VariableBase var)
         {
             if (string.IsNullOrEmpty(var.Name)) var.Name = "Variable";
-            if (this.Variables.Where(x => x.Name == var.Name).FirstOrDefault() == null) return; //no name like it
+            if (Variables.FirstOrDefault(x => x.Name == var.Name) == null) return; //no name like it
 
             List<VariableBase> sameNameObjList =
                 this.Variables.Where(x => x.Name == var.Name).ToList<VariableBase>();
@@ -335,7 +332,7 @@ namespace Ginger.SolutionGeneral
 
             //Set unique name
             int counter = 2;
-            while ((this.Variables.Where(x => x.Name == var.Name + "_" + counter.ToString()).FirstOrDefault()) != null)
+            while ((Variables.FirstOrDefault(x => x.Name == var.Name + "_" + counter.ToString())) != null)
                 counter++;
             var.Name = var.Name + "_" + counter.ToString();
         }

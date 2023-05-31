@@ -17,24 +17,20 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
+using Ginger.SolutionWindows.TreeViewItems;
+using Ginger.WindowExplorer;
+using GingerCore.Actions;
+using GingerCore.Drivers.ASCF;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using Ginger.Drivers.WindowsAutomation;
-using Ginger.SolutionWindows.TreeViewItems;
-using Ginger.WindowExplorer;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Drivers;
-using GingerCore.Drivers.ASCF;
-using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
 
 namespace Ginger.Actions.Locators.ASCF
 {
-    class ASCFFormTreeItem : TreeViewItemBase, ITreeViewItem , IWindowExplorerTreeItem
+    class ASCFFormTreeItem : TreeViewItemBase, ITreeViewItem, IWindowExplorerTreeItem
     {
         public ASCFDriver ASCFDriver { get; set; }
 
@@ -60,7 +56,7 @@ namespace Ginger.Actions.Locators.ASCF
             //string rc = ASCFDriver.Send("GetFormControls", " ", Path, " ", " ", false);
 
             string rc = string.Empty;
-            List <ITreeViewItem> Childrens = new List<ITreeViewItem>();            
+            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
             string controls;
             if (rc.StartsWith("OK"))
             {
@@ -72,7 +68,7 @@ namespace Ginger.Actions.Locators.ASCF
                 return null;
             }
             string[] a = controls.Split('~');
-            foreach(string control in a)
+            foreach (string control in a)
             {
                 if (control.Length > 0)
                 {
@@ -90,7 +86,7 @@ namespace Ginger.Actions.Locators.ASCF
                     {
                         ASCFFormTreeItem ACFI = new ASCFFormTreeItem();
                         ACFI.Name = ControlInfo[0];
-                        ACFI.Path = ControlInfo[2];                       
+                        ACFI.Path = ControlInfo[2];
                         ACFI.ASCFDriver = ASCFDriver;
                         Childrens.Add(ACFI);
                     }

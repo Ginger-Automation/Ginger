@@ -16,16 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
-using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -34,7 +27,7 @@ namespace Amdocs.Ginger.Repository
         public IPluginPackageOperations PluginPackageOperations;
 
         [IsSerializedForLocalRepository]
-        public string PluginId { get; set;  }
+        public string PluginId { get; set; }
 
         [IsSerializedForLocalRepository]
         public string PluginPackageVersion { get; set; }
@@ -69,7 +62,7 @@ namespace Amdocs.Ginger.Repository
             mFolder = folder;
         }
 
-        
+
         string mFolder;
         public string Folder
         {
@@ -109,16 +102,16 @@ namespace Amdocs.Ginger.Repository
                 //string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 //userFolder = Path.Combine(userFolder, "Ginger", "PluginPackages");
                 //return userFolder;
-                string folder= Path.Combine(General.LocalUserApplicationDataFolderPath, "PluginsPackages");
-                if(Directory.Exists(folder) == false)
+                string folder = Path.Combine(General.LocalUserApplicationDataFolderPath, "PluginsPackages");
+                if (Directory.Exists(folder) == false)
                 {
                     Directory.CreateDirectory(folder);
                 }
                 return folder;
             }
         }
-      
-        public override string ItemName { get { return PluginId; } set {  } }
+
+        public override string ItemName { get { return PluginId; } set { } }
 
 
         public override string GetItemType()

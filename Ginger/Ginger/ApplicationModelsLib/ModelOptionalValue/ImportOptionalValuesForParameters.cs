@@ -16,22 +16,22 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using System.Data;
 using Amdocs.Ginger.Common.APIModelLib;
-using GingerCore.Environments;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
+using Amdocs.Ginger.Repository;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
-using amdocs.ginger.GingerCoreNET;
-using System.Text;
-using GingerCore.DataSource;
 using GingerAutoPilot.APIModelLib;
+using GingerCore.DataSource;
+using GingerCore.Environments;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 {
@@ -122,7 +122,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
 
                 if (ShowMessage)
+                {
                     Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, OptionalValuesPerParameterDict.Count());
+                }
             }
         }
         /// <summary>
@@ -146,7 +148,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 }
 
                 if (ShowMessage)
+                {
                     Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, OptionalValuesPerParameterDict.Count());
+                }
             }
         }
         #endregion
@@ -225,7 +229,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
 
             if (ShowMessage)
+            {
                 Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParameters);
+            }
         }
 
         public void PopulateExcelDBOptionalValuesForAPIParametersExcelDB(ObservableList<GlobalAppModelParameter> mGlobalParamterList, List<GlobalAppModelParameter> SelectedParametersGridList, List<ParameterValues> ParameterValuesByNameDic)
@@ -307,7 +313,9 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 
 
             if (ShowMessage)
+            {
                 Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParameters);
+            }
         }
         #endregion
 
@@ -350,7 +358,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 if (sheetData != null)
                                 {
                                     IEnumerable<Row> rows = sheetData.Descendants<Row>();
-                                    if (rows != null && rows.Count() > 0)
+                                    if (rows != null && rows.Any())
                                     {
                                         foreach (Cell cell in rows.ElementAt(0))
                                         {
@@ -395,11 +403,17 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 break;
                             case "No value given for one or more required parameters.":
                                 if (ShowMessage)
+                                {
                                     Reporter.ToUser(eUserMsgKey.ExcelBadWhereClause);
+                                }
+
                                 break;
                             default:
                                 if (ShowMessage)
+                                {
                                     Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
+                                }
+
                                 break;
                         }
                         return null;
@@ -592,7 +606,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     try
                     {
                         WorkbookPart workbookPart = spreadSheetDocument.WorkbookPart;
-                        Sheet sheet = workbookPart.Workbook.Descendants<Sheet>().Where(s => s.Name == shName).FirstOrDefault();
+                        Sheet sheet = workbookPart.Workbook.Descendants<Sheet>().FirstOrDefault(s => s.Name == shName);
                         if (sheet != null)
                         {
                             string relId = sheet.Id;
@@ -603,7 +617,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 if (sheetData != null)
                                 {
                                     IEnumerable<Row> rows = sheetData.Descendants<Row>();
-                                    if (rows != null && rows.Count() > 0)
+                                    if (rows != null && rows.Any())
                                     {
                                         foreach (Cell cell in rows.ElementAt(0))
                                         {
@@ -622,7 +636,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 break;
                             case "No value given for one or more required parameters.":
                                 if (ShowMessage)
+                                {
                                     Reporter.ToUser(eUserMsgKey.ExcelBadWhereClause);
+                                }
+
                                 break;
                             default:
                                 if (ShowMessage)
@@ -831,7 +848,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             }
             bool IsExportSuccess = ExportToExcel(dtTemplate, PathToExport, dtTemplate.TableName);
             if (IsExportSuccess && ShowMessage)
+            {
                 Reporter.ToUser(eUserMsgKey.ExportDetails, "Excel File");
+            }
+
             return IsExportSuccess;
         }
 
@@ -1051,7 +1071,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                     if (sheetData != null)
                                     {
                                         IEnumerable<Row> rows = sheetData.Descendants<Row>();
-                                        if (rows != null && rows.Count() > 0)
+                                        if (rows != null && rows.Any())
                                         {
                                             int i = 1;
                                             foreach (Cell cell in rows.ElementAt(0))
@@ -1110,11 +1130,17 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 break;
                             case "No value given for one or more required parameters.":
                                 if (ShowMessage)
+                                {
                                     Reporter.ToUser(eUserMsgKey.ExcelBadWhereClause);
+                                }
+
                                 break;
                             default:
                                 if (ShowMessage)
+                                {
                                     Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
+                                }
+
                                 break;
                         }
                         return null;
@@ -1244,7 +1270,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             db.User = user;
             db.Pass = password;
             if (!string.IsNullOrEmpty(connectionString))
+            {
                 db.ConnectionString = connectionString;
+            }
+
             db.DBType = (Database.eDBTypes)Enum.Parse(typeof(Database.eDBTypes), dbType);
 
             DatabaseOperations databaseOperations = new DatabaseOperations(db);
@@ -1273,7 +1302,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             List<List<string>> Record = (List<List<string>>)SQLResult.ElementAt(1);
             string[][] ParamValues = new string[ParamNameList.Count][];//create matrix ParamName -> ParamValues(List)
             for (int i = 0; i < ParamNameList.Count; i++)
+            {
                 ParamValues[i] = new string[Record.Count];
+            }
+
             int rowValue = 0;
             for (int i = 0; i < Record.Count; i++)
             {
@@ -1281,9 +1313,13 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 for (int j = 0; j < current.Length; j++)
                 {
                     if (current[j] != null)
+                    {
                         ParamValues[rowValue++][i] = current[j];
+                    }
                     else
+                    {
                         ParamValues[rowValue++][i] = string.Empty;
+                    }
                 }
                 rowValue = 0;
             }

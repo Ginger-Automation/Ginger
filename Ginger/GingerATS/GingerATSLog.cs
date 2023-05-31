@@ -16,10 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
 
 namespace GingerATS
 {
@@ -45,7 +41,10 @@ namespace GingerATS
             {
                 mGingerATSLogLines.Add(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " | " + logLineType.ToString());
                 if (logLineContent != null && logLineContent != string.Empty)
+                {
                     mGingerATSLogLines.Add(logLineContent);
+                }
+
                 if (ex != null)
                 {
                     mGingerATSLogLines.Add("## Exception Details: ");
@@ -67,8 +66,12 @@ namespace GingerATS
             try
             {
                 if (File.Exists(mGingerATSLogPath))
+                {
                     if (ConvertBytesToMegabytes(new FileInfo(mGingerATSLogPath).Length) > 10)
+                    {
                         File.Delete(mGingerATSLogPath);
+                    }
+                }
             }
             catch (Exception) { }
 

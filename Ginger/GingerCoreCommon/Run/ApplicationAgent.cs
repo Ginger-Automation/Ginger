@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -16,15 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 
 namespace GingerCore.Platforms
 {
@@ -60,7 +60,7 @@ namespace GingerCore.Platforms
             {
                 if (mAppID == Guid.Empty)
                 {
-                    ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == AppName).FirstOrDefault();
+                    ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == AppName);
                     if (appPlat != null)
                     {
                         return appPlat.Guid;
@@ -85,7 +85,7 @@ namespace GingerCore.Platforms
             {
                 if (mAppPlatform == null)
                 {
-                    mAppPlatform = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == AppName).FirstOrDefault();
+                    mAppPlatform = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == AppName);
                 }
                 return mAppPlatform;
             }
@@ -137,7 +137,7 @@ namespace GingerCore.Platforms
                 if (mAgent != null)
                 {
                     // check if the AgentName & Id is diff before setting the value to avoid dirty status to become modified when unnecessary
-                    if (AgentName != mAgent.Name)
+                    if (mAgentName != mAgent.Name)
                     {
                         AgentName = mAgent.Name;
                     }

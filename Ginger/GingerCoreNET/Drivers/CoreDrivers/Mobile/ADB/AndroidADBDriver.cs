@@ -13,27 +13,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
-using GingerCore.Actions.Android;
-using GingerCore.Actions.Common;
-using GingerCore.Actions.VisualTesting;
-using GingerCore.Drivers.CommunicationProtocol;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using SharpAdbClient;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 //using System.Windows.Media.Imaging;
-using System.Xml;
 
 namespace GingerCore.Drivers.AndroidADB
 {

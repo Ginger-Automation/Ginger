@@ -16,14 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using Amdocs.Ginger.Common;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace GingerCore.Actions.ScreenCapture
 {

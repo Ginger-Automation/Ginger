@@ -18,7 +18,6 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
@@ -39,16 +38,16 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         InvertStatus = 3,
     }
     public interface IAct
-    {      
+    {
         Guid Guid { get; set; }
         string ItemName { get; set; }
         string Description { get; set; }
-        string ActionType { get;  }
+        string ActionType { get; }
 
         string RunDescription { get; set; }
-         DateTime StartTimeStamp { get; set; }
-         DateTime EndTimeStamp { get; set; }
-         int RetryMechanismCount { get; set; }
+        DateTime StartTimeStamp { get; set; }
+        DateTime EndTimeStamp { get; set; }
+        int RetryMechanismCount { get; set; }
         int MaxNumberOfRetries { get; set; }
         long? Elapsed { get; set; }
         eStatusConverterOptions StatusConverter { get; set; }
@@ -56,19 +55,19 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         string Error { get; set; }
         string ExInfo { get; set; }
         ObservableList<ActInputValue> InputValues { get; set; }
-        ObservableList<ActReturnValue> ReturnValues { get;  }
+        ObservableList<ActReturnValue> ReturnValues { get; }
         ObservableList<FlowControl> FlowControls { get; set; }
-        ObservableList<String> ScreenShots  { get; set; }
+        ObservableList<String> ScreenShots { get; set; }
         bool Active { get; set; }
         bool FailIgnored { get; set; }
-        ObservableList<ActReturnValue> ActReturnValues { get;  }
+        ObservableList<ActReturnValue> ActReturnValues { get; }
         string LocateValue { get; set; }
 
         List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing();
 
         ObservableList<VariableDependency> VariablesDependencies { get; set; }
         bool SupportSimulation { get; set; }
-        String ActionDescription { get;  }
+        String ActionDescription { get; }
         string ExecutionLogFolder { get; set; }
         bool EnableActionLogConfig { get; set; }
         ActionLogConfig ActionLogConfig { get; set; }

@@ -39,21 +39,21 @@ namespace Ginger.WindowExplorer.Mainframe
         public string Path { get; set; }
 
         public ObservableList<GingerCore.Actions.Act> GetElementActions()
-        {   
+        {
             ObservableList<GingerCore.Actions.Act> ACL = new ObservableList<GingerCore.Actions.Act>();
             return ACL;
         }
 
         public ObservableList<ControlProperty> GetElementProperties()
         {
-            throw new NotImplementedException ();
+            throw new NotImplementedException();
         }
 
         public List<ITreeViewItem> Childrens()
         {
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
             //TODO: improve below to use really automate page used mainfram driver
-            Agent agent = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.DriverType == Agent.eDriverType.MainFrame3270 && ((AgentOperations)x.AgentOperations).Status == Agent.eStatus.Running).FirstOrDefault();
+            Agent agent = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().FirstOrDefault(x => x.DriverType == Agent.eDriverType.MainFrame3270 && ((AgentOperations)x.AgentOperations).Status == Agent.eStatus.Running);
             if (agent != null)
             {
                 MFDriver = (MainFrameDriver)((AgentOperations)agent.AgentOperations).Driver;
@@ -87,7 +87,7 @@ namespace Ginger.WindowExplorer.Mainframe
 
         public System.Windows.Controls.ContextMenu Menu()
         {
-            throw new NotImplementedException ();
+            throw new NotImplementedException();
         }
 
         public object NodeObject()

@@ -3,13 +3,9 @@ using Amdocs.Ginger.Run;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Environments;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace GingerCoreNETUnitTest.RunListeners
 {
@@ -33,7 +29,7 @@ namespace GingerCoreNETUnitTest.RunListeners
             //mExecutionLogger.ExecutionLogfolder = @"c:\temp\koko1";
             //mExecutionLogger.Configuration.ExecutionLoggerConfigurationIsEnabled = true; // !!!!!!!!!!!!!!!!!!!!! remove this flag            
             //mGingerRunner.RunListeners.Add(mExecutionLogger);
-            mExecutionLogger = (ExecutionLoggerManager)((GingerExecutionEngine)mGingerRunner.Executor).RunListeners.Where(x=>x.GetType()==typeof(ExecutionLoggerManager)).FirstOrDefault();   // !!!!!!!!!!!!!!!!
+            mExecutionLogger = (ExecutionLoggerManager)((GingerExecutionEngine)mGingerRunner.Executor).RunListeners.FirstOrDefault(x => x.GetType() == typeof(ExecutionLoggerManager));   // !!!!!!!!!!!!!!!!
         }
 
         [ClassCleanup]
@@ -81,9 +77,9 @@ namespace GingerCoreNETUnitTest.RunListeners
 
 
             //Assert
-            
 
-           
+
+
 
             //TimeLineEvent actionLineEvent = activityTimeLineEvent.ChildrenList[1];
             //Assert.IsTrue(actionLineEvent.Start != 0, "Action TimeLine Event.Start !=0");

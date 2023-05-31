@@ -42,9 +42,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
         public static ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
-        enum StatuesName { NoRun = 0, PASS = 1, FAIL = 2, WIP = 3, Blocked = 4}
-        Dictionary<int, int> statusesDic = new Dictionary<int, int>() 
-        { {(int)StatuesName.NoRun, 0 }, {(int)StatuesName.PASS, 0 }, 
+        enum StatuesName { NoRun = 0, PASS = 1, FAIL = 2, WIP = 3, Blocked = 4 }
+        Dictionary<int, int> statusesDic = new Dictionary<int, int>()
+        { {(int)StatuesName.NoRun, 0 }, {(int)StatuesName.PASS, 0 },
             {(int)StatuesName.FAIL, 0 }, {(int)StatuesName.WIP, 0 }, {(int)StatuesName.Blocked, 0 }};
         private ZephyrEntRepositoryStd zephyrEntRepository;
 
@@ -124,7 +124,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     ActivitiesGroup repoActivsGroup = null;
                     if (repoActivsGroup == null)
                     {
-                        repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.TestID).FirstOrDefault();
+                        repoActivsGroup = GingerActivitiesGroupsRepo.FirstOrDefault(x => x.ExternalID == tc.TestID);
                     }
                     if (repoActivsGroup != null)
                     {
@@ -165,15 +165,15 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                         bool toAddStepActivity = false;
 
                         //check if mapped activity exist in repository
-                        Activity repoStepActivity = (Activity)GingerActivitiesRepo.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
+                        Activity repoStepActivity = (Activity)GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID == step.StepID);
                         if (repoStepActivity != null)
                         {
                             //check if it is part of the Activities Group
-                            ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                            ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                             if (groupStepActivityIdent != null)
                             {
                                 //already in Activities Group so get link to it
-                                stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                                stepActivity = (Activity)busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                                 // in any case update description/expected/name - even if "step" was taken from repository
                                 stepActivity.Description = StripHTML(step.Description);
                                 stepActivity.Expected = StripHTML(step.Expected);
@@ -208,7 +208,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                             //get the param value
                             string paramSelectedValue = string.Empty;
                             bool? isflowControlParam = null;
-                            QC.ALMTSTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+                            QC.ALMTSTestParameter tcParameter = tc.Parameters.FirstOrDefault(x => x.Name.ToUpper() == param.ToUpper());
 
                             //get the param value
                             if (tcParameter != null && tcParameter.Value != null && tcParameter.Value != string.Empty)
@@ -225,7 +225,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                             string linkedVariable = null;
                             if (paramSelectedValue.StartsWith("#$#"))
                             {
-                                string[] valueParts = paramSelectedValue.Split(new [] { "#$#" }, StringSplitOptions.None);
+                                string[] valueParts = paramSelectedValue.Split(new[] { "#$#" }, StringSplitOptions.None);
                                 if (valueParts.Count() == 3)
                                 {
                                     linkedVariable = valueParts[1];
@@ -252,7 +252,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                 isflowControlParam = true;
                             }
                             //check if already exist param with that name
-                            VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+                            VariableBase stepActivityVar = stepActivity.Variables.FirstOrDefault(x => x.Name.ToUpper() == param.ToUpper());
                             if (stepActivityVar == null)
                             {
                                 //#Param not exist so add it
@@ -306,7 +306,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                             //add the variable selected value                          
                             if (stepActivityVar is VariableSelectionList)
                             {
-                                OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.Where(x => x.Value == paramSelectedValue).FirstOrDefault();
+                                OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.FirstOrDefault(x => x.Value == paramSelectedValue);
                                 if (stepActivityVarOptionalVar == null)
                                 {
                                     //no such variable value option so add it
@@ -357,7 +357,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                         foreach (QC.ALMTSTestStep step in tc.Steps)
                         {
                             int stepIndx = tc.Steps.IndexOf(step) + 1;
-                            ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                            ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                             if (actIdent == null || actIdent.IdentifiedActivity == null)
                             {
                                 break;//something wrong- shouldn't be null
@@ -373,7 +373,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                             {
                                 groupIndx++;
                                 if (string.IsNullOrEmpty(ident.ActivityExternalID) ||
-                                        tc.Steps.Where(x => x.StepID == ident.ActivityExternalID).FirstOrDefault() == null)
+                                        tc.Steps.FirstOrDefault(x => x.StepID == ident.ActivityExternalID) == null)
                                 {
                                     continue;//activity which not originally came from the TC
                                 }
@@ -458,7 +458,8 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         {
             ObservableList<ExternalItemFieldBase> almFields = new ObservableList<ExternalItemFieldBase>();
             List<Preference> fieldsValues = zephyrEntRepository.GetCustomFieldsValues();
-            zephyrEntRepository.GetCustomFields().ForEach(ent => {
+            zephyrEntRepository.GetCustomFields().ForEach(ent =>
+            {
                 if (!String.IsNullOrEmpty(ent.columnName) && ent.columnName.StartsWith("zcf_"))
                 {
                     almFields.Add(new ExternalItemFieldBase()
@@ -479,16 +480,16 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         private ObservableList<string> AddValuesToField(List<Preference> fieldsValues, string entityName, string fieldName)
         {
             ObservableList<string> possibleValues = new ObservableList<string>();
-            Preference field = fieldsValues.Find(val => val.name.Contains(String.Join(".", new [] { entityName.ToLower(), fieldName.ToLower() })));
+            Preference field = fieldsValues.Find(val => val.name.Contains(String.Join(".", new[] { entityName.ToLower(), fieldName.ToLower() })));
             if (field != null)
             {
                 List<dynamic> values = Newtonsoft.Json.JsonConvert.DeserializeObject<List<dynamic>>(field.value);
                 values.ForEach(x =>
                 {
                     Dictionary<string, string> data = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(((Newtonsoft.Json.Linq.JObject)x).ToString().Replace("{{", "{").Replace("}}", "}"));
-                    if(data != null && data.ContainsKey("value"))
+                    if (data != null && data.ContainsKey("value"))
                     {
-                        possibleValues.Add(String.Join("#",new[] { data["id"], data["value"] }));
+                        possibleValues.Add(String.Join("#", new[] { data["id"], data["value"] }));
                     }
                 });
             }

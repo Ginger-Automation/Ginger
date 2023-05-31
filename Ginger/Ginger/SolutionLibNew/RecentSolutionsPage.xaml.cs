@@ -17,10 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Ginger.Environments;
 using Ginger.SolutionGeneral;
-using GingerCoreNET.GeneralLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib;
 using GingerWPF.WizardLib;
 using System.Windows;
 using System.Windows.Controls;
@@ -39,7 +36,7 @@ namespace GingerWPF.SolutionLib
         }
 
         private void SetRecentSolutions()
-        {           
+        {
             //WorkSpace.Instance.UserProfile.SetRecentSolutionsObjects();
             //recentSolutionsListBox.ItemsSource = WorkSpace.Instance.UserProfile.RecentSolutionsObjects;                       
         }
@@ -54,7 +51,7 @@ namespace GingerWPF.SolutionLib
         }
 
         private void recentSolutionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {            
+        {
             string folder = ((Solution)recentSolutionsListBox.SelectedItem).Folder;
             WorkSpace.Instance.OpenSolution(folder);
         }

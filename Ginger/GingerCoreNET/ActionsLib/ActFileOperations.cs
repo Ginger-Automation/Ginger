@@ -16,15 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using GingerCore.Helpers;
 using System.IO;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using amdocs.ginger.GingerCoreNET;
+using System.Linq;
 //This class is for dummy act - good for agile, and to be replace later on when real
 //  act is available, so tester can write the step to be.
 namespace GingerCore.Actions
@@ -129,7 +128,7 @@ namespace GingerCore.Actions
             {
                 string[] FileNameList = System.IO.Directory.GetFiles(Path.GetDirectoryName(calculatedSourceFilePath), Path.GetFileName(calculatedSourceFilePath));
 
-                if (FileNameList.Count() > 0)
+                if (FileNameList.Any())
                 {
                     calculatedSourceFilePath = System.IO.Directory.GetFiles(Path.GetDirectoryName(calculatedSourceFilePath), Path.GetFileName(calculatedSourceFilePath))[0];
                 }
@@ -287,7 +286,7 @@ namespace GingerCore.Actions
                     if (System.IO.File.Exists(calculatedSourceFilePath))
                     {
                         if (!System.IO.Directory.Exists(DestinationFolder))
-                        {
+                        {                            
                             System.IO.Directory.CreateDirectory(DestinationFolder);
                         }
                         System.IO.Compression.ZipFile.ExtractToDirectory(calculatedSourceFilePath, DestinationFolder);
@@ -332,7 +331,7 @@ namespace GingerCore.Actions
                 else
                 {
                     base.ExInfo = e.Message;
-                    base.Error = "Failed to run File Operation on file " + fileName;
+                    base.Error = $"Failed to run File Operation on file {fileName}";
                 }
             }
         }

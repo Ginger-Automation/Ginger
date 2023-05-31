@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Drivers.AndroidADB;
-using GingerCore.Drivers.Common;
 using GingerWPF.UserControlsLib.UCTreeView;
 
 namespace Ginger.WindowExplorer.Android

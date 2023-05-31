@@ -16,20 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Ginger.UserControlsLib.TextEditor;
-using GingerWPF.UserControlsLib.UCTreeView;
 using GingerCore;
-using GingerCore.SourceControl;
+using GingerWPF.TreeViewItemsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using GingerWPF.TreeViewItemsLib;
-using Amdocs.Ginger.Common.Enums;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -109,7 +108,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         public void AddGherkinOptions(ContextMenu CM)
         {
-            if (System.IO.Path.GetExtension(FileName) == ".feature" &&  WorkSpace.Instance.UserProfile.UserTypeHelper.IsSupportAutomate)
+            if (System.IO.Path.GetExtension(FileName) == ".feature" && WorkSpace.Instance.UserProfile.UserTypeHelper.IsSupportAutomate)
             {
                 MenuItem GherkinMenu = TreeViewUtils.CreateSubMenu(CM, "Gherkin");
                 //TOD Change Icon
@@ -120,9 +119,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void GoToGherkinBusinessFlow(object sender, RoutedEventArgs e)
         {
             ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            BusinessFlow BF = businessFlows.Where(x => x.ExternalID != null ? System.IO.Path.GetFullPath(x.ExternalID.Replace("~",  WorkSpace.Instance.Solution.Folder)) == System.IO.Path.GetFullPath(Path) : false).FirstOrDefault();
+            BusinessFlow BF = businessFlows.FirstOrDefault(x => x.ExternalID != null ? System.IO.Path.GetFullPath(x.ExternalID.Replace("~", WorkSpace.Instance.Solution.Folder)) == System.IO.Path.GetFullPath(Path) : false);
             if (BF == null)
+            {
                 Reporter.ToUser(eUserMsgKey.GherkinNotifyBFIsNotExistForThisFeatureFile, FileName);
+            }
             else
             {
                 App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.Automate, BF);
@@ -140,9 +141,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to open document using external application, error: " + ex.Message);                
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to open document using external application, error: " + ex.Message);
             }
-}
+        }
 
         public override bool SaveTreeItem(object item, bool saveOnlyIfDirty = false)
         {
@@ -157,7 +158,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
         {
             if (Reporter.ToUser(eUserMsgKey.DeleteRepositoryItemAreYouSure, FileName) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+            {
                 return false;
+            }
 
             try
             {

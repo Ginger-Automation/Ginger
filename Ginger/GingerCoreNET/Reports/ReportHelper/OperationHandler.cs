@@ -20,17 +20,16 @@ using Ginger.Reports;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 {
-   public class OperationHandler
+    public class OperationHandler
     {
         public void CreateCustomerLogo(object a, string tempFolder)
         {
             HTMLReportConfiguration currentTemplate = (HTMLReportConfiguration)a;
             System.Drawing.Image CustomerLogo = this.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
-            CustomerLogo.Save(Path.Combine(tempFolder,"CustomerLogo.png"));
+            CustomerLogo.Save(Path.Combine(tempFolder, "CustomerLogo.png"));
             HTMLReportConfigurationOperations.EnchancingLoadedFieldsWithDataAndValidating(currentTemplate);
         }
 

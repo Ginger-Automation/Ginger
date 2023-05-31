@@ -73,7 +73,8 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         public dynamic UpdateTestPlanningFolder(long cycleId, long parenttreeid, BusinessFlow businessFlow)
         {
             List<TestCaseResource> testCaseResources = zephyrEntRepository.GetTestCasesByAssignmentTree(Convert.ToInt32(parenttreeid));
-            testCaseResources.ForEach(tcr => {
+            testCaseResources.ForEach(tcr =>
+            {
                 if (!businessFlow.ActivitiesGroups.Any(ag => ag.ExternalID2.Equals(tcr.testcase.id.ToString())))
                 {
                     bool isDeleted = zephyrEntRepository.DeleteTestFromPhaseByTestId(Convert.ToInt32(tcr.testcase.testcaseId), Convert.ToInt32(tcr.tct.tcrCatalogTreeId), Convert.ToInt32(cycleId));
@@ -150,7 +151,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     executions = zephyrEntRepository.GetModuleExecutionData(Convert.ToInt32(bizFlow.ExternalID));
                 }
                 // Create new Executions Ids for selected Activities Groups
-                if(executions == null || executions.Count == 0)
+                if (executions == null || executions.Count == 0)
                 {
 
                 }
@@ -214,7 +215,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                             System.IO.Directory.Delete(activGroup.TempReportFolder, true);
                                             //Creating the Zip file - finish
 
-                                            Execution attachmentExecution = zephyrEntRepository.UpdateTestCaseAttachment(scheduleId.ToString() , zipFileName);
+                                            Execution attachmentExecution = zephyrEntRepository.UpdateTestCaseAttachment(scheduleId.ToString(), zipFileName);
 
                                             if (attachmentExecution == null)
                                             {
@@ -265,11 +266,11 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
 
         private JObject findPhaseToExportDetails(JObject exportedCategories, string id)
         {
-            if(exportedCategories.GetValue("id").ToString().Equals(id))
+            if (exportedCategories.GetValue("id").ToString().Equals(id))
             {
                 return exportedCategories;
             }
-            if(exportedCategories.GetValue("categories").Count() > 0)
+            if (exportedCategories.GetValue("categories").Any())
             {
                 return findPhaseToExportDetails((JObject)exportedCategories.GetValue("categories").First, id);
             }
@@ -443,20 +444,20 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         }
         public int GetTestStatus(ActivitiesGroup testToExport)
         {
-            if (testToExport.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == eRunStatus.Failed).Any())
+            if (testToExport.ActivitiesIdentifiers.Any(x => x.IdentifiedActivity.Status == eRunStatus.Failed))
             {
                 return 2;
             }
-            else if (testToExport.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == eRunStatus.Blocked).Any())
+            else if (testToExport.ActivitiesIdentifiers.Any(x => x.IdentifiedActivity.Status == eRunStatus.Blocked))
             {
                 return 4;
             }
-            else if (testToExport.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == eRunStatus.Running).Any())
+            else if (testToExport.ActivitiesIdentifiers.Any(x => x.IdentifiedActivity.Status == eRunStatus.Running))
             {
                 return 3;
             }
-            else if ((testToExport.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == eRunStatus.Pending).Any())
-                        || (testToExport.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == eRunStatus.Stopped).Any()))
+            else if ((testToExport.ActivitiesIdentifiers.Any(x => x.IdentifiedActivity.Status == eRunStatus.Pending))
+                        || (testToExport.ActivitiesIdentifiers.Any(x => x.IdentifiedActivity.Status == eRunStatus.Stopped)))
             {
                 return 3;
             }
@@ -464,7 +465,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             {
                 return 1;
             }
-            else if (testToExport.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == eRunStatus.Skipped).Any())
+            else if (testToExport.ActivitiesIdentifiers.Any(x => x.IdentifiedActivity.Status == eRunStatus.Skipped))
             {
                 return 3;
             }

@@ -80,7 +80,7 @@ namespace GingerCore.Actions
             get
             {
                 if (string.IsNullOrEmpty(mScreenshotTempFolder))
-                { 
+                {
                     mScreenshotTempFolder = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "Ginger_Screenshots");
                 }
                 return mScreenshotTempFolder;
@@ -251,13 +251,14 @@ namespace GingerCore.Actions
 
         string mRawResponseValues;
 
-        public string RawResponseValues { 
-            get 
-            { 
+        public string RawResponseValues
+        {
+            get
+            {
                 return mRawResponseValues;
-            } 
-            set 
-            { 
+            }
+            set
+            {
                 mRawResponseValues = value;
                 OnPropertyChanged(nameof(RawResponseValues));
             }
@@ -810,7 +811,7 @@ namespace GingerCore.Actions
         public string GetInputParamValue(string Param)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = (from aiv in InputValues where aiv!= null &&aiv.Param == Param select aiv).FirstOrDefault();
+            ActInputValue AIV = (from aiv in InputValues where aiv != null && aiv.Param == Param select aiv).FirstOrDefault();
             if (AIV == null)
             {
                 return null;
@@ -823,7 +824,7 @@ namespace GingerCore.Actions
 
         public ActInputValue GetOrCreateInputParam(string Param, string DefaultValue = null)
         {
-            ActInputValue AIV = (from aiv in InputValues where aiv!=null && aiv.Param == Param select aiv).FirstOrDefault();
+            ActInputValue AIV = (from aiv in InputValues where aiv != null && aiv.Param == Param select aiv).FirstOrDefault();
             if (AIV == null)
             {
                 AIV = new ActInputValue() { Param = Param, Value = DefaultValue };
@@ -891,7 +892,7 @@ namespace GingerCore.Actions
         public string GetInputParamCalculatedValue(string Param, bool decryptValue = true)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActInputValue AIV = (from aiv in InputValues where aiv!=null && aiv.Param == Param select aiv).FirstOrDefault();
+            ActInputValue AIV = (from aiv in InputValues where aiv != null && aiv.Param == Param select aiv).FirstOrDefault();
             if (AIV == null)
             {
                 return null;
@@ -1213,7 +1214,7 @@ namespace GingerCore.Actions
                 case eFilterBy.Tags:
                     foreach (Guid tagGuid in Tags)
                     {
-                        Guid guid = ((List<Guid>)obj).Where(x => tagGuid.Equals(x)).FirstOrDefault();
+                        Guid guid = ((List<Guid>)obj).FirstOrDefault(x => tagGuid.Equals(x));
                         if (!guid.Equals(Guid.Empty))
                         {
                             return true;
@@ -1489,11 +1490,11 @@ namespace GingerCore.Actions
                                 VariableDependency varDep = null;
                                 if (this.VariablesDependencies != null)
                                 {
-                                    varDep = this.VariablesDependencies.Where(avd => avd.VariableName == listVar.Name && avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                    varDep = VariablesDependencies.FirstOrDefault(avd => avd.VariableName == listVar.Name && avd.VariableGuid == listVar.Guid);
                                 }
                                 if (varDep == null)
                                 {
-                                    varDep = this.VariablesDependencies.Where(avd => avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                    varDep = VariablesDependencies.FirstOrDefault(avd => avd.VariableGuid == listVar.Guid);
                                 }
                                 if (varDep != null)
                                 {
@@ -1984,6 +1985,6 @@ namespace GingerCore.Actions
             return "Action";
         }
 
-        
+
     }
 }

@@ -18,7 +18,6 @@ limitations under the License.
 
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
@@ -27,12 +26,14 @@ using GingerCore.Drivers;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace GingerCore.Actions
 {
@@ -95,6 +96,8 @@ namespace GingerCore.Actions
             public static string BlockingJavaWindow = "BlockingJavaWindow"; //search for blocking java window that popup before the application(Security, Update...) 
             public static string PortConfigParam = "PortConfigParam";
             public static string DynamicPortPlaceHolder = "DynamicPortPlaceHolder";
+            public static string IsCustomApplicationProcessName = "IsCustomApplicationProcessName";
+            public static string ApplicationProcessName = "ApplicationProcessName";
 
         }
 
@@ -140,8 +143,10 @@ namespace GingerCore.Actions
             {
                 if (mURL == string.Empty)//backward support
                 {
-                    if (InputValues.Where(x => x.Param == "URL" && x.Value != string.Empty).FirstOrDefault() != null)
+                    if (InputValues.FirstOrDefault(x => x.Param == "URL" && x.Value != string.Empty) != null)
+                    {
                         mURL = GetInputParamValue("URL");
+                    }
                 }
                 return mURL;
             }
@@ -206,10 +211,14 @@ namespace GingerCore.Actions
             {
                 if (mPort == string.Empty)//backward support
                 {
-                    if (InputValues.Where(x => x.Param == "Port" && x.Value != string.Empty).FirstOrDefault() != null)
+                    if (InputValues.FirstOrDefault(x => x.Param == "Port" && x.Value != string.Empty) != null)
+                    {
                         mPort = GetInputParamValue("Port");
+                    }
                     else
+                    {
                         mPort = "8888";
+                    }
                 }
                 return mPort;
             }
@@ -302,6 +311,36 @@ namespace GingerCore.Actions
             }
         }
 
+        //------------------- application process name to attach
+        string mApplicationProcessName = string.Empty;
+        string mJApplicationProcessName_calc = string.Empty;
+        [IsSerializedForLocalRepository]
+        public string ApplicationProcessName
+        {
+            get
+            {
+                return mApplicationProcessName;
+            }
+            set
+            {
+                mApplicationProcessName = value;
+                OnPropertyChanged(Fields.ApplicationProcessName);
+            }
+        }
+        private bool mIsCustomApplicationProcessName = false;
+        [IsSerializedForLocalRepository]
+        public bool IsCustomApplicationProcessName
+        {
+            get
+            {
+                return mIsCustomApplicationProcessName;
+            }
+            set
+            {
+                mIsCustomApplicationProcessName = value;
+                OnPropertyChanged(Fields.IsCustomApplicationProcessName);
+            }
+        }
         // ValueExpression mVE = null;
 
         enum URLExtensionType
@@ -330,19 +369,34 @@ namespace GingerCore.Actions
 
         private CancellationTokenSource mAttachAgentCancellationToken = null;
         private Task mAttachAgentTask = null;
+        private bool mWaitForWindowTimeOut = false;
+        private readonly List<string> processNames = new();
         public override void Execute()
         {
+            processNames.Clear();
+            processNames.Add("java");
+            processNames.Add("jp2");
+
             mJavaApplicationProcessID = -1;
 
             //calculate the arguments
-            if (!CalculateArguments()) return;
+            if (!CalculateArguments())
+            {
+                return;
+            }
 
             //validate the arguments
-            if (!ValidateArguments()) return;
+            if (!ValidateArguments())
+            {
+                return;
+            }
 
             if (mLaunchJavaApplication)
             {
-                if (!PerformLaunchJavaApplication()) return;
+                if (!PerformLaunchJavaApplication())
+                {
+                    return;
+                }
             }
 
             if (mLaunchWithAgent)
@@ -373,7 +427,10 @@ namespace GingerCore.Actions
                     mAttachAgentTask = Task.Run(() =>
                     {
                         mProcessIDForAttach = -1;
-                        if (!PerformAttachGingerAgent()) return;
+                        if (!PerformAttachGingerAgent())
+                        {
+                            return;
+                        }
 
                         if (mPort_Calc.Equals(Fields.DynamicPortPlaceHolder) &&
                             mPortValueAutoResetEvent != null)
@@ -387,7 +444,7 @@ namespace GingerCore.Actions
                     //Wait Max 30 secs for Attach agent to attach the jar or process to exit
                     Stopwatch st = new Stopwatch();
                     st.Start();
-                    while (st.ElapsedMilliseconds < 30 * 1000)
+                    while (st.ElapsedMilliseconds < 30 * 1000 && !mWaitForWindowTimeOut)
                     {
                         if (IsInstrumentationModuleLoaded(mProcessIDForAttach))
                         {
@@ -468,13 +525,16 @@ namespace GingerCore.Actions
 
                 mJavaAgentPath_Calc = CalculateValue(mJavaAgentPath);
                 if (string.IsNullOrEmpty(mJavaAgentPath_Calc))
+                {
                     mJavaAgentPath_Calc = GetGingerAgentsDefaultFolder();
+                }
 
                 CalculatePortValue();
 
                 mWaitForWindowTitle_Calc = CalculateValue(mWaitForWindowTitle);
                 mWaitForWindowTitleMaxTime_Calc = CalculateValue(mWaitForWindowTitleMaxTime);
                 mAttachAgentProcessSyncTime_Calc = CalculateValue(mAttachAgentProcessSyncTime);
+                mJApplicationProcessName_calc = CalculateValue(mApplicationProcessName);
                 return true;
             }
             catch (Exception ex)
@@ -628,8 +688,12 @@ namespace GingerCore.Actions
                 //arrange java application command params
                 List<string> commandParams = new List<string>();
                 foreach (ActInputValue AIV in this.InputValues)
+                {
                     if (!string.IsNullOrEmpty(AIV.Param) && !string.IsNullOrEmpty(AIV.ValueForDriver) && string.Compare(AIV.Param, "URL", true) != 0 && string.Compare(AIV.Param, "Port", true) != 0 && string.Compare(AIV.Param, "PortConfigParam", true) != 0)
+                    {
                         commandParams.Add(AIV.Param + "=" + AIV.ValueForDriver);
+                    }
+                }
 
                 string commandParams_OneLine = string.Empty;
                 if (commandParams.Count > 0)
@@ -639,39 +703,56 @@ namespace GingerCore.Actions
                         if (commandParams_OneLine == string.Empty)
                         {
                             if (isJNLP)
+                            {
                                 commandParams_OneLine += "?" + param;
+                            }
                             else
+                            {
                                 commandParams_OneLine += " " + "\"" + param + "\"";
+                            }
                         }
                         else
                         {
                             if (isJNLP)
+                            {
                                 commandParams_OneLine += "&" + param;
+                            }
                             else
+                            {
                                 commandParams_OneLine += " " + "\"" + param + "\"";
+                            }
                         }
                     }
                 }
 
                 //command
                 if (URLExtensionType.JNLP == mURLExtension)
+                {
                     command = "\"" + mURL_Calc + "\"";
-
+                }
                 else if (URLExtensionType.JAR == mURLExtension)
+                {
                     command = "-jar \"" + mURL_Calc + "\"";
+                }
 
                 // If it java exe then directly use the exe path as java executor
                 else
+                {
                     javaExecuter = mURL_Calc;
+                }
 
                 if (commandParams_OneLine != string.Empty)
+                {
                     command += commandParams_OneLine;
+                }
 
                 //run commnad
                 ExecuteCommandAsync(new List<string> { javaExecuter, command });
 
                 if (String.IsNullOrEmpty(Error) != true)
+                {
                     return false;
+                }
 
                 if (mWaitForWindowWhenDoingLaunch && !mLaunchWithAgent) // If wait for window is true and attach agent is false we wait for window to load. Else wait will be done when doing attach
                 {
@@ -729,7 +810,9 @@ namespace GingerCore.Actions
                 ExecuteCommandAsync(new List<string> { javaExecuter, command });
 
                 if (String.IsNullOrEmpty(Error) != true)
+                {
                     return false;
+                }
 
                 return true;
             }
@@ -746,6 +829,10 @@ namespace GingerCore.Actions
             bool bFound = false;
             try
             {
+                if (IsCustomApplicationProcessName && !string.IsNullOrEmpty(mJApplicationProcessName_calc))
+                {
+                    processNames.Add(mJApplicationProcessName_calc.Trim().ToLower());
+                }
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
                 while (!bFound)
@@ -762,7 +849,10 @@ namespace GingerCore.Actions
                     // If Application is not launched from Ginger then we go over the process to find the target Process ID
                     else
                     {
-                        Process[] processlist = Process.GetProcesses();
+
+                        var processlist = Process.GetProcesses()
+                            .Where(process => processNames.Any(name => process.ProcessName.Contains(name, StringComparison.OrdinalIgnoreCase)));
+
                         List<Process> matchingProcessList = new List<Process>();
 
                         foreach (Process process in processlist)
@@ -823,7 +913,10 @@ namespace GingerCore.Actions
                     }
                     // Go out after max seconds
                     if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
+                    {
+                        mWaitForWindowTimeOut = true;
                         break;
+                    }
 
                     Thread.Sleep(1000);
                 }
@@ -1002,13 +1095,18 @@ namespace GingerCore.Actions
 
         private bool ProcessExists(int processId)
         {
-            Process p = Process.GetProcesses().FirstOrDefault(x => x.Id == processId);
-
-            if (p != null && !p.HasExited)
+            try
             {
-                return true;
+                Process p = Process.GetProcessById(processId);
+                if (p != null && !p.HasExited)
+                {
+                    return true;
+                }
             }
-
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG,"Error occured while fectching process by id.", ex);
+            }
             return false;
         }
         private static string handleExePath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "StaticDrivers", "handle.exe");

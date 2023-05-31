@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -17,8 +17,6 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
@@ -43,9 +41,10 @@ namespace Ginger.Run
     {
         NA,
         Runner,
+        Runset,
         BusinessFlow
     }
-    public  class GingerRunner : RepositoryItemBase
+    public class GingerRunner : RepositoryItemBase
     {
         public enum eActionExecutorType
         {

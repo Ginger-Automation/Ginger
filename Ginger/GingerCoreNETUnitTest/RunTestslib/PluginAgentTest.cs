@@ -18,21 +18,18 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCoreNET.RunLib;
-using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 using System.IO;
 
 // FIXME to use local HTML test page
 
 namespace WorkspaceHold
-{        
+{
     [Level3]
     [TestClass]
     public class PluginAgentTest
@@ -41,13 +38,13 @@ namespace WorkspaceHold
         public TestContext TestContext { get; set; }
 
         static GingerGrid mGingerGrid;
-        
+
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
             mTestHelper.ClassInitialize(TestContext);
-            
+
 
             // Create temp solution
             SolutionRepository solutionRepository;
@@ -70,7 +67,7 @@ namespace WorkspaceHold
 
         [ClassCleanup]
         public static void ClassCleanup()
-        {                        
+        {
             mTestHelper.ClassCleanup();
         }
 
@@ -82,18 +79,18 @@ namespace WorkspaceHold
 
         [TestCleanup]
         public void TestCleanUp()
-        {            
+        {
             mTestHelper.TestCleanup();
         }
 
-        
+
         [Ignore] // Fail on Linux
         [TestMethod]
         [Timeout(60000)]
         public void StartLocalDriverFromPlugin()
         {
             //Arrange  
-            Agent agent = new Agent() { Name = "agent 1" };            
+            Agent agent = new Agent() { Name = "agent 1" };
             agent.AgentType = Agent.eAgentType.Service;
             agent.PluginId = "Memo";
             agent.ServiceId = "DictionaryService";
@@ -119,7 +116,7 @@ namespace WorkspaceHold
         public void StartX3LocalDriverFromPlugin()
         {
             //Arrange  
-            Agent a1 = new Agent() { Name = "a1", AgentType = Agent.eAgentType.Service, PluginId = "Memo", ServiceId = "DictionaryService"};
+            Agent a1 = new Agent() { Name = "a1", AgentType = Agent.eAgentType.Service, PluginId = "Memo", ServiceId = "DictionaryService" };
             Agent a2 = new Agent() { Name = "a2", AgentType = Agent.eAgentType.Service, PluginId = "Memo", ServiceId = "DictionaryService" };
             Agent a3 = new Agent() { Name = "a3", AgentType = Agent.eAgentType.Service, PluginId = "Memo", ServiceId = "DictionaryService" };
 
@@ -143,7 +140,7 @@ namespace WorkspaceHold
         }
 
 
-      
+
 
 
         // FIXME and use when we have the selenium plugin working 
@@ -199,7 +196,7 @@ namespace WorkspaceHold
         //    //Assert.AreEqual(list.Count, 0);
         //}
 
-        
+
 
 
     }

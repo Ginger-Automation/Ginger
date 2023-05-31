@@ -16,20 +16,20 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
 
 namespace Amdocs.Ginger.Repository
 {
     public abstract class ApplicationModelBase : RepositoryItemBase
     {
-        
+
 
         private string mName = string.Empty;
 
@@ -96,7 +96,7 @@ namespace Amdocs.Ginger.Repository
                 case eFilterBy.Tags:
                     foreach (RepositoryItemKey tagKey in TagsKeys)
                     {
-                        Guid guid = ((List<Guid>)obj).Where(x => tagKey.Guid.Equals(x) == true).FirstOrDefault();
+                        Guid guid = ((List<Guid>)obj).FirstOrDefault(x => tagKey.Guid.Equals(x) == true);
                         if (!guid.Equals(Guid.Empty))
                             return true;
                     }
@@ -152,7 +152,7 @@ namespace Amdocs.Ginger.Repository
             return new List<string>();
         }
 
-        public void SetModelConfigsWithExecutionData(object obj=null)
+        public void SetModelConfigsWithExecutionData(object obj = null)
         {
             if (obj == null)
             {
@@ -188,7 +188,7 @@ namespace Amdocs.Ginger.Repository
                                 PI.SetValue(obj, valueString);
                             }
                         }
-                        else if(value is IObservableList && GetModelListsToConfigsWithExecutionData().Contains(mi.Name))
+                        else if (value is IObservableList && GetModelListsToConfigsWithExecutionData().Contains(mi.Name))
                         {
                             foreach (object o in value)
                             {
@@ -208,49 +208,49 @@ namespace Amdocs.Ginger.Repository
             var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
-                    if (mi.Name == "ItemImageType" || mi.Name == "OptionalValuesString" || mi.Name == "Path" || mi.Name == "PlaceHolder" || mi.Name == "FileName" || mi.Name == "TagsKeys" || mi.Name == "AppModelParameters" || mi.Name == "ContainingFolderFullPath" || mi.Name == "mName" || mi.Name == "Name" || mi.Name == "ItemName" || mi.Name == "RelativeFilePath" || mi.Name == "FilePath" || mi.Name == "ObjFileExt" || mi.Name == "ObjFolderName" || mi.Name == "ItemNameField")
-                    {
-                        continue;
-                    }
+                if (mi.Name == "ItemImageType" || mi.Name == "OptionalValuesString" || mi.Name == "Path" || mi.Name == "PlaceHolder" || mi.Name == "FileName" || mi.Name == "TagsKeys" || mi.Name == "AppModelParameters" || mi.Name == "ContainingFolderFullPath" || mi.Name == "mName" || mi.Name == "Name" || mi.Name == "ItemName" || mi.Name == "RelativeFilePath" || mi.Name == "FilePath" || mi.Name == "ObjFileExt" || mi.Name == "ObjFolderName" || mi.Name == "ItemNameField")
+                {
+                    continue;
+                }
 
-                    PropertyInfo PI = item.GetType().GetProperty(mi.Name);
-                    dynamic value = null;
-                    if (mi.MemberType == MemberTypes.Property)
-                        value = PI.GetValue(item);
-                    else if (mi.MemberType == MemberTypes.Field)
-                        value = item.GetType().GetField(mi.Name).GetValue(item);
+                PropertyInfo PI = item.GetType().GetProperty(mi.Name);
+                dynamic value = null;
+                if (mi.MemberType == MemberTypes.Property)
+                    value = PI.GetValue(item);
+                else if (mi.MemberType == MemberTypes.Field)
+                    value = item.GetType().GetField(mi.Name).GetValue(item);
 
-                    if (value != null && value is IObservableList)
+                if (value != null && value is IObservableList)
+                {
+                    foreach (object o in value)
+                        UpdateParamsPlaceholder(o, placeHoldersToReplace, newVarName);
+                }
+                else if (value != null && value is string)
+                {
+                    try
                     {
-                        foreach (object o in value)
-                            UpdateParamsPlaceholder(o, placeHoldersToReplace, newVarName);
-                    }
-                    else if (value != null && value is string)
-                    {
-                        try
+                        string valueString = (string)PI.GetValue(item);
+                        foreach (string palceHolder in placeHoldersToReplace)
                         {
-                            string valueString = (string)PI.GetValue(item);
-                            foreach (string palceHolder in placeHoldersToReplace)
-                            {
-                                bool notifyPropertyChanged = false;
-                                if (valueString.Contains(palceHolder))
-                                    notifyPropertyChanged = true;
-                                valueString = valueString.Replace(palceHolder, newVarName);
-                                PI.SetValue(item, valueString);
+                            bool notifyPropertyChanged = false;
+                            if (valueString.Contains(palceHolder))
+                                notifyPropertyChanged = true;
+                            valueString = valueString.Replace(palceHolder, newVarName);
+                            PI.SetValue(item, valueString);
 
-                                if (notifyPropertyChanged)
-                                    ((dynamic)item).OnPropertyChanged(mi.Name);
-                            }
+                            if (notifyPropertyChanged)
+                                ((dynamic)item).OnPropertyChanged(mi.Name);
                         }
-                        catch (Exception) { }
                     }
+                    catch (Exception) { }
+                }
             }
         }
 
         public ObservableList<AppModelParameter> MergedParamsList
         {
             get
-            { 
+            {
                 ObservableList<AppModelParameter> mergedList = new ObservableList<AppModelParameter>();
                 foreach (AppModelParameter localParam in AppModelParameters)
                     mergedList.Add(localParam);

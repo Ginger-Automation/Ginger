@@ -20,7 +20,8 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.AnalyzerLib;
-using Ginger.Reports;
+using Ginger.Configurations;
+using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.Run;
 using Ginger.SourceControl;
 using GingerCore;
@@ -30,11 +31,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using static Ginger.Reports.ExecutionLoggerConfiguration;
 using static GingerCoreNET.SourceControl.SourceControlBase;
-using Ginger.Configurations;
-using static Ginger.Configurations.SealightsConfiguration;
-using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -294,7 +291,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             Reporter.ToLog(eLogLevel.INFO, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), Runset));
             ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-            mRunSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == Runset.ToLower().Trim()).FirstOrDefault();
+            mRunSetConfig = RunSets.FirstOrDefault(x => x.Name.ToLower().Trim() == Runset.ToLower().Trim());
             if (mRunSetConfig != null)
             {
                 mRunsetExecutor.RunSetConfig = mRunSetConfig;
@@ -313,7 +310,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             Reporter.ToLog(eLogLevel.INFO, "Selected Environment: '" + Env + "'");
             if (String.IsNullOrEmpty(Env) == false)
             {
-                ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == Env.ToLower().Trim()).FirstOrDefault();
+                ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault(x => x.Name.ToLower().Trim() == Env.ToLower().Trim());
                 if (env != null)
                 {
                     mRunsetExecutor.RunsetExecutionEnvironment = env;
@@ -331,9 +328,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
             if (mRunsetExecutor.RunsetExecutionEnvironment == null && (String.IsNullOrEmpty(Env) || Env == "Default"))
             {
-                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Count > 0)
+                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Any())
                 {
-                    mRunsetExecutor.RunsetExecutionEnvironment = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().First();
+                    mRunsetExecutor.RunsetExecutionEnvironment = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ProjEnvironment>();
                     Reporter.ToLog(eLogLevel.INFO, "Auto Selected the default Environment: '" + mRunsetExecutor.RunsetExecutionEnvironment.Name + "'");
                 }
                 else
@@ -373,13 +370,41 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     SealightsTestStage != null && SealightsEntityLevel != null)
                 {
                     // Override the Sealights Solution's settings with the CLI's settings
-                    if (SealightsUrl != null) WorkSpace.Instance.Solution.SealightsConfiguration.SealightsURL = SealightsUrl;
-                    if (SealightsAgentToken != null) WorkSpace.Instance.Solution.SealightsConfiguration.SealightsAgentToken = SealightsAgentToken;
-                    if (SealightsLabID != null) WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLabId = SealightsLabID;
-                    if (SealightsSessionID != null) WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID = SealightsSessionID;
-                    if (SealightsTestStage != null) WorkSpace.Instance.Solution.SealightsConfiguration.SealightsTestStage = SealightsTestStage;
-                    if (SealightsSessionTimeOut != null) WorkSpace.Instance.Solution.SealightsConfiguration.SealightsSessionTimeout = SealightsSessionTimeOut;
-                    if (SealightsEntityLevel != null) WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel = (SealightsConfiguration.eSealightsEntityLevel)Enum.Parse(typeof(SealightsConfiguration.eSealightsEntityLevel), SealightsEntityLevel);
+                    if (SealightsUrl != null)
+                    {
+                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsURL = SealightsUrl;
+                    }
+
+                    if (SealightsAgentToken != null)
+                    {
+                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsAgentToken = SealightsAgentToken;
+                    }
+
+                    if (SealightsLabID != null)
+                    {
+                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLabId = SealightsLabID;
+                    }
+
+                    if (SealightsSessionID != null)
+                    {
+                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsBuildSessionID = SealightsSessionID;
+                    }
+
+                    if (SealightsTestStage != null)
+                    {
+                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsTestStage = SealightsTestStage;
+                    }
+
+                    if (SealightsSessionTimeOut != null)
+                    {
+                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsSessionTimeout = SealightsSessionTimeOut;
+                    }
+
+                    if (SealightsEntityLevel != null)
+                    {
+                        WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel = (SealightsConfiguration.eSealightsEntityLevel)Enum.Parse(typeof(SealightsConfiguration.eSealightsEntityLevel), SealightsEntityLevel);
+                    }
+
                     WorkSpace.Instance.Solution.SealightsConfiguration.SealightsTestRecommendations = SealightsTestRecommendations ? SealightsConfiguration.eSealightsTestRecommendations.Yes : SealightsConfiguration.eSealightsTestRecommendations.No;
 
                     // Override the Sealights RunSet's settings with the CLI's settings

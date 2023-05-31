@@ -78,10 +78,10 @@ namespace Ginger.ALM.Repository
         public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null)
         {
             bool result = false;
-            string responseStr=string.Empty;
+            string responseStr = string.Empty;
             if (activtiesGroup != null)
             {
-            ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
+                ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
                 var testCaseFields = allFields.Where(a => a.ItemType == ResourceType.TEST_CASE.ToString());
                 bool exportRes = ((JiraCore)this.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, testCaseFields, ref responseStr);
 
@@ -98,7 +98,9 @@ namespace Ginger.ALM.Repository
                     return true;
                 }
                 else
+                {
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), activtiesGroup.Name, responseStr);
+                }
             }
             return result;
         }
@@ -109,10 +111,13 @@ namespace Ginger.ALM.Repository
             foreach (ActivitiesGroup group in grdActivitiesGroups)
             {
                 if (ExportActivitiesGroupToALM(group))
+                {
                     askToSaveBF = true;
+                }
             }
 
             if (askToSaveBF)
+            {
                 if (Reporter.ToUser(eUserMsgKey.AskIfToSaveBFAfterExport, businessFlow.Name) == eUserMsgSelection.Yes)
                 {
                     Reporter.ToStatus(eStatusMsgKey.SaveItem, null, businessFlow.Name,
@@ -120,6 +125,7 @@ namespace Ginger.ALM.Repository
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(businessFlow);
                     Reporter.HideStatusMessage();
                 }
+            }
         }
 
         public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, eALMConnectType almConectStyle = eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
@@ -241,7 +247,7 @@ namespace Ginger.ALM.Repository
         {
             if (ALMCore.DefaultAlmConfig.JiraTestingALM == eTestingALMType.Xray)
             {
-                JIRA.JiraImportReviewPage win = new JIRA.JiraImportReviewPage(importDestinationPath:importDestinationFolderPath);
+                JIRA.JiraImportReviewPage win = new JIRA.JiraImportReviewPage(importDestinationPath: importDestinationFolderPath);
                 win.ShowAsWindow();
             }
             if (ALMCore.DefaultAlmConfig.JiraTestingALM == eTestingALMType.Zephyr)
@@ -259,14 +265,14 @@ namespace Ginger.ALM.Repository
 
         public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<object> selectedTests)
         {
-            if (selectedTests != null && selectedTests.Count() > 0)
+            if (selectedTests != null && selectedTests.Any())
             {
                 ObservableList<JiraTestSet> testSetsItemsToImport = new ObservableList<JiraTestSet>();
                 foreach (GingerCore.ALM.JIRA.JiraTestSet selectedTS in selectedTests)
                 {
                     try
                     {
-                        BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == selectedTS.Key).FirstOrDefault();
+                        BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().FirstOrDefault(x => x.ExternalID == selectedTS.Key);
                         if (existedBF != null)
                         {
                             Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, selectedTS.Name);
@@ -277,7 +283,7 @@ namespace Ginger.ALM.Repository
                         }
                         Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, selectedTS.Name);
                         JiraTestSet jiraImportedTSData = ((JiraCore)this.AlmCore).GetJiraTestSetData(selectedTS);
-                        
+
                         SetImportedTS(jiraImportedTSData, importDestinationPath);
                     }
                     catch (Exception ex)
@@ -293,18 +299,18 @@ namespace Ginger.ALM.Repository
 
         public bool ImportSelectedZephyrCyclesAndFolders(string importDestinationPath, IEnumerable<object> selectedObjects)
         {
-            if (selectedObjects != null && selectedObjects.Count() > 0)
+            if (selectedObjects != null && selectedObjects.Any())
             {
                 foreach (JiraZephyrTreeItem obj in selectedObjects)
                 {
                     BusinessFlow existedBF;
                     if (obj is JiraZephyrFolderTreeItem)
                     {
-                        existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == ((JiraZephyrFolderTreeItem)obj).CycleId  && x.ExternalID2 == obj.Id).FirstOrDefault();
+                        existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().FirstOrDefault(x => x.ExternalID == ((JiraZephyrFolderTreeItem)obj).CycleId && x.ExternalID2 == obj.Id);
                     }
                     else
                     {
-                        existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == obj.Id && x.ExternalID2 == null).FirstOrDefault();
+                        existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().FirstOrDefault(x => x.ExternalID == obj.Id && x.ExternalID2 == null);
                     }
 
                     if (existedBF != null)
@@ -350,9 +356,9 @@ namespace Ginger.ALM.Repository
                             {
                                 if (!string.IsNullOrEmpty(activ.TargetApplication))
                                 {
-                                    if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
+                                    if (tsBusFlow.TargetApplications.FirstOrDefault(x => x.Name == activ.TargetApplication) == null)
                                     {
-                                        ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                                        ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == activ.TargetApplication);
                                         if (appAgent != null)
                                         {
                                             tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
@@ -417,7 +423,7 @@ namespace Ginger.ALM.Repository
                 Reporter.HideStatusMessage();
             }
             catch { }
-            
+
         }
 
         private void SetBFPropertiesAfterImport(BusinessFlow tsBusFlow)
@@ -426,27 +432,41 @@ namespace Ginger.ALM.Repository
             {
                 //add the applications mapped to the Activities
                 foreach (Activity activ in tsBusFlow.Activities)
+                {
                     if (string.IsNullOrEmpty(activ.TargetApplication) == false)
-                        if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
+                    {
+                        if (tsBusFlow.TargetApplications.FirstOrDefault(x => x.Name == activ.TargetApplication) == null)
                         {
-                            ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                            ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == activ.TargetApplication);
                             if (appAgent != null)
+                            {
                                 tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
+                            }
                         }
+                    }
+                }
                 //handle non mapped Activities
                 if (tsBusFlow.TargetApplications.Count == 0)
+                {
                     tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
+                }
+
                 foreach (Activity activ in tsBusFlow.Activities)
                 {
                     if (string.IsNullOrEmpty(activ.TargetApplication))
+                    {
                         activ.TargetApplication = tsBusFlow.MainApplication;
+                    }
+
                     activ.Active = true;
                 }
             }
             else
             {
                 foreach (Activity activ in tsBusFlow.Activities)
+                {
                     activ.TargetApplication = null; // no app configured on solution level
+                }
             }
         }
 
@@ -493,7 +513,7 @@ namespace Ginger.ALM.Repository
         {
             if (TCsIDs.Count > 0)
             {
-                Dictionary<string,JiraTest> getActivitiesGroupUpdatedData = ((JiraCore)ALMIntegration.Instance.AlmCore).GetJiraTestsUpdatedData(businessFlow.ExternalID, TCsIDs.Select(x => x.Item1.ToString()).ToList());
+                Dictionary<string, JiraTest> getActivitiesGroupUpdatedData = ((JiraCore)ALMIntegration.Instance.AlmCore).GetJiraTestsUpdatedData(businessFlow.ExternalID, TCsIDs.Select(x => x.Item1.ToString()).ToList());
                 ((JiraCore)ALMIntegration.Instance.AlmCore).UpdateBFSelectedAG(ref businessFlow, getActivitiesGroupUpdatedData);
                 SetBFPropertiesAfterImport(businessFlow);
             }

@@ -28,7 +28,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 {
@@ -39,7 +38,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
         private string[] PomElementGUID;// => mAct.ElementLocateValue.ToString().Split('_');
         public POMExecutionUtils(Act act, string elementLocateValue)
         {
-            
+
             mAct = act;
             var context = Context.GetAsContext(mAct.Context);
             ExecutedFrom = context.ExecutedFrom;
@@ -49,11 +48,11 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
         public POMExecutionUtils()
         {
-            
+
         }
 
 
-        
+
 
 
         public ApplicationPOMModel GetCurrentPOM()
@@ -73,7 +72,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
         public ElementInfo GetCurrentPOMElementInfo()
         {
             Guid currentPOMElementInfoGUID = new Guid(PomElementGUID[1]);
-            ElementInfo selectedPOMElementInfo = GetCurrentPOM().MappedUIElements.Where(z => z.Guid == currentPOMElementInfoGUID).FirstOrDefault();
+            ElementInfo selectedPOMElementInfo = GetCurrentPOM().MappedUIElements.FirstOrDefault(z => z.Guid == currentPOMElementInfoGUID);
 
             if (selectedPOMElementInfo == null)
             {
@@ -86,7 +85,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
         public ElementInfo GetFriendlyElementInfo(Guid elementGuid)
         {
-            ElementInfo selectedPOMElementInfo = GetCurrentPOM().MappedUIElements.Where(z => z.Guid == elementGuid).FirstOrDefault();
+            ElementInfo selectedPOMElementInfo = GetCurrentPOM().MappedUIElements.FirstOrDefault(z => z.Guid == elementGuid);
 
             if (selectedPOMElementInfo == null)
             {
@@ -222,7 +221,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             var passedLocator = GetCurrentPOMElementInfo().Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed);
 
 
-            if (passedLocator == null || passedLocator.Count() == 0)
+            if (passedLocator == null || !passedLocator.Any())
             {
                 if (ExecutedFrom == eExecutedFrom.Run)
                 {
@@ -253,7 +252,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             }
 
             Guid currentPOMElementInfoGUID = new Guid(PomElementGUID[1]);
-            var currentElementDelta = deltaElementInfos.Where(x => x.ElementInfo.Guid == currentPOMElementInfoGUID).FirstOrDefault();
+            var currentElementDelta = deltaElementInfos.FirstOrDefault(x => x.ElementInfo.Guid == currentPOMElementInfoGUID);
             if (currentElementDelta == null || currentElementDelta.DeltaStatus == eDeltaStatus.Deleted)
             {
                 mAct.ExInfo += "Element not found during self healing process.";
@@ -271,7 +270,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             {
                 try
                 {
-                    var deltaInfo = deltaElementInfos.Where(x => x.ElementInfo.Guid == elementInfo.Guid).FirstOrDefault();
+                    var deltaInfo = deltaElementInfos.FirstOrDefault(x => x.ElementInfo.Guid == elementInfo.Guid);
                     if (deltaInfo != null)
                     {
                         if (deltaInfo.DeltaStatus == eDeltaStatus.Changed)

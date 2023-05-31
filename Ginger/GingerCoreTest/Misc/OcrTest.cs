@@ -16,14 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore.GingerOCR;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using GingerTestHelper;
-using GingerCore.Actions;
-using GingerCore.Actions.XML;
-using Amdocs.Ginger.Common;
-using GingerCore;
-using GingerCore.GingerOCR;
 
 namespace GingerCoreTest.Misc
 {
@@ -62,7 +58,7 @@ namespace GingerCoreTest.Misc
         [TestMethod]
         public void ReadAllTextPdf()
         {
-            string txtOutput = GingerOcrOperations.ReadTextFromPdfSinglePage(OcrPdfAllTextFilePath, "1");
+            string txtOutput = GingerOcrOperations.ReadTextFromPdfSinglePage(OcrPdfAllTextFilePath, "1" , 300);
             string txtExpectedOutput = "Hi, try reading this text\n" + Environment.NewLine;
             Assert.AreEqual(txtExpectedOutput, txtOutput);
         }
@@ -70,7 +66,7 @@ namespace GingerCoreTest.Misc
         [TestMethod]
         public void ReadTextAfterLabelsPdf()
         {
-            string txtOutput = GingerOcrOperations.ReadTextAfterLabelPdf(OcrPdfFilePath, "Processed By");
+            string txtOutput = GingerOcrOperations.ReadTextAfterLabelPdf(OcrPdfFilePath, "Processed By", 300);
             string txtExpectedOutput = " : 107W0000\n";
             Assert.AreEqual(txtExpectedOutput, txtOutput);
         }
@@ -78,7 +74,7 @@ namespace GingerCoreTest.Misc
         [TestMethod]
         public void ReadTextBetweenLabelsPdf()
         {
-            string txtOutput = GingerOcrOperations.ReadTextBetweenLabelsPdf(OcrPdfFilePath, "Installer", "Stock Issue Form No", string.Empty);
+            string txtOutput = GingerOcrOperations.ReadTextBetweenLabelsPdf(OcrPdfFilePath, "Installer", "Stock Issue Form No", string.Empty,300);
             string txtExpectedOutput = " : MOHD AZHARI BIN MAD ATARI (70020776) ";
             Assert.AreEqual(txtExpectedOutput, txtOutput);
         }

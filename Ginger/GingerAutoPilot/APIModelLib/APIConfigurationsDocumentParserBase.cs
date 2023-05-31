@@ -36,7 +36,7 @@ namespace Amdocs.Ginger.Repository
             string fileContent = System.IO.File.ReadAllText(FilePath);
             if (IsValidJson(fileContent))
             {
-                return JSONTemplateParser.ParseJSONResponseSampleIntoReturnValues(fileContent); 
+                return JSONTemplateParser.ParseJSONResponseSampleIntoReturnValues(fileContent);
             }
             else if (IsValidXML(fileContent))
             {
@@ -50,12 +50,14 @@ namespace Amdocs.Ginger.Repository
         {
             foreach (string Value in OptionalValuesPerParameterDict[tuple])
             {
-                OptionalValue OptionalValueExist = AMP.OptionalValuesList.Where(x => x.Value == Value).FirstOrDefault();
+                OptionalValue OptionalValueExist = AMP.OptionalValuesList.FirstOrDefault(x => x.Value == Value);
                 if (OptionalValueExist == null)
                 {
                     OptionalValue OptionalValue = new OptionalValue() { Value = Value };
                     if (!string.IsNullOrEmpty(Value))
-                        OptionalValue.IsDefault = true; 
+                    {
+                        OptionalValue.IsDefault = true;
+                    }
 
                     AMP.OptionalValuesList.Add(OptionalValue);
                     ParameterValuesUpdated = true;
@@ -92,7 +94,7 @@ namespace Amdocs.Ginger.Repository
                 {
                     return false;
                 }
-                catch (Exception) 
+                catch (Exception)
                 {
                     return false;
                 }
@@ -111,10 +113,10 @@ namespace Amdocs.Ginger.Repository
             {
                 return false;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
-            }            
+            }
         }
     }
 }

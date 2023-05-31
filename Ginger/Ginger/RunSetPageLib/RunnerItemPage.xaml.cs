@@ -112,7 +112,10 @@ namespace Ginger.Run
             get
             {
                 if (mItemChilds == null)
+                {
                     LoadChildRunnerItems();
+                }
+
                 return mItemChilds;
             }
         }
@@ -162,9 +165,15 @@ namespace Ginger.Run
             {
                 foreach (Activity ac in ((BusinessFlow)ItemObject).Activities)
                 {
-                    if (ac.GetType() == typeof(ErrorHandler)) continue;//do not show Error Handler for now
+                    if (ac.GetType() == typeof(ErrorHandler))
+                    {
+                        continue;//do not show Error Handler for now
+                    }
 
-                    if (ac.GetType() == typeof(CleanUpActivity)) continue;//do not show Clean Up Activity for now
+                    if (ac.GetType() == typeof(CleanUpActivity))
+                    {
+                        continue;//do not show Clean Up Activity for now
+                    }
 
                     RunnerItemPage ri = new RunnerItemPage(ac);
                     this.Context.BusinessFlow = (BusinessFlow)ItemObject;
@@ -266,7 +275,9 @@ namespace Ginger.Run
             {
                 //Todo : need to see why it is blocking activity,businessflow selection.
                 if (((Act)sender).Status == eRunStatus.Running)
+                {
                     OnRunnerItemEvent(RunnerItemEventArgs.eEventType.SetAsSelectedRequired, this, ItemtType, ItemObject);
+                }
             }
         }
 
@@ -275,7 +286,9 @@ namespace Ginger.Run
             if (e.PropertyName == nameof(Activity.Status))
             {
                 if (((Activity)sender).Status == eRunStatus.Running)
+                {
                     OnRunnerItemEvent(RunnerItemEventArgs.eEventType.SetAsSelectedRequired, this, ItemtType, ItemObject);
+                }
             }
         }
 
@@ -284,7 +297,9 @@ namespace Ginger.Run
             if (e.PropertyName == nameof(BusinessFlow.RunStatus))
             {
                 if (((BusinessFlow)sender).RunStatus == eRunStatus.Running)
+                {
                     OnRunnerItemEvent(RunnerItemEventArgs.eEventType.SetAsSelectedRequired, this, ItemtType, ItemObject);
+                }
             }
         }
 
@@ -295,6 +310,10 @@ namespace Ginger.Run
             {
                 Click(this, e);
             }
+            if(e.Handled)
+            {
+                OnRunnerItemEvent(RunnerItemEventArgs.eEventType.ViewConfiguration, this, ItemtType, ItemObject);
+            }            
         }
         public event RoutedEventHandler ClickAutomate;
         private void xautomateBusinessflow_Click(object sender, RoutedEventArgs e)
@@ -344,9 +363,13 @@ namespace Ginger.Run
         private void xDetailView_Click(object sender, RoutedEventArgs e)
         {
             if (pageGrid.RowDefinitions[1].Height.Value == 0)
+            {
                 ExpandCollapseRunnerItem(true);
+            }
             else
+            {
                 ExpandCollapseRunnerItem(false);
+            }
         }
         public void ExpandCollapseRunnerItem(bool isExpand)
         {
@@ -383,9 +406,13 @@ namespace Ginger.Run
         private void UserControl_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (((RunnerItemPage)sender).ItemObject is Act || ((RunnerItemPage)sender).ItemObject is Activity)
+            {
                 OnRunnerItemEvent(RunnerItemEventArgs.eEventType.ViewRunnerItemRequired, this, ItemtType, ItemObject);
+            }
             else
+            {
                 OnRunnerItemEvent(RunnerItemEventArgs.eEventType.ViewConfiguration, this, ItemtType, ItemObject);
+            }
         }
 
         private void xExportToAlm_Click(object sender, RoutedEventArgs e)

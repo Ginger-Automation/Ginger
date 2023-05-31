@@ -23,15 +23,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace GingerCore.UserControls
 {
@@ -87,7 +79,7 @@ namespace GingerCore.UserControls
 
             IEnumerable<HtmlNode> htmlElements = _htmldocument.DocumentNode.Descendants().Where(x => !x.Name.StartsWith("#") && x.NodeType == HtmlNodeType.Element && !ElementsToSkip.Contains(x.Name));
 
-            if (htmlElements.Count() != 0)
+            if (htmlElements.Any())
             {
                 TreeViewItem TVRoot = new TreeViewItem() { IsExpanded = true };
                 //TVRoot.Tag = _htmldocument.DocumentNode;

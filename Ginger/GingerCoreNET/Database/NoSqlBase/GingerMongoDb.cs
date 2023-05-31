@@ -16,27 +16,23 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using GingerCore.Actions;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using GingerCore.Actions;
-using Amdocs.Ginger.Common;
-
-using MongoDB.Driver;
-using MongoDB.Bson;
-
-using Newtonsoft.Json;
-using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.NoSqlBase
 {
     public class GingerMongoDb : NoSqlBase
-    {        
+    {
         MongoClient mMongoClient = null;
         ActDBValidation Act = null;
         string DbName;
-      
+
 
         public override bool Connect()
         {
@@ -88,7 +84,7 @@ namespace GingerCore.NoSqlBase
                             String deCryptValue = EncryptionHandler.DecryptwithKey(Db.DatabaseOperations.PassCalculated.ToString());
                             if (!string.IsNullOrEmpty(deCryptValue))
                             {
-                                mongoCredential = MongoCredential.CreateCredential(HostPortDB[HostPortDB.Length-1], Db.DatabaseOperations.UserCalculated, deCryptValue);
+                                mongoCredential = MongoCredential.CreateCredential(HostPortDB[HostPortDB.Length - 1], Db.DatabaseOperations.UserCalculated, deCryptValue);
                             }
                             else
                             {
@@ -165,6 +161,10 @@ namespace GingerCore.NoSqlBase
         }
         public List<string> GetDatabaseList()
         {
+            if (mMongoClient == null)
+            {
+                return new List<string>();
+            }
             return mMongoClient.ListDatabaseNames().ToList();
         }
         public override List<string> GetTableList(string dbName)
@@ -192,10 +192,10 @@ namespace GingerCore.NoSqlBase
             var collection = db.GetCollection<BsonDocument>(collectionName);
 
             var result = collection.Find(new BsonDocument()).Project(Builders<BsonDocument>.Projection.Exclude("_id")).ToList();
-            foreach(var row in result)
+            foreach (var row in result)
             {
                 IEnumerable<string> columnNames = row.Elements.Select(x => x.Name);
-                List <string> previousRowColumns = columns.ToList();
+                List<string> previousRowColumns = columns.ToList();
                 var currentRowColumns = previousRowColumns.Union(columnNames);
                 if (currentRowColumns.Count() > previousRowColumns.Count)
                 {
@@ -234,7 +234,7 @@ namespace GingerCore.NoSqlBase
                     return null;
                 }
             }
-            
+
         }
         private string GetUpdateQueryParams(string inputSQL)
         {
@@ -243,7 +243,7 @@ namespace GingerCore.NoSqlBase
             string updateQueryParams = inputSQL.Substring(startIndex, endIndex - startIndex);
             return updateQueryParams.Trim();
         }
-        private string GetQueryParamater(string inputSQL,string param)
+        private string GetQueryParamater(string inputSQL, string param)
         {
             string queryParameterValue = GetQueryParameterValue(inputSQL, param);
 
@@ -302,7 +302,7 @@ namespace GingerCore.NoSqlBase
             VE.Value = Act.SQL;
             string SQLCalculated = VE.ValueCalculated;
             string collectionName = "";
-            if (Action== Actions.ActDBValidation.eDBValidationType.SimpleSQLOneValue)
+            if (Action == Actions.ActDBValidation.eDBValidationType.SimpleSQLOneValue)
             {
                 collectionName = Act.Table;
             }
@@ -352,7 +352,7 @@ namespace GingerCore.NoSqlBase
                         Act.AddOrUpdateReturnParamActual("Record Count", count.ToString());
                         break;
                     case Actions.ActDBValidation.eDBValidationType.UpdateDB:
-                        
+
                         //do commit
                         if (Act.CommitDB_Value == true)
                         {
@@ -378,7 +378,7 @@ namespace GingerCore.NoSqlBase
                         {
                             filter = "{" + col + ":" + where + "}";
                         }
-                        else 
+                        else
                         {
                             //Equality matches on the whole embedded document require an exact match of the specified <value> document, including the field order
                             //For ex where contains value = {field1:_value1,field2:_value2,field3:"_value3",...}
@@ -392,15 +392,15 @@ namespace GingerCore.NoSqlBase
                             {
                                 filter = "{" + col + ":\"" + where + "\"}";
                             }
-                        
+
                         }
 
                         var resultSimpleSQLOne = collection.Find(filter).Project(Builders<BsonDocument>.Projection.Exclude("_id")).ToList();
 
                         AddValuesFromResult(resultSimpleSQLOne);
                         break;
-                    default:                        
-                        Act.Error+= "Operation Type "+ Action +" is not yes supported for Mongo DB";
+                    default:
+                        Act.Error += "Operation Type " + Action + " is not yes supported for Mongo DB";
                         break;
                 }
             }

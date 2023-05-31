@@ -29,7 +29,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
     {
         public ExecutionLoggerHelper()
         {
-                
+
         }
         public void CleanDirectory(string folderName, bool isCleanFile = true)
         {
@@ -54,7 +54,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     Directory.Delete(folderName, false);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to Clean Execution Logger Folder '{0}', Issue:'{1}'", folderName, ex.Message));
             }
@@ -70,7 +70,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 }
                 else
                 {
-                   // CleanDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
+                    // CleanDirectory(WorkSpace.Instance.ReportsInfo.EmailReportTempFolder);
                 }
             }
             catch (Exception ex)

@@ -105,7 +105,7 @@ namespace Ginger.ALM.Repository
 
                     try
                     {
-                        BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == RQMID + "=" + testPlan.RQMID).FirstOrDefault();
+                        BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().FirstOrDefault(x => x.ExternalID == RQMID + "=" + testPlan.RQMID);
                         if (existedBF != null)
                         {
                             eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, testPlan.Name);
@@ -120,16 +120,16 @@ namespace Ginger.ALM.Repository
                         // convert test set into BF
                         BusinessFlow tsBusFlow = ((RQMCore)ALMIntegration.Instance.AlmCore).ConvertRQMTestPlanToBF(testPlan);
 
-                        if ( WorkSpace.Instance.Solution.MainApplication != null)
+                        if (WorkSpace.Instance.Solution.MainApplication != null)
                         {
                             //add the applications mapped to the Activities
                             foreach (Activity activ in tsBusFlow.Activities)
                             {
                                 if (string.IsNullOrEmpty(activ.TargetApplication) == false)
                                 {
-                                    if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
+                                    if (tsBusFlow.TargetApplications.FirstOrDefault(x => x.Name == activ.TargetApplication) == null)
                                     {
-                                        ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                                        ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == activ.TargetApplication);
                                         if (appAgent != null)
                                         {
                                             tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
@@ -234,7 +234,7 @@ namespace Ginger.ALM.Repository
             {
                 return false;
             }
-            if ( WorkSpace.Instance.Solution.ExternalItemsFields.Where(x => x.ItemType == "TestCase").ToList().Count == 0)
+            if (WorkSpace.Instance.Solution.ExternalItemsFields.Where(x => x.ItemType == "TestCase").ToList().Count == 0)
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Current solution have no predefined values for RQM's mandatory fields. Please configure before doing export. ('ALM'-'ALM Items Fields Configuration')");
                 return false;
@@ -250,7 +250,7 @@ namespace Ginger.ALM.Repository
             string res = string.Empty;
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
 
-            exportRes = ((RQMCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRQM(businessFlow,  WorkSpace.Instance.Solution.ExternalItemsFields, ref res);
+            exportRes = ((RQMCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToRQM(businessFlow, WorkSpace.Instance.Solution.ExternalItemsFields, ref res);
 
             if (exportRes)
             {
@@ -293,18 +293,24 @@ namespace Ginger.ALM.Repository
             }, false) is string fileName)
             {
                 if (!((RQMCore)ALMIntegration.Instance.AlmCore).ValidateConfigurationFile(fileName))
+                {
                     return false;
+                }
 
-                string folderPath = Path.Combine( WorkSpace.Instance.Solution.Folder, "Configurations");
+                string folderPath = Path.Combine(WorkSpace.Instance.Solution.Folder, "Configurations");
                 DirectoryInfo di = Directory.CreateDirectory(folderPath);
 
                 folderPath = Path.Combine(folderPath, "RQMServerConfigurationsPackage");
                 if (Directory.Exists(folderPath))
+                {
                     DeleteDirectoryAndFiles(folderPath);
+                }
 
                 ZipFile.ExtractToDirectory(fileName, di.FullName);
                 if (!((RQMCore)ALMIntegration.Instance.AlmCore).IsConfigPackageExists())
+                {
                     return false;
+                }
 
                 ALMIntegration.Instance.SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.RQM);
             }

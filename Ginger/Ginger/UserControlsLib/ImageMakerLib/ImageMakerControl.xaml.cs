@@ -16,16 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Core;
+using Amdocs.Ginger.Common.Enums;
+using FontAwesome5;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using FontAwesome5;
-using Amdocs.Ginger.Common.Enums;
-using System.Windows.Media.Animation;
 
 namespace Amdocs.Ginger.UserControls
 {
@@ -589,6 +588,15 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.SelfHealing:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Magic);
+                    break;
+                case eImageType.Rules:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Gavel);
+                    break;
+                case eImageType.AdminUser:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserCog, Brushes.OrangeRed);
+                    break;
+                case eImageType.NormalUser:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserCog);
                     break;
                 #endregion
 

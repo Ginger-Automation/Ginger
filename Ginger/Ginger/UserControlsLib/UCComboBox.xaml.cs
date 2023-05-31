@@ -74,7 +74,7 @@ namespace Ginger.UserControlsLib
         {
             // If the VE is on stand alone form:
             this.obj = bindedObject;
-            this.AttrName = bindedObjField;         
+            this.AttrName = bindedObjField;
 
             GingerCore.General.FillComboFromEnumType(ComboBox, optionalEnumType);
             BindVEAndSelectionChangedEvent(false, UCselectionChange);
@@ -88,7 +88,7 @@ namespace Ginger.UserControlsLib
             FillComboBoxFromDynamicList(comboBoxEnumItemsList);
             ComboBox.IsEditable = false;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, dependencyProperty, bindedObject, AttrName);
-           
+
         }
 
 
@@ -109,13 +109,13 @@ namespace Ginger.UserControlsLib
         /// <param name="isVENeeded">boolean value to specify is value expression is needed</param>
         /// <param name="UCselectionChange">Selection changed event to attach to the field</param>
         /// <param name="context">Context of the input value. If Value expression is needed then context is must</param>
-        public void Init(ActInputValue AIV,Type optionalEnumType=null, bool isVENeeded = false,  SelectionChangedEventHandler UCselectionChange= null, Context context=null)
+        public void Init(ActInputValue AIV, Type optionalEnumType = null, bool isVENeeded = false, SelectionChangedEventHandler UCselectionChange = null, Context context = null)
         {
             // If the VE is on stand alone form:
             this.obj = AIV;
             this.AttrName = nameof(ActInputValue.Value);
             mContext = context;
-            if (optionalEnumType!=null)
+            if (optionalEnumType != null)
             {
                 GingerCore.General.FillComboFromEnumType(ComboBox, optionalEnumType);
             }
@@ -149,7 +149,7 @@ namespace Ginger.UserControlsLib
             {
                 ComboBox.Items.Clear();
                 ComboBox.SelectedValuePath = "Value";
-                Type Etype = comboBoxEnumItemsList[0].GetType();                
+                Type Etype = comboBoxEnumItemsList[0].GetType();
                 foreach (object item in comboBoxEnumItemsList)
                 {
                     ComboItem CEI = new ComboItem();
@@ -171,7 +171,7 @@ namespace Ginger.UserControlsLib
                 Col.Width = new GridLength(22);
                 VEButton.Visibility = Visibility.Visible;
                 ComboBox.IsEditable = true;
-                if(obj.GetType()==typeof(ActInputValue))
+                if (obj.GetType() == typeof(ActInputValue))
                 {
                     GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ComboBox, ComboBox.TextProperty, (ActInputValue)obj);
                 }
@@ -179,7 +179,7 @@ namespace Ginger.UserControlsLib
                 {
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.TextProperty, obj, AttrName);
                 }
-                
+
             }
             else
             {
@@ -195,8 +195,8 @@ namespace Ginger.UserControlsLib
         }
 
         public void VEButton_Click(object sender, RoutedEventArgs e)
-        {           
-            if(obj is Act)
+        {
+            if (obj is Act)
             {
                 mContext = Context.GetAsContext(((Act)obj).Context);
             }
@@ -210,7 +210,9 @@ namespace Ginger.UserControlsLib
             ComboBox.Items.Clear();
             ComboBox.SelectedValuePath = "Value";
             foreach (ComboItem item in comboBoxItemsList)
+            {
                 ComboBox.Items.Add(item);
+            }
         }
     }
 }

@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -36,7 +35,7 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddText("To perform a multi select action, Select Locate By type, e.g- ByID,ByCSS,ByXPath etc.Then enter the value of property" +
             " that you set in Locate By type and then enter the page url in value textbox and run the action.");
-        }        
+        }
 
         public override string ActionEditPage { get { return null; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }

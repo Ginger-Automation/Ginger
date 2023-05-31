@@ -17,32 +17,21 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
-using GingerCore.Properties;
-using GingerCore.Repository;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using GingerCore.Platforms;
-using System.Runtime.InteropServices;
-using GingerCore.Helpers;
-using System.Drawing.Imaging;
-using System.Drawing;
-
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
-using SikuliStandard.sikuli_UTIL;
 using SikuliStandard.sikuli_REST;
-using Amdocs.Ginger.Common;
-using System.Diagnostics;
+using SikuliStandard.sikuli_UTIL;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
-using Amdocs.Ginger.Common.UIElement;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.DataSource;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace GingerCore.Actions
 {
@@ -267,13 +256,13 @@ namespace GingerCore.Actions
                 }
                 if (lstWindows.Count != 0)
                 {
-                    WinAPIAutomation.ShowWindow(lstWindows.Where(m => m.Current.Name.Equals(processNameForSikuli)).First());
+                    WinAPIAutomation.ShowWindow(lstWindows.First(m => m.Current.Name.Equals(processNameForSikuli)));
                     if (SetCustomResolution)
                     {
                         List<int> lstVal = GetCustomResolutionValues();
                         if (lstVal.Count == 2)
                         {
-                            WinAPIAutomation.ResizeExternalWindow(lstWindows.Where(m => m.Current.Name.Equals(processNameForSikuli)).First(), lstVal[0], lstVal[1]);
+                            WinAPIAutomation.ResizeExternalWindow(lstWindows.First(m => m.Current.Name.Equals(processNameForSikuli)), lstVal[0], lstVal[1]);
                         }
                     }
                 }
@@ -524,8 +513,7 @@ namespace GingerCore.Actions
             if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
             {
                 RefreshActiveProcessesTitles();
-                if (lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)) == null ||
-                    lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).Count() == 0)
+                if (!lstWindows.Any(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)))
                 {
                     Error = "Target Application is not running";
                     return false;

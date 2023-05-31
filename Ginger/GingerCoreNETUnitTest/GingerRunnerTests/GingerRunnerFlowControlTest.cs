@@ -33,10 +33,10 @@ namespace amdocs.ginger.GingerCoreNETTest.GingerRunnerTests
     [TestClass]
     [Level1]
     public class GingerRunnerFlowControlTest
-    {        
+    {
 
         static GingerRunner mGR;
-        
+
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
@@ -52,19 +52,19 @@ namespace amdocs.ginger.GingerCoreNETTest.GingerRunnerTests
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents = new ObservableList<Agent>();
             ((GingerExecutionEngine)mGR.Executor).SolutionAgents.Add(a);
 
-            mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "App1", Agent = a });            
+            mGR.ApplicationAgents.Add(new ApplicationAgent() { AppName = "App1", Agent = a });
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
-            
+
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            
+
         }
 
 
@@ -163,7 +163,7 @@ namespace amdocs.ginger.GingerCoreNETTest.GingerRunnerTests
             a1.Acts.Add(act4);
 
             //Act           
-            Run();                        
+            Run();
 
             //Assert
             Assert.AreEqual(eRunStatus.Stopped, mBF.RunStatus);

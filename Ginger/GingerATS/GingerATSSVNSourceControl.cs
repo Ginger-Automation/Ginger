@@ -16,9 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using SharpSvn;
-using System.IO;
 
 namespace GingerATS
 {
@@ -27,10 +25,10 @@ namespace GingerATS
         public GingerATSLog Logger = null;
         private SvnClient mClient;
         public SourceConnectionDetails mSourceConnectionDetails { get; set; }
-        string mSolutionFullLocalPath=string.Empty;
+        string mSolutionFullLocalPath = string.Empty;
         private SvnUpdateResult mOperationResult;
         public SvnUpdateResult OperationResult { get { return mOperationResult; } set { mOperationResult = value; } }
-         
+
         public GingerATSSVNSourceControl(SourceConnectionDetails sourceConnectionDetails, string solutionFullLocalPath)
         {
             mSourceConnectionDetails = sourceConnectionDetails;
@@ -64,7 +62,10 @@ namespace GingerATS
         public void GetProject()
         {
             if (mClient == null)
+            {
                 Init();
+            }
+
             try
             {
                 mClient.CheckOut(new Uri(mSourceConnectionDetails.SourceURL +
@@ -85,7 +86,9 @@ namespace GingerATS
         public void GetLatest()
         {
             if (mClient == null)
+            {
                 Init();
+            }
 
             try
             {

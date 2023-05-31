@@ -13,10 +13,7 @@ using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace GingerCoreNETUnitTest.GingerRunnerTests
 {
@@ -30,11 +27,11 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {           
+        {
 
             Platform p = new Platform();
             p.PlatformType = ePlatformType.Web;
-    
+
 
             if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
             {
@@ -65,7 +62,7 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             mGR.Executor.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
             //mGR.BusinessFlows.Add(BF1);
 
-      
+
         }
 
         [TestMethod]
@@ -178,7 +175,7 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             businessFlow.Activities[2].Acts[0].FlowControls.Add(flowControl);
 
             mGR.Executor.BusinessFlows.Add(businessFlow);
-          
+
 
             Context context1 = new Context();
             context1.BusinessFlow = businessFlow;
@@ -227,7 +224,7 @@ namespace GingerCoreNETUnitTest.GingerRunnerTests
             Assert.AreEqual(eRunStatus.Passed, businessFlow.RunStatus, "Business Flow Status");
             Assert.AreEqual(eRunStatus.Passed, businessFlow.Activities[0].Status, "Activity 1 Status");
             Assert.AreEqual(eRunStatus.Passed, businessFlow.Activities[1].Status, "Activity 2 Status");
-            Assert.AreEqual(eRunStatus.Passed, businessFlow.Activities[2].Status, "Activity 3 Status");            
+            Assert.AreEqual(eRunStatus.Passed, businessFlow.Activities[2].Status, "Activity 3 Status");
             Assert.AreEqual(eRunStatus.Passed, businessFlow.Activities[3].Status, "Clean Up Activity should execute");
         }
 

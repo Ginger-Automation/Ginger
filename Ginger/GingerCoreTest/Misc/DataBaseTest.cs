@@ -16,12 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -33,12 +27,15 @@ using GingerCore.Environments;
 using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
 namespace UnitTests.NonUITests
 {
     [Level3]
     [TestClass]
-    
-    public class DataBaseTest 
+
+    public class DataBaseTest
     {
         static GingerRunner mGR = null;
 
@@ -47,12 +44,12 @@ namespace UnitTests.NonUITests
         [TestInitialize]
         public void TestInitialize()
         {
-            
+
         }
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {           
+        {
             mGR = new GingerRunner();
             mGR.Executor = new GingerExecutionEngine(mGR);
 
@@ -64,7 +61,7 @@ namespace UnitTests.NonUITests
             Activity activity = new Activity();
             mBF.Activities.Add(activity);
             mBF.CurrentActivity = activity;
-          
+
             mGR.Executor.CurrentBusinessFlow = mBF;
 
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
@@ -73,7 +70,8 @@ namespace UnitTests.NonUITests
         }
 
         [Ignore]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestOracleDBConnectionAndReadAllTables()
         {
             Database db = new Database();
@@ -81,8 +79,8 @@ namespace UnitTests.NonUITests
             db.DatabaseOperations = databaseOperations;
             db.DBType = Database.eDBTypes.Oracle;
             //ATT LS DB            
-            db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];          
-            Boolean b =  db.DatabaseOperations.Connect();
+            db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];
+            Boolean b = db.DatabaseOperations.Connect();
             //List<string> recs = new List<string>();
             List<object> recs = new List<object>();
             if (b)
@@ -93,13 +91,14 @@ namespace UnitTests.NonUITests
 
                 db.DatabaseOperations.CloseConnection();
             }
-           Assert.AreEqual(b, true);
+            Assert.AreEqual(b, true);
             //Assert.IsNotNull(recs.Count, 0);
             Assert.IsNotNull(recs.Count);
         }
 
         [Ignore]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestMSAccessDB()
         {
             Database db = new Database();
@@ -107,7 +106,7 @@ namespace UnitTests.NonUITests
             db.DatabaseOperations = databaseOperations;
             db.DBType = Database.eDBTypes.MSAccess;
             //    db.ConnectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\SVN\GingerSolutions\SCM\Documents\MassData\MAIN_DB.mdb";          
-            db.ConnectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source="+ TestResources.GetTestResourcesFile(@"Database\GingerUnitTest.mdb");
+            db.ConnectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + TestResources.GetTestResourcesFile(@"Database\GingerUnitTest.mdb");
             string dbstr = db.ConnectionString;
 
             Boolean b = db.DatabaseOperations.Connect();
@@ -115,12 +114,13 @@ namespace UnitTests.NonUITests
             {
                 List<string> tables = db.DatabaseOperations.GetTablesList();
                 db.DatabaseOperations.CloseConnection();
-            }            
-            
-           Assert.AreEqual(b, true);    
+            }
+
+            Assert.AreEqual(b, true);
         }
         [Ignore]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestMSSQL()
         {
             Database db = new Database();
@@ -128,8 +128,8 @@ namespace UnitTests.NonUITests
             db.DatabaseOperations = databaseOperations;
             db.DBType = Database.eDBTypes.MSSQL;
 
-           
-            db.ConnectionString = ConfigurationManager.AppSettings["MSSQLString"]; 
+
+            db.ConnectionString = ConfigurationManager.AppSettings["MSSQLString"];
 
             Boolean b = db.DatabaseOperations.Connect();
             if (b)
@@ -138,11 +138,12 @@ namespace UnitTests.NonUITests
                 db.DatabaseOperations.CloseConnection();
             }
 
-           Assert.AreEqual(b, true);    
+            Assert.AreEqual(b, true);
         }
 
         [Ignore]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void OracleFreeSQL()
         {
             Database db = new Database();
@@ -150,8 +151,8 @@ namespace UnitTests.NonUITests
             db.DatabaseOperations = databaseOperations;
             db.DBType = Database.eDBTypes.Oracle;
             //ATT LS DB
-          
-            db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];    
+
+            db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];
             Boolean b = db.DatabaseOperations.Connect();
             if (b)
             {
@@ -159,19 +160,20 @@ namespace UnitTests.NonUITests
                 Assert.IsNotNull(recs.Count);
                 db.DatabaseOperations.CloseConnection();
             }
-           Assert.AreEqual(b, true);
-           
-            
+            Assert.AreEqual(b, true);
+
+
         }
         [Ignore]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void OracleUpdateDB1InsertQuery()
         {
             Database db = new Database();
             DatabaseOperations databaseOperations = new DatabaseOperations(db);
             db.DatabaseOperations = databaseOperations;
             db.DBType = Database.eDBTypes.Oracle;
-            db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];    
+            db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];
             string impactedlines = "";
             Boolean b = db.DatabaseOperations.Connect();
             if (b)
@@ -185,36 +187,38 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(impactedlines, "1");
         }
         [Ignore]
-        [TestMethod]  [Timeout(60000)]     
+        [TestMethod]
+        [Timeout(60000)]
         public void OracleUpdateDBUpdateQuery()
         {
             Database db = new Database();
             DatabaseOperations databaseOperations = new DatabaseOperations(db);
             db.DatabaseOperations = databaseOperations;
-            db.DBType = Database.eDBTypes.Oracle;           
-            db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];    
+            db.DBType = Database.eDBTypes.Oracle;
+            db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];
             string impactedlines = null;
             Boolean b = db.DatabaseOperations.Connect();
             if (b)
             {
                 string updateStamp = DateTime.Now.ToString();
-                string updateQuery = "UPDATE GINGER_DB_UNIT_TEST SET COMMENTS='"+DateTime.UtcNow.ToString()+"' where TEST_ID=(select max(test_id) AS TEST_ID from GINGER_DB_UNIT_TEST)";                
-                impactedlines = db.DatabaseOperations.fUpdateDB(updateQuery, true);                
+                string updateQuery = "UPDATE GINGER_DB_UNIT_TEST SET COMMENTS='" + DateTime.UtcNow.ToString() + "' where TEST_ID=(select max(test_id) AS TEST_ID from GINGER_DB_UNIT_TEST)";
+                impactedlines = db.DatabaseOperations.fUpdateDB(updateQuery, true);
                 db.DatabaseOperations.CloseConnection();
             }
-           Assert.AreEqual(impactedlines, "1");
+            Assert.AreEqual(impactedlines, "1");
         }
 
 
         [Ignore]
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void OracleUpdateDBDeleteQuery()
         {
             Database db = new Database();
             DatabaseOperations databaseOperations = new DatabaseOperations(db);
             db.DatabaseOperations = databaseOperations;
-            db.DBType = Database.eDBTypes.Oracle;            
-            db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];    
+            db.DBType = Database.eDBTypes.Oracle;
+            db.ConnectionString = ConfigurationManager.AppSettings["OracleConnectionString"];
             string impactedlines = null;
             Boolean b = db.DatabaseOperations.Connect();
             if (b)
@@ -222,7 +226,7 @@ namespace UnitTests.NonUITests
                 impactedlines = db.DatabaseOperations.fUpdateDB("delete from GINGER_DB_UNIT_TEST where TEST_ID=(select min(test_id) AS TEST_ID from GINGER_DB_UNIT_TEST) ", true);
                 db.DatabaseOperations.CloseConnection();
             }
-           Assert.IsNotNull(impactedlines);
+            Assert.IsNotNull(impactedlines);
         }
         [Ignore]
         [TestMethod]
@@ -252,7 +256,7 @@ namespace UnitTests.NonUITests
             actDB.AppName = "DB";
             actDB.DBName = "MongoDb";
             actDB.SQL = "db.products.find( {} )";
-            
+
             mBF.CurrentActivity.Acts.Add(actDB);
             mBF.CurrentActivity.Acts.CurrentItem = actDB;
 
@@ -383,12 +387,12 @@ namespace UnitTests.NonUITests
 
             mBF.CurrentActivity.Acts.Add(actDB);
             mBF.CurrentActivity.Acts.CurrentItem = actDB;
-            
+
             //Act            
             ((DatabaseOperations)db.DatabaseOperations).NameBeforeEdit = actDB.DBName;
             db.Name = "MongoDBNew";
             //Database.UpdateDatabaseNameChangeInItem(actDB, db.NameBeforeEdit, db.Name);
-            
+
             //Assert
             Assert.AreEqual(actDB.DBName, db.Name, "Names");
 
@@ -415,11 +419,11 @@ namespace UnitTests.NonUITests
             //Arrange
             string ConStringUsingPwd = "SERVER=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=MyHost)(PORT=MyPort))(CONNECT_DATA=(SERVICE_NAME=MyOracleSID)));uid=myUsername;pwd=myPassword;";
             string ConStringUsingPassword = "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=MyHost)(PORT=MyPort))(CONNECT_DATA=(SERVICE_NAME=MyOracleSID)));User Id=myUsername;Password=myPassword;";
-            
+
             //Act
             string ResultPwd = General.HidePasswordFromString(ConStringUsingPwd);
             string ResultPassword = General.HidePasswordFromString(ConStringUsingPassword);
-            
+
             //Assert
             Assert.AreNotEqual(ConStringUsingPwd, ResultPwd);
             Assert.AreEqual(ResultPwd.Contains("pwd=*****"), true);

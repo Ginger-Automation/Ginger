@@ -16,23 +16,22 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.ApiActionsConversion;
 using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Linq;
-using amdocs.ginger.GingerCoreNET;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCore;
 
 namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 {
@@ -101,8 +100,11 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
-            if(mAPIModelsPage == null)
+            if (mAPIModelsPage == null)
+            {
                 mAPIModelsPage = new APIModelsPage(mAPIModelFolder);
+            }
+
             return mAPIModelsPage;
         }
 
@@ -123,9 +125,13 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             TreeViewUtils.AddSubMenuItem(addMenu, "REST API Model", AddRESTAPIModel, null, eImageType.APIModel);
             TreeViewUtils.AddSubMenuItem(addMenu, "Convert Web services Actions", WebServiceActionsConversionHandler, null, eImageType.Convert);
             if (mAPIModelFolder.IsRootFolder)
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew:false, allowDeleteFolder:false, allowRenameFolder:false, allowRefresh: false, allowDeleteAllItems: true);
+            {
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true);
+            }
             else
+            {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew: false, allowRefresh: false);
+            }
 
             AddSourceControlOptions(mContextMenu);
         }
@@ -136,7 +142,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void WebServiceActionsConversionHandler(object sender, RoutedEventArgs e)
-        {            
+        {
             WizardWindow.ShowWizard(new ApiActionsConversionWizard(mAPIModelFolder), 900, 700);
         }
 
@@ -153,7 +159,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         private void AddSingleAPIModel(ApplicationAPIUtils.eWebApiType type)
         {
             string apiName = string.Empty; ;
-            if (InputBoxWindow.GetInputWithValidation(string.Format("Add {0} API",type.ToString()), "API Name:", ref apiName))
+            if (InputBoxWindow.GetInputWithValidation(string.Format("Add {0} API", type.ToString()), "API Name:", ref apiName))
             {
                 ApplicationAPIModel newApi = new ApplicationAPIModel();
                 newApi.APIType = type;
@@ -165,7 +171,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         public void AddAPIModelFromDocument(object sender, RoutedEventArgs e)
         {
-            if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(p => p.Platform == ePlatformType.WebServices).Count() > 0)
+            if (WorkSpace.Instance.Solution.ApplicationPlatforms.Any(p => p.Platform == ePlatformType.WebServices))
             {
                 mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
                 WizardWindow.ShowWizard(new AddAPIModelWizard(mAPIModelFolder), 1000);

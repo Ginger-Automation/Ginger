@@ -25,14 +25,16 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using System.Windows.Input;
 
 namespace Ginger
 {
@@ -82,7 +84,7 @@ namespace Ginger
 
             /// <summary>
             /// Item opened from Windows Explorer in the Side Panel
-           /// </summary>
+            /// </summary>
             Explorer = 8,
 
             /// <summary>
@@ -154,7 +156,11 @@ namespace Ginger
         }
         internal static ImageSource ToBitmapSource(System.Drawing.Bitmap source)
         {
-            if (source == null) return null;
+            if (source == null)
+            {
+                return null;
+            }
+
             BitmapSource bitSrc = null;
             var hBitmap = source.GetHbitmap();
             try
@@ -193,13 +199,18 @@ namespace Ginger
             {
                 nameUnique = true;
                 foreach (string t in itemList)
+                {
                     if (t == item)
                     {
                         nameUnique = false;
                         break;
                     }
+                }
+
                 if (nameUnique)
+                {
                     break;
+                }
                 else
                 {
                     if (counter == 0)
@@ -253,7 +264,10 @@ namespace Ginger
         public static bool CompareStringsIgnoreCase(string strOne, string strTwo)
         {
             if (strOne == null || strTwo == null)
+            {
                 return false;
+            }
+
             return strOne.Equals(strTwo, StringComparison.OrdinalIgnoreCase);
         }
 
@@ -423,9 +437,15 @@ namespace Ginger
             System.Windows.Controls.Image img = new System.Windows.Controls.Image();
             img.Source = new BitmapImage(new Uri(@"/Images/" + imageName, UriKind.RelativeOrAbsolute));
             if (width > 0)
+            {
                 img.Width = width;
+            }
+
             if (height > 0)
+            {
                 img.Height = height;
+            }
+
             return img;
         }
 
@@ -531,7 +551,7 @@ namespace Ginger
                 {
                     foreach (Guid tagID in tagsIDsList)
                     {
-                        RepositoryItemTag tag = WorkSpace.Instance.Solution.Tags.Where(x => x.Guid == tagID).FirstOrDefault();
+                        RepositoryItemTag tag = WorkSpace.Instance.Solution.Tags.FirstOrDefault(x => x.Guid == tagID);
                         if (tag != null)
                         {
                             tagsDesc += "#" + tag.Name;
@@ -587,6 +607,37 @@ namespace Ginger
             {
                 return UndoChangesInRepoItem(item, isLocalBackup, clearBackup);
             }
+        }
+
+        public static bool IsAdmin()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                WindowsIdentity current = WindowsIdentity.GetCurrent();
+                WindowsPrincipal windowsPrincipal = new WindowsPrincipal(current);
+                return windowsPrincipal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                var process = new System.Diagnostics.Process();
+                var startInfo = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "id",
+                    Arguments = "-u",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false
+                };
+
+                process.StartInfo = startInfo;
+                process.Start();
+                var output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+
+                int.TryParse(output, out int userId);
+
+                return userId == 0;
+            }
+            return false;
         }
     }
 }

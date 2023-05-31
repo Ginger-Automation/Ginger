@@ -16,25 +16,19 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
-using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
-using GingerCore.Platforms;
 using GingerCore.Variables;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerWPF.WizardLib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Ginger.Repository
 {
@@ -225,7 +219,7 @@ namespace Ginger.Repository
         {
             bool linkIsByExternalID = false;
             bool linkIsByParentID = false;
-            if (items != null && items.Count() > 0)
+            if (items != null && items.Any())
             {
                 foreach (RepositoryItemBase item in items)
                 {
