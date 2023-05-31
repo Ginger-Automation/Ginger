@@ -395,7 +395,7 @@ namespace Ginger.Run
                     xRunRunsetBtn.ButtonText = "Running...";
                     setAsRunning = true;
                 }
-                else if (RunSetConfig.GingerRunners.Where(x => x.Status == eRunStatus.Running).FirstOrDefault() != null)
+                else if (RunSetConfig.GingerRunners.FirstOrDefault(x => x.Status == eRunStatus.Running) != null)
                 {
                     xRunRunsetBtn.ButtonText = "Running...";
                     xRunRunsetBtn.ToolTip = "Execution of at least one Runner is in progress";
@@ -443,7 +443,7 @@ namespace Ginger.Run
 
         private bool CheckIfExecutionIsInProgress()
         {
-            if (mRunSetConfig.IsRunning || RunSetConfig.GingerRunners.Where(x => x.Status == eRunStatus.Running || x.Executor.IsRunning == true).FirstOrDefault() != null)
+            if (mRunSetConfig.IsRunning || RunSetConfig.GingerRunners.FirstOrDefault(x => x.Status == eRunStatus.Running || x.Executor.IsRunning == true) != null)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation can't be done during execution.");
                 return true;
@@ -882,7 +882,7 @@ namespace Ginger.Run
                 if (WorkSpace.Instance.UserProfile.RecentRunset != null &&
                              WorkSpace.Instance.UserProfile.RecentRunset != Guid.Empty)
                 {
-                    RunSetConfig recentRunset = allRunsets.Where(runsets => runsets.Guid == WorkSpace.Instance.UserProfile.RecentRunset).FirstOrDefault();
+                    RunSetConfig recentRunset = allRunsets.FirstOrDefault(runsets => runsets.Guid == WorkSpace.Instance.UserProfile.RecentRunset);
                     if (recentRunset != null)
                     {
                         return recentRunset;
@@ -1656,7 +1656,7 @@ namespace Ginger.Run
                 {
                     newRunner.Name = "Runner " + ++Count;
                     //set unique name
-                    while (mRunSetConfig.GingerRunners.Where(x => x.Name == newRunner.Name).FirstOrDefault() != null)
+                    while (mRunSetConfig.GingerRunners.FirstOrDefault(x => x.Name == newRunner.Name) != null)
                     {
                         newRunner.Name = "Runner " + ++Count;
                     }
@@ -1828,7 +1828,7 @@ namespace Ginger.Run
             {
                 UpdateRunButtonIcon(true);
 
-                if (RunSetConfig.GingerRunners.Where(x => x.Status == eRunStatus.Stopped).FirstOrDefault() == null)
+                if (RunSetConfig.GingerRunners.FirstOrDefault(x => x.Status == eRunStatus.Stopped) == null)
                 {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "There are no Stopped Runners to Continue.");
                     return;
@@ -1912,7 +1912,7 @@ namespace Ginger.Run
 
         private void xStopRunsetBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (RunSetConfig.GingerRunners.Where(x => x.Executor.IsRunning == true).FirstOrDefault() == null)
+            if (RunSetConfig.GingerRunners.FirstOrDefault(x => x.Executor.IsRunning == true) == null)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "There are no Running Runners to Stop.");
                 return;
@@ -2040,7 +2040,7 @@ namespace Ginger.Run
                 if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
                 {
                     ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
-                    HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+                    HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
 
                     string reportsResultFolder = string.Empty;
                     if (!_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
@@ -2748,7 +2748,7 @@ namespace Ginger.Run
             { return; }
             if (mCurrentSelectedRunner.ExecutorEngine.GingerRunner.Guid == (Guid)xRunnersCombo.SelectedValue)
             { return; }
-            GingerRunner SelectedRunner = mRunSetConfig.GingerRunners.Where(x => x.Guid.ToString() == xRunnersCombo.SelectedValue.ToString()).FirstOrDefault();
+            GingerRunner SelectedRunner = mRunSetConfig.GingerRunners.FirstOrDefault(x => x.Guid.ToString() == xRunnersCombo.SelectedValue.ToString());
             int index = mRunSetConfig.GingerRunners.IndexOf(SelectedRunner);
             List<FlowElement> fe = mFlowDiagram.GetAllFlowElements();
             GingerRunnerHighlight(((RunnerPage)fe[index].GetCustomeShape().Content));

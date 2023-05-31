@@ -139,7 +139,7 @@ namespace Ginger.BusinessFlowWindows
             //remove deleted
             for (int indx = 0; indx < mBusinessFlow.TargetApplications.Count; indx++)
             {
-                if (mApplicationsPlatforms.Where(x => x.Selected && x.AppName == mBusinessFlow.TargetApplications[indx].Name).FirstOrDefault() == null)
+                if (mApplicationsPlatforms.FirstOrDefault(x => x.Selected && x.AppName == mBusinessFlow.TargetApplications[indx].Name) == null)
                 {
                     mBusinessFlow.TargetApplications.RemoveAt(indx);
                     indx--;
@@ -149,7 +149,7 @@ namespace Ginger.BusinessFlowWindows
             //add new
             foreach (ApplicationPlatform TA in mApplicationsPlatforms.Where(x => x.Selected).ToList())
             {
-                if (mBusinessFlow.TargetApplications.Where(x => x.Name == TA.AppName).FirstOrDefault() == null)
+                if (mBusinessFlow.TargetApplications.FirstOrDefault(x => x.Name == TA.AppName) == null)
                 {
                     TargetApplication tt = new TargetApplication();
                     tt.AppName = TA.AppName;

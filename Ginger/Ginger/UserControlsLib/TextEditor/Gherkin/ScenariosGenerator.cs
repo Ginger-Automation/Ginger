@@ -111,7 +111,7 @@ namespace Ginger.GherkinLib
                                     string val = GetExampleValue(x.TableHeader, tr, ColName);
                                     a.ActivityName = a.ActivityName.Replace("<" + ColName + ">", "\"" + val + "\"");
 
-                                    VariableBase v = a.Variables.Where(y => y.Name == ColName).FirstOrDefault();
+                                    VariableBase v = a.Variables.FirstOrDefault(y => y.Name == ColName);
 
                                     OptionalValue ov = new OptionalValue(val);
                                     if (ValuesDict.ContainsKey(ColName))
@@ -141,7 +141,7 @@ namespace Ginger.GherkinLib
                                 {
                                     foreach (OptionalValue ov in ValuesDict[vb.Name])
                                     {
-                                        OptionalValue ExistedOV = ((VariableSelectionList)vb).OptionalValuesList.Where(y => y.Value == ov.Value).FirstOrDefault();
+                                        OptionalValue ExistedOV = ((VariableSelectionList)vb).OptionalValuesList.FirstOrDefault(y => y.Value == ov.Value);
                                         if (ExistedOV == null)
                                         {
                                             ((VariableSelectionList)vb).OptionalValuesList.Add(ov);

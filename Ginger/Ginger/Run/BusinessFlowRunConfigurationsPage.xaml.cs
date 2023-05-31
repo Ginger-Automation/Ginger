@@ -215,7 +215,7 @@ namespace Ginger.Run
                             foreach (VariableBase selectedVar in selectedVars)
                             {
 
-                                VariableBase matchingVar = bf.GetBFandActivitiesVariabeles(true).Where(x => x.Guid == selectedVar.Guid).FirstOrDefault();
+                                VariableBase matchingVar = bf.GetBFandActivitiesVariabeles(true).FirstOrDefault(x => x.Guid == selectedVar.Guid);
                                 if (matchingVar != null)
                                 {
                                     String originalValue = matchingVar.Value;
@@ -347,7 +347,7 @@ namespace Ginger.Run
             ObservableList<VariableBase> cachedVariables = cachedBusinessFlow.GetBFandActivitiesVariabeles(true);
             foreach (VariableBase variable in bfInputVariables)
             {
-                VariableBase vb = cachedVariables.Where(x => x.Guid == variable.Guid).FirstOrDefault();
+                VariableBase vb = cachedVariables.FirstOrDefault(x => x.Guid == variable.Guid);
                 if (vb !=null && vb.GetType() == typeof(VariableSelectionList))
                 {
                     ((VariableSelectionList)variable).OptionalValuesList = new ObservableList<OptionalValue>();

@@ -239,7 +239,7 @@ namespace Ginger.WindowExplorer
 
             SetActionDetails(act);
             mContext.Runner.PrepActionValueExpression(act);
-            ApplicationAgent ag = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.Where(x => x.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
+            ApplicationAgent ag = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.FirstOrDefault(x => x.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication);
             if (ag != null)
             {
                 mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;

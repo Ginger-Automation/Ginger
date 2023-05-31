@@ -143,7 +143,7 @@ namespace GingerCore.Actions
             {
                 if (mURL == string.Empty)//backward support
                 {
-                    if (InputValues.Where(x => x.Param == "URL" && x.Value != string.Empty).FirstOrDefault() != null)
+                    if (InputValues.FirstOrDefault(x => x.Param == "URL" && x.Value != string.Empty) != null)
                     {
                         mURL = GetInputParamValue("URL");
                     }
@@ -211,7 +211,7 @@ namespace GingerCore.Actions
             {
                 if (mPort == string.Empty)//backward support
                 {
-                    if (InputValues.Where(x => x.Param == "Port" && x.Value != string.Empty).FirstOrDefault() != null)
+                    if (InputValues.FirstOrDefault(x => x.Param == "Port" && x.Value != string.Empty) != null)
                     {
                         mPort = GetInputParamValue("Port");
                     }

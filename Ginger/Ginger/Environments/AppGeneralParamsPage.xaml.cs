@@ -214,10 +214,10 @@ namespace Ginger.Environments
                     ObservableList<ProjEnvironment> envs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
                     foreach (ProjEnvironment env in envs)
                     {
-                        EnvApplication matchingApp = env.Applications.Where(x => x.Name == AppOwner.Name).FirstOrDefault();
+                        EnvApplication matchingApp = env.Applications.FirstOrDefault(x => x.Name == AppOwner.Name);
                         if (matchingApp != null && matchingApp != AppOwner)
                         {
-                            if (matchingApp.GeneralParams.Where(x => x.Name == ((GeneralParam)obj).Name).FirstOrDefault() == null)
+                            if (matchingApp.GeneralParams.FirstOrDefault(x => x.Name == ((GeneralParam)obj).Name) == null)
                             {
                                 GeneralParam param = (GeneralParam)(((RepositoryItemBase)obj).CreateCopy());
                                 matchingApp.GeneralParams.Add(param);

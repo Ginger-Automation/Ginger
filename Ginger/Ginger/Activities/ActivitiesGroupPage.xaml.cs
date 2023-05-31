@@ -160,15 +160,15 @@ namespace Ginger.Activities
 
             foreach (ActivityIdentifiers actIdent in mActivitiesGroup.ActivitiesIdentifiers)
             {
-                Activity repoAct = (Activity)activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                Activity repoAct = (Activity)activitiesRepository.FirstOrDefault(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid);
                 if (repoAct == null)
                 {
-                    repoAct = (Activity)activitiesRepository.Where(x => x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                    repoAct = (Activity)activitiesRepository.FirstOrDefault(x => x.Guid == actIdent.ActivityGuid);
                 }
 
                 if (repoAct == null)
                 {
-                    repoAct = (Activity)activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName).FirstOrDefault();
+                    repoAct = (Activity)activitiesRepository.FirstOrDefault(x => x.ActivityName == actIdent.ActivityName);
                 }
 
                 if (repoAct != null)

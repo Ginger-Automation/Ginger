@@ -111,7 +111,7 @@ namespace Ginger.ALM
             {
                 if (WorkSpace.Instance.Solution.ALMConfigs != null && WorkSpace.Instance.Solution.ALMConfigs.Count > 0)
                 {
-                    return WorkSpace.Instance.Solution.ALMConfigs.Where(alm => alm.DefaultAlm).FirstOrDefault();
+                    return WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(alm => alm.DefaultAlm);
                 }
                 else
                 {
@@ -582,7 +582,7 @@ namespace Ginger.ALM
             {
                 foreach (ExternalItemFieldBase defaultField in ALMCore.AlmItemFields)
                 {
-                    ExternalItemFieldBase currentField = mItemsFields.Where(x => x.ID == defaultField.ID && x.ItemType == defaultField.ItemType).FirstOrDefault();
+                    ExternalItemFieldBase currentField = mItemsFields.FirstOrDefault(x => x.ID == defaultField.ID && x.ItemType == defaultField.ItemType);
                     if (currentField != null)
                     {
                         currentField.ToUpdate = false;

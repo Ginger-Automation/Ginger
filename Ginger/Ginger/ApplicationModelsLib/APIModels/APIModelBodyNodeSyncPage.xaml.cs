@@ -129,7 +129,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
                             else
                             {
                                 XDocument xDoc = XDocument.Parse(XMLDoc.OuterXml);
-                                var xmlNodeByValue = xDoc.Root.Descendants().Where(a => a.Value == paramToDelete.PlaceHolder).FirstOrDefault();
+                                var xmlNodeByValue = xDoc.Root.Descendants().FirstOrDefault(a => a.Value == paramToDelete.PlaceHolder);
                                 if (xmlNodeByValue != null)
                                 {
                                     mNodesToDeleteList.Add(new NodeToDelete(Regex.Replace(xmlNodeByValue.Parent.ToString(), @"\s+", string.Empty)));
@@ -323,7 +323,7 @@ namespace Ginger.ApplicationModelsLib.APIModels
                 List<AppModelParameter> nodeParamsList = mApplicationAPIModel.AppModelParameters.Where(x => xmlNode.ParentOuterXml.Contains(x.PlaceHolder)).ToList();
                 foreach (AppModelParameter param in nodeParamsList)
                 {
-                    if (mParamsPendingDelete.Where(x => x.PlaceHolder == param.PlaceHolder).FirstOrDefault() == null)
+                    if (mParamsPendingDelete.FirstOrDefault(x => x.PlaceHolder == param.PlaceHolder) == null)
                     {
                         mParamsPendingDelete.Add(param);
                     }

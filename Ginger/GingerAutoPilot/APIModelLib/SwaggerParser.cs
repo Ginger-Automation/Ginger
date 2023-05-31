@@ -209,7 +209,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 
         private void GenerateResponse(SwaggerOperation operation, ApplicationAPIModel basicModal)
         {
-            if (operation.Responses.Count > 0 && operation.Responses.Keys.Where(x => x.StartsWith("2")).Any())
+            if (operation.Responses.Count > 0 && operation.Responses.Keys.Any(x => x.StartsWith("2")))
             {
                 //handling only the first sucess response code need to be improved
                 //as discussed, for now handling response for only success
