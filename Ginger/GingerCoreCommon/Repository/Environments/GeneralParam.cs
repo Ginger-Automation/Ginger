@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -134,7 +134,7 @@ namespace Amdocs.Ginger.Repository
                         {
                             try
                             {
-                                if (PI.CanWrite)
+                                if (PI != null && PI.CanWrite)
                                 {
                                     string stringValue = value.ToString();
                                     string placeHolder = "{EnvParam App=YYY Param=XXX}";
@@ -154,6 +154,53 @@ namespace Amdocs.Ginger.Repository
                     }
                 }
             }
+        }
+
+        public static bool IsParamBeingUsedInBFs(object action, string appName, string paramOldName)
+        {
+            var actionMembers = action.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+            foreach (MemberInfo mi in actionMembers)
+            {
+                if (Common.GeneralLib.General.IsFieldToAvoidInVeFieldSearch(mi.Name))
+                    continue;
+
+                dynamic value = GetActionMemberValue(action, mi);
+
+                if (value is IObservableList)
+                    foreach (object o in value)
+                        return IsParamBeingUsedInBFs(o, appName, paramOldName);
+                else
+                {
+                    try
+                    {
+                        if (value != null)
+                        {
+                            string stringValue = value.ToString();
+                            string placeHolder = "{EnvParam App=YYY Param=XXX}";
+                            placeHolder = placeHolder.Replace("YYY", appName);
+                            placeHolder = placeHolder.Replace("XXX", paramOldName);
+
+                            if (stringValue.Contains(placeHolder))
+                                return true;
+                        }
+                    }
+                    catch (Exception ex)
+                    { Console.WriteLine(ex.StackTrace); }
+                }
+            }
+            return false;
+        }
+
+        private static dynamic GetActionMemberValue(object action, MemberInfo mi)
+        {
+            PropertyInfo PI = action.GetType().GetProperty(mi.Name);
+            dynamic value = null;
+            if (mi.MemberType == MemberTypes.Property)
+                value = PI.GetValue(action);
+            else if (mi.MemberType == MemberTypes.Field)
+                value = action.GetType().GetField(mi.Name).GetValue(action);
+
+            return value;
         }
 
         public override string ItemName
