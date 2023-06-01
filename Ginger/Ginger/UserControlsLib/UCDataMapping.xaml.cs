@@ -233,7 +233,7 @@ namespace Ginger.UserControlsLib
             if (control != null)
             {
                 control.MappedValuePropertyChanged((string)args.NewValue);
-                if (!(Equals((string)args.OldValue, ((string)args.NewValue))))
+                if ((string)args.OldValue != null && !(Equals((string)args.OldValue, ((string)args.NewValue))) && WorkSpace.Instance.RunsetExecutor.RunSetConfig != null)
                 {
                     WorkSpace.Instance.RunsetExecutor.RunSetConfig.DirtyStatus = eDirtyStatus.Modified;
                 }
