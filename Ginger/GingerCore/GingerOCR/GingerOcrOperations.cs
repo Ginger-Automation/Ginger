@@ -353,19 +353,26 @@ namespace GingerCore.GingerOCR
                             string lineTxt = iter.GetText(PageIteratorLevel.TextLine);
                             if (lineTxt.Contains(firstLabel))
                             {
-                                firstIndexOf = lineTxt.IndexOf(firstLabel) + firstLabel.Length;
+                                firstIndexOf = lineTxt.IndexOf(firstLabel);
+                                int startConcatIndex = lineTxt.IndexOf(firstLabel) + firstLabel.Length;
+
                                 if (lineTxt.Contains(secondLabel))
                                 {
                                     secondIndexOf = lineTxt.IndexOf(secondLabel);
-                                    resultTxt = lineTxt.Substring(firstIndexOf, secondIndexOf - firstIndexOf);
+
+                                    if (secondIndexOf == firstIndexOf) resultTxt = " ";
+
+                                    else resultTxt = lineTxt.Substring(startConcatIndex, secondIndexOf - startConcatIndex);
+
                                     return;
                                 }
                                 else
                                 {
-                                    resultTxt = string.Concat(resultTxt, lineTxt.Substring(firstIndexOf));
+                                    resultTxt = string.Concat(resultTxt, lineTxt.Substring(startConcatIndex));
                                     continue;
                                 }
                             }
+
                             if (firstIndexOf != -1)
                             {
                                 if (lineTxt.Contains(secondLabel))
