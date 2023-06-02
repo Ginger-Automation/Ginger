@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -49,8 +49,26 @@ namespace Ginger.Run.RunSetActions
             return list;
         }
 
+        private Email mEmail;
         [IsSerializedForLocalRepository]
-        public Email Email = new Email();
+        public Email Email
+        {
+            get
+            {
+                return mEmail;
+            }
+            set
+            {
+                if (mEmail != value)
+                {
+                    if (mEmail != null)
+                        mEmail.OnDirtyStatusChanged -= this.RaiseDirtyChanged;
+                    mEmail = value;
+                    mEmail.StartDirtyTracking();
+                    mEmail.OnDirtyStatusChanged += this.RaiseDirtyChanged;
+                }
+            }
+        }
 
         //User can attach several templates to the email
         // attach template + RI
@@ -125,6 +143,10 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
+        public RunSetActionHTMLReportSendEmail()
+        {
+            Email = new();
+        }
 
         public override void Execute(IReportInfo RI)
         {
