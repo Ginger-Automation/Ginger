@@ -61,15 +61,29 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 {
                     queryToImap = queryToImap.And(SearchQuery.DeliveredAfter(filters.ReceivedStartDate)).And(SearchQuery.DeliveredBefore(filters.ReceivedEndDate));
                 }
-                var query = new SearchQuery();
-
+                
                 // Add a condition to the search query.
                 IList<UniqueId> list = inbox.Search(queryToImap, cancellationToken);
 
                 foreach (var item in list)
                 {
                     MimeMessage message = inbox.GetMessage(item);
-                    emailProcessor(ConvertMessageToReadEmail(message, filters));
+                    if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Either)
+                    {
+                        emailProcessor(ConvertMessageToReadEmail(message, filters));
+                    }
+                    else if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.No)
+                    {
+                        if(message.Attachments.Count() == 0)
+                        {
+                            emailProcessor(ConvertMessageToReadEmail(message, filters));
+                        }
+                    }
+                    else if(DoesSatisfyAttachmentFilter(message,filters))
+                    {
+                        emailProcessor(ConvertMessageToReadEmail(message, filters));
+                    }
+                   
                 }
 
             }
@@ -87,6 +101,48 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 client.DisposeIfNotNull();
             }
             return Task.CompletedTask;
+        }
+
+        private bool DoesSatisfyAttachmentFilter(MimeMessage message, EmailReadFilters filters)
+        {
+                 
+            if (string.IsNullOrEmpty(filters.AttachmentContentType))
+            {
+                return true;
+            }
+            IEnumerable<string> expectedContentTypes = null;
+            if (!string.IsNullOrEmpty(filters.AttachmentContentType))
+            {
+                expectedContentTypes = filters.AttachmentContentType.Split(";", StringSplitOptions.RemoveEmptyEntries);
+            }
+            if (expectedContentTypes != null && !expectedContentTypes.Any())
+            {
+                return true;
+            }
+
+            return HasAnyAttachmentWithExpectedContentType( message, expectedContentTypes);
+        }
+
+
+        private bool HasAnyAttachmentWithExpectedContentType( MimeMessage message,
+            IEnumerable<string> expectedContentTypes)
+        {
+            bool hasAnyAttachmentWithExpectedContentType = false;
+            IEnumerable<MimeEntity> attachments = message.Attachments;
+            int icount = attachments.Count();
+            if (icount > 0)
+            {
+                foreach (var attachment in attachments)
+                {
+                    String ContentType = ((MimePart)attachment).ContentType.ToString().Split(";", StringSplitOptions.RemoveEmptyEntries)[0].Split(":", StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                    if (!string.IsNullOrEmpty(ContentType) && expectedContentTypes.Any(expectedContentType => expectedContentType.Equals(ContentType)))
+                    {
+                        hasAnyAttachmentWithExpectedContentType = true;
+                    }
+                }
+            }
+            return hasAnyAttachmentWithExpectedContentType;
+                
         }
 
 

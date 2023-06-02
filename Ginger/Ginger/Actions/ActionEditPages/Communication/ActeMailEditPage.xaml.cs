@@ -126,7 +126,9 @@ namespace Ginger.Actions.Communication
         private void BindSendEMailConfigView()
         {
             xEmailConfigView.xActionTypeSendRadioButton.IsChecked = mAct.eMailActionType == ActeMail.eEmailActionType.SendEmail;
-            xEmailConfigView.xActionTypeReadRadioButton.IsChecked = mAct.eMailActionType == ActeMail.eEmailActionType.ReadEmail;         
+            xEmailConfigView.xActionTypeReadRadioButton.IsChecked = mAct.eMailActionType == ActeMail.eEmailActionType.ReadEmail;
+            xEmailConfigView.xEmailReadMethodIMAP.IsSelected = mAct.readMailActionType == ActeMail.ReadEmailActionType.IMAP;
+            xEmailConfigView.xEmailReadMethodMSGraph.IsSelected = mAct.readMailActionType == ActeMail.ReadEmailActionType.MSGraphAPI;
             xEmailConfigView.xFromVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFrom));
             xEmailConfigView.xFromDisplayNameVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFromDisplayName));
             xEmailConfigView.xToVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Mailto));
