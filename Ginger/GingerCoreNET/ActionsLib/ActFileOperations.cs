@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using Applitools.Utils;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -285,10 +286,14 @@ namespace GingerCore.Actions
                     }
                     if (System.IO.File.Exists(calculatedSourceFilePath))
                     {
+                        if (!DestinationFolder.EndsWithOrdinal(Path.GetFileNameWithoutExtension(calculatedSourceFilePath)))
+                        {
+                            DestinationFolder = $"{DestinationFolder}\\{Path.GetFileNameWithoutExtension(calculatedSourceFilePath)}";
+                        }
                         if (!System.IO.Directory.Exists(DestinationFolder))
                         {                            
                             System.IO.Directory.CreateDirectory(DestinationFolder);
-                        }
+                        }                       
                         System.IO.Compression.ZipFile.ExtractToDirectory(calculatedSourceFilePath, DestinationFolder);
                     }
                     else
@@ -341,6 +346,11 @@ namespace GingerCore.Actions
             string calculatedDestinationPath = GetInputParamCalculatedValue(Fields.DestinationFolder);
 
             calculatedDestinationPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedDestinationPath);
+            if(FileOperationMode == eFileoperations.UnZip && !calculatedDestinationPath.EndsWith("\\"))
+            {
+                calculatedDestinationPath = $"{calculatedDestinationPath}\\";
+
+            }           
             DestinationFolder = System.IO.Path.GetDirectoryName(calculatedDestinationPath);
             if (String.IsNullOrEmpty(DestinationFolder))
             {
@@ -354,7 +364,6 @@ namespace GingerCore.Actions
                 }
             }
             DestinationFile = System.IO.Path.GetFileName(calculatedDestinationPath);
-
         }
         public override bool SerializationError(SerializationErrorType errorType, string name, string value)
         {
