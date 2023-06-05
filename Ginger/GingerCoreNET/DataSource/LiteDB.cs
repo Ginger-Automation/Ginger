@@ -137,7 +137,7 @@ namespace GingerCoreNET.DataSource
             {
                 var table = db.GetCollection(tableName);
 
-                string[] List = columnList.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] List = columnList.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 var doc = new BsonDocument();
                 if (columnList.Contains("KEY_VAL"))
                 {

@@ -1692,21 +1692,21 @@ namespace Ginger.Run
                                     sColList = sColList + ADSC.TableColumn + ",";
                                     if (ADSC.OutputType == "Parameter")
                                     {
-                                        sColVals = $"{sColVals}'{item.Param.Replace("'", "''")}',";
+                                        sColVals = sColVals + "'" + item.Param.Replace("'", "''") + "',";
                                     }
                                     else if (ADSC.OutputType == "Path")
                                     {
-                                        sColVals = $"{sColVals}'{item.Path}',";
+                                        sColVals = sColVals + "'" + item.Path + "',";
                                     }
                                     else if (ADSC.OutputType == "Actual")
                                     {
                                         string strActual = item.Actual == null ? "" : item.Actual.ToString();
-                                        sColVals = $"{sColVals}'{strActual.Replace("'", "''")}',";
+                                        sColVals = sColVals + "'" + strActual.Replace("'", "''") + "',";
                                     }
                                 }
                                 sColList = sColList + "GINGER_ID,GINGER_USED,";
                                 int rowCount = DataSource.GetRowCount(DataSourceTable.Name);
-                                sColVals = $"{sColVals}{(rowCount + 1)},'False',";
+                                sColVals = sColVals + (rowCount + 1) + ",'False',";
 
                                 sQuery = DataSource.UpdateDSReturnValues(DataSourceTable.Name, sColList, sColVals);
                                 //sQuery = "INSERT INTO " + DataSourceTable.Name + "(" + sColList + "GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME,GINGER_USED) VALUES (" + sColVals + "'" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "',false)";
