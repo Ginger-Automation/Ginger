@@ -62,7 +62,9 @@ namespace Ginger.Run.RunSetActions
                 if (mEmail != value)
                 {
                     if (mEmail != null)
+                    {
                         mEmail.OnDirtyStatusChanged -= this.RaiseDirtyChanged;
+                    }
                     mEmail = value;
                     mEmail.StartDirtyTracking();
                     mEmail.OnDirtyStatusChanged += this.RaiseDirtyChanged;
