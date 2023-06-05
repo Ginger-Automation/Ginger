@@ -317,7 +317,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(foundItemsList.Count, 2, "Found items count");
             Assert.AreEqual(foundItemsList[0].FieldName, "Value", "Name Validation");
             Assert.AreEqual(foundItemsList[0].FieldValue, "bla bli bla VTFInsideList bla bla bla", "Value Validation");
-            Assert.AreEqual(foundItemsList[1].FieldName, "mExpected", "Name Validation");
+            Assert.AreEqual(foundItemsList[1].FieldName, "Expected", "Name Validation");
             Assert.AreEqual(foundItemsList[1].FieldValue, "I expect you to VTFInsideList behave", "Value Validation");
         }
 
