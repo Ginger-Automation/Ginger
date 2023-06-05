@@ -57,7 +57,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 {
                     queryToImap = queryToImap.And(SearchQuery.SubjectContains(filters.Body));
                 }
-                if (!(filters.ReceivedStartDate.Equals(DateTime.MinValue)) && (filters.ReceivedEndDate.Equals(DateTime.Today)))
+                if (!(filters.ReceivedStartDate.Equals(DateTime.MinValue)) || (filters.ReceivedEndDate.Equals(DateTime.Today)))
                 {
                     queryToImap = queryToImap.And(SearchQuery.DeliveredAfter(filters.ReceivedStartDate)).And(SearchQuery.DeliveredBefore(filters.ReceivedEndDate));
                 }
@@ -68,22 +68,13 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 foreach (var item in list)
                 {
                     MimeMessage message = inbox.GetMessage(item);
-                    if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Either)
-                    {
-                        emailProcessor(ConvertMessageToReadEmail(message, filters));
-                    }
-                    else if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.No)
-                    {
-                        if(message.Attachments.Count() == 0)
-                        {
-                            emailProcessor(ConvertMessageToReadEmail(message, filters));
-                        }
-                    }
-                    else if(DoesSatisfyAttachmentFilter(message,filters))
-                    {
-                        emailProcessor(ConvertMessageToReadEmail(message, filters));
-                    }
                    
+                    if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Either || 
+                        ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.No) && message.Attachments.Count() == 0) ||
+                        DoesSatisfyAttachmentFilter(message, filters))
+                    {
+                        emailProcessor(ConvertMessageToReadEmail(message, filters));
+                    }
                 }
 
             }
@@ -105,22 +96,17 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
 
         private bool DoesSatisfyAttachmentFilter(MimeMessage message, EmailReadFilters filters)
         {
-                 
+            IEnumerable<string> expectedContentTypes = null;
             if (string.IsNullOrEmpty(filters.AttachmentContentType))
             {
                 return true;
             }
-            IEnumerable<string> expectedContentTypes = null;
-            if (!string.IsNullOrEmpty(filters.AttachmentContentType))
+            else            
             {
                 expectedContentTypes = filters.AttachmentContentType.Split(";", StringSplitOptions.RemoveEmptyEntries);
-            }
-            if (expectedContentTypes != null && !expectedContentTypes.Any())
-            {
-                return true;
-            }
+                return HasAnyAttachmentWithExpectedContentType(message, expectedContentTypes);
 
-            return HasAnyAttachmentWithExpectedContentType( message, expectedContentTypes);
+            }                     
         }
 
 
@@ -129,13 +115,12 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
         {
             bool hasAnyAttachmentWithExpectedContentType = false;
             IEnumerable<MimeEntity> attachments = message.Attachments;
-            int icount = attachments.Count();
-            if (icount > 0)
+            
+            if (attachments.Count() > 0)
             {
                 foreach (var attachment in attachments)
-                {
-                    String ContentType = ((MimePart)attachment).ContentType.ToString().Split(";", StringSplitOptions.RemoveEmptyEntries)[0].Split(":", StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                    if (!string.IsNullOrEmpty(ContentType) && expectedContentTypes.Any(expectedContentType => expectedContentType.Equals(ContentType)))
+                {                                      
+                    if (!string.IsNullOrEmpty(attachment.ContentType.MimeType) && expectedContentTypes.Any(expectedContentType => expectedContentType.Equals(attachment.ContentType.MimeType)))
                     {
                         hasAnyAttachmentWithExpectedContentType = true;
                     }
