@@ -206,6 +206,7 @@ namespace GingerCore.GeneralLib
                 if (mEnableSSL != value)
                 {
                     mEnableSSL = value;
+                    OnPropertyChanged(nameof(EnableSSL));
                 }
             }
         }
@@ -219,6 +220,7 @@ namespace GingerCore.GeneralLib
                 if (mCertificatePath != value)
                 {
                     mCertificatePath = value;
+                    OnPropertyChanged(nameof(CertificatePath));
                 }
             }
         }
@@ -232,10 +234,29 @@ namespace GingerCore.GeneralLib
                 if (mIsValidationRequired != value)
                 {
                     mIsValidationRequired = value;
+                    OnPropertyChanged(nameof(IsValidationRequired));
                 }
             }
         }
-        public static string CertificatePasswordUCValueExpression { get; set; }
+
+        private string mCertificatePasswordUCValueExpression;
+        [IsSerializedForLocalRepository]
+        public string CertificatePasswordUCValueExpression 
+        {
+            get
+            {
+                return mCertificatePasswordUCValueExpression;
+            }
+            set
+            {
+                if(mCertificatePasswordUCValueExpression != value)
+                {
+                    mCertificatePasswordUCValueExpression = value;
+                    OnPropertyChanged(nameof(CertificatePasswordUCValueExpression));
+                }
+            }
+        }
+
         private bool mConfigureCredential = false;
         [IsSerializedForLocalRepository(false)]
         public bool ConfigureCredential
@@ -246,6 +267,7 @@ namespace GingerCore.GeneralLib
                 if (mConfigureCredential != value)
                 {
                     mConfigureCredential = value;
+                    OnPropertyChanged(nameof(ConfigureCredential));
                 }
             }
         }

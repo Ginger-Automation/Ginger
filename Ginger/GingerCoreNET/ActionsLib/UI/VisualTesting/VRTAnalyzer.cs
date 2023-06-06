@@ -286,14 +286,21 @@ namespace GingerCore.Actions.VisualTesting
                             mAct.Error += $"Differences from baseline was found." + System.Environment.NewLine + result.DiffUrl;
 
                             //Add difference image to act screenshots
-                            int index = result.DiffUrl.LastIndexOf("/");
-                            string imageToDownload = result.DiffUrl.Substring(index + 1);
-                            General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
+                            if(result.DiffUrl != null){
+                                int index = result.DiffUrl.LastIndexOf("/");
+                                string imageToDownload = result.DiffUrl.Substring(index + 1);
+                                General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
+                            }
+                            
 
                             //Add baseline image to act screenshots
-                            index = result.BaselineUrl.LastIndexOf("/");
-                            imageToDownload = result.BaselineUrl.Substring(index + 1);
-                            General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
+                            if(result.BaselineUrl != null)
+                            {
+                                int index = result.BaselineUrl.LastIndexOf("/");
+                                string imageToDownload = result.BaselineUrl.Substring(index + 1);
+                                General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
+                            }
+                            
 
                             //No need to Add current Screenshot to act screenshots, it will be added in the end if the action is failed
                             break;
