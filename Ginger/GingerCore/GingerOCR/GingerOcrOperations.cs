@@ -354,7 +354,7 @@ namespace GingerCore.GingerOCR
                             if (lineTxt.Contains(firstLabel))
                             {
                                 firstIndexOf = lineTxt.IndexOf(firstLabel);
-                                int startConcatIndex = lineTxt.IndexOf(firstLabel) + firstLabel.Length;
+                                int startConcatIndex = firstIndexOf + firstLabel.Length;
 
                                 if (lineTxt.Contains(secondLabel))
                                 {
