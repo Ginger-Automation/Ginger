@@ -116,7 +116,7 @@ namespace Amdocs.Ginger.Repository
                 //Get the attr value
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);
                 dynamic value = null;
-                if (mi.MemberType == MemberTypes.Property)
+                if (mi.MemberType == MemberTypes.Property && PI != null)
                 {
                     try
                     {

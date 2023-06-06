@@ -136,10 +136,14 @@ namespace Ginger.Environments
             foreach (var item in grdAppParams.DataSourceList.ListItems)
             {
                 if (ignoreCurrentSelectedItem && ((GeneralParam)item).Guid.Equals(((GeneralParam)grdAppParams.CurrentItem).Guid))
-                    continue;
+                { 
+                    continue; 
+                }
 
                 if (((GeneralParam)item).Name == name)
+                {
                     return true;
+                }
             }
             return false;
         }
