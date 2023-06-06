@@ -117,15 +117,28 @@ namespace Amdocs.Ginger.Repository
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);
                 dynamic value = null;
                 if (mi.MemberType == MemberTypes.Property)
-                    value = PI.GetValue(item);
+                {
+                    try
+                    {
+                        value = PI.GetValue(item);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                    }
+                }
                 else if (mi.MemberType == MemberTypes.Field)
-                    value = item.GetType().GetField(mi.Name).GetValue(item);
+                { 
+                    value = item.GetType().GetField(mi.Name).GetValue(item); 
+                }
 
                 if (value is IObservableList)
                 {
                     List<dynamic> list = new List<dynamic>();
                     foreach (object o in value)
-                        UpdateNameChangeInItem(o, app, prevVarName, newVarName, ref ItemWasChanged);
+                    { 
+                        UpdateNameChangeInItem(o, app, prevVarName, newVarName, ref ItemWasChanged); 
+                    }
                 }
                 else
                 {
@@ -149,7 +162,10 @@ namespace Amdocs.Ginger.Repository
                                     }
                                 }
                             }
-                            catch (Exception ex) { Console.WriteLine(ex.StackTrace); }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                            }
                         }
                     }
                 }
@@ -162,30 +178,42 @@ namespace Amdocs.Ginger.Repository
             foreach (MemberInfo mi in actionMembers)
             {
                 if (Common.GeneralLib.General.IsFieldToAvoidInVeFieldSearch(mi.Name))
-                    continue;
+                { 
+                    continue; 
+                }
 
                 dynamic value = GetActionMemberValue(action, mi);
+                if (value == null)
+                {
+                    continue;
+                }
 
                 if (value is IObservableList)
+                {
                     foreach (object o in value)
-                        return IsParamBeingUsedInBFs(o, appName, paramOldName);
+                    {
+                        if (IsParamBeingUsedInBFs(o, appName, paramOldName))
+                        {
+                            return true;
+                        }
+                    }
+                }
                 else
                 {
                     try
                     {
-                        if (value != null)
-                        {
-                            string stringValue = value.ToString();
-                            string placeHolder = "{EnvParam App=YYY Param=XXX}";
-                            placeHolder = placeHolder.Replace("YYY", appName);
-                            placeHolder = placeHolder.Replace("XXX", paramOldName);
+                        string stringValue = value.ToString();
+                        string oldParamPlaceHolder = $"{'{'}EnvParam App={appName} Param={paramOldName}{'}'}";
 
-                            if (stringValue.Contains(placeHolder))
-                                return true;
+                        if (stringValue != null && stringValue.Contains(oldParamPlaceHolder))
+                        {
+                            return true;
                         }
                     }
                     catch (Exception ex)
-                    { Console.WriteLine(ex.StackTrace); }
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                    }
                 }
             }
             return false;
@@ -195,10 +223,22 @@ namespace Amdocs.Ginger.Repository
         {
             PropertyInfo PI = action.GetType().GetProperty(mi.Name);
             dynamic value = null;
-            if (mi.MemberType == MemberTypes.Property)
-                value = PI.GetValue(action);
-            else if (mi.MemberType == MemberTypes.Field)
-                value = action.GetType().GetField(mi.Name).GetValue(action);
+
+            try
+            {
+                if (mi.MemberType == MemberTypes.Property && PI != null)
+                {
+                    value = PI.GetValue(action);
+                }
+                else if (mi.MemberType == MemberTypes.Field)
+                {
+                    value = action.GetType().GetField(mi.Name).GetValue(action);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+            }
 
             return value;
         }

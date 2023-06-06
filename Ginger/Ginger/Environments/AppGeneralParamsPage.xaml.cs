@@ -25,7 +25,9 @@ using GingerCore.Actions;
 using GingerCore.Environments;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Controls;
 
 namespace Ginger.Environments
@@ -168,23 +170,30 @@ namespace Ginger.Environments
         }
         private bool IsParameterBeingUsed(string paramName)
         {
-            ObservableList<BusinessFlow> bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-
-            foreach (BusinessFlow bf in bfs)
+            try
             {
-                foreach (Activity activity in bf.Activities)
+                ObservableList<BusinessFlow> bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                foreach (BusinessFlow bf in bfs)
                 {
-                    foreach (Act action in activity.Acts)
+                    foreach (var activity in bf.Activities)
                     {
-                        if (GeneralParam.IsParamBeingUsedInBFs(action, AppOwner.Name, paramName))
+                        foreach (var action in activity.Acts)
                         {
-                            return true;
+                            if (GeneralParam.IsParamBeingUsedInBFs(action, AppOwner.Name, paramName))
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
+                return false;
             }
-
-            return false;
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
         }
 
         #region Events
@@ -198,12 +207,12 @@ namespace Ginger.Environments
 
         private string GenerateParamName(int count)
         {
-            while (IsParamNameAlreadyExists("Parameter " + ++count, false))
+            while (IsParamNameAlreadyExists($"Parameter {++count}", false))
             {
                 continue;
             }
 
-            return "Parameter " + count;
+            return $"Parameter {count}";
         }
         #endregion Events
 
