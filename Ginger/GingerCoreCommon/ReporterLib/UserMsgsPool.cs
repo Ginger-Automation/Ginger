@@ -414,7 +414,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.DeleteRepositoryItemAreYouSure, new UserMsg(eUserMsgType.WARN, "Delete", "Are you sure you want to delete '{0}' item?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DeleteTreeFolderAreYouSure, new UserMsg(eUserMsgType.WARN, "Delete Folder", "Are you sure you want to delete the '{0}' folder and all of it content?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.RenameRepositoryItemAreYouSure, new UserMsg(eUserMsgType.WARN, "Rename", "Are you sure you want to rename '{0}'?", eUserMsgOption.YesNoCancel, eUserMsgSelection.Yes));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.SaveBusinessFlowChanges, new UserMsg(eUserMsgType.QUESTION, "Save Changes", "Save Changes to - {0}", eUserMsgOption.YesNoCancel, eUserMsgSelection.Yes));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SaveBusinessFlowChanges, new UserMsg(eUserMsgType.QUESTION, "Save Changes", "Save Changes to - {0}", eUserMsgOption.YesNoCancel, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SolutionLoadError, new UserMsg(eUserMsgType.ERROR, "Solution Load Error", "Failed to load the solution." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.MissingAddSolutionInputs, new UserMsg(eUserMsgType.WARN, "Add Solution", "Missing solution inputs, please set the solution name, folder, encryption key and main application details.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SolutionAlreadyExist, new UserMsg(eUserMsgType.WARN, "Add Solution", "The solution already exist, please select different name/folder.", eUserMsgOption.OK, eUserMsgSelection.None));
@@ -788,7 +788,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.DataSourceColumnHasSpace, new UserMsg(eUserMsgType.ERROR, "Column Name Cannot Contain Space", " Column Name [ {0} ] cannot contain space, please remove space and try again", eUserMsgOption.OK, eUserMsgSelection.OK));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.DeleteRecoverFolderWarn, new UserMsg(eUserMsgType.WARN, "Delete Unrecovered files?",
-   "Unerecovered items will be deleted. Do you want to continue?",
+   "Unrecovered items will be deleted. Do you want to continue?",
    eUserMsgOption.YesNo, eUserMsgSelection.No));
 
         }
