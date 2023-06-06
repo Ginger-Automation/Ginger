@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Applitools.Utils;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using NPOI.HPSF;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -288,7 +289,7 @@ namespace GingerCore.Actions
                     {
                         if (!DestinationFolder.EndsWithOrdinal(Path.GetFileNameWithoutExtension(calculatedSourceFilePath)))
                         {
-                            DestinationFolder = $"{DestinationFolder}\\{Path.GetFileNameWithoutExtension(calculatedSourceFilePath)}";
+                            DestinationFolder = Path.Combine(DestinationFolder, DestinationFile);
                         }
                         if (!System.IO.Directory.Exists(DestinationFolder))
                         {                            
@@ -344,12 +345,9 @@ namespace GingerCore.Actions
         private void SetupDestinationfolders()
         {
             string calculatedDestinationPath = GetInputParamCalculatedValue(Fields.DestinationFolder);
-
-            calculatedDestinationPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedDestinationPath);
-            if(FileOperationMode == eFileoperations.UnZip && !calculatedDestinationPath.EndsWith("\\"))
+            if(WorkSpace.Instance.Solution != null)
             {
-                calculatedDestinationPath = $"{calculatedDestinationPath}\\";
-
+                calculatedDestinationPath = calculatedDestinationPath.Contains(WorkSpace.Instance.Solution.Name) ? WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedDestinationPath) : calculatedDestinationPath;
             }           
             DestinationFolder = System.IO.Path.GetDirectoryName(calculatedDestinationPath);
             if (String.IsNullOrEmpty(DestinationFolder))
