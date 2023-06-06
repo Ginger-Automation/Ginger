@@ -31,6 +31,7 @@ using Applitools.Utils;
 using System.Threading;
 using Amdocs.Ginger.Common;
 
+
 namespace Amdocs.Ginger.CoreNET.GeneralLib
 {
     public sealed class EmailReadGmailOperations : IEmailReadOperations, IDisposable
@@ -40,7 +41,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             ImapClient client = new ImapClient();
             try
             {
-                client.Connect("imap.gmail.com", 993, true);
+                client.Connect(config.IMapHost, Int32.Parse(config.IMapPort), true);
                 client.Authenticate(config.UserEmail, config.UserPassword);
                 var inbox = client.Inbox;
                 inbox.Open(FolderAccess.ReadOnly);
@@ -82,6 +83,11 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 
                 // Add a condition to the search query.
                 IList<UniqueId> list = inbox.Search(queryToImap, cancellationToken);
+                IEnumerable<string> expectedContentTypes = null;
+                if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes && (!string.IsNullOrEmpty(filters.AttachmentContentType)))
+                {                    
+                    expectedContentTypes = filters.AttachmentContentType.Split(";", StringSplitOptions.RemoveEmptyEntries);
+                }
 
                 foreach (var item in list)
                 {
@@ -89,7 +95,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                    
                     if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Either || 
                         ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.No) && message.Attachments.Count() == 0) ||
-                        DoesSatisfyAttachmentFilter(message, filters))
+                        DoesSatisfyAttachmentFilter(message, expectedContentTypes))
                     {
                         emailProcessor(ConvertMessageToReadEmail(message, filters));
                     }
@@ -112,18 +118,16 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             return Task.CompletedTask;
         }
 
-        private bool DoesSatisfyAttachmentFilter(MimeMessage message, EmailReadFilters filters)
+        private bool DoesSatisfyAttachmentFilter(MimeMessage message, IEnumerable<string> expectedContentType)
         {
-            IEnumerable<string> expectedContentTypes = null;
-            if (string.IsNullOrEmpty(filters.AttachmentContentType))
+           
+            if (expectedContentType == null || expectedContentType.Count() == 0)
             {
                 return true;
             }
             else            
-            {
-                expectedContentTypes = filters.AttachmentContentType.Split(";", StringSplitOptions.RemoveEmptyEntries);
-                return HasAnyAttachmentWithExpectedContentType(message, expectedContentTypes);
-
+            {                
+                return HasAnyAttachmentWithExpectedContentType(message, expectedContentType);
             }                     
         }
 
@@ -196,9 +200,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 Attachments = attachments
             };
 
-
         }
-
         public void Dispose()
         {
         }
