@@ -436,19 +436,26 @@ namespace Ginger.Variables
                 Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Updating new {0} name '{1}' on all usage instances...", GingerDicser.GetTermResValue(eTermResKey.Variable), mVariable.Name));
                 if (mParent is Solution)
                 {
-                    ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                    Parallel.ForEach(allBF, bfl =>
+                    if (editMode is eEditMode.Global)
                     {
-                        bfl.SetUniqueVariableName(mVariable);
-                        Parallel.ForEach(bfl.Activities, activity =>
+                        ((Solution)mParent).SetUniqueVariableName(mVariable);
+                    }
+                    else
+                    {
+                        ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                        Parallel.ForEach(allBF, bfl =>
                         {
-                            Parallel.ForEach(activity.Acts, action =>
+                            bfl.SetUniqueVariableName(mVariable);
+                            Parallel.ForEach(bfl.Activities, activity =>
                             {
-                                bool changedwasDone = false;
-                                VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
+                                Parallel.ForEach(activity.Acts, action =>
+                                {
+                                    bool changedwasDone = false;
+                                    VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
+                                });
                             });
                         });
-                    });
+                    }
                 }
                 else if (mParent is BusinessFlow)
                 {
