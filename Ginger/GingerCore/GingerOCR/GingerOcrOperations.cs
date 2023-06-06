@@ -360,10 +360,15 @@ namespace GingerCore.GingerOCR
                                 {
                                     secondIndexOf = lineTxt.IndexOf(secondLabel);
 
-                                    if (secondIndexOf == firstIndexOf) resultTxt = " ";
+                                    if (secondIndexOf == firstIndexOf)
+                                    {
+                                        resultTxt = " ";
+                                    }
 
-                                    else resultTxt = lineTxt.Substring(startConcatIndex, secondIndexOf - startConcatIndex);
-
+                                    else
+                                    {
+                                        resultTxt = lineTxt.Substring(startConcatIndex, secondIndexOf - startConcatIndex);
+                                    }
                                     return;
                                 }
                                 else
