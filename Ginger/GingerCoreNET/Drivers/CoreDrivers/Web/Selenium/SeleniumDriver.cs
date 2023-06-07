@@ -4401,6 +4401,7 @@ namespace GingerCore.Drivers
                         exceptioncount++;
                         return (IsRunning());
                     }
+                    CloseDriver();
                     return false;
                 }
                 catch (Exception ex2)
@@ -4410,7 +4411,7 @@ namespace GingerCore.Drivers
                     {
                         return true;
                     }
-
+                    CloseDriver();
                     return false;
                 }
                 return true;
