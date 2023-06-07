@@ -319,10 +319,11 @@ namespace Ginger.Run
             mGingerRunner.ProjEnvironment = null;
             if (mGingerRunner.UseSpecificEnvironment == true && string.IsNullOrEmpty(mGingerRunner.SpecificEnvironmentName) == false)
             {
-                ProjEnvironment specificEnv = (from x in allEnvs where x.Name == mGingerRunner.SpecificEnvironmentName select (ProjEnvironment)x).FirstOrDefault();
+                ProjEnvironment specificEnv = (ProjEnvironment)allEnvs
+                    .FirstOrDefault(env => string.Equals(env.Name, mGingerRunner.SpecificEnvironmentName));
                 if (specificEnv != null)
                 {
-                    mGingerRunner.ProjEnvironment = specificEnv;
+                    mGingerRunner.ProjEnvironment = (ProjEnvironment)specificEnv.CreateCopy();
                 }
                 else
                 {
@@ -332,7 +333,7 @@ namespace Ginger.Run
 
             if (mGingerRunner.ProjEnvironment == null)
             {
-                mGingerRunner.ProjEnvironment = defaultEnv;
+                mGingerRunner.ProjEnvironment = (ProjEnvironment)defaultEnv.CreateCopy();
             }
         }
 
@@ -554,17 +555,19 @@ namespace Ginger.Run
                     if (!mStopRun)//not on stop run
                     {
                         CloseAgents();
-                        if (mGingerRunner.ProjEnvironment != null && RunLevel == eRunLevel.Runner)
+                        if (mGingerRunner.ProjEnvironment != null && mGingerRunner.ProjEnvironment.Applications != null)
                         {
                             //needed for db close connection
                             foreach (EnvApplication ea in mGingerRunner.ProjEnvironment.Applications)
                             {
-                                foreach (Database db in ea.Dbs)
+                                if (ea.Dbs != null)
                                 {
-                                    if (db.DatabaseOperations == null)
+                                    foreach (Database db in ea.Dbs)
                                     {
-                                        DatabaseOperations databaseOperations = new DatabaseOperations(db);
-                                        db.DatabaseOperations = databaseOperations;
+                                        if (db.DatabaseOperations == null)
+                                        {
+                                            db.DatabaseOperations = new DatabaseOperations(db);
+                                        }
                                     }
                                 }
                             }
