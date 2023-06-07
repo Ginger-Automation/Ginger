@@ -105,7 +105,11 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
         {
             xSMTPPasswordTextBox.LostFocus += (_, _) => xSMTPPasswordTextBox.Text = Encrypt(xSMTPPasswordTextBox.Text);
             xCertificatePasswordTextBox.LostFocus += (_, _) => xCertificatePasswordTextBox.Text = Encrypt(xCertificatePasswordTextBox.Text);
-            xUserPasswordTextBox.LostFocus += (_, _) => xUserPasswordTextBox.Text = Encrypt(xUserPasswordTextBox.Text);
+            if (!string.IsNullOrEmpty(xUserPasswordTextBox.Text) && !xUserPasswordTextBox.Text.Contains("{Var Name"))
+            {
+                xUserPasswordTextBox.LostFocus += (_, _) => xUserPasswordTextBox.Text = Encrypt(xUserPasswordTextBox.Text);
+            }                       
+            
         }
 
         public void Initialize(Options options)

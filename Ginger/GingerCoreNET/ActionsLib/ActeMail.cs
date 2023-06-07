@@ -695,6 +695,12 @@ namespace GingerCore.Actions.Communication
             }
             else
             {
+                int a;
+                if (string.IsNullOrEmpty(config.IMapHost) || !int.TryParse(config.IMapPort, out a))
+                {
+                    Error = "Error: Inavlid Host OR Port provided. Please provide valid Host Name and Port Number";
+                    return;
+                }
                 emailReadOperations = new EmailReadGmailOperations();
             }
 
