@@ -344,11 +344,8 @@ namespace GingerCore.Actions
 
         private void SetupDestinationfolders()
         {
-            string calculatedDestinationPath = GetInputParamCalculatedValue(Fields.DestinationFolder);
-            if(WorkSpace.Instance.Solution != null)
-            {
-                calculatedDestinationPath = calculatedDestinationPath.Contains(WorkSpace.Instance.Solution.Name) ? WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedDestinationPath) : calculatedDestinationPath;
-            }           
+            string calculatedDestinationPath = GetInputParamCalculatedValue(Fields.DestinationFolder);           
+            calculatedDestinationPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedDestinationPath) ;                      
             DestinationFolder = System.IO.Path.GetDirectoryName(calculatedDestinationPath);
             if (String.IsNullOrEmpty(DestinationFolder))
             {
