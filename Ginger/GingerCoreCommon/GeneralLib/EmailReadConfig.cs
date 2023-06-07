@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -22,6 +22,8 @@ namespace GingerCore.GeneralLib
 {
     public struct EmailReadConfig : IEquatable<EmailReadConfig>
     {
+        public string IMapHost { get; set; }
+        public string IMapPort { get; set; }
         public string UserEmail { get; set; }
         public string UserPassword { get; set; }
         public string ClientId { get; set; }

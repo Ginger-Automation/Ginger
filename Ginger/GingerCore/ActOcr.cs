@@ -302,14 +302,16 @@ namespace GingerCore
                     }
                     break;
                 case eActOcrImageOperations.ReadTextBetweenTwoStrings:
-                    resultText = GingerOcrOperations.ReadTextFromImageBetweenStrings(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString), ValueExpression.Calculate(SecondString));
+                    string err = string.Empty;
+
+                    resultText = GingerOcrOperations.ReadTextFromImageBetweenStrings(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString), ValueExpression.Calculate(SecondString), ref err );
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
                     }
                     else
                     {
-                        Error = "Unable to read text from Image";
+                        Error = err;
                     }
                     break;
                 case eActOcrImageOperations.ReadAllText:
@@ -347,15 +349,16 @@ namespace GingerCore
                     }
                     break;
                 case eActOcrPdfOperations.ReadTextBetweenTwoStrings:
+                    string err = string.Empty;
                     resultText = GingerOcrOperations.ReadTextBetweenLabelsPdf(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString),
-                        ValueExpression.Calculate(SecondString), ValueExpression.Calculate(PageNumber), (int)SelectedOcrDPIOperation, ValueExpression.Calculate(OcrPassword));
+                        ValueExpression.Calculate(SecondString), ValueExpression.Calculate(PageNumber), (int)SelectedOcrDPIOperation,ref err,ValueExpression.Calculate(OcrPassword));
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
                     }
                     else
                     {
-                        Error = "Unable to read text from PDF";
+                        Error = err;
                     }
                     break;
                 case eActOcrPdfOperations.ReadTextFromPDFSinglePage:

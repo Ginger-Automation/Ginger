@@ -203,6 +203,32 @@ namespace GingerCore.Actions.Communication
             }
         }
 
+        public string IMapHost
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(IMapHost), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(IMapHost), value);
+                OnPropertyChanged(nameof(IMapHost));
+            }
+        }
+
+        public string IMapPort
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(IMapPort), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(IMapPort), value);
+                OnPropertyChanged(nameof(IMapPort));
+            }
+        }
+
         public string MSGraphTenantId
         {
             get
@@ -669,6 +695,12 @@ namespace GingerCore.Actions.Communication
             }
             else
             {
+                int a;
+                if (string.IsNullOrEmpty(config.IMapHost) || !int.TryParse(config.IMapPort, out a))
+                {
+                    Error = "Error: Inavlid Host OR Port provided. Please provide valid Host Name and Port Number";
+                    return;
+                }
                 emailReadOperations = new EmailReadGmailOperations();
             }
 
@@ -740,11 +772,16 @@ namespace GingerCore.Actions.Communication
             {
                 calculatedUserPassword = EncryptionHandler.DecryptwithKey(calculatedUserPassword);
             }
+            string calculatedIMapHost = GetInputParamCalculatedValue(nameof(IMapHost));
+            string calculatedIMapPort = GetInputParamCalculatedValue(nameof(IMapPort));
             string calculatedMSGraphClientId = GetInputParamCalculatedValue(nameof(MSGraphClientId));
             string calculatedMSGraphTenantId = GetInputParamCalculatedValue(nameof(MSGraphTenantId));
 
+
             EmailReadConfig config = new()
             {
+                IMapHost = calculatedIMapHost,
+                IMapPort = calculatedIMapPort,
                 UserEmail = calculatedUserEmail,
                 UserPassword = calculatedUserPassword,
                 ClientId = calculatedMSGraphClientId,

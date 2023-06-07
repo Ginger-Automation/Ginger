@@ -21,6 +21,7 @@ using Freeware;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Tabula;
 using Tabula.Detectors;
 using Tabula.Extractors;
@@ -103,20 +104,10 @@ namespace GingerCore.GingerOCR
             return txtOutput;
         }
 
-        public static string ReadTextFromImageBetweenStrings(string imageFilePath, string firstLabel, string secondLabel)
+        public static string ReadTextFromImageBetweenStrings(string imageFilePath, string firstLabel, string secondLabel , ref string err)
         {
-            string resultTxt = string.Empty;
             Page pageObj = GetPageObjectFromFilePath(imageFilePath);
-            int firstIndexOf = -1;
-            int secondIndexOf = -1;
-
-            ReadTextBetweenTwoLabels(firstLabel, secondLabel, ref resultTxt, ref firstIndexOf, ref secondIndexOf, pageObj);
-            if (firstIndexOf != -1 && secondIndexOf != -1)
-            {
-                return resultTxt;
-            }
-
-            return resultTxt;
+            return ReadTextBetweenTwoLabels(firstLabel, secondLabel, pageObj , ref err);
         }
 
         private static string ReadTextFromByteArray(byte[] byteArray)
@@ -305,22 +296,16 @@ namespace GingerCore.GingerOCR
             return resultTxt;
         }
 
-        public static string ReadTextBetweenLabelsPdf(string pdfFilePath, string firstLabel, string secondLabel, string pageNum, int dpi, string password = null)
+        public static string ReadTextBetweenLabelsPdf(string pdfFilePath, string firstLabel, string secondLabel, string pageNum, int dpi, ref string err ,string password = null)
         {
-            string resultTxt = string.Empty;
-            int firstIndexOf = -1;
-            int secondIndexOf = -1;
             if (!string.IsNullOrEmpty(pageNum))
             {
                 List<byte[]> lstPngByte = GetPngByteArrayFromPdf(pdfFilePath, pageNum, dpi, password);
                 foreach (byte[] pngByte in lstPngByte)
                 {
                     Page pageObj = GetPageObjectFromByteArray(pngByte);
-                    ReadTextBetweenTwoLabels(firstLabel, secondLabel, ref resultTxt, ref firstIndexOf, ref secondIndexOf, pageObj);
-                    if (firstIndexOf != -1 && secondIndexOf != -1)
-                    {
-                        return resultTxt;
-                    }
+                    return ReadTextBetweenTwoLabels(firstLabel, secondLabel, pageObj, ref err);
+                    
                 }
             }
             else
@@ -329,18 +314,17 @@ namespace GingerCore.GingerOCR
                 foreach (byte[] byteArray in lstByteArray)
                 {
                     Page pageObj = GetPageObjectFromByteArray(byteArray);
-                    ReadTextBetweenTwoLabels(firstLabel, secondLabel, ref resultTxt, ref firstIndexOf, ref secondIndexOf, pageObj);
-                    if (firstIndexOf != -1 && secondIndexOf != -1)
-                    {
-                        return resultTxt;
-                    }
+                    return ReadTextBetweenTwoLabels(firstLabel, secondLabel, pageObj, ref err);
+                    
                 }
             }
             return string.Empty;
         }
-
-        private static void ReadTextBetweenTwoLabels(string firstLabel, string secondLabel, ref string resultTxt, ref int firstIndexOf, ref int secondIndexOf, Page pageObj)
+        private static string ReadTextBetweenTwoLabels(string firstLabel, string secondLabel, Page pageObj , ref string err)
         {
+            StringBuilder resultTxt = new();
+            int firstIndexOf  = -1;
+            int secondIndexOf = -1;
             using (pageObj)
             {
                 using (ResultIterator iter = pageObj.GetIterator())
@@ -350,43 +334,83 @@ namespace GingerCore.GingerOCR
                     {
                         do
                         {
+                            // GetText reads the text according to the PageIteratorLevel
                             string lineTxt = iter.GetText(PageIteratorLevel.TextLine);
-                            if (lineTxt.Contains(firstLabel))
+                                                        
+                            // If the firstLabel index isn't found , this block finds the index of the first label.
+                            if (firstIndexOf == -1)//
                             {
-                                firstIndexOf = lineTxt.IndexOf(firstLabel) + firstLabel.Length;
-                                if (lineTxt.Contains(secondLabel))
+                                firstIndexOf = lineTxt.IndexOf(firstLabel);
+                                // if the firstLabel exists in the current textLine , check if the secondLabel exists in the same line as well.
+                                if(firstIndexOf != -1)
                                 {
-                                    secondIndexOf = lineTxt.IndexOf(secondLabel);
-                                    resultTxt = lineTxt.Substring(firstIndexOf, secondIndexOf - firstIndexOf);
-                                    return;
+
+                                    // the search of the second label should start from the end of the firstLabel
+                                    // eg: firstLabel = "Hello" , secondLabel = "World"  , lineTxt = "Hello World"
+                                    // firstIndexOf = 0 
+                                    // find the secondLabel after 5th index (firstIndexOf + firstLabel.length => 0 + 5 => 5).
+                                    // Math.Min is added just in case firstIndexOf + firstLabel.Length > lineTxt.Length which would throw an exception.
+
+                                    secondIndexOf = lineTxt.IndexOf(secondLabel, Math.Min((firstIndexOf + firstLabel.Length), lineTxt.Length));
+                                    
+                                    // if the second label exists in the same txtLine append the string between the two labels and break from the loop to return the result
+                                    if (secondIndexOf != -1)
+                                    {
+                                        resultTxt.Append(lineTxt.AsSpan(firstIndexOf + firstLabel.Length, secondIndexOf - (firstIndexOf + firstLabel.Length)));
+                                        break;
+                                    }
+
+                                    // if the second label does not exist in the same txtLine append the text after the first label and continue the search on the text line
+
+                                    else
+                                    {
+                                        resultTxt.Append(lineTxt.AsSpan(firstIndexOf + firstLabel.Length));
+                                        continue;
+                                    }
                                 }
-                                else
-                                {
-                                    resultTxt = string.Concat(resultTxt, lineTxt.Substring(firstIndexOf));
-                                    continue;
-                                }
+
                             }
-                            if (firstIndexOf != -1)
+                            
+
+                            // if the firstLabel already exists , find the second label
+                            else
                             {
-                                if (lineTxt.Contains(secondLabel))
+                                secondIndexOf = lineTxt.IndexOf(secondLabel);
+
+                                // if the second label exists in the txtLine, append text before the secondLabel starts.
+                                if (secondIndexOf != -1)
                                 {
-                                    secondIndexOf = lineTxt.IndexOf(secondLabel);
-                                    resultTxt = string.Concat(resultTxt, lineTxt.Substring(0, secondIndexOf));
+                                    resultTxt.Append(lineTxt.AsSpan(0, secondIndexOf));
                                     break;
                                 }
+
+                                // if the second label doesn't exist , append the whole txtLine
                                 else
                                 {
-                                    resultTxt = string.Concat(resultTxt, lineTxt);
+                                    resultTxt.Append(lineTxt);
                                 }
+                                
                             }
                         } while (iter.Next(PageIteratorLevel.TextLine));
+
                     }
                     catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                        err = "Unable to read text from Image";
                     }
                 }
             }
+
+
+            // if the either or both of the labels aren't found then this error is printed on the execution section.
+            if(firstIndexOf == -1 || secondIndexOf == -1)
+            {
+                err = "Text Between the two mentioned labels does not exist, Please try entering different values";
+            }
+
+
+            return (firstIndexOf != -1 && secondIndexOf != -1) ?  resultTxt.ToString() : string.Empty;
         }
 
         public static Dictionary<string, object> ReadTextFromPdfAllPages(string pdfFilePath, int dpi, string password = null)
