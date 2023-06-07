@@ -25,7 +25,9 @@ using GingerCore.Actions;
 using GingerCore.Environments;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Controls;
 
 namespace Ginger.Environments
@@ -66,20 +68,37 @@ namespace Ginger.Environments
             if (e.Column.Header.ToString() == GeneralParam.Fields.Name)
             {
                 GeneralParam changedParam = (GeneralParam)grdAppParams.CurrentItem;
-                if (changedParam.Name != changedParam.NameBeforeEdit)
+
+                if (changedParam != null && !changedParam.Name.Equals(changedParam.NameBeforeEdit))
                 {
-                    //ask user if want us to update the parameter name in all BF's
-                    if (Reporter.ToUser(eUserMsgKey.ChangingEnvironmentParameterValue) == eUserMsgSelection.Yes)
-                        UpdateVariableNameChange(changedParam);
-                    else
-                        changedParam.Name = changedParam.NameBeforeEdit; // Restore Variable Name
+                    if (string.IsNullOrWhiteSpace(changedParam.Name))
+                    {
+                        Reporter.ToUser(eUserMsgKey.EnvParamNameEmpty);
+                        RestoreVariableName(changedParam);
+                    }
+                    else if (IsParamNameAlreadyExists(changedParam.Name, true))
+                    {
+                        Reporter.ToUser(eUserMsgKey.EnvParamNameExists);
+                        RestoreVariableName(changedParam);
+                    }
+                    else if (IsParameterBeingUsed(changedParam.NameBeforeEdit))
+                    {
+                        if (Reporter.ToUser(eUserMsgKey.ChangingEnvironmentParameterValue) == eUserMsgSelection.Yes)
+                        {
+                            UpdateVariableNameChange(changedParam);
+                        }
+                        else
+                        {
+                            RestoreVariableName(changedParam);
+                        }
+                    }
                 }
             }
             else if (e.Column.Header.ToString() == GeneralParam.Fields.Value)
             {
                 GeneralParam selectedEnvParam = (GeneralParam)grdAppParams.CurrentItem;
 
-                String intialValue = selectedEnvParam.Value;
+                string intialValue = selectedEnvParam.Value;
 
                 if (!string.IsNullOrEmpty(intialValue))
                 {
@@ -107,6 +126,28 @@ namespace Ginger.Environments
             }
         }
 
+        private static void RestoreVariableName(GeneralParam changedParam)
+        {
+            changedParam.Name = string.IsNullOrWhiteSpace(changedParam.NameBeforeEdit) ? string.Empty : changedParam.NameBeforeEdit;
+        }
+
+        private bool IsParamNameAlreadyExists(string name, bool ignoreCurrentSelectedItem)
+        {
+            foreach (var item in grdAppParams.DataSourceList.ListItems)
+            {
+                if (ignoreCurrentSelectedItem && ((GeneralParam)item).Guid.Equals(((GeneralParam)grdAppParams.CurrentItem).Guid))
+                { 
+                    continue; 
+                }
+
+                if (((GeneralParam)item).Name == name)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
         public void UpdateVariableNameChange(GeneralParam parameter)
         {
             if (parameter == null)
@@ -131,14 +172,51 @@ namespace Ginger.Environments
             }
             parameter.NameBeforeEdit = parameter.Name;
         }
+        private bool IsParameterBeingUsed(string paramName)
+        {
+            try
+            {
+                ObservableList<BusinessFlow> bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                foreach (BusinessFlow bf in bfs)
+                {
+                    foreach (var activity in bf.Activities)
+                    {
+                        foreach (var action in activity.Acts)
+                        {
+                            if (GeneralParam.IsParamBeingUsedInBFs(action, AppOwner.Name, paramName))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
+        }
 
         #region Events
         private void AddParam(object sender, RoutedEventArgs e)
         {
-            GeneralParam param = new GeneralParam() { Name = "Parameter " + AppOwner.GeneralParams.Count };
+            GeneralParam param = new GeneralParam() { Name = GenerateParamName(AppOwner.GeneralParams.Count) };
             param.PropertyChanged += param_PropertyChanged;
 
             AppOwner.GeneralParams.Add(param);
+        }
+
+        private string GenerateParamName(int count)
+        {
+            while (IsParamNameAlreadyExists($"Parameter {++count}", false))
+            {
+                continue;
+            }
+
+            return $"Parameter {count}";
         }
         #endregion Events
 
