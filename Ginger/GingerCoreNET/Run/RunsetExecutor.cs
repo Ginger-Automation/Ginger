@@ -335,16 +335,18 @@ namespace Ginger.Run
             {
                 if (gr.UseSpecificEnvironment)
                 {
-                    if (gr.ProjEnvironment != null)
+                    if (gr.ProjEnvironment != null && gr.ProjEnvironment.Applications != null)
                     {
                         foreach (EnvApplication ea in gr.ProjEnvironment.Applications)
                         {
-                            foreach (Database db in ea.Dbs)
+                            if (ea.Dbs != null)
                             {
-                                if (db.DatabaseOperations == null)
+                                foreach (Database db in ea.Dbs)
                                 {
-                                    DatabaseOperations databaseOperations = new DatabaseOperations(db);
-                                    db.DatabaseOperations = databaseOperations;
+                                    if (db.DatabaseOperations == null)
+                                    {
+                                        db.DatabaseOperations = new DatabaseOperations(db);
+                                    }
                                 }
                             }
                         }
@@ -512,7 +514,6 @@ namespace Ginger.Run
                         {
                             if (doContinueRun == false)
                             {
-                                GR.Executor.RunLevel = eRunLevel.Runset;
                                 GR.Executor.RunRunner();
                             }
                             else
@@ -543,7 +544,6 @@ namespace Ginger.Run
 
                             if (doContinueRun == false)
                             {
-                                GR.Executor.RunLevel = eRunLevel.Runset;
                                 GR.Executor.RunRunner();
                             }
                             else
@@ -556,7 +556,6 @@ namespace Ginger.Run
                                 }
                                 else if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)//continue the runners flow
                                 {
-                                    GR.Executor.RunLevel = eRunLevel.Runset;
                                     GR.Executor.RunRunner();
                                 }
                             }
