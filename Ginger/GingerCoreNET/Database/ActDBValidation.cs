@@ -374,7 +374,7 @@ namespace GingerCore.Actions
             }
 
             string AppNameCalculated = ValueExpression.Calculate(this.AppName);
-            EnvApplication App = (from a in RunOnEnvironment.Applications where a.Name == AppNameCalculated select a).FirstOrDefault();
+            EnvApplication App = RunOnEnvironment.Applications.FirstOrDefault(app => string.Equals(app.Name, AppNameCalculated));
             if (App == null)
             {
                 Error = "The mapped Environment Application '" + AppNameCalculated + "' was not found in the '" + RunOnEnvironment.Name + "' Environment which was selected for execution.";
@@ -382,7 +382,7 @@ namespace GingerCore.Actions
             }
 
             string DBNameCalculated = ValueExpression.Calculate(DBName);
-            DB = (Database)(from d in App.Dbs where d.Name == DBNameCalculated select d).FirstOrDefault();
+            DB = (Database)App.Dbs.FirstOrDefault(db => string.Equals(db.Name, DBNameCalculated));
             if (DB == null)
             {
                 Error = "The mapped DB '" + DBNameCalculated + "' was not found in the '" + AppNameCalculated + "' Environment Application.";
@@ -392,8 +392,10 @@ namespace GingerCore.Actions
             DB.ProjEnvironment = RunOnEnvironment;
             DB.BusinessFlow = RunOnBusinessFlow;
 
-            DatabaseOperations databaseOperations = new DatabaseOperations(DB);
-            DB.DatabaseOperations = databaseOperations;
+            if (DB.DatabaseOperations == null)
+            {
+                DB.DatabaseOperations = new DatabaseOperations(DB);
+            }
 
             return true;
         }
