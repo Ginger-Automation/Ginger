@@ -234,11 +234,12 @@ namespace Ginger.Actions
         private void PdfPassword_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             UCValueExpression uv = (UCValueExpression)sender;
-            TextBox pdfPasswordTextBox = uv.ValueTextBox;
-            
-            if (!EncryptionHandler.IsStringEncrypted(pdfPasswordTextBox.Text))
+            if ( !string.IsNullOrEmpty(uv.ValueTextBox.Text) && !uv.ValueTextBox.Text.Contains("{Var Name"))
             {
-                pdfPasswordTextBox.Text = EncryptionHandler.EncryptwithKey(pdfPasswordTextBox.Text); 
+                if (!EncryptionHandler.IsStringEncrypted(uv.ValueTextBox.Text))
+                {
+                    uv.ValueTextBox.Text = EncryptionHandler.EncryptwithKey(uv.ValueTextBox.Text);
+                }
             }
 
         }

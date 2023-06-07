@@ -331,8 +331,14 @@ namespace GingerCore
 
         private void ExecutePdfOperation()
         {
+
+            // Password Can be entered in 2 ways 
+            // 1. Directly Entering the password
+            // 2. using ValueExpressions
+            // If ValueExpression is used , Calculate returns the decrypted value , else it will return the encrypted value
+            // Hence before decrpyting , checking if the string is encrypted is required otherwise an error is thrown.
             string password = ValueExpression.Calculate(OcrPassword);
-            string decryptedPassword = EncryptionHandler.DecryptwithKey(password);
+            string decryptedPassword =  (EncryptionHandler.IsStringEncrypted(password)) ?  EncryptionHandler.DecryptwithKey(password) : password;
             string resultText = string.Empty;
             Dictionary<string, object> dctOutput = new Dictionary<string, object>();
             switch (SelectedOcrPdfOperation)
