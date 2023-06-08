@@ -140,7 +140,7 @@
                             <RowDefinition MaxHeight="190" MinHeight="40"></RowDefinition>
                         </Grid.RowDefinitions>
                         <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="PDF Password (if any): " />
-                        <Actions:UCValueExpression Grid.Row="0" Grid.Column="1" x:Name="xSetPdfPasswordTextBox" ToolTip="PDF Password (if any)" MinWidth="250" MaxWidth="400" Margin="5,0"/>
+                        <Actions:UCValueExpression Grid.Row="0" Grid.Column="1"  LostKeyboardFocus="PdfPassword_LostKeyboardFocus" x:Name="xSetPdfPasswordTextBox" ToolTip="PDF Password (if any)" MinWidth="250" MaxWidth="400" Margin="5,0"/>
 
                         <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Dots per Inch:"></Label>
                         <StackPanel Grid.Row="1" Grid.Column="1"  Orientation="Horizontal">

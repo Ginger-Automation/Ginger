@@ -126,7 +126,9 @@ namespace Ginger.Actions.Communication
         private void BindSendEMailConfigView()
         {
             xEmailConfigView.xActionTypeSendRadioButton.IsChecked = mAct.eMailActionType == ActeMail.eEmailActionType.SendEmail;
-            xEmailConfigView.xActionTypeReadRadioButton.IsChecked = mAct.eMailActionType == ActeMail.eEmailActionType.ReadEmail;         
+            xEmailConfigView.xActionTypeReadRadioButton.IsChecked = mAct.eMailActionType == ActeMail.eEmailActionType.ReadEmail;
+            xEmailConfigView.xEmailReadMethodIMAP.IsSelected = mAct.readMailActionType == ActeMail.ReadEmailActionType.IMAP;
+            xEmailConfigView.xEmailReadMethodMSGraph.IsSelected = mAct.readMailActionType == ActeMail.ReadEmailActionType.MSGraphAPI;
             xEmailConfigView.xFromVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFrom));
             xEmailConfigView.xFromDisplayNameVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFromDisplayName));
             xEmailConfigView.xToVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Mailto));
@@ -147,6 +149,9 @@ namespace Ginger.Actions.Communication
             BindingHandler.ObjFieldBinding(xEmailConfigView.xUserPasswordTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.ReadUserPassword));
             xEmailConfigView.xClientIdVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MSGraphClientId));
             xEmailConfigView.xTenantIdVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MSGraphTenantId));
+            xEmailConfigView.xImapHost.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.IMapHost));
+            xEmailConfigView.xImapPort.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.IMapPort));
+
             xEmailConfigView.xFilterFolderAllRadioButton.IsChecked = mAct.FilterFolder == EmailReadFilters.eFolderFilter.All;
             xEmailConfigView.xFilterFolderSpecificRadioButton.IsChecked = mAct.FilterFolder == EmailReadFilters.eFolderFilter.Specific;
             xEmailConfigView.xFilterFolderAllRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;

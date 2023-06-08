@@ -164,7 +164,9 @@ namespace Amdocs.Ginger.Common
         UploadSolutionToSourceControl,
         UploadSolutionFailed,
         SourceControlBranchNameEmpty, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace,
-        DeleteRecoverFolderWarn
+        DeleteRecoverFolderWarn,
+        EnvParamNameExists,
+        EnvParamNameEmpty
     }
 
     public static class UserMsgsPool
@@ -361,7 +363,9 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.WindowClosed, new UserMsg(eUserMsgType.WARN, "Invalid target window", "Target window is either closed or no longer available. \n\n Please Add switch Window action by selecting correct target window on Window Explorer", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.TargetWindowNotSelected, new UserMsg(eUserMsgType.WARN, "Target Window not Selected", "Please choose the target window from available list", eUserMsgOption.OK, eUserMsgSelection.None));
 
-            Reporter.UserMsgsPool.Add(eUserMsgKey.ChangingEnvironmentParameterValue, new UserMsg(eUserMsgType.WARN, "Changing Environment Variable Name", "Changing the Environment variable name will cause rename this environment variable name in every " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", do you want to continue?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ChangingEnvironmentParameterValue, new UserMsg(eUserMsgType.WARN, "Changing Parameter Name", "Changing the Parameter name will cause rename this parameter name in every " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ", do you want to continue?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.EnvParamNameExists, new UserMsg(eUserMsgType.WARN, "Changing Parameter Name", "Parameter name already exists, provide different name.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.EnvParamNameEmpty, new UserMsg(eUserMsgType.WARN, "Changing Parameter Name", "Parameter name cannot be Empty.", eUserMsgOption.OK, eUserMsgSelection.None));            
             Reporter.UserMsgsPool.Add(eUserMsgKey.SaveLocalChanges, new UserMsg(eUserMsgType.QUESTION, "Save Local Changes?", "Your Local Changes will be saved. Do you want to Continue?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.LooseLocalChanges, new UserMsg(eUserMsgType.WARN, "Loose Local Changes?", "Your Local Changes will be Lost. Do you want to Continue?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.IFSaveChangesOfBF, new UserMsg(eUserMsgType.WARN, "Save Current" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Before Change?", "Do you want to save the changes made in the '{0}' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "?", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -414,7 +418,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.DeleteRepositoryItemAreYouSure, new UserMsg(eUserMsgType.WARN, "Delete", "Are you sure you want to delete '{0}' item?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DeleteTreeFolderAreYouSure, new UserMsg(eUserMsgType.WARN, "Delete Folder", "Are you sure you want to delete the '{0}' folder and all of it content?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.RenameRepositoryItemAreYouSure, new UserMsg(eUserMsgType.WARN, "Rename", "Are you sure you want to rename '{0}'?", eUserMsgOption.YesNoCancel, eUserMsgSelection.Yes));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.SaveBusinessFlowChanges, new UserMsg(eUserMsgType.QUESTION, "Save Changes", "Save Changes to - {0}", eUserMsgOption.YesNoCancel, eUserMsgSelection.Yes));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SaveBusinessFlowChanges, new UserMsg(eUserMsgType.QUESTION, "Save Changes", "Save Changes to - {0}", eUserMsgOption.YesNoCancel, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SolutionLoadError, new UserMsg(eUserMsgType.ERROR, "Solution Load Error", "Failed to load the solution." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.MissingAddSolutionInputs, new UserMsg(eUserMsgType.WARN, "Add Solution", "Missing solution inputs, please set the solution name, folder, encryption key and main application details.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SolutionAlreadyExist, new UserMsg(eUserMsgType.WARN, "Add Solution", "The solution already exist, please select different name/folder.", eUserMsgOption.OK, eUserMsgSelection.None));
@@ -788,7 +792,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.DataSourceColumnHasSpace, new UserMsg(eUserMsgType.ERROR, "Column Name Cannot Contain Space", " Column Name [ {0} ] cannot contain space, please remove space and try again", eUserMsgOption.OK, eUserMsgSelection.OK));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.DeleteRecoverFolderWarn, new UserMsg(eUserMsgType.WARN, "Delete Unrecovered files?",
-   "Unerecovered items will be deleted. Do you want to continue?",
+   "Unrecovered items will be deleted. Do you want to continue?",
    eUserMsgOption.YesNo, eUserMsgSelection.No));
 
         }

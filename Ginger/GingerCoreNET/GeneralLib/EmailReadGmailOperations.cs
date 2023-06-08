@@ -31,6 +31,7 @@ using Applitools.Utils;
 using System.Threading;
 using Amdocs.Ginger.Common;
 
+
 namespace Amdocs.Ginger.CoreNET.GeneralLib
 {
     public sealed class EmailReadGmailOperations : IEmailReadOperations, IDisposable
@@ -40,7 +41,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             ImapClient client = new ImapClient();
             try
             {
-                client.Connect("imap.gmail.com", 993, true);
+                client.Connect(config.IMapHost, Int32.Parse(config.IMapPort), true);
                 client.Authenticate(config.UserEmail, config.UserPassword);
                 var inbox = client.Inbox;
                 inbox.Open(FolderAccess.ReadOnly);
@@ -75,19 +76,29 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 {
                     queryToImap = queryToImap.And(SearchQuery.SubjectContains(filters.Body));
                 }
-                if (!(filters.ReceivedStartDate.Equals(DateTime.MinValue)) && (filters.ReceivedEndDate.Equals(DateTime.Today)))
+                if (!(filters.ReceivedStartDate.Equals(DateTime.MinValue)) || (filters.ReceivedEndDate.Equals(DateTime.Today)))
                 {
                     queryToImap = queryToImap.And(SearchQuery.DeliveredAfter(filters.ReceivedStartDate)).And(SearchQuery.DeliveredBefore(filters.ReceivedEndDate));
                 }
-                var query = new SearchQuery();
-
+                
                 // Add a condition to the search query.
                 IList<UniqueId> list = inbox.Search(queryToImap, cancellationToken);
+                IEnumerable<string> expectedContentTypes = null;
+                if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes && (!string.IsNullOrEmpty(filters.AttachmentContentType)))
+                {                    
+                    expectedContentTypes = filters.AttachmentContentType.Split(";", StringSplitOptions.RemoveEmptyEntries);
+                }
 
                 foreach (var item in list)
                 {
                     MimeMessage message = inbox.GetMessage(item);
-                    emailProcessor(ConvertMessageToReadEmail(message, filters));
+                   
+                    if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Either || 
+                        ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.No) && message.Attachments.Count() == 0) ||
+                        DoesSatisfyAttachmentFilter(message, expectedContentTypes))
+                    {
+                        emailProcessor(ConvertMessageToReadEmail(message, filters));
+                    }
                 }
 
             }
@@ -105,6 +116,40 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 client.DisposeIfNotNull();
             }
             return Task.CompletedTask;
+        }
+
+        private bool DoesSatisfyAttachmentFilter(MimeMessage message, IEnumerable<string> expectedContentType)
+        {
+           
+            if (expectedContentType == null || expectedContentType.Count() == 0)
+            {
+                return true;
+            }
+            else            
+            {                
+                return HasAnyAttachmentWithExpectedContentType(message, expectedContentType);
+            }                     
+        }
+
+
+        private bool HasAnyAttachmentWithExpectedContentType( MimeMessage message,
+            IEnumerable<string> expectedContentTypes)
+        {
+            bool hasAnyAttachmentWithExpectedContentType = false;
+            IEnumerable<MimeEntity> attachments = message.Attachments;
+            
+            if (attachments.Count() > 0)
+            {
+                foreach (var attachment in attachments)
+                {                                      
+                    if (!string.IsNullOrEmpty(attachment.ContentType.MimeType) && expectedContentTypes.Any(expectedContentType => expectedContentType.Equals(attachment.ContentType.MimeType)))
+                    {
+                        hasAnyAttachmentWithExpectedContentType = true;
+                    }
+                }
+            }
+            return hasAnyAttachmentWithExpectedContentType;
+                
         }
 
 
@@ -155,9 +200,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 Attachments = attachments
             };
 
-
         }
-
         public void Dispose()
         {
         }
