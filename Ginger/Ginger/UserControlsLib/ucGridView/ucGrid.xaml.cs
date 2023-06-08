@@ -134,15 +134,18 @@ namespace Ginger
                     }
                     this.Dispatcher.Invoke(() =>
                     {
-                        grdMain.ItemsSource = mCollectionView;
-
-                        // Make the first row selected
-                        if (value != null && value.Count > 0)
+                        if (mCollectionView != null)
                         {
-                            grdMain.SelectedIndex = 0;
-                            grdMain.CurrentItem = value[0];
-                            // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
-                            mObjList.CurrentItem = value[0];
+                            grdMain.ItemsSource = mCollectionView;
+
+                            // Make the first row selected
+                            if (value != null && value.Count > 0)
+                            {
+                                grdMain.SelectedIndex = 0;
+                                grdMain.CurrentItem = value[0];
+                                // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
+                                mObjList.CurrentItem = value[0];
+                            }
                         }
                     });
                     UpdateFloatingButtons();
@@ -356,7 +359,7 @@ namespace Ginger
                 grdMain.CommitEdit();
                 grdMain.CancelEdit();
                 CollectFilterData();
-                mCollectionView.Refresh();
+                mCollectionView?.Refresh();
             });
         }
 

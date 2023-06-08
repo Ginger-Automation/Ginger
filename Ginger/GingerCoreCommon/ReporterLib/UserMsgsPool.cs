@@ -75,7 +75,7 @@ namespace Amdocs.Ginger.Common
         SureWantToDeleteAll, SureWantToDeleteSelectedItems, SureWantToDelete, NoItemToDelete, SelectItemToDelete, FailedToloadTheGrid,
         SureWantToContinue, BaseAPIWarning, MultipleMatchingAPI,
         ErrorReadingRepositoryItem,
-        EnvNotFound, SelectItemToAdd, CannotAddGinger,
+        EnvNotFound, SelectItemToAdd, RunnerLimitReached,
         ShortcutCreated, ShortcutCreationFailed, CannotRunShortcut,
         SolutionFileNotFound, PlugInFileNotFound,
         MissingAddSolutionInputs, SolutionAlreadyExist, AddSolutionSucceed, AddSolutionFailed,
@@ -569,7 +569,7 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.EnvNotFound, new UserMsg(eUserMsgType.ERROR, "Env not found", "Env not found {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
-            Reporter.UserMsgsPool.Add(eUserMsgKey.CannotAddGinger, new UserMsg(eUserMsgType.ERROR, "Cannot Add Ginger", "Number of Gingers is limited to 12 Gingers.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RunnerLimitReached, new UserMsg(eUserMsgType.ERROR, "Max Runners Limit Reached", "Max 12 Number of Runners can be added in single Runset.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.ShortcutCreated, new UserMsg(eUserMsgType.INFO, "New Shortcut created", "Shortcut created on selected path - {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 

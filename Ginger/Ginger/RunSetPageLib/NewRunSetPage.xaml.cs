@@ -1677,7 +1677,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.CannotAddGinger);
+                Reporter.ToUser(eUserMsgKey.RunnerLimitReached);
             }
         }
 

@@ -4031,12 +4031,12 @@ namespace Ginger.Run
                 CurrentBusinessFlow.Environment = mGingerRunner.ProjEnvironment == null ? "" : mGingerRunner.ProjEnvironment.Name;
                 if (PrepareVariables() == false)
                 {
-                    if (CurrentBusinessFlow.Activities.Count > 0)
+                    if (CurrentBusinessFlow.Activities.Any())
                     {
                         NotifyActivityGroupStart(CurrentBusinessFlow.ActivitiesGroups[0]);
                         NotifyActivityStart(CurrentBusinessFlow.Activities[0]);
                         CurrentBusinessFlow.Activities[0].Status = eRunStatus.Failed;
-                        if (CurrentBusinessFlow.Activities[0].Acts.Count > 0)
+                        if (CurrentBusinessFlow.Activities[0].Acts.Any())
                         {
                             NotifyActionStart((Act)CurrentBusinessFlow.Activities[0].Acts[0]);
                             CurrentBusinessFlow.Activities[0].Acts[0].Error = string.Format("Error occured in Input {0} values setup, please make sure all configured {1} Input {0} Mapped Values are valid", GingerDicser.GetTermResValue(eTermResKey.Variables), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
@@ -4053,7 +4053,7 @@ namespace Ginger.Run
                 st.Start();
 
                 //Do Run validations
-                if (CurrentBusinessFlow.Activities.Count == 0)
+                if (!CurrentBusinessFlow.Activities.Any())
                 {
                     return;//no Activities to run
                 }
