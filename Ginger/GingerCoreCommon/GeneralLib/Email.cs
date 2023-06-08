@@ -191,8 +191,23 @@ namespace GingerCore.GeneralLib
         [IsSerializedForLocalRepository]
         public string Event { get; set; }
 
+        private eEmailMethod mEmailMethod;
         [IsSerializedForLocalRepository]
-        public eEmailMethod EmailMethod { get; set; }
+        public eEmailMethod EmailMethod 
+        { 
+            get
+            {
+                return mEmailMethod;
+            }
+            set
+            {
+                if(mEmailMethod != value)
+                {
+                    mEmailMethod = value;
+                    OnPropertyChanged(nameof(EmailMethod));
+                }
+            }
+        }
 
         public readEmailMethod ReadEmailMethod { get; set; }
 
