@@ -24,6 +24,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using static GingerCore.ActOcr;
+using System.Windows.Input;
 
 namespace Ginger.Actions
 {
@@ -229,5 +230,19 @@ namespace Ginger.Actions
             xColumnWhereValue.IsEnabled = !rb.IsChecked.Value;
             xOperationCombo.IsEnabled = !rb.IsChecked.Value;
         }
+
+        private void PdfPassword_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            UCValueExpression uv = (UCValueExpression)sender;
+            if ( !string.IsNullOrEmpty(uv.ValueTextBox.Text) && !uv.ValueTextBox.Text.Contains("{Var Name"))
+            {
+                if (!EncryptionHandler.IsStringEncrypted(uv.ValueTextBox.Text))
+                {
+                    uv.ValueTextBox.Text = EncryptionHandler.EncryptwithKey(uv.ValueTextBox.Text);
+                }
+            }
+
+        }
+
     }
 }
