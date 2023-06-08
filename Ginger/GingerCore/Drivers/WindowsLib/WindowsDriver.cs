@@ -141,8 +141,11 @@ namespace GingerCore.Drivers.WindowsLib
 
         public override void CloseDriver()
         {
-            mUIAutomationHelper.StopRecording();
-            mUIAutomationHelper = null;
+            if(mUIAutomationHelper!=null)
+            {
+                mUIAutomationHelper.StopRecording();
+                mUIAutomationHelper = null;
+            }            
         }
 
         public override Act GetCurrentElement()
