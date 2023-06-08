@@ -62,10 +62,10 @@ namespace Ginger.Reports
 
         public enum eDataPublishingPhase
         {
-            [EnumValueDescription("Post Execution")]
-            PostExecution,
             [EnumValueDescription("During Execution")]
-            DuringExecution
+            DuringExecution,
+            [EnumValueDescription("Post Execution")]
+            PostExecution           
         }
 
 
