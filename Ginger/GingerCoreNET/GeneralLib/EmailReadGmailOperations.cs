@@ -76,11 +76,16 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 {
                     queryToImap = queryToImap.And(SearchQuery.SubjectContains(filters.Body));
                 }
-                if (!(filters.ReceivedStartDate.Equals(DateTime.MinValue)) || (filters.ReceivedEndDate.Equals(DateTime.Today)))
+
+                if (!(filters.ReceivedStartDate.Equals(DateTime.MinValue)))
                 {
-                    queryToImap = queryToImap.And(SearchQuery.DeliveredAfter(filters.ReceivedStartDate)).And(SearchQuery.DeliveredBefore(filters.ReceivedEndDate));
+                    queryToImap = queryToImap.And(SearchQuery.DeliveredAfter(filters.ReceivedStartDate.AddDays(-1)));
                 }
-                
+                if (!(filters.ReceivedEndDate.Equals(DateTime.Today)))
+                {
+                    queryToImap = queryToImap.And(SearchQuery.DeliveredBefore(filters.ReceivedEndDate.AddDays(1)));
+                }
+
                 // Add a condition to the search query.
                 IList<UniqueId> list = inbox.Search(queryToImap, cancellationToken);
                 IEnumerable<string> expectedContentTypes = null;
@@ -95,7 +100,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                    
                     if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Either || 
                         ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.No) && message.Attachments.Count() == 0) ||
-                        DoesSatisfyAttachmentFilter(message, expectedContentTypes))
+                        ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes) && DoesSatisfyAttachmentFilter(message, expectedContentTypes)))
                     {
                         emailProcessor(ConvertMessageToReadEmail(message, filters));
                     }
@@ -121,7 +126,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
         private bool DoesSatisfyAttachmentFilter(MimeMessage message, IEnumerable<string> expectedContentType)
         {
            
-            if (expectedContentType == null || expectedContentType.Count() == 0)
+            if ((expectedContentType == null || expectedContentType.Count() == 0) && message.Attachments.Count() > 0)
             {
                 return true;
             }
