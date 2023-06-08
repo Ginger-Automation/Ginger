@@ -41,8 +41,9 @@ namespace GingerCoreTest.Misc
         [TestMethod]
         public void ReadTextBetweenLabelsImage()
         {
+            string err = string.Empty;
             string txtOutput = GingerOcrOperations.ReadTextFromImageBetweenStrings(OcrImageFilePath,
-                                                                                   "Version", "Steps");
+                                                                                   "Version", "Steps" , ref err);
             string txtExpectedOutput = ": 4.1\n\n";
             Assert.AreEqual(txtExpectedOutput, txtOutput);
         }
@@ -74,7 +75,8 @@ namespace GingerCoreTest.Misc
         [TestMethod]
         public void ReadTextBetweenLabelsPdf()
         {
-            string txtOutput = GingerOcrOperations.ReadTextBetweenLabelsPdf(OcrPdfFilePath, "Installer", "Stock Issue Form No", string.Empty,300);
+            string err = string.Empty;
+            string txtOutput = GingerOcrOperations.ReadTextBetweenLabelsPdf(OcrPdfFilePath, "Installer", "Stock Issue Form No", string.Empty,300 , ref err);
             string txtExpectedOutput = " : MOHD AZHARI BIN MAD ATARI (70020776) ";
             Assert.AreEqual(txtExpectedOutput, txtOutput);
         }
