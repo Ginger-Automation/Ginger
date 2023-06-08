@@ -74,7 +74,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 }
                 if (!string.IsNullOrEmpty(filters.Body))
                 {
-                    queryToImap = queryToImap.And(SearchQuery.SubjectContains(filters.Body));
+                    queryToImap = queryToImap.And(SearchQuery.BodyContains(filters.Body));
                 }
 
                 if (!(filters.ReceivedStartDate.Equals(DateTime.MinValue)))
