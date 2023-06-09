@@ -41,7 +41,6 @@ namespace Ginger.Run
     {
         NA,
         Runner,
-        Runset,
         BusinessFlow
     }
     public class GingerRunner : RepositoryItemBase

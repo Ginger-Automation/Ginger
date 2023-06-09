@@ -19,7 +19,9 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using Applitools.Utils;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using NPOI.HPSF;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -282,15 +284,21 @@ namespace GingerCore.Actions
                         base.ExInfo = "Not a valid Zip File";
                         base.Error = "Not a valid Zip File";
                         return;
-                    }
+                    }                
+
                     if (System.IO.File.Exists(calculatedSourceFilePath))
                     {
+                        if (!DestinationFolder.EndsWithOrdinal(Path.GetFileNameWithoutExtension(calculatedSourceFilePath)))
+                        {
+                            DestinationFolder = Path.Combine(DestinationFolder, Path.GetFileNameWithoutExtension(calculatedSourceFilePath));
+                        }
                         if (!System.IO.Directory.Exists(DestinationFolder))
-                        {                            
+                        {
                             System.IO.Directory.CreateDirectory(DestinationFolder);
                         }
                         System.IO.Compression.ZipFile.ExtractToDirectory(calculatedSourceFilePath, DestinationFolder);
                     }
+
                     else
                     {
                         base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
@@ -339,10 +347,9 @@ namespace GingerCore.Actions
         private void SetupDestinationfolders()
         {
             string calculatedDestinationPath = GetInputParamCalculatedValue(Fields.DestinationFolder);
-
             calculatedDestinationPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedDestinationPath);
             DestinationFolder = System.IO.Path.GetDirectoryName(calculatedDestinationPath);
-            if (String.IsNullOrEmpty(DestinationFolder))
+            if (!String.IsNullOrEmpty(DestinationFolder))
             {
                 if (System.IO.Directory.Exists(calculatedDestinationPath))
                 {
@@ -354,7 +361,6 @@ namespace GingerCore.Actions
                 }
             }
             DestinationFile = System.IO.Path.GetFileName(calculatedDestinationPath);
-
         }
         public override bool SerializationError(SerializationErrorType errorType, string name, string value)
         {
