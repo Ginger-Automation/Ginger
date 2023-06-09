@@ -178,16 +178,16 @@ namespace Ginger.UserControlsLib.UCListView
 
                     mObjList = value;
 
-                    filteredView = new CollectionViewSource() { Source = mObjList }.View;
+                    filteredView = CollectionViewSource.GetDefaultView(mObjList);
 
                     if (filteredView != null)
                     {
                         CollectFilterData();
                         //if(filteredView.Filter == null)
-                        filteredView.Filter = LVItemFilter;
+                        filteredView.Filter = LVItemFilter;                      
                     }
 
-                    xListView.ItemsSource = filteredView;
+                    xListView.ItemsSource = mObjList; 
 
                     this.Dispatcher.BeginInvoke((Action)(() =>
                     {
@@ -209,6 +209,7 @@ namespace Ginger.UserControlsLib.UCListView
                         mListViewHelper.ExpandItemOnLoad = false;
                         xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
                     }));
+
                 }
                 catch (Exception ex)
                 {
