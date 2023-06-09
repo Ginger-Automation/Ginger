@@ -25,6 +25,7 @@ using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -103,13 +104,18 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
 
         private void AddEncryptionHandlerForPasswordControls()
         {
-            xSMTPPasswordTextBox.LostFocus += (_, _) => xSMTPPasswordTextBox.Text = Encrypt(xSMTPPasswordTextBox.Text);
-            xCertificatePasswordTextBox.LostFocus += (_, _) => xCertificatePasswordTextBox.Text = Encrypt(xCertificatePasswordTextBox.Text);
-            if (!string.IsNullOrEmpty(xUserPasswordTextBox.Text) && !xUserPasswordTextBox.Text.Contains("{Var Name"))
+            xSMTPPasswordTextBox.LostFocus += (_, _) => xSMTPPasswordTextBox.Text = EncryptPassword(xSMTPPasswordTextBox.Text);
+            xCertificatePasswordTextBox.LostFocus += (_, _) => xCertificatePasswordTextBox.Text = EncryptPassword(xCertificatePasswordTextBox.Text);
+            xUserPasswordTextBox.LostFocus += (_, _) => xUserPasswordTextBox.Text = EncryptPassword(xUserPasswordTextBox.Text);                     
+        }
+
+        private string EncryptPassword(string password)
+        {
+            if (!string.IsNullOrEmpty(password) && !password.Contains("{Var Name"))
             {
-                xUserPasswordTextBox.LostFocus += (_, _) => xUserPasswordTextBox.Text = Encrypt(xUserPasswordTextBox.Text);
-            }                       
-            
+                return Encrypt(xUserPasswordTextBox.Text);
+            }
+            return password;
         }
 
         public void Initialize(Options options)
