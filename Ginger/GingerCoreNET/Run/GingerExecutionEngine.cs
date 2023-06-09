@@ -323,7 +323,8 @@ namespace Ginger.Run
                     .FirstOrDefault(env => string.Equals(env.Name, mGingerRunner.SpecificEnvironmentName));
                 if (specificEnv != null)
                 {
-                    mGingerRunner.ProjEnvironment = (ProjEnvironment)specificEnv.CreateCopy(setNewGUID: false);
+                    //use Env copy to avoid parallel runners sharing runner exclusive resources like DB connections etc.
+                    mGingerRunner.ProjEnvironment = (ProjEnvironment)specificEnv.CreateCopy(setNewGUID: false, deepCopy: true);
                 }
                 else
                 {
@@ -333,7 +334,8 @@ namespace Ginger.Run
 
             if (mGingerRunner.ProjEnvironment == null)
             {
-                mGingerRunner.ProjEnvironment = (ProjEnvironment)defaultEnv.CreateCopy(setNewGUID: false);
+                //use Env copy to avoid parallel runners sharing runner exclusive resources like DB connections etc.
+                mGingerRunner.ProjEnvironment = (ProjEnvironment)defaultEnv.CreateCopy(setNewGUID: false, deepCopy: true);
             }
         }
 

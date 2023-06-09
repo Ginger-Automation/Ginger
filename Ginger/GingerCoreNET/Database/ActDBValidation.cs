@@ -220,8 +220,23 @@ namespace GingerCore.Actions
             }
         }
 
+        private eDBValidationType mDBValidationType;
         [IsSerializedForLocalRepository]
-        public eDBValidationType DBValidationType { get; set; }
+        public eDBValidationType DBValidationType
+        {
+            get
+            {
+                return mDBValidationType;
+            }
+            set
+            {
+                if(mDBValidationType != value)
+                {
+                    mDBValidationType = value;
+                    OnPropertyChanged(nameof(DBValidationType));
+                }
+            }
+        }
 
         private string mInsertJson = string.Empty;
 
