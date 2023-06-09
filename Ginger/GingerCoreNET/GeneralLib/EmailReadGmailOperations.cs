@@ -57,7 +57,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 {
                     if (filters.To.Contains(","))
                     {
-                        IEnumerable<string> actualRecipients = filters.To.Split(',', StringSplitOptions.TrimEntries);
+                        IEnumerable<string> actualRecipients = filters.To.Split(';', StringSplitOptions.TrimEntries);
                         foreach (string expectedRecipient in actualRecipients)
                         {
                             queryToImap = queryToImap.And(SearchQuery.ToContains(expectedRecipient));
@@ -79,7 +79,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
 
                 if (!(filters.ReceivedStartDate.Equals(DateTime.MinValue)))
                 {
-                    queryToImap = queryToImap.And(SearchQuery.DeliveredAfter(filters.ReceivedStartDate.AddDays(-1)));
+                    queryToImap = queryToImap.And(SearchQuery.DeliveredAfter(filters.ReceivedStartDate));
                 }
                 if (!(filters.ReceivedEndDate.Equals(DateTime.Today)))
                 {
@@ -124,9 +124,8 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
         }
 
         private bool DoesSatisfyAttachmentFilter(MimeMessage message, IEnumerable<string> expectedContentType)
-        {
-           
-            if ((expectedContentType == null || expectedContentType.Count() == 0) && message.Attachments.Count() > 0)
+        {           
+            if ((expectedContentType == null || !expectedContentType.Any()) && message.Attachments.Count() > 0)
             {
                 return true;
             }
