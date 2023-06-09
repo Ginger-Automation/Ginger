@@ -54,7 +54,7 @@ namespace GingerCore.Environments
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<EnvApplication> Applications = new ObservableList<EnvApplication>();
+        public ObservableList<EnvApplication> Applications { get; set; } = new ObservableList<EnvApplication>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<Guid> Tags = new ObservableList<Guid>();
