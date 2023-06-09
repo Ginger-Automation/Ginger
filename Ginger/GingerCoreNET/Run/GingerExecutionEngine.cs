@@ -1558,7 +1558,7 @@ namespace Ginger.Run
                             mColList.Remove("GINGER_USED");
                         }
 
-                        act.AddOrUpdateOutDataSourceParam(act.OutDataSourceName, act.OutDataSourceTableName, item.Param, item.Param, "", mColList, act.OutDSParamMapType);
+                        act.AddOrUpdateOutDataSourceParam(act.OutDataSourceName, act.OutDataSourceTableName, item.Param.Replace(" ","_"), item.Param.Replace(" ", "_"), "", mColList, act.OutDSParamMapType);
                     }
 
                     if (act.ConfigOutDSParamAutoCheck)
@@ -1614,7 +1614,7 @@ namespace Ginger.Run
                         string sColVals = "";
                         foreach (ActOutDataSourceConfig ADSC in mADCS)
                         {
-                            List<ActReturnValue> outReturnPath = (from arc in mOutRVs where arc.Param == ADSC.OutputType select arc).ToList();
+                            List<ActReturnValue> outReturnPath = (from arc in mOutRVs where arc.Param.Replace(" ", "_") == ADSC.OutputType select arc).ToList();
                             if (outReturnPath.Count > 0)
                             {
                                 sColList = $"{sColList}{ADSC.TableColumn},";
