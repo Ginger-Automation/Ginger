@@ -356,7 +356,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         public void Dispose()
         {
             mSheet = null;
-            mWorkbook.Close();
+            mWorkbook?.Close();
             mWorkbook = null;
         }
 

@@ -135,7 +135,7 @@ namespace Ginger.UserControlsLib.UCListView
             this.Dispatcher.Invoke(() =>
             {
                 CollectFilterData();
-                filteredView?.Refresh();
+                filteredView.Refresh();
             });
         }
 
@@ -178,39 +178,38 @@ namespace Ginger.UserControlsLib.UCListView
 
                     mObjList = value;
 
-                    filteredView = new CollectionViewSource() { Source = mObjList }.View;
+                    filteredView = CollectionViewSource.GetDefaultView(mObjList);
 
                     if (filteredView != null)
                     {
                         CollectFilterData();
                         //if(filteredView.Filter == null)
-                        filteredView.Filter = LVItemFilter;
-
-                        xListView.ItemsSource = filteredView;
-
-
-
-                        this.Dispatcher.BeginInvoke((Action)(() =>
-                        {
-                            xSearchTextBox.Text = "";
-
-                            // Make the first row selected
-                            if (value != null && value.Count > 0)
-                            {
-                                xListView.SelectedIndex = 0;
-                                xListView.SelectedItem = value[0];
-                                // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
-                                if (mObjList.SyncCurrentItemWithViewSelectedItem && mObjList.Count > 0)
-                                {
-                                    mObjList.CurrentItem = value[0];
-                                }
-                            }
-
-                            //show items as collapsed
-                            mListViewHelper.ExpandItemOnLoad = false;
-                            xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
-                        }));
+                        filteredView.Filter = LVItemFilter;                      
                     }
+
+                    xListView.ItemsSource = mObjList; 
+
+                    this.Dispatcher.BeginInvoke((Action)(() =>
+                    {
+                        xSearchTextBox.Text = "";
+
+                        // Make the first row selected
+                        if (value != null && value.Count > 0)
+                        {
+                            xListView.SelectedIndex = 0;
+                            xListView.SelectedItem = value[0];
+                            // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
+                            if (mObjList.SyncCurrentItemWithViewSelectedItem && mObjList.Count > 0)
+                            {
+                                mObjList.CurrentItem = value[0];
+                            }
+                        }
+
+                        //show items as collapsed
+                        mListViewHelper.ExpandItemOnLoad = false;
+                        xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
+                    }));
+
                 }
                 catch (Exception ex)
                 {
@@ -959,7 +958,7 @@ namespace Ginger.UserControlsLib.UCListView
 
             mSearchString = xSearchTextBox.Text;
             CollectFilterData();
-            filteredView?.Refresh();
+            filteredView.Refresh();
         }
 
         private void xSearchClearBtn_Click(object sender, RoutedEventArgs e)
@@ -974,7 +973,7 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 mSearchString = xSearchTextBox.Text;
                 CollectFilterData();
-                filteredView?.Refresh();
+                filteredView.Refresh();
             }
         }
 
