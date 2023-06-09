@@ -75,7 +75,7 @@ namespace Amdocs.Ginger.Common
         SureWantToDeleteAll, SureWantToDeleteSelectedItems, SureWantToDelete, NoItemToDelete, SelectItemToDelete, FailedToloadTheGrid,
         SureWantToContinue, BaseAPIWarning, MultipleMatchingAPI,
         ErrorReadingRepositoryItem,
-        EnvNotFound, SelectItemToAdd, CannotAddGinger,
+        EnvNotFound, SelectItemToAdd, RunnerLimitReached,
         ShortcutCreated, ShortcutCreationFailed, CannotRunShortcut,
         SolutionFileNotFound, PlugInFileNotFound,
         MissingAddSolutionInputs, SolutionAlreadyExist, AddSolutionSucceed, AddSolutionFailed,
@@ -102,7 +102,7 @@ namespace Amdocs.Ginger.Common
         ReportTemplateNotFound, DriverNotSupportingWindowExplorer, AgentNotRunningAfterWaiting,
         FoundDuplicateAgentsInRunSet, StaticErrorMessage, StaticWarnMessage, StaticInfoMessage, StaticQuestionsMessage, ApplicationAgentNotMapped,
         ActivitiesGroupAlreadyMappedToTC, ExportItemToALMFailed, AskIfToSaveBFAfterExport,
-        BusinessFlowAlreadyMappedToTC, AskIfSureWantToClose, AskIfSureWantToCloseWithoutNote, AskIfSureWantToRestart, AskIfSureWantToRestartWithoutNote, WindowClosed, TargetWindowNotSelected,
+        BusinessFlowAlreadyMappedToTC, AskIfSureWantToClose, AskIfSureWantToCloseWithoutNote, AskIfSureWantToRestart, AskIfSureWantToRestartWithoutNote , AskIfSureWantToRestartInAdminMode, WindowClosed, TargetWindowNotSelected,
         ChangingEnvironmentParameterValue, IFSaveChangesOfBF, AskIfToLoadExternalFields, WhetherToOpenSolution,
         AutomationTabExecResultsNotExists, FolderNamesAreTooLong, FolderSizeTooSmall, DefaultTemplateCantBeDeleted, FileNotExist, ExecutionsResultsProdIsNotOn, ExecutionsResultsNotExists, ExecutionsResultsToDelete, AllExecutionsResultsToDelete, FilterNotBeenSet, RetreivingAllElements, ClickElementAgain, CloseFilterPage,
         BusinessFlowNeedTargetApplication, HTMLReportAttachment, ImageSize,
@@ -214,6 +214,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToCloseWithoutNote, new UserMsg(eUserMsgType.QUESTION, "Close Ginger", "Are you sure you want to close Ginger?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToRestart, new UserMsg(eUserMsgType.QUESTION, "Restart Ginger", "Are you sure you want to Restart Ginger?" + Environment.NewLine + Environment.NewLine + "Notice: Unsaved changes won't be saved.", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToRestartWithoutNote, new UserMsg(eUserMsgType.QUESTION, "Restart Ginger", "Are you sure you want to Restart Ginger?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToRestartInAdminMode, new UserMsg(eUserMsgType.QUESTION, "Ginger In Admin Mode", "Are you sure you want to launch Ginger in admin mode?" + Environment.NewLine + Environment.NewLine + "Note: Please save modified changes before launch.", eUserMsgOption.YesNo, eUserMsgSelection.No));            
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.BusinessFlowNeedTargetApplication, new UserMsg(eUserMsgType.WARN, "Target Application Not Selected", "Target Application Not Selected! Please Select at least one Target Application", eUserMsgOption.OK, eUserMsgSelection.None));
 
@@ -573,7 +575,7 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.EnvNotFound, new UserMsg(eUserMsgType.ERROR, "Env not found", "Env not found {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
-            Reporter.UserMsgsPool.Add(eUserMsgKey.CannotAddGinger, new UserMsg(eUserMsgType.ERROR, "Cannot Add Ginger", "Number of Gingers is limited to 12 Gingers.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RunnerLimitReached, new UserMsg(eUserMsgType.ERROR, "Max Runners Limit Reached", "Max 12 Number of Runners can be added in single Runset.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.ShortcutCreated, new UserMsg(eUserMsgType.INFO, "New Shortcut created", "Shortcut created on selected path - {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
