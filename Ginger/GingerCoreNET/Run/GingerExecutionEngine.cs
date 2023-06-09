@@ -323,7 +323,8 @@ namespace Ginger.Run
                     .FirstOrDefault(env => string.Equals(env.Name, mGingerRunner.SpecificEnvironmentName));
                 if (specificEnv != null)
                 {
-                    mGingerRunner.ProjEnvironment = (ProjEnvironment)specificEnv.CreateCopy(setNewGUID: false);
+                    //use Env copy to avoid parallel runners sharing runner exclusive resources like DB connections etc.
+                    mGingerRunner.ProjEnvironment = (ProjEnvironment)specificEnv.CreateCopy(setNewGUID: false, deepCopy: true);
                 }
                 else
                 {
@@ -333,7 +334,8 @@ namespace Ginger.Run
 
             if (mGingerRunner.ProjEnvironment == null)
             {
-                mGingerRunner.ProjEnvironment = (ProjEnvironment)defaultEnv.CreateCopy(setNewGUID: false);
+                //use Env copy to avoid parallel runners sharing runner exclusive resources like DB connections etc.
+                mGingerRunner.ProjEnvironment = (ProjEnvironment)defaultEnv.CreateCopy(setNewGUID: false, deepCopy: true);
             }
         }
 
@@ -4034,12 +4036,12 @@ namespace Ginger.Run
                 CurrentBusinessFlow.Environment = mGingerRunner.ProjEnvironment == null ? "" : mGingerRunner.ProjEnvironment.Name;
                 if (PrepareVariables() == false)
                 {
-                    if (CurrentBusinessFlow.Activities.Count > 0)
+                    if (CurrentBusinessFlow.Activities.Any())
                     {
                         NotifyActivityGroupStart(CurrentBusinessFlow.ActivitiesGroups[0]);
                         NotifyActivityStart(CurrentBusinessFlow.Activities[0]);
                         CurrentBusinessFlow.Activities[0].Status = eRunStatus.Failed;
-                        if (CurrentBusinessFlow.Activities[0].Acts.Count > 0)
+                        if (CurrentBusinessFlow.Activities[0].Acts.Any())
                         {
                             NotifyActionStart((Act)CurrentBusinessFlow.Activities[0].Acts[0]);
                             CurrentBusinessFlow.Activities[0].Acts[0].Error = string.Format("Error occured in Input {0} values setup, please make sure all configured {1} Input {0} Mapped Values are valid", GingerDicser.GetTermResValue(eTermResKey.Variables), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
@@ -4056,7 +4058,7 @@ namespace Ginger.Run
                 st.Start();
 
                 //Do Run validations
-                if (CurrentBusinessFlow.Activities.Count == 0)
+                if (!CurrentBusinessFlow.Activities.Any())
                 {
                     return;//no Activities to run
                 }
