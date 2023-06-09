@@ -43,8 +43,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             {
                 client.Connect(config.IMapHost, Int32.Parse(config.IMapPort), true);
                 client.Authenticate(config.UserEmail, config.UserPassword);
-                var inbox = client.Inbox;
-                inbox.Open(FolderAccess.ReadOnly);
+                
                 CancellationToken cancellationToken = default(CancellationToken);
 
                 var queryToImap = new SearchQuery();
@@ -55,10 +54,9 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 }
                 if (!string.IsNullOrEmpty(filters.To))
                 {
-                    if (filters.To.Contains(","))
+                    if (filters.To.Contains(';'))
                     {
-                        IEnumerable<string> actualRecipients = filters.To.Split(';', StringSplitOptions.TrimEntries);
-                        foreach (string expectedRecipient in actualRecipients)
+                        foreach (string expectedRecipient in filters.To.Split(';', StringSplitOptions.TrimEntries))
                         {
                             queryToImap = queryToImap.And(SearchQuery.ToContains(expectedRecipient));
                         }
@@ -77,7 +75,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                     queryToImap = queryToImap.And(SearchQuery.BodyContains(filters.Body));
                 }
 
-                if (!(filters.ReceivedStartDate.Equals(DateTime.MinValue)))
+                if (!filters.ReceivedStartDate.Equals(DateTime.MinValue))
                 {
                     queryToImap = queryToImap.And(SearchQuery.DeliveredAfter(filters.ReceivedStartDate));
                 }
@@ -85,24 +83,32 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 {
                     queryToImap = queryToImap.And(SearchQuery.DeliveredBefore(filters.ReceivedEndDate.AddDays(1)));
                 }
-
-                // Add a condition to the search query.
-                IList<UniqueId> list = inbox.Search(queryToImap, cancellationToken);
                 IEnumerable<string> expectedContentTypes = null;
                 if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes && (!string.IsNullOrEmpty(filters.AttachmentContentType)))
-                {                    
+                {
                     expectedContentTypes = filters.AttachmentContentType.Split(";", StringSplitOptions.RemoveEmptyEntries);
                 }
 
+
+                var inbox = client.Inbox;
+                inbox.Open(FolderAccess.ReadOnly);
+                // Add a condition to the search query.
+                IList<UniqueId> list = inbox.Search(queryToImap, cancellationToken);
+
+                MimeMessage message = null;
                 foreach (var item in list)
                 {
-                    MimeMessage message = inbox.GetMessage(item);
+                    message = inbox.GetMessage(item);
                    
                     if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Either || 
-                        ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.No) && message.Attachments.Count() == 0) ||
+                        ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.No) && !message.Attachments.Any()) ||
                         ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes) && DoesSatisfyAttachmentFilter(message, expectedContentTypes)))
                     {
-                        emailProcessor(ConvertMessageToReadEmail(message, filters));
+                        if(string.IsNullOrEmpty(filters.Body) || message.TextBody.Contains(filters.Body))
+                        {
+                            emailProcessor(ConvertMessageToReadEmail(message, filters));
+                        }
+                       
                     }
                 }
 
@@ -125,7 +131,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
 
         private bool DoesSatisfyAttachmentFilter(MimeMessage message, IEnumerable<string> expectedContentType)
         {           
-            if ((expectedContentType == null || !expectedContentType.Any()) && message.Attachments.Count() > 0)
+            if ((expectedContentType == null || !expectedContentType.Any()) && message.Attachments.Any())
             {
                 return true;
             }
@@ -140,11 +146,10 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             IEnumerable<string> expectedContentTypes)
         {
             bool hasAnyAttachmentWithExpectedContentType = false;
-            IEnumerable<MimeEntity> attachments = message.Attachments;
             
-            if (attachments.Count() > 0)
+            if (message.Attachments.Any())
             {
-                foreach (var attachment in attachments)
+                foreach (var attachment in message.Attachments)
                 {                                      
                     if (!string.IsNullOrEmpty(attachment.ContentType.MimeType) && expectedContentTypes.Any(expectedContentType => expectedContentType.Equals(attachment.ContentType.MimeType)))
                     {
@@ -154,19 +159,6 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             }
             return hasAnyAttachmentWithExpectedContentType;
                 
-        }
-
-
-        private void ValidateIMapConfig(EmailReadConfig config)
-        {
-            if (string.IsNullOrEmpty(config.UserEmail))
-            {
-                throw new ArgumentException("user email is required");
-            }
-            if (string.IsNullOrEmpty(config.UserPassword))
-            {
-                throw new ArgumentException("user password is required");
-            }
         }
 
         public static byte[] ReadFully(IMimeContent input)
@@ -182,7 +174,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
         {
             IEnumerable<ReadEmail.Attachment> attachments = null ;
 
-            if (message.Attachments != null && message.Attachments.Count() > 0)
+            if (message.Attachments != null && message.Attachments.Any())
             {
                 attachments = message.Attachments
                     .Where(attachment => attachment.ContentType.MimeType.Equals(filters.AttachmentContentType))
@@ -200,7 +192,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 Subject = message.Subject.ToString(),
                 Body = message.Body.ToString(),
                 ReceivedDateTime = message.Date.LocalDateTime,
-                HasAttachments = message.Attachments.Count() > 0,
+                HasAttachments = message.Attachments.Any(),
                 Attachments = attachments
             };
 
