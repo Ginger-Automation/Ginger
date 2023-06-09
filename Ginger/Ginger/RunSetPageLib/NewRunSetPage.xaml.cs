@@ -1919,7 +1919,6 @@ namespace Ginger.Run
             }
             xStopRunsetBtn.ButtonText = "Stopping...";
             xStopRunsetBtn.ButtonImageType = eImageType.Running;
-            xStopRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionStop");
             xStopRunsetBtn.IsEnabled = false;
 
             WorkSpace.Instance.RunsetExecutor.StopRun();//stops only running runners  
