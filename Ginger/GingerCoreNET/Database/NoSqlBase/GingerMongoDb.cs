@@ -355,7 +355,7 @@ namespace GingerCore.NoSqlBase
                     case Actions.ActDBValidation.eDBValidationType.UpdateDB:
 
                         //do commit
-                        if (Act.CommitDB_Value == true && mMongoClient.Cluster.Description.Type != ClusterType.Standalone)
+                        if (Act.CommitDB_Value && mMongoClient.Cluster.Description.Type != ClusterType.Standalone)
                         {
                             var session = mMongoClient.StartSession();
                             session.StartTransaction();
