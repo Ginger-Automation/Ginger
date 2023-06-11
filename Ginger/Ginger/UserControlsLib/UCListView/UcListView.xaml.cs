@@ -184,10 +184,10 @@ namespace Ginger.UserControlsLib.UCListView
                     {
                         CollectFilterData();
                         //if(filteredView.Filter == null)
-                        filteredView.Filter = LVItemFilter;                      
+                        filteredView.Filter = LVItemFilter;
                     }
 
-                    xListView.ItemsSource = mObjList; 
+                    xListView.ItemsSource = mObjList;
 
                     this.Dispatcher.BeginInvoke((Action)(() =>
                     {
@@ -234,13 +234,18 @@ namespace Ginger.UserControlsLib.UCListView
         List<Guid> mFilterSelectedTags = null;
         private void CollectFilterData()
         {
-            //collect search values           
-            this.Dispatcher.Invoke(() =>
+            //collect search values
+            if (mObjList != null)
             {
-                mObjList.FilterStringData = xSearchTextBox.Text;
-                mFilterSelectedTags = xTagsFilter.GetSelectedTagsList();
-            });
+                this.Dispatcher.Invoke(() =>
+                {
+                    mObjList.FilterStringData = xSearchTextBox.Text;
+                    mFilterSelectedTags = xTagsFilter.GetSelectedTagsList();
+
+                });
+            }
         }
+
 
         bool LVItemFilter(object item)
         {
