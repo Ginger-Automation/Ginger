@@ -237,8 +237,11 @@ namespace Ginger.UserControlsLib.UCListView
             //collect search values           
             this.Dispatcher.Invoke(() =>
             {
-                mObjList.FilterStringData = xSearchTextBox.Text;
-                mFilterSelectedTags = xTagsFilter.GetSelectedTagsList();
+                if (mObjList != null)
+                {
+                    mObjList.FilterStringData = xSearchTextBox.Text;
+                    mFilterSelectedTags = xTagsFilter.GetSelectedTagsList();
+                }
             });
         }
 
