@@ -2238,8 +2238,11 @@ namespace Ginger.Run
                     xActivitiesRunnerItemsListView.Visibility = Visibility.Collapsed;
                     General.DoEvents();//for seeing the processing icon better to do with Async
 
-                    xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ChildItemPages;
-
+                    // added if condition for the Application to throw an error if the mCurrentBusinessFlowRunnerItem is null
+                    if (mCurrentBusinessFlowRunnerItem!=null)
+                    {
+                        xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ChildItemPages;
+                    }
                 }
                 finally
                 {
