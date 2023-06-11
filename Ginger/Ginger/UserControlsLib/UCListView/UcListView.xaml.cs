@@ -249,7 +249,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         bool LVItemFilter(object item)
         {
-            if (string.IsNullOrWhiteSpace(mObjList.FilterStringData) && (mFilterSelectedTags == null || mFilterSelectedTags.Count == 0))
+            if (string.IsNullOrWhiteSpace(mObjList.FilterStringData) && (mFilterSelectedTags == null || !mFilterSelectedTags.Any()))
             {
                 return true;
             }
@@ -261,7 +261,7 @@ namespace Ginger.UserControlsLib.UCListView
             }
 
             //Filter by Tags            
-            if (mFilterSelectedTags != null && mFilterSelectedTags.Count > 0)
+            if (mFilterSelectedTags != null && mFilterSelectedTags.Any())
             {
                 return TagsFilter(item, mFilterSelectedTags);
             }
@@ -510,12 +510,12 @@ namespace Ginger.UserControlsLib.UCListView
         public void SetListOperations()
         {
             List<ListItemOperation> listOperations = mListViewHelper.GetListOperations();
-            if (listOperations != null && listOperations.Count > 0)
+            if (listOperations != null && listOperations.Any())
             {
                 xListOperationsPnl.Children.Clear();
                 xListOperationsPnl.Visibility = Visibility.Visible;
 
-                foreach (ListItemOperation operation in listOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)).ToList())
+                foreach (ListItemOperation operation in listOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)))
                 {
                     ucButton operationBtn = new ucButton();
                     operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.CircleImageButton;
@@ -563,11 +563,11 @@ namespace Ginger.UserControlsLib.UCListView
         private void SetListExtraOperations()
         {
             List<ListItemOperation> extraOperations = mListViewHelper.GetListExtraOperations();
-            if (extraOperations != null && extraOperations.Count > 0)
+            if (extraOperations != null && extraOperations.Any())
             {
                 ((MenuItem)(xListExtraOperationsMenu.Items[0])).Items.Clear();
                 xListExtraOperationsMenu.Visibility = Visibility.Visible;
-                foreach (ListItemOperation operation in extraOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)).ToList())
+                foreach (ListItemOperation operation in extraOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)))
                 {
                     MenuItem menuitem = new MenuItem();
                     menuitem.Style = (Style)FindResource("$MenuItemStyle");
@@ -808,7 +808,7 @@ namespace Ginger.UserControlsLib.UCListView
                 if (panel.Tag != null)
                 {
                     List<ListItemNotification> notifications = mListViewHelper.GetItemGroupNotificationsList(panel.Tag.ToString());
-                    if (notifications != null && notifications.Count > 0)
+                    if (notifications != null && notifications.Any())
                     {
                         panel.Visibility = Visibility.Visible;
                         foreach (ListItemNotification notification in notifications)
@@ -854,9 +854,9 @@ namespace Ginger.UserControlsLib.UCListView
         private void SetGroupOperations(Menu menu)
         {
             List<ListItemGroupOperation> groupOperations = mListViewHelper.GetItemGroupOperationsList();
-            if (groupOperations != null && groupOperations.Count > 0)
+            if (groupOperations != null && groupOperations.Any())
             {
-                foreach (ListItemGroupOperation operation in groupOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)).ToList())
+                foreach (ListItemGroupOperation operation in groupOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)))
                 {
                     MenuItem menuitem = new MenuItem();
                     menuitem.Style = (Style)FindResource("$MenuItemStyle");
