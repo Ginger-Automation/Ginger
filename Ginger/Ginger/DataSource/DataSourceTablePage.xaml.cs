@@ -476,7 +476,11 @@ namespace Ginger.DataSource
 
         void ValidateAndUpdateDBTableName(string newName)
         {
-            if (mDSTableDetails.DSC.DSTableList.Any(t => t.Name.Equals(newName, StringComparison.OrdinalIgnoreCase)))
+            if (string.IsNullOrEmpty(newName.Trim()))
+            {
+                Reporter.ToUser(eUserMsgKey.DbTableNameEmpty);                
+            }
+            else  if(mDSTableDetails.DSC.DSTableList.Any(t => t.Name.Equals(newName, StringComparison.OrdinalIgnoreCase)))
             {
                 Reporter.ToUser(eUserMsgKey.DbTableNameError, newName);
             }
