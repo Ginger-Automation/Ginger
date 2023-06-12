@@ -30,7 +30,7 @@ namespace Amdocs.Ginger.Common
         NoItemWasSelected, AskToAddCheckInComment, FailedToGetProjectsListFromSVN, AskToSelectSolution, UpdateToRevision, CommitedToRevision, GitUpdateState, SourceControlConnFaild, SourceControlRemoteCannotBeAccessed, SourceControlUnlockFaild, SourceControlConnSucss, SourceControlLockSucss, SourceControlUnlockSucss, SourceControlConnMissingConnInputs, SourceControlConnMissingLocalFolderInput,
         PleaseStartAgent, AskToSelectValidation,
         EnvironmentItemLoadError, MissingUnixCredential,
-        ErrorConnectingToDataBase, ErrorClosingConnectionToDataBase, DbTableError, DbTableNameError, DbQueryError, DbConnSucceed, DbConnFailed,
+        ErrorConnectingToDataBase, ErrorClosingConnectionToDataBase, DbTableError, DbTableNameError, DbTableNameEmpty, DbQueryError, DbConnSucceed, DbConnFailed,
         TestagentSucceed, MobileDriverNotConnected, FailedToConnectAgent, RecordingStopped, SshCommandError, GoToUrlFailure, HookLinkEventError, AskToStartAgent, RestartAgent,
         MissingActionPropertiesEditor, AskToSelectItem, AskToSelectAction, ImportSeleniumScriptError,
         AskToSelectVariable, VariablesAssignError, SetCycleNumError, VariablesParentNotFound, CantStoreToVariable,
@@ -318,6 +318,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.DbQueryError, new UserMsg(eUserMsgType.ERROR, "DB Query Error", "The DB Query returned error, please double check the table name and field name." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DbConnFailed, new UserMsg(eUserMsgType.ERROR, "DB Connection Status", "Connect to the DB failed.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DbConnSucceed, new UserMsg(eUserMsgType.INFO, "DB Connection Status", "Connect to the DB succeeded.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.DbTableNameEmpty, new UserMsg(eUserMsgType.ERROR, "Invalid DB Table Name", "Table name cannot be empty. Please provide valid name", eUserMsgOption.OK, eUserMsgSelection.None));
             #endregion DataBase Messages
 
             #region Environment Messages
