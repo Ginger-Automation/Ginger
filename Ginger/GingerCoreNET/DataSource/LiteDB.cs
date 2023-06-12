@@ -720,21 +720,28 @@ namespace GingerCoreNET.DataSource
         {
             bool renameSuccess = false;
             bool tableExist = false;
-            using (var db = new LiteDatabase(FileFullPath))
-            {
-                tableExist = db.CollectionExists(newTableName);
-                if (!tableExist)
+            try
+            {                
+                using (var db = new LiteDatabase(FileFullPath))
                 {
-                    renameSuccess = db.RenameCollection(tableName, newTableName);
+                    tableExist = db.CollectionExists(newTableName);
+                    if (!tableExist)
+                    {
+                        renameSuccess = db.RenameCollection(tableName, newTableName);
+                    }
+                }
+                if (renameSuccess)
+                {
+                    this.UpdateDSNameChangeInItem(this, tableName, newTableName, ref renameSuccess);
+                }
+                else if (tableExist)
+                {
+                    Reporter.ToUser(eUserMsgKey.DbTableNameError, newTableName);
                 }
             }
-            if (renameSuccess)
+            catch (Exception ex)
             {
-                this.UpdateDSNameChangeInItem(this, tableName, newTableName, ref renameSuccess);
-            }
-            else if (tableExist)
-            {
-                Reporter.ToUser(eUserMsgKey.DbTableNameError, newTableName);
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occured while renaming the table {tableName}", ex);                
             }
         }
 
