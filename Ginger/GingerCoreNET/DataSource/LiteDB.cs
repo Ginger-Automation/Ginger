@@ -720,21 +720,28 @@ namespace GingerCoreNET.DataSource
         {
             bool renameSuccess = false;
             bool tableExist = false;
-            using (var db = new LiteDatabase(FileFullPath))
+            try
             {
-                tableExist = db.CollectionExists(newTableName);
-                if (!tableExist)
+                using (var db = new LiteDatabase(FileFullPath))
                 {
-                    renameSuccess = db.RenameCollection(tableName, newTableName);
+                    tableExist = db.CollectionExists(newTableName);
+                    if (!tableExist)
+                    {
+                        renameSuccess = db.RenameCollection(tableName, newTableName);
+                    }
+                }
+                if (renameSuccess)
+                {
+                    this.UpdateDSNameChangeInItem(this, tableName, newTableName, ref renameSuccess);
+                }
+                else if (tableExist)
+                {
+                    Reporter.ToUser(eUserMsgKey.DbTableNameError, newTableName);
                 }
             }
-            if (renameSuccess)
+            catch (Exception)
             {
-                this.UpdateDSNameChangeInItem(this, tableName, newTableName, ref renameSuccess);
-            }
-            else if (tableExist)
-            {
-                Reporter.ToUser(eUserMsgKey.DbTableNameError, newTableName);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Table name can not be empty");
             }
         }
 
