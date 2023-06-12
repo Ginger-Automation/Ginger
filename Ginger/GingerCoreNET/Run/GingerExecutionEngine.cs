@@ -1457,13 +1457,13 @@ namespace Ginger.Run
                     return;
                 }
 
-                if (act.ReturnValues.Count == 0)
+                if (!act.ReturnValues.Any())
                 {
                     return;
                 }
 
-                List<ActReturnValue> mReturnValues = (from arc in act.ReturnValues where arc.Active == true select arc).ToList();
-                if (mReturnValues.Count == 0)
+                var mReturnValues = act.ReturnValues.Where(arc => arc.Active == true);
+                if (!mReturnValues.Any())
                 {
                     return;
                 }
@@ -1482,8 +1482,8 @@ namespace Ginger.Run
                     }
                 }
 
-                List<ActOutDataSourceConfig> mADCS = (from arc in act.DSOutputConfigParams where arc.DSName == act.OutDataSourceName && arc.DSTable == act.OutDataSourceTableName && arc.Active == true select arc).ToList();
-                if (mADCS.Count == 0 && act.OutDSParamMapType == Act.eOutputDSParamMapType.ParamToRow.ToString())
+                var mADCS = act.DSOutputConfigParams.Where(arc => arc.DSName == act.OutDataSourceName && arc.DSTable == act.OutDataSourceTableName && arc.Active == true);
+                if (!mADCS.Any() && act.OutDSParamMapType == Act.eOutputDSParamMapType.ParamToRow.ToString())
                 {
                     return;
                 }
@@ -1534,11 +1534,11 @@ namespace Ginger.Run
                         act.OutDataSourceTableName = act.DSOutputConfigParams[0].DSTable;
                     }
 
-                    List<ActReturnValue> mUniqueRVs = (from arc in act.ReturnValues where arc.Path == "" || arc.Path == "1" select arc).ToList();
+                    var mUniqueRVs = act.ReturnValues.Where(arc=> arc.Path == "" || arc.Path == "1");
                     // if in output values there is only 1 record with Path = null
-                    if (mUniqueRVs.Count == 0 && act.ReturnValues != null)
+                    if (!mUniqueRVs.Any() && act.ReturnValues != null)
                     {
-                        mUniqueRVs = act.ReturnValues.ToList();
+                        mUniqueRVs = act.ReturnValues;
                     }
                     foreach (ActReturnValue item in mUniqueRVs)
                     {
@@ -1569,11 +1569,11 @@ namespace Ginger.Run
                         }
                     }
 
-                    mADCS = (from arc in act.DSOutputConfigParams where arc.DSName == act.OutDataSourceName && arc.DSTable == act.OutDataSourceTableName && arc.Active == true && arc.OutParamMap == act.OutDSParamMapType select arc).ToList();
+                    mADCS = act.DSOutputConfigParams.Where(arc => arc.DSName == act.OutDataSourceName && arc.DSTable == act.OutDataSourceTableName && arc.Active == true && arc.OutParamMap == act.OutDSParamMapType);
 
 
 
-                    if (mADCS.Count == 0)
+                    if (!mADCS.Any())
                     {
                         return;
                     }
@@ -1595,35 +1595,33 @@ namespace Ginger.Run
                     }
 
                     int iPathCount = 0;
-                    List<ActReturnValue> mOutRVs = (from arc in act.ReturnValues where arc.Path == "" select arc).ToList();
-                    if (mOutRVs.Count == 0)
+                    var mOutRVs = act.ReturnValues.Where(arc=> arc.Path == "");
+                    if (!mOutRVs.Any())
                     {
                         iPathCount++;
-                        mOutRVs = (from arc in act.ReturnValues where arc.Path == iPathCount.ToString() select arc).ToList();
+                        mOutRVs = act.ReturnValues.Where(arc => arc.Path == iPathCount.ToString());
 
                         // if in output values there is only 1 record with Path = null
-                        if (mOutRVs.Count == 0 && act.ReturnValues != null)
+                        if (!mOutRVs.Any() && act.ReturnValues != null)
                         {
-                            mOutRVs = act.ReturnValues.ToList();
+                            mOutRVs = act.ReturnValues;
                         }
                     }
 
-                    while (mOutRVs.Count > 0)
+                    while (mOutRVs.Any())
                     {
                         string sColList = "";
                         string sColVals = "";
                         foreach (ActOutDataSourceConfig ADSC in mADCS)
                         {
-                            List<ActReturnValue> outReturnPath = (from arc in mOutRVs where arc.Param.Replace(" ", "_") == ADSC.OutputType select arc).ToList();
-                            if (outReturnPath.Count > 0)
+                            var outReturnPath = mOutRVs.FirstOrDefault(arc=> arc.Param.Replace(" ", "_") == ADSC.OutputType);
+                            if (outReturnPath!=null)
                             {
                                 sColList = $"{sColList}{ADSC.TableColumn},";
-                                string valActual = outReturnPath[0].Actual == null ? "" : outReturnPath[0].Actual.ToString();
+                                string valActual = outReturnPath.Actual == null ? "" : outReturnPath.Actual.ToString();
                                 //Replace from value like [,] and [']  as this break liteDB insertion query 
 
-                                string valActualReplace1 = valActual.Replace(",", "%2C");
-                                string valActualReplace2 = valActualReplace1.Replace("'", "%27");
-                                sColVals = $"{sColVals}'{valActualReplace2.Replace("'", "''")}',";
+                                sColVals = $"{sColVals}'{valActual.Replace(",", "%2C").Replace("'", "%27").Replace("'", "''")}',";
                             }
                         }
                         if (sColList == "")
@@ -1637,12 +1635,11 @@ namespace Ginger.Run
                         sQuery = DataSource.UpdateDSReturnValues(DataSourceTable.Name, sColList, sColVals);
 
                         //ReplaceBack to value like [,] and [']  
-                        string sQueryReplace = sQuery.Replace("%27", "'");
-                        DataSource.RunQuery(sQueryReplace.Replace("%2C", ","));
+                        DataSource.RunQuery(sQuery.Replace("%2C", ",").Replace("%27", "'"));
 
                         //Next Path
                         iPathCount++;
-                        mOutRVs = (from arc in act.ReturnValues where arc.Path == iPathCount.ToString() select arc).ToList();
+                        mOutRVs = act.ReturnValues.Where(arc => arc.Path == iPathCount.ToString());
                     }
                 }
                 else
