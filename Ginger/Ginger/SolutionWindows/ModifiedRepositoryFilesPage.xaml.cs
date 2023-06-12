@@ -22,6 +22,7 @@ using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.UserControls;
+using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -163,7 +164,18 @@ namespace Ginger.SolutionWindows
                     Reporter.ToUser(eUserMsgKey.AskToSelectItem);
                     return;
                 }
-                if (Reporter.ToUser(eUserMsgKey.SaveAllModifiedItems, $"Are you sure you want to save {selectedFiles.Count} Item(s)") == eUserMsgSelection.Yes)
+                eUserMsgSelection userMsgSelection = eUserMsgSelection.No;
+                //Shared Activities
+                if (selectedFiles.Any(item => item.FileType.Equals("Shared Activities")))
+                {
+                    userMsgSelection = Reporter.ToUser(eUserMsgKey.SaveAllModifiedItems, $"Are you sure you want to save {selectedFiles.Count} Item(s)?{Environment.NewLine}{Environment.NewLine}Note: Updating Shared {GingerDicser.GetTermResValue(eTermResKey.Activities)} will update the usage of all linked instances.");
+                }
+                else 
+                {
+                    userMsgSelection = Reporter.ToUser(eUserMsgKey.SaveAllModifiedItems, $"Are you sure you want to save {selectedFiles.Count} Item(s)?");
+                }
+
+                if (userMsgSelection == eUserMsgSelection.Yes)
                 {
                     await Task.Run(() =>
                    {
@@ -171,7 +183,7 @@ namespace Ginger.SolutionWindows
                        {
                            foreach (var file in fileToSave)
                            {
-                               SaveHandler.Save(file.item);
+                               SaveHandler.Save(file.item, checkPreSaveHandler: false);
                            }
                        });
                    });

@@ -1086,7 +1086,7 @@ namespace GingerCore
         }
         public override bool PreSaveHandler()
         {
-            return Reporter.ToUser(eUserMsgKey.WarnOnEditLinkSharedActivities) == Amdocs.Ginger.Common.eUserMsgSelection.No;
+            return Reporter.ToUser(eUserMsgKey.WarnOnSaveLinkSharedActivities) == Amdocs.Ginger.Common.eUserMsgSelection.No;
         }
 
         public bool IsAutoLearned { get; set; }

@@ -234,6 +234,7 @@ namespace Amdocs.Ginger.Common.Enums
         Wrench,
         Settings,
         Eraser,
+        Broom,
         Power,
         ArrowDown,
         ArrowRight,
