@@ -704,9 +704,10 @@ namespace GingerCore.Actions.Communication
                 emailReadOperations = new EmailReadGmailOperations();
             }
 
-            int index = 1;
+            int index = 0;
             emailReadOperations.ReadEmails(filters, config, email =>
             {
+                index++;
                 AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.From), email.From, index.ToString());
                 AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Subject), email.Subject, index.ToString());
                 AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Body), email.Body, index.ToString());
@@ -720,8 +721,13 @@ namespace GingerCore.Actions.Communication
                         AddOrUpdateReturnParamActualWithPath(filename, filepath, index.ToString());
                     }
                 }
-                index++;
             }).Wait();
+
+            if (index == 0)
+            {
+                Error = "Error: No Emails found matching the filters. Please veriy the filters again.";
+                return;
+            }
         }
 
         private EmailReadFilters CreateEmailReadFilters()
@@ -795,7 +801,7 @@ namespace GingerCore.Actions.Communication
         {
             string calculatedAttachmentDownloadPath = GetInputParamCalculatedValue(nameof(AttachmentDownloadPath));
             if (string.IsNullOrEmpty(calculatedAttachmentDownloadPath))
-            {
+            {               
                 throw new InvalidOperationException("Invalid attachment download path");
             }
 
@@ -810,6 +816,11 @@ namespace GingerCore.Actions.Communication
 
             if (email.Attachments != null)
             {
+                string downloadFolder = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedAttachmentDownloadPath);
+                if (!System.IO.Directory.Exists(downloadFolder))
+                {
+                    System.IO.Directory.CreateDirectory(downloadFolder);
+                }
                 foreach (ReadEmail.Attachment attachment in email.Attachments)
                 {
                     if (expectedContentTypes != null && 
@@ -817,13 +828,8 @@ namespace GingerCore.Actions.Communication
                     {
                         continue;
                     }
-                    string downloadFolder = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedAttachmentDownloadPath);
-                    if (!System.IO.Directory.Exists(downloadFolder))
-                    {
-                        System.IO.Directory.CreateDirectory(downloadFolder);
-                    }
-                    string filePath = Path.Combine(downloadFolder, attachment.Name);
-                    string uniqueFilePath = GetUniqueFilePath(filePath);
+                   
+                    string uniqueFilePath = GetUniqueFilePath(Path.Combine(downloadFolder, attachment.Name));
                     File.WriteAllBytes(uniqueFilePath, attachment.ContentBytes);
                     fileNamesAndPaths.Add((attachment.Name, uniqueFilePath));
                 }

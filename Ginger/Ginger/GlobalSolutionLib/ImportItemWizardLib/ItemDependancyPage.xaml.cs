@@ -209,7 +209,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             foreach (GlobalSolutionItem item in wiz.SelectedItemsListToImport.Where(x => x.RequiredFor == solutionItem.ItemName))
             {
                 item.Selected = solutionItem.Selected;
-                CheckUncheckDependantItems(item);
+                //CheckUncheckDependantItems(item);
             }
         }
     }
