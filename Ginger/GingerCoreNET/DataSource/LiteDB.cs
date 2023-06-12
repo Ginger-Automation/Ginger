@@ -721,7 +721,7 @@ namespace GingerCoreNET.DataSource
             bool renameSuccess = false;
             bool tableExist = false;
             try
-            {
+            {                
                 using (var db = new LiteDatabase(FileFullPath))
                 {
                     tableExist = db.CollectionExists(newTableName);
@@ -739,9 +739,9 @@ namespace GingerCoreNET.DataSource
                     Reporter.ToUser(eUserMsgKey.DbTableNameError, newTableName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Table name can not be empty");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occured while renaming the table {tableName}", ex);                
             }
         }
 
