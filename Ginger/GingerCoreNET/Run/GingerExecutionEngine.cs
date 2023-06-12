@@ -4591,7 +4591,8 @@ namespace Ginger.Run
                 mExecutedActionWhenStopped = (Act)CurrentBusinessFlow.CurrentActivity?.Acts.CurrentItem;
                 mExecutedBusinessFlowWhenStopped = (BusinessFlow)CurrentBusinessFlow;
                 Agent currentAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
-                if (currentAgent != null)
+                // Added an extra condition for the Application to not throw an error if the  ((AgentOperations)currentAgent.AgentOperations).Driver is null
+                if (currentAgent != null && ((AgentOperations)currentAgent.AgentOperations).Driver!=null)
                 {
                     ((AgentOperations)currentAgent.AgentOperations).Driver.cancelAgentLoading = true;
                 }
