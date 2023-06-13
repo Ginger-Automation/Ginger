@@ -158,36 +158,24 @@ namespace Ginger.SolutionWindows
             try
             {
                 loaderElement.Visibility = Visibility.Visible;
-                List<ModifiedRepositoryFileInfo> selectedFiles = mModifiedFilesInfo.Where(x => x.Selected).ToList();
-                if (selectedFiles == null || selectedFiles.Count == 0)
+                var selectedFiles = mModifiedFilesInfo.Where(x => x.Selected);
+                if (selectedFiles == null || !selectedFiles.Any())
                 {
                     Reporter.ToUser(eUserMsgKey.AskToSelectItem);
                     return;
                 }
-                eUserMsgSelection userMsgSelection;
-                //Shared Activities
-                if (selectedFiles.Any(item => item.FileType.Equals("Shared Activities")))
-                {
-                    userMsgSelection = Reporter.ToUser(eUserMsgKey.SaveAllModifiedItems, $"Are you sure you want to save {selectedFiles.Count} Item(s)?{Environment.NewLine}{Environment.NewLine}Note: Updating Shared {GingerDicser.GetTermResValue(eTermResKey.Activities)} will update the usage of all linked instances.");
-                }
-                else 
-                {
-                    userMsgSelection = Reporter.ToUser(eUserMsgKey.SaveAllModifiedItems, $"Are you sure you want to save {selectedFiles.Count} Item(s)?");
-                }
 
-                if (userMsgSelection == eUserMsgSelection.Yes)
-                {
-                    await Task.Run(() =>
+                await Task.Run(() =>
+               {
+                   Parallel.ForEach(selectedFiles.GroupBy(g => g.FileType), fileToSave =>
                    {
-                       Parallel.ForEach(selectedFiles.GroupBy(g => g.FileType), fileToSave =>
+                       foreach (var file in fileToSave)
                        {
-                           foreach (var file in fileToSave)
-                           {
-                               SaveHandler.Save(file.item, checkPreSaveHandler: false);
-                           }
-                       });
+                           SaveHandler.Save(file.item);
+                       }
                    });
-                }
+               });
+
             }
             catch (Exception ex)
             {

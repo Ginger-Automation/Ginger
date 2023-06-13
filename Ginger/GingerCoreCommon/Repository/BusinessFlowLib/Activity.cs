@@ -1084,10 +1084,6 @@ namespace GingerCore
             // saving from Shared repository tab
             GingerCoreCommonWorkSpace.Instance.SharedRepositoryOperations.UpdateSharedRepositoryLinkedInstances(this);
         }
-        public override bool PreSaveHandler()
-        {
-            return Reporter.ToUser(eUserMsgKey.WarnOnSaveLinkSharedActivities) == Amdocs.Ginger.Common.eUserMsgSelection.No;
-        }
 
         public bool IsAutoLearned { get; set; }
     }

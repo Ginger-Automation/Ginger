@@ -148,13 +148,13 @@ namespace Amdocs.Ginger.Repository
         /// Save changes of exsiting Repository Item to file system
         /// </summary>
         /// <param name="repositoryItem"></param>
-        public void SaveRepositoryItem(RepositoryItemBase repositoryItem, bool checkPreSaveHandler = true)
+        public void SaveRepositoryItem(RepositoryItemBase repositoryItem)
         {
-            if (String.IsNullOrEmpty(repositoryItem.ContainingFolder))
+            if (string.IsNullOrEmpty(repositoryItem.ContainingFolder))
             {
                 throw new Exception("Cannot save item, there is no containing folder defined - " + repositoryItem.GetType().FullName + ", " + repositoryItem.GetNameForFileName());
             }
-            if (checkPreSaveHandler && repositoryItem.PreSaveHandler())
+            if (repositoryItem.PreSaveHandler())
             {
                 return;
             }

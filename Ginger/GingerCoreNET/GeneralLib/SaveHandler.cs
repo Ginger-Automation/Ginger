@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
 {
     public static class SaveHandler
     {
-        public static void Save(RepositoryItemBase objectToSave, bool checkPreSaveHandler = true)
+        public static void Save(RepositoryItemBase objectToSave)
         {
             if (objectToSave == null)
             {
@@ -40,7 +40,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             else
             {
                 Reporter.ToStatus(eStatusMsgKey.SaveItem, null, objectToSave.ItemName, "item");
-                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(objectToSave, checkPreSaveHandler);
+                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(objectToSave);
                 Reporter.HideStatusMessage();
             }
         }
