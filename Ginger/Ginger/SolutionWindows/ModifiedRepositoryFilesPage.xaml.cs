@@ -164,7 +164,7 @@ namespace Ginger.SolutionWindows
                     Reporter.ToUser(eUserMsgKey.AskToSelectItem);
                     return;
                 }
-                eUserMsgSelection userMsgSelection = eUserMsgSelection.No;
+                eUserMsgSelection userMsgSelection;
                 //Shared Activities
                 if (selectedFiles.Any(item => item.FileType.Equals("Shared Activities")))
                 {
