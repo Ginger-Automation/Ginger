@@ -152,7 +152,7 @@ namespace Ginger.Variables
             this.Width = 850;
             this.Height = 400;
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, showClosebtn:false);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, showClosebtn: false, closeEventHandler: okBtn_Click);
         }
 
         private void undoBtn_Click(object sender, RoutedEventArgs e)

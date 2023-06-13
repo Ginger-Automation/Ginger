@@ -167,7 +167,8 @@ namespace Amdocs.Ginger.Common
         SourceControlBranchNameEmpty, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace,
         DeleteRecoverFolderWarn,
         EnvParamNameExists,
-        EnvParamNameEmpty
+        EnvParamNameEmpty,
+        RenameVariableReferences
     }
 
     public static class UserMsgsPool
@@ -407,6 +408,7 @@ namespace Amdocs.Ginger.Common
             #endregion Excel Messages
 
             #region Variables Messages
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RenameVariableReferences, new UserMsg(eUserMsgType.QUESTION, "Rename Variable References", "Do you want to rename all references of this variable?" + Environment.NewLine + "Note: Not renaming the references may cause issues in solution.", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskToSelectVariable, new UserMsg(eUserMsgType.WARN, "Select " + GingerDicser.GetTermResValue(eTermResKey.Variable), "Please select " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ".", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.VariablesAssignError, new UserMsg(eUserMsgType.ERROR, GingerDicser.GetTermResValue(eTermResKey.Variables) + " Assign Error", "Failed to assign " + GingerDicser.GetTermResValue(eTermResKey.Variables) + "." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SetCycleNumError, new UserMsg(eUserMsgType.ERROR, "Set Cycle Number Error", "Failed to set the cycle number." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
