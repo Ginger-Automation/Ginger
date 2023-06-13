@@ -182,7 +182,7 @@ namespace Ginger.Run
                         }                        
                     }
                 }
-                else if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null && !WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Any(x => string.IsNullOrEmpty(x.ALMDefectID)))
+                else if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null && WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Any() && !WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Any(x => string.IsNullOrEmpty(x.ALMDefectID)))
                 {
                     Reporter.ToUser(eUserMsgKey.AllSelectedDefectAlreadyCreatedInAlm);
                     return;

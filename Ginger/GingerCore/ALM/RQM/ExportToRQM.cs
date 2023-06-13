@@ -416,6 +416,8 @@ namespace GingerCore.ALM.RQM
                 exeResult.TestCaseExportID = txExportID;
                 exeResult.TestScriptExportID = tsExportID;
                 exeResult.ExecutionRecordExportID = erExportID;
+                exeResult.StartDate = businessFlow.StartTimeStamp.ToString("o");
+                exeResult.EndDate = businessFlow.EndTimeStamp.ToString("o");
 
                 int i = 1;
                 foreach (Activity act in relevantActivities)
