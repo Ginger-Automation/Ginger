@@ -261,7 +261,7 @@ namespace Ginger.Agents
                         SelectedAgent.AgentOperations.WaitForAgentToBeReady();
                     }
                     Agent.eStatus Status = ((AgentOperations)SelectedAgent.AgentOperations).Status;
-                    if (Status != Agent.eStatus.Running && Status != Agent.eStatus.Starting)
+                    if (((AgentOperations)SelectedAgent.AgentOperations).Driver != null && Status != Agent.eStatus.Running && Status != Agent.eStatus.Starting)
                     {
                         string errorMessage = ((AgentOperations)SelectedAgent.AgentOperations).Driver.ErrorMessageFromDriver;
                         if (String.IsNullOrEmpty(errorMessage))

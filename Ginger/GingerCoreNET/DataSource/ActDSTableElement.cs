@@ -60,7 +60,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return "Data Source Manipulation";
+                 return "Data Source Manipulation";
             }
         }
 
@@ -279,22 +279,81 @@ namespace GingerCore.Actions
 
         }
 
+        private eControlAction mControlAction;
         [IsSerializedForLocalRepository]
-        public eControlAction ControlAction { get; set; }
+        public eControlAction ControlAction
+        {
+            get
+            {
+                return mControlAction;
+            }
+            set
+            {
+                if (mControlAction != value)
+                {
+                    mControlAction = value;
+                    OnPropertyChanged(nameof(ControlAction));
+                }
+            }
+        }
 
+        private string mValueExp;
         [IsSerializedForLocalRepository]
-        public string ValueExp { get; set; }
+        public string ValueExp
+        {
+            get
+            {
+                return mValueExp;
+            }
+            set
+            {
+                if (mValueExp != value)
+                {
+                    mValueExp = value;
+                    OnPropertyChanged(nameof(ValueExp));
+                }
+            }
+        }
 
         public string VarName { get; set; }
 
         [IsSerializedForLocalRepository]
         public string ValueUC { get; set; }
 
-        //[IsSerializedForLocalRepository]
-        public ObservableList<ActDSConditon> WhereConditions { get; set; }
-
+        private ObservableList<ActDSConditon> mWhereConditions;
         [IsSerializedForLocalRepository]
-        public ExportToExcelConfig ExcelConfig { get; set; }
+        public ObservableList<ActDSConditon> WhereConditions
+        {
+            get
+            {
+                return mWhereConditions;
+            }
+            set
+            {
+                if (mWhereConditions != value)
+                {
+                    mWhereConditions = value;
+                    OnPropertyChanged(nameof(WhereConditions));
+                }
+            }
+        }
+
+        private ExportToExcelConfig mExcelConfig;
+        [IsSerializedForLocalRepository]
+        public ExportToExcelConfig ExcelConfig {
+            get
+            {
+                return mExcelConfig;
+            }
+            set
+            {
+                if (mExcelConfig != value)
+                {
+                    mExcelConfig = value;
+                    OnPropertyChanged(nameof(ExcelConfig));
+                }
+            }
+        }
 
         public enum eControlAction
         {
@@ -363,36 +422,175 @@ namespace GingerCore.Actions
         }
 
 
+        private string mQueryValue;
         [IsSerializedForLocalRepository]
-        public string QueryValue { get; set; }
+        public string QueryValue {
+            get
+            {
+                return mQueryValue;
+            }
+            set
+            {
+                if (mQueryValue != value)
+                {
+                    mQueryValue = value;
+                    OnPropertyChanged(nameof(QueryValue));
+                }
+            }
+        }
+
+        private string mColSelectorValue;
+        [IsSerializedForLocalRepository]
+        public string ColSelectorValue
+        {
+            get
+            {
+                return mColSelectorValue;
+            }
+            set
+            {
+                if (mColSelectorValue != value)
+                {
+                    mColSelectorValue = value;
+                    OnPropertyChanged(nameof(ColSelectorValue));
+                }
+            }
+        }
+
+        private string mDSName;
+        [IsSerializedForLocalRepository]
+        public string DSName
+        {
+            get
+            {
+                return mDSName;
+            }
+            set
+            {
+                if (mDSName != value)
+                {
+                    mDSName = value;
+                    OnPropertyChanged(nameof(DSName));
+                }
+            }
+        }
+
+        private bool mCustomized;
+        [IsSerializedForLocalRepository]
+        public bool Customized
+        {
+            get
+            {
+                return mCustomized;
+            }
+            set
+            {
+                if (mCustomized != value)
+                {
+                    mCustomized = value;
+                    OnPropertyChanged(nameof(Customized));
+                }
+            }
+        }
+
+        private bool mByQuery;
+        [IsSerializedForLocalRepository]
+        public bool ByQuery { get
+            {
+                return mByQuery;
+            }
+                set { 
+                mByQuery = value;
+                OnPropertyChanged(nameof(ByQuery));
+            }
+        }
+
+        private string mDSTableName;
+        [IsSerializedForLocalRepository]
+        public string DSTableName
+        {
+            get
+            {
+                return mDSTableName;
+            }
+            set
+            {
+                if(mDSTableName != value)
+                {
+                    mDSTableName = value;
+                    OnPropertyChanged(nameof(DSTableName));
+                }
+            }
+        }
+
+        private eRunColPropertyValue mWhereProperty;
+        [IsSerializedForLocalRepository]
+        public eRunColPropertyValue WhereProperty {
+            get
+            {
+                return mWhereProperty;
+            }
+            set
+            {
+                if (mWhereProperty != value)
+                {
+                    mWhereProperty = value;
+                    OnPropertyChanged(nameof(WhereProperty));
+                }
+            }
+        }
+
+        private eRunColOperator mWhereOperator;
+        [IsSerializedForLocalRepository]
+        public eRunColOperator WhereOperator {
+            get { return mWhereOperator; }
+            set
+            {
+
+                if (mWhereOperator != value)
+                {
+                    mWhereOperator = value;
+                    OnPropertyChanged(nameof(WhereOperator));
+                }
+            }
+        }
+
+        private bool mByRowNum;
+        [IsSerializedForLocalRepository]
+        public bool ByRowNum {
+            get
+            {
+                return mByRowNum;
+            }
+            set
+            {
+                if (mByRowNum != value)
+                {
+                    mByRowNum = value;
+                    OnPropertyChanged(nameof(ByRowNum));
+                }
+            }
+        }
+
+        private int mRowVal;
+        [IsSerializedForLocalRepository]
+        public int RowVal
+        {
+            get
+            {
+                return mRowVal;
+            }
+            set
+            {
+                if (mRowVal != value)
+                {
+                    mRowVal = value;
+                    OnPropertyChanged(nameof(RowVal));
+                }
+            }
+        }
 
 
-        [IsSerializedForLocalRepository]
-        public string ColSelectorValue { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public string DSName { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public bool Customized { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public bool ByQuery { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public string DSTableName { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public eRunColPropertyValue WhereProperty { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public eRunColOperator WhereOperator { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public bool ByRowNum { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public int RowVal { get; set; }
         [IsSerializedForLocalRepository]
         public bool ByNextAvailable { get; set; }
 
