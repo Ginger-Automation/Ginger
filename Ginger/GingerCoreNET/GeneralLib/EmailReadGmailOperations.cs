@@ -73,9 +73,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 if (!string.IsNullOrEmpty(filters.Body))
                 {
                     queryToImap = queryToImap.And(SearchQuery.BodyContains(filters.Body));
-                }
-
-                const string dateTimeFormat = "yyyy-MM-ddTHH:mm:ssK";
+                }              
 
                 DateTimeOffset receivedStartDateTimeToOffset = (DateTimeOffset)filters.ReceivedStartDate.ToUniversalTime();
                 DateTimeOffset receivedEndDateTimeToOffset = (DateTimeOffset)filters.ReceivedEndDate.ToUniversalTime();
