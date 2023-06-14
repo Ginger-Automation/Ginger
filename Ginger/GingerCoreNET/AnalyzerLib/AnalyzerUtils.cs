@@ -55,6 +55,7 @@ namespace Ginger.AnalyzerLib
             {
                 List<string> tempList = RunBusinessFlowAnalyzer(BF, issuesList);
                 MergeVariablesList(usedVariablesInSolution, tempList);
+                tempList.Clear();
             });
             ReportUnusedVariables(solution, usedVariablesInSolution, issuesList);
         }
@@ -144,14 +145,13 @@ namespace Ginger.AnalyzerLib
                         }
 
                     }
-
-                    List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
-                    MergeVariablesList(usedVariablesInActivity, tempList);
+                    
+                    MergeVariablesList(usedVariablesInActivity, AnalyzeAction.GetUsedVariableFromAction(action));                    
                 });
+                
 
-                List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
-
-                MergeVariablesList(usedVariablesInActivity, activityVarList);
+                MergeVariablesList(usedVariablesInActivity, AnalyzeActivity.GetUsedVariableFromActivity(activity));
+                
                 ReportUnusedVariables(activity, usedVariablesInActivity, issuesList);
                 MergeVariablesList(usedVariablesInBF, usedVariablesInActivity);
 
