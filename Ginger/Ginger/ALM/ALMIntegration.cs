@@ -591,7 +591,7 @@ namespace Ginger.ALM
                             if ((defaultField.PossibleValues.Count == 0 && currentField.SelectedValue != defaultField.SelectedValue) || (defaultField.PossibleValues.Count > 0 && defaultField.PossibleValues.Contains(currentField.SelectedValue) && currentField.SelectedValue != defaultField.PossibleValues[0]))
                             {
                                 currentField.ToUpdate = true;
-                                updatedFields.Add(currentField);
+                               
                             }
                             else
                             {
@@ -604,6 +604,7 @@ namespace Ginger.ALM
                             currentField.SelectedValue = defaultField.SelectedValue;
                             currentField.ToUpdate = false;
                         }
+                        updatedFields.Add(currentField);
                     }
                 }
             }

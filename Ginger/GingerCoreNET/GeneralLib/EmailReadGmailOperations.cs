@@ -73,7 +73,10 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 if (!string.IsNullOrEmpty(filters.Body))
                 {
                     queryToImap = queryToImap.And(SearchQuery.BodyContains(filters.Body));
-                }
+                }              
+
+                DateTimeOffset receivedStartDateTimeToOffset = (DateTimeOffset)filters.ReceivedStartDate.ToUniversalTime();
+                DateTimeOffset receivedEndDateTimeToOffset = (DateTimeOffset)filters.ReceivedEndDate.ToUniversalTime();
 
                 if (!filters.ReceivedStartDate.Equals(DateTime.MinValue))
                 {
@@ -82,6 +85,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 if (!(filters.ReceivedEndDate.Equals(DateTime.Today)))
                 {
                     queryToImap = queryToImap.And(SearchQuery.DeliveredBefore(filters.ReceivedEndDate.AddDays(1)));
+
                 }
                 IEnumerable<string> expectedContentTypes = null;
                 if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes && (!string.IsNullOrEmpty(filters.AttachmentContentType)))
@@ -104,7 +108,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                         ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.No) && !message.Attachments.Any()) ||
                         ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes) && DoesSatisfyAttachmentFilter(message, expectedContentTypes)))
                     {
-                        if(string.IsNullOrEmpty(filters.Body) || message.TextBody.Contains(filters.Body))
+                        if ((string.IsNullOrEmpty(filters.Body) || message.TextBody.Contains(filters.Body)) && (message.Date >= receivedStartDateTimeToOffset && message.Date <= receivedEndDateTimeToOffset))                            
                         {
                             emailProcessor(ConvertMessageToReadEmail(message, filters));
                         }
