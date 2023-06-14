@@ -157,7 +157,7 @@ namespace Ginger.ALM
             LoadFieldsStatusLbl.Visibility = Visibility.Collapsed;
             grdQCFields.Visibility = Visibility.Visible;
             grdQCFields.DataSourceList = mItemsFields;
-            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "ALM Item Fields population is complete");
+            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "ALM Item Fields population is complete");
         }
         #endregion
 
