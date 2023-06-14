@@ -164,7 +164,14 @@ namespace Ginger.Variables
         {
             if (mVariable.NameBeforeEdit != mVariable.Name)
             {
-                await Task.Run(() => UpdateVariableNameChange());
+                if (Reporter.ToUser(eUserMsgKey.RenameVariableReferences, mParent.GetType().Name) == eUserMsgSelection.OK)
+                {
+                    await Task.Run(() => UpdateVariableNameChange());
+                }
+                else
+                {
+                    mVariable.Name = mVariable.NameBeforeEdit;
+                }
             }
         }
 
@@ -469,6 +476,10 @@ namespace Ginger.Variables
                             VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
                         });
                     });
+                    if (mVariable.SetAsOutputValue)
+                    {
+                        UpdateVariableNameInRunsets(bf.Guid);
+                    }
                 }
                 else if (mParent is Activity)
                 {
@@ -485,6 +496,32 @@ namespace Ginger.Variables
             finally
             {
                 Reporter.HideStatusMessage();
+            }
+        }
+
+        private void UpdateVariableNameInRunsets(Guid businessFlowGuid)
+        {
+            string variableOldName = mVariable.NameBeforeEdit;
+            string variableNewName = mVariable.Name;
+
+            foreach (RunSetConfig runset in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>())
+            {
+                foreach (GingerRunner runner in runset.GingerRunners)
+                {
+                    foreach (BusinessFlowRun bfRun in runner.BusinessFlowsRunList.Where(x => x.BusinessFlowGuid.Equals(businessFlowGuid)))
+                    {
+                        IEnumerable<VariableBase> variablesMappedToOldName = bfRun.BusinessFlowCustomizedRunVariables
+                            .Where(variable =>
+                            {
+                                return string.Equals(variable.MappedOutputValue, variableOldName);
+                            });
+
+                        foreach (VariableBase variable in variablesMappedToOldName)
+                        {
+                            variable.MappedOutputValue = variableNewName;
+                        }
+                    }
+                }
             }
         }
 
