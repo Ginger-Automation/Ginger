@@ -56,7 +56,6 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
                     {
                         mWizard.apps.Add(new EnvApplication() { Name = "MyApplication" });
                     }
-                   
                     xAppsListBox.ItemsSource = mWizard.apps;
                     break;
 
@@ -67,7 +66,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
         private void xAddAppBtn_Click(object sender, RoutedEventArgs e)
         {
             string newAppName = "NewApp";
-            EnvApplication envApp = new EnvApplication() { Name = newAppName }; 
+            EnvApplication envApp = new EnvApplication() { Name = newAppName };
             if (GingerCore.General.GetInputWithValidation("Add Environment Application", "Application Name:", ref newAppName, null, false, envApp))
             {
                 if (mWizard.apps.FirstOrDefault(x => x.Name == newAppName) == null)

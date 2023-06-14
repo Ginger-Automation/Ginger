@@ -25,7 +25,6 @@ namespace GingerCore.Environments
 {
     public class EnvApplication : RepositoryItemBase
     {
-        
 
         private string mName;
         [IsSerializedForLocalRepository]
