@@ -99,12 +99,12 @@ namespace Ginger.AnalyzerLib
             Dispatcher.Invoke(() =>
             {               
                 if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add && e.NewItems != null)
-                {
-                    TotalIssues++;
-                    IssuesCountLabel.Content = TotalIssues;
+                {                   
                     foreach (AnalyzerItemBase item in e.NewItems)
                     {
-                        if(item.Severity == AnalyzerItemBase.eSeverity.High || item.Severity == AnalyzerItemBase.eSeverity.Critical)
+                        TotalIssues++;
+                        IssuesCountLabel.Content = TotalIssues;
+                        if (item.Severity == AnalyzerItemBase.eSeverity.High || item.Severity == AnalyzerItemBase.eSeverity.Critical)
                         {
                             TotalHighAndCriticalIssues++;
                             CriticalAndHighIssuesLabelCounter.Content = TotalHighAndCriticalIssues;
