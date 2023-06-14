@@ -56,6 +56,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
                     {
                         mWizard.apps.Add(new EnvApplication() { Name = "MyApplication" });
                     }
+
                     xAppsListBox.ItemsSource = mWizard.apps;
                     break;
 
