@@ -72,6 +72,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
             {
                 if (mWizard.apps.FirstOrDefault(x => x.Name == newAppName) == null)
                 {
+                    envApp.Name = newAppName;
                     envApp.Active = true;
                     mWizard.apps.Add(envApp);
                 }
