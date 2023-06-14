@@ -51,6 +51,8 @@ namespace Ginger.AnalyzerLib
 
         Brush _brush = new SolidColorBrush(Colors.Red);
 
+        Brush _brushDefault = (SolidColorBrush)new BrushConverter().ConvertFromString("#152B37");
+
         private AnalyzedObject mAnalyzedObject;
 
         GenericWindow _pageGenericWin = null;
@@ -108,16 +110,17 @@ namespace Ginger.AnalyzerLib
                         {
                             TotalHighAndCriticalIssues++;
                             CriticalAndHighIssuesLabelCounter.Content = TotalHighAndCriticalIssues;
-                            CriticalAndHighIssuesLabelCounter.Foreground = _brush;
-                            CriticalAndHighIssuesLabel.Visibility = Visibility.Visible;
+                            if (TotalHighAndCriticalIssues == 1)
+                            {
+                                CriticalAndHighIssuesLabelCounter.Foreground = _brush;                                
+                            }
                         }
                         else if(item.CanAutoFix == AnalyzerItemBase.eCanFix.Yes)
                         {
                             AutoFixIssues++;
-                            CanAutoFixLableCounter.Content = AutoFixIssues;
-                            CanAutoFixLable.Visibility = Visibility.Visible;
+                            CanAutoFixLableCounter.Content = AutoFixIssues;                            
                         }
-                    }
+                    }                                   
                 }
             });            
         }
@@ -169,7 +172,7 @@ namespace Ginger.AnalyzerLib
             mIssues.CollectionChanged -= MIssues_CollectionChanged;
             mIssues.CollectionChanged += MIssues_CollectionChanged;
             CriticalAndHighIssuesLabelCounter.Content = "0";
-            CriticalAndHighIssuesLabelCounter.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#152B37");   //"#20334f";
+            CriticalAndHighIssuesLabelCounter.Foreground = _brushDefault;   //"#20334f";
             CanAutoFixLableCounter.Content = "0";
             await Analyze();
         }
@@ -184,6 +187,9 @@ namespace Ginger.AnalyzerLib
         {
             // Each analyzer will set to true once completed, this is prep for multi run in threads for speed
             mIssues.Clear();
+            TotalIssues = 0;
+            TotalHighAndCriticalIssues = 0;
+            AutoFixIssues = 0;
             BusyInProcess = true;
             mAnalyzerCompleted = false;
             mAnalyzeDoneOnce = true;
