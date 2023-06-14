@@ -321,8 +321,8 @@ namespace GingerCore
             {
                 mActivities.LoadLazyInfo();
                 mLazyLoadFlagForUnitTest = true;
-                AttachActivitiesGroupsAndActivities(mActivities);
                 LoadLinkedActivities();
+                AttachActivitiesGroupsAndActivities(mActivities);
                 if (this.DirtyStatus != eDirtyStatus.NoTracked)
                 {
                     this.TrackObservableList(mActivities);
@@ -1050,7 +1050,7 @@ namespace GingerCore
         {
             if (this.Activities.Any(f => f.IsLinkedItem))
             {
-                Parallel.For(0, this.Activities.Count(), i =>
+                Parallel.For(0, this.Activities.Count, i =>
                 {
                     if (!this.Activities[i].IsLinkedItem)
                         return;
@@ -1062,6 +1062,7 @@ namespace GingerCore
                         copyItem.Guid = this.Activities[i].Guid;
                         copyItem.ActivitiesGroupID = this.Activities[i].ActivitiesGroupID;
                         copyItem.Type = this.Activities[i].Type;
+                        copyItem.Active = this.Activities[i].Active; 
                         this.Activities[i] = copyItem;
                     }
                 });
@@ -1073,7 +1074,7 @@ namespace GingerCore
             int i = 0;
             foreach (Activity a in Activities)
             {
-                i += a.Acts.Count();
+                i += a.Acts.Count;
             }
             return i;
         }
