@@ -165,9 +165,13 @@ namespace Ginger.Variables
         {
             if (mVariable.NameBeforeEdit != mVariable.Name)
             {
-                if (Reporter.ToUser(eUserMsgKey.RenameVariableReferences) == eUserMsgSelection.Yes)
+                if (Reporter.ToUser(eUserMsgKey.RenameVariableReferences, mParent.GetType().Name) == eUserMsgSelection.OK)
                 {
                     await Task.Run(() => UpdateVariableNameChange());
+                }
+                else
+                {
+                    mVariable.Name = mVariable.NameBeforeEdit;
                 }
             }
         }
@@ -473,6 +477,10 @@ namespace Ginger.Variables
                             VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
                         });
                     });
+                    if (mVariable.SetAsOutputValue)
+                    {
+                        UpdateVariableNameInRunsets(bf.Guid);
+                    }
                 }
                 else if (mParent is Activity)
                 {
@@ -484,7 +492,6 @@ namespace Ginger.Variables
                         VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
                     });
                 }
-                UpdateVariableNameInRunsets();
                 mVariable.NameBeforeEdit = mVariable.Name;
             }
             finally
@@ -493,7 +500,7 @@ namespace Ginger.Variables
             }
         }
 
-        private void UpdateVariableNameInRunsets()
+        private void UpdateVariableNameInRunsets(Guid businessFlowGuid)
         {
             string variableOldName = mVariable.NameBeforeEdit;
             string variableNewName = mVariable.Name;
@@ -502,7 +509,7 @@ namespace Ginger.Variables
             {
                 foreach (GingerRunner runner in runset.GingerRunners)
                 {
-                    foreach (BusinessFlowRun bfRun in runner.BusinessFlowsRunList)
+                    foreach (BusinessFlowRun bfRun in runner.BusinessFlowsRunList.Where(x => x.BusinessFlowGuid.Equals(businessFlowGuid)))
                     {
                         IEnumerable<VariableBase> variablesMappedToOldName = bfRun.BusinessFlowCustomizedRunVariables
                             .Where(variable =>

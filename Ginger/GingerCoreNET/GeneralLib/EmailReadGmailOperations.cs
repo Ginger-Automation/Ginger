@@ -110,7 +110,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                     {
                         if ((string.IsNullOrEmpty(filters.Body) || message.TextBody.Contains(filters.Body)) && (message.Date >= receivedStartDateTimeToOffset && message.Date <= receivedEndDateTimeToOffset))                            
                         {
-                            emailProcessor(ConvertMessageToReadEmail(message, filters));
+                            emailProcessor(ConvertMessageToReadEmail(message, expectedContentTypes));
                         }
                        
                     }
@@ -174,14 +174,15 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             }
         }
 
-        private ReadEmail ConvertMessageToReadEmail(MimeMessage message, EmailReadFilters filters)
+        private ReadEmail ConvertMessageToReadEmail(MimeMessage message,
+            IEnumerable<string> expectedContentTypes)
         {
             IEnumerable<ReadEmail.Attachment> attachments = null ;
 
             if (message.Attachments != null && message.Attachments.Any())
             {
                 attachments = message.Attachments
-                    .Where(attachment => attachment.ContentType.MimeType.Equals(filters.AttachmentContentType))
+                    .Where(attachment => expectedContentTypes.Contains(attachment.ContentType.MimeType))
                     .Select(attachment => new ReadEmail.Attachment()
                     {
                         Name = ((MimePart)attachment).ContentType.Name,
