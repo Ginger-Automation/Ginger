@@ -314,7 +314,7 @@ namespace GingerCore.Drivers.WindowsLib
                     if (!result.Equals(""))
                     {
                         actWBE.AddOrUpdateReturnParamActual("Actual", result);
-                        actWBE.ExInfo = result;
+                        actWBE.ExInfo = "Page source added to Output values.";
                     }
                     else
                     {

@@ -119,65 +119,87 @@ namespace Ginger.Run
 
         private void OpenDefectForSelectedSuggestions_Click(object sender, RoutedEventArgs e)
         {
-            //if selected ALM is QC And UseRest=False return
-            GingerCoreNET.ALMLib.ALMConfig almConfig = ALMCore.GetCurrentAlmConfig(((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).AlmType);
-            if (!almConfig.UseRest && almConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.QC)
+            try
             {
-                Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");
-                return;
-            }
-
-            if ((WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null) && (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Count > 0) &&
-                (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.ToOpenDefectFlag == true && (x.ALMDefectID == null || x.ALMDefectID == string.Empty)).ToList().Count > 0))
-            {
-                if (Reporter.ToUser(eUserMsgKey.AskALMDefectsOpening, WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.ToOpenDefectFlag == true && (x.ALMDefectID == null || x.ALMDefectID == string.Empty)).ToList().Count) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                Mouse.OverrideCursor = Cursors.Wait;
+                if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null && 
+                    WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Any(x => x.ToOpenDefectFlag == true && string.IsNullOrEmpty(x.ALMDefectID)))
                 {
-                    Mouse.OverrideCursor = Cursors.Wait;
-                    Dictionary<Guid, Dictionary<string, string>> defectsForOpening = new Dictionary<Guid, Dictionary<string, string>>();
-                    foreach (DefectSuggestion defectSuggestion in WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.ToOpenDefectFlag == true && (x.ALMDefectID == null || x.ALMDefectID == string.Empty)).ToList())
+                    //if selected ALM is QC And UseRest=False return
+                    GingerCoreNET.ALMLib.ALMConfig almConfig = ALMCore.GetCurrentAlmConfig(((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).AlmType);
+                    if (!almConfig.UseRest && almConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.QC)
                     {
-                        Dictionary<string, string> currentALMDefectFieldsValues = new Dictionary<string, string>();
-                        try
-                        {
-                            currentALMDefectFieldsValues = ((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).ALMDefectProfileFields.Where(z => (z.SelectedValue != null && z.SelectedValue != string.Empty) ||
-                                                                                                                                                                               z.ExternalID == "description" || z.ExternalID == "Summary" || z.ExternalID == "name").ToDictionary(x => x.ExternalID, x => x.SelectedValue != null ? x.SelectedValue.Replace("&", "&amp;") : x.SelectedValue = string.Empty)
-                                                                                                                                         .ToDictionary(w => w.Key, w => w.Key == "description" ? defectSuggestion.ErrorDetails : w.Value)
-                                                                                                                                         .ToDictionary(w => w.Key, w => w.Key == "Summary" ? defectSuggestion.Summary : w.Value)
-                                                                                                                                         .ToDictionary(w => w.Key, w => w.Key == "name" ? defectSuggestion.Summary : w.Value);
-                        }
-                        catch (Exception ex)
-                        {
-                            currentALMDefectFieldsValues.Add("Summary", defectSuggestion.Summary);
-                            currentALMDefectFieldsValues.Add("description", defectSuggestion.ErrorDetails != null ? defectSuggestion.ErrorDetails : "There is no error description");
-                        }
-                        currentALMDefectFieldsValues.Add("screenshots", String.Join(",", defectSuggestion.ScreenshotFileNames));
-                        currentALMDefectFieldsValues.Add("ActivityGroupExternalID", defectSuggestion.ActivityGroupExternalID);
-                        currentALMDefectFieldsValues.Add("ActivityExternalID", defectSuggestion.ActivityExternalID);
-                        currentALMDefectFieldsValues.Add("BFExternalID1", defectSuggestion.BFExternalID.Item1);
-                        currentALMDefectFieldsValues.Add("BFExternalID2", defectSuggestion.BFExternalID.Item2);
-
-                        defectsForOpening.Add(defectSuggestion.DefectSuggestionGuid, currentALMDefectFieldsValues);
+                        Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI);
+                        return;
                     }
-                    var defectFields = ((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).ALMDefectProfileFields.ToList();
-                    //Update alm type to open defect
-                    ALMIntegration.Instance.UpdateALMType(((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).AlmType, true);
-                    Dictionary<Guid, string> defectsOpeningResults = ALMIntegration.Instance.CreateNewALMDefects(defectsForOpening, defectFields);
 
-                    if ((defectsOpeningResults != null) && (defectsOpeningResults.Count > 0))
+                    if (Reporter.ToUser(eUserMsgKey.AskALMDefectsOpening, WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Count(x => x.ToOpenDefectFlag == true && string.IsNullOrEmpty(x.ALMDefectID))) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                     {
-                        foreach (KeyValuePair<Guid, string> defectOpeningResult in defectsOpeningResults)
+                        
+                        Dictionary<Guid, Dictionary<string, string>> defectsForOpening = new Dictionary<Guid, Dictionary<string, string>>();
+                        foreach (DefectSuggestion defectSuggestion in WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.ToOpenDefectFlag == true && string.IsNullOrEmpty(x.ALMDefectID)))
                         {
-                            if ((defectOpeningResult.Value != null) && (defectOpeningResult.Value != "0"))
+                            Dictionary<string, string> currentALMDefectFieldsValues = new Dictionary<string, string>();
+                            try
                             {
-                                WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.DefectSuggestionGuid == defectOpeningResult.Key).ToList().ForEach(z => { z.ALMDefectID = defectOpeningResult.Value; z.IsOpenDefectFlagEnabled = false; z.ToOpenDefectFlag = false; });
+                                currentALMDefectFieldsValues = ((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).ALMDefectProfileFields.Where(z => (z.SelectedValue != null && z.SelectedValue != string.Empty) ||
+                                                                                                                                                                                   z.ExternalID == "description" || z.ExternalID == "Summary" || z.ExternalID == "name").ToDictionary(x => x.ExternalID, x => x.SelectedValue != null ? x.SelectedValue.Replace("&", "&amp;") : x.SelectedValue = string.Empty)
+                                                                                                                                             .ToDictionary(w => w.Key, w => w.Key == "description" ? defectSuggestion.ErrorDetails : w.Value)
+                                                                                                                                             .ToDictionary(w => w.Key, w => w.Key == "Summary" ? defectSuggestion.Summary : w.Value)
+                                                                                                                                             .ToDictionary(w => w.Key, w => w.Key == "name" ? defectSuggestion.Summary : w.Value);
                             }
+                            catch (Exception ex)
+                            {
+                                currentALMDefectFieldsValues.Add("Summary", defectSuggestion.Summary);
+                                currentALMDefectFieldsValues.Add("description", defectSuggestion.ErrorDetails != null ? defectSuggestion.ErrorDetails : "There is no error description");
+                            }
+                            currentALMDefectFieldsValues.Add("screenshots", string.Join(",", defectSuggestion.ScreenshotFileNames));
+                            currentALMDefectFieldsValues.Add("ActivityGroupExternalID", defectSuggestion.ActivityGroupExternalID);
+                            currentALMDefectFieldsValues.Add("ActivityExternalID", defectSuggestion.ActivityExternalID);
+                            currentALMDefectFieldsValues.Add("BFExternalID1", defectSuggestion.BFExternalID.Item1);
+                            currentALMDefectFieldsValues.Add("BFExternalID2", defectSuggestion.BFExternalID.Item2);
+
+                            defectsForOpening.Add(defectSuggestion.DefectSuggestionGuid, currentALMDefectFieldsValues);
                         }
-                        grdDefectSuggestions.DataSourceList = WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList;
-                        Mouse.OverrideCursor = null;
-                        Reporter.ToUser(eUserMsgKey.ALMDefectsWereOpened, defectsOpeningResults.Where(x => x.Value != null && x.Value != string.Empty && x.Value != "0").ToList().Count);
+                        var defectFields = ((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).ALMDefectProfileFields.ToList();
+                        //Update alm type to open defect
+                        ALMIntegration.Instance.UpdateALMType(((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).AlmType, true);
+                        Dictionary<Guid, string> defectsOpeningResults = ALMIntegration.Instance.CreateNewALMDefects(defectsForOpening, defectFields);
+
+                        if (defectsOpeningResults != null && defectsOpeningResults.Any())
+                        {
+                            foreach (KeyValuePair<Guid, string> defectOpeningResult in defectsOpeningResults.Where(d => !string.IsNullOrEmpty(d.Value) && d.Value != "0"))
+                            {
+                                foreach (var suggestedDefect in WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.DefectSuggestionGuid == defectOpeningResult.Key))
+                                {
+                                    suggestedDefect.ALMDefectID = defectOpeningResult.Value;
+                                    suggestedDefect.IsOpenDefectFlagEnabled = false;
+                                    suggestedDefect.ToOpenDefectFlag = false;
+                                }
+                            }
+                            grdDefectSuggestions.DataSourceList = WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList;                            
+                            Reporter.ToUser(eUserMsgKey.ALMDefectsWereOpened, defectsOpeningResults.Where(x => x.Value != null && x.Value != string.Empty && x.Value != "0").ToList().Count);
+                        }                        
                     }
-                    Mouse.OverrideCursor = null;
                 }
+                else if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null && WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Any() && !WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Any(x => string.IsNullOrEmpty(x.ALMDefectID)))
+                {
+                    Reporter.ToUser(eUserMsgKey.AllSelectedDefectAlreadyCreatedInAlm);
+                    return;
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.NoSelectedDefect);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to create Defect - { ex.InnerException}");
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
             }
         }
     }
