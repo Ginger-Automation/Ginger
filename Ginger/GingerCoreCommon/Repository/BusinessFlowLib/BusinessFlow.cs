@@ -1050,7 +1050,7 @@ namespace GingerCore
         {
             if (this.Activities.Any(f => f.IsLinkedItem))
             {
-                Parallel.For(0, this.Activities.Count, i =>
+                Parallel.For(0, this.Activities.Count, new ParallelOptions() { MaxDegreeOfParallelism = 5 }, i =>
                 {
                     if (!this.Activities[i].IsLinkedItem)
                         return;
