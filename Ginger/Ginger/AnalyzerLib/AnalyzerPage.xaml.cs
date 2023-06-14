@@ -97,12 +97,12 @@ namespace Ginger.AnalyzerLib
         private void MIssues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             Dispatcher.Invoke(() =>
-            {
-                TotalIssues++;
-                IssuesCountLabel.Content = TotalIssues;
+            {               
                 if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add && e.NewItems != null)
                 {
-                    foreach(AnalyzerItemBase item in e.NewItems)
+                    TotalIssues++;
+                    IssuesCountLabel.Content = TotalIssues;
+                    foreach (AnalyzerItemBase item in e.NewItems)
                     {
                         if(item.Severity == AnalyzerItemBase.eSeverity.High || item.Severity == AnalyzerItemBase.eSeverity.Critical)
                         {
