@@ -166,7 +166,8 @@ namespace Amdocs.Ginger.Common
         SourceControlBranchNameEmpty, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace,
         DeleteRecoverFolderWarn,
         EnvParamNameExists,
-        EnvParamNameEmpty
+        EnvParamNameEmpty,
+        RenameVariableReferences
     }
 
     public static class UserMsgsPool
