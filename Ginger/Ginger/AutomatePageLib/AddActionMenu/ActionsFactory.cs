@@ -56,17 +56,21 @@ namespace Ginger.BusinessFlowPages
         public static int AddActionsHandler(object mItem, Context mContext, int targetIndex = -1)
         {
             Act instance = null;
-            ePlatformType currentActivityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
 
             if (mContext.Activity != null)
             {
                 mContext.BusinessFlow.CurrentActivity = mContext.Activity;//so new Actions will be added to correct Activity
+            }
+            else { 
+                return -1;
             }
             if (!mContext.Activity.EnableEdit && mContext.Activity.IsLinkedItem)
             {
                 Reporter.ToUser(eUserMsgKey.EditLinkSharedActivities);
                 return -1;
             }
+
+            ePlatformType currentActivityPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x=> x.AppName == mContext.Activity.TargetApplication).Platform;
             if (mItem is Act)
             {
                 Act selectedAction = mItem as Act;

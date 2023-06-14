@@ -1050,7 +1050,7 @@ namespace GingerCore
         {
             if (this.Activities.Any(f => f.IsLinkedItem))
             {
-                Parallel.For(0, this.Activities.Count(), i =>
+                Parallel.For(0, this.Activities.Count, new ParallelOptions() { MaxDegreeOfParallelism = 5 }, i =>
                 {
                     if (!this.Activities[i].IsLinkedItem)
                         return;
@@ -1061,7 +1061,7 @@ namespace GingerCore
                         Activity copyItem = (Activity)sharedActivity.CreateInstance(true);
                         copyItem.Guid = this.Activities[i].Guid;
                         copyItem.ActivitiesGroupID = this.Activities[i].ActivitiesGroupID;
-                        copyItem.Type = this.Activities[i].Type;
+                        copyItem.Type = this.Activities[i].Type;                        
                         this.Activities[i] = copyItem;
                     }
                 });

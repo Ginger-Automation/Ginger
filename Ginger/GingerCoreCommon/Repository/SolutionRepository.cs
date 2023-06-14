@@ -150,7 +150,7 @@ namespace Amdocs.Ginger.Repository
         /// <param name="repositoryItem"></param>
         public void SaveRepositoryItem(RepositoryItemBase repositoryItem)
         {
-            if (String.IsNullOrEmpty(repositoryItem.ContainingFolder))
+            if (string.IsNullOrEmpty(repositoryItem.ContainingFolder))
             {
                 throw new Exception("Cannot save item, there is no containing folder defined - " + repositoryItem.GetType().FullName + ", " + repositoryItem.GetNameForFileName());
             }
