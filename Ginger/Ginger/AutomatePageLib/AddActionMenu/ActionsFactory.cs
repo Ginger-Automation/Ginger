@@ -190,11 +190,13 @@ namespace Ginger.BusinessFlowPages
             }
             else
             {
-                instance = (Act)selectedAction.CreateCopy();
+                //GetNewAction might change the list of InputValues, hence calling before CreateCopy
                 if (selectedAction is IObsoleteAction && (selectedAction as IObsoleteAction).IsObsoleteForPlatform(mContext.Platform))
                 {
                     eUserMsgSelection userSelection;
-                    if (((IObsoleteAction)selectedAction).GetNewAction() == null)
+                    bool hasNewAction = ((IObsoleteAction)selectedAction).GetNewAction() == null;
+                    instance = (Act)selectedAction.CreateCopy();
+                    if (hasNewAction)
                     {
                         userSelection = Reporter.ToUser(eUserMsgKey.WarnAddLegacyAction, ((IObsoleteAction)selectedAction).TargetActionTypeName());
                         if (userSelection == eUserMsgSelection.No)
@@ -215,11 +217,15 @@ namespace Ginger.BusinessFlowPages
                             instance = ((IObsoleteAction)selectedAction).GetNewAction();
                             instance.Description = instance.ActionType;
                         }
-                        else if (userSelection == eUserMsgSelection.Cancel || userSelection == eUserMsgSelection.No)
+                        else if (userSelection == eUserMsgSelection.Cancel)
                         {
                             return null;            //do not add any action
                         }
                     }
+                }
+                else
+                {
+                    instance = (Act)selectedAction.CreateCopy();
                 }
 
                 for (int i = 0; i < selectedAction.InputValues.Count; i++)
