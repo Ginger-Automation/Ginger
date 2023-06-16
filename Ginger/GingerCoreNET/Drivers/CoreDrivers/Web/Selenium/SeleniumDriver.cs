@@ -230,6 +230,11 @@ namespace GingerCore.Drivers
         public string PageLoadStrategy { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("ignore")]
+        [UserConfiguredDescription("Specifies the state of current session’s user prompt handler, You can change it from dismiss, accept, dismissAndNotify, acceptAndNotify, ignore")]
+        public string UnhandledPromptBehavior { get; set; }
+
+        [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Start BMP - Browser Mob Proxy (true/false)")]
         public bool StartBMP { get; set; }
@@ -497,6 +502,7 @@ namespace GingerCore.Drivers
                         options.AddArgument("--start-maximized");
                         SetCurrentPageLoadStrategy(options);
                         SetBrowserLogLevel(options);
+                        SetUnhandledPromptBehavior(options);
 
                         if (IsUserProfileFolderPathValid())
                         {
@@ -672,7 +678,7 @@ namespace GingerCore.Drivers
                             SetBrowserLogLevel(EDOpts);
                             //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
                             //EDOpts.UseChromium = true;
-                            EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                            EDOpts.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Default;
                             if (IsUserProfileFolderPathValid())
                             {
                                 EDOpts.AddAdditionalEdgeOption("user-data-dir=", UserProfileFolderPath);
@@ -760,7 +766,7 @@ namespace GingerCore.Drivers
                                 edgeOptions.AddAdditionalOption(SeleniumDriver.RemoteVersionParam, RemoteVersion);
                             }
 
-                            edgeOptions.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                            edgeOptions.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Default;
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), edgeOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
@@ -9701,6 +9707,37 @@ namespace GingerCore.Drivers
                 }
             }
 
+        }
+
+        public void SetUnhandledPromptBehavior(DriverOptions options)
+        {
+            if (UnhandledPromptBehavior != null)
+            {
+                if (UnhandledPromptBehavior.ToLower() == nameof(OpenQA.Selenium.UnhandledPromptBehavior.Accept).ToLower())
+                {
+                    options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Accept;
+                }
+                else if (UnhandledPromptBehavior.ToLower() == nameof(OpenQA.Selenium.UnhandledPromptBehavior.Dismiss).ToLower())
+                {
+                    options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Dismiss;
+                }
+                else if (UnhandledPromptBehavior.ToLower() == nameof(OpenQA.Selenium.UnhandledPromptBehavior.DismissAndNotify).ToLower())
+                {
+                    options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.DismissAndNotify;
+                }
+                else if (UnhandledPromptBehavior.ToLower() == nameof(OpenQA.Selenium.UnhandledPromptBehavior.AcceptAndNotify).ToLower())
+                {
+                    options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.AcceptAndNotify;
+                }
+                else if (UnhandledPromptBehavior.ToLower() == nameof(OpenQA.Selenium.UnhandledPromptBehavior.Ignore).ToLower())
+                {
+                    options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Ignore;
+                }
+                else
+                {
+                    options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Default;
+                }
+            }
         }
 
         private void SetBrowserLogLevel(DriverOptions options)
