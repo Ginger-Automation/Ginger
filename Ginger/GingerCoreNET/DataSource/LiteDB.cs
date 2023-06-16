@@ -551,7 +551,7 @@ namespace GingerCoreNET.DataSource
                                     if ((jt as JProperty).Name != "_id")
                                     {
                                         string sData = jt.ToString();
-                                        Regex regex = new Regex(@": {(\r|\n| )*""_type"": ""System.DBNull, mscorlib""(\r|\n| )*}");
+                                        Regex regex = new Regex(@": {(\r|\n| )*""_type"": ""System.DBNull*");
                                         Match match = regex.Match(sData);
                                         if (match.Success)
                                         {
