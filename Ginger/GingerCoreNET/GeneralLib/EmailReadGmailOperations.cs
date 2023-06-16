@@ -99,8 +99,9 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
 
                 var list = new UniqueIdSet(MailKit.Search.SortOrder.Descending);
                 foreach (var uid in inbox.Search(queryToImap, cancellationToken))
+                {
                     list.Add(uid);
-
+                }                   
                 // Add a condition to the search query.                        
                 MimeMessage message = null;
                 foreach (var item in list)
