@@ -477,10 +477,6 @@ namespace Ginger.Variables
                             VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
                         });
                     });
-                    if (mVariable.SetAsOutputValue)
-                    {
-                        UpdateVariableNameInRunsets(bf.Guid);
-                    }
                 }
                 else if (mParent is Activity)
                 {
@@ -492,6 +488,10 @@ namespace Ginger.Variables
                         VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
                     });
                 }
+                if (mVariable.SetAsOutputValue || mParent is Solution)
+                {
+                    UpdateVariableNameInRunsets();
+                }
                 mVariable.NameBeforeEdit = mVariable.Name;
             }
             finally
@@ -500,7 +500,7 @@ namespace Ginger.Variables
             }
         }
 
-        private void UpdateVariableNameInRunsets(Guid businessFlowGuid)
+        private void UpdateVariableNameInRunsets()
         {
             string variableOldName = mVariable.NameBeforeEdit;
             string variableNewName = mVariable.Name;
@@ -509,7 +509,7 @@ namespace Ginger.Variables
             {
                 foreach (GingerRunner runner in runset.GingerRunners)
                 {
-                    foreach (BusinessFlowRun bfRun in runner.BusinessFlowsRunList.Where(x => x.BusinessFlowGuid.Equals(businessFlowGuid)))
+                    foreach (BusinessFlowRun bfRun in runner.BusinessFlowsRunList)
                     {
                         IEnumerable<VariableBase> variablesMappedToOldName = bfRun.BusinessFlowCustomizedRunVariables
                             .Where(variable =>
