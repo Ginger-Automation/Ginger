@@ -95,10 +95,13 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
 
 
                 var inbox = client.Inbox;
-                inbox.Open(FolderAccess.ReadOnly);
-                // Add a condition to the search query.
-                IList<UniqueId> list = inbox.Search(queryToImap, cancellationToken);
+                inbox.Open(FolderAccess.ReadOnly);               
 
+                var list = new UniqueIdSet(MailKit.Search.SortOrder.Descending);
+                foreach (var uid in inbox.Search(queryToImap, cancellationToken))
+                    list.Add(uid);
+
+                // Add a condition to the search query.                        
                 MimeMessage message = null;
                 foreach (var item in list)
                 {
