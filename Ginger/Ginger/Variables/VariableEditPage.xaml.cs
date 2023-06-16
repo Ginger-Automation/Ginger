@@ -165,9 +165,13 @@ namespace Ginger.Variables
         {
             if (mVariable.NameBeforeEdit != mVariable.Name)
             {
-                if (Reporter.ToUser(eUserMsgKey.RenameVariableReferences) == eUserMsgSelection.Yes)
+                if (Reporter.ToUser(eUserMsgKey.RenameVariableReferences, mParent.GetType().Name) == eUserMsgSelection.OK)
                 {
                     await Task.Run(() => UpdateVariableNameChange());
+                }
+                else
+                {
+                    mVariable.Name = mVariable.NameBeforeEdit;
                 }
             }
         }
@@ -484,7 +488,10 @@ namespace Ginger.Variables
                         VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
                     });
                 }
-                UpdateVariableNameInRunsets();
+                if (mVariable.SetAsOutputValue || mParent is Solution)
+                {
+                    UpdateVariableNameInRunsets();
+                }
                 mVariable.NameBeforeEdit = mVariable.Name;
             }
             finally

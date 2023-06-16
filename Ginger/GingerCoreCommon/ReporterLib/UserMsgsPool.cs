@@ -118,6 +118,7 @@ namespace Amdocs.Ginger.Common
         WarnOnDynamicActivities,
         WarnOnLinkSharedActivities,
         WarnOnEditLinkSharedActivities,
+        WarnOnSaveLinkSharedActivities,
         EditLinkSharedActivities,
         QcConnectFailureRestAPI,
         ExportedExecDetailsToALMIsInProcess,
@@ -407,7 +408,7 @@ namespace Amdocs.Ginger.Common
             #endregion Excel Messages
 
             #region Variables Messages
-            Reporter.UserMsgsPool.Add(eUserMsgKey.RenameVariableReferences, new UserMsg(eUserMsgType.QUESTION, "Rename Variable References", "Do you want to rename all references of this variable?" + Environment.NewLine + "Note: Not renaming the references may cause issues in solution.", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RenameVariableReferences, new UserMsg(eUserMsgType.QUESTION, "Rename Variable References", "Do you want to rename all references of this variable?" + Environment.NewLine + "Note: Renaming will update its usage across {0}.", eUserMsgOption.OKCancel, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskToSelectVariable, new UserMsg(eUserMsgType.WARN, "Select " + GingerDicser.GetTermResValue(eTermResKey.Variable), "Please select " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ".", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.VariablesAssignError, new UserMsg(eUserMsgType.ERROR, GingerDicser.GetTermResValue(eTermResKey.Variables) + " Assign Error", "Failed to assign " + GingerDicser.GetTermResValue(eTermResKey.Variables) + "." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SetCycleNumError, new UserMsg(eUserMsgType.ERROR, "Set Cycle Number Error", "Failed to set the cycle number." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
@@ -423,7 +424,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.DeleteRepositoryItemAreYouSure, new UserMsg(eUserMsgType.WARN, "Delete", "Are you sure you want to delete '{0}' item?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DeleteTreeFolderAreYouSure, new UserMsg(eUserMsgType.WARN, "Delete Folder", "Are you sure you want to delete the '{0}' folder and all of it content?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.RenameRepositoryItemAreYouSure, new UserMsg(eUserMsgType.WARN, "Rename", "Are you sure you want to rename '{0}'?", eUserMsgOption.YesNoCancel, eUserMsgSelection.Yes));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.SaveBusinessFlowChanges, new UserMsg(eUserMsgType.QUESTION, "Save Changes", "Save Changes to - {0}", eUserMsgOption.YesNoCancel, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SaveBusinessFlowChanges, new UserMsg(eUserMsgType.QUESTION, "Save Changes", "Save Changes to - {0}", eUserMsgOption.YesNo, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SolutionLoadError, new UserMsg(eUserMsgType.ERROR, "Solution Load Error", "Failed to load the solution." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.MissingAddSolutionInputs, new UserMsg(eUserMsgType.WARN, "Add Solution", "Missing solution inputs, please set the solution name, folder, encryption key and main application details.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SolutionAlreadyExist, new UserMsg(eUserMsgType.WARN, "Add Solution", "The solution already exist, please select different name/folder.", eUserMsgOption.OK, eUserMsgSelection.None));
@@ -712,7 +713,13 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.WarnOnDynamicActivities, new UserMsg(eUserMsgType.QUESTION, "Dynamic " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " Warning", "The dynamically added Shared Repository " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " will not be saved (but they will continue to appear on the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ")") + System.Environment.NewLine + System.Environment.NewLine + "To continue with Save?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.WarnOnLinkSharedActivities, new UserMsg(eUserMsgType.QUESTION, "Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " Warning", "The Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " are readonly and any changes done will not be saved." + System.Environment.NewLine + System.Environment.NewLine + "Do you want to save other changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+
             Reporter.UserMsgsPool.Add(eUserMsgKey.WarnOnEditLinkSharedActivities, new UserMsg(eUserMsgType.QUESTION, "Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " Warning", "Any updates to linked shared repository auto update the shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " and all it's usage in other flows." + System.Environment.NewLine + System.Environment.NewLine + "Do you want to proceed with Edit?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.WarnOnSaveLinkSharedActivities, new UserMsg(eUserMsgType.QUESTION, "Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " Warning", "Any updates to linked shared repository auto update the shared " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " and all it's usage in other flows." + System.Environment.NewLine + System.Environment.NewLine + "Do you want to proceed with Save?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            
+
+
             Reporter.UserMsgsPool.Add(eUserMsgKey.EditLinkSharedActivities, new UserMsg(eUserMsgType.INFO, "Link Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities), "Linked shared repository " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " are read only by default." + System.Environment.NewLine + System.Environment.NewLine + "If you want to update, open it in edit mode.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.QcConnectFailureRestAPI, new UserMsg(eUserMsgType.WARN, "QC/ALM Connection Failed", "QC/ALM connection failed." + System.Environment.NewLine + "Please make sure that the server url and the credentials you use are correct.", eUserMsgOption.OK, eUserMsgSelection.None));
