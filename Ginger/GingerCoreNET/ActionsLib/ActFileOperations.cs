@@ -168,7 +168,7 @@ namespace GingerCore.Actions
                     }
                     break;
                 case eFileoperations.Copy:
-                    SetupDestinationfolders();
+                    SetupDestinationFolder();
                     if (System.IO.File.Exists(calculatedSourceFilePath))
                     {
                         if (System.IO.Directory.Exists(DestinationFolder))
@@ -200,7 +200,7 @@ namespace GingerCore.Actions
                     }
                     break;
                 case eFileoperations.ForceCopy:
-                    SetupDestinationfolders();
+                    SetupDestinationFolder();
                     if (System.IO.File.Exists(calculatedSourceFilePath))
                     {
                         if (!System.IO.Directory.Exists(DestinationFolder))
@@ -219,7 +219,7 @@ namespace GingerCore.Actions
                     }
                     break;
                 case eFileoperations.Move:
-                    SetupDestinationfolders();
+                    SetupDestinationFolder();
                     if (IsSorcePathRelative)
                     {
                         base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
@@ -277,7 +277,7 @@ namespace GingerCore.Actions
                     }
                     break;
                 case eFileoperations.UnZip:
-                    SetupDestinationfolders();
+                    SetupDestinationFolder();
                     if (!calculatedSourceFilePath.ToLower().EndsWith(".zip"))
                     {
                         base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
@@ -344,23 +344,23 @@ namespace GingerCore.Actions
             }
         }
 
-        private void SetupDestinationfolders()
+        private void SetupDestinationFolder()
         {
             string calculatedDestinationPath = GetInputParamCalculatedValue(Fields.DestinationFolder);
             calculatedDestinationPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedDestinationPath);
-            DestinationFolder = System.IO.Path.GetDirectoryName(calculatedDestinationPath);
-            if (!String.IsNullOrEmpty(DestinationFolder))
+            DestinationFolder = Path.GetDirectoryName(calculatedDestinationPath);
+            if (!string.IsNullOrEmpty(DestinationFolder))
             {
-                if (System.IO.Directory.Exists(calculatedDestinationPath))
+                if (Directory.Exists(calculatedDestinationPath))
                 {
                     DestinationFolder = calculatedDestinationPath;
-                    if (!DestinationFolder.EndsWith(@"\"))
+                    if (!Path.EndsInDirectorySeparator(DestinationFolder))
                     {
-                        DestinationFolder = DestinationFolder + @"\";
+                        DestinationFolder += Path.DirectorySeparatorChar;
                     }
                 }
             }
-            DestinationFile = System.IO.Path.GetFileName(calculatedDestinationPath);
+            DestinationFile = Path.GetFileName(calculatedDestinationPath);
         }
         public override bool SerializationError(SerializationErrorType errorType, string name, string value)
         {
