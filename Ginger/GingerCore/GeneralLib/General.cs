@@ -422,7 +422,7 @@ namespace GingerCore
 
                     break;
                 case "EnvApplication":
-                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<EnvApplication>().Any(x => x.Name == resultValue))
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Any(x => x.Applications.Any(y=>y.Name== resultValue)))
                     {
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Application with same name: " + "'" + resultValue + "'" + " already exists.");
                         return true;

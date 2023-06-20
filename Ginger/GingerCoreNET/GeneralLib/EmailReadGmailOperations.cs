@@ -73,7 +73,10 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 if (!string.IsNullOrEmpty(filters.Body))
                 {
                     queryToImap = queryToImap.And(SearchQuery.BodyContains(filters.Body));
-                }
+                }              
+
+                DateTimeOffset receivedStartDateTimeToOffset = (DateTimeOffset)filters.ReceivedStartDate.ToUniversalTime();
+                DateTimeOffset receivedEndDateTimeToOffset = (DateTimeOffset)filters.ReceivedEndDate.ToUniversalTime();
 
                 if (!filters.ReceivedStartDate.Equals(DateTime.MinValue))
                 {
@@ -82,6 +85,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 if (!(filters.ReceivedEndDate.Equals(DateTime.Today)))
                 {
                     queryToImap = queryToImap.And(SearchQuery.DeliveredBefore(filters.ReceivedEndDate.AddDays(1)));
+
                 }
                 IEnumerable<string> expectedContentTypes = null;
                 if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes && (!string.IsNullOrEmpty(filters.AttachmentContentType)))
@@ -91,10 +95,14 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
 
 
                 var inbox = client.Inbox;
-                inbox.Open(FolderAccess.ReadOnly);
-                // Add a condition to the search query.
-                IList<UniqueId> list = inbox.Search(queryToImap, cancellationToken);
+                inbox.Open(FolderAccess.ReadOnly);               
 
+                var list = new UniqueIdSet(MailKit.Search.SortOrder.Descending);
+                foreach (var uid in inbox.Search(queryToImap, cancellationToken))
+                {
+                    list.Add(uid);
+                }                   
+                // Add a condition to the search query.                        
                 MimeMessage message = null;
                 foreach (var item in list)
                 {
@@ -104,9 +112,9 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                         ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.No) && !message.Attachments.Any()) ||
                         ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes) && DoesSatisfyAttachmentFilter(message, expectedContentTypes)))
                     {
-                        if(string.IsNullOrEmpty(filters.Body) || message.TextBody.Contains(filters.Body))
+                        if ((string.IsNullOrEmpty(filters.Body) || message.TextBody.Contains(filters.Body)) && (message.Date >= receivedStartDateTimeToOffset && message.Date <= receivedEndDateTimeToOffset))                            
                         {
-                            emailProcessor(ConvertMessageToReadEmail(message, filters));
+                            emailProcessor(ConvertMessageToReadEmail(message, expectedContentTypes));
                         }
                        
                     }
@@ -170,14 +178,15 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             }
         }
 
-        private ReadEmail ConvertMessageToReadEmail(MimeMessage message, EmailReadFilters filters)
+        private ReadEmail ConvertMessageToReadEmail(MimeMessage message,
+            IEnumerable<string> expectedContentTypes)
         {
             IEnumerable<ReadEmail.Attachment> attachments = null ;
 
             if (message.Attachments != null && message.Attachments.Any())
             {
                 attachments = message.Attachments
-                    .Where(attachment => attachment.ContentType.MimeType.Equals(filters.AttachmentContentType))
+                    .Where(attachment => expectedContentTypes.Contains(attachment.ContentType.MimeType))
                     .Select(attachment => new ReadEmail.Attachment()
                     {
                         Name = ((MimePart)attachment).ContentType.Name,

@@ -656,7 +656,7 @@ namespace GingerCore.ALM.RQM
                         RqmResponseData responseDataVersionedTS;
                         try
                         {
-                            string curentExecutionRecordScriptUri = executionRecord.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.ExecutesTestScriptUri, nsmgrExecutionRecords).Attributes[0].InnerText.ToString();
+                            string curentExecutionRecordScriptUri = executionRecord.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.ExecutesTestScriptUri, nsmgrExecutionRecords) != null ? executionRecord.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.ExecutesTestScriptUri, nsmgrExecutionRecords).Attributes[0].InnerText.ToString() :  string.Empty;
                             responseDataVersionedTS = RQMRep.GetRqmResponse(loginData, new Uri(curentExecutionRecordScriptUri));
                         }
                         catch

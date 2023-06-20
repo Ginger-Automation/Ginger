@@ -26,7 +26,6 @@ namespace GingerCore.Environments
     public class EnvApplication : RepositoryItemBase
     {
 
-
         private string mName;
         [IsSerializedForLocalRepository]
         public string Name { get { return mName; } set { if (mName != value) { mName = value; OnPropertyChanged(nameof(Name)); } } }
@@ -90,6 +89,10 @@ namespace GingerCore.Environments
             {
                 this.Name = value;
             }
+        }
+        public override string GetItemType()
+        {
+            return nameof(EnvApplication);
         }
 
         public override eImageType ItemImageType
