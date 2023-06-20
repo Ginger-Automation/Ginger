@@ -519,6 +519,8 @@ namespace Ginger.Actions
                 mDataSourceName = mDSNames[0];
             }
 
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ByQuery, RadioButton.IsCheckedProperty, mActDSTblElem, ActDSTableElement.Fields.ByQuery);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(QueryVal, TextBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.QueryValue);
             if (mActDSTblElem.ValueExp != null && mActDSTblElem.ValueExp != "")
             {
                 SetDataSourceVEParams(mActDSTblElem.ValueExp);
