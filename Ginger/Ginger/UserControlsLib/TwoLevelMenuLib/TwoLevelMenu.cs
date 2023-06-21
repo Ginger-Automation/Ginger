@@ -36,7 +36,7 @@ namespace Ginger.TwoLevelMenuLib
             {
                 if (!WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
                 {
-                    if (topMenuItem.Name == WorkSpace.Instance.Solution.ExternalIntegrationsTabName)
+                    if (WorkSpace.Instance.Solution!= null && topMenuItem.Name == WorkSpace.Instance.Solution.ExternalIntegrationsTabName)
                     {
                         continue;
                     }
