@@ -86,11 +86,14 @@ namespace GingerCore.ALM.RQM
             {
                 XmlSerializer serializer = new
                 XmlSerializer(typeof(RQMProjectListConfiguration));
-                FileStream fs = new FileStream(importConfigTemplate, FileMode.Open);
-                XmlReader reader = XmlReader.Create(fs);
                 RQMProjectListConfiguration RQMProjectList;
-                RQMProjectList = (RQMProjectListConfiguration)serializer.Deserialize(reader);
-                fs.Close();
+                XmlReader reader;
+                using (FileStream fs = new FileStream(importConfigTemplate, FileMode.Open))
+                {
+                    reader = XmlReader.Create(fs);                   
+                    RQMProjectList = (RQMProjectListConfiguration)serializer.Deserialize(reader);
+                    fs.Close();
+                }
 
                 RQMProject currentRQMProjectMapping;
                 if (RQMProjectList.RQMProjects.Count > 0)
@@ -370,7 +373,7 @@ namespace GingerCore.ALM.RQM
                             }
                             else
                             {
-                                RQMExecutionRecord currentExecutionRecord = testPlan.RQMExecutionRecords.Where(y => y.RelatedTestCaseRqmID == txExportID && y.RelatedTestScriptRqmID == tsExportID).FirstOrDefault();
+                                RQMExecutionRecord currentExecutionRecord = testPlan.RQMExecutionRecords.FirstOrDefault(y => y.RelatedTestCaseRqmID == txExportID && y.RelatedTestScriptRqmID == tsExportID);
                                 if (currentExecutionRecord != null)
                                 {
                                     erExportID = currentExecutionRecord.RQMID;
