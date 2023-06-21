@@ -61,7 +61,8 @@ namespace GingerCore.Actions
             ForceCopy,
             RunCommand,
             UnZip,
-            DeleteDirectoryFiles
+            DeleteDirectoryFiles,
+            DeleteDirectory
         }
 
         public eFileoperations FileOperationMode
