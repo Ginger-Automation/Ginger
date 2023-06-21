@@ -39,6 +39,7 @@ namespace Ginger.Actions
 
             DestinationFolderTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileOperations.Fields.DestinationFolder), true, true, UCValueExpression.eBrowserType.Folder);
 
+            DirectoryPathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileOperations.Fields.SourceFilePath), true, true, UCValueExpression.eBrowserType.Folder);
             xRunArgumentsTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActFileOperations.Arguments)), true, false);
 
             mAct.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();

@@ -36,5 +36,10 @@
             <Label Style="{StaticResource @InputFieldLabelStyle}">Arguments:</Label>
             <Actions:UCValueExpression x:Name="xRunArgumentsTextBox" />
         </StackPanel>
+
+        <StackPanel Grid.Row="1" >
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Source File Path:</Label>
+            <Actions:UCValueExpression x:Name="DirectoryPathTextBox" ToolTip="Text file full/relative path"/>
+        </StackPanel>
     </Grid>
 </Page>
