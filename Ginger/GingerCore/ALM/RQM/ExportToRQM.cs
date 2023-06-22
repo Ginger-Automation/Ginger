@@ -489,7 +489,7 @@ namespace GingerCore.ALM.RQM
                             exeStep.StepActualResult = "Not Completed";
                             break;
                         case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped:
-                            exeStep.StepStatus = ACL_Data_Contract.ExecutoinStatus.Outscoped;
+                            exeStep.StepStatus = ACL_Data_Contract.ExecutoinStatus.Skipped;
                             exeStep.StepActualResult = "Skipped";
                             break;
                         case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked:

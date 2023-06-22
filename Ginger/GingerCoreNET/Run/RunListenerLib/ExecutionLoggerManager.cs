@@ -37,6 +37,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using static GingerCore.ALM.PublishToALMConfig;
 using Activity = GingerCore.Activity;
 
 namespace Ginger.Run
@@ -501,20 +502,11 @@ namespace Ginger.Run
                     //
                     // Defects Suggestion section (to be considered to remove to separate function)
                     //
-                    if (action.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                    if (action.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && !WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Any(z => z != null && z.FailedActionGuid == action.Guid))
                     {
-                        //if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(z => z.FailedActionGuid == action.Guid).ToList().Count > 0)
-                        //    return;
+                        //Get the ALM test Set Level for publish Result to ALM
+                        bool IsRunTestSetLevel = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.FirstOrDefault(x => x.ItemName == "Publish Execution Results to ALM").GetAlMTestSetLevel() == eALMTestSetLevel.RunSet ? true : false;
 
-                        //
-                        ActivitiesGroup currrentGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == mCurrentActivity.ActivitiesGroupID);
-                        string currrentGroupName = string.Empty;
-                        if (currrentGroup != null)
-                        {
-                            currrentGroupName = currrentGroup.Name;
-                        }
-
-                        //
                         List<string> screenShotsPathes = new List<string>();
                         bool isScreenshotButtonEnabled = false;
                         if ((action.ScreenShots != null) && (action.ScreenShots.Count > 0))
@@ -529,32 +521,31 @@ namespace Ginger.Run
                             automatedOpeningFlag = true;
                         }
 
-                        // OMG !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-                        //
+                        ActivitiesGroup currentGroup = new ActivitiesGroup();
                         StringBuilder description = new StringBuilder();
-                        description.Append("&#60;html&#62;&#60;body&#62;&#60;b&#62;" + this.GingerData.GingerName + "&#60;b&#62;&#60;br&#62;");
-                        description.Append("&#60;div&#62;&#60;ul style='list - style - type:circle'&#62;&#60;li&#62;&#60;b&#62;" + mContext.BusinessFlow.Name + " (failed)&#60;b&#62;&#60;/li&#62;");
-                        if (currrentGroupName != string.Empty)
+                        description.Append("&#60;html&#62;&#60;body&#62;&#60;b&#62;").Append(this.GingerData.GingerName).Append("&#60;b&#62;&#60;br&#62;");
+                        description.Append("&#60;div&#62;&#60;ul style='list - style - type:circle'&#62;&#60;li&#62;&#60;b&#62;").Append(mContext.BusinessFlow.Name).Append(" (failed)&#60;b&#62;&#60;/li&#62;");
+                        if (!IsRunTestSetLevel)
                         {
+                            currentGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == mCurrentActivity.ActivitiesGroupID);
                             description.Append("&#60;ul style = 'list - style - type:square'&#62;");
-                            this.mCurrentBusinessFlow.ActivitiesGroups.ToList().TakeWhile(x => x.Name != mCurrentActivity.ActivitiesGroupID).ToList().ForEach(r => { description.Append("&#60;li&#62;" + r.Name + "&#60;/li&#62;"); });
-                            description.Append("&#60;li&#62;&#60;b&#62;" + currrentGroupName + " (failed)&#60;b&#62;&#60;/li&#62;");
+                            this.mCurrentBusinessFlow.ActivitiesGroups.ToList().TakeWhile(x => x.Name != mCurrentActivity.ActivitiesGroupID).ToList().ForEach(r => { description.Append("&#60;li&#62;").Append(r.Name).Append("&#60;/li&#62;"); });
+                            description.Append("&#60;li&#62;&#60;b&#62;").Append(currentGroup.Name).Append(" (failed)&#60;b&#62;&#60;/li&#62;");
                             description.Append("&#60;ul style = 'list - style - type:upper-roman'&#62;");
-                            this.mCurrentBusinessFlow.Activities.Where(x => currrentGroup.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(x.Guid)).ToList().TakeWhile(x => x.Guid != mCurrentActivity.Guid).ToList().ForEach(r => { description.Append("&#60;li&#62;" + r.ActivityName + "&#60;/li&#62;"); });
-                            description.Append("&#60;li&#62;&#60;b&#62;" + mCurrentActivity.ActivityName + " (failed)&#60;b&#62;&#60;/li&#62;");
+                            this.mCurrentBusinessFlow.Activities.Where(x => currentGroup.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(x.Guid)).ToList().TakeWhile(x => x.Guid != mCurrentActivity.Guid).ToList().ForEach(r => { description.Append("&#60;li&#62;").Append(r.ActivityName).Append("&#60;/li&#62;"); });
+                            description.Append("&#60;li&#62;&#60;b&#62;").Append(mCurrentActivity.ActivityName).Append(" (failed)&#60;b&#62;&#60;/li&#62;");
                             description.Append("&#60;ul style = 'list - style - type:disc'&#62;");
                             mCurrentActivity.Acts.TakeWhile(x => x.Guid != action.Guid).ToList().ForEach(r => { description.Append("&#60;li&#62;" + r.Description + "&#60;/li&#62;"); });
-                            description.Append("&#60;li&#62;&#60;b&#62;&#60;font color='#ff0000'b&#62;" + action.Description + " (failed)&#60;/font&#62;&#60;b&#62;&#60;/li&#62;&#60;/li&#62;&#60;/li&#62;&#60;/li&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/div&#62;&#60;/body&#62;&#60;/html&#62;");
+                            description.Append("&#60;li&#62;&#60;b&#62;&#60;font color='#ff0000'b&#62;").Append(action.Description).Append("(failed)&#60;/font&#62;&#60;b&#62;&#60;/li&#62;&#60;/li&#62;&#60;/li&#62;&#60;/li&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/div&#62;&#60;/body&#62;&#60;/html&#62;");
                         }
                         else
                         {
                             description.Append("&#60;ul style = 'list - style - type:upper-roman'&#62;");
-                            mContext.BusinessFlow.Activities.TakeWhile(x => x.Guid != mCurrentActivity.Guid).ToList().ForEach(r => { description.Append("&#60;li&#62;" + r.ActivityName + "&#60;/li&#62;"); });
+                            mContext.BusinessFlow.Activities.TakeWhile(x => x.Guid != mCurrentActivity.Guid).ToList().ForEach(r => { description.Append("&#60;li&#62;").Append(r.ActivityName).Append("&#60;/li&#62;"); });
                             description.Append("&#60;li&#62;&#60;b&#62;" + mCurrentActivity.ActivityName + " (failed)&#60;b&#62;&#60;/li&#62;");
                             description.Append("&#60;ul style = 'list - style - type:disc'&#62;");
-                            mCurrentActivity.Acts.TakeWhile(x => x.Guid != action.Guid).ToList().ForEach(r => { description.Append("&#60;li&#62;" + r.Description + "&#60;/li&#62;"); });
-                            description.Append("&#60;li&#62;&#60;b&#62;&#60;font color='#ff0000'b&#62;" + action.Description + " (failed)&#60;/font&#62;&#60;b&#62;&#60;/li&#62;&#60;/li&#62;&#60;/li&#62;&#60;/li&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/div&#62;&#60;/body&#62;&#60;/html&#62;");
+                            mCurrentActivity.Acts.TakeWhile(x => x.Guid != action.Guid).ToList().ForEach(r => { description.Append("&#60;li&#62;").Append(r.Description).Append("&#60;/li&#62;"); });
+                            description.Append("&#60;li&#62;&#60;b&#62;&#60;font color='#ff0000'b&#62;").Append(action.Description).Append(" (failed)&#60;/font&#62;&#60;b&#62;&#60;/li&#62;&#60;/li&#62;&#60;/li&#62;&#60;/li&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/div&#62;&#60;/body&#62;&#60;/html&#62;");
                         }
 
                         if (GingerData.GingerName == null)
@@ -562,14 +553,11 @@ namespace Ginger.Run
                             GingerData.GingerName = "";
                         }
 
-                        if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(z => z!=null && z.FailedActionGuid == action.Guid).ToList().Count == 0)
-                        {
-                            WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Add(new DefectSuggestion(action.Guid, this.GingerData.GingerName, mContext.BusinessFlow.Name, currrentGroupName,
-                                                                                           mContext.BusinessFlow.ExecutionLogActivityCounter, mCurrentActivity.ActivityName, mCurrentActivity.ExecutionLogActionCounter,
-                                                                                           action.Description, action.RetryMechanismCount, action.Error, action.ExInfo, screenShotsPathes,
-                                                                                           isScreenshotButtonEnabled, automatedOpeningFlag, description.ToString(),
-                                                                                           currrentGroup.ExternalID, mCurrentActivity.ExternalID, new Tuple<string, string>(mContext.BusinessFlow.ExternalID, mContext.BusinessFlow.ExternalID2)));
-                        }
+                        WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Add(new DefectSuggestion(action.Guid, this.GingerData.GingerName, mContext.BusinessFlow.Name, IsRunTestSetLevel ? mContext.BusinessFlow.Name : currentGroup.Name,
+                                                                                       mContext.BusinessFlow.ExecutionLogActivityCounter, mCurrentActivity.ActivityName, mCurrentActivity.ExecutionLogActionCounter,
+                                                                                       action.Description, action.RetryMechanismCount, action.Error, action.ExInfo, screenShotsPathes,
+                                                                                       isScreenshotButtonEnabled, automatedOpeningFlag, description.ToString(),
+                                                                                       IsRunTestSetLevel ? mContext.BusinessFlow.ExternalID : currentGroup.ExternalID, mCurrentActivity.ExternalID, new Tuple<string, string>(mContext.BusinessFlow.ExternalID, !string.IsNullOrEmpty(mContext.BusinessFlow.ExternalID2) ? mContext.BusinessFlow.ExternalID2 : string.Empty)));
                     }
                     //
                     // Defects Suggestion section - end
