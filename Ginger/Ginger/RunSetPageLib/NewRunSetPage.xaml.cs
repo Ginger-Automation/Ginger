@@ -1786,14 +1786,18 @@ namespace Ginger.Run
                 var result = await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
 
                 // handling ALM Defects Opening
-                ObservableList<ALMDefectProfile> ALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
-                if ((WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null) && (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Count > 0) &&
-                    (ALMDefectProfiles != null) && (ALMDefectProfiles.Count > 0))
+                
+                if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null && WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Count > 0)
                 {
-                    this.Dispatcher.Invoke(() =>
+                    ObservableList<ALMDefectProfile> ALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
+                    if(ALMDefectProfiles != null && ALMDefectProfiles.Count > 0)
                     {
-                        InitALMDefectsOpeningSection();
-                    });
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            InitALMDefectsOpeningSection();
+                        });
+                    }
+                   
                 }
             }
             catch (Exception ex)
