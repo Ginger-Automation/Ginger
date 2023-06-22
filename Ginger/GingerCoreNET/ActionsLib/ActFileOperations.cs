@@ -172,11 +172,18 @@ namespace GingerCore.Actions
                 case eFileoperations.DeleteDirectory:
                     if (!System.IO.Directory.Exists(calculatedSourceFilePath))
                     {
-                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
-                        base.ExInfo = "Directory doesn't exists";
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        base.ExInfo = "Directory path doesn't exists";
                         return;
                     }
                     string[] directories = System.IO.Directory.GetDirectories(calculatedSourceFilePath);
+                    if(directories == null || directories.Length ==0)
+                    {
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        base.ExInfo = "No Directory found to delete";
+                        return;
+                    }
+                    
                     foreach (string directory in directories)
                     {
                         System.IO.Directory.Delete(directory,true);
