@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 
 namespace GingerCore.GeneralLib
 {
@@ -15,12 +16,16 @@ namespace GingerCore.GeneralLib
         /// <param name="thisFrame">Frame control to clear the back entries from.</param>
         public static void ClearAllBackEntries(this Frame thisFrame)
         {
-            if (!thisFrame.CanGoBack && !thisFrame.CanGoForward)
+            if (!thisFrame.NavigationService.CanGoBack && !thisFrame.NavigationService.CanGoForward)
             {
                 return;
             }
 
-            while (thisFrame.RemoveBackEntry() != null) { };
+            JournalEntry lastEntry;
+            do 
+            {
+                lastEntry = thisFrame.NavigationService.RemoveBackEntry();
+            } while (lastEntry != null);
         }
 
         /// <summary>
