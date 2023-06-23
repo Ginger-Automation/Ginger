@@ -204,7 +204,6 @@ namespace Ginger.Actions
             mAction = null!;
             mContext = null!;
 
-            sMultiLocatorVals = "";
             _pageGenericWin = null!;
 
             IsPageClosing = false;
@@ -265,7 +264,9 @@ namespace Ginger.Actions
             }
             xActionTabs.SelectedItem = newSelectedItem;
             if (previousSelectedItem == newSelectedItem)
+            {
                 SetSelectedTabFrameContent();
+            }
         }
 
         private void SetExplorerMode()
