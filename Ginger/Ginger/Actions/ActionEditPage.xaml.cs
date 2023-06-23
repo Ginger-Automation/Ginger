@@ -185,16 +185,11 @@ namespace Ginger.Actions
         {
             if(mAction != null)
             {
-                //mAction.PropertyChanged -= ActionPropertyChanged;
                 string allProperties = string.Empty;
                 PropertyChangedEventManager.RemoveHandler(source: mAction, handler: ActionPropertyChanged, propertyName: allProperties);
-                //mAction.InputValues.CollectionChanged -= InputValues_CollectionChanged;
                 CollectionChangedEventManager.RemoveHandler(source: mAction.InputValues, handler: InputValues_CollectionChanged);
-                //mAction.FlowControls.CollectionChanged -= FlowControls_CollectionChanged;
                 CollectionChangedEventManager.RemoveHandler(source: mAction.FlowControls, handler: FlowControls_CollectionChanged);
-                //mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
                 CollectionChangedEventManager.RemoveHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
-                //mAction.ScreenShots.CollectionChanged -= ScreenShots_CollectionChanged;
                 CollectionChangedEventManager.RemoveHandler(source: mAction.ScreenShots, handler: ScreenShots_CollectionChanged);
             }
             mAction = null!;
@@ -1771,14 +1766,11 @@ namespace Ginger.Actions
                 {
                     if (mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)
                     {
-                        //mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
                         CollectionChangedEventManager.RemoveHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
                         xOutputValuesGrid.DataSourceList = null;
                     }
                     else
                     {
-                        //mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
-                        //mAction.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
                         CollectionChangedEventManager.RemoveHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
                         CollectionChangedEventManager.AddHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
                         xOutputValuesGrid.DataSourceList = mAction.ReturnValues;
@@ -1876,16 +1868,11 @@ namespace Ginger.Actions
             //this.ClearControlsBindings();
             if (mAction != null)
             {
-                //mAction.PropertyChanged -= ActionPropertyChanged;
                 string allProperties = string.Empty;
                 PropertyChangedEventManager.RemoveHandler(source: mAction, ActionPropertyChanged, propertyName: allProperties);
-                //mAction.InputValues.CollectionChanged -= InputValues_CollectionChanged;
                 CollectionChangedEventManager.RemoveHandler(source: mAction.InputValues, handler: InputValues_CollectionChanged);
-                //mAction.FlowControls.CollectionChanged -= FlowControls_CollectionChanged;
                 CollectionChangedEventManager.RemoveHandler(source: mAction.FlowControls, handler: FlowControls_CollectionChanged);
-                //mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
                 CollectionChangedEventManager.RemoveHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
-                //mAction.ScreenShots.CollectionChanged -= ScreenShots_CollectionChanged;
                 CollectionChangedEventManager.RemoveHandler(source: mAction.ScreenShots, handler: ScreenShots_CollectionChanged);
                 mAction = null;
             }

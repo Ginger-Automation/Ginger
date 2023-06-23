@@ -663,14 +663,6 @@ namespace Ginger.UserControlsLib.UCListView
                     if (parent != null)
                     {
                         ParentList = (UcListView)parent;
-                        //ParentList.UcListViewEvent -= ParentList_UcListViewEvent;
-                        //ParentList.UcListViewEvent += ParentList_UcListViewEvent;
-                        //ParentList.List.SelectionChanged -= ParentList_SelectionChanged;
-                        //ParentList.List.SelectionChanged += ParentList_SelectionChanged;
-                        //UcListViewEventManager.RemoveHandler(ParentList, ParentList_UcListViewEvent);
-                        //UcListViewEventManager.AddHandler(ParentList, ParentList_UcListViewEvent);
-                        //SelectionChangedEventManager.RemoveHandler(ParentList.List, ParentList_SelectionChanged);
-                        //SelectionChangedEventManager.AddHandler(ParentList.List, ParentList_SelectionChanged);
                         WeakEventManager<UcListView, UcListViewEventArgs>.RemoveHandler(ParentList, nameof(UcListView.UcListViewEvent), ParentList_UcListViewEvent);
                         WeakEventManager<UcListView, UcListViewEventArgs>.AddHandler(ParentList, nameof(UcListView.UcListViewEvent), ParentList_UcListViewEvent);
                         WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(ParentList.List, nameof(Selector.SelectionChanged), ParentList_SelectionChanged);
