@@ -1531,7 +1531,7 @@ namespace Ginger.Run
 
                     var mUniqueRVs = act.ReturnValues.Where(arc => arc.Path == "" || arc.Path == "1");
                     // if in output values there is only 1 record with Path = null
-                    if (mUniqueRVs.Count == 0 && act.ReturnValues != null)
+                    if (mUniqueRVs.Count() == 0 && act.ReturnValues != null)
                     {
                         mUniqueRVs = act.ReturnValues.ToList();
                     }
@@ -1597,13 +1597,13 @@ namespace Ginger.Run
                         mOutRVs = (from arc in act.ReturnValues where arc.Path == iPathCount.ToString() select arc).ToList();
 
                         // if in output values there is only 1 record with Path = null
-                        if (mOutRVs.Count == 0 && act.ReturnValues != null)
+                        if (mOutRVs.Count() == 0 && act.ReturnValues != null)
                         {
                             mOutRVs = act.ReturnValues.ToList();
                         }
                     }
 
-                    while (mOutRVs.Count > 0)
+                    while (mOutRVs.Count() > 0)
                     {
                         string sColList = "";
                         string sColVals = "";
@@ -1613,7 +1613,7 @@ namespace Ginger.Run
                             if (outReturnPath != null)
                             {
                                 sColList = sColList + ADSC.TableColumn + ",";
-                                string valActual = outReturnPath[0].Actual == null ? "" : outReturnPath[0].Actual.ToString();
+                                string valActual = outReturnPath.Actual == null ? "" : outReturnPath.Actual.ToString();
                                 sColVals = sColVals + "'" + valActual.Replace("'", "''") + "',";
                             }
                         }
