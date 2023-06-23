@@ -16,9 +16,11 @@ namespace GingerCore.GeneralLib
         public static void ClearAllBackEntries(this Frame thisFrame)
         {
             if (!thisFrame.CanGoBack && !thisFrame.CanGoForward)
+            {
                 return;
+            }
 
-            while (thisFrame.RemoveBackEntry() != null);
+            while (thisFrame.RemoveBackEntry() != null) { };
         }
 
         /// <summary>

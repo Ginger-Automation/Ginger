@@ -1321,7 +1321,9 @@ namespace Ginger.Run
 
             int runnerPageIndex = 0;
             while (mRunSetConfig.GingerRunners.Count > runnerPages.Count)
+            {
                 runnerPages.Add(new RunnerPage());
+            }
 
             foreach (GingerRunner GR in mRunSetConfig.GingerRunners.ToList())
             {

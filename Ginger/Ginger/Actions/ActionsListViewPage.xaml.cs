@@ -135,8 +135,6 @@ namespace GingerWPF.BusinessFlowsLib
                 if (mActionEditPage != null)
                 {
                     mActionEditPage.ClearPageBindings();
-                    //mActionEditPage.KeepAlive = false;
-                    //mActionEditPage = null;
                     //GC.Collect();
                 }
                 xMainFrame.ClearAndSetContent(mActionsListView);

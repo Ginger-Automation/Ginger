@@ -177,12 +177,11 @@ namespace Ginger.UserControlsLib.UCListView
 
                 this.Dispatcher.Invoke(() =>
                 {
-                    if (Item is RepositoryItemBase)
+                    if (Item is RepositoryItemBase repositoryItemBase)
                     {
-                        //((RepositoryItemBase)Item).PropertyChanged -= Item_PropertyChanged;
-                        //((RepositoryItemBase)Item).PropertyChanged += Item_PropertyChanged;
-                        PropertyChangedEventManager.RemoveHandler(source: (RepositoryItemBase)Item, Item_PropertyChanged, string.Empty);
-                        PropertyChangedEventManager.AddHandler(source: (RepositoryItemBase)Item, Item_PropertyChanged, string.Empty);
+                        string allProperties = string.Empty;
+                        PropertyChangedEventManager.RemoveHandler(source: repositoryItemBase, handler: Item_PropertyChanged, propertyName: allProperties);
+                        PropertyChangedEventManager.AddHandler(source: repositoryItemBase, handler: Item_PropertyChanged, propertyName: allProperties);
                     }
 
                     if (!string.IsNullOrEmpty(mItemIconField))
@@ -253,14 +252,9 @@ namespace Ginger.UserControlsLib.UCListView
 
         public void ClearBindings()
         {
-            //ParentList.UcListViewEvent -= ParentList_UcListViewEvent;
-            //ParentList.List.SelectionChanged -= ParentList_SelectionChanged;
-            //((RepositoryItemBase)Item).PropertyChanged -= Item_PropertyChanged;
-            //UcListViewEventManager.RemoveHandler(ParentList, ParentList_UcListViewEvent);
-            //SelectionChangedEventManager.RemoveHandler(ParentList.List, ParentList_SelectionChanged);
-            WeakEventManager<UcListView, UcListViewEventArgs>.RemoveHandler(ParentList, nameof(UcListView.UcListViewEvent), ParentList_UcListViewEvent);
-            WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(ParentList.List, nameof(Selector.SelectionChanged), ParentList_SelectionChanged);
-            PropertyChangedEventManager.RemoveHandler((RepositoryItemBase)Item, Item_PropertyChanged, string.Empty);
+            WeakEventManager<UcListView, UcListViewEventArgs>.RemoveHandler(source: ParentList, eventName: nameof(UcListView.UcListViewEvent), handler: ParentList_UcListViewEvent);
+            WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(source: ParentList.List, eventName: nameof(Selector.SelectionChanged), handler: ParentList_SelectionChanged);
+            PropertyChangedEventManager.RemoveHandler(source: (RepositoryItemBase)Item, handler: Item_PropertyChanged, propertyName: string.Empty);
 
             BindingOperations.ClearAllBindings(xItemIcon);
             foreach (ImageMakerControl notification in xItemNotificationsPnl.Children)

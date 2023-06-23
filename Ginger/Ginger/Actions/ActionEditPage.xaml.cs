@@ -135,25 +135,19 @@ namespace Ginger.Actions
                 mAction.SaveBackup();
             }
 
-            //mAction.PropertyChanged -= ActionPropertyChanged;
-            //mAction.PropertyChanged += ActionPropertyChanged;
             string allProperties = string.Empty;
             PropertyChangedEventManager.RemoveHandler(source: mAction, handler: ActionPropertyChanged, propertyName: allProperties);
             PropertyChangedEventManager.AddHandler(source: mAction, handler: ActionPropertyChanged, propertyName: allProperties);
-            //mAction.InputValues.CollectionChanged -= InputValues_CollectionChanged;
-            //mAction.InputValues.CollectionChanged += InputValues_CollectionChanged;
+
             CollectionChangedEventManager.RemoveHandler(source: mAction.InputValues, handler: InputValues_CollectionChanged);
             CollectionChangedEventManager.AddHandler(source: mAction.InputValues, handler: InputValues_CollectionChanged);
-            //mAction.FlowControls.CollectionChanged -= FlowControls_CollectionChanged;
-            //mAction.FlowControls.CollectionChanged += FlowControls_CollectionChanged;
+
             CollectionChangedEventManager.RemoveHandler(source: mAction.FlowControls, handler: FlowControls_CollectionChanged);
             CollectionChangedEventManager.AddHandler(source: mAction.FlowControls, handler: FlowControls_CollectionChanged);
-            //mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
-            //mAction.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
+
             CollectionChangedEventManager.RemoveHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
             CollectionChangedEventManager.AddHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
-            //mAction.ScreenShots.CollectionChanged -= ScreenShots_CollectionChanged;
-            //mAction.ScreenShots.CollectionChanged += ScreenShots_CollectionChanged;
+
             CollectionChangedEventManager.RemoveHandler(source: mAction.ScreenShots, handler: ScreenShots_CollectionChanged);
             CollectionChangedEventManager.AddHandler(source: mAction.ScreenShots, handler: ScreenShots_CollectionChanged);
 
