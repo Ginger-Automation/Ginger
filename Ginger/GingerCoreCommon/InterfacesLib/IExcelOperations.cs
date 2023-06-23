@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -32,7 +32,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         /// <param name="filter">Data table filter, like ColName=Value</param>
         /// <param name="selectedRows">false: first row in data table, True: all rows</param>
         /// <returns>Sheet as Data table</returns>
-        DataTable ReadData(string fileName, string sheetName, string filter, bool selectedRows);
+        DataTable ReadData(string fileName, string sheetName, string filter, bool selectedRows , string rowHeaderNumber);
         /// <summary>
         /// Update Excel cells by user data set.
         /// </summary>
@@ -54,7 +54,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         /// , Like: A2 for one cell, A2:D4 for multi cells</param>
         /// <param name="selectedRows">false: first cell after filter, True: all cells</param>
         /// <returns></returns>
-        DataTable ReadCellData(string fileName, string sheetName, string filter, bool selectedRows);
+        DataTable ReadCellData(string fileName, string sheetName, string filter, bool selectedRows, string headerRowNumber);
         /// <summary>
         /// Update excel cells
         /// </summary>

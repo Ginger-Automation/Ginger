@@ -37,43 +37,44 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         DataTable mFilteredDataTable { get; set; }
         IWorkbook mWorkbook { get; set; }
         ISheet mSheet { get; set; }
-        private DataTable ConvertSheetToDataTable(ISheet sheet)
+        private DataTable ConvertSheetToDataTable(ISheet sheet , int rowHeaderNumber)
         {
             try
             {
                 var dtExcelTable = new DataTable();
                 dtExcelTable.Rows.Clear();
                 dtExcelTable.Columns.Clear();
-                IRow headerRow = sheet.GetRow(0);
+                IRow headerRow = this.GetHeaderRow(sheet, rowHeaderNumber);
                 bool allUnique = headerRow.Cells.GroupBy(x => x.StringCellValue).All(g => g.Count() == 1);
                 if (!allUnique)
                 {
                     throw new DuplicateNameException(string.Format("Sheet '{0}' contains duplicate column names", sheet.SheetName));
                 }
                 int colCount = headerRow.LastCellNum;
+                int initialColNumber = -1;
                 for (var c = 0; c < colCount; c++)
                 {
-                    if (headerRow.GetCell(c) == null)
+                    ICell cell = headerRow.GetCell(c);
+                    if (cell!=null && !dtExcelTable.Columns.Contains(cell.ToString()))
                     {
-                        dtExcelTable.Columns.Add("Col " + c);
-                        continue;
-                    }
-                    if (!dtExcelTable.Columns.Contains(headerRow.GetCell(c).ToString()))
-                    {
+                        if(initialColNumber  == -1) 
+                        { 
+                            initialColNumber = c; 
+                        }
                         dtExcelTable.Columns.Add(GingerCoreNET.GeneralLib.General.RemoveSpecialCharactersInColumnHeader(headerRow.GetCell(c).ToString()).Trim());
                     }
                 }
-                var i = 1;
+                var i = rowHeaderNumber;
                 var currentRow = sheet.GetRow(i);
                 while (currentRow != null)
                 {
                     var dr = dtExcelTable.NewRow();
-                    for (var j = 0; j < dr.ItemArray.Length; j++)
+                    for (var j = initialColNumber; j < initialColNumber+dr.ItemArray.Length; j++)
                     {
                         var cell = currentRow.GetCell(j);
                         if (cell != null)
                         {
-                            dr[j] = GetCellValue(cell, cell.CellType);
+                            dr[j - initialColNumber] = GetCellValue(cell, cell.CellType);
                         }
                     }
                     dtExcelTable.Rows.Add(dr);
@@ -82,15 +83,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 }
                 return dtExcelTable;
             }
-            catch (DuplicateNameException dupEx)
-            {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Can't convert sheet to data, " + dupEx.Message);
-                throw;
-            }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.WARN, "Can't convert sheet to data, " + ex.Message);
-                return null;
+                string exceptionMessage = $"Can't convert sheet to data, {ex.Message}";
+                Reporter.ToLog(eLogLevel.WARN, exceptionMessage);
+                throw;
             }
         }
 
@@ -124,47 +121,40 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             return cellVal;
         }
 
-        public DataTable ReadData(string fileName, string sheetName, string filter, bool selectedRows)
+        public DataTable ReadData(string fileName, string sheetName, string filter, bool selectedRows , string headerRowNumber = "1")
         {
             filter = filter ?? "";
             try
             {
-                if (!GetExcelSheet(fileName, sheetName))
-                {
-                    return null;
-                }
-                mExcelDataTable = ConvertSheetToDataTable(mSheet);
+                GetExcelSheet(fileName, sheetName);
+                mExcelDataTable = ConvertSheetToDataTable(mSheet , int.Parse(string.IsNullOrEmpty(headerRowNumber) ? "1" : headerRowNumber));
                 mExcelDataTable.DefaultView.RowFilter = filter;
-                mFilteredDataTable = GetFilteredDataTable(mExcelDataTable, selectedRows);
+                mFilteredDataTable = string.IsNullOrEmpty(filter) ? mExcelDataTable : GetFilteredDataTable(mExcelDataTable, selectedRows);
                 return mFilteredDataTable;
-            }
-            catch (DuplicateNameException ex)
-            {
-                Reporter.ToLog(eLogLevel.WARN, "Can't read sheet data, " + ex.Message);
-                throw;
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.WARN, "Can't read sheet data, " + ex.Message);
-                return null;
+                throw;
             }
         }
 
-        private bool GetExcelSheet(string fileName, string sheetName)
+        private void GetExcelSheet(string fileName, string sheetName)
         {
             mWorkbook = GetExcelWorkbook(fileName);
             if (mWorkbook == null)
             {
                 Reporter.ToLog(eLogLevel.WARN, "File name not Exists.");
-                return false;
+                // TODO Can a Custom Exception be made instead of 'Exception' ??
+                throw new Exception("File Name DOES NOT Exist, Please verify if the File Path is valid");
             }
             mSheet = mWorkbook.GetSheet(sheetName);
             if (mSheet == null)
             {
                 Reporter.ToLog(eLogLevel.WARN, "Sheet name not Exists.");
-                return false;
+                // TODO Can a Custom Exception be made instead of 'Exception' ??
+                throw new Exception("Sheet name DOES NOT Exist , Please verify if the entered Sheet Name is valid");
             }
-            return true;
         }
 
         private DataTable GetFilteredDataTable(DataTable dataTable, bool selectAllRows)
@@ -211,82 +201,89 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             return true;
         }
 
-        public DataTable ReadCellData(string fileName, string sheetName, string filter, bool selectedRows)
+        public DataTable ReadCellData(string fileName, string sheetName, string filter, bool selectedRows , string headerRowNumber)
         {
-            if (string.IsNullOrEmpty(filter))
+            try
             {
-                return ReadData(fileName, sheetName, filter, selectedRows);
-            }
-            Regex regex = new Regex(@"(^[A-Z]+\d+$)|(^[A-Z]+\d+:[A-Z]+\d+$)");
-            Match match = regex.Match(filter);
-            if (!match.Success)
-            {
-                return null;
-            }
-            if (!GetExcelSheet(fileName, sheetName))
-            {
-                return null;
-            }
-            CellReference cellFrom;
-            CellReference cellTo;
-            if (filter.Contains(":"))
-            {
-                string[] filterArray = filter.Split(':');
-                cellFrom = new CellReference(filterArray[0]);
-                cellTo = new CellReference(filterArray[1]);
-            }
-            else
-            {
-                cellFrom = new CellReference(filter);
-                cellTo = new CellReference(filter);
-            }
-            var dtExcelTable = new DataTable();
-            dtExcelTable.Rows.Clear();
-            dtExcelTable.Columns.Clear();
-            var headerRow = mSheet.GetRow(0);
-            int colCount = headerRow.LastCellNum;
-            if (cellFrom.Col > colCount || cellTo.Col > colCount)
-            {
-                Reporter.ToLog(eLogLevel.WARN, "Invalid filter expresion, please check");
-                return null;
-            }
-            for (var c = cellFrom.Col; c <= cellTo.Col; c++)
-            {
-                if (headerRow.GetCell(c) != null && !dtExcelTable.Columns.Contains(headerRow.GetCell(c).ToString()))
+                if (string.IsNullOrEmpty(filter))
                 {
-                    dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString());
+                    return ReadData(fileName, sheetName, filter, selectedRows, headerRowNumber);
                 }
-            }
-            var i = cellFrom.Row;
-            var currentRow = mSheet.GetRow(i);
-            int dtColCount = 0;
-            while (i <= cellTo.Row)
-            {
-                var dr = dtExcelTable.NewRow();
-                dtColCount = 0;
-                for (var j = cellFrom.Col; j <= cellTo.Col; j++)
+                Regex regex = new Regex(@"(^[A-Z]+\d+$)|(^[A-Z]+\d+:[A-Z]+\d+$)");
+                Match match = regex.Match(filter);
+                if (!match.Success)
                 {
-                    ICell cell;
-                    if (currentRow != null)
-                    {
-                        cell = currentRow.GetCell(j);
-                    }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.WARN, "Invalid filter expresion, please check");
-                        return null;
-                    }
-                    if (cell != null)
-                    {
-                        dr[dtColCount] = GetCellValue(cell, cell.CellType);
-                    }
-                    dtColCount++;
+                    return null;
                 }
-                dtExcelTable.Rows.Add(dr);
-                i++;
-                currentRow = mSheet.GetRow(i);
+                GetExcelSheet(fileName, sheetName);
+                CellReference cellFrom;
+                CellReference cellTo;
+                if (filter.Contains(":"))
+                {
+                    string[] filterArray = filter.Split(':');
+                    cellFrom = new CellReference(filterArray[0]);
+                    cellTo = new CellReference(filterArray[1]);
+                }
+                else
+                {
+                    cellFrom = new CellReference(filter);
+                    cellTo = new CellReference(filter);
+                }
+                var dtExcelTable = new DataTable();
+                dtExcelTable.Rows.Clear();
+                dtExcelTable.Columns.Clear();
+                var headerRow = mSheet.GetRow(0);
+                int colCount = headerRow.LastCellNum;
+                if (cellFrom.Col > colCount || cellTo.Col > colCount)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Invalid filter expresion, please check");
+                    return null;
+                }
+                for (var c = cellFrom.Col; c <= cellTo.Col; c++)
+                {
+                    if (headerRow.GetCell(c) != null && !dtExcelTable.Columns.Contains(headerRow.GetCell(c).ToString()))
+                    {
+                        dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString());
+                    }
+                }
+                var i = cellFrom.Row;
+                var currentRow = mSheet.GetRow(i);
+                int dtColCount = 0;
+                while (i <= cellTo.Row)
+                {
+                    var dr = dtExcelTable.NewRow();
+                    dtColCount = 0;
+                    for (var j = cellFrom.Col; j <= cellTo.Col; j++)
+                    {
+                        ICell cell;
+                        if (currentRow != null)
+                        {
+                            cell = currentRow.GetCell(j);
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.WARN, "Invalid filter expresion, please check");
+                            return null;
+                        }
+                        if (cell != null)
+                        {
+                            dr[dtColCount] = GetCellValue(cell, cell.CellType);
+                        }
+                        dtColCount++;
+                    }
+                    dtExcelTable.Rows.Add(dr);
+                    i++;
+                    currentRow = mSheet.GetRow(i);
+                }
+                return dtExcelTable;
+
+
             }
-            return dtExcelTable;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "Can't read cell data, " + ex.Message);
+                throw;
+            }
         }
 
         public bool WriteData(string fileName, string sheetName, string filter, string setDataUsed, List<Tuple<string, object>> updateCellValuesList, string primaryKey = null, string key = null)
@@ -375,6 +372,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 return ((decimal)cell.NumericCellValue).ToString(CultureInfo.InvariantCulture);
             }
             return cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
+        }
+
+        private IRow GetHeaderRow(ISheet sheet , int headerRowNumber=1)
+        {
+            IRow header = sheet.GetRow(headerRowNumber - 1);
+            if (header == null) throw new InvalidDataException($"Could not Find Header Columns at the Row Number : {headerRowNumber}, Please Enter the Appropriate Header Row Number");
+            return header;
         }
     }
 }

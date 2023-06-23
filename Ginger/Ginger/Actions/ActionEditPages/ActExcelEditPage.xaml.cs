@@ -25,11 +25,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace Ginger.Actions
 {
@@ -57,6 +59,8 @@ namespace Ginger.Actions
             SelectRowsWhereTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.SelectRowsWhere));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SelectAllRows, CheckBox.IsCheckedProperty, mAct, nameof(ActExcel.SelectAllRows));
             PrimaryKeyColumnTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.PrimaryKeyColumn));
+            HeaderRowNumTextBox.BindControl(Context.GetAsContext(mAct.Context) , mAct , nameof(ActExcel.HeaderRowNum));
+
             SetDataUsedTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.SetDataUsed));
             ColMappingRulesTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.ColMappingRules));
 
@@ -126,7 +130,6 @@ namespace Ginger.Actions
                 DataTable excelSheetData = GetExcelSheetData(true);
                 if (excelSheetData == null)
                 {
-                    Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
                     return;
                 }
 
@@ -134,7 +137,7 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
             }
         }
 
@@ -183,25 +186,23 @@ namespace Ginger.Actions
         {
             try
             {
+                ContextProcessInputValueForDriver();
+
                 if (!mAct.CheckMandatoryFieldsExists(new List<string>() {
                 nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName),  nameof(mAct.SelectRowsWhere)}))
                 {
-                    Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
                     return;
                 }
-                ContextProcessInputValueForDriver();
                 DataTable excelSheetData = GetExcelSheetData(false);
                 if (excelSheetData == null)
                 {
-                    Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
                     return;
                 }
-
                 SetExcelDataGridItemsSource(excelSheetData);
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
             }
         }
         DataTable GetExcelSheetData(bool isViewAllData)
@@ -214,19 +215,14 @@ namespace Ginger.Actions
                 }
                 if (!isViewAllData && mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellData && !string.IsNullOrWhiteSpace(mAct.CalculatedFilter))
                 {
-                    return mExcelOperations.ReadCellData(mAct.CalculatedFileName, mAct.CalculatedSheetName, mAct.CalculatedFilter, true);
+                    return mExcelOperations.ReadCellData(mAct.CalculatedFileName, mAct.CalculatedSheetName, mAct.CalculatedFilter, true, mAct.HeaderRowNum);
                 }
-                return mExcelOperations.ReadData(mAct.CalculatedFileName, mAct.CalculatedSheetName, isViewAllData ? null : mAct.CalculatedFilter, true);
-            }
-            catch (DuplicateNameException ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
-                throw;
+                return mExcelOperations.ReadData(mAct.CalculatedFileName, mAct.CalculatedSheetName, isViewAllData ? null : mAct.CalculatedFilter, true , mAct.HeaderRowNum);
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
-                return null;
+                throw;
             }
         }
         private void ExcelActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -252,12 +248,11 @@ namespace Ginger.Actions
             mAct.SheetName = SheetNamComboBox.Text;
             ContextProcessInputValueForDriver();
         }
-
+        
         private void SheetNamComboBox_DropDownOpened(object sender, EventArgs e)
         {
             if (!mAct.CheckMandatoryFieldsExists(new List<string>() { nameof(mAct.CalculatedFileName) }))
             {
-                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
                 return;
             }
             FillSheetCombo();
@@ -274,11 +269,15 @@ namespace Ginger.Actions
         {
             if (!mAct.CheckMandatoryFieldsExists(new List<string>() { nameof(mAct.CalculatedFileName) }))
             {
-                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
                 return;
             }
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = mAct.CalculatedFileName, UseShellExecute = true });
         }
 
+        private void HeaderNumValidation(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
     }
 }

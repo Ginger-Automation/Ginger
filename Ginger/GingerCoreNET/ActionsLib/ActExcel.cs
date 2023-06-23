@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace GingerCore.Actions
 {
@@ -121,6 +122,18 @@ namespace GingerCore.Actions
             {
                 AddOrUpdateInputParamValue(nameof(SheetName), value);
                 OnPropertyChanged(nameof(SheetName));
+            }
+        }
+        public string HeaderRowNum
+        {
+            get
+            {
+                return GetInputParamValue(nameof(HeaderRowNum));
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(HeaderRowNum), value);
+                OnPropertyChanged(nameof(HeaderRowNum));
             }
         }
         public string CalculatedSheetName
@@ -266,7 +279,12 @@ namespace GingerCore.Actions
             {
                 if (String.IsNullOrWhiteSpace((string)this[field]))
                 {
-                    this.Error += eUserMsgKey.ExcelInvalidFieldData;
+                    string calculated = "Calculated";
+                    int indexOfField = field.IndexOf(calculated);
+                    var splitBetCapLetters = new Regex(@"(?<=[A-Z])(?=[A-Z][a-z]) | (?<=[^A-Z])(?=[A-Z]) | (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
+                    string actualFieldValue = splitBetCapLetters.Replace(indexOfField != -1 ?  field.Substring(indexOfField + calculated.Length) : field, " ") ;
+                    this.Error = $"The Mandatory field : {actualFieldValue} cannot be empty";
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, this.Error);
                     return false;
                 }
             }
@@ -277,7 +295,7 @@ namespace GingerCore.Actions
         {
             try
             {
-                DataTable excelDataTable = excelOperator.ReadCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows);
+                DataTable excelDataTable = excelOperator.ReadCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, HeaderRowNum);
                 if (!string.IsNullOrEmpty(SelectRowsWhere) && !SelectAllRows)
                 {
                     string CellValue = excelDataTable.Rows[0][0].ToString();
@@ -306,7 +324,7 @@ namespace GingerCore.Actions
         {
             try
             {
-                DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows);
+                DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, HeaderRowNum);
                 if (excelDataTable != null && excelDataTable.Rows.Count > 0)
                 {
                     for (int j = 0; j < excelDataTable.Rows.Count; j++)
@@ -357,7 +375,8 @@ namespace GingerCore.Actions
             }
             catch (Exception ex)
             {
-                Error += eUserMsgKey.ExcelInvalidFieldData + ", " + ex.Message;
+                Error = ex.Message;
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
             }
         }
 
@@ -368,7 +387,7 @@ namespace GingerCore.Actions
                 List<Tuple<string, object>> cellValuesToUpdateList = new List<Tuple<string, object>>();
                 cellValuesToUpdateList.AddRange(FieldsValueToTupleList(CalculatedSetDataUsed));
                 cellValuesToUpdateList.AddRange(FieldsValueToTupleList(CalculatedColMappingRules));
-                DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows);
+                DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows , HeaderRowNum);
                 if (excelDataTable == null)
                 {
                     Error = "Table return no Rows with given filter";
