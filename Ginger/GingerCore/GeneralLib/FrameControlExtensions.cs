@@ -35,8 +35,8 @@ namespace GingerCore.GeneralLib
         /// <param name="content">New content that will be set to this Frame.</param>
         public static void ClearAndSetContent(this Frame thisFrame, object content)
         {
-            ClearAllBackEntries(thisFrame);
             thisFrame.Content = content;
+            ClearAllBackEntries(thisFrame);
         }
     }
 }

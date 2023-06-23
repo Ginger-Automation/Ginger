@@ -72,7 +72,7 @@ namespace Ginger.Actions
 
         private Act mAction;
         static public string sMultiLocatorVals = "";
-        GenericWindow _pageGenericWin = null;
+        GenericWindow _pageGenericWin = null!;
         //public ActionsPage ap;
 
         bool IsPageClosing = false;
@@ -84,12 +84,12 @@ namespace Ginger.Actions
         List<string> mDSNames = new List<string>();
         private DataSourceTable mDSTable;
         private string mDataSourceName;
-        List<String> mColNames = null;
+        List<String> mColNames = null!;
         ObservableList<ActOutDataSourceConfig> aOutDSConfigParam = new ObservableList<ActOutDataSourceConfig>();
         ObservableList<String> mStoreToVarsList = new ObservableList<string>();
 
-        private BusinessFlow mActParentBusinessFlow = null;
-        private Activity mActParentActivity = null;
+        private BusinessFlow mActParentBusinessFlow = null!;
+        private Activity mActParentActivity = null!;
 
         Button mSimulateRunBtn = new Button();
         Button mRunActionBtn = new Button();
@@ -122,6 +122,7 @@ namespace Ginger.Actions
         public void Init(Act act, General.eRIPageViewMode editMode = General.eRIPageViewMode.Automation, BusinessFlow? actParentBusinessFlow = null, Activity? actParentActivity = null)
         {
             Clear();
+            
 
             //ActionEditNum++;
             //LiveActionEditCounter++;
@@ -192,10 +193,35 @@ namespace Ginger.Actions
                 CollectionChangedEventManager.RemoveHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
                 CollectionChangedEventManager.RemoveHandler(source: mAction.ScreenShots, handler: ScreenShots_CollectionChanged);
             }
+
+            xDetailsTab.Tag = false;
+            xOperationSettingsTab.Tag = false;
+            xFlowControlTab.Tag = false;
+            xOutputValuesTab.Tag = false;
+            xExecutionReportTab.Tag = false;
+            xHelpTab.Tag = false;
+
             mAction = null!;
             mContext = null!;
-            mActParentActivity = null!;
+
+            sMultiLocatorVals = "";
+            _pageGenericWin = null!;
+
+            IsPageClosing = false;
+
+            mDSList = new ObservableList<DataSourceBase>();
+            mDSTableList = new ObservableList<DataSourceTable>();
+            mDSNames = new List<string>();
+            mColNames = null!;
+            aOutDSConfigParam = new ObservableList<ActOutDataSourceConfig>();
+            mStoreToVarsList = new ObservableList<string>();
+
             mActParentBusinessFlow = null!;
+            mActParentActivity = null!;
+            mSimulateRunBtn = new Button();
+            mRunActionBtn = new Button();
+            mStopRunBtn = new Button();
+            saveWasDone = false;
         }
 
         private void InitView()
@@ -226,15 +252,20 @@ namespace Ginger.Actions
                 SetExplorerMode();
             }
 
+            object previousSelectedItem = xActionTabs.SelectedItem;
+            object newSelectedItem;
             if ((EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View || EditMode == General.eRIPageViewMode.ViewAndExecute) &&
                        (mAction.Status != null && mAction.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending))
             {
-                xActionTabs.SelectedItem = xExecutionReportTab;
+                newSelectedItem = xExecutionReportTab;
             }
             else
             {
-                xActionTabs.SelectedItem = xOperationSettingsTab;
+                newSelectedItem = xOperationSettingsTab;
             }
+            xActionTabs.SelectedItem = newSelectedItem;
+            if (previousSelectedItem == newSelectedItem)
+                SetSelectedTabFrameContent();
         }
 
         private void SetExplorerMode()
@@ -1303,6 +1334,11 @@ namespace Ginger.Actions
         }
 
         private void xActionTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SetSelectedTabFrameContent();
+        }
+
+        private void SetSelectedTabFrameContent()
         {
             if (mAction == null)
             {
