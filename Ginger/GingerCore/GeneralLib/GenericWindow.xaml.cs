@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -210,7 +211,7 @@ namespace Ginger
             //set page content
             if (windowPage != null)
             {
-                PageFrame.Content = windowPage;
+                PageFrame.ClearAndSetContent(windowPage);
             }
 
 

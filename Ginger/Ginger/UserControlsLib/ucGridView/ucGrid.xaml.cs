@@ -104,7 +104,7 @@ namespace Ginger
                 {
                     if (mObjList != null)
                     {
-                        mObjList.PropertyChanged -= ObjListPropertyChanged;
+                        PropertyChangedEventManager.RemoveHandler(source: mObjList, handler: ObjListPropertyChanged, propertyName: string.Empty);
                     }
                     mObjList = value;
                     if (mObjList != null)
@@ -154,8 +154,8 @@ namespace Ginger
                 }
                 if (mObjList != null)
                 {
-                    mObjList.PropertyChanged += ObjListPropertyChanged;
-                    mObjList.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(CollectionChangedMethod);
+                    PropertyChangedEventManager.AddHandler(source: mObjList, handler: ObjListPropertyChanged, propertyName: string.Empty);
+                    CollectionChangedEventManager.AddHandler(source: mObjList, handler: CollectionChangedMethod);
                 }
             }
             get
@@ -383,7 +383,7 @@ namespace Ginger
 
         #endregion ##### Control Objects
 
-        private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
+        private void CollectionChangedMethod(object? sender, NotifyCollectionChangedEventArgs e)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -1163,7 +1163,7 @@ namespace Ginger
         #endregion ##### External Methods
 
         #region ##### Internal Methods
-        private void ObjListPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void ObjListPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             GingerCore.General.DoEvents();
             if (e.PropertyName == "CurrentItem")

@@ -1529,7 +1529,7 @@ namespace Ginger.Run
                         act.OutDataSourceTableName = act.DSOutputConfigParams[0].DSTable;
                     }
 
-                    List<ActReturnValue> mUniqueRVs = (from arc in act.ReturnValues where arc.Path == "" || arc.Path == "1" select arc).ToList();
+                    var mUniqueRVs = act.ReturnValues.Where(arc => arc.Path == "" || arc.Path == "1");
                     // if in output values there is only 1 record with Path = null
                     if (mUniqueRVs.Count == 0 && act.ReturnValues != null)
                     {
@@ -1553,7 +1553,7 @@ namespace Ginger.Run
                             mColList.Remove("GINGER_USED");
                         }
 
-                        act.AddOrUpdateOutDataSourceParam(act.OutDataSourceName, act.OutDataSourceTableName, item.Param, item.Param, "", mColList, act.OutDSParamMapType);
+                        act.AddOrUpdateOutDataSourceParam(act.OutDataSourceName, act.OutDataSourceTableName, item.Param.Replace(" ", "_"), item.Param.Replace(" ", "_"), "", mColList, act.OutDSParamMapType);
                     }
 
                     if (act.ConfigOutDSParamAutoCheck)
@@ -1590,8 +1590,8 @@ namespace Ginger.Run
                     }
 
                     int iPathCount = 0;
-                    List<ActReturnValue> mOutRVs = (from arc in act.ReturnValues where arc.Path == "" select arc).ToList();
-                    if (mOutRVs.Count == 0)
+                    var mOutRVs = act.ReturnValues.Where(arc => arc.Path == "");
+                    if (!mOutRVs.Any())
                     {
                         iPathCount++;
                         mOutRVs = (from arc in act.ReturnValues where arc.Path == iPathCount.ToString() select arc).ToList();
@@ -1609,8 +1609,8 @@ namespace Ginger.Run
                         string sColVals = "";
                         foreach (ActOutDataSourceConfig ADSC in mADCS)
                         {
-                            List<ActReturnValue> outReturnPath = (from arc in mOutRVs where arc.Param == ADSC.OutputType select arc).ToList();
-                            if (outReturnPath.Count > 0)
+                            var outReturnPath = mOutRVs.FirstOrDefault(arc => arc.Param.Replace(" ", "_") == ADSC.OutputType);
+                            if (outReturnPath != null)
                             {
                                 sColList = sColList + ADSC.TableColumn + ",";
                                 string valActual = outReturnPath[0].Actual == null ? "" : outReturnPath[0].Actual.ToString();
@@ -4581,7 +4581,8 @@ namespace Ginger.Run
                 mExecutedActionWhenStopped = (Act)CurrentBusinessFlow.CurrentActivity?.Acts.CurrentItem;
                 mExecutedBusinessFlowWhenStopped = (BusinessFlow)CurrentBusinessFlow;
                 Agent currentAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
-                if (currentAgent != null)
+                // Added an extra condition for the Application to not throw an error if the  ((AgentOperations)currentAgent.AgentOperations).Driver is null
+                if (currentAgent != null && ((AgentOperations)currentAgent.AgentOperations).Driver != null)
                 {
                     ((AgentOperations)currentAgent.AgentOperations).Driver.cancelAgentLoading = true;
                 }
@@ -4876,7 +4877,7 @@ namespace Ginger.Run
         {
             get
             {
-                ExecutionLoggerManager ExecutionLoggerManager = (ExecutionLoggerManager)mRunListeners.FirstOrDefault(x=> x.GetType() == typeof(ExecutionLoggerManager));
+                ExecutionLoggerManager ExecutionLoggerManager = (ExecutionLoggerManager)mRunListeners.FirstOrDefault(x => x.GetType() == typeof(ExecutionLoggerManager));
                 return ExecutionLoggerManager;
             }
         }
@@ -4885,7 +4886,7 @@ namespace Ginger.Run
         {
             get
             {
-                AccountReportExecutionLogger centeralized_Logger = (AccountReportExecutionLogger)mRunListeners.FirstOrDefault(x=> x.GetType() == typeof(AccountReportExecutionLogger));
+                AccountReportExecutionLogger centeralized_Logger = (AccountReportExecutionLogger)mRunListeners.FirstOrDefault(x => x.GetType() == typeof(AccountReportExecutionLogger));
                 return centeralized_Logger;
             }
         }
@@ -4894,7 +4895,7 @@ namespace Ginger.Run
         {
             get
             {
-                SealightsReportExecutionLogger sealights_Logger = (SealightsReportExecutionLogger)mRunListeners.FirstOrDefault(x=> x.GetType() == typeof(SealightsReportExecutionLogger));
+                SealightsReportExecutionLogger sealights_Logger = (SealightsReportExecutionLogger)mRunListeners.FirstOrDefault(x => x.GetType() == typeof(SealightsReportExecutionLogger));
                 return sealights_Logger;
             }
         }
@@ -5435,6 +5436,14 @@ namespace Ginger.Run
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to do Offline BusinessFlow Execution Log", ex);
                 return false;
+            }
+        }
+
+        public void ClearBindings()
+        {
+            if (CurrentBusinessFlow != null)
+            {
+                CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
             }
         }
     }

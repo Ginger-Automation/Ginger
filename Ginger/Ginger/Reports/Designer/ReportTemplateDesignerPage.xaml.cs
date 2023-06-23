@@ -23,6 +23,7 @@ using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Environments;
+using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using System;
 using System.Collections;
@@ -57,7 +58,7 @@ namespace Ginger.Reports.Designer
         private void LoadReportTemplatePage()
         {
             mReportPage = GetSampleReportPage(mReportTemplate.Xaml);
-            ReportFrame.Content = mReportPage;
+            ReportFrame.ClearAndSetContent(mReportPage);
         }
 
         public static ReportPage GetSampleReportPage(string Xaml)

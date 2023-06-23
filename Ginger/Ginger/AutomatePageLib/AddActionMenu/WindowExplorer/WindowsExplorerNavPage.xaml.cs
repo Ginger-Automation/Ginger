@@ -23,6 +23,7 @@ using Ginger.BusinessFlowPages.AddActionMenu;
 using Ginger.Run;
 using Ginger.WindowExplorer;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCoreNET;
 using System.Collections.Generic;
@@ -148,7 +149,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     }
                 }
 
-                xSelectedItemFrame.Content = mCurrentLoadedPage;
+                xSelectedItemFrame.ClearAndSetContent(mCurrentLoadedPage);
             });
         }
 

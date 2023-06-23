@@ -29,6 +29,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 
@@ -178,8 +179,10 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     if (Item is RepositoryItemBase)
                     {
-                        ((RepositoryItemBase)Item).PropertyChanged -= Item_PropertyChanged;
-                        ((RepositoryItemBase)Item).PropertyChanged += Item_PropertyChanged;
+                        //((RepositoryItemBase)Item).PropertyChanged -= Item_PropertyChanged;
+                        //((RepositoryItemBase)Item).PropertyChanged += Item_PropertyChanged;
+                        PropertyChangedEventManager.RemoveHandler(source: (RepositoryItemBase)Item, Item_PropertyChanged, string.Empty);
+                        PropertyChangedEventManager.AddHandler(source: (RepositoryItemBase)Item, Item_PropertyChanged, string.Empty);
                     }
 
                     if (!string.IsNullOrEmpty(mItemIconField))
@@ -250,9 +253,14 @@ namespace Ginger.UserControlsLib.UCListView
 
         public void ClearBindings()
         {
-            ParentList.UcListViewEvent -= ParentList_UcListViewEvent;
-            ParentList.List.SelectionChanged -= ParentList_SelectionChanged;
-            ((RepositoryItemBase)Item).PropertyChanged -= Item_PropertyChanged;
+            //ParentList.UcListViewEvent -= ParentList_UcListViewEvent;
+            //ParentList.List.SelectionChanged -= ParentList_SelectionChanged;
+            //((RepositoryItemBase)Item).PropertyChanged -= Item_PropertyChanged;
+            //UcListViewEventManager.RemoveHandler(ParentList, ParentList_UcListViewEvent);
+            //SelectionChangedEventManager.RemoveHandler(ParentList.List, ParentList_SelectionChanged);
+            WeakEventManager<UcListView, UcListViewEventArgs>.RemoveHandler(ParentList, nameof(UcListView.UcListViewEvent), ParentList_UcListViewEvent);
+            WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(ParentList.List, nameof(Selector.SelectionChanged), ParentList_SelectionChanged);
+            PropertyChangedEventManager.RemoveHandler((RepositoryItemBase)Item, Item_PropertyChanged, string.Empty);
 
             BindingOperations.ClearAllBindings(xItemIcon);
             foreach (ImageMakerControl notification in xItemNotificationsPnl.Children)
@@ -277,7 +285,7 @@ namespace Ginger.UserControlsLib.UCListView
             this.ClearControlsBindings();
         }
 
-        private void ParentList_UcListViewEvent(UcListViewEventArgs EventArgs)
+        private void ParentList_UcListViewEvent(object? sender, UcListViewEventArgs EventArgs)
         {
             switch (EventArgs.EventType)
             {
@@ -598,7 +606,7 @@ namespace Ginger.UserControlsLib.UCListView
         }
 
 
-        private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Item_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == mItemNameField || e.PropertyName == mItemNameExtentionField || e.PropertyName == mItemMandatoryField)
             {
@@ -661,10 +669,18 @@ namespace Ginger.UserControlsLib.UCListView
                     if (parent != null)
                     {
                         ParentList = (UcListView)parent;
-                        ParentList.UcListViewEvent -= ParentList_UcListViewEvent;
-                        ParentList.UcListViewEvent += ParentList_UcListViewEvent;
-                        ParentList.List.SelectionChanged -= ParentList_SelectionChanged;
-                        ParentList.List.SelectionChanged += ParentList_SelectionChanged;
+                        //ParentList.UcListViewEvent -= ParentList_UcListViewEvent;
+                        //ParentList.UcListViewEvent += ParentList_UcListViewEvent;
+                        //ParentList.List.SelectionChanged -= ParentList_SelectionChanged;
+                        //ParentList.List.SelectionChanged += ParentList_SelectionChanged;
+                        //UcListViewEventManager.RemoveHandler(ParentList, ParentList_UcListViewEvent);
+                        //UcListViewEventManager.AddHandler(ParentList, ParentList_UcListViewEvent);
+                        //SelectionChangedEventManager.RemoveHandler(ParentList.List, ParentList_SelectionChanged);
+                        //SelectionChangedEventManager.AddHandler(ParentList.List, ParentList_SelectionChanged);
+                        WeakEventManager<UcListView, UcListViewEventArgs>.RemoveHandler(ParentList, nameof(UcListView.UcListViewEvent), ParentList_UcListViewEvent);
+                        WeakEventManager<UcListView, UcListViewEventArgs>.AddHandler(ParentList, nameof(UcListView.UcListViewEvent), ParentList_UcListViewEvent);
+                        WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(ParentList.List, nameof(Selector.SelectionChanged), ParentList_SelectionChanged);
+                        WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(ParentList.List, nameof(Selector.SelectionChanged), ParentList_SelectionChanged);
                     }
                     OnPropertyChanged(nameof(IsSelected));
                 }
@@ -672,7 +688,7 @@ namespace Ginger.UserControlsLib.UCListView
             });
         }
 
-        private void ParentList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ParentList_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             OnPropertyChanged(nameof(IsSelected));
         }

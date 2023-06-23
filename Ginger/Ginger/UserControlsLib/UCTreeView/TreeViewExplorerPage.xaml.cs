@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Windows.Controls;
@@ -59,7 +60,7 @@ namespace GingerWPF.UserControlsLib
             ITreeViewItem TVObj = (ITreeViewItem)TVI.Tag;
             if (TVObj is ITreeViewItem)
             {
-                DetailsFrame.Content = TVObj.EditPage();
+                DetailsFrame.ClearAndSetContent(TVObj.EditPage());
             }
             else
             {

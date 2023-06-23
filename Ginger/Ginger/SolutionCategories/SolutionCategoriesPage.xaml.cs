@@ -39,10 +39,13 @@ namespace Ginger.SolutionCategories
         ObservableList<SolutionCategoryDefinition> mCategoriesDefinitions;
         bool mReadOnly;
 
-        public SolutionCategoriesPage(eSolutionCategoriesPageMode mode, ObservableList<SolutionCategoryDefinition> categoriesDefinitions = null, bool readOnlyMode = false)
+        public SolutionCategoriesPage()
         {
             InitializeComponent();
+        }
 
+        public void Init(eSolutionCategoriesPageMode mode, ObservableList<SolutionCategoryDefinition> categoriesDefinitions = null, bool readOnlyMode = false)
+        {
             mPageMode = mode;
             mCategoriesDefinitions = categoriesDefinitions;
             if (WorkSpace.Instance.Solution != null)

@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using GingerCore.GeneralLib;
 using System;
 using System.Reflection;
 using System.Windows;
@@ -52,7 +53,7 @@ namespace Ginger.Run.RunSetActions
             //Page p = mRunSetAction.GetEditPage();
             Page p = GetEditPage(mRunSetAction.GetEditPage());
 
-            ActionEditPageFrame.Content = p;
+            ActionEditPageFrame.ClearAndSetContent(p);
 
             if (mRunSetAction.SupportRunOnConfig)
             {

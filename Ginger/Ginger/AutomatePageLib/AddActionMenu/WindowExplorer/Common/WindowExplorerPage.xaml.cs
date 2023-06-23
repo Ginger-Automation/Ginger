@@ -41,6 +41,7 @@ using GingerCore.Drivers.Appium;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.JavaDriverLib;
 using GingerCore.Drivers.PBDriver;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -1141,7 +1142,7 @@ namespace Ginger.WindowExplorer
 
                 mScreenShotViewPage.xMainImage.MouseLeftButtonDown += XMainImage_MouseLeftButtonDown;
 
-                xScreenShotFrame.Content = mScreenShotViewPage;
+                xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
                 //xDeviceImage.Source = General.ToBitmapSource(ScreenShotBitmap);
 
                 xScreenShotFrame.Visibility = Visibility.Visible;
@@ -1548,7 +1549,7 @@ namespace Ginger.WindowExplorer
 
             if (!xLiveSpyTabContentFrame.HasContent || xLiveSpyTabContentFrame.Content == null)
             {
-                xLiveSpyTabContentFrame.Content = spyPage;
+                xLiveSpyTabContentFrame.ClearAndSetContent(spyPage);
             }
         }
 

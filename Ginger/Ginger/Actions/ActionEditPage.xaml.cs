@@ -44,6 +44,8 @@ using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Windows;
@@ -111,9 +113,15 @@ namespace Ginger.Actions
 
         public General.eRIPageViewMode EditMode { get; set; }
 
-        public ActionEditPage(Act act, General.eRIPageViewMode editMode = General.eRIPageViewMode.Automation, BusinessFlow actParentBusinessFlow = null, Activity actParentActivity = null)
+        public ActionEditPage(Act act, General.eRIPageViewMode editMode = General.eRIPageViewMode.Automation, BusinessFlow? actParentBusinessFlow = null, Activity? actParentActivity = null)
         {
             InitializeComponent();
+            Init(act, editMode, actParentBusinessFlow, actParentActivity);
+        }
+
+        public void Init(Act act, General.eRIPageViewMode editMode = General.eRIPageViewMode.Automation, BusinessFlow? actParentBusinessFlow = null, Activity? actParentActivity = null)
+        {
+            Clear();
 
             //ActionEditNum++;
             //LiveActionEditCounter++;
@@ -127,16 +135,27 @@ namespace Ginger.Actions
                 mAction.SaveBackup();
             }
 
-            mAction.PropertyChanged -= ActionPropertyChanged;
-            mAction.PropertyChanged += ActionPropertyChanged;
-            mAction.InputValues.CollectionChanged -= InputValues_CollectionChanged;
-            mAction.InputValues.CollectionChanged += InputValues_CollectionChanged;
-            mAction.FlowControls.CollectionChanged -= FlowControls_CollectionChanged;
-            mAction.FlowControls.CollectionChanged += FlowControls_CollectionChanged;
-            mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
-            mAction.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
-            mAction.ScreenShots.CollectionChanged -= ScreenShots_CollectionChanged;
-            mAction.ScreenShots.CollectionChanged += ScreenShots_CollectionChanged;
+            //mAction.PropertyChanged -= ActionPropertyChanged;
+            //mAction.PropertyChanged += ActionPropertyChanged;
+            string allProperties = string.Empty;
+            PropertyChangedEventManager.RemoveHandler(source: mAction, handler: ActionPropertyChanged, propertyName: allProperties);
+            PropertyChangedEventManager.AddHandler(source: mAction, handler: ActionPropertyChanged, propertyName: allProperties);
+            //mAction.InputValues.CollectionChanged -= InputValues_CollectionChanged;
+            //mAction.InputValues.CollectionChanged += InputValues_CollectionChanged;
+            CollectionChangedEventManager.RemoveHandler(source: mAction.InputValues, handler: InputValues_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: mAction.InputValues, handler: InputValues_CollectionChanged);
+            //mAction.FlowControls.CollectionChanged -= FlowControls_CollectionChanged;
+            //mAction.FlowControls.CollectionChanged += FlowControls_CollectionChanged;
+            CollectionChangedEventManager.RemoveHandler(source: mAction.FlowControls, handler: FlowControls_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: mAction.FlowControls, handler: FlowControls_CollectionChanged);
+            //mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
+            //mAction.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
+            CollectionChangedEventManager.RemoveHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
+            //mAction.ScreenShots.CollectionChanged -= ScreenShots_CollectionChanged;
+            //mAction.ScreenShots.CollectionChanged += ScreenShots_CollectionChanged;
+            CollectionChangedEventManager.RemoveHandler(source: mAction.ScreenShots, handler: ScreenShots_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: mAction.ScreenShots, handler: ScreenShots_CollectionChanged);
 
             mContext = Context.GetAsContext(mAction.Context);
             if (mContext != null && mContext.Runner != null)
@@ -166,6 +185,28 @@ namespace Ginger.Actions
 
             InitView();
             mAction.ResumeDirtyTracking();
+        }
+
+        public void Clear()
+        {
+            if(mAction != null)
+            {
+                //mAction.PropertyChanged -= ActionPropertyChanged;
+                string allProperties = string.Empty;
+                PropertyChangedEventManager.RemoveHandler(source: mAction, handler: ActionPropertyChanged, propertyName: allProperties);
+                //mAction.InputValues.CollectionChanged -= InputValues_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(source: mAction.InputValues, handler: InputValues_CollectionChanged);
+                //mAction.FlowControls.CollectionChanged -= FlowControls_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(source: mAction.FlowControls, handler: FlowControls_CollectionChanged);
+                //mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
+                //mAction.ScreenShots.CollectionChanged -= ScreenShots_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(source: mAction.ScreenShots, handler: ScreenShots_CollectionChanged);
+            }
+            mAction = null!;
+            mContext = null!;
+            mActParentActivity = null!;
+            mActParentBusinessFlow = null!;
         }
 
         private void InitView()
@@ -431,7 +472,7 @@ namespace Ginger.Actions
             xActionHelpDetailsFram.SetContent(desPage);
         }
 
-        private void ScreenShots_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void ScreenShots_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -463,7 +504,7 @@ namespace Ginger.Actions
             }
         }
 
-        private void ReturnValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void ReturnValues_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateOutputValuesTabHeader();
             mAction.OnPropertyChanged(nameof(Act.ReturnValuesCount));
@@ -476,7 +517,7 @@ namespace Ginger.Actions
             });
         }
 
-        private void FlowControls_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void FlowControls_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateFlowControlsTabHeader();
             mAction.OnPropertyChanged(nameof(Act.FlowControlsInfo));
@@ -500,7 +541,7 @@ namespace Ginger.Actions
         }
 
 
-        private void InputValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void InputValues_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             SwitchingInputValueBoxAndGrid(mAction);
         }
@@ -1728,7 +1769,7 @@ namespace Ginger.Actions
         //        mSimulateRunBtn.Visibility = Visibility.Collapsed;
         //}
 
-        private void ActionPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void ActionPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Act.Status))
             {
@@ -1736,13 +1777,16 @@ namespace Ginger.Actions
                 {
                     if (mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)
                     {
-                        mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
+                        //mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
+                        CollectionChangedEventManager.RemoveHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
                         xOutputValuesGrid.DataSourceList = null;
                     }
                     else
                     {
-                        mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
-                        mAction.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
+                        //mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
+                        //mAction.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
+                        CollectionChangedEventManager.RemoveHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
+                        CollectionChangedEventManager.AddHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
                         xOutputValuesGrid.DataSourceList = mAction.ReturnValues;
                         ReturnValues_CollectionChanged(null, null);
                     }
@@ -1838,11 +1882,17 @@ namespace Ginger.Actions
             //this.ClearControlsBindings();
             if (mAction != null)
             {
-                mAction.PropertyChanged -= ActionPropertyChanged;
-                mAction.InputValues.CollectionChanged -= InputValues_CollectionChanged;
-                mAction.FlowControls.CollectionChanged -= FlowControls_CollectionChanged;
-                mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
-                mAction.ScreenShots.CollectionChanged -= ScreenShots_CollectionChanged;
+                //mAction.PropertyChanged -= ActionPropertyChanged;
+                string allProperties = string.Empty;
+                PropertyChangedEventManager.RemoveHandler(source: mAction, ActionPropertyChanged, propertyName: allProperties);
+                //mAction.InputValues.CollectionChanged -= InputValues_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(source: mAction.InputValues, handler: InputValues_CollectionChanged);
+                //mAction.FlowControls.CollectionChanged -= FlowControls_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(source: mAction.FlowControls, handler: FlowControls_CollectionChanged);
+                //mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
+                //mAction.ScreenShots.CollectionChanged -= ScreenShots_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(source: mAction.ScreenShots, handler: ScreenShots_CollectionChanged);
                 mAction = null;
             }
             xFlowControlConditionsFrame.NavigationService.RemoveBackEntry();

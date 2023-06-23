@@ -554,7 +554,7 @@ namespace Ginger.Actions
                 mActDSTblElem.DSTableName = mDSTable.Name;
                 mActDSTblElem.DSName = mDSTable.DSC.Name;
                 Page pageContent = new Ginger.DataSource.DataSourceExportToExcel(mActDSTblElem);
-                ExcelSpecificFrame.Content = pageContent;
+                ExcelSpecificFrame.ClearAndSetContent(pageContent);
                 ExcelSpecificFrame.Visibility = Visibility.Visible;
             }
             else
