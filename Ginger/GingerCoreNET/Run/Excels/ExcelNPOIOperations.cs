@@ -37,6 +37,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         DataTable mFilteredDataTable { get; set; }
         IWorkbook mWorkbook { get; set; }
         ISheet mSheet { get; set; }
+
+        /*
+            Reading The Rows and Columns of the Excel Sheet
+         */
         private DataTable ConvertSheetToDataTable(ISheet sheet , int rowHeaderNumber)
         {
             try
@@ -45,11 +49,18 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 dtExcelTable.Rows.Clear();
                 dtExcelTable.Columns.Clear();
                 IRow headerRow = this.GetHeaderRow(sheet, rowHeaderNumber);
-                bool allUnique = headerRow.Cells.GroupBy(x => x.StringCellValue).All(g => g.Count() == 1);
+/*              
+ *              The below code is redundant because the dtExcelTable.Columns.Add() -> throws DuplicateNameException
+ *                
+ *                bool allUnique = headerRow.Cells.GroupBy(x => x.StringCellValue).All(g => g.Count() == 1);
                 if (!allUnique)
                 {
                     throw new DuplicateNameException(string.Format("Sheet '{0}' contains duplicate column names", sheet.SheetName));
                 }
+*/              
+                /*
+                 initialColNumber -> is used to locate the first column number of the first header column
+                 */
                 int colCount = headerRow.LastCellNum;
                 int initialColNumber = -1;
                 for (var c = 0; c < colCount; c++)
@@ -61,9 +72,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                         { 
                             initialColNumber = c; 
                         }
-                        dtExcelTable.Columns.Add(GingerCoreNET.GeneralLib.General.RemoveSpecialCharactersInColumnHeader(headerRow.GetCell(c).ToString()).Trim());
+                        dtExcelTable.Columns.Add(GingerCoreNET.GeneralLib.General.RemoveSpecialCharactersInColumnHeader(cell.ToString()).Trim());
                     }
                 }
+
+                /*
+                 intialColNumber is used to also locate where to start and end the reading of the row data. 
+                 */
                 var i = rowHeaderNumber;
                 var currentRow = sheet.GetRow(i);
                 while (currentRow != null)
@@ -121,6 +136,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             return cellVal;
         }
 
+
+        // Read the whole row and col data with/without filter
         public DataTable ReadData(string fileName, string sheetName, string filter, bool selectedRows , string headerRowNumber = "1")
         {
             filter = filter ?? "";
@@ -139,6 +156,9 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             }
         }
 
+        /*
+        This function is used as a validator , checks if the file path and/or sheet name exists
+        */
         private void GetExcelSheet(string fileName, string sheetName)
         {
             mWorkbook = GetExcelWorkbook(fileName);
@@ -201,6 +221,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             return true;
         }
 
+
+        // Returns a cell's data only if the filter is set otherwise works like the ReadData() function
         public DataTable ReadCellData(string fileName, string sheetName, string filter, bool selectedRows , string headerRowNumber)
         {
             try
@@ -374,10 +396,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             return cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
         }
 
+        // This function returns the Column Titles (Header Columns)
         private IRow GetHeaderRow(ISheet sheet , int headerRowNumber=1)
         {
             IRow header = sheet.GetRow(headerRowNumber - 1);
-            if (header == null) throw new InvalidDataException($"Could not Find Header Columns at the Row Number : {headerRowNumber}, Please Enter the Appropriate Header Row Number");
+            if (header == null)
+            {
+                throw new InvalidDataException($"Could not Find Header Columns at the Row Number : {headerRowNumber}, Please Enter the Appropriate Header Row Number");
+            }
             return header;
         }
     }

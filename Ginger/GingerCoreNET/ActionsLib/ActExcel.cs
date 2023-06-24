@@ -273,6 +273,10 @@ namespace GingerCore.Actions
             get { return this.GetType().GetProperty(propertyName).GetValue(this, null); }
         }
 
+        /*
+         Checks if certain fields exist. If they don't, an Error (Pop up) is shown to the user
+         
+         */
         public bool CheckMandatoryFieldsExists(List<string> fields)
         {
             foreach (string field in fields)
@@ -280,9 +284,13 @@ namespace GingerCore.Actions
                 if (String.IsNullOrWhiteSpace((string)this[field]))
                 {
                     string calculated = "Calculated";
+                    // Some fields start with Calculated eg: CalculatedSheetName. first the substring 'SheetName' is considered and then it is split according to Capital Letters
                     int indexOfField = field.IndexOf(calculated);
+                    // Regex used to split the string by Capital Letters eg: SheetName becomes Sheet Name
                     var splitBetCapLetters = new Regex(@"(?<=[A-Z])(?=[A-Z][a-z]) | (?<=[^A-Z])(?=[A-Z]) | (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
-                    string actualFieldValue = splitBetCapLetters.Replace(indexOfField != -1 ?  field.Substring(indexOfField + calculated.Length) : field, " ") ;
+                    // if the field name startwith Calculated then consider the substring after 'Calculated' otherwise use the field itself
+                    string substr = indexOfField != -1 ? field.Substring(indexOfField + calculated.Length) : field;
+                    string actualFieldValue = splitBetCapLetters.Replace( substr, " ") ;
                     this.Error = $"The Mandatory field : {actualFieldValue} cannot be empty";
                     Reporter.ToUser(eUserMsgKey.StaticErrorMessage, this.Error);
                     return false;
