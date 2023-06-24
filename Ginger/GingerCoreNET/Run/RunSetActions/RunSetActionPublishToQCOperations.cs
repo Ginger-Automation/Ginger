@@ -167,7 +167,7 @@ namespace Ginger.Run.RunSetActions
                         virtualBF.AddActivitiesGroup(virtualAG);
                         foreach (Activity runSetAct in runSetBF.Activities)
                         {
-                            virtualBF.AddActivity((Activity)runSetAct.CreateCopy(false), virtualAG, -1, false); ;
+                            virtualBF.AddActivity((Activity)runSetAct.CreateCopy(false), virtualAG, -1, false);
                         }
                     }
                 }
