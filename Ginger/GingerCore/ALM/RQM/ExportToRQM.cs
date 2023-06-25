@@ -852,8 +852,6 @@ namespace GingerCore.ALM.RQM
         private Dictionary<string, string> GetCustomProperties(string ItemType)
         {
             Dictionary<string, string> propertiesList = new Dictionary<string, string>();
-            if (mExternalItemsFields.Count > 0)
-            {
                 foreach (ExternalItemFieldBase itemField in mExternalItemsFields)
                 {
                     if (itemField.ItemType == ItemType)
@@ -864,11 +862,7 @@ namespace GingerCore.ALM.RQM
                         }
                     }
                 }
-            }
-            else
-            {
-                Reporter.ToLog(eLogLevel.INFO, "Could not export to RQM, External Items Fields values are missing");
-            }
+            Reporter.ToLog(eLogLevel.INFO, $"Custom Properties count { mExternalItemsFields.Count}");
             return propertiesList;
         }
 

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -239,7 +239,10 @@ namespace Ginger.SolutionGeneral
             IEnumerable<string> files = Directory.EnumerateFiles(folder, "*.xml", SearchOption.AllDirectories).AsParallel().AsOrdered();
             Parallel.ForEach(files, file =>
             {
-                CB.Add(file);
+                if (!file.Contains("RQMServerConfigurationsPackage"))
+                {
+                    CB.Add(file);
+                }
             });
         }
 
