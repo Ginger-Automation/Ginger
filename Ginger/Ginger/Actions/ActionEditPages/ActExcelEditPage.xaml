@@ -40,8 +40,8 @@
                     </DockPanel>
                 </StackPanel>
                 <StackPanel>
-                    <Label Style="{StaticResource @InputFieldLabelStyle}">Header Row Number:</Label>
-                    <Actions:UCValueExpression HorizontalAlignment="Left" Width="250" x:Name="HeaderRowNumTextBox" ToolTip="Enter the Row Number at which the Header Columns Exists" PreviewTextInput="HeaderNumValidation"/>
+                    <Label Style="{StaticResource @InputFieldLabelStyle}">Table Header Row Number:</Label>
+                    <Actions:UCValueExpression HorizontalAlignment="Left" Width="250" x:Name="HeaderRowNumTextBox" ToolTip="Enter the Row Number at which the Table Headers Exists" PreviewTextInput="HeaderNumValidation"/>
                 </StackPanel>
             </StackPanel>
 

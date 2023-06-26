@@ -66,7 +66,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 for (var c = 0; c < colCount; c++)
                 {
                     ICell cell = headerRow.GetCell(c);
-                    if (cell!=null && !dtExcelTable.Columns.Contains(cell.ToString()))
+                    if (cell!=null)
                     {
                         if(initialColNumber  == -1) 
                         { 

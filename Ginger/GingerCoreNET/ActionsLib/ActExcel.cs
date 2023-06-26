@@ -144,6 +144,14 @@ namespace GingerCore.Actions
                 return sheet.Trim();
             }
         }
+        public string CalculatedHeaderRowNum
+        {
+            get
+            {
+                string headerRowNum = GetInputParamCalculatedValue(nameof(HeaderRowNum)) ?? "1";
+                return headerRowNum;
+            }
+        }
         public string SelectRowsWhere
         {
             get
@@ -303,7 +311,7 @@ namespace GingerCore.Actions
         {
             try
             {
-                DataTable excelDataTable = excelOperator.ReadCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, HeaderRowNum);
+                DataTable excelDataTable = excelOperator.ReadCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, CalculatedHeaderRowNum);
                 if (!string.IsNullOrEmpty(SelectRowsWhere) && !SelectAllRows)
                 {
                     string CellValue = excelDataTable.Rows[0][0].ToString();
@@ -332,7 +340,7 @@ namespace GingerCore.Actions
         {
             try
             {
-                DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, HeaderRowNum);
+                DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, CalculatedHeaderRowNum);
                 if (excelDataTable != null && excelDataTable.Rows.Count > 0)
                 {
                     for (int j = 0; j < excelDataTable.Rows.Count; j++)
