@@ -216,6 +216,10 @@ namespace GingerCore
                         }
                     }
                 }
+                catch (Exception e)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error Occured! While Trying to Communicate with the {Agent.AgentType} Agent {Agent.Name}. Please try checking your Agent Configurations!", e);
+                }
                 finally
                 {
                     if (Agent.AgentType == Agent.eAgentType.Service)

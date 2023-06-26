@@ -927,6 +927,7 @@ namespace GingerCore.Drivers
             {
                 if (Driver != null)
                 {
+                    Driver.Close();
                     Driver.Quit();
                     Driver = null;
                 }

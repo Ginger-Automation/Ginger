@@ -92,7 +92,15 @@ namespace Ginger.Run.RunSetActions
                 {
                     if (bfs.Count > 0)
                     {
-                        TargetFrameworkHelper.Helper.ExportVirtualBusinessFlowToALM(bfs[0], PublishToALMConfig, false, eALMConnectType.Silence, PublishToALMConfig.TestSetFolderDestination, PublishToALMConfig.TestCaseFolderDestination);
+                        if (!TargetFrameworkHelper.Helper.ExportVirtualBusinessFlowToALM(bfs[0], PublishToALMConfig, false, eALMConnectType.Silence, PublishToALMConfig.TestSetFolderDestination, PublishToALMConfig.TestCaseFolderDestination))
+                        {
+                            RunSetActionPublishToQC.Errors = result;
+                            RunSetActionPublishToQC.Status = eRunSetActionStatus.Failed;
+                        }
+                        else
+                        {
+                            RunSetActionPublishToQC.Status = eRunSetActionStatus.Completed;
+                        }
                     }
                     else
                     {
@@ -106,16 +114,17 @@ namespace Ginger.Run.RunSetActions
                 {
                     bfs.Add((BusinessFlow)BFR.GetBusinessFlow());
                 }
+                if (!TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig))
+                {
+                    RunSetActionPublishToQC.Errors = result;
+                    RunSetActionPublishToQC.Status = eRunSetActionStatus.Failed;
+                }
+                else
+                {
+                    RunSetActionPublishToQC.Status = eRunSetActionStatus.Completed;
+                }
             }
-            if (!TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig))
-            {
-                RunSetActionPublishToQC.Errors = result;
-                RunSetActionPublishToQC.Status = eRunSetActionStatus.Failed;
-            }
-            else
-            {
-                RunSetActionPublishToQC.Status = eRunSetActionStatus.Completed;
-            }
+           
         }
 
         private BusinessFlow ConvertRunSetToBF(IReportInfo reportInfo)
@@ -158,7 +167,7 @@ namespace Ginger.Run.RunSetActions
                         virtualBF.AddActivitiesGroup(virtualAG);
                         foreach (Activity runSetAct in runSetBF.Activities)
                         {
-                            virtualBF.AddActivity(runSetAct, virtualAG);
+                            virtualBF.AddActivity((Activity)runSetAct.CreateCopy(false), virtualAG, -1, false);
                         }
                     }
                 }
