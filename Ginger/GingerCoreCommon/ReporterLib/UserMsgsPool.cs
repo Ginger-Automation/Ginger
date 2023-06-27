@@ -164,7 +164,8 @@ namespace Amdocs.Ginger.Common
         UploadSolutionToSourceControl,
         UploadSolutionFailed,
         SourceControlBranchNameEmpty, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace,
-        DeleteRecoverFolderWarn
+        DeleteRecoverFolderWarn,
+        NotAllowedForMappedRuntimeValue
     }
 
     public static class UserMsgsPool
@@ -383,6 +384,7 @@ namespace Amdocs.Ginger.Common
             #endregion Actions Messages
 
             #region Runset Messages
+            Reporter.UserMsgsPool.Add(eUserMsgKey.NotAllowedForMappedRuntimeValue, new UserMsg(eUserMsgType.WARN, "Not Allowed for Mapped Runtime Value", "{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.RunsetNoGingerPresentForBusinessFlow, new UserMsg(eUserMsgType.WARN, "No Ginger in " + GingerDicser.GetTermResValue(eTermResKey.RunSet), "Please add at least one Ginger to your " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " before choosing a " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ".", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ResetBusinessFlowRunVariablesFailed, new UserMsg(eUserMsgType.ERROR, GingerDicser.GetTermResValue(eTermResKey.Variables) + " Reset Failed", "Failed to reset the " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " to original configurations." + System.Environment.NewLine + "Error Details: {0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToGenerateAutoRunDescription, new UserMsg(eUserMsgType.QUESTION, "Automatic Description Creation", "Do you want to automatically populate the Run Description?", eUserMsgOption.YesNo, eUserMsgSelection.No));
