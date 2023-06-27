@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Applitools.Utils;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using NPOI.HPSF;
 using System;
 using System.Collections.Generic;
@@ -61,7 +62,8 @@ namespace GingerCore.Actions
             ForceCopy,
             RunCommand,
             UnZip,
-            DeleteDirectoryFiles
+            DeleteDirectoryFiles,
+            DeleteDirectory
         }
 
         public eFileoperations FileOperationMode
@@ -158,7 +160,7 @@ namespace GingerCore.Actions
                 case eFileoperations.DeleteDirectoryFiles:
                     if (!System.IO.Directory.Exists(calculatedSourceFilePath))
                     {
-                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                         base.ExInfo = "Folder doesn't exists";
                         return;
                     }
@@ -166,6 +168,15 @@ namespace GingerCore.Actions
                     {
                         System.IO.File.Delete(file);
                     }
+                    break;
+                case eFileoperations.DeleteDirectory:
+                    if (!System.IO.Directory.Exists(calculatedSourceFilePath))
+                    {
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        base.ExInfo = "Folder doesn't exists";
+                        return;
+                    }
+                    System.IO.Directory.Delete(calculatedSourceFilePath, recursive:true);
                     break;
                 case eFileoperations.Copy:
                     SetupDestinationFolder();
