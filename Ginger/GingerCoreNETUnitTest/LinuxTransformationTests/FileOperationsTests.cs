@@ -55,5 +55,31 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             Assert.AreNotEqual(actFileOperation.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed);
         }
 
+        [TestMethod]
+        [Timeout(60000)]
+        public void DeleteDirectoryTest()
+        {
+            // Arrange
+            string directoryPath = "/path/to/directory";
+
+            // We are creating a test directory and contents in it
+            Directory.CreateDirectory(directoryPath);
+            File.WriteAllText(Path.Combine(directoryPath, "file1.txt"), "File 1 content");
+            File.WriteAllText(Path.Combine(directoryPath, "file2.txt"), "File 2 content");
+
+            actFileOperation.FileOperationMode = ActFileOperations.eFileoperations.DeleteDirectory;
+            actFileOperation.AddOrUpdateInputParamValueAndCalculatedValue("SourceFilePath", directoryPath);
+
+            // Act
+            actFileOperation.Execute();
+
+            // Assert
+            Assert.AreNotEqual(actFileOperation.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed);
+            Assert.IsFalse(Directory.Exists(directoryPath), "The directory should be deleted.");
+            Assert.IsFalse(File.Exists(Path.Combine(directoryPath, "file1.txt")), "File 1 should be deleted.");
+            Assert.IsFalse(File.Exists(Path.Combine(directoryPath, "file2.txt")), "File 2 should be deleted.");
+        }
+
+
     }
 }
