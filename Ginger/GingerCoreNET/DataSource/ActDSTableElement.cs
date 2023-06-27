@@ -18,11 +18,13 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.DataSource;
 using Amdocs.Ginger.Repository;
 using GingerCore.DataSource;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -349,9 +351,15 @@ namespace GingerCore.Actions
             {
                 if (mExcelConfig != value)
                 {
+                    if (mExcelConfig != null)
+                    {
+                        mExcelConfig.OnDirtyStatusChanged -= this.RaiseDirtyChanged;
+                    }
                     mExcelConfig = value;
+                    mExcelConfig.StartDirtyTracking();
+                    mExcelConfig.OnDirtyStatusChanged += this.RaiseDirtyChanged;
                     OnPropertyChanged(nameof(ExcelConfig));
-                }
+                }  
             }
         }
 

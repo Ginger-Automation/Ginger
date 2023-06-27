@@ -2264,7 +2264,7 @@ namespace Ginger.Run
                                                 }
                                                 else
                                                 {
-                                                    act.Error = "Agent failed to start for the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " Application.";
+                                                    act.Error = $"Agent failed to start for the { GingerDicser.GetTermResValue(eTermResKey.Activity)} Application. Current Agent Status {((AgentOperations)currentAgent.AgentOperations).Status}";
                                                 }
                                             }
 
