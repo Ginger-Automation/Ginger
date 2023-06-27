@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace GingerCore.Actions
 {
@@ -118,8 +119,11 @@ namespace GingerCore.Actions
                     if (((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status != Agent.eStatus.FailedToStart)
                     {
                         ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations.Close();
-                    } ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).DSList = DSList;
+                        Thread.Sleep(2000);
+                    } 
+                    ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).DSList = DSList;
                     ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations.StartDriver();
+                    Thread.Sleep(2000);
                     break;
             }
         }

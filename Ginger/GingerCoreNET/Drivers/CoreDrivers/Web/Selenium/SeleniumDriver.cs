@@ -927,6 +927,7 @@ namespace GingerCore.Drivers
             {
                 if (Driver != null)
                 {
+                    Driver.Close();
                     Driver.Quit();
                     Driver = null;
                 }
@@ -7780,7 +7781,7 @@ namespace GingerCore.Drivers
         }
 
         private void OpenNewTab()
-        {
+        {            
             IJavaScriptExecutor javaScriptExecutor = (IJavaScriptExecutor)Driver;
             javaScriptExecutor.ExecuteScript("window.open();");
             Driver.SwitchTo().Window(Driver.WindowHandles[Driver.WindowHandles.Count - 1]);

@@ -307,7 +307,7 @@ namespace Ginger.Run
         {
             if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
             {
-                Process.Start(new ProcessStartInfo() { FileName = WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, UseShellExecute = true });
+                Process.Start(new ProcessStartInfo() { FileName = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder), UseShellExecute = true });
             }
             else
             {
