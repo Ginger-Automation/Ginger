@@ -61,7 +61,8 @@ namespace GingerCore.Actions
             ForceCopy,
             RunCommand,
             UnZip,
-            DeleteDirectoryFiles
+            DeleteDirectoryFiles,
+            DeleteDirectory
         }
 
         public eFileoperations FileOperationMode
@@ -158,14 +159,32 @@ namespace GingerCore.Actions
                 case eFileoperations.DeleteDirectoryFiles:
                     if (!System.IO.Directory.Exists(calculatedSourceFilePath))
                     {
-                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
-                        base.ExInfo = "Folder doesn't exists";
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        base.ExInfo = "Folder doesn't exist";
                         return;
                     }
                     foreach (string file in System.IO.Directory.GetFiles(calculatedSourceFilePath))
                     {
                         System.IO.File.Delete(file);
                     }
+                    break;
+                case eFileoperations.DeleteDirectory:
+                    string finalpath = calculatedSourceFilePath;
+
+                    bool isLinuxPath = IsLinuxPath(finalpath);
+                    if (!isLinuxPath)
+                    {
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        base.ExInfo = "Linux path is not valid";
+                        return;
+                    }
+                    if (!System.IO.Directory.Exists(finalpath))
+                    {
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        base.ExInfo = "Directory doesn't exist";
+                        return;
+                    }
+                    System.IO.Directory.Delete(finalpath,recursive:true);
                     break;
                 case eFileoperations.Copy:
                     SetupDestinationFolder();
@@ -369,6 +388,29 @@ namespace GingerCore.Actions
                 return true;
             }
             return false;
+        }
+        
+        public bool IsLinuxPath(string path) //Method checking valid linux path
+        {
+            char[] invalidPathChars = Path.GetInvalidPathChars();
+
+            if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+            {
+                // Linux or macOS platform, check for valid Linux path characters
+                foreach (char c in path)
+                {
+                    if (invalidPathChars.Contains(c))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            else
+            {
+                // Non-Linux OS, assuming path is valid
+                return true;
+            }
         }
     }
 }
