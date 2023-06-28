@@ -59,7 +59,8 @@ namespace GingerCore.Actions
             ForceCopy,
             RunCommand,
             UnZip,
-            DeleteDirectoryFiles
+            DeleteDirectoryFiles,
+            DeleteDirectory
         }
 
         public eFileoperations FileOperationMode
@@ -164,6 +165,15 @@ namespace GingerCore.Actions
                     {
                         System.IO.File.Delete(file);
                     }
+                    break;
+                case eFileoperations.DeleteDirectory:
+                    if(!System.IO.Directory.Exists(calculatedSourceFilePath))
+                    {
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        base.ExInfo = "Directory doesn't exist";
+                        return;
+                    }
+                    System.IO.Directory.Delete(calculatedSourceFilePath, recursive:true);
                     break;
                 case eFileoperations.Copy:
                     SetupDestinationfolders();
