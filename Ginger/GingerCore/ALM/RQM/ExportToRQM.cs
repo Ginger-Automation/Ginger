@@ -121,14 +121,14 @@ namespace GingerCore.ALM.RQM
                                 return false;
                             }
                         }
-                        if (!string.IsNullOrEmpty(testPlan.URLPathVersioned))
-                        {
-                            testPlan.RQMExecutionRecords = RQMConnect.Instance.GetExecutionRecordsByTestPlan(loginData, reader, currentRQMProjectMapping, RQMCore.ALMProjectGroupName, RQMCore.ALMProjectGuid, testPlan.URLPathVersioned);
-                        }
-                        else
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Plan not found.");
-                        }
+                        //if (!string.IsNullOrEmpty(testPlan.URLPathVersioned))
+                        //{
+                        //    testPlan.RQMExecutionRecords = RQMConnect.Instance.GetExecutionRecordsByTestPlan(loginData, reader, currentRQMProjectMapping, RQMCore.ALMProjectGroupName, RQMCore.ALMProjectGuid, testPlan.URLPathVersioned);
+                        //}
+                        //else
+                        //{
+                        //    Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Plan not found.");
+                        //}
 
                         List<ExecutionResult> exeResultList = new List<ExecutionResult>();
                         foreach (ActivitiesGroup activGroup in businessFlow.ActivitiesGroups)
@@ -138,7 +138,7 @@ namespace GingerCore.ALM.RQM
                                 || publishToALMConfig.FilterStatus == FilterByStatus.All)
                             {
                                 testPlan.Name = !string.IsNullOrEmpty(publishToALMConfig.VariableForTCRunNameCalculated) ? publishToALMConfig.VariableForTCRunNameCalculated : testPlan.Name;
-                                ExecutionResult exeResult = GetExeResultforAg(businessFlow, bfExportedID, activGroup, ref result, testPlan);
+                                ExecutionResult exeResult = GetExeResultforAg(businessFlow, bfExportedID, activGroup, ref result, testPlan,currentRQMProjectMapping);
                                 if (exeResult != null)
                                 {
                                     exeResultList.Add(exeResult);
@@ -260,7 +260,7 @@ namespace GingerCore.ALM.RQM
             // get data about execution records per current test plan - finish
             return false;
         }
-        private ExecutionResult GetExeResultforAg(BusinessFlow businessFlow, string bfExportedID, ActivitiesGroup activGroup, ref string result, RQMTestPlan testPlan)
+        private ExecutionResult GetExeResultforAg(BusinessFlow businessFlow, string bfExportedID, ActivitiesGroup activGroup, ref string result, RQMTestPlan testPlan, RQMProject currentRQMProjectMapping)
         {
             try
             {
@@ -280,6 +280,11 @@ namespace GingerCore.ALM.RQM
                 string txExportID = GetExportedIDString(activGroup.ExternalID, "RQMID");
                 string tsExportID = GetExportedIDString(activGroup.ExternalID, "RQMScriptID");
                 string erExportID = GetExportedIDString(activGroup.ExternalID, "RQMRecordID");
+
+                var TestCaseVersionUrl = RQMConnect.Instance.GetTestCaseByIdByProject(loginData, testPlan.PreFix, currentRQMProjectMapping.Guid, txExportID);
+
+                testPlan.RQMExecutionRecords = RQMConnect.Instance.GetExecutionRecordsByTestCase(loginData, reader, currentRQMProjectMapping, RQMCore.ALMProjectGroupName, RQMCore.ALMProjectGuid, TestCaseVersionUrl);
+
                 if ((activGroup.TestSuiteId != null) && (activGroup.TestSuiteId != string.Empty))
                 {
                     // check if test suite execution record is exists per current Test Suite ID
