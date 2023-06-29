@@ -748,15 +748,29 @@ namespace GingerCore
                 {
                     Driver.Dispatcher.Invoke(() =>
                    {
-                       Driver.CloseDriver();
-                       Thread.Sleep(1000);
+                       try
+                       {
+                           Driver.CloseDriver();
+                           Thread.Sleep(1000);
+                       }
+                       catch(Exception ex)
+                       { 
+                           Reporter.ToLog(eLogLevel.ERROR, "Error occurred while closing Agent.", ex); 
+                       }
                    });
                 }
                 else
                 {
                     await Task.Run(() =>
                     {
-                        Driver.CloseDriver();
+                        try
+                        {
+                            Driver.CloseDriver();
+                        }
+                        catch(Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error occurred while closing Driver.", ex);
+                        }
                     });
                 }
                 if (MSTATask != null)
@@ -768,6 +782,10 @@ namespace GingerCore
                 }
 
                 Driver = null;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while closing Agent.", ex);
             }
             finally
             {

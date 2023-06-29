@@ -928,8 +928,6 @@ namespace GingerCore.Drivers
                 if (Driver != null)
                 {
                     Driver.Close();
-                    Driver.Quit();
-                    Driver = null;
                 }
                 if (StartBMP)
                 {
@@ -944,6 +942,19 @@ namespace GingerCore.Drivers
             catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Selenium Driver", e);
+            }
+
+            try
+            {
+                if(Driver != null)
+                {
+                    Driver.Quit();
+                    Driver = null;
+                }
+            }
+            catch(Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error when try to quit Selenium Driver", e);
             }
         }
 
@@ -4402,6 +4413,7 @@ namespace GingerCore.Drivers
                         exceptioncount++;
                         return (IsRunning());
                     }
+                    CloseDriver();
                     return false;
                 }
                 catch (Exception ex2)
@@ -4411,7 +4423,7 @@ namespace GingerCore.Drivers
                     {
                         return true;
                     }
-
+                    CloseDriver();
                     return false;
                 }
                 return true;
