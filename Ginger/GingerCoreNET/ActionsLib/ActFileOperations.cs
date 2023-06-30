@@ -169,9 +169,6 @@ namespace GingerCore.Actions
                     }
                     break;
                 case eFileoperations.DeleteDirectory:
-                    //string finalpath = calculatedSourceFilePath;
-
-                    //bool isLinuxPath = IsLinuxPath(finalpath);
                     if (!IsLinuxPath(calculatedSourceFilePath))
                     {
                         base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
