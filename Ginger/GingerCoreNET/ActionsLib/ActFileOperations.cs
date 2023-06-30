@@ -326,7 +326,7 @@ namespace GingerCore.Actions
 
             }
         }
-        catch
+        catch(Exception)
          {
                 base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 base.ExInfo = "Invalid File Operation";
