@@ -134,6 +134,8 @@ namespace GingerCore.Actions
                     calculatedSourceFilePath = System.IO.Directory.GetFiles(Path.GetDirectoryName(calculatedSourceFilePath), Path.GetFileName(calculatedSourceFilePath))[0];
                 }
             }
+            try
+            {
             switch (FileOperationMode)
             {
                 case eFileoperations.CheckFileExists:
@@ -157,7 +159,7 @@ namespace GingerCore.Actions
                 case eFileoperations.DeleteDirectoryFiles:
                     if (!System.IO.Directory.Exists(calculatedSourceFilePath))
                     {
-                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                         base.ExInfo = "Folder doesn't exists";
                         return;
                     }
@@ -167,22 +169,22 @@ namespace GingerCore.Actions
                     }
                     break;
                 case eFileoperations.DeleteDirectory:
-                    string finalpath = calculatedSourceFilePath;
+                    //string finalpath = calculatedSourceFilePath;
 
-                    bool isLinuxPath = IsLinuxPath(finalpath);
-                    if (!isLinuxPath)
+                    //bool isLinuxPath = IsLinuxPath(finalpath);
+                    if (!IsLinuxPath(calculatedSourceFilePath))
                     {
                         base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        base.ExInfo = "Linux path is not valid";
+                        base.ExInfo = "Path is not valid";
                         return;
                     }
-                    if (!System.IO.Directory.Exists(finalpath))
+                    if (!System.IO.Directory.Exists(calculatedSourceFilePath))
                     {
                         base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                         base.ExInfo = "Directory doesn't exist";
                         return;
                     }
-                    System.IO.Directory.Delete(finalpath, recursive: true);
+                    System.IO.Directory.Delete(calculatedSourceFilePath, recursive: true);
                     break;
                 case eFileoperations.Copy:
                     SetupDestinationfolders();
@@ -322,6 +324,12 @@ namespace GingerCore.Actions
                 default:
                     break;
 
+            }
+        }
+        catch
+         {
+                base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                base.ExInfo = "Invalid File Operation";
             }
         }
 
