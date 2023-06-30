@@ -183,10 +183,12 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
         {
             IEnumerable<ReadEmail.Attachment> attachments = null ;
 
-            if (expectedContentTypes != null)
+            if (message.Attachments != null && message.Attachments.Any())
             {
-                if (message.Attachments != null && message.Attachments.Any())
+
+                if (expectedContentTypes != null)
                 {
+               
                     attachments = message.Attachments
                         .Where(attachment => expectedContentTypes.Contains(attachment.ContentType.MimeType))
                         .Select(attachment => new ReadEmail.Attachment()
@@ -196,12 +198,9 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                             ContentBytes = ReadFully(((MimePart)attachment).Content)
                         });
                 }
-            }
-            else
-            {
-
-                if (message.Attachments != null && message.Attachments.Any())
+                else
                 {
+
                     attachments = message.Attachments
                         .Select(attachment => new ReadEmail.Attachment()
                         {
@@ -209,9 +208,9 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                             ContentType = ((MimePart)attachment).ContentType.MimeType,
                             ContentBytes = ReadFully(((MimePart)attachment).Content)
                         });
-                }
 
-            }
+                }
+            }           
 
             return new ReadEmail()
             {
