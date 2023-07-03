@@ -185,15 +185,32 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
 
             if (message.Attachments != null && message.Attachments.Any())
             {
-                attachments = message.Attachments
-                    .Where(attachment => expectedContentTypes.Contains(attachment.ContentType.MimeType))
-                    .Select(attachment => new ReadEmail.Attachment()
-                    {
-                        Name = ((MimePart)attachment).ContentType.Name,
-                        ContentType = ((MimePart)attachment).ContentType.MimeType,
-                        ContentBytes = ReadFully(((MimePart)attachment).Content)
-                    });
-            }
+
+                if (expectedContentTypes != null)
+                {
+               
+                    attachments = message.Attachments
+                        .Where(attachment => expectedContentTypes.Contains(attachment.ContentType.MimeType))
+                        .Select(attachment => new ReadEmail.Attachment()
+                        {
+                            Name = ((MimePart)attachment).ContentType.Name,
+                            ContentType = ((MimePart)attachment).ContentType.MimeType,
+                            ContentBytes = ReadFully(((MimePart)attachment).Content)
+                        });
+                }
+                else
+                {
+
+                    attachments = message.Attachments
+                        .Select(attachment => new ReadEmail.Attachment()
+                        {
+                            Name = ((MimePart)attachment).ContentType.Name,
+                            ContentType = ((MimePart)attachment).ContentType.MimeType,
+                            ContentBytes = ReadFully(((MimePart)attachment).Content)
+                        });
+
+                }
+            }           
 
             return new ReadEmail()
             {

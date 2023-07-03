@@ -273,7 +273,7 @@
                             <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderSpecificRadioButton" Content="Specific" Style="{StaticResource RadioButtonStyle}"/>
                         </StackPanel>
                     </Grid>
-                    <Grid Margin="{StaticResource RowMargin}">
+                    <Grid Margin="{StaticResource RowMargin}" x:Name="FolderSpecificGrid">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Visibility" Value="Collapsed"/>
