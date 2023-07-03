@@ -149,7 +149,7 @@ namespace GingerCore.ALM.RQM
                                 else
                                 {
                                     result = $"Execution Results List not found for {businessFlow.Name} and testplan {bfExportedID}";
-                                    return false;
+                                    //return false;
                                 }
                             }
                         }
@@ -276,6 +276,7 @@ namespace GingerCore.ALM.RQM
                 if (string.IsNullOrEmpty(activGroup.ExternalID))
                 {
                     result = $"ExternalID not found for {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name}  {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}, cannot export RQM TestPlan execution results without it. Please check configured External Id.";
+                    Reporter.ToLog(eLogLevel.ERROR, $"ExternalID not found for {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name}  {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}, cannot export RQM TestPlan execution results without it. Please check configured External Id.");
                     return null;
                 }
 
@@ -286,6 +287,7 @@ namespace GingerCore.ALM.RQM
                 if (string.IsNullOrEmpty(testCaseId) || testCaseId.Equals("0"))
                 {
                     result = $"Test Case Id not found for {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}, cannot export RQM TestPlan execution results without it. Please check configured External Id.";
+                    Reporter.ToLog(eLogLevel.ERROR, $"Test Case Id not found for {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}, cannot export RQM TestPlan execution results without it. Please check configured External Id.");
                     return null;
                 }
 
@@ -383,23 +385,26 @@ namespace GingerCore.ALM.RQM
                     if (string.IsNullOrEmpty(TestCaseVersionUrl))
                     {
                         result = $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name}{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} Cannot find test case with id {testCaseId}";
+                        Reporter.ToLog(eLogLevel.ERROR, $"At {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name}{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} Cannot find test case with id {testCaseId}");
                         return null;
                     }
                     RQMConnect.Instance.GetExecutionRecordsByTestCase(loginData, reader, currentRQMProjectMapping, RQMCore.ALMProjectGroupName, RQMCore.ALMProjectGuid, testPlan.URLPathVersioned, TestCaseVersionUrl, ref exeRecordId);
-
                     if (string.IsNullOrEmpty(exeRecordId) || exeRecordId.Equals("0"))
                     {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Record id not found for {businessFlow.Name}, creating new record");
                         CreateExecutionRecord(bfExportedID, activGroup, testPlan, loginData, testCaseId, testScriptId, ref exeRecordId);
                     }
                 }
                 else
                 {
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Record id not found for {businessFlow.Name}, creating new record");
                     CreateExecutionRecord(bfExportedID, activGroup, testPlan, loginData, testCaseId, testScriptId, ref exeRecordId);
                 }
 
                 if (string.IsNullOrEmpty(exeRecordId) || exeRecordId.Equals("0"))
                 {
                     result = $"Execution Record Id not found for {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}, cannot export RQM TestPlan execution results without it. Please check configured External Id.";
+                    Reporter.ToLog(eLogLevel.ERROR, $"Execution Record Id not found for {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}, cannot export RQM TestPlan execution results without it. Please check configured External Id.");
                     return null;
                 }
 
@@ -492,6 +497,8 @@ namespace GingerCore.ALM.RQM
                     }
                     erExportID = currentActivity.ExportedTcExecutionRecId.ToString();
                     activGroup.ExternalID = $"RQMID={txExportID}|RQMScriptID={tsExportID}|RQMRecordID={erExportID}|AtsID={atsID}";
+                    Reporter.ToLog(eLogLevel.DEBUG
+                        , $"created Record id with {activGroup.ExternalID}");
                 }
             }
             catch (Exception ex)
