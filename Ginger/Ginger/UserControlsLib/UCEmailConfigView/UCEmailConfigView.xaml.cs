@@ -429,6 +429,10 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
                 xImapHostGrid.Visibility = Visibility.Collapsed;
                 xImapPortGrid.Visibility = Visibility.Collapsed;
                 passwdLabel.Content = "User Password:";
+                if (xFilterFolderSpecificRadioButton.IsChecked == true)
+                {
+                    FolderSpecificGrid.Visibility = Visibility.Visible;
+                }
             }
             else
             {
@@ -439,6 +443,7 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
                 xImapHostGrid.Visibility = Visibility.Visible;
                 xImapPortGrid.Visibility = Visibility.Visible;
                 passwdLabel.Content = "User App Password:";
+                FolderSpecificGrid.Visibility = Visibility.Collapsed;
             }
         }
         private void TriggerReadEmailMethodChangedEvent()
