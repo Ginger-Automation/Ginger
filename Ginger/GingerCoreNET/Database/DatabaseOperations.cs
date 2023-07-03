@@ -693,15 +693,7 @@ namespace GingerCore.Environments
             return rc;
         }
 
-        private const int MAX_RETRY = 5;
-        private readonly AutoResetEvent RetrySyncEvent = new(false);
-
         public List<object> FreeSQL(string SQL, int? timeout = null)
-        {
-            return FreeSQLWithRetries(SQL, timeout);
-        }
-
-        private List<object> FreeSQLWithRetries(string SQL, int? timeout = null, int retryCount = 0)
         {
             MakeSureConnectionIsOpen();
             List<string> Headers = new List<string>();
@@ -751,20 +743,6 @@ namespace GingerCore.Environments
                     ReturnList.Add(Records);
                 }
             }
-            catch (NullReferenceException e)
-            {
-                //While executing in parallel the connection might get disposed, in that case retry the query
-                if (IsConnectionDisposed() && retryCount < MAX_RETRY)
-                {
-                    Reporter.ToLog(eLogLevel.INFO, $"Database connection got disposed, retry iteration: {retryCount+1}, query: {SQL}");
-                    RetrySyncEvent.WaitOne();
-                    List<object> result = FreeSQLWithRetries(SQL, timeout, retryCount + 1);
-                    RetrySyncEvent.Set();
-                    return result;
-                }
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + SQL, e);
-                throw;
-            }
             catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + SQL, e);
@@ -779,27 +757,6 @@ namespace GingerCore.Environments
             }
             return ReturnList;
         }
-
-        private bool IsConnectionDisposed()
-        {
-            bool isConnectionDisposed;
-            try
-            {
-                oConn.Open();
-                isConnectionDisposed = false;
-            }
-            catch (ObjectDisposedException)
-            {
-                isConnectionDisposed = true;
-            }
-            catch (InvalidOperationException)
-            {
-                isConnectionDisposed = false;
-            }
-            return isConnectionDisposed;
-        }
-
-
 
         public string GetRecordCount(string SQL)
         {

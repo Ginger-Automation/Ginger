@@ -128,7 +128,7 @@ namespace GingerCore.Actions
             {
                 string[] FileNameList = System.IO.Directory.GetFiles(Path.GetDirectoryName(calculatedSourceFilePath), Path.GetFileName(calculatedSourceFilePath));
 
-                if (FileNameList.Count() > 0)
+                if (FileNameList.Any())
                 {
                     calculatedSourceFilePath = System.IO.Directory.GetFiles(Path.GetDirectoryName(calculatedSourceFilePath), Path.GetFileName(calculatedSourceFilePath))[0];
                 }
@@ -286,7 +286,7 @@ namespace GingerCore.Actions
                     if (System.IO.File.Exists(calculatedSourceFilePath))
                     {
                         if (!System.IO.Directory.Exists(DestinationFolder))
-                        {
+                        {                            
                             System.IO.Directory.CreateDirectory(DestinationFolder);
                         }
                         System.IO.Compression.ZipFile.ExtractToDirectory(calculatedSourceFilePath, DestinationFolder);
@@ -331,7 +331,7 @@ namespace GingerCore.Actions
                 else
                 {
                     base.ExInfo = e.Message;
-                    base.Error = "Failed to run File Operation on file " + fileName;
+                    base.Error = $"Failed to run File Operation on file {fileName}";
                 }
             }
         }

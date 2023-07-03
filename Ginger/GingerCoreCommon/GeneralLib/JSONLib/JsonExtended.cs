@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -175,16 +175,6 @@ namespace Amdocs.Ginger.Common.GeneralLib
             List<JsonExtended> mEndingnodes = new List<JsonExtended>();
 
             var Jpropertytype = typeof(JProperty);
-            //  mEndingnodes=   this.GetAllNodes().Where(x=> x.GetToken().GetType()== Jpropertytype & (x.GetToken().Children().Count()>0)).ToList();
-            /* if (IncludeSelfClosingTags)
-             {
-                 mEndingnodes = this.GetAllNodes().Where(x => x.ChildNodes.Count == 0 && x.GetXmlNode().NodeType != XmlNodeType.EndElement && x.GetXmlNode().NodeType != XmlNodeType.Comment).ToList();
-             }
-             else
-             {
-                 mEndingnodes = this.GetAllNodes().Where(x => x.ChildNodes.Count == 0 && !x.XMLString.EndsWith("/>") && x.GetXmlNode().NodeType != XmlNodeType.EndElement && x.GetXmlNode().NodeType != XmlNodeType.Comment).ToList();
-
-             }*/
 
             List<JsonExtended> allNodesList = this.GetAllNodes();
 
@@ -192,11 +182,10 @@ namespace Amdocs.Ginger.Common.GeneralLib
             {
                 if (nodes.GetToken().GetType() == Jpropertytype)
                 {
-
                     mEndingnodes.Add(nodes);
                 }
             }
-            return allNodesList.Where(x => x.GetToken().Children().Count() == 0);
+            return allNodesList.Where(x => !x.GetToken().Children().Any());
         }
 
 
@@ -206,12 +195,6 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
 
         private List<JsonExtended> ChildNodes = new List<JsonExtended>();
-
-
-
-
-
-
 
         private void BuildThisNode(JEnumerable<JToken> JTl)
         {
@@ -225,7 +208,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
         public void RemoveDuplicatesNodes()
         {
             List<JsonExtended> childNodesList = this.GetChildNodes();
-            if (childNodesList.Count() == 0)
+            if (!childNodesList.Any())
                 return;
 
             if (childNodesList.Count() > 1)

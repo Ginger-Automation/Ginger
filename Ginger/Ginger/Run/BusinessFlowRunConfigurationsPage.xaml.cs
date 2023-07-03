@@ -215,7 +215,7 @@ namespace Ginger.Run
                             foreach (VariableBase selectedVar in selectedVars)
                             {
 
-                                VariableBase matchingVar = bf.GetBFandActivitiesVariabeles(true).Where(x => x.Guid == selectedVar.Guid).FirstOrDefault();
+                                VariableBase matchingVar = bf.GetBFandActivitiesVariabeles(true).FirstOrDefault(x => x.Guid == selectedVar.Guid);
                                 if (matchingVar != null)
                                 {
                                     String originalValue = matchingVar.Value;
@@ -265,7 +265,7 @@ namespace Ginger.Run
         {
             try
             {
-                BusinessFlow originalBF = (from bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where bf.Guid == mBusinessFlow.Guid select bf).FirstOrDefault();
+                BusinessFlow originalBF = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(mBusinessFlow.Guid);
                 if (originalBF == null)
                 {
                     originalBF = (from bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where bf.Name == mBusinessFlow.Name select bf).FirstOrDefault();
@@ -347,7 +347,7 @@ namespace Ginger.Run
             ObservableList<VariableBase> cachedVariables = cachedBusinessFlow.GetBFandActivitiesVariabeles(true);
             foreach (VariableBase variable in bfInputVariables)
             {
-                VariableBase vb = cachedVariables.Where(x => x.Guid == variable.Guid).FirstOrDefault();
+                VariableBase vb = cachedVariables.FirstOrDefault(x => x.Guid == variable.Guid);
                 if (vb !=null && vb.GetType() == typeof(VariableSelectionList))
                 {
                     ((VariableSelectionList)variable).OptionalValuesList = new ObservableList<OptionalValue>();
@@ -498,7 +498,7 @@ namespace Ginger.Run
         }
         private void UpdateFlowControlTabVisual()
         {
-            bool b = mBusinessFlow.BFFlowControls.Count() > 0;
+            bool b = mBusinessFlow.BFFlowControls.Any();
             SetTabOnOffSign(FlowControlTab, b);
             if (b)
             {

@@ -143,7 +143,7 @@ namespace GingerCore.Actions
             {
                 if (mURL == string.Empty)//backward support
                 {
-                    if (InputValues.Where(x => x.Param == "URL" && x.Value != string.Empty).FirstOrDefault() != null)
+                    if (InputValues.FirstOrDefault(x => x.Param == "URL" && x.Value != string.Empty) != null)
                     {
                         mURL = GetInputParamValue("URL");
                     }
@@ -211,7 +211,7 @@ namespace GingerCore.Actions
             {
                 if (mPort == string.Empty)//backward support
                 {
-                    if (InputValues.Where(x => x.Param == "Port" && x.Value != string.Empty).FirstOrDefault() != null)
+                    if (InputValues.FirstOrDefault(x => x.Param == "Port" && x.Value != string.Empty) != null)
                     {
                         mPort = GetInputParamValue("Port");
                     }
@@ -370,10 +370,10 @@ namespace GingerCore.Actions
         private CancellationTokenSource mAttachAgentCancellationToken = null;
         private Task mAttachAgentTask = null;
         private bool mWaitForWindowTimeOut = false;
-        ArrayList processNames;
+        private readonly List<string> processNames = new();
         public override void Execute()
         {
-            processNames = new();
+            processNames.Clear();
             processNames.Add("java");
             processNames.Add("jp2");
 
@@ -850,7 +850,9 @@ namespace GingerCore.Actions
                     else
                     {
 
-                        var processlist = Process.GetProcesses().Where(x => processNames.Contains(x.ProcessName.ToLower()));
+                        var processlist = Process.GetProcesses()
+                            .Where(process => processNames.Any(name => process.ProcessName.Contains(name, StringComparison.OrdinalIgnoreCase)));
+
                         List<Process> matchingProcessList = new List<Process>();
 
                         foreach (Process process in processlist)

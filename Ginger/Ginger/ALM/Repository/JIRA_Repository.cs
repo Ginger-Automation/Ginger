@@ -265,14 +265,14 @@ namespace Ginger.ALM.Repository
 
         public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<object> selectedTests)
         {
-            if (selectedTests != null && selectedTests.Count() > 0)
+            if (selectedTests != null && selectedTests.Any())
             {
                 ObservableList<JiraTestSet> testSetsItemsToImport = new ObservableList<JiraTestSet>();
                 foreach (GingerCore.ALM.JIRA.JiraTestSet selectedTS in selectedTests)
                 {
                     try
                     {
-                        BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == selectedTS.Key).FirstOrDefault();
+                        BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().FirstOrDefault(x => x.ExternalID == selectedTS.Key);
                         if (existedBF != null)
                         {
                             Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, selectedTS.Name);
@@ -299,18 +299,18 @@ namespace Ginger.ALM.Repository
 
         public bool ImportSelectedZephyrCyclesAndFolders(string importDestinationPath, IEnumerable<object> selectedObjects)
         {
-            if (selectedObjects != null && selectedObjects.Count() > 0)
+            if (selectedObjects != null && selectedObjects.Any())
             {
                 foreach (JiraZephyrTreeItem obj in selectedObjects)
                 {
                     BusinessFlow existedBF;
                     if (obj is JiraZephyrFolderTreeItem)
                     {
-                        existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == ((JiraZephyrFolderTreeItem)obj).CycleId && x.ExternalID2 == obj.Id).FirstOrDefault();
+                        existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().FirstOrDefault(x => x.ExternalID == ((JiraZephyrFolderTreeItem)obj).CycleId && x.ExternalID2 == obj.Id);
                     }
                     else
                     {
-                        existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == obj.Id && x.ExternalID2 == null).FirstOrDefault();
+                        existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().FirstOrDefault(x => x.ExternalID == obj.Id && x.ExternalID2 == null);
                     }
 
                     if (existedBF != null)
@@ -356,9 +356,9 @@ namespace Ginger.ALM.Repository
                             {
                                 if (!string.IsNullOrEmpty(activ.TargetApplication))
                                 {
-                                    if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
+                                    if (tsBusFlow.TargetApplications.FirstOrDefault(x => x.Name == activ.TargetApplication) == null)
                                     {
-                                        ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                                        ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == activ.TargetApplication);
                                         if (appAgent != null)
                                         {
                                             tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
@@ -435,9 +435,9 @@ namespace Ginger.ALM.Repository
                 {
                     if (string.IsNullOrEmpty(activ.TargetApplication) == false)
                     {
-                        if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
+                        if (tsBusFlow.TargetApplications.FirstOrDefault(x => x.Name == activ.TargetApplication) == null)
                         {
-                            ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                            ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == activ.TargetApplication);
                             if (appAgent != null)
                             {
                                 tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });

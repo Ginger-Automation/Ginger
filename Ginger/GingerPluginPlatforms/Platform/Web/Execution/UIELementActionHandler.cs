@@ -192,7 +192,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                 {
                     Frames = (JArray)InputParams["Frames"];
 
-                    if (Frames != null && Frames.Children().Count() > 0)
+                    if (Frames != null && Frames.Children().Any())
                     {
 
                         mPlatformService.BrowserActions.SwitchToDefaultContent();

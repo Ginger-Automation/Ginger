@@ -35,6 +35,17 @@ namespace Ginger.Actions
         private string initialDirectory;
         eBrowserType mBrowserType;
 
+        public eBrowserType BrowserType
+        {
+            get
+            {
+                return mBrowserType;
+            }
+            set
+            {
+                mBrowserType = value;
+            }
+        }
 
         public static DependencyProperty ContextProperty = DependencyProperty.Register("Context", typeof(Context), typeof(UCValueExpression), new PropertyMetadata(ContextChanged));
 
@@ -158,7 +169,7 @@ namespace Ginger.Actions
             switch (mBrowserType)
             {
                 case eBrowserType.File:
-                    String filePath = string.Empty;
+                    string filePath = string.Empty;
                     string upperFileType = fileType.ToUpper();
                     if (string.IsNullOrEmpty(initialDirectory) == false)
                     {

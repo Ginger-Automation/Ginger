@@ -217,7 +217,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
             ActReturnValue.eItemParts ePartToUpdate = (ActReturnValue.eItemParts)Enum.Parse(typeof(ActReturnValue.eItemParts), usage.SelectedItemPart);
             foreach (ActReturnValue apiARV in apiModel.ReturnValues)
             {
-                ActReturnValue actARV = act.ActReturnValues.Where(x => x.Guid == apiARV.Guid).FirstOrDefault();
+                ActReturnValue actARV = act.ActReturnValues.FirstOrDefault(x => x.Guid == apiARV.Guid);
                 if (actARV != null) //Exist already in the action - Update it
                 {
                     actARV.Active = apiARV.Active;
@@ -288,7 +288,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
             {
                 if (act.ReturnValues[index].AddedAutomatically == true)
                 {
-                    ActReturnValue apiARV = apiModel.ReturnValues.Where(x => x.Guid == act.ReturnValues[index].Guid).FirstOrDefault();
+                    ActReturnValue apiARV = apiModel.ReturnValues.FirstOrDefault(x => x.Guid == act.ReturnValues[index].Guid);
                     if (apiARV == null) //Output value deleted from API - delete it also from action
                     {
                         act.ReturnValues.RemoveAt(index);

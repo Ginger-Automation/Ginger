@@ -132,7 +132,7 @@ namespace UnitTests.NonUITests
             };
             DummyAction.ReturnValues.Add(ARV5);
 
-            ABF = (AnalyzeBusinessFlow)AnalyzeBusinessFlow.Analyze(Solution, BF).Where(x => x.Description.Equals(AnalyzeBusinessFlow.LegacyOutPutValidationDescription)).First();
+            ABF = (AnalyzeBusinessFlow)AnalyzeBusinessFlow.Analyze(Solution, BF).First(x => x.Description.Equals(AnalyzeBusinessFlow.LegacyOutPutValidationDescription));
         }
 
 
@@ -142,20 +142,20 @@ namespace UnitTests.NonUITests
             ABF.FixItHandler.Invoke(ABF, null);
             var ReturnValues = ABF.ReturnValues;
 
-            ActReturnValue ARV1 = ReturnValues.Where(x => x.Param.Equals("Value1")).FirstOrDefault();
+            ActReturnValue ARV1 = ReturnValues.FirstOrDefault(x => x.Param.Equals("Value1"));
             Assert.AreEqual(Amdocs.Ginger.Common.Expressions.eOperator.Equals, ARV1.Operator);
 
 
-            ActReturnValue ARV2 = ReturnValues.Where(x => x.Param.Equals("Value2")).FirstOrDefault();
+            ActReturnValue ARV2 = ReturnValues.FirstOrDefault(x => x.Param.Equals("Value2"));
             Assert.AreEqual(Amdocs.Ginger.Common.Expressions.eOperator.Legacy, ARV2.Operator);
 
-            ActReturnValue ARV3 = ReturnValues.Where(x => x.Param.Equals("Value3")).FirstOrDefault();
+            ActReturnValue ARV3 = ReturnValues.FirstOrDefault(x => x.Param.Equals("Value3"));
             Assert.AreEqual(Amdocs.Ginger.Common.Expressions.eOperator.Legacy, ARV3.Operator);
 
-            ActReturnValue ARV4 = ReturnValues.Where(x => x.Param.Equals("Value4")).FirstOrDefault();
+            ActReturnValue ARV4 = ReturnValues.FirstOrDefault(x => x.Param.Equals("Value4"));
             Assert.AreEqual(Amdocs.Ginger.Common.Expressions.eOperator.Legacy, ARV4.Operator);
 
-            ActReturnValue ARV5 = ReturnValues.Where(x => x.Param.Equals("Value5")).FirstOrDefault();
+            ActReturnValue ARV5 = ReturnValues.FirstOrDefault(x => x.Param.Equals("Value5"));
             Assert.AreEqual(Amdocs.Ginger.Common.Expressions.eOperator.Equals, ARV5.Operator);
 
         }

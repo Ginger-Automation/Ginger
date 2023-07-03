@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GingerCore.GeneralLib
 {
-    public sealed class EmailReadOperations : IEmailReadOperations
+    public sealed class EmailReadMSGraphOperations : IEmailReadOperations
     {
         private static readonly IEnumerable<string> Scopes = new[]
         {
@@ -29,7 +29,7 @@ namespace GingerCore.GeneralLib
         };
         private const int MessageRequestPageSize = 10;
 
-        public async Task ReadEmails(EmailReadFilters filters, MSGraphConfig config, Action<ReadEmail> emailProcessor)
+        public async Task ReadEmails(EmailReadFilters filters, EmailReadConfig config, Action<ReadEmail> emailProcessor)
         {
             GraphServiceClient graphServiceClient = CreateGraphServiceClient(config);
             IEnumerable<ICollectionPage<Message>> messageCollections;
@@ -113,7 +113,7 @@ namespace GingerCore.GeneralLib
             {
                 expectedContentTypes = filters.AttachmentContentType.Split(";", StringSplitOptions.RemoveEmptyEntries);
             }
-            if (expectedContentTypes != null && expectedContentTypes.Count() == 0)
+            if (expectedContentTypes != null && !expectedContentTypes.Any())
             {
                 return true;
             }
@@ -217,7 +217,7 @@ namespace GingerCore.GeneralLib
             return message.Body.Content.Contains(expectedBody, StringComparison.OrdinalIgnoreCase);
         }
 
-        private GraphServiceClient CreateGraphServiceClient(MSGraphConfig config)
+        private GraphServiceClient CreateGraphServiceClient(EmailReadConfig config)
         {
             ValidateMSGraphConfig(config);
             TokenCredentialOptions options = new()
@@ -231,7 +231,7 @@ namespace GingerCore.GeneralLib
             return new GraphServiceClient(userNamePasswordCredential, Scopes);
         }
 
-        private void ValidateMSGraphConfig(MSGraphConfig config)
+        private void ValidateMSGraphConfig(EmailReadConfig config)
         {
             if (string.IsNullOrEmpty(config.UserEmail))
             {
@@ -519,7 +519,7 @@ namespace GingerCore.GeneralLib
                 Subject = message.Subject,
                 Body = message.Body.Content,
                 ReceivedDateTime = message.ReceivedDateTime?.DateTime.ToLocalTime() ?? DateTime.MinValue,
-                HasAttachments = (message.HasAttachments ?? false) && attachments != null && attachments.Count() > 0,
+                HasAttachments = (message.HasAttachments ?? false) && attachments != null && attachments.Any(),
                 Attachments = attachments
             };
         }

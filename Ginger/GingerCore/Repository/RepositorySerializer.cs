@@ -526,7 +526,7 @@ namespace GingerCore.Repository
                         // another option is check the nake to start with List, Observe...
                         //or find a better way
                         // meanwhile it is working
-                        if (FI.FieldType.GenericTypeArguments.Count() > 0)
+                        if (FI.FieldType.GenericTypeArguments.Any())
                         {
                             SetObjectListAttrs(xdr, obj);
                         }
@@ -553,7 +553,7 @@ namespace GingerCore.Repository
                         // another option is check the nake to start with List, Observe...
                         //or find a better way
                         // meanwhile it is working
-                        if (PI.PropertyType.GenericTypeArguments.Count() > 0)
+                        if (PI.PropertyType.GenericTypeArguments.Any())
                         {
                             SetObjectListAttrs(xdr, obj);
                         }

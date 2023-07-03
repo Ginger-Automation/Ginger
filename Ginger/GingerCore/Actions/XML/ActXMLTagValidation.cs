@@ -43,7 +43,7 @@ namespace GingerCore.Actions.XML
         {
             public static string InputFile = "InputFile";
             public static string ReqisFromFile = "ReqisFromFile";
-            public static string DocumentType = "DocumentType";
+            public static string DocumentType = "DocumentType";            
         }
 
 
@@ -83,9 +83,7 @@ namespace GingerCore.Actions.XML
                 return GetOrCreateInputParam(Fields.InputFile);
 
             }
-        }
-
-
+        }        
 
         [IsSerializedForLocalRepository(true)]
         public bool ReqisFromFile
@@ -126,8 +124,11 @@ namespace GingerCore.Actions.XML
                 return "XML Tag Validation";
             }
         }
-
-
+        [IsSerializedForLocalRepository]
+        public bool ReadJustXMLAttributeValues
+        {
+            get;set;
+        }
         public override eImageType Image { get { return eImageType.CodeFile; } }
 
 
@@ -205,7 +206,7 @@ namespace GingerCore.Actions.XML
                 if (Tokenfound != null)
                 {
                     AddOrUpdateReturnParamActualWithPath("InnerText", Tokenfound.ToString(), VE.ValueCalculated);
-                    if (Tokenfound.Children().Count() > 0)
+                    if (Tokenfound.Children().Any())
                     {
                         JsonExtended JE = new JsonExtended(Tokenfound.ToString());
                         foreach (JsonExtended item in JE.GetEndingNodes())
@@ -236,17 +237,19 @@ namespace GingerCore.Actions.XML
                     // var.Value = VE.ValueCalculated;
 
                     XmlNode node = ReadNodeFromXmlDoc(xmlReqDoc, VE.ValueCalculated);
-
-                    if (node.InnerText != null)
+                    if (!this.ReadJustXMLAttributeValues)
                     {
-                        AddOrUpdateReturnParamActualWithPath("InnerText", node.InnerText.ToString(), VE.ValueCalculated);
+                        if (node.InnerText != null)
+                        {
+                            AddOrUpdateReturnParamActualWithPath("InnerText", node.InnerText.ToString(), VE.ValueCalculated);
+                        }
                     }
 
                     if (aiv.Value == null || aiv.Value == String.Empty)
                     {
                         foreach (XmlAttribute XA in node.Attributes)
                         {
-                            ActReturnValue rv = ReturnValues.Where(x => x.Path == XA.Name).FirstOrDefault();
+                            ActReturnValue rv = ReturnValues.FirstOrDefault(x => x.Path == XA.Name);
                             if (rv == null)
                             {
                                 AddOrUpdateReturnParamActualWithPath(aiv.Param, XA.Value.ToString(), XA.Name);
@@ -262,7 +265,7 @@ namespace GingerCore.Actions.XML
                         if (node.Attributes != null)
                         {
                             var nameAttribute = node.Attributes[@aiv.Value];
-                            ActReturnValue rv = ReturnValues.Where(x => x.Path == aiv.Value).FirstOrDefault();
+                            ActReturnValue rv = ReturnValues.FirstOrDefault(x => x.Path == aiv.Value && x.FilePath == aiv.FilePath);
                             if (rv == null)
                             {
                                 AddOrUpdateReturnParamActualWithPath(aiv.Param, nameAttribute.Value.ToString(), aiv.Value);

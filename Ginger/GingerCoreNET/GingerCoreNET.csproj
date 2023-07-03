@@ -253,6 +253,8 @@
   
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="7.22.0" />
   
+    <PackageReference Include="MailKit" Version="4.0.0" />
+  
     <PackageReference Include="MedallionShell" Version="1.6.2" />
   
     <PackageReference Include="Meziantou.Framework.Win32.CredentialManager" Version="1.4.2" />
@@ -270,7 +272,7 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Graph" Version="4.51.0" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="MongoDB.Driver" Version="2.8.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.19.1" />
     <PackageReference Include="MySql.Data" Version="8.0.16" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Npgsql" Version="4.0.7" />
@@ -278,8 +280,8 @@
     <PackageReference Include="NUglify" Version="1.9.7" />
     <PackageReference Include="Protractor" Version="1.0.0" />
     <PackageReference Include="RestSharp" Version="108.0.3" />
-    <PackageReference Include="Selenium.Support" Version="4.9.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.9.0" />
+    <PackageReference Include="Selenium.Support" Version="4.9.1" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.9.1" />
     <PackageReference Include="Selenium.WebDriver.Extensions" Version="4.1.0" />
     <PackageReference Include="SharpAdbClient" Version="2.3.23" />
     <PackageReference Include="SSH.NET" Version="2020.0.1" />

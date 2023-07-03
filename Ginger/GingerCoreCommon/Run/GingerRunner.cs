@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -41,6 +41,7 @@ namespace Ginger.Run
     {
         NA,
         Runner,
+        Runset,
         BusinessFlow
     }
     public class GingerRunner : RepositoryItemBase

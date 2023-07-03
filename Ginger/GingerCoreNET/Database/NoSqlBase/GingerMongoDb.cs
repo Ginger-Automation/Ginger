@@ -161,6 +161,10 @@ namespace GingerCore.NoSqlBase
         }
         public List<string> GetDatabaseList()
         {
+            if (mMongoClient == null)
+            {
+                return new List<string>();
+            }
             return mMongoClient.ListDatabaseNames().ToList();
         }
         public override List<string> GetTableList(string dbName)

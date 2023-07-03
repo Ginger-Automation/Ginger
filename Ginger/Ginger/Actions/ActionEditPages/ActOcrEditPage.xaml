@@ -129,12 +129,27 @@
                 </Expander.Header>
                 <Expander.Content>
                     <Grid>
-                        <StackPanel Orientation="Vertical" Margin="0,10,10,10">
-                            <StackPanel Orientation="Horizontal">
-                                <Label Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="PDF Password (if any): " />
-                                <Actions:UCValueExpression x:Name="xSetPdfPasswordTextBox" ToolTip="PDF Password (if any)" MinWidth="100" MaxWidth="300" Margin="5,0"/>
-                            </StackPanel>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MinWidth="100"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="100"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="100"></ColumnDefinition>
+
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition MaxHeight="190" MinHeight="40"></RowDefinition>
+                            <RowDefinition MaxHeight="190" MinHeight="40"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="PDF Password (if any): " />
+                        <Actions:UCValueExpression Grid.Row="0" Grid.Column="1" x:Name="xSetPdfPasswordTextBox" ToolTip="PDF Password (if any)" MinWidth="250" MaxWidth="400" Margin="5,0"/>
+
+                        <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Dots per Inch:"></Label>
+                        <StackPanel Grid.Row="1" Grid.Column="1"  Orientation="Horizontal">
+                            <ComboBox x:Name="xDPIComboBox" MinWidth="225" MaxWidth="400" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="3,0,3,0" VerticalAlignment="Center"></ComboBox>
+                            <usercontrols:ImageMakerControl  VerticalAlignment="Center"  x:Name="xInfoDPI" ToolTip="PDF is converted to PNG before OCR. Dots per Inch decides the quality of the converted PNG. More is better, but takes more OCR time" SetAsFontImageWithSize="12" ImageType="Info" Width="12" Height="12" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" Margin="2,0,0,0"/>
                         </StackPanel>
+
+
+
                     </Grid>
                 </Expander.Content>
             </Expander>

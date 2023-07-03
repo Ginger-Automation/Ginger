@@ -219,7 +219,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
             reportsResultFolder = ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
                                                                                                                     false,
-                                                                                                                    HTMLReportConfigurations.Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault(),
+                                                                                                                    HTMLReportConfigurations.FirstOrDefault(x => (x.ID == rReport.SelectedHTMLReportTemplateID)),
                                                                                                                     extraInformationCalculated + System.IO.Path.DirectorySeparatorChar + System.IO.Path.GetFileName(runSetFolder), false, currentConf.HTMLReportConfigurationMaximalFolderSize);
 
         }
@@ -266,7 +266,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
         public string GetALMConfig()
         {
-            return WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType.ToString();
+            return WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm).AlmType.ToString();
         }
 
         public IWebserviceDriverWindow GetWebserviceDriverWindow(BusinessFlow businessFlow)

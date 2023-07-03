@@ -70,7 +70,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
             EnvApplication envApp = new EnvApplication() { Name = newAppName };
             if (GingerCore.General.GetInputWithValidation("Add Environment Application", "Application Name:", ref newAppName, null, false, envApp))
             {
-                if (mWizard.apps.Where(x => x.Name == newAppName).FirstOrDefault() == null)
+                if (mWizard.apps.FirstOrDefault(x => x.Name == newAppName) == null)
                 {
                     envApp.Active = true;
                     mWizard.apps.Add(envApp);

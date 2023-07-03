@@ -36,7 +36,7 @@ namespace Ginger.AnalyzerLib
         {
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
             // check that we have Runners
-            if (RSC.GingerRunners.Count() == 0)
+            if (!RSC.GingerRunners.Any())
             {
                 RunSetConfigAnalyzer AGR = CreateNewIssue(IssuesList, RSC);
                 AGR.Description = "Missing Runners";
@@ -114,22 +114,22 @@ namespace Ginger.AnalyzerLib
                                 {
                                     optionalVariables = ((GingerExecutionEngine)GR.Executor).GetPossibleOutputVariables(RSC, bf, includeGlobalVars: true, includePrevRunnersVars: false);
                                 }
-                                issueExist = optionalVariables.Where(x => x.Name == inputVar.MappedOutputValue).FirstOrDefault() == null;
+                                issueExist = optionalVariables.FirstOrDefault(x => x.Name == inputVar.MappedOutputValue) == null;
                                 break;
                             case VariableBase.eOutputType.OutputVariable:
                                 if (optionalOutputVariables == null)
                                 {
                                     optionalOutputVariables = ((GingerExecutionEngine)GR.Executor).GetPossibleOutputVariables(RSC, bf, includeGlobalVars: false, includePrevRunnersVars: true);
                                 }
-                                issueExist = optionalOutputVariables.Where(x => x.VariableInstanceInfo == inputVar.MappedOutputValue).FirstOrDefault() == null;
+                                issueExist = optionalOutputVariables.FirstOrDefault(x => x.VariableInstanceInfo == inputVar.MappedOutputValue) == null;
                                 break;
                             case VariableBase.eOutputType.GlobalVariable:
                                 Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);
-                                issueExist = WorkSpace.Instance.Solution.Variables.Where(x => x.Guid == mappedGuid).FirstOrDefault() == null;
+                                issueExist = WorkSpace.Instance.Solution.Variables.FirstOrDefault(x => x.Guid == mappedGuid) == null;
                                 break;
                             case VariableBase.eOutputType.ApplicationModelParameter:
                                 Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);
-                                issueExist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Where(x => x.Guid == mappedGuid).FirstOrDefault() == null;
+                                issueExist = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<GlobalAppModelParameter>(mappedGuid) == null;
                                 break;
                             case VariableBase.eOutputType.DataSource:
                                 issueExist = string.IsNullOrEmpty(inputVar.MappedOutputValue);

@@ -38,6 +38,7 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
             public eBodyContentType[] SupportedBodyContentTypes { get; set; } = { eBodyContentType.FreeText };
             public int MaxBodyCharCount { get; set; } = 0;
             public bool FromDisplayNameEnabled { get; set; } = true;
+            public bool ReadDisplayNameEnabled { get; set; } = true;
             public bool CCEnabled { get; set; } = true;
             public bool AttachmentsEnabled { get; set; } = true;
             public bool AllowAttachmentExtraInformation { get; set; } = false;
@@ -45,6 +46,7 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
             public eAttachmentType[] SupportedAttachmentTypes { get; set; } = { eAttachmentType.File };
             public AttachmentGridBindingMap AttachmentGridBindingMap { get; set; } = new AttachmentGridBindingMap();
             public Email.eEmailMethod DefaultEmailMethod { get; set; } = Email.eEmailMethod.SMTP;
+            public Email.readEmailMethod DefaultReadEmailMethod { get; set; } = Email.readEmailMethod.MSGraphAPI;
             public eBodyContentType DefaultBodyContentType { get; set; } = eBodyContentType.FreeText;
         }
 
@@ -57,10 +59,15 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
         }
 
         private bool mIsDisplayNameFieldEnabled;
+        private bool readEmailFieldEnabled;
         private Context? mContext;
 
         public delegate void EmailMethodChangeHandler(Email.eEmailMethod selectedEmailMethod);
         public event EmailMethodChangeHandler? EmailMethodChanged;
+        public delegate void ReadmailMethodChangeHandler(ActeMail.ReadEmailActionType selectedReadEmailMethod);
+        public event ReadmailMethodChangeHandler? ReadmailMethodChanged;
+
+
         public delegate void ActionTypeChangedHandler(ActeMail.eEmailActionType selectedActionType);
         public event ActionTypeChangedHandler? ActionTypeChanged;
         public delegate void HasAttachmentsSelectionChangedHandler(EmailReadFilters.eHasAttachmentsFilter selectedValue);
@@ -89,12 +96,14 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
             SetBodyContentType(options.SupportedBodyContentTypes, options.DefaultBodyContentType);
             SetMaxBodyCharCount(options.MaxBodyCharCount);
             mIsDisplayNameFieldEnabled = options.FromDisplayNameEnabled;
+            readEmailFieldEnabled = options.ReadDisplayNameEnabled;
             SetCCVisibility(ConvertBooleanToVisibility(options.CCEnabled));
             if (options.AttachmentsEnabled)
             {
                 InitializeAttachmentsGrid(options);
             }
             SetDefaultEmailMethod(options.DefaultEmailMethod);
+            SetDefaultReadmailMethod(options.DefaultReadEmailMethod);
             InitializeHasAttachmentsComboBoxItems();
         }
 
@@ -257,6 +266,21 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
             }
         }
 
+        private void SetDefaultReadmailMethod(Email.readEmailMethod defaultReadmailMethod)
+        {
+            switch (defaultReadmailMethod)
+            {
+                case Email.readEmailMethod.MSGraphAPI:
+                    xEmailReadMethodMSGraph.IsSelected = true;
+                    return;
+                case Email.readEmailMethod.IMAP:
+                    xEmailReadMethodIMAP.IsSelected = true;
+                    return;
+                default:
+                    throw new NotImplementedException($"logic for setting {defaultReadmailMethod} as default Raedemail method is not implemented");
+            }
+        }
+        
         private void InitializeHasAttachmentsComboBoxItems()
         {
             xHasAttachmentsComboBox.BindControl(Enum.GetValues<EmailReadFilters.eHasAttachmentsFilter>());
@@ -354,6 +378,42 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
         {
             RoutedEventHandler? handler = AddHTMLReportAttachment;
             handler?.Invoke(sender, e);
+        }
+        private void xReadEmailMethod_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ChangeReadEmailFieldVisibility();
+            TriggerReadEmailMethodChangedEvent();
+        }
+
+        private void ChangeReadEmailFieldVisibility()
+        {
+            if (!mIsDisplayNameFieldEnabled)
+            {
+                return;
+            }
+
+            if (xEmailReadMethodMSGraph.IsSelected)
+            { 
+                FolderNameLabel.Visibility = Visibility.Visible;
+                FoldersStackPanel.Visibility = Visibility.Visible;
+                xClientIdGrid.Visibility = Visibility.Visible;
+                xTenantIdGrid.Visibility= Visibility.Visible;                
+                passwdLabel.Content = "User Password:";
+            }
+            else
+            {
+                FolderNameLabel.Visibility = Visibility.Collapsed;
+                FoldersStackPanel.Visibility = Visibility.Collapsed;
+                xClientIdGrid.Visibility = Visibility.Collapsed;
+                xTenantIdGrid.Visibility = Visibility.Collapsed;               
+                passwdLabel.Content = "User App Password:";
+            }
+        }
+        private void TriggerReadEmailMethodChangedEvent()
+        {
+            ComboBoxItem selectedReadmailMethodComboBoxItem = (ComboBoxItem)xEmailReadMethod.SelectedItem;
+            ActeMail.ReadEmailActionType selectedReadmailMethod = Enum.Parse<ActeMail.ReadEmailActionType>((string)selectedReadmailMethodComboBoxItem.Tag);
+            ReadmailMethodChanged?.Invoke(selectedReadmailMethod);
         }
 
         private void xEmailMethod_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -537,7 +537,7 @@ namespace Ginger.WindowExplorer
 
         private void xDDLocateBy_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mLocators.CurrentItem = mLocators.Where(l => l.LocateBy == (eLocateBy)xDDLocateBy.SelectedItem).FirstOrDefault();
+            mLocators.CurrentItem = mLocators.FirstOrDefault(l => l.LocateBy == (eLocateBy)xDDLocateBy.SelectedItem);
             mElementInfo.Locators.CurrentItem = mLocators.CurrentItem;
 
             xLocateValueTxtBlock.Text = (mElementInfo.Locators.CurrentItem as ElementLocator).LocateValue;

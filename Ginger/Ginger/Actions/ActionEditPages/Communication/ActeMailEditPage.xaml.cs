@@ -46,6 +46,7 @@ namespace Ginger.Actions.Communication
             mAct = act;
             CreateAttachmentList();
             InitializeXSendEMailConfigView();
+
         }
 
         [MemberNotNull(nameof(mAttachments))]
@@ -125,7 +126,7 @@ namespace Ginger.Actions.Communication
         private void BindSendEMailConfigView()
         {
             xEmailConfigView.xActionTypeSendRadioButton.IsChecked = mAct.eMailActionType == ActeMail.eEmailActionType.SendEmail;
-            xEmailConfigView.xActionTypeReadRadioButton.IsChecked = mAct.eMailActionType == ActeMail.eEmailActionType.ReadEmail;
+            xEmailConfigView.xActionTypeReadRadioButton.IsChecked = mAct.eMailActionType == ActeMail.eEmailActionType.ReadEmail;         
             xEmailConfigView.xFromVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFrom));
             xEmailConfigView.xFromDisplayNameVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFromDisplayName));
             xEmailConfigView.xToVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Mailto));
@@ -174,6 +175,7 @@ namespace Ginger.Actions.Communication
             xEmailConfigView.AttachmentNameVEButtonClick += xSendEMailConfigView_NameValueExpressionButtonClick;
             xEmailConfigView.ActionTypeChanged += xSendEMailConfigView_ActionTypeChanged;
             xEmailConfigView.HasAttachmentsSelectionChanged += xSendEMailConfigView_HasAttachmentsSelectionChanged;
+            xEmailConfigView.ReadmailMethodChanged += xReadEmailConfigView_ReadMethodChanged;
         }
 
         private static ComboEnumItem FindComboBoxItem(ComboBox comboBox, Predicate<ComboEnumItem> predicate)
@@ -242,7 +244,10 @@ namespace Ginger.Actions.Communication
         {
             mAct.FilterHasAttachments = selectedValue;
         }
-
+        private void xReadEmailConfigView_ReadMethodChanged(ActeMail.ReadEmailActionType selectedReadMethod)
+        {
+            mAct.readMailActionType = selectedReadMethod ;
+        }
         public sealed class Attachment : INotifyPropertyChanged
         {
             public eAttachmentType Type { get => eAttachmentType.File; }

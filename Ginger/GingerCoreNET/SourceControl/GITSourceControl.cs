@@ -198,7 +198,7 @@ namespace GingerCore.SourceControl
 
                 using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
                 {
-                    if (Path == SolutionFolder && repo.RetrieveStatus().Count() != 0)
+                    if (Path == SolutionFolder && repo.RetrieveStatus().Any())
                     {
                         return SourceControlFileInfo.eRepositoryItemStatus.Modified;
                     }
@@ -894,7 +894,7 @@ namespace GingerCore.SourceControl
                 options.OnPushStatusError += ErrorOnppush;
                 options.CredentialsProvider = GetSourceCredentialsHandler();
 
-                Branch currentBranch = repo.Branches.Where(x => x.FriendlyName == SourceControlBranch).FirstOrDefault();
+                Branch currentBranch = repo.Branches.FirstOrDefault(x => x.FriendlyName == SourceControlBranch);
                 repo.Network.Push(currentBranch, options);
             }
         }

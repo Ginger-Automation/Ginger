@@ -1617,7 +1617,7 @@ namespace GingerCore.Drivers.WindowsLib
 
                 LocateElementByLocators(EI.Locators, GetOutAfterFoundElement);
 
-                if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count() > 0)
+                if (activesElementLocators.Any(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed))
                 {
                     return true;
                 }
@@ -1761,7 +1761,7 @@ namespace GingerCore.Drivers.WindowsLib
         public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
         {
             //try by type and Xpath comparison
-            ElementInfo OriginalElementInfo = originalElements.Where(x => (x.ElementTypeEnum == latestElement.ElementTypeEnum)
+            ElementInfo OriginalElementInfo = originalElements.FirstOrDefault(x => (x.ElementTypeEnum == latestElement.ElementTypeEnum)
                                                                 && (x.XPath == latestElement.XPath)
                                                                 && (x.Path == latestElement.Path || (string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(latestElement.Path)))
                                                                 && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) == null
@@ -1769,7 +1769,7 @@ namespace GingerCore.Drivers.WindowsLib
                                                                         && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue == latestElement.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue)
                                                                         )
                                                                     )
-                                                                ).FirstOrDefault();
+);
             return OriginalElementInfo;
         }
 
