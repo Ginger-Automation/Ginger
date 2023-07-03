@@ -467,7 +467,6 @@ namespace GingerCore.NoSqlBase
             var filterString = updateQueryParamsStrings[0];
             //set param
             var paramString = updateQueryParamsStrings[1];
-            //var paramString = "{ $set: { StartTime : \"2030-01-17T13:34:14.385+00:00\" } }";
             BsonDocument filterDocumnet = BsonDocument.Parse(filterString);
             BsonDocument paramDocumnet = BsonDocument.Parse(paramString);
 
