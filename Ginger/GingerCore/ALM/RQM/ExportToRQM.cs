@@ -249,13 +249,13 @@ namespace GingerCore.ALM.RQM
 
                         if (resultInfo.ErrorCode == 0)
                         {
-                            result = "Export execution details to RQM performed successfully.";
+                            result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} Execution results published to RQM successfully.";
                             return true;
                         }
                         else
                         {
-                            result = resultInfo.ErrorDesc;
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to RQM/ALM");
+                            result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} Execution results failed to publist to RQM due to {resultInfo.ErrorDesc}";
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to export execution details to RQM/ALM due to{resultInfo.ErrorDesc}");
                             return false;
                         }
                     }
