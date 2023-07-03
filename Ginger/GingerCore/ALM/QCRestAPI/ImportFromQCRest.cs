@@ -211,12 +211,12 @@ namespace GingerCore.ALM.QCRestAPI
                     ActivitiesGroup repoActivsGroup = null;
                     if (tc.LinkedTestID != null && tc.LinkedTestID != string.Empty)
                     {
-                        repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.LinkedTestID).FirstOrDefault();
+                        repoActivsGroup = GingerActivitiesGroupsRepo.FirstOrDefault(x => x.ExternalID == tc.LinkedTestID);
                     }
 
                     if (repoActivsGroup == null)
                     {
-                        repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.TestID).FirstOrDefault();
+                        repoActivsGroup = GingerActivitiesGroupsRepo.FirstOrDefault(x => x.ExternalID == tc.TestID);
                     }
 
                     if (repoActivsGroup != null)
@@ -266,15 +266,15 @@ namespace GingerCore.ALM.QCRestAPI
                         bool toAddStepActivity = false;
 
                         //check if mapped activity exist in repository
-                        Activity repoStepActivity = (Activity)GingerActivitiesRepo.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
+                        Activity repoStepActivity = (Activity)GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID == step.StepID);
                         if (repoStepActivity != null)
                         {
                             //check if it is part of the Activities Group
-                            ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                            ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                             if (groupStepActivityIdent != null)
                             {
                                 //already in Activities Group so get link to it
-                                stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                                stepActivity = (Activity)busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                                 // in any case update description/expected/name - even if "step" was taken from repository
                                 stepActivity.Description = StripHTML(step.Description);
                                 stepActivity.Expected = StripHTML(step.Expected);
@@ -312,7 +312,7 @@ namespace GingerCore.ALM.QCRestAPI
                             //get the param value
                             string paramSelectedValue = string.Empty;
                             bool? isflowControlParam = null;
-                            QC.ALMTSTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+                            QC.ALMTSTestParameter tcParameter = tc.Parameters.FirstOrDefault(x => x.Name.ToUpper() == param.ToUpper());
 
                             //get the param value
                             if (tcParameter != null && tcParameter.Value != null && tcParameter.Value != string.Empty)
@@ -357,7 +357,7 @@ namespace GingerCore.ALM.QCRestAPI
                             }
 
                             //check if already exist param with that name
-                            VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+                            VariableBase stepActivityVar = stepActivity.Variables.FirstOrDefault(x => x.Name.ToUpper() == param.ToUpper());
                             if (stepActivityVar == null)
                             {
                                 //#Param not exist so add it
@@ -411,7 +411,7 @@ namespace GingerCore.ALM.QCRestAPI
                             //add the variable selected value                          
                             if (stepActivityVar is VariableSelectionList)
                             {
-                                OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.Where(x => x.Value == paramSelectedValue).FirstOrDefault();
+                                OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.FirstOrDefault(x => x.Value == paramSelectedValue);
                                 if (stepActivityVarOptionalVar == null)
                                 {
                                     //no such variable value option so add it
@@ -458,7 +458,7 @@ namespace GingerCore.ALM.QCRestAPI
                         foreach (QC.ALMTSTestStep step in tc.Steps)
                         {
                             int stepIndx = tc.Steps.IndexOf(step) + 1;
-                            ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                            ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                             if (actIdent == null || actIdent.IdentifiedActivity == null)
                             {
                                 break;//something wrong- shouldn't be null
@@ -475,7 +475,7 @@ namespace GingerCore.ALM.QCRestAPI
                             {
                                 groupIndx++;
                                 if (string.IsNullOrEmpty(ident.ActivityExternalID) ||
-                                        tc.Steps.Where(x => x.StepID == ident.ActivityExternalID).FirstOrDefault() == null)
+                                        tc.Steps.FirstOrDefault(x => x.StepID == ident.ActivityExternalID) == null)
                                 {
                                     continue;//activity which not originally came from the TC
                                 }
@@ -557,7 +557,7 @@ namespace GingerCore.ALM.QCRestAPI
                         foreach (QCTestCaseStep step in tSTestCaseSteps)
                         {
                             int stepIndx = int.Parse(step.StepOrder) + 1;
-                            ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.Id).FirstOrDefault();
+                            ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.Id);
                             if (actIdent == null || actIdent.IdentifiedActivity == null)
                             {
                                 break;//something wrong- shouldn't be null
@@ -574,7 +574,7 @@ namespace GingerCore.ALM.QCRestAPI
                             {
                                 groupIndx++;
                                 if (string.IsNullOrEmpty(ident.ActivityExternalID) ||
-                                        tSTestCaseSteps.Where(x => x.Id == ident.ActivityExternalID).FirstOrDefault() == null)
+                                        tSTestCaseSteps.FirstOrDefault(x => x.Id == ident.ActivityExternalID) == null)
                                 {
                                     continue;//activity which not originally came from the TC
                                 }
@@ -804,12 +804,12 @@ namespace GingerCore.ALM.QCRestAPI
             }
             if (relevantStep != null)
             {
-                repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == relevantStep.ElementsField["link-test"].ToString()).FirstOrDefault();
+                repoActivsGroup = GingerActivitiesGroupsRepo.FirstOrDefault(x => x.ExternalID == relevantStep.ElementsField["link-test"].ToString());
             }
 
             if (repoActivsGroup == null)
             {
-                repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == testInstance.Id).FirstOrDefault();
+                repoActivsGroup = GingerActivitiesGroupsRepo.FirstOrDefault(x => x.ExternalID == testInstance.Id);
             }
 
             if (repoActivsGroup != null)
@@ -864,11 +864,11 @@ namespace GingerCore.ALM.QCRestAPI
                 bool toAddStepActivity = false;
 
                 //check if mapped activity exist in repository
-                Activity repoStepActivity = (Activity)GingerActivitiesRepo.Where(x => x.ExternalID == step.Id).FirstOrDefault();
+                Activity repoStepActivity = (Activity)GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID == step.Id);
                 if (repoStepActivity != null)
                 {
                     //check if it is part of the Activities Group
-                    ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.Id).FirstOrDefault();
+                    ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.Id);
                     if (groupStepActivityIdent != null)
                     {
                         stepActivity = LinkStepAndUpdate(busFlow, groupStepActivityIdent, step, testInstance);
@@ -902,7 +902,7 @@ namespace GingerCore.ALM.QCRestAPI
             Activity stepActivity;
 
             //already in Activities Group so get link to it
-            stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+            stepActivity = (Activity)busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
             // in any case update description/expected/name - even if "step" was taken from repository
             stepActivity.Description = StripHTML(step.Description);
             stepActivity.Expected = StripHTML(step.ElementsField["expected"].ToString());
@@ -933,8 +933,8 @@ namespace GingerCore.ALM.QCRestAPI
                 //get the param value
                 string paramSelectedValue = string.Empty;
                 bool? isflowControlParam = null;
-                QCTestCaseParam tcParameter = tSTestCasesParams.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
-                QCTestInstanceParam testInstanceParameter = testInstanceParamsColl.Where(x => x.ParentId == tcParameter.Id).FirstOrDefault();
+                QCTestCaseParam tcParameter = tSTestCasesParams.FirstOrDefault(x => x.Name.ToUpper() == param.ToUpper());
+                QCTestInstanceParam testInstanceParameter = testInstanceParamsColl.FirstOrDefault(x => x.ParentId == tcParameter.Id);
 
                 //get the param value
                 if (testInstanceParameter.ElementsField["actual-value"] != null)
@@ -979,7 +979,7 @@ namespace GingerCore.ALM.QCRestAPI
                 }
 
                 //check if already exist param with that name
-                VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+                VariableBase stepActivityVar = stepActivity.Variables.FirstOrDefault(x => x.Name.ToUpper() == param.ToUpper());
                 if (stepActivityVar == null)
                 {
                     //#Param not exist so add it
@@ -1033,7 +1033,7 @@ namespace GingerCore.ALM.QCRestAPI
                 //add the variable selected value                          
                 if (stepActivityVar is VariableSelectionList)
                 {
-                    OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.Where(x => x.Value == paramSelectedValue).FirstOrDefault();
+                    OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.FirstOrDefault(x => x.Value == paramSelectedValue);
                     if (stepActivityVarOptionalVar == null)
                     {
                         //no such variable value option so add it

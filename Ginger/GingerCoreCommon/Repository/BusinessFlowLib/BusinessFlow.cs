@@ -350,7 +350,7 @@ namespace GingerCore
                 ObservableList<ApplicationPlatform> appsPlatform = new ObservableList<ApplicationPlatform>();
                 foreach (TargetBase target in TargetApplications)
                 {
-                    ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == target.Name).FirstOrDefault();
+                    ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == target.Name);
                     if (appPlat != null)
                     {
                         appsPlatform.Add(appPlat);
@@ -383,7 +383,7 @@ namespace GingerCore
             {
                 if (CurrentActivity != null && string.IsNullOrEmpty(CurrentActivity.ActivitiesGroupID) == false)
                 {
-                    return this.ActivitiesGroups.Where(x => x.Name == CurrentActivity.ActivitiesGroupID).FirstOrDefault();
+                    return ActivitiesGroups.FirstOrDefault(x => x.Name == CurrentActivity.ActivitiesGroupID);
                 }
                 else
                 {
@@ -450,7 +450,7 @@ namespace GingerCore
             {
                 if (ErrorHandlerOriginActivity != null && string.IsNullOrEmpty(ErrorHandlerOriginActivity.ActivitiesGroupID) == false)
                 {
-                    return this.ActivitiesGroups.Where(x => x.Name == ErrorHandlerOriginActivity.ActivitiesGroupID).FirstOrDefault();
+                    return ActivitiesGroups.FirstOrDefault(x => x.Name == ErrorHandlerOriginActivity.ActivitiesGroupID);
                 }
                 else
                 {
@@ -776,7 +776,7 @@ namespace GingerCore
                 {
                     if (string.IsNullOrEmpty(CurrentActivity.ActivitiesGroupID) == false)
                     {
-                        activitiesGroup = this.ActivitiesGroups.Where(x => x.Name == CurrentActivity.ActivitiesGroupID).FirstOrDefault();
+                        activitiesGroup = ActivitiesGroups.FirstOrDefault(x => x.Name == CurrentActivity.ActivitiesGroupID);
                         insertIndex = Activities.IndexOf(CurrentActivity);
                         while (!string.IsNullOrEmpty(Activities[insertIndex].ActivitiesGroupID) && Activities[insertIndex].ActivitiesGroupID.Equals(activitiesGroup?.Name) == true)
                         {
@@ -835,7 +835,7 @@ namespace GingerCore
         public void SetUniqueVariableName(VariableBase var)
         {
             if (string.IsNullOrEmpty(var.Name)) var.Name = "Variable";
-            if (this.Variables.Where(x => x.Name == var.Name).FirstOrDefault() == null) return; //no name like it
+            if (Variables.FirstOrDefault(x => x.Name == var.Name) == null) return; //no name like it
 
             List<VariableBase> sameNameObjList =
                 this.Variables.Where(x => x.Name == var.Name).ToList<VariableBase>();
@@ -843,7 +843,7 @@ namespace GingerCore
 
             //Set unique name
             int counter = 2;
-            while ((this.Variables.Where(x => x.Name == var.Name + "_" + counter.ToString()).FirstOrDefault()) != null)
+            while ((Variables.FirstOrDefault(x => x.Name == var.Name + "_" + counter.ToString())) != null)
                 counter++;
             var.Name = var.Name + "_" + counter.ToString();
         }
@@ -874,7 +874,7 @@ namespace GingerCore
 
         public void SetUniqueActivitiesGroupName(ActivitiesGroup activitiesGroup)
         {
-            if (this.ActivitiesGroups.Where(ag => ag.Name == activitiesGroup.Name).FirstOrDefault() == null) return; //no name like it in the group
+            if (ActivitiesGroups.FirstOrDefault(ag => ag.Name == activitiesGroup.Name) == null) return; //no name like it in the group
 
             List<ActivitiesGroup> sameNameObjList =
                 this.ActivitiesGroups.Where(obj => obj.Name == activitiesGroup.Name).ToList();
@@ -882,7 +882,7 @@ namespace GingerCore
 
             //Set unique name
             int counter = 2;
-            while ((this.ActivitiesGroups.Where(obj => obj.Name == activitiesGroup.Name + "_" + counter.ToString()).FirstOrDefault()) != null)
+            while ((ActivitiesGroups.FirstOrDefault(obj => obj.Name == activitiesGroup.Name + "_" + counter.ToString())) != null)
                 counter++;
             activitiesGroup.Name = activitiesGroup.Name + "_" + counter.ToString();
         }
@@ -922,10 +922,10 @@ namespace GingerCore
             //Free Activities which attached to missing group
             foreach (Activity activity in activitiesList)
             {
-                ActivitiesGroup group = ActivitiesGroups.Where(actg => actg.Name == activity.ActivitiesGroupID).FirstOrDefault();
+                ActivitiesGroup group = ActivitiesGroups.FirstOrDefault(actg => actg.Name == activity.ActivitiesGroupID);
                 if (group != null)
                 {
-                    if ((group.ActivitiesIdentifiers.Where(actidnt => actidnt.ActivityName == activity.ActivityName && actidnt.ActivityGuid == activity.Guid).FirstOrDefault()) == null)
+                    if ((group.ActivitiesIdentifiers.FirstOrDefault(actidnt => actidnt.ActivityName == activity.ActivityName && actidnt.ActivityGuid == activity.Guid)) == null)
                     {
                         activity.ActivitiesGroupID = string.Empty;
                     }
@@ -938,14 +938,14 @@ namespace GingerCore
                 for (int AIindex = 0; AIindex < group.ActivitiesIdentifiers.Count;)
                 {
                     ActivityIdentifiers actIdentifis = (ActivityIdentifiers)group.ActivitiesIdentifiers[AIindex];
-                    Activity activ = activitiesList.Where(x => x.ActivityName == actIdentifis.ActivityName && x.Guid == actIdentifis.ActivityGuid && x.ActivitiesGroupID == group.Name).FirstOrDefault();
+                    Activity activ = activitiesList.FirstOrDefault(x => x.ActivityName == actIdentifis.ActivityName && x.Guid == actIdentifis.ActivityGuid && x.ActivitiesGroupID == group.Name);
                     if (activ == null)
                     {
-                        activ = activitiesList.Where(x => x.Guid == actIdentifis.ActivityGuid && x.ActivitiesGroupID == group.Name).FirstOrDefault();
+                        activ = activitiesList.FirstOrDefault(x => x.Guid == actIdentifis.ActivityGuid && x.ActivitiesGroupID == group.Name);
                     }
                     if (activ == null)
                     {
-                        activ = activitiesList.Where(x => x.ParentGuid == actIdentifis.ActivityGuid && x.ActivitiesGroupID == group.Name).FirstOrDefault();
+                        activ = activitiesList.FirstOrDefault(x => x.ParentGuid == actIdentifis.ActivityGuid && x.ActivitiesGroupID == group.Name);
                     }
                     if (activ != null)
                     {
@@ -972,7 +972,7 @@ namespace GingerCore
             foreach (Activity activity in activitiesList)
             {
                 if (string.IsNullOrEmpty(activity.ActivitiesGroupID) == true
-                                || ActivitiesGroups.Where(actg => actg.Name == activity.ActivitiesGroupID).FirstOrDefault() == null)
+                                || ActivitiesGroups.FirstOrDefault(actg => actg.Name == activity.ActivitiesGroupID) == null)
                 {
                     //attach to Activity Group
                     if (activitiesList.IndexOf(activity) == 0)
@@ -982,7 +982,7 @@ namespace GingerCore
                     }
                     else
                     {
-                        ActivitiesGroup group = ActivitiesGroups.Where(actg => actg.Name == activitiesList[activitiesList.IndexOf(activity) - 1].ActivitiesGroupID).FirstOrDefault();
+                        ActivitiesGroup group = ActivitiesGroups.FirstOrDefault(actg => actg.Name == activitiesList[activitiesList.IndexOf(activity) - 1].ActivitiesGroupID);
                         group.AddActivityToGroup(activity);
                     }
                 }
@@ -1004,13 +1004,13 @@ namespace GingerCore
                         if (activityGroupIsOutOfSync)
                         {
                             //remove from previous group
-                            ActivitiesGroup oldGroup = ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
+                            ActivitiesGroup oldGroup = ActivitiesGroups.FirstOrDefault(x => x.Name == activity.ActivitiesGroupID);
                             if (oldGroup != null)
                             {
                                 oldGroup.RemoveActivityFromGroup(activity);
                             }
                             //attach to new group which will be with similar name like older one
-                            ActivitiesGroup alreadyAddedGroup = ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID + "_2").FirstOrDefault();
+                            ActivitiesGroup alreadyAddedGroup = ActivitiesGroups.FirstOrDefault(x => x.Name == activity.ActivitiesGroupID + "_2");
                             if (alreadyAddedGroup != null)
                             {
                                 alreadyAddedGroup.AddActivityToGroup(activity);
@@ -1030,7 +1030,7 @@ namespace GingerCore
             int index = 0;
             foreach (Activity activity in activitiesList)
             {
-                ActivitiesGroup group = ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
+                ActivitiesGroup group = ActivitiesGroups.FirstOrDefault(x => x.Name == activity.ActivitiesGroupID);
                 if (!groupsOrderDic.ContainsKey(group))
                 {
                     groupsOrderDic.Add(group, index);
@@ -1116,7 +1116,7 @@ namespace GingerCore
         {
             get
             {
-                if (TargetApplications != null && TargetApplications.Count() > 0)
+                if (TargetApplications != null && TargetApplications.Any())
                 {
                     return TargetApplications[0].Name;
                 }
@@ -1236,11 +1236,11 @@ namespace GingerCore
             {
                 foreach (ActivityIdentifiers actIdent in activitiesGroup.ActivitiesIdentifiers)
                 {
-                    Activity repoAct = activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                    Activity repoAct = activitiesRepository.FirstOrDefault(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid);
                     if (repoAct == null)
-                        repoAct = activitiesRepository.Where(x => x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                        repoAct = activitiesRepository.FirstOrDefault(x => x.Guid == actIdent.ActivityGuid);
                     if (repoAct == null)
-                        repoAct = activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName).FirstOrDefault();
+                        repoAct = activitiesRepository.FirstOrDefault(x => x.ActivityName == actIdent.ActivityName);
                     if (repoAct != null)
                     {
                         Activity actInstance = (Activity)repoAct.CreateInstance(true);
@@ -1288,7 +1288,7 @@ namespace GingerCore
         /// <returns></returns>
         public eUserMsgSelection MapTAToBF(eUserMsgSelection userSelection, Activity activityIns, ObservableList<ApplicationPlatform> ApplicationPlatforms)
         {
-            if (!this.TargetApplications.Where(x => x.Name == activityIns.TargetApplication).Any())
+            if (!TargetApplications.Any(x => x.Name == activityIns.TargetApplication))
             {
                 if (userSelection == eUserMsgSelection.None)
                 {
@@ -1297,7 +1297,7 @@ namespace GingerCore
 
                 if (userSelection == eUserMsgSelection.OK)
                 {
-                    ApplicationPlatform appAgent = ApplicationPlatforms.Where(x => x.AppName == activityIns.TargetApplication).FirstOrDefault();
+                    ApplicationPlatform appAgent = ApplicationPlatforms.FirstOrDefault(x => x.AppName == activityIns.TargetApplication);
                     if (appAgent != null)
                     {
                         this.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
@@ -1327,7 +1327,7 @@ namespace GingerCore
                 lst.Add(new StatItem() { Description = v.Status, Count = v.Count });
             }
 
-            if (groups.Count() > 0)
+            if (groups.Any())
                 isValidaionsExist = true;
             else
                 isValidaionsExist = false;
@@ -1336,7 +1336,7 @@ namespace GingerCore
 
         public void SetActivityTargetApplication(Activity activity)
         {
-            if (this.TargetApplications.Where(x => x.Name == activity.TargetApplication).FirstOrDefault() == null)
+            if (TargetApplications.FirstOrDefault(x => x.Name == activity.TargetApplication) == null)
             {
                 activity.TargetApplication = this.MainApplication;
             }
@@ -1422,7 +1422,7 @@ namespace GingerCore
                 return lstActivities[0];
             else//we have more than 1
             {
-                Activity firstActive = lstActivities.Where(x => x.Active == true).FirstOrDefault();
+                Activity firstActive = lstActivities.FirstOrDefault(x => x.Active == true);
                 if (firstActive != null)
                     return firstActive;
                 else
@@ -1491,7 +1491,7 @@ namespace GingerCore
                 case eFilterBy.Tags:
                     foreach (Guid tagGuid in Tags)
                     {
-                        Guid guid = ((List<Guid>)obj).Where(x => tagGuid.Equals(x) == true).FirstOrDefault();
+                        Guid guid = ((List<Guid>)obj).FirstOrDefault(x => tagGuid.Equals(x) == true);
                         if (!guid.Equals(Guid.Empty))
                             return true;
                     }
@@ -1622,14 +1622,14 @@ namespace GingerCore
 
         public ActivitiesGroup GetActivitiesGroupByName(string groupName)
         {
-            return ActivitiesGroups.Where(x => x.Name == groupName).FirstOrDefault();
+            return ActivitiesGroups.FirstOrDefault(x => x.Name == groupName);
         }
 
         public Tuple<ActivitiesGroup, ActivityIdentifiers> GetActivityGroupAndIdentifier(Activity activity)
         {
             ActivitiesGroup group = null;
             ActivityIdentifiers activityIdent = null;
-            group = ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
+            group = ActivitiesGroups.FirstOrDefault(x => x.Name == activity.ActivitiesGroupID);
             if (group != null)
             {
                 activityIdent = group.GetActivityIdentifiers(activity);
@@ -1772,8 +1772,8 @@ namespace GingerCore
         {
             if (Activities.Any(act => act.Guid == activityGuid))
             {
-                Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().Type = eSharedItemType.Link;
-                Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().ParentGuid = parentGuid;
+                Activities.FirstOrDefault(act => act.Guid == activityGuid).Type = eSharedItemType.Link;
+                Activities.FirstOrDefault(act => act.Guid == activityGuid).ParentGuid = parentGuid;
                 return true;
             }
             return false;
@@ -1783,8 +1783,8 @@ namespace GingerCore
         {
             if (Activities.Any(act => act.Guid == activityGuid))
             {
-                Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().Type = eSharedItemType.Regular;
-                Activities.Where(act => act.Guid == activityGuid).FirstOrDefault().ParentGuid = parentGuid;
+                Activities.FirstOrDefault(act => act.Guid == activityGuid).Type = eSharedItemType.Regular;
+                Activities.FirstOrDefault(act => act.Guid == activityGuid).ParentGuid = parentGuid;
                 return true;
             }
             return false;

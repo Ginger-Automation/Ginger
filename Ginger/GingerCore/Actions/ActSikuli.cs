@@ -256,13 +256,13 @@ namespace GingerCore.Actions
                 }
                 if (lstWindows.Count != 0)
                 {
-                    WinAPIAutomation.ShowWindow(lstWindows.Where(m => m.Current.Name.Equals(processNameForSikuli)).First());
+                    WinAPIAutomation.ShowWindow(lstWindows.First(m => m.Current.Name.Equals(processNameForSikuli)));
                     if (SetCustomResolution)
                     {
                         List<int> lstVal = GetCustomResolutionValues();
                         if (lstVal.Count == 2)
                         {
-                            WinAPIAutomation.ResizeExternalWindow(lstWindows.Where(m => m.Current.Name.Equals(processNameForSikuli)).First(), lstVal[0], lstVal[1]);
+                            WinAPIAutomation.ResizeExternalWindow(lstWindows.First(m => m.Current.Name.Equals(processNameForSikuli)), lstVal[0], lstVal[1]);
                         }
                     }
                 }
@@ -513,8 +513,7 @@ namespace GingerCore.Actions
             if (!ActSikuliOperation.Equals(eActSikuliOperation.GetValue))
             {
                 RefreshActiveProcessesTitles();
-                if (lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)) == null ||
-                    lstWindows.Where(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)).Count() == 0)
+                if (!lstWindows.Any(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)))
                 {
                     Error = "Target Application is not running";
                     return false;

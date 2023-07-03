@@ -236,7 +236,7 @@ namespace Ginger.BusinessFlowPages
 
                     //Check if target already exist else add it
                     // TODO: search only in targetplugin type
-                    TargetPlugin targetPlugin = (TargetPlugin)(from x in mContext.BusinessFlow.TargetApplications where x.Name == p.ServiceId select x).SingleOrDefault();
+                    TargetPlugin targetPlugin = (TargetPlugin)mContext.BusinessFlow.TargetApplications.FirstOrDefault(x=>  x.Name == p.ServiceId);
                     if (targetPlugin == null)
                     {
                         // check if interface add it
@@ -269,7 +269,7 @@ namespace Ginger.BusinessFlowPages
             string elementVal = string.Empty;
             if (elementInfo.OptionalValuesObjectsList.Count > 0)
             {
-                elementVal = Convert.ToString(elementInfo.OptionalValuesObjectsList.Where(v => v.IsDefault).FirstOrDefault().Value);
+                elementVal = Convert.ToString(elementInfo.OptionalValuesObjectsList.FirstOrDefault(v => v.IsDefault).Value);
             }
 
             ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
@@ -299,7 +299,7 @@ namespace Ginger.BusinessFlowPages
             bool copyAsLink = true;
             if (!string.IsNullOrWhiteSpace(ActivitiesGroupID))
             {
-                parentGroup = businessFlow.ActivitiesGroups.Where(g => g.Name == ActivitiesGroupID).FirstOrDefault();
+                parentGroup = businessFlow.ActivitiesGroups.FirstOrDefault(g => g.Name == ActivitiesGroupID);
             }
 
             var activitiesGroupSelectionPage = new ActivitiesGroupSelectionPage(businessFlow, parentGroup, IsPomActivity);

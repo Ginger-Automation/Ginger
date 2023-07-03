@@ -288,7 +288,7 @@ namespace Ginger.SolutionWindows
             AddApplicationPage AAP = new AddApplicationPage(mSolution);
             AAP.ShowAsWindow();
 
-            if (mSolution.ApplicationPlatforms.Count() > 0)
+            if (mSolution.ApplicationPlatforms.Any())
             {
                 ApplicationTextBox.Text = mSolution.ApplicationPlatforms[0].AppName;
                 MainPlatformComboBox.SelectedValue = mSolution.ApplicationPlatforms[0].Platform;

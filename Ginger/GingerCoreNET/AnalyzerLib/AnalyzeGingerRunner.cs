@@ -36,7 +36,7 @@ namespace Ginger.AnalyzerLib
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
 
             // check that we have BFs
-            if (GR.Executor.BusinessFlows.Count() == 0)
+            if (!GR.Executor.BusinessFlows.Any())
             {
                 AnalyzeGingerRunner AGR = CreateNewIssue(IssuesList, GR);
                 AGR.Description = "Runner is missing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
@@ -54,7 +54,7 @@ namespace Ginger.AnalyzerLib
             {
                 if (string.IsNullOrEmpty(AA.AgentName))
                 {
-                    if (GR.Executor.SolutionApplications.Where(x => (x.AppName == AA.AppName && x.Platform == ePlatformType.NA)).FirstOrDefault() != null)
+                    if (GR.Executor.SolutionApplications.FirstOrDefault(x => (x.AppName == AA.AppName && x.Platform == ePlatformType.NA)) != null)
                     {
                         continue;
                     }

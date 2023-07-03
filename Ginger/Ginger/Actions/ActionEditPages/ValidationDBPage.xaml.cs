@@ -261,7 +261,7 @@ namespace Ginger.Actions
                 if (db.DBType.Equals(eDBTypes.CosmosDb))
                 {
                     if (ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())) == null
-                        || ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())).Count() == 0)
+                        || !ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Any(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())))
                     {
                         ValidationCfgComboBox.Items.Add(new ComboEnumItem() { text = "Insert", Value = eDBValidationType.Insert });
                     }
@@ -269,7 +269,7 @@ namespace Ginger.Actions
                 else
                 {
                     if (ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())) != null
-                        && ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Where(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())).Count() != 0)
+                        && ValidationCfgComboBox.Items.Cast<ComboEnumItem>().Any(m => m.text.ToString().Equals(eDBValidationType.Insert.ToString())))
                     {
                         if (ValidationCfgComboBox.SelectedValue != null && ValidationCfgComboBox.SelectedValue.ToString() == eDBValidationType.Insert.ToString())
                         {

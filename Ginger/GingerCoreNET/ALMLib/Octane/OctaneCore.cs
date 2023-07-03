@@ -155,8 +155,8 @@ namespace GingerCore.ALM
             {
                 return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
             }).Result;
-            AlmDomain domain = domains.DataResult.Where(f => f.DomainName.Equals(ALMCore.DefaultAlmConfig.ALMDomain)).FirstOrDefault();
-            ProjectArea project = domain.Projects.Where(p => p.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName)).FirstOrDefault();
+            AlmDomain domain = domains.DataResult.FirstOrDefault(f => f.DomainName.Equals(ALMCore.DefaultAlmConfig.ALMDomain));
+            ProjectArea project = domain.Projects.FirstOrDefault(p => p.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName));
             this.loginDto = new LoginDTO()
             {
                 User = ALMCore.DefaultAlmConfig.ALMUserName,
@@ -613,7 +613,7 @@ namespace GingerCore.ALM
                 new ObservableList<ExternalItemFieldBase>(GetALMItemFields(null, true).Where(x => x.ItemType.Equals(fieldType)));
             foreach (var item in fields)
             {
-                ExternalItemFieldBase savedItem = savedFields.Where(i => i.ID.Equals(item.ID)).FirstOrDefault();
+                ExternalItemFieldBase savedItem = savedFields.FirstOrDefault(i => i.ID.Equals(item.ID));
                 if (savedItem != null)
                 {
                     item.SelectedValue = savedItem.SelectedValue;
@@ -796,7 +796,7 @@ namespace GingerCore.ALM
             {
                 return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
             }).Result;
-            return domains.DataResult.Where(f => f.DomainName.Equals(ALMDomainName)).FirstOrDefault().Projects.ToDictionary(project => project.ProjectName, project => project.ProjectName);
+            return domains.DataResult.FirstOrDefault(f => f.DomainName.Equals(ALMDomainName)).Projects.ToDictionary(project => project.ProjectName, project => project.ProjectName);
         }
 
         public override List<string> GetALMDomains()
@@ -974,7 +974,7 @@ namespace GingerCore.ALM
             List<Test> test = octaneRepository.GetEntities<Test>(GetLoginDTO(), filter);
             if (test.Any())
             {
-                Test testTemp = test.Where(f => true).FirstOrDefault();
+                Test testTemp = test.FirstOrDefault(f => true);
                 return new ALMTestCase() { Id = testcaseID, TestId = testcaseID, Name = testTemp.Name };
             }
             return null;
@@ -1186,11 +1186,11 @@ namespace GingerCore.ALM
             List<string> CallingTCs = new List<string>();
             if (tc.LinkedTestID != null && tc.LinkedTestID != string.Empty)
             {
-                repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.LinkedTestID).FirstOrDefault();
+                repoActivsGroup = GingerActivitiesGroupsRepo.FirstOrDefault(x => x.ExternalID == tc.LinkedTestID);
             }
             if (repoActivsGroup == null)
             {
-                repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.TestID).FirstOrDefault();
+                repoActivsGroup = GingerActivitiesGroupsRepo.FirstOrDefault(x => x.ExternalID == tc.TestID);
             }
             if (repoActivsGroup != null)
             {
@@ -1239,15 +1239,15 @@ namespace GingerCore.ALM
                 bool toAddStepActivity = false;
 
                 //check if mapped activity exist in repository
-                Activity repoStepActivity = (Activity)GingerActivitiesRepo.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
+                Activity repoStepActivity = (Activity)GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID == step.StepID);
                 if (repoStepActivity != null)
                 {
                     //check if it is part of the Activities Group
-                    ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                    ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                     if (groupStepActivityIdent != null)
                     {
                         //already in Activities Group so get link to it
-                        stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                        stepActivity = (Activity)busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                         // in any case update description/expected/name - even if "step" was taken from repository
                         stepActivity.Description = step.Description;
                         stepActivity.Expected = step.Expected;
@@ -1284,7 +1284,7 @@ namespace GingerCore.ALM
                     //get the param value
                     string paramSelectedValue = string.Empty;
                     bool? isflowControlParam = null;
-                    QC.ALMTSTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+                    QC.ALMTSTestParameter tcParameter = tc.Parameters.FirstOrDefault(x => x.Name.ToUpper() == param.ToUpper());
 
                     //get the param value
                     if (tcParameter != null && tcParameter.Value != null && tcParameter.Value != string.Empty)
@@ -1329,7 +1329,7 @@ namespace GingerCore.ALM
                     }
 
                     //check if already exist param with that name
-                    VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+                    VariableBase stepActivityVar = stepActivity.Variables.FirstOrDefault(x => x.Name.ToUpper() == param.ToUpper());
                     if (stepActivityVar == null)
                     {
                         //#Param not exist so add it
@@ -1383,7 +1383,7 @@ namespace GingerCore.ALM
                     //add the variable selected value                          
                     if (stepActivityVar is VariableSelectionList)
                     {
-                        OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.Where(x => x.Value == paramSelectedValue).FirstOrDefault();
+                        OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.FirstOrDefault(x => x.Value == paramSelectedValue);
                         if (stepActivityVarOptionalVar == null)
                         {
                             //no such variable value option so add it
@@ -1436,7 +1436,7 @@ namespace GingerCore.ALM
                 foreach (QC.ALMTSTestStep step in tc.Steps)
                 {
                     int stepIndx = tc.Steps.IndexOf(step) + 1;
-                    ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                    ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                     if (actIdent == null || actIdent.IdentifiedActivity == null) { break; }
                     Activity act = (Activity)actIdent.IdentifiedActivity;
                     int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
@@ -1449,7 +1449,7 @@ namespace GingerCore.ALM
                     {
                         groupIndx++;
                         if (string.IsNullOrEmpty(ident.ActivityExternalID) ||
-                                tc.Steps.Where(x => x.StepID == ident.ActivityExternalID).FirstOrDefault() == null)
+                                tc.Steps.FirstOrDefault(x => x.StepID == ident.ActivityExternalID) == null)
                         {
                             continue;//activity which not originally came from the TC
                         }
@@ -1745,7 +1745,7 @@ namespace GingerCore.ALM
                                     test.SetValue(field.ExternalID, new BaseEntity()
                                     {
                                         TypeName = "release",
-                                        Id = releases.Where(r => r.Name.Equals(field.SelectedValue)).FirstOrDefault().Id
+                                        Id = releases.FirstOrDefault(r => r.Name.Equals(field.SelectedValue)).Id
                                     });
                                 }
                                 else if (field.ExternalID == "severity")

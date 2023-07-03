@@ -358,7 +358,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 if (sheetData != null)
                                 {
                                     IEnumerable<Row> rows = sheetData.Descendants<Row>();
-                                    if (rows != null && rows.Count() > 0)
+                                    if (rows != null && rows.Any())
                                     {
                                         foreach (Cell cell in rows.ElementAt(0))
                                         {
@@ -606,7 +606,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     try
                     {
                         WorkbookPart workbookPart = spreadSheetDocument.WorkbookPart;
-                        Sheet sheet = workbookPart.Workbook.Descendants<Sheet>().Where(s => s.Name == shName).FirstOrDefault();
+                        Sheet sheet = workbookPart.Workbook.Descendants<Sheet>().FirstOrDefault(s => s.Name == shName);
                         if (sheet != null)
                         {
                             string relId = sheet.Id;
@@ -617,7 +617,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 if (sheetData != null)
                                 {
                                     IEnumerable<Row> rows = sheetData.Descendants<Row>();
-                                    if (rows != null && rows.Count() > 0)
+                                    if (rows != null && rows.Any())
                                     {
                                         foreach (Cell cell in rows.ElementAt(0))
                                         {
@@ -1071,7 +1071,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                     if (sheetData != null)
                                     {
                                         IEnumerable<Row> rows = sheetData.Descendants<Row>();
-                                        if (rows != null && rows.Count() > 0)
+                                        if (rows != null && rows.Any())
                                         {
                                             int i = 1;
                                             foreach (Cell cell in rows.ElementAt(0))

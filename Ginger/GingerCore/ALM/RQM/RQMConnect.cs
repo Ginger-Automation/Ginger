@@ -185,7 +185,7 @@ namespace GingerCore.ALM.RQM
         {
             GetRQMDomainProjects();
 
-            IProjectDefinitions selectedProj = rqmProjectsDataList.Where(x => x.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName)).FirstOrDefault();
+            IProjectDefinitions selectedProj = rqmProjectsDataList.FirstOrDefault(x => x.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName));
             if (selectedProj != null)
             {
                 //Save selected project details
@@ -221,7 +221,7 @@ namespace GingerCore.ALM.RQM
                     RQMProject currentRQMProjectMapping;
                     if (RQMProjectList.RQMProjects.Count > 0)
                     {
-                        currentRQMProjectMapping = RQMProjectList.RQMProjects.Where(x => x.Name == RQMProject || x.Name == "DefaultProjectName").FirstOrDefault();
+                        currentRQMProjectMapping = RQMProjectList.RQMProjects.FirstOrDefault(x => x.Name == RQMProject || x.Name == "DefaultProjectName");
                         if (currentRQMProjectMapping != null)
                         {
                             //
@@ -233,7 +233,7 @@ namespace GingerCore.ALM.RQM
                                 rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
                             }
 
-                            IProjectDefinitions currentProj = rqmProjectsDataList.Where(x => x.ProjectName == RQMProject).FirstOrDefault();
+                            IProjectDefinitions currentProj = rqmProjectsDataList.FirstOrDefault(x => x.ProjectName == RQMProject);
 
                             List<RqmResponseData> responseDataList = RQMRep.GetAllTestPlansByProject(loginData, currentProj.Guid, currentProj.Prefix);
                             foreach (RqmResponseData responseData in responseDataList)
@@ -299,7 +299,7 @@ namespace GingerCore.ALM.RQM
                     RQMProject currentRQMProjectMapping;
                     if (RQMProjectList.RQMProjects.Count > 0)
                     {
-                        currentRQMProjectMapping = RQMProjectList.RQMProjects.Where(x => x.Name == RQMProject || x.Name == "DefaultProjectName").FirstOrDefault();
+                        currentRQMProjectMapping = RQMProjectList.RQMProjects.FirstOrDefault(x => x.Name == RQMProject || x.Name == "DefaultProjectName");
                         if (currentRQMProjectMapping != null)
                         {
                             //
@@ -311,7 +311,7 @@ namespace GingerCore.ALM.RQM
                                 rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
                             }
                             
-                            IProjectDefinitions currentProj = rqmProjectsDataList.Where(x => x.ProjectName == RQMProject).FirstOrDefault();
+                            IProjectDefinitions currentProj = rqmProjectsDataList.FirstOrDefault(x => x.ProjectName == RQMProject);
                             RqmResponseData responseData = RQMRep.GetTestPlanByIdByProject(loginData, currentProj.Prefix, currentProj.Guid, RQMTestPlanId);
                             System.Diagnostics.Debug.WriteLine($" in GetTestPlanByIdByProject :  { JsonConvert.SerializeObject(responseData) }" );
                             try //skip result incase of error, defect #5164
@@ -418,7 +418,7 @@ namespace GingerCore.ALM.RQM
                     RQMProject currentRQMProjectMapping;
                     if (RQMProjectList.RQMProjects.Count > 0)
                     {
-                        currentRQMProjectMapping = RQMProjectList.RQMProjects.Where(x => x.Name == RQMProject || x.Name == "DefaultProjectName").FirstOrDefault();
+                        currentRQMProjectMapping = RQMProjectList.RQMProjects.FirstOrDefault(x => x.Name == RQMProject || x.Name == "DefaultProjectName");
                         if (currentRQMProjectMapping != null)
                         {
                             //
@@ -430,7 +430,7 @@ namespace GingerCore.ALM.RQM
                                 rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
                             }
 
-                            IProjectDefinitions currentProj = rqmProjectsDataList.Where(x => x.ProjectName == RQMProject).FirstOrDefault();
+                            IProjectDefinitions currentProj = rqmProjectsDataList.FirstOrDefault(x => x.ProjectName == RQMProject);
 
                             RqmResponseData responseData = RQMRep.GetRqmResponse(loginData, new Uri(testPlan.URLPath));
                             System.Diagnostics.Trace.WriteLine($"in GetRQMTestPlanFullData responseData for testplan :{ Newtonsoft.Json.JsonConvert.SerializeObject(responseData)}");
@@ -464,7 +464,7 @@ namespace GingerCore.ALM.RQM
                                                                                                          responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.Name, nsmgrTS).InnerText.ToString(),
                                                                                                          responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.RQMID, nsmgrTS).InnerText.ToString());
                                 System.Diagnostics.Trace.WriteLine($"in GetRQMTestPlanFullData currentSuiteTestCases :{ Newtonsoft.Json.JsonConvert.SerializeObject(currentSuiteTestCases)}");
-                                RQMTestSuite currentTestSuite = testPlan.TestSuites.Where(z => z.RQMID == responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.RQMID, nsmgrTS).InnerText.ToString()).FirstOrDefault();
+                                RQMTestSuite currentTestSuite = testPlan.TestSuites.FirstOrDefault(z => z.RQMID == responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.RQMID, nsmgrTS).InnerText.ToString());
                                 if (currentTestSuite != null)
                                 {
                                     currentTestSuite.Name = responseDataNodeTestSuite.SelectSingleNode(currentRQMProjectMapping.RQMTestSuiteMapping.Name, nsmgrTS).InnerText.ToString();

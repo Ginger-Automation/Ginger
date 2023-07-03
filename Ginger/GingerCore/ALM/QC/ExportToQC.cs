@@ -66,16 +66,16 @@ namespace GingerCore.ALM.QC
                             {
                                 TSTest tsTest = null;
                                 //go by TC ID = TC Instance ID
-                                tsTest = qcTSTests.Where(x => x.TestId == activGroup.ExternalID && x.ID == activGroup.ExternalID2).FirstOrDefault();
+                                tsTest = qcTSTests.FirstOrDefault(x => x.TestId == activGroup.ExternalID && x.ID == activGroup.ExternalID2);
                                 if (tsTest == null)
                                 {
                                     //go by Linked TC ID + TC Instance ID
-                                    tsTest = qcTSTests.Where(x => ImportFromQC.GetTSTestLinkedID(x) == activGroup.ExternalID && x.ID == activGroup.ExternalID2).FirstOrDefault();
+                                    tsTest = qcTSTests.FirstOrDefault(x => ImportFromQC.GetTSTestLinkedID(x) == activGroup.ExternalID && x.ID == activGroup.ExternalID2);
                                 }
                                 if (tsTest == null)
                                 {
                                     //go by TC ID 
-                                    tsTest = qcTSTests.Where(x => x.TestId == activGroup.ExternalID).FirstOrDefault();
+                                    tsTest = qcTSTests.FirstOrDefault(x => x.TestId == activGroup.ExternalID);
                                 }
                                 if (tsTest != null)
                                 {
@@ -138,7 +138,7 @@ namespace GingerCore.ALM.QC
                                     {
                                         //search for matching activity based on ID and not order, un matching steps need to be left as No Run
                                         int stepDesignID = Convert.ToInt16(step["ST_DESSTEP_ID"].ToString());
-                                        Activity matchingActivity = activities.Where(x => x.ExternalID == stepDesignID.ToString()).FirstOrDefault();
+                                        Activity matchingActivity = activities.FirstOrDefault(x => x.ExternalID == stepDesignID.ToString());
                                         if (matchingActivity != null)
                                         {
                                             switch (matchingActivity.Status)
@@ -201,7 +201,7 @@ namespace GingerCore.ALM.QC
                                     }
 
                                     //update the TC general status based on the activities status collection.                                
-                                    if (stepsStatuses.Where(x => x == "Failed").Count() > 0)
+                                    if (stepsStatuses.Any(x => x == "Failed"))
                                     {
                                         run.Status = "Failed";
                                     }
@@ -292,7 +292,7 @@ namespace GingerCore.ALM.QC
                     List stepsList = stepF.NewList("");
                     foreach (DesignStep step in stepsList)
                     {
-                        if (activitiesGroup.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.ExternalID == step.ID.ToString()).FirstOrDefault() == null)
+                        if (activitiesGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.IdentifiedActivity.ExternalID == step.ID.ToString()) == null)
                         {
                             stepF.RemoveItem(step.ID);
                         }
@@ -454,7 +454,7 @@ namespace GingerCore.ALM.QC
                     List tsTestsList = testsF.NewList("");
                     foreach (TSTest tsTest in tsTestsList)
                     {
-                        ActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == tsTest.TestId.ToString() && x.ExternalID2 == tsTest.ID.ToString())).FirstOrDefault();
+                        ActivitiesGroup ag = businessFlow.ActivitiesGroups.FirstOrDefault(x => (x.ExternalID == tsTest.TestId.ToString() && x.ExternalID2 == tsTest.ID.ToString()));
                         if (ag == null)
                         {
                             testsF.RemoveItem(tsTest.ID);

@@ -222,13 +222,13 @@ namespace Ginger.Run
                             //This is needed to handle updating the outputvariable mappedoutvalues to new style
                             UpdateOldOutputVariableMappedValues(customizedVar);
 
-                            VariableBase originalVar = allBfVars.Where(v => v.ParentGuid == customizedVar.ParentGuid && v.Guid == customizedVar.Guid).FirstOrDefault();
+                            VariableBase originalVar = allBfVars.FirstOrDefault(v => v.ParentGuid == customizedVar.ParentGuid && v.Guid == customizedVar.Guid);
                             if (originalVar == null)//for supporting dynamic run set XML in which we do not have GUID
                             {
-                                originalVar = allBfVars.Where(v => v.ParentName == customizedVar.ParentName && v.Name == customizedVar.Name).FirstOrDefault();
+                                originalVar = allBfVars.FirstOrDefault(v => v.ParentName == customizedVar.ParentName && v.Name == customizedVar.Name);
                                 if (originalVar == null)
                                 {
-                                    originalVar = allBfVars.Where(v => v.Name == customizedVar.Name).FirstOrDefault();
+                                    originalVar = allBfVars.FirstOrDefault(v => v.Name == customizedVar.Name);
                                 }
                             }
                             if (originalVar != null)
@@ -265,7 +265,7 @@ namespace Ginger.Run
                         Guid guid = AllPreviousBusinessFlowRuns[i].BusinessFlowGuid;
                         BusinessFlow bf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(guid);
 
-                        if (bf.GetBFandActivitiesVariabeles(false, false, true).Where(x => x.Guid.ToString() == var.MappedOutputValue).FirstOrDefault() != null)
+                        if (bf.GetBFandActivitiesVariabeles(false, false, true).FirstOrDefault(x => x.Guid.ToString() == var.MappedOutputValue) != null)
                         {
                             var.MappedOutputValue = AllPreviousBusinessFlowRuns[i].BusinessFlowInstanceGuid + "_" + var.MappedOutputValue;
                             break;
@@ -512,6 +512,7 @@ namespace Ginger.Run
                         {
                             if (doContinueRun == false)
                             {
+                                GR.Executor.RunLevel = eRunLevel.Runset;
                                 GR.Executor.RunRunner();
                             }
                             else
@@ -542,6 +543,7 @@ namespace Ginger.Run
 
                             if (doContinueRun == false)
                             {
+                                GR.Executor.RunLevel = eRunLevel.Runset;
                                 GR.Executor.RunRunner();
                             }
                             else
@@ -554,6 +556,7 @@ namespace Ginger.Run
                                 }
                                 else if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)//continue the runners flow
                                 {
+                                    GR.Executor.RunLevel = eRunLevel.Runset;
                                     GR.Executor.RunRunner();
                                 }
                             }
@@ -627,7 +630,7 @@ namespace Ginger.Run
         }
         public void CreateGingerExecutionReportAutomaticly()
         {
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             if ((mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled) && (Runners != null) && (Runners.Count > 0))
             {
                 if (mSelectedExecutionLoggerConfiguration.ExecutionLoggerHTMLReportsAutomaticProdIsEnabled)
@@ -858,11 +861,11 @@ namespace Ginger.Run
                         {
                             var virtualAgent = (Agent)appAgents[i].Agent;
 
-                            var realAgent = runset.ActiveAgentList.Where(x => ((Agent)x).Guid.ToString() == virtualAgent.ParentGuid.ToString()).FirstOrDefault();
+                            var realAgent = runset.ActiveAgentList.FirstOrDefault(x => ((Agent)x).Guid.ToString() == virtualAgent.ParentGuid.ToString());
 
                             if (realAgent != null)
                             {
-                                var runsetVirtualAgent = runset.ActiveAgentList.Where(x => ((Agent)x).Guid == ((Agent)virtualAgent).Guid).FirstOrDefault();
+                                var runsetVirtualAgent = runset.ActiveAgentList.FirstOrDefault(x => ((Agent)x).Guid == ((Agent)virtualAgent).Guid);
                                 appAgents[i].Agent = realAgent;
 
                                 if (runsetVirtualAgent != null)

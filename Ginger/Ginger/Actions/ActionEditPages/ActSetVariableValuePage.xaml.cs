@@ -69,7 +69,7 @@ namespace Ginger.Actions
 
         private void VariableNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            VariableBase var = mVars.Where(x => x.Name == VariableNameComboBox.SelectedItem.ToString()).FirstOrDefault();
+            VariableBase var = mVars.FirstOrDefault(x => x.Name == VariableNameComboBox.SelectedItem.ToString());
 
             //Clear fields
             VariableTypeTextBox.Text = string.Empty;

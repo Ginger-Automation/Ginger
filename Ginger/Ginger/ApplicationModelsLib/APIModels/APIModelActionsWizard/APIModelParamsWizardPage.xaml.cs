@@ -112,7 +112,7 @@ namespace Ginger.ApiModelsFolder
                     {
                         //Check if already exists in the list, if yes - add only its optional values and description
                         EnhancedActInputValue EAIV = null;
-                        EAIV = mAddApiModelActionWizardPage.EnhancedInputValueList.Where(x => x.Param == AMDP.PlaceHolder).FirstOrDefault();
+                        EAIV = mAddApiModelActionWizardPage.EnhancedInputValueList.FirstOrDefault(x => x.Param == AMDP.PlaceHolder);
                         if (EAIV != null)
                         {
                             foreach (OptionalValue optionalValue in AMDP.OptionalValuesList)
@@ -141,9 +141,9 @@ namespace Ginger.ApiModelsFolder
                             AIV.Param = AMDP.PlaceHolder;
                             AIV.Description = AMDP.Description;
                             string OldValue = string.Empty;
-                            if (OldList != null && OldList.Count() > 0)
+                            if (OldList != null && OldList.Any())
                             {
-                                EnhancedActInputValue oldAIV = OldList.Where(x => x.ParamGuid == AMDP.Guid).FirstOrDefault();
+                                EnhancedActInputValue oldAIV = OldList.FirstOrDefault(x => x.ParamGuid == AMDP.Guid);
                                 if (oldAIV != null)
                                 {
                                     OldValue = oldAIV.Value;

@@ -235,11 +235,11 @@ namespace Ginger.Reports
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 }
-                else if ((from x in GingerReports where x.IsBlocked == true select x).Count() > 0)
+                else if ((from x in GingerReports where x.IsBlocked == true select x).Any())
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
                 }
-                else if ((from x in GingerReports where x.IsStopped == true select x).Count() > 0)
+                else if ((from x in GingerReports where x.IsStopped == true select x).Any())
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
                 }

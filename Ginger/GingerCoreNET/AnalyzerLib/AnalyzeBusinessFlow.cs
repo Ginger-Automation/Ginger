@@ -49,7 +49,7 @@ namespace Ginger.AnalyzerLib
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
 
             // Check BF have Target Apps            
-            if (BusinessFlow.TargetApplications == null || BusinessFlow.TargetApplications.Count() == 0)
+            if (BusinessFlow.TargetApplications == null || !BusinessFlow.TargetApplications.Any())
             {
                 AnalyzeBusinessFlow ABF = new AnalyzeBusinessFlow();
                 ABF.Description = MissingTargetApp;
@@ -72,7 +72,7 @@ namespace Ginger.AnalyzerLib
             }
 
             // Check BF have activities
-            if (BusinessFlow.Activities.Count() == 0)
+            if (!BusinessFlow.Activities.Any())
             {
                 AnalyzeBusinessFlow ABF = new AnalyzeBusinessFlow();
                 ABF.UTDescription = "MissingActivities";
@@ -126,8 +126,8 @@ namespace Ginger.AnalyzerLib
             {
                 if (ivr.Active)
                 {
-                    VariableBase sVariable = bfInputVariables.Where(v => v.Guid == ivr.SourceVariableGuid).FirstOrDefault();
-                    VariableBase tVariable = bfInputVariables.Where(v => v.Guid == ivr.TargetVariableGuid).FirstOrDefault();
+                    VariableBase sVariable = bfInputVariables.FirstOrDefault(v => v.Guid == ivr.SourceVariableGuid);
+                    VariableBase tVariable = bfInputVariables.FirstOrDefault(v => v.Guid == ivr.TargetVariableGuid);
                     if (sVariable == null || tVariable == null)
                     {
                         string vtype = string.Empty;
@@ -300,9 +300,9 @@ namespace Ginger.AnalyzerLib
             // Take the target app from the solution
             AnalyzeBusinessFlow ABF = (AnalyzeBusinessFlow)sender;
             // Do recheck
-            if (ABF.mBusinessFlow.TargetApplications.Count() == 0)
+            if (!ABF.mBusinessFlow.TargetApplications.Any())
             {
-                if (ABF.mSolution.ApplicationPlatforms.Count == 0)
+                if (!ABF.mSolution.ApplicationPlatforms.Any())
                 {
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The default Application Platform Info is missing, please go to Solution level to add at least one Target Application.");
                     return;

@@ -540,7 +540,7 @@ namespace Amdocs.Ginger.Repository
             // make sure we cleared all bak items = full restore
             if (isLocalBackup)
             {
-                if (mLocalBackupDic.Count() != 0)
+                if (mLocalBackupDic.Any())
                 {
                     // TODO: err handler
                     return false;
@@ -548,7 +548,7 @@ namespace Amdocs.Ginger.Repository
             }
             else
             {
-                if (mBackupDic.Count() != 0)
+                if (mBackupDic.Any())
                 {
                     // TODO: err handler 
                     return false;

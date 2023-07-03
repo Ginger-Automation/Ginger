@@ -111,32 +111,6 @@ namespace Ginger.SolutionAutoSaveAndRecover
             });
         }
 
-        private void DeleteButton_Click(object sender, RoutedEventArgs e)
-        {
-            List<RecoveredItem> SelectedFiles = mRecoveredItems.Where(x => x.Selected == true && (x.Status != eRecoveredItemStatus.Deleted && x.Status != eRecoveredItemStatus.Recovered)).ToList();
-
-            if (SelectedFiles == null || SelectedFiles.Count == 0)
-            {
-                //TODO: please select valid Recover items to delete
-                Reporter.ToUser(eUserMsgKey.RecoverItemsMissingSelectionToRecover, "delete");
-                return;
-            }
-
-            foreach (RecoveredItem Ri in SelectedFiles)
-            {
-                try
-                {
-                    File.Delete(Ri.RecoveredItemObject.FileName);
-                    Ri.Status = eRecoveredItemStatus.Deleted;
-                }
-                catch
-                {
-                    Ri.Status = eRecoveredItemStatus.DeleteFailed;
-                }
-            }
-
-        }
-
         private void RecoverButton_Click(object sender, RoutedEventArgs e)
         {
             List<RecoveredItem> SelectedFiles = mRecoveredItems.Where(x => x.Selected == true && (x.Status == eRecoveredItemStatus.PendingRecover || x.Status == eRecoveredItemStatus.RecoveredFailed)).ToList();
@@ -156,12 +130,12 @@ namespace Ginger.SolutionAutoSaveAndRecover
                     if (ri.RecoveredItemObject is BusinessFlow)
                     {
                         ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                        originalItem = businessFlows.Where(x => x.Guid == ri.RecoveredItemObject.Guid).FirstOrDefault();
+                        originalItem = businessFlows.FirstOrDefault(x => x.Guid == ri.RecoveredItemObject.Guid);
                     }
                     else if (ri.RecoveredItemObject is Run.RunSetConfig)
                     {
                         ObservableList<RunSetConfig> Runsets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-                        originalItem = Runsets.Where(x => x.Guid == ri.RecoveredItemObject.Guid).FirstOrDefault();
+                        originalItem = Runsets.FirstOrDefault(x => x.Guid == ri.RecoveredItemObject.Guid);
                     }
                     if (originalItem == null)
                     {

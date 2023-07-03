@@ -28,7 +28,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
-            if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList().Count() == 0)
+            if (!WorkSpace.Instance.Solution.ApplicationPlatforms.Any(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)))
             {
                 return new ValidationResult(false, "POM supported Target Application platform is required");
             }

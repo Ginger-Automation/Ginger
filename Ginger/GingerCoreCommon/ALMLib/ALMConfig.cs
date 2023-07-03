@@ -232,6 +232,20 @@ namespace GingerCoreNET.ALMLib
             }
         }
 
+        private string mDefectFieldAPI;
+        public string DefectFieldAPI
+        {
+            get { return mDefectFieldAPI; }
+            set
+            {
+                if (mDefectFieldAPI != value)
+                {
+                    mDefectFieldAPI = value;
+                    OnPropertyChanged(nameof(DefectFieldAPI));
+                }
+            }
+        }
+
         public override string ItemName { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
         public override bool SerializationError(SerializationErrorType errorType, string name, string value)

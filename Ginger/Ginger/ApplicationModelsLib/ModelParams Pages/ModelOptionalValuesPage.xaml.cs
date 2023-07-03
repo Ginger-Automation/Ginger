@@ -177,7 +177,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         private void BtnCopyClicked(object sender, RoutedEventArgs e)
         {
             SavedDefaultOV = null;
-            OptionalValue defaultOptionalValue = OptionalValuesGrid.Grid.SelectedItems.Cast<OptionalValue>().ToList().Where(x => x.IsDefault == true).FirstOrDefault();
+            OptionalValue defaultOptionalValue = OptionalValuesGrid.Grid.SelectedItems.Cast<OptionalValue>().ToList().FirstOrDefault(x => x.IsDefault == true);
             if (defaultOptionalValue != null)
             { SavedDefaultOV = defaultOptionalValue; }
         }
@@ -262,7 +262,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             RadioButton isDefaultRb = (RadioButton)sender;
 
-            OptionalValue clickedOv = mParentObject.OptionalValuesList.Where(x => x.Guid == (Guid)isDefaultRb.Tag).FirstOrDefault();
+            OptionalValue clickedOv = mParentObject.OptionalValuesList.FirstOrDefault(x => x.Guid == (Guid)isDefaultRb.Tag);
             if (clickedOv != null && clickedOv.IsDefault != true)
             { clickedOv.IsDefault = true; }
 

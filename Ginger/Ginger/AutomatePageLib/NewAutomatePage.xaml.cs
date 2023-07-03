@@ -368,7 +368,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 if (!string.IsNullOrEmpty(mExecutionEngine.GingerRunner.SpecificEnvironmentName))
                 {
-                    xEnvironmentComboBox.SelectedItem = (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name == mExecutionEngine.GingerRunner.SpecificEnvironmentName).First());
+                    xEnvironmentComboBox.SelectedItem = (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().First(x => x.Name == mExecutionEngine.GingerRunner.SpecificEnvironmentName));
                     if (RaiseEnvComboBoxChanged != null)
                     {
                         RaiseEnvComboBoxChanged(null, null);
@@ -619,7 +619,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (WorkSpace.Instance.Solution != null && mBusinessFlow != null)
             {
                 //First we check if biz flow have target apps if not add one based on solution, fast convert for old or deleted
-                if (mBusinessFlow.TargetApplications.Count() == 0)
+                if (!mBusinessFlow.TargetApplications.Any())
                 {
                     if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.MainApplication))
                     {
@@ -1037,7 +1037,7 @@ namespace GingerWPF.BusinessFlowsLib
             // set errorhandler execution status
             actionToExecute.ErrorHandlerExecuted = false;
 
-            if (parentActivity.Acts.Count() == 0 && !skipInternalValidations)
+            if (!parentActivity.Acts.Any() && !skipInternalValidations)
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to Run.");
                 return;
@@ -1260,7 +1260,7 @@ namespace GingerWPF.BusinessFlowsLib
                 }
             }
             var dirtyLinkedActivities = mBusinessFlow.Activities.Where(x => x.IsLinkedItem && x.EnableEdit);
-            if (dirtyLinkedActivities.Count() > 0)
+            if (dirtyLinkedActivities.Any())
             {
                 foreach (Activity dirtyLinkedActivity in dirtyLinkedActivities)
                 {
@@ -1538,7 +1538,7 @@ namespace GingerWPF.BusinessFlowsLib
                 Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;
             }
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             //create the execution logger files            
             string exec_folder = mExecutionEngine.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(Path.Combine(_selectedExecutionLoggerConfiguration.CalculatedLoggerFolder, Ginger.Run.ExecutionLoggerManager.defaultAutomationTabOfflineLogName));
 
@@ -1706,7 +1706,7 @@ namespace GingerWPF.BusinessFlowsLib
                 Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;
             }
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             //get logger files
             string exec_folder = mExecutionEngine.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(Path.Combine(_selectedExecutionLoggerConfiguration.CalculatedLoggerFolder, Ginger.Run.ExecutionLoggerManager.defaultAutomationTabLogName));
             //create the report
@@ -1736,7 +1736,7 @@ namespace GingerWPF.BusinessFlowsLib
                 return;
             }
 
-            GingerRunnerTimeLine gingerRunnerTimeLine = (GingerRunnerTimeLine)(from x in mExecutionEngine.RunListeners where x.GetType() == typeof(GingerRunnerTimeLine) select x).SingleOrDefault();
+            GingerRunnerTimeLine gingerRunnerTimeLine = (GingerRunnerTimeLine)mExecutionEngine.RunListeners.FirstOrDefault(x=>x.GetType() == typeof(GingerRunnerTimeLine));
             TimeLinePage timeLinePage = new TimeLinePage(gingerRunnerTimeLine.timeLineEvents);
             timeLinePage.ShowAsWindow();
         }
