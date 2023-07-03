@@ -697,7 +697,7 @@ namespace GingerCore.ALM.RQM
         {
             try
             {
-                RqmResponseData responseDataExecutionRecords = RQMRep.GetExecutionByTestCase(loginData, currentProjPrefix, currentProjGuid, testPlanUrlVersioned, testCaseURLPathVersioned);
+                RqmResponseData responseDataExecutionRecords = RQMRep.GetExecutionByTestPlanAndTestCase(loginData, currentProjPrefix, currentProjGuid, testPlanUrlVersioned, testCaseURLPathVersioned);
 
                 XmlDocument docExecutionRecords = new XmlDocument();
 
