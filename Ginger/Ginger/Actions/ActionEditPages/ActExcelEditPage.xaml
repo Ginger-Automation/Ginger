@@ -77,7 +77,10 @@
                 <Button x:Name="xOpenExcelButton"  Style="{StaticResource @InputButtonStyle}" Click="xOpenExcelButton_Click" Content="Open Excel" DockPanel.Dock="Right" HorizontalAlignment="Right" Width="80" Padding="5,0,5,0" Margin="5,0,5,0" />
             </DockPanel>
 
-            <DataGrid x:Name="ExcelDataGrid" DockPanel.Dock="Top" AutoGenerateColumns="False">
+            <TextBlock DockPanel.Dock="Top" Margin="4" FontWeight="Bold" FontSize="10" Foreground="{StaticResource $HighlightColor_Red}"> 
+                <Run Typography.Variants="Superscript" Foreground="{StaticResource $Color_DarkBlue}">*</Run>
+                Viewing Excel Data (View Data / View Filtered Data) will display ATMOST 50 ROWS</TextBlock>
+            <DataGrid x:Name="ExcelDataGrid" DockPanel.Dock="Top" AutoGenerateColumns="False" ScrollViewer.CanContentScroll="True">
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="{x:Type DataGridColumnHeader}">
                         <Setter Property="Template">

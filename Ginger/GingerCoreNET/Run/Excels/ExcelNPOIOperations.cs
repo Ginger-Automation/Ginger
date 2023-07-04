@@ -41,13 +41,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         /*
             Reading The Rows and Columns of the Excel Sheet
          */
-        private DataTable ConvertSheetToDataTable(ISheet sheet , int rowHeaderNumber)
+        private DataTable ConvertSheetToDataTable(ISheet sheet , int rowHeaderNumber , int endRowNumber = -1)
         {
             try
             {
                 var dtExcelTable = new DataTable();
-                dtExcelTable.Rows.Clear();
-                dtExcelTable.Columns.Clear();
                 IRow headerRow = this.GetHeaderRow(sheet, rowHeaderNumber);
 /*              
  *              The below code is redundant because the dtExcelTable.Columns.Add() -> throws DuplicateNameException
@@ -61,41 +59,12 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 /*
                  initialColNumber -> is used to locate the first column number of the first header column
                  */
-                int colCount = headerRow.LastCellNum;
                 int initialColNumber = -1;
-                for (var c = 0; c < colCount; c++)
-                {
-                    ICell cell = headerRow.GetCell(c);
-                    if (cell!=null)
-                    {
-                        if(initialColNumber  == -1) 
-                        { 
-                            initialColNumber = c; 
-                        }
-                        dtExcelTable.Columns.Add(GingerCoreNET.GeneralLib.General.RemoveSpecialCharactersInColumnHeader(cell.ToString()).Trim());
-                    }
-                }
-
+                SetHeaderColumns(headerRow , ref initialColNumber, dtExcelTable);
                 /*
                  intialColNumber is used to also locate where to start and end the reading of the row data. 
                  */
-                var i = rowHeaderNumber;
-                var currentRow = sheet.GetRow(i);
-                while (currentRow != null)
-                {
-                    var dr = dtExcelTable.NewRow();
-                    for (var j = initialColNumber; j < initialColNumber+dr.ItemArray.Length; j++)
-                    {
-                        var cell = currentRow.GetCell(j);
-                        if (cell != null)
-                        {
-                            dr[j - initialColNumber] = GetCellValue(cell, cell.CellType);
-                        }
-                    }
-                    dtExcelTable.Rows.Add(dr);
-                    i++;
-                    currentRow = sheet.GetRow(i);
-                }
+                SetRowsForDataTable(sheet , dtExcelTable , initialColNumber, rowHeaderNumber, endRowNumber);
                 return dtExcelTable;
             }
             catch (Exception ex)
@@ -156,6 +125,25 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             }
         }
 
+        public DataTable ReadDataWithRowLimit(string fileName, string sheetName , string filter , bool selectedRows , string headerRowNumber="1" , int endRowNumber = -1)
+        {
+            filter = filter ?? "";
+            try
+            {
+                GetExcelSheet(fileName , sheetName);
+                mExcelDataTable = ConvertSheetToDataTable(mSheet , int.Parse(string.IsNullOrEmpty(headerRowNumber) ? "1" : headerRowNumber) , endRowNumber);
+                mExcelDataTable.DefaultView.RowFilter = filter;
+                mFilteredDataTable = string.IsNullOrEmpty(filter) ? mExcelDataTable : GetFilteredDataTable(mExcelDataTable, selectedRows);
+                return mFilteredDataTable;
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "Can't read sheet data, " + ex.Message);
+                throw;
+            }
+        }
+
         /*
         This function is used as a validator , checks if the file path and/or sheet name exists
         */
@@ -166,7 +154,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             {
                 Reporter.ToLog(eLogLevel.WARN, "File name not Exists.");
                 // TODO Can a Custom Exception be made instead of 'Exception' ??
-                throw new Exception("File Name DOES NOT Exist, Please verify if the File Path is valid");
+                throw new Exception("File DOES NOT Exist or is currently being used by some other application, Please verify if the File Path is valid");
             }
             mSheet = mWorkbook.GetSheet(sheetName);
             if (mSheet == null)
@@ -254,7 +242,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 var dtExcelTable = new DataTable();
                 dtExcelTable.Rows.Clear();
                 dtExcelTable.Columns.Clear();
-                var headerRow = mSheet.GetRow(0);
+                var headerRow = this.GetHeaderRow(mSheet , int.Parse(string.IsNullOrEmpty(headerRowNumber) ? "1" : headerRowNumber));
                 int colCount = headerRow.LastCellNum;
                 if (cellFrom.Col > colCount || cellTo.Col > colCount)
                 {
@@ -405,6 +393,53 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 throw new InvalidDataException($"Could not Find Header Columns at the Row Number : {headerRowNumber}, Please Enter the Appropriate Header Row Number");
             }
             return header;
+        }
+
+
+        private void SetHeaderColumns(IRow headerRow, ref int initialColNumber, DataTable dtExcelTable )
+        {
+            int colCount = headerRow.LastCellNum;
+            for (var c = 0; c < colCount; c++)
+            {
+                ICell cell = headerRow.GetCell(c);
+                if (cell != null)
+                {
+                    if (initialColNumber == -1)
+                    {
+                        initialColNumber = c;
+                    }
+                    dtExcelTable.Columns.Add(GingerCoreNET.GeneralLib.General.RemoveSpecialCharactersInColumnHeader(cell.ToString()).Trim());
+                }
+            }
+
+        }
+
+        private void SetRowsForDataTable(ISheet sheet,DataTable dtExcelTable , int initialColNumber , int startRowNumber , int endRowNumber)
+        {
+            var i = startRowNumber;
+            var currentRow = sheet.GetRow(i);
+
+            while ( hasDataTableReachedRowLimit(currentRow , endRowNumber , startRowNumber, i))
+            {
+                var dr = dtExcelTable.NewRow();
+                for (var j = initialColNumber; j < initialColNumber + dr.ItemArray.Length; j++)
+                {
+                    var cell = currentRow.GetCell(j);
+                    if (cell != null)
+                    {
+                        dr[j - initialColNumber] = GetCellValue(cell, cell.CellType);
+                    }
+                }
+                dtExcelTable.Rows.Add(dr);
+                i++;
+                currentRow = sheet.GetRow(i);
+            }
+
+        }
+
+        private bool hasDataTableReachedRowLimit(IRow currentRow , int endRowNumber , int startRowNumber,int i)
+        {
+            return  (endRowNumber == -1) ? currentRow!=null  : currentRow != null && (startRowNumber+endRowNumber - i) > 0;
         }
     }
 }

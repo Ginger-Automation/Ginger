@@ -128,7 +128,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetInputParamValue(nameof(HeaderRowNum));
+                return GetInputParamValue(nameof(HeaderRowNum)) ?? "1";
             }
             set
             {

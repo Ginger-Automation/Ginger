@@ -32,7 +32,9 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         /// <param name="filter">Data table filter, like ColName=Value</param>
         /// <param name="selectedRows">false: first row in data table, True: all rows</param>
         /// <returns>Sheet as Data table</returns>
-        DataTable ReadData(string fileName, string sheetName, string filter, bool selectedRows , string rowHeaderNumber);
+        DataTable ReadData(string fileName, string sheetName, string filter, bool selectedRows, string headerRowNumber);
+
+        DataTable ReadDataWithRowLimit(string fileName, string sheetName, string filter, bool selectedRows, string headerRowNumber, int endRowNumber);
         /// <summary>
         /// Update Excel cells by user data set.
         /// </summary>

@@ -43,6 +43,7 @@ namespace Ginger.Actions
         public ActionEditPage actp;
         private ActExcel mAct;
         private IExcelOperations mExcelOperations = new ExcelNPOIOperations();
+        private const int VIEW_DATA_ROW_LIMIT = 50; 
         public ActExcelEditPage(ActExcel act)
         {
             InitializeComponent();
@@ -64,7 +65,7 @@ namespace Ginger.Actions
             SetDataUsedTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.SetDataUsed));
             ColMappingRulesTextBox.BindControl(Context.GetAsContext(mAct.Context), mAct, nameof(ActExcel.ColMappingRules));
 
-            if (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData)
+            if (mAct.ExcelActionType == ActExcel.eExcelActionType.ReadData || mAct.ExcelActionType == ActExcel.eExcelActionType.ReadCellData)
             {
                 this.ColMappingRulesSection.Visibility = Visibility.Collapsed;
                 SetDataUsedSection.Visibility = Visibility.Visible;
@@ -177,7 +178,6 @@ namespace Ginger.Actions
                     {
                         excelDataGridRows.Add(excelSheetRow.ItemArray);
                     }
-                    Thread.Sleep(10);
                 }
             });
         }
@@ -217,7 +217,7 @@ namespace Ginger.Actions
                 {
                     return mExcelOperations.ReadCellData(mAct.CalculatedFileName, mAct.CalculatedSheetName, mAct.CalculatedFilter, mAct.SelectAllRows, mAct.CalculatedHeaderRowNum);
                 }
-                return mExcelOperations.ReadData(mAct.CalculatedFileName, mAct.CalculatedSheetName, isViewAllData ? null : mAct.CalculatedFilter, mAct.SelectAllRows , mAct.CalculatedHeaderRowNum);
+                return mExcelOperations.ReadDataWithRowLimit(mAct.CalculatedFileName, mAct.CalculatedSheetName, isViewAllData ? null : mAct.CalculatedFilter, mAct.SelectAllRows , mAct.CalculatedHeaderRowNum , VIEW_DATA_ROW_LIMIT);
             }
             catch (Exception ex)
             {
@@ -229,7 +229,7 @@ namespace Ginger.Actions
         {
             ContextProcessInputValueForDriver();
 
-            if (ExcelActionComboBox.SelectedValue.ToString() == "ReadData")
+            if (ExcelActionComboBox.SelectedValue.ToString() == "ReadData"   || ExcelActionComboBox.SelectedValue.ToString() == "ReadCellData")
             {
                 SetDataUsedSection.Visibility = Visibility.Visible;
                 ColMappingRulesSection.Visibility = Visibility.Collapsed;
