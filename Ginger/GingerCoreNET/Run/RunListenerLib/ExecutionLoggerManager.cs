@@ -505,7 +505,7 @@ namespace Ginger.Run
                     if (action.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && !WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Any(z => z != null && z.FailedActionGuid == action.Guid))
                     {
                         //Get the ALM test Set Level for publish Result to ALM
-                        bool IsRunTestSetLevel = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.FirstOrDefault(x => x.ItemName == "Publish Execution Results to ALM").GetAlMTestSetLevel() == eALMTestSetLevel.RunSet ? true : false;
+                        bool IsRunTestSetLevel = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.FirstOrDefault(x => x.ItemName == "Publish Execution Results to ALM")?.GetAlMTestSetLevel() == eALMTestSetLevel.RunSet ? true : false;
 
                         List<string> screenShotsPathes = new List<string>();
                         bool isScreenshotButtonEnabled = false;
