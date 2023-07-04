@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Applitools.Utils;
@@ -331,10 +332,11 @@ namespace GingerCore.Actions
 
             }
         }
-        catch(Exception)
+        catch(Exception ex)
          {
                 base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                base.ExInfo = "Invalid File Operation";
+                base.Error = $"{ActionType.ToString()} File Operation failed due to {ex.Message}";
+                Reporter.ToLog(eLogLevel.ERROR, $"{ActionType.ToString()} File Operation failed", ex);
             }
         }
 
