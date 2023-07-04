@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common.InterfacesLib;
+#region License
+/*
+Copyright © 2014-2023 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common.InterfacesLib;
 using Azure.Identity;
 using Microsoft.Graph;
 using System;
@@ -9,7 +27,7 @@ using System.Threading.Tasks;
 
 namespace GingerCore.GeneralLib
 {
-    public sealed class EmailReadOperations : IEmailReadOperations
+    public sealed class EmailReadMSGraphOperations : IEmailReadOperations
     {
         private static readonly IEnumerable<string> Scopes = new[]
         {
@@ -29,7 +47,7 @@ namespace GingerCore.GeneralLib
         };
         private const int MessageRequestPageSize = 10;
 
-        public async Task ReadEmails(EmailReadFilters filters, MSGraphConfig config, Action<ReadEmail> emailProcessor)
+        public async Task ReadEmails(EmailReadFilters filters, EmailReadConfig config, Action<ReadEmail> emailProcessor)
         {
             GraphServiceClient graphServiceClient = CreateGraphServiceClient(config);
             IEnumerable<ICollectionPage<Message>> messageCollections;
@@ -217,7 +235,7 @@ namespace GingerCore.GeneralLib
             return message.Body.Content.Contains(expectedBody, StringComparison.OrdinalIgnoreCase);
         }
 
-        private GraphServiceClient CreateGraphServiceClient(MSGraphConfig config)
+        private GraphServiceClient CreateGraphServiceClient(EmailReadConfig config)
         {
             ValidateMSGraphConfig(config);
             TokenCredentialOptions options = new()
@@ -231,7 +249,7 @@ namespace GingerCore.GeneralLib
             return new GraphServiceClient(userNamePasswordCredential, Scopes);
         }
 
-        private void ValidateMSGraphConfig(MSGraphConfig config)
+        private void ValidateMSGraphConfig(EmailReadConfig config)
         {
             if (string.IsNullOrEmpty(config.UserEmail))
             {

@@ -191,7 +191,7 @@ namespace GingerCore.ALM
             {
                 return zephyrEntRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
             }).Result;
-            return domains.DataResult.Where(f => f.DomainName.Equals(ALMDomainName)).FirstOrDefault().Projects.ToDictionary(project => project.ProjectId.ToString(), project => project.ProjectName);
+            return domains.DataResult.FirstOrDefault(f => f.DomainName.Equals(ALMDomainName)).Projects.ToDictionary(project => project.ProjectId.ToString(), project => project.ProjectName);
         }
 
         public long GetCurrentUser()

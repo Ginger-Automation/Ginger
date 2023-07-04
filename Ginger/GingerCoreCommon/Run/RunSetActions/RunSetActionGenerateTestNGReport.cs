@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
+using GingerCore.ALM;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -87,6 +88,11 @@ namespace Ginger.Run.RunSetActions
                 }
             }
             return false;
+        }
+
+        public override PublishToALMConfig.eALMTestSetLevel GetAlMTestSetLevel()
+        {
+            throw new NotImplementedException();
         }
     }
 }

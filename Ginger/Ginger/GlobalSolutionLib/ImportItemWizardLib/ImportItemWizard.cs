@@ -66,7 +66,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             AddPage(Name: "Select Solution Items", Title: "Select Solution Items", SubTitle: "Select Solution Items...", Page: new SelectItemFromSolutionPage());
 
             AddPage(Name: "Solution Items Dependency Validation", Title: "Solution Items Dependency Validation", SubTitle: "Solution Items Dependency Validation...", Page: new ItemDependancyPage());
-
+            
+            DisableNavigationList(); //disable the direct navigation of pages
         }
 
         public override string Title { get { return "Import Global Cross Solution Wizard"; } }
@@ -169,7 +170,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                 {
                     foreach (VariableBase vb in VariableListToImport)
                     {
-                        if (WorkSpace.Instance.Solution.Variables.Where(x => x.Name == vb.Name).FirstOrDefault() == null)
+                        if (WorkSpace.Instance.Solution.Variables.FirstOrDefault(x => x.Name == vb.Name) == null)
                         {
                             WorkSpace.Instance.Solution.AddVariable(vb);
                         }
@@ -181,9 +182,9 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             {
                 string[] filePaths = Directory.GetFiles(Path.Combine(SolutionFolder), "Ginger.Solution.xml", SearchOption.AllDirectories);
                 Solution solution = (Solution)newRepositorySerializer.DeserializeFromFile(filePaths[0]);
-                ApplicationPlatform applicationPlatform = solution.ApplicationPlatforms.Where(x => x.AppName == itemToImport.ItemName).FirstOrDefault();
+                ApplicationPlatform applicationPlatform = solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == itemToImport.ItemName);
 
-                ApplicationPlatform appPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == applicationPlatform.AppName && x.Platform == applicationPlatform.Platform).FirstOrDefault();
+                ApplicationPlatform appPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == applicationPlatform.AppName && x.Platform == applicationPlatform.Platform);
                 if (appPlatform == null)
                 {
                     WorkSpace.Instance.Solution.ApplicationPlatforms.Add(applicationPlatform);

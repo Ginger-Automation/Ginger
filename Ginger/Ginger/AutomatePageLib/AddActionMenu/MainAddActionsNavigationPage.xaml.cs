@@ -69,8 +69,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             InitializeComponent();
 
             mContext = context;
-            context.PropertyChanged -= Context_PropertyChanged;
-            context.PropertyChanged += Context_PropertyChanged;
+
+            mContext.PropertyChanged -= Context_PropertyChanged;
+            mContext.PropertyChanged += Context_PropertyChanged;
 
             xNavigationBarPnl.Visibility = Visibility.Collapsed;
             xSelectedItemFrame.ContentRendered += NavPnlActionFrame_ContentRendered;

@@ -205,12 +205,12 @@ namespace Ginger.Variables
                                     VariableDependency varDep = null;
                                     if (act.VariablesDependencies != null)
                                     {
-                                        varDep = act.VariablesDependencies.Where(avd => avd.VariableName == listVar.Name && avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                        varDep = act.VariablesDependencies.FirstOrDefault(avd => avd.VariableName == listVar.Name && avd.VariableGuid == listVar.Guid);
                                     }
 
                                     if (varDep == null)
                                     {
-                                        varDep = act.VariablesDependencies.Where(avd => avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                        varDep = act.VariablesDependencies.FirstOrDefault(avd => avd.VariableGuid == listVar.Guid);
                                     }
 
                                     foreach (OptionalValue varOptionalVal in ((VariableSelectionList)listVar).OptionalValuesList)
@@ -252,12 +252,12 @@ namespace Ginger.Variables
                                     VariableDependency varDep = null;
                                     if (activity.VariablesDependencies != null)
                                     {
-                                        varDep = activity.VariablesDependencies.Where(avd => avd.VariableName == listVar.Name && avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                        varDep = activity.VariablesDependencies.FirstOrDefault(avd => avd.VariableName == listVar.Name && avd.VariableGuid == listVar.Guid);
                                     }
 
                                     if (varDep == null)
                                     {
-                                        varDep = activity.VariablesDependencies.Where(avd => avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                        varDep = activity.VariablesDependencies.FirstOrDefault(avd => avd.VariableGuid == listVar.Guid);
                                     }
 
                                     foreach (OptionalValue varOptionalVal in ((VariableSelectionList)listVar).OptionalValuesList)
@@ -788,7 +788,7 @@ namespace Ginger.Variables
                                     {
                                         if ((bool)row[colsIndex] == true)
                                         {
-                                            VariableDependency actAcd = act.VariablesDependencies.Where(acd => acd.VariableName == var.Name).FirstOrDefault();
+                                            VariableDependency actAcd = act.VariablesDependencies.FirstOrDefault(acd => acd.VariableName == var.Name);
                                             if (actAcd != null)
                                             {
                                                 if (actAcd.VariableValues.Contains(optVal.Value) == false)
@@ -818,7 +818,7 @@ namespace Ginger.Variables
                                     {
                                         if ((bool)row[colsIndex] == true)
                                         {
-                                            VariableDependency actAcd = act.VariablesDependencies.Where(acd => acd.VariableName == var.Name).FirstOrDefault();
+                                            VariableDependency actAcd = act.VariablesDependencies.FirstOrDefault(acd => acd.VariableName == var.Name);
                                             if (actAcd != null)
                                             {
                                                 if (actAcd.VariableValues.Contains(optVal.Value) == false)

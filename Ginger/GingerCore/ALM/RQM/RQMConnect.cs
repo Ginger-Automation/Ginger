@@ -60,7 +60,6 @@ namespace GingerCore.ALM.RQM
         bool connectedToProject;
         IProjectDefinitions connectedProjectDefenition;
         List<IProjectDefinitions> rqmProjectsDataList;
-
         private RQMConnect()
         {
         }
@@ -185,7 +184,7 @@ namespace GingerCore.ALM.RQM
         {
             GetRQMDomainProjects();
 
-            IProjectDefinitions selectedProj = rqmProjectsDataList.Where(x => x.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName)).FirstOrDefault();
+            IProjectDefinitions selectedProj = rqmProjectsDataList.FirstOrDefault(x => x.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName));
             if (selectedProj != null)
             {
                 //Save selected project details
@@ -323,7 +322,7 @@ namespace GingerCore.ALM.RQM
                             try //skip result incase of error, defect #5164
                             {
                                 XmlDocument doc = new XmlDocument();
-                                doc.LoadXml(responseData.responseText);
+                                doc.LoadXml(!string.IsNullOrEmpty(responseData.responseText) ? responseData.responseText : string.Empty);
                                 XmlNamespaceManager nsmgr = new XmlNamespaceManager(reader.NameTable);
                                 currentRQMProjectMapping.RQMTestPlansListMapping.RQMNameSpaces.RQMNameSpaceList.ForEach(y => nsmgr.AddNamespace(y.RQMNameSpacePrefix, y.RQMNameSpaceName));
                                 XmlNode responseDataNode = doc.DocumentElement;
@@ -659,7 +658,7 @@ namespace GingerCore.ALM.RQM
                             Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Script by test plan not found {ex.Message}");
                         }
                         XmlDocument docVersionedTS = new XmlDocument();
-                        docVersionedTS.LoadXml(responseDataVersionedTS.responseText);
+                        docVersionedTS.LoadXml(!string.IsNullOrEmpty(responseDataVersionedTS.responseText) ? responseDataVersionedTS.responseText : string.Empty);
                         XmlNode responseDataNodeVersionedTS = docVersionedTS.DocumentElement;
 
                         if (RQMExecutionRecords.Where(x => x.RQMID == executionRecord.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.RQMID, nsmgrExecutionRecords).InnerText.ToString()).ToList().Count == 0)
@@ -671,7 +670,10 @@ namespace GingerCore.ALM.RQM
                             RQMExecutionRecords.Add(rQMExecutionRecord);
                         }
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Case by test plan not found { ex.Message}");
+                    }
                 }
             }
             catch (Exception ex)

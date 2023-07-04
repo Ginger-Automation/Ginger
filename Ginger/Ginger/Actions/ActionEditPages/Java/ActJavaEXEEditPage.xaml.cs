@@ -83,7 +83,7 @@ namespace Ginger.Actions.Java
 
         private void RemoveOldInputParams()
         {
-            if (mAct.InputValues.Where(x => x.Param == "Value" && x.Value == string.Empty).FirstOrDefault() != null)
+            if (mAct.InputValues.FirstOrDefault(x => x.Param == "Value" && x.Value == string.Empty) != null)
             {
                 mAct.RemoveInputParam("Value");
             }

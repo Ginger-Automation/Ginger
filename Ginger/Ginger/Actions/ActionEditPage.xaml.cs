@@ -419,7 +419,7 @@ namespace Ginger.Actions
 
         private void RemoveCaptureTypeFromComboItems(Act.eWindowsToCapture captureType)
         {
-            var comboEnumItem = xWindowsToCaptureCombo.Items.Cast<ComboEnumItem>().Where(x => x.Value.ToString() == captureType.ToString()).FirstOrDefault();
+            var comboEnumItem = xWindowsToCaptureCombo.Items.Cast<ComboEnumItem>().FirstOrDefault(x => x.Value.ToString() == captureType.ToString());
             xWindowsToCaptureCombo.Items.Remove(comboEnumItem);
         }
 
@@ -551,7 +551,7 @@ namespace Ginger.Actions
                 {
                     xInputValuesGrid.Visibility = Visibility.Collapsed;
                     xValueBoxPnl.Visibility = Visibility.Visible;
-                    ActInputValue inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
+                    ActInputValue inputValue = a.InputValues.FirstOrDefault(x => x.Param == "Value");
                     if (inputValue != null)
                     {
                         xValueVE.Init(mContext, inputValue, nameof(ActInputValue.Value));
@@ -564,19 +564,19 @@ namespace Ginger.Actions
                     xInputValuesGrid.Visibility = Visibility.Collapsed;
                     xValueBoxPnl.Visibility = Visibility.Visible;
                     a.Value = "";
-                    ActInputValue inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
+                    ActInputValue inputValue = a.InputValues.FirstOrDefault(x => x.Param == "Value");
                     xValueVE.Init(Context.GetAsContext(a.Context), inputValue, nameof(ActInputValue.Value));
                 }
             }
             else if (a.GetType() == typeof(ActGenElement) || a.GetType() == typeof(ActTableElement))
             {
 
-                ActInputValue inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
+                ActInputValue inputValue = a.InputValues.FirstOrDefault(x => x.Param == "Value");
 
                 if (inputValue == null)
                 {
                     a.AddOrUpdateInputParamValue("Value", "");
-                    inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
+                    inputValue = a.InputValues.FirstOrDefault(x => x.Param == "Value");
                 }
                 xInputValuesGrid.Visibility = Visibility.Collapsed;
                 xValueBoxPnl.Visibility = Visibility.Visible;
@@ -650,14 +650,19 @@ namespace Ginger.Actions
                     xValueBoxPnl.Visibility = Visibility.Collapsed;
                 }
             }
+            else if(a.GetType() == typeof(ActCompareImgs))
+            {
+                xInputValuesGrid.Visibility = Visibility.Collapsed;
+                xValueBoxPnl.Visibility = Visibility.Collapsed;
+            }
             else if (a.GetType() == typeof(ActSetVariableValue) || a.GetType() == typeof(ActCreatePDFChart)
-                        || a.GetType() == typeof(ActCompareImgs) || a.GetType() == typeof(ActGenerateFileFromTemplate)
+                        || a.GetType() == typeof(ActGenerateFileFromTemplate)
                         || a.GetType() == typeof(ActPBControl) || a.GetType() == typeof(ActWindowsControl)
                         || a.GetType() == typeof(ActMenuItem) || a.GetType() == typeof(ActJavaElement))
             {
                 xInputValuesGrid.Visibility = Visibility.Collapsed;
                 xValueBoxPnl.Visibility = Visibility.Visible;
-                ActInputValue inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
+                ActInputValue inputValue = a.InputValues.FirstOrDefault(x => x.Param == "Value");
                 if (inputValue != null)
                 {
                     xValueVE.ValueTextBox.Text = inputValue.Value;
@@ -1361,7 +1366,7 @@ namespace Ginger.Actions
 
         private void ControlSelectorButton_Click(object sender, RoutedEventArgs e)
         {
-            ApplicationAgent aa = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.Where(x => x.AppName == mActParentActivity.TargetApplication).FirstOrDefault();
+            ApplicationAgent aa = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.FirstOrDefault(x => x.AppName == mActParentActivity.TargetApplication);
             if (aa != null)
             {
                 if (((AgentOperations)((Agent)aa.Agent).AgentOperations).Driver == null)

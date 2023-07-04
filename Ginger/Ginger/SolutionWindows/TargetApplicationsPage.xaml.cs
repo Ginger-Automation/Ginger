@@ -86,7 +86,7 @@ namespace Ginger.SolutionWindows
         }
         public bool NameAlreadyExists(string value)
         {
-            if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(obj => obj.AppName == value).FirstOrDefault() == null)
+            if (WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(obj => obj.AppName == value) == null)
             {
                 return false; //no name like it in the group 
             }
@@ -175,7 +175,7 @@ namespace Ginger.SolutionWindows
 
         private void UpdateApplicationNameChangeInSolution(ApplicationPlatform app)
         {
-            int numOfAfectedBFs = 0;
+            int numOfAfectedItems = 0;
             if (Reporter.ToUser(eUserMsgKey.UpdateApplicationNameChangeInSolution) == Amdocs.Ginger.Common.eUserMsgSelection.No)
             {
                 return;
@@ -198,17 +198,27 @@ namespace Ginger.SolutionWindows
                             {
                                 if (activity.TargetApplication == app.NameBeforeEdit)
                                 {
-                                    activity.TargetApplication = app.AppName;
+                                    activity.TargetApplication = app.AppName;                                    
                                 }
                             }
-
-                            numOfAfectedBFs++;
+                            numOfAfectedItems++;
                             break;
                         }
                     }
                 }
             }
-            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, string.Format("{0} {1} were updated successfully, please remember to Save All change.", numOfAfectedBFs, GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)));
+
+            foreach (Activity activity in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>())
+            {
+                //update the shared repository activities 
+                if (activity.TargetApplication == app.NameBeforeEdit)
+                {
+                    activity.StartDirtyTracking();
+                    activity.TargetApplication = app.AppName;
+                    numOfAfectedItems++;
+                }                             
+            }
+            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, string.Format("{0} items were updated successfully, please remember to Save All change.", numOfAfectedItems));
         }
 
         private void btnDelete_Click(object sender, RoutedEventArgs e)

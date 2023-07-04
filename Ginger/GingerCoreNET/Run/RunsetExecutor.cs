@@ -25,6 +25,7 @@ using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.Repository;
+using AutoMapper;
 using Ginger.Configurations;
 using Ginger.Reports;
 using Ginger.Run.RunSetActions;
@@ -34,6 +35,7 @@ using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -47,7 +49,7 @@ namespace Ginger.Run
 {
     public class RunsetExecutor : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;     
         public void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
@@ -164,7 +166,7 @@ namespace Ginger.Run
         }
 
         public void InitRunner(GingerRunner runner, GingerExecutionEngine ExecutorEngine)
-        {
+        {          
             //Configure Runner for execution
             runner.Status = eRunStatus.Pending;
             runner.Executor = ExecutorEngine;
@@ -222,13 +224,13 @@ namespace Ginger.Run
                             //This is needed to handle updating the outputvariable mappedoutvalues to new style
                             UpdateOldOutputVariableMappedValues(customizedVar);
 
-                            VariableBase originalVar = allBfVars.Where(v => v.ParentGuid == customizedVar.ParentGuid && v.Guid == customizedVar.Guid).FirstOrDefault();
+                            VariableBase originalVar = allBfVars.FirstOrDefault(v => v.ParentGuid == customizedVar.ParentGuid && v.Guid == customizedVar.Guid);
                             if (originalVar == null)//for supporting dynamic run set XML in which we do not have GUID
                             {
-                                originalVar = allBfVars.Where(v => v.ParentName == customizedVar.ParentName && v.Name == customizedVar.Name).FirstOrDefault();
+                                originalVar = allBfVars.FirstOrDefault(v => v.ParentName == customizedVar.ParentName && v.Name == customizedVar.Name);
                                 if (originalVar == null)
                                 {
-                                    originalVar = allBfVars.Where(v => v.Name == customizedVar.Name).FirstOrDefault();
+                                    originalVar = allBfVars.FirstOrDefault(v => v.Name == customizedVar.Name);
                                 }
                             }
                             if (originalVar != null)
@@ -265,7 +267,7 @@ namespace Ginger.Run
                         Guid guid = AllPreviousBusinessFlowRuns[i].BusinessFlowGuid;
                         BusinessFlow bf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(guid);
 
-                        if (bf.GetBFandActivitiesVariabeles(false, false, true).Where(x => x.Guid.ToString() == var.MappedOutputValue).FirstOrDefault() != null)
+                        if (bf.GetBFandActivitiesVariabeles(false, false, true).FirstOrDefault(x => x.Guid.ToString() == var.MappedOutputValue) != null)
                         {
                             var.MappedOutputValue = AllPreviousBusinessFlowRuns[i].BusinessFlowInstanceGuid + "_" + var.MappedOutputValue;
                             break;
@@ -286,8 +288,8 @@ namespace Ginger.Run
             //keep original description values
             VariableBase originalCopy = (VariableBase)originalVar.CreateCopy(false);
 
-            //ovveride original variable configurations with user customizations
-            RepositoryItemBase.ObjectsDeepCopy(customizedVar, originalVar);//need to replace 'ObjectsDeepCopy' with AutoMapper and to map on it which values should be overiden
+            //ovveride original variable configurations with user customizations            
+            CreateMapper<VariableBase>().Map<VariableBase, VariableBase>(customizedVar, originalVar);
             originalVar.DiffrentFromOrigin = customizedVar.DiffrentFromOrigin;
             originalVar.MappedOutputVariable = customizedVar.MappedOutputVariable;
             //Fix for Empty variable are not being saved in Run Configuration (when variable has value in BusinessFlow but is changed to empty in RunSet)
@@ -304,17 +306,31 @@ namespace Ginger.Run
             originalVar.SetAsOutputValue = originalCopy.SetAsOutputValue;
             originalVar.LinkedVariableName = originalCopy.LinkedVariableName;
             originalVar.Publish = originalCopy.Publish;
+        }
 
-            //temp solution for release, find better way, issue is with the RepositoryItemBase.ObjectsDeepCopy which causing duplicated optional values
-            if (originalVar is VariableSelectionList)
+        private IMapper CreateMapper<T>()
+        {
+            var config = new MapperConfiguration(cfg =>
             {
-                for (int indx = 0; indx < ((VariableSelectionList)originalVar).OptionalValuesList.Count; indx++)
+                cfg.CreateMap<List<string>, List<string>>().ConvertUsing(new IgnoringNullValuesTypeConverter<List<string>>());
+                cfg.CreateMap<List<Guid>, List<Guid>>().ConvertUsing(new IgnoringNullValuesTypeConverter<List<Guid>>());                
+                cfg.CreateMap<T, T>()
+               .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            });
+            return config.CreateMapper();
+        }
+
+        public class IgnoringNullValuesTypeConverter<T> : ITypeConverter<T, T> where T : class
+        {
+            public T Convert(T source, T destination, ResolutionContext context)
+            {
+                if (source is IList && ((IList)source).Count == 0)
                 {
-                    if (((VariableSelectionList)originalVar).OptionalValuesList.Where(x => x.Value == ((VariableSelectionList)originalVar).OptionalValuesList[indx].Value).ToList().Count > 1)
-                    {
-                        ((VariableSelectionList)originalVar).OptionalValuesList.RemoveAt(indx);
-                        indx--;
-                    }
+                    return destination;
+                }
+                else
+                {
+                    return source;
                 }
             }
         }
@@ -335,16 +351,18 @@ namespace Ginger.Run
             {
                 if (gr.UseSpecificEnvironment)
                 {
-                    if (gr.ProjEnvironment != null)
+                    if (gr.ProjEnvironment != null && gr.ProjEnvironment.Applications != null)
                     {
                         foreach (EnvApplication ea in gr.ProjEnvironment.Applications)
                         {
-                            foreach (Database db in ea.Dbs)
+                            if (ea.Dbs != null)
                             {
-                                if (db.DatabaseOperations == null)
+                                foreach (Database db in ea.Dbs)
                                 {
-                                    DatabaseOperations databaseOperations = new DatabaseOperations(db);
-                                    db.DatabaseOperations = databaseOperations;
+                                    if (db.DatabaseOperations == null)
+                                    {
+                                        db.DatabaseOperations = new DatabaseOperations(db);
+                                    }
                                 }
                             }
                         }
@@ -512,7 +530,6 @@ namespace Ginger.Run
                         {
                             if (doContinueRun == false)
                             {
-                                GR.Executor.RunLevel = eRunLevel.Runset;
                                 GR.Executor.RunRunner();
                             }
                             else
@@ -543,7 +560,6 @@ namespace Ginger.Run
 
                             if (doContinueRun == false)
                             {
-                                GR.Executor.RunLevel = eRunLevel.Runset;
                                 GR.Executor.RunRunner();
                             }
                             else
@@ -556,7 +572,6 @@ namespace Ginger.Run
                                 }
                                 else if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)//continue the runners flow
                                 {
-                                    GR.Executor.RunLevel = eRunLevel.Runset;
                                     GR.Executor.RunRunner();
                                 }
                             }
@@ -630,7 +645,7 @@ namespace Ginger.Run
         }
         public void CreateGingerExecutionReportAutomaticly()
         {
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             if ((mSelectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled) && (Runners != null) && (Runners.Count > 0))
             {
                 if (mSelectedExecutionLoggerConfiguration.ExecutionLoggerHTMLReportsAutomaticProdIsEnabled)
@@ -861,11 +876,11 @@ namespace Ginger.Run
                         {
                             var virtualAgent = (Agent)appAgents[i].Agent;
 
-                            var realAgent = runset.ActiveAgentList.Where(x => ((Agent)x).Guid.ToString() == virtualAgent.ParentGuid.ToString()).FirstOrDefault();
+                            var realAgent = runset.ActiveAgentList.FirstOrDefault(x => ((Agent)x).Guid.ToString() == virtualAgent.ParentGuid.ToString());
 
                             if (realAgent != null)
                             {
-                                var runsetVirtualAgent = runset.ActiveAgentList.Where(x => ((Agent)x).Guid == ((Agent)virtualAgent).Guid).FirstOrDefault();
+                                var runsetVirtualAgent = runset.ActiveAgentList.FirstOrDefault(x => ((Agent)x).Guid == ((Agent)virtualAgent).Guid);
                                 appAgents[i].Agent = realAgent;
 
                                 if (runsetVirtualAgent != null)

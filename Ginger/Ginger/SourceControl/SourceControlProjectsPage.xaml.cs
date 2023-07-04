@@ -104,7 +104,7 @@ namespace Ginger.SourceControl
 
             SolutionsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
 
-            if (mSourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
+            if(!string.IsNullOrEmpty(mSourceControl.SourceControlURL) && mSourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
             {
                 xBranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
             }

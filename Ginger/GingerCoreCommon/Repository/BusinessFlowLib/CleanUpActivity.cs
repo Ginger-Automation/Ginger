@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -24,6 +24,14 @@ namespace Amdocs.Ginger.Common.Repository.BusinessFlowLib
     public class CleanUpActivity : Activity
     {
         public override eImageType ItemImageType
+        {
+            get
+            {
+                return eImageType.Eraser;
+            }
+        }
+
+        public override eImageType TargetApplicationPlatformImage
         {
             get
             {

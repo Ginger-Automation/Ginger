@@ -64,13 +64,13 @@ namespace Amdocs.Ginger.CoreNET.Platform
             String FileContent;
             if (SaveRequest)
             {
-                FileContent = actPlugin.ReturnValues.Where(x => x.Param == "Request:").FirstOrDefault().Actual;
+                FileContent = actPlugin.ReturnValues.FirstOrDefault(x => x.Param == "Request:").Actual;
                 SaveToFile("Request", FileContent, PathToSave, (ActWebAPIBase)actPlugin);
             }
             if (SaveResponse)
             {
 
-                FileContent = actPlugin.ReturnValues.Where(x => x.Param == "Response:").FirstOrDefault().Actual;
+                FileContent = actPlugin.ReturnValues.FirstOrDefault(x => x.Param == "Response:").Actual;
                 SaveToFile("Response", FileContent, PathToSave, (ActWebAPIBase)actPlugin);
             }
 
