@@ -419,13 +419,10 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
             {
                 return;
             }
-
             if (xEmailReadMethodMSGraph.IsSelected)
-            { 
-                FolderNameLabel.Visibility = Visibility.Visible;
-                FoldersStackPanel.Visibility = Visibility.Visible;
+            {
                 xClientIdGrid.Visibility = Visibility.Visible;
-                xTenantIdGrid.Visibility= Visibility.Visible;
+                xTenantIdGrid.Visibility = Visibility.Visible;
                 xImapHostGrid.Visibility = Visibility.Collapsed;
                 xImapPortGrid.Visibility = Visibility.Collapsed;
                 passwdLabel.Content = "User Password:";
@@ -436,15 +433,15 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
             }
             else
             {
-                FolderNameLabel.Visibility = Visibility.Collapsed;
-                FoldersStackPanel.Visibility = Visibility.Collapsed;
+
                 xClientIdGrid.Visibility = Visibility.Collapsed;
                 xTenantIdGrid.Visibility = Visibility.Collapsed;
                 xImapHostGrid.Visibility = Visibility.Visible;
                 xImapPortGrid.Visibility = Visibility.Visible;
                 passwdLabel.Content = "User App Password:";
-                FolderSpecificGrid.Visibility = Visibility.Collapsed;
-            }
+                xFilterFolderSpecificRadioButton.IsChecked = false;
+
+            }           
         }
         private void TriggerReadEmailMethodChangedEvent()
         {

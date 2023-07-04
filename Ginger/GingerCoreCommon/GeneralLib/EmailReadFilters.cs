@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -52,6 +52,9 @@ namespace GingerCore.GeneralLib
         public string AttachmentDownloadPath { get; set; }
         public DateTime ReceivedStartDate { get; set; }
         public DateTime ReceivedEndDate { get; set; }
+        public bool ReadUnread { get; set; }
+        public int ReadCount { get; set; }
+        public bool MarkRead { get; set; }
 
         public bool Equals(EmailReadFilters other)
         {
