@@ -450,9 +450,9 @@ namespace Ginger
             return GingerCore.General.MergeVerticallyAndSaveBitmaps(bitmaps);
         }
 
-        public void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
+        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
         {
-            ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, eALMConnectType.Silence);
+           return ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, eALMConnectType.Silence);
         }
 
         public ITextBoxFormatter CreateTextBoxFormatter(object Textblock)
