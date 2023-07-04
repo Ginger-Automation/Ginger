@@ -25,7 +25,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
-using DocumentFormat.OpenXml.Spreadsheet;
+
 
 namespace GingerCore.GeneralLib
 {
@@ -69,7 +69,7 @@ namespace GingerCore.GeneralLib
             GraphServiceClient graphServiceClient, Action<ReadEmail> emailProcessor)
         {
             IEnumerable<string> expectedRecipients = null;
-            int  count = 0;
+            int  count = 1;
             if (!string.IsNullOrEmpty(filters.To))
             {
                 expectedRecipients = filters.To.Split(";", StringSplitOptions.RemoveEmptyEntries);
@@ -85,6 +85,10 @@ namespace GingerCore.GeneralLib
                         messageCollection,
                         message =>
                         {
+                            if (count > filters.ReadCount)
+                            {
+                                return false;
+                            }
                             if (!DoesSatisfyToFilter(message, expectedRecipients))
                             {
                                 return true;
@@ -96,17 +100,13 @@ namespace GingerCore.GeneralLib
                             if (!DoesSatisfyBodyFilter(message, filters.Body))
                             {
                                 return true;
-                            }
-                            count++;
-                            if (count > filters.ReadCount)
-                            {
-                                return false;
-                            }
+                            }                                                      
                             if (filters.MarkRead)
                             {
                                 MarkEmailAsRead(graphServiceClient, message);
                             }
                             emailProcessor(ConvertMessageToReadEmail(message));
+                            count++;
                             return true;
                         });
 
@@ -296,10 +296,8 @@ namespace GingerCore.GeneralLib
                 TokenCredentialOptions options = new()
                 {
                     AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
-                };
-
-                string userPassword = config.UserPassword;
-                UsernamePasswordCredential userNamePasswordCredential = new(config.UserEmail, userPassword, config.TenantId, config.ClientId, options);
+                };               
+                UsernamePasswordCredential userNamePasswordCredential = new(config.UserEmail, config.UserPassword, config.TenantId, config.ClientId, options);
 
                 return new GraphServiceClient(userNamePasswordCredential, Scopes);
             }
@@ -559,7 +557,7 @@ namespace GingerCore.GeneralLib
         private void AppendReadUnreadFilter(StringBuilder filterParameter, EmailReadFilters filters)
         {
 
-            if (filters.ReadUnread.Equals(true))
+            if (filters.ReadUnread)
             {
                 if (filterParameter.Length > 0)
                 {

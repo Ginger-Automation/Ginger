@@ -43,7 +43,6 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             {               
                 client.Connect(config.IMapHost, Int32.Parse(config.IMapPort), true);
                 client.Authenticate(config.UserEmail, config.UserPassword);                             
-                IList<IMailFolder> folders = client.GetFolders(new FolderNamespace('.', ""));
                 
                 CancellationToken cancellationToken = default(CancellationToken);
 
@@ -88,7 +87,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                     queryToImap = queryToImap.And(SearchQuery.DeliveredBefore(filters.ReceivedEndDate.AddDays(1)));
 
                 }
-                if(filters.ReadUnread.Equals(true))
+                if(filters.ReadUnread)
                 {
                     queryToImap = queryToImap.And(SearchQuery.NotSeen);
                 }
