@@ -31,6 +31,7 @@ using Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Run;
 using Ginger.Reports;
+using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
@@ -93,8 +94,6 @@ namespace Ginger.Run
 
         List<RunListenerBase> mRunListeners = new List<RunListenerBase>();
         public List<RunListenerBase> RunListeners { get { return mRunListeners; } }
-
-
 
         private bool mStopRun = false;
         private bool mStopBusinessFlow = false;
@@ -509,13 +508,8 @@ namespace Ginger.Run
                         RunBusinessFlow(executedBusFlow, doResetErrorHandlerExecutedFlag: true);// full BF run
                     }
                     //Do "During Execution" Run set Operations
-                    if (PublishToALMConfig != null)
-                    {
-                        string result = string.Empty;
-                        ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
-                        bfs.Add(executedBusFlow);
-                        TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Silence);
-                    }
+
+                    StartPublishResultsToAlmTask(executedBusFlow);
                     //Call For Business Flow Control
                     flowControlIndx = DoBusinessFlowControl(executedBusFlow);
                     if (flowControlIndx == null && executedBusFlow.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) //stop if needed based on current BF failure
@@ -607,6 +601,48 @@ namespace Ginger.Run
                 }
 
 
+            }
+        }
+
+        private void StartPublishResultsToAlmTask(BusinessFlow executedBusFlow)
+        {
+            if (PublishToALMConfig != null)
+            {
+                Task ExportResultTask = Task.Run(() =>
+                {
+                    var runsetAction = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.FirstOrDefault(f => f is RunSetActionPublishToQC && f.RunAt.Equals(RunSetActionBase.eRunAt.DuringExecution) && f.Active);
+                    var prevStatus = runsetAction.Status;                    
+                    bool isSuccess = false;
+                    runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Running;
+                    ObservableList<BusinessFlow> bfs = new(){executedBusFlow};
+                    string result = "";
+                    try
+                    {
+                        isSuccess = TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Silence);
+                        if(!isSuccess)
+                        {
+                            runsetAction.Errors += result + Environment.NewLine;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        runsetAction.Errors += ex.Message + Environment.NewLine;
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to publish execution result to ALM for {executedBusFlow.Name}", ex);
+                    }
+                    finally
+                    {
+                        if (!isSuccess)
+                        {
+                            runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Failed;
+                        }
+                        else
+                        {
+                            runsetAction.Status = prevStatus;
+                        }
+                    }
+                });
+
+                WorkSpace.Instance.RunsetExecutor.ALMResultsPublishTaskPool.Add(ExportResultTask);
             }
         }
 
@@ -1534,7 +1570,7 @@ namespace Ginger.Run
                         act.OutDataSourceTableName = act.DSOutputConfigParams[0].DSTable;
                     }
 
-                    var mUniqueRVs = act.ReturnValues.Where(arc=> arc.Path == "" || arc.Path == "1");
+                    var mUniqueRVs = act.ReturnValues.Where(arc => arc.Path == "" || arc.Path == "1");
                     // if in output values there is only 1 record with Path = null
                     if (!mUniqueRVs.Any() && act.ReturnValues != null)
                     {
@@ -1558,7 +1594,7 @@ namespace Ginger.Run
                             mColList.Remove("GINGER_USED");
                         }
 
-                        act.AddOrUpdateOutDataSourceParam(act.OutDataSourceName, act.OutDataSourceTableName, item.Param.Replace(" ","_"), item.Param.Replace(" ", "_"), "", mColList, act.OutDSParamMapType);
+                        act.AddOrUpdateOutDataSourceParam(act.OutDataSourceName, act.OutDataSourceTableName, item.Param.Replace(" ", "_"), item.Param.Replace(" ", "_"), "", mColList, act.OutDSParamMapType);
                     }
 
                     if (act.ConfigOutDSParamAutoCheck)
@@ -1595,7 +1631,7 @@ namespace Ginger.Run
                     }
 
                     int iPathCount = 0;
-                    var mOutRVs = act.ReturnValues.Where(arc=> arc.Path == "");
+                    var mOutRVs = act.ReturnValues.Where(arc => arc.Path == "");
                     if (!mOutRVs.Any())
                     {
                         iPathCount++;
@@ -1614,8 +1650,8 @@ namespace Ginger.Run
                         string sColVals = "";
                         foreach (ActOutDataSourceConfig ADSC in mADCS)
                         {
-                            var outReturnPath = mOutRVs.FirstOrDefault(arc=> arc.Param.Replace(" ", "_") == ADSC.OutputType);
-                            if (outReturnPath!=null)
+                            var outReturnPath = mOutRVs.FirstOrDefault(arc => arc.Param.Replace(" ", "_") == ADSC.OutputType);
+                            if (outReturnPath != null)
                             {
                                 sColList = $"{sColList}{ADSC.TableColumn},";
                                 string valActual = outReturnPath.Actual == null ? "" : outReturnPath.Actual.ToString();
@@ -2264,7 +2300,7 @@ namespace Ginger.Run
                                                 }
                                                 else
                                                 {
-                                                    act.Error = $"Agent failed to start for the { GingerDicser.GetTermResValue(eTermResKey.Activity)} Application. Current Agent Status {((AgentOperations)currentAgent.AgentOperations).Status}";
+                                                    act.Error = $"Agent failed to start for the {GingerDicser.GetTermResValue(eTermResKey.Activity)} Application. Current Agent Status {((AgentOperations)currentAgent.AgentOperations).Status}";
                                                 }
                                             }
 
@@ -4592,7 +4628,7 @@ namespace Ginger.Run
                 mExecutedBusinessFlowWhenStopped = (BusinessFlow)CurrentBusinessFlow;
                 Agent currentAgent = (Agent)CurrentBusinessFlow.CurrentActivity.CurrentAgent;
                 // Added an extra condition for the Application to not throw an error if the  ((AgentOperations)currentAgent.AgentOperations).Driver is null
-                if (currentAgent != null && ((AgentOperations)currentAgent.AgentOperations).Driver!=null)
+                if (currentAgent != null && ((AgentOperations)currentAgent.AgentOperations).Driver != null)
                 {
                     ((AgentOperations)currentAgent.AgentOperations).Driver.cancelAgentLoading = true;
                 }
@@ -4887,7 +4923,7 @@ namespace Ginger.Run
         {
             get
             {
-                ExecutionLoggerManager ExecutionLoggerManager = (ExecutionLoggerManager)mRunListeners.FirstOrDefault(x=> x.GetType() == typeof(ExecutionLoggerManager));
+                ExecutionLoggerManager ExecutionLoggerManager = (ExecutionLoggerManager)mRunListeners.FirstOrDefault(x => x.GetType() == typeof(ExecutionLoggerManager));
                 return ExecutionLoggerManager;
             }
         }
@@ -4896,7 +4932,7 @@ namespace Ginger.Run
         {
             get
             {
-                AccountReportExecutionLogger centeralized_Logger = (AccountReportExecutionLogger)mRunListeners.FirstOrDefault(x=> x.GetType() == typeof(AccountReportExecutionLogger));
+                AccountReportExecutionLogger centeralized_Logger = (AccountReportExecutionLogger)mRunListeners.FirstOrDefault(x => x.GetType() == typeof(AccountReportExecutionLogger));
                 return centeralized_Logger;
             }
         }
@@ -4905,7 +4941,7 @@ namespace Ginger.Run
         {
             get
             {
-                SealightsReportExecutionLogger sealights_Logger = (SealightsReportExecutionLogger)mRunListeners.FirstOrDefault(x=> x.GetType() == typeof(SealightsReportExecutionLogger));
+                SealightsReportExecutionLogger sealights_Logger = (SealightsReportExecutionLogger)mRunListeners.FirstOrDefault(x => x.GetType() == typeof(SealightsReportExecutionLogger));
                 return sealights_Logger;
             }
         }
