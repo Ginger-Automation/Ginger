@@ -120,7 +120,7 @@ namespace GingerCore.Actions
                     {
                         ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations.Close();
                         Thread.Sleep(2000);
-                    } 
+                    }
                     ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).DSList = DSList;
                     ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations.StartDriver();
                     Thread.Sleep(2000);
