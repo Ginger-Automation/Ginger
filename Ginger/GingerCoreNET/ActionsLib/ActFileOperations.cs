@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Applitools.Utils;
@@ -61,7 +62,8 @@ namespace GingerCore.Actions
             ForceCopy,
             RunCommand,
             UnZip,
-            DeleteDirectoryFiles
+            DeleteDirectoryFiles,
+            DeleteDirectory
         }
 
         public eFileoperations FileOperationMode
@@ -135,6 +137,8 @@ namespace GingerCore.Actions
                     calculatedSourceFilePath = System.IO.Directory.GetFiles(Path.GetDirectoryName(calculatedSourceFilePath), Path.GetFileName(calculatedSourceFilePath))[0];
                 }
             }
+            try
+            {
             switch (FileOperationMode)
             {
                 case eFileoperations.CheckFileExists:
@@ -158,7 +162,7 @@ namespace GingerCore.Actions
                 case eFileoperations.DeleteDirectoryFiles:
                     if (!System.IO.Directory.Exists(calculatedSourceFilePath))
                     {
-                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                         base.ExInfo = "Folder doesn't exists";
                         return;
                     }
@@ -166,6 +170,21 @@ namespace GingerCore.Actions
                     {
                         System.IO.File.Delete(file);
                     }
+                    break;
+                case eFileoperations.DeleteDirectory:
+                    if (!IsLinuxPath(calculatedSourceFilePath))
+                    {
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        base.ExInfo = "Path is not valid";
+                        return;
+                    }
+                    if (!System.IO.Directory.Exists(calculatedSourceFilePath))
+                    {
+                        base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        base.ExInfo = "Directory doesn't exist";
+                        return;
+                    }
+                    System.IO.Directory.Delete(calculatedSourceFilePath, recursive: true);
                     break;
                 case eFileoperations.Copy:
                     SetupDestinationFolder();
@@ -313,6 +332,13 @@ namespace GingerCore.Actions
 
             }
         }
+        catch(Exception ex)
+         {
+                base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                base.Error = $"{ActionType.ToString()} File Operation failed due to {ex.Message}";
+                Reporter.ToLog(eLogLevel.ERROR, $"{ActionType.ToString()} File Operation failed", ex);
+            }
+        }
 
         private void ProcessStart(string fileName, string arguments = null)
         {
@@ -369,6 +395,28 @@ namespace GingerCore.Actions
                 return true;
             }
             return false;
+        }
+        public bool IsLinuxPath(string path) //Method checking valid linux path
+        {
+            char[] invalidPathChars = Path.GetInvalidPathChars();
+
+            if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+            {
+                // Linux or macOS platform, check for valid Linux path characters
+                foreach (char c in path)
+                {
+                    if (invalidPathChars.Contains(c))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            else
+            {
+                // Non-Linux OS, assuming path is valid
+                return true;
+            }
         }
     }
 }
