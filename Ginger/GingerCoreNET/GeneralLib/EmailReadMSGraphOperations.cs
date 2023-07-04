@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.GeneralLib
 {
@@ -58,8 +59,8 @@ namespace GingerCore.GeneralLib
             else
             {
                 messageCollections = await GetFoldersMessages(graphServiceClient, filters);
-            }
-
+            }           
+           
             await IterateMessages(messageCollections, filters, graphServiceClient, emailProcessor);
         }
 
@@ -67,13 +68,15 @@ namespace GingerCore.GeneralLib
             GraphServiceClient graphServiceClient, Action<ReadEmail> emailProcessor)
         {
             IEnumerable<string> expectedRecipients = null;
+            int  count = 0;
             if (!string.IsNullOrEmpty(filters.To))
             {
                 expectedRecipients = filters.To.Split(";", StringSplitOptions.RemoveEmptyEntries);
-            }
+            }           
 
             foreach (ICollectionPage<Message> messageCollection in messageCollections)
             {
+               
                 PageIterator<Message> messageIterator = PageIterator<Message>.CreatePageIterator(
                     graphServiceClient,
                     messageCollection,
@@ -91,10 +94,21 @@ namespace GingerCore.GeneralLib
                         {
                             return true;
                         }
-
-                        emailProcessor(ConvertMessageToReadEmail(message));
+                        count++;
+                        if (count > filters.ReadCount)
+                        {
+                            return false;
+                        }
+                        if (filters.MarkRead)
+                        {
+                            message.IsRead = true;
+                            
+                            //graphServiceClient.UpdateMessage(message, new List<String>() { MessagePropertyName.IsRead }, new UserId("info@independentsoft.onmicrosoft.com"));
+                        }                           
+                        emailProcessor(ConvertMessageToReadEmail(message));                       
                         return true;
                     });
+
                 await messageIterator.IterateAsync();
             }
         }
@@ -237,16 +251,29 @@ namespace GingerCore.GeneralLib
 
         private GraphServiceClient CreateGraphServiceClient(EmailReadConfig config)
         {
-            ValidateMSGraphConfig(config);
-            TokenCredentialOptions options = new()
+            try
             {
-                AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
-            };
+                ValidateMSGraphConfig(config);
+                TokenCredentialOptions options = new()
+                {
+                    AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
+                };
 
-            string userPassword = config.UserPassword;
-            UsernamePasswordCredential userNamePasswordCredential = new(config.UserEmail, userPassword, config.TenantId, config.ClientId, options);
+                string userPassword = config.UserPassword;
+                UsernamePasswordCredential userNamePasswordCredential = new(config.UserEmail, userPassword, config.TenantId, config.ClientId, options);
 
-            return new GraphServiceClient(userNamePasswordCredential, Scopes);
+                return new GraphServiceClient(userNamePasswordCredential, Scopes);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error Occured while Making connection.Please check Configuration Details", ex);
+                if (ex.InnerException != null)
+                {
+                    throw ex.InnerException;
+                }
+                throw;
+            }
+            
         }
 
         private void ValidateMSGraphConfig(EmailReadConfig config)
@@ -275,20 +302,22 @@ namespace GingerCore.GeneralLib
             string selectParameter = SelectedMessageFields.Aggregate((aggr, value) => $"{aggr},{value}");
             try
             {
+              
                 return await graphServiceClient
-                    .Me
-                    .Messages
-                    .Request()
-                    .Header("Prefer", "outlook.body-content-type='text'")
-                    .Select(selectParameter)
-                    .Filter(filterParameter)
-                    .OrderBy(orderByParameter)
-                    .Expand("attachments")
-                    .Top(MessageRequestPageSize)
-                    .GetAsync();
-            }
+                .Me
+                .Messages
+                .Request()
+                .Header("Prefer", "outlook.body-content-type='text'")
+                .Select(selectParameter)
+                .Filter(filterParameter)
+                .OrderBy(orderByParameter)
+                .Expand("attachments")
+                .Top(MessageRequestPageSize)
+                .GetAsync();                                
+            }           
             catch (Exception e)
             {
+                Reporter.ToLog(eLogLevel.ERROR, "Error Occured while reading emails using Graph API", e);
                 if (e.InnerException != null)
                 {
                     throw e.InnerException;
@@ -305,7 +334,7 @@ namespace GingerCore.GeneralLib
             {
                 foldersMessages.Add(await GetFolderMessages(folderName, graphServiceClient, filters));
             }
-
+           
             return foldersMessages;
         }
 
@@ -317,7 +346,7 @@ namespace GingerCore.GeneralLib
             string folderId = await GetFolderId(graphServiceClient, folderName);
             try
             {
-                return await graphServiceClient
+                    return await graphServiceClient
                     .Me
                     .MailFolders[folderId]
                     .Messages
@@ -345,12 +374,11 @@ namespace GingerCore.GeneralLib
             string orderBy = "receivedDateTime desc";
 
             StringBuilder filterParameter = new();
-
             AppendReceivedDateTimeFilter(filterParameter, filters);
             AppendFromFilter(filterParameter, filters);
             AppendSubjectFilter(filterParameter, filters);
             AppendHasAttachmentsFilter(filterParameter, filters);
-
+            AppendReadUnreadFilter(filterParameter, filters);            
             return (filterParameter.ToString(), orderBy);
         }
 
@@ -486,20 +514,33 @@ namespace GingerCore.GeneralLib
 
             filterParameter.Append($"from/emailAddress/address eq '{filters.From}'");
         }
+        private void AppendReadUnreadFilter(StringBuilder filterParameter, EmailReadFilters filters)
+        {
+            
+            if (filters.ReadUnread.Equals(true))
+            {
+                if (filterParameter.Length > 0)
+                {
+                    filterParameter.Append(" and ");
+                }
+                filterParameter.Append("isRead ne true");
+
+            }
+        }
 
         private void AppendSubjectFilter(StringBuilder filterParameter, EmailReadFilters filters)
         {
-            if (string.IsNullOrEmpty(filters.Subject))
-            {
-                return;
-            }
+                if (string.IsNullOrEmpty(filters.Subject))
+                {
+                    return;
+                }
 
-            if (filterParameter.Length > 0)
-            {
-                filterParameter.Append(" and ");
-            }
+                if (filterParameter.Length > 0)
+                {
+                    filterParameter.Append(" and ");
+                }
 
-            filterParameter.Append($"contains(subject,'{filters.Subject}')");
+                filterParameter.Append($"contains(subject,'{filters.Subject}')");
         }
 
         private void AppendHasAttachmentsFilter(StringBuilder filterParameter, EmailReadFilters filters)

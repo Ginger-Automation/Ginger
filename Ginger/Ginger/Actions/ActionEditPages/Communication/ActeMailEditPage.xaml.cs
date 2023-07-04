@@ -128,7 +128,7 @@ namespace Ginger.Actions.Communication
             xEmailConfigView.xActionTypeSendRadioButton.IsChecked = mAct.eMailActionType == ActeMail.eEmailActionType.SendEmail;
             xEmailConfigView.xActionTypeReadRadioButton.IsChecked = mAct.eMailActionType == ActeMail.eEmailActionType.ReadEmail;
             xEmailConfigView.xEmailReadMethodIMAP.IsSelected = mAct.readMailActionType == ActeMail.ReadEmailActionType.IMAP;
-            xEmailConfigView.xEmailReadMethodMSGraph.IsSelected = mAct.readMailActionType == ActeMail.ReadEmailActionType.MSGraphAPI;
+            xEmailConfigView.xEmailReadMethodMSGraph.IsSelected = mAct.readMailActionType == ActeMail.ReadEmailActionType.MSGraphAPI;            
             xEmailConfigView.xFromVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFrom));
             xEmailConfigView.xFromDisplayNameVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFromDisplayName));
             xEmailConfigView.xToVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Mailto));
@@ -169,9 +169,22 @@ namespace Ginger.Actions.Communication
             xEmailConfigView.xDownloadAttachmentNoRadioButton.IsChecked = !mAct.DownloadAttachments;
             xEmailConfigView.xDownloadAttachmentYesRadioButton.Checked += (_, _) => mAct.DownloadAttachments = true;
             xEmailConfigView.xDownloadAttachmentNoRadioButton.Checked += (_, _) => mAct.DownloadAttachments = false;
+            xEmailConfigView.xReadUnreadRadioButton.Checked += (_, _) => mAct.ReadUnreadMails = true;
+            xEmailConfigView.xReadUnreadRadioButton.Checked += (_, _) => mAct.ReadAllMails = false;
+            xEmailConfigView.xReadAllRadioButton.Checked += (_, _) => mAct.ReadAllMails = true;
+            xEmailConfigView.xReadAllRadioButton.Checked += (_, _) => mAct.ReadUnreadMails = false;
+            xEmailConfigView.xEmailReadLimit.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.ReadCount));
+            xEmailConfigView.xMarkAsReadYes.Checked += (_, _) => mAct.MarkMailsAsRead = true;
+            xEmailConfigView.xMarkAsReadNo.Checked += (_, _) => mAct.MarkMailsAsRead = false;
+
+
             xEmailConfigView.xAttachmentDownloadPathVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.AttachmentDownloadPath));
             BindingHandler.ObjFieldBinding(xEmailConfigView.xFilterReceivedStartDateTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.FilterReceivedStartDate));
             BindingHandler.ObjFieldBinding(xEmailConfigView.xFilterReceivedEndDateTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.FilterReceivedEndDate));
+            //BindingHandler.ObjFieldBinding(xEmailConfigView.xReadUnreadRadioButton,RadioButton.IsCheckedProperty, mAct, nameof(ActeMail.ReadUnreadMails));
+            BindingHandler.ObjFieldBinding(xEmailConfigView.xReadUnreadRadioButton, RadioButton.IsCheckedProperty, mAct, nameof(ActeMail.ReadUnreadMails));
+            BindingHandler.ObjFieldBinding(xEmailConfigView.xReadAllRadioButton, RadioButton.IsCheckedProperty, mAct, nameof(ActeMail.ReadAllMails));
+            BindingHandler.ObjFieldBinding(xEmailConfigView.xEmailReadLimit, TextBox.TextProperty, mAct, nameof(ActeMail.ReadCount));
 
             xEmailConfigView.xAttachmentsGrid.DataSourceList = mAttachments;
 

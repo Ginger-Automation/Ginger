@@ -40,14 +40,15 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
         {
             ImapClient client = new ImapClient();
             try
-            {
+            {               
                 client.Connect(config.IMapHost, Int32.Parse(config.IMapPort), true);
-                client.Authenticate(config.UserEmail, config.UserPassword);
+                client.Authenticate(config.UserEmail, config.UserPassword);                             
+                IList<IMailFolder> folders = client.GetFolders(new FolderNamespace('.', ""));
                 
                 CancellationToken cancellationToken = default(CancellationToken);
 
                 var queryToImap = new SearchQuery();
-
+               
                 if (!string.IsNullOrEmpty(filters.From))
                 {
                     queryToImap = queryToImap.And(SearchQuery.FromContains(filters.From));
@@ -87,15 +88,20 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                     queryToImap = queryToImap.And(SearchQuery.DeliveredBefore(filters.ReceivedEndDate.AddDays(1)));
 
                 }
+                if(filters.ReadUnread.Equals(true))
+                {
+                    queryToImap = queryToImap.And(SearchQuery.NotSeen);
+                }
+
                 IEnumerable<string> expectedContentTypes = null;
                 if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes && (!string.IsNullOrEmpty(filters.AttachmentContentType)))
                 {
-                    expectedContentTypes = filters.AttachmentContentType.Split(";", StringSplitOptions.RemoveEmptyEntries);
+                    expectedContentTypes = filters.AttachmentContentType.Split(";", StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim());
                 }
 
 
                 var inbox = client.Inbox;
-                inbox.Open(FolderAccess.ReadOnly);               
+                inbox.Open(FolderAccess.ReadWrite);   //.ReadOnly            
 
                 var list = new UniqueIdSet(MailKit.Search.SortOrder.Descending);
                 foreach (var uid in inbox.Search(queryToImap, cancellationToken))
@@ -104,20 +110,33 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 }                   
                 // Add a condition to the search query.                        
                 MimeMessage message = null;
+                
+                int   readcount = filters.ReadCount, count = 0;                            
+
                 foreach (var item in list)
                 {
+                    if (count >= readcount)
+                    {
+                        break;
+                    }                  
                     message = inbox.GetMessage(item);
-                   
-                    if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Either || 
+
+                    if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Either ||
                         ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.No) && !message.Attachments.Any()) ||
                         ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes) && DoesSatisfyAttachmentFilter(message, expectedContentTypes)))
                     {
-                        if ((string.IsNullOrEmpty(filters.Body) || message.TextBody.Contains(filters.Body)) && (message.Date >= receivedStartDateTimeToOffset && message.Date <= receivedEndDateTimeToOffset))                            
+                        if ((string.IsNullOrEmpty(filters.Body) || message.TextBody.Contains(filters.Body)) && (message.Date >= receivedStartDateTimeToOffset && message.Date <= receivedEndDateTimeToOffset))
                         {
                             emailProcessor(ConvertMessageToReadEmail(message, expectedContentTypes));
+                            if(filters.MarkRead.Equals(true))
+                                {
+                                   inbox.AddFlags(item, MessageFlags.Seen, true);   
+                                }
+                            count++;
                         }
-                       
+
                     }
+                    
                 }
 
             }
@@ -148,8 +167,6 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 return HasAnyAttachmentWithExpectedContentType(message, expectedContentType);
             }                     
         }
-
-
         private bool HasAnyAttachmentWithExpectedContentType( MimeMessage message,
             IEnumerable<string> expectedContentTypes)
         {
@@ -185,14 +202,28 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
 
             if (message.Attachments != null && message.Attachments.Any())
             {
-                attachments = message.Attachments
-                    .Where(attachment => expectedContentTypes.Contains(attachment.ContentType.MimeType))
-                    .Select(attachment => new ReadEmail.Attachment()
-                    {
-                        Name = ((MimePart)attachment).ContentType.Name,
-                        ContentType = ((MimePart)attachment).ContentType.MimeType,
-                        ContentBytes = ReadFully(((MimePart)attachment).Content)
-                    });
+                if (expectedContentTypes != null)
+                {
+
+                    attachments = message.Attachments
+                       .Where(attachment => expectedContentTypes.Contains(attachment.ContentType.MimeType))
+                       .Select(attachment => new ReadEmail.Attachment()
+                       {
+                           Name = ((MimePart)attachment).ContentType.Name,
+                           ContentType = ((MimePart)attachment).ContentType.MimeType,
+                           ContentBytes = ReadFully(((MimePart)attachment).Content)
+                       });
+                }
+                else
+                {
+                    attachments = message.Attachments
+                        .Select(attachment => new ReadEmail.Attachment()
+                        {
+                            Name = ((MimePart)attachment).ContentType.Name,
+                            ContentType = ((MimePart)attachment).ContentType.MimeType,
+                            ContentBytes = ReadFully(((MimePart)attachment).Content)
+                        });
+                }
             }
 
             return new ReadEmail()
