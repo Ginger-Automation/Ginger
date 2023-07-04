@@ -426,6 +426,10 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
                 xImapHostGrid.Visibility = Visibility.Collapsed;
                 xImapPortGrid.Visibility = Visibility.Collapsed;
                 passwdLabel.Content = "User Password:";
+                if (xFilterFolderSpecificRadioButton.IsChecked == true)
+                {
+                    FolderSpecificGrid.Visibility = Visibility.Visible;
+                }
             }
             else
             {
