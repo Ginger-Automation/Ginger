@@ -762,7 +762,7 @@ namespace GingerCore
                        }
                        catch(Exception ex)
                        { 
-                           Reporter.ToLog(eLogLevel.ERROR, "Error occurred while closing Agent.", ex); 
+                           Reporter.ToLog(eLogLevel.ERROR, "Exception occured while closing the driver", ex); 
                        }
                    });
                 }
@@ -776,7 +776,7 @@ namespace GingerCore
                         }
                         catch(Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Error occurred while closing Driver.", ex);
+                            Reporter.ToLog(eLogLevel.ERROR, "Exception occured while closing the driver", ex);
                         }
                     });
                 }
@@ -792,7 +792,7 @@ namespace GingerCore
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while closing Agent.", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while closing the driver", ex);
             }
             finally
             {
