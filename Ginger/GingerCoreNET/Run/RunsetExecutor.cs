@@ -24,7 +24,7 @@ using Amdocs.Ginger.CoreNET.Run.ExecutionSummary;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
-using Amdocs.Ginger.Repository;
+using AutoMapper;
 using Ginger.Configurations;
 using Ginger.Reports;
 using Ginger.Run.RunSetActions;
@@ -34,6 +34,7 @@ using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -47,7 +48,7 @@ namespace Ginger.Run
 {
     public class RunsetExecutor : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;     
         public void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
@@ -75,6 +76,7 @@ namespace Ginger.Run
         ObservableList<DefectSuggestion> mDefectSuggestionsList = new ObservableList<DefectSuggestion>();
         private List<BusinessFlowRun> AllPreviousBusinessFlowRuns = new List<BusinessFlowRun>();
         RunSetConfig mRunSetConfig = null;
+        internal List<Task> ALMResultsPublishTaskPool;
         public RunSetConfig RunSetConfig
         {
             get
@@ -164,7 +166,7 @@ namespace Ginger.Run
         }
 
         public void InitRunner(GingerRunner runner, GingerExecutionEngine ExecutorEngine)
-        {
+        {          
             //Configure Runner for execution
             runner.Status = eRunStatus.Pending;
             runner.Executor = ExecutorEngine;
@@ -286,8 +288,8 @@ namespace Ginger.Run
             //keep original description values
             VariableBase originalCopy = (VariableBase)originalVar.CreateCopy(false);
 
-            //ovveride original variable configurations with user customizations
-            RepositoryItemBase.ObjectsDeepCopy(customizedVar, originalVar);//need to replace 'ObjectsDeepCopy' with AutoMapper and to map on it which values should be overiden
+            //ovveride original variable configurations with user customizations            
+            CreateMapper<VariableBase>().Map<VariableBase, VariableBase>(customizedVar, originalVar);
             originalVar.DiffrentFromOrigin = customizedVar.DiffrentFromOrigin;
             originalVar.MappedOutputVariable = customizedVar.MappedOutputVariable;
             //Fix for Empty variable are not being saved in Run Configuration (when variable has value in BusinessFlow but is changed to empty in RunSet)
@@ -304,17 +306,31 @@ namespace Ginger.Run
             originalVar.SetAsOutputValue = originalCopy.SetAsOutputValue;
             originalVar.LinkedVariableName = originalCopy.LinkedVariableName;
             originalVar.Publish = originalCopy.Publish;
+        }
 
-            //temp solution for release, find better way, issue is with the RepositoryItemBase.ObjectsDeepCopy which causing duplicated optional values
-            if (originalVar is VariableSelectionList)
+        private IMapper CreateMapper<T>()
+        {
+            var config = new MapperConfiguration(cfg =>
             {
-                for (int indx = 0; indx < ((VariableSelectionList)originalVar).OptionalValuesList.Count; indx++)
+                cfg.CreateMap<List<string>, List<string>>().ConvertUsing(new IgnoringNullValuesTypeConverter<List<string>>());
+                cfg.CreateMap<List<Guid>, List<Guid>>().ConvertUsing(new IgnoringNullValuesTypeConverter<List<Guid>>());                
+                cfg.CreateMap<T, T>()
+               .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            });
+            return config.CreateMapper();
+        }
+
+        public class IgnoringNullValuesTypeConverter<T> : ITypeConverter<T, T> where T : class
+        {
+            public T Convert(T source, T destination, ResolutionContext context)
+            {
+                if (source is IList && ((IList)source).Count == 0)
                 {
-                    if (((VariableSelectionList)originalVar).OptionalValuesList.Where(x => x.Value == ((VariableSelectionList)originalVar).OptionalValuesList[indx].Value).ToList().Count > 1)
-                    {
-                        ((VariableSelectionList)originalVar).OptionalValuesList.RemoveAt(indx);
-                        indx--;
-                    }
+                    return destination;
+                }
+                else
+                {
+                    return source;
                 }
             }
         }
@@ -335,16 +351,18 @@ namespace Ginger.Run
             {
                 if (gr.UseSpecificEnvironment)
                 {
-                    if (gr.ProjEnvironment != null)
+                    if (gr.ProjEnvironment != null && gr.ProjEnvironment.Applications != null)
                     {
                         foreach (EnvApplication ea in gr.ProjEnvironment.Applications)
                         {
-                            foreach (Database db in ea.Dbs)
+                            if (ea.Dbs != null)
                             {
-                                if (db.DatabaseOperations == null)
+                                foreach (Database db in ea.Dbs)
                                 {
-                                    DatabaseOperations databaseOperations = new DatabaseOperations(db);
-                                    db.DatabaseOperations = databaseOperations;
+                                    if (db.DatabaseOperations == null)
+                                    {
+                                        db.DatabaseOperations = new DatabaseOperations(db);
+                                    }
                                 }
                             }
                         }
@@ -471,7 +489,7 @@ namespace Ginger.Run
                     WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
                 }
 
-                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution && Runners.Count > 0)
+                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == eDataPublishingPhase.DuringExecution && Runners.Count > 0)
                 {
                     await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetStart(RunSetConfig);
                 }
@@ -479,7 +497,7 @@ namespace Ginger.Run
                 if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes && Runners.Count > 0)
                 {
                     string[] testsToExclude = ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetStart(RunSetConfig);
-                    if (testsToExclude != null)
+                    if (testsToExclude != null && testsToExclude.Length > 0)
                     {
                         DisableTestsExecution(testsToExclude, RunSetConfig);
                     }
@@ -512,7 +530,6 @@ namespace Ginger.Run
                         {
                             if (doContinueRun == false)
                             {
-                                GR.Executor.RunLevel = eRunLevel.Runset;
                                 GR.Executor.RunRunner();
                             }
                             else
@@ -543,7 +560,6 @@ namespace Ginger.Run
 
                             if (doContinueRun == false)
                             {
-                                GR.Executor.RunLevel = eRunLevel.Runset;
                                 GR.Executor.RunRunner();
                             }
                             else
@@ -556,7 +572,6 @@ namespace Ginger.Run
                                 }
                                 else if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)//continue the runners flow
                                 {
-                                    GR.Executor.RunLevel = eRunLevel.Runset;
                                     GR.Executor.RunRunner();
                                 }
                             }
@@ -606,6 +621,8 @@ namespace Ginger.Run
                     await ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetEnd(RunSetConfig);
                 }
 
+                FinishPublishResultsToAlmTask();
+
                 if (mStopRun == false)
                 {
                     // Process all post execution RunSet Operations
@@ -628,6 +645,24 @@ namespace Ginger.Run
                 mRunSetConfig.IsRunning = false;
             }
         }
+
+        private void FinishPublishResultsToAlmTask()
+        {
+            if (ALMResultsPublishTaskPool != null && ALMResultsPublishTaskPool.Count > 0)
+            {
+                // Wait for all ALM publish tasks to complete
+                Reporter.ToLog(eLogLevel.INFO, "######## Finishing Update Execution Results to ALM...");
+                Task.WaitAll(ALMResultsPublishTaskPool.ToArray());
+                ALMResultsPublishTaskPool.Clear();
+                ALMResultsPublishTaskPool = null;
+                var runsetAction = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.FirstOrDefault(f => f is RunSetActionPublishToQC && f.RunAt.Equals(RunSetActionBase.eRunAt.DuringExecution));
+                if (runsetAction.Status != RunSetActionBase.eRunSetActionStatus.Failed)
+                {
+                    runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Completed;
+                }
+            }
+        }
+
         public void CreateGingerExecutionReportAutomaticly()
         {
             HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
@@ -656,6 +691,7 @@ namespace Ginger.Run
                 runner.Executor.ResetRunnerExecutionDetails();
                 runner.Executor.CloseAgents();
             }
+            ResetRunsetActions();
         }
 
         public void StopRun()
@@ -670,6 +706,15 @@ namespace Ginger.Run
             }
         }
 
+        internal void ResetRunsetActions() 
+        {
+            foreach (RunSetActionBase RSA in RunSetConfig.RunSetActions)
+            {
+                RSA.Errors = "";
+                RSA.Status = RunSetActionBase.eRunSetActionStatus.Pending;
+                RSA.Elapsed = 0;
+            }
+        }
 
         internal void ProcessRunSetActions(List<RunSetActionBase.eRunAt> runAtList)
         {
@@ -752,6 +797,8 @@ namespace Ginger.Run
                             if (RSA is RunSetActions.RunSetActionPublishToQC)
                             {
                                 RSA.PrepareDuringExecAction(Runners);
+                                ALMResultsPublishTaskPool = new List<Task>();
+                                RSA.Errors = "";
                             }
 
                             break;

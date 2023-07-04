@@ -63,7 +63,7 @@ namespace Ginger.UserControlsLib
 
         public bool ValidateKey()
         {
-            if (!string.IsNullOrEmpty(EncryptionKeyPasswordBox.Password) && mSolution.SolutionOperations.ValidateKey(EncryptionKeyPasswordBox.Password))
+            if (!string.IsNullOrEmpty(EncryptionKeyPasswordBox.Password) && mSolution !=null && mSolution.SolutionOperations !=null && mSolution.SolutionOperations.ValidateKey(EncryptionKeyPasswordBox.Password))
             {
                 ValidFlag.Visibility = Visibility.Visible;
                 InvalidFlag.Visibility = Visibility.Collapsed;

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -25,7 +25,6 @@ namespace GingerCore.Environments
 {
     public class EnvApplication : RepositoryItemBase
     {
-
 
         private string mName;
         [IsSerializedForLocalRepository]
@@ -60,7 +59,7 @@ namespace GingerCore.Environments
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<IDatabase> Dbs = new ObservableList<IDatabase>();
+        public ObservableList<IDatabase> Dbs { get; set; } = new ObservableList<IDatabase>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<UnixServer> UnixServers = new ObservableList<UnixServer>();
@@ -90,6 +89,10 @@ namespace GingerCore.Environments
             {
                 this.Name = value;
             }
+        }
+        public override string GetItemType()
+        {
+            return nameof(EnvApplication);
         }
 
         public override eImageType ItemImageType

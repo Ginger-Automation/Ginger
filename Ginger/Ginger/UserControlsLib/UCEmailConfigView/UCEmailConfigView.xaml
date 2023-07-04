@@ -273,7 +273,7 @@
                             <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderSpecificRadioButton" Content="Specific" Style="{StaticResource RadioButtonStyle}"/>
                         </StackPanel>
                     </Grid>
-                    <Grid Margin="{StaticResource RowMargin}">
+                    <Grid Margin="{StaticResource RowMargin}" x:Name="FolderSpecificGrid">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Visibility" Value="Collapsed"/>
@@ -471,6 +471,23 @@
                             <ComboBoxItem x:Name="xEmailReadMethodIMAP" Content="IMAP" Tag="IMAP"  IsSelected="True"/>
                         </ComboBox>
                     </Grid>
+                    <Grid Margin="{StaticResource RowMargin}" x:Name="xImapHostGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="IMAP Host:"/>
+                        <Actions:UCValueExpression x:Name="xImapHost" Grid.Column="1"/>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}" x:Name="xImapPortGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="IMAP Port:"/>
+                        <Actions:UCValueExpression x:Name="xImapPort" Grid.Column="1"/>
+                    </Grid>                    
+                    
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
