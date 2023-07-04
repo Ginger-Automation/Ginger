@@ -25,6 +25,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace GingerCore.GeneralLib
 {
@@ -46,7 +47,7 @@ namespace GingerCore.GeneralLib
             "attachments",
             "hasAttachments"
         };
-        private const int MessageRequestPageSize = 10;
+        private int MessageRequestPageSize = 10;
 
         public async Task ReadEmails(EmailReadFilters filters, EmailReadConfig config, Action<ReadEmail> emailProcessor)
         {
@@ -59,8 +60,8 @@ namespace GingerCore.GeneralLib
             else
             {
                 messageCollections = await GetFoldersMessages(graphServiceClient, filters);
-            }           
-           
+            }
+
             await IterateMessages(messageCollections, filters, graphServiceClient, emailProcessor);
         }
 
@@ -72,45 +73,83 @@ namespace GingerCore.GeneralLib
             if (!string.IsNullOrEmpty(filters.To))
             {
                 expectedRecipients = filters.To.Split(";", StringSplitOptions.RemoveEmptyEntries);
-            }           
-
-            foreach (ICollectionPage<Message> messageCollection in messageCollections)
-            {
-               
-                PageIterator<Message> messageIterator = PageIterator<Message>.CreatePageIterator(
-                    graphServiceClient,
-                    messageCollection,
-                    message =>
-                    {
-                        if (!DoesSatisfyToFilter(message, expectedRecipients))
-                        {
-                            return true;
-                        }
-                        if (!DoesSatisfyAttachmentFilter(graphServiceClient, message, filters).Result)
-                        {
-                            return true;
-                        }
-                        if (!DoesSatisfyBodyFilter(message, filters.Body))
-                        {
-                            return true;
-                        }
-                        count++;
-                        if (count > filters.ReadCount)
-                        {
-                            return false;
-                        }
-                        if (filters.MarkRead)
-                        {
-                            message.IsRead = true;
-                            
-                            //graphServiceClient.UpdateMessage(message, new List<String>() { MessagePropertyName.IsRead }, new UserId("info@independentsoft.onmicrosoft.com"));
-                        }                           
-                        emailProcessor(ConvertMessageToReadEmail(message));                       
-                        return true;
-                    });
-
-                await messageIterator.IterateAsync();
             }
+            try
+            {
+
+                foreach (ICollectionPage<Message> messageCollection in messageCollections)
+                {
+
+                    PageIterator<Message> messageIterator = PageIterator<Message>.CreatePageIterator(
+                        graphServiceClient,
+                        messageCollection,
+                        message =>
+                        {
+                            if (!DoesSatisfyToFilter(message, expectedRecipients))
+                            {
+                                return true;
+                            }
+                            if (!DoesSatisfyAttachmentFilter(graphServiceClient, message, filters).Result)
+                            {
+                                return true;
+                            }
+                            if (!DoesSatisfyBodyFilter(message, filters.Body))
+                            {
+                                return true;
+                            }
+                            count++;
+                            if (count > filters.ReadCount)
+                            {
+                                return false;
+                            }
+                            if (filters.MarkRead)
+                            {
+                                MarkEmailAsRead(graphServiceClient, message);
+                            }
+                            emailProcessor(ConvertMessageToReadEmail(message));
+                            return true;
+                        });
+
+                    await messageIterator.IterateAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error Occured while Making connection.Please check Configuration Details", ex);
+                if (ex.InnerException != null)
+                {
+                    throw ex.InnerException;
+                }
+                throw;
+            }
+
+        }
+
+        private bool MarkEmailAsRead(GraphServiceClient graphServiceClient, Message message)
+        {
+            try
+            {
+                var task = Task.Run(() =>
+                {
+                    try
+                    {
+                        graphServiceClient.Me.Messages[message.Id].
+                    Request().UpdateAsync(new Microsoft.Graph.Message() { IsRead = true });
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to mark mail as Read", ex);
+                    }
+                });
+                task.Wait();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to mark mail as Read", ex);
+            }
+            return false;
         }
 
         private bool DoesSatisfyToFilter(Message message, IEnumerable<string> expectedRecipients)
@@ -273,7 +312,7 @@ namespace GingerCore.GeneralLib
                 }
                 throw;
             }
-            
+
         }
 
         private void ValidateMSGraphConfig(EmailReadConfig config)
@@ -300,9 +339,12 @@ namespace GingerCore.GeneralLib
         {
             (string filterParameter, string orderByParameter) = BuildReadRequestFilterAndOrderParameters(filters);
             string selectParameter = SelectedMessageFields.Aggregate((aggr, value) => $"{aggr},{value}");
+            if (filters.ReadCount < MessageRequestPageSize)
+            {
+                MessageRequestPageSize = filters.ReadCount;
+            }
             try
             {
-              
                 return await graphServiceClient
                 .Me
                 .Messages
@@ -313,8 +355,8 @@ namespace GingerCore.GeneralLib
                 .OrderBy(orderByParameter)
                 .Expand("attachments")
                 .Top(MessageRequestPageSize)
-                .GetAsync();                                
-            }           
+                .GetAsync();
+            }
             catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error Occured while reading emails using Graph API", e);
@@ -334,7 +376,7 @@ namespace GingerCore.GeneralLib
             {
                 foldersMessages.Add(await GetFolderMessages(folderName, graphServiceClient, filters));
             }
-           
+
             return foldersMessages;
         }
 
@@ -346,18 +388,18 @@ namespace GingerCore.GeneralLib
             string folderId = await GetFolderId(graphServiceClient, folderName);
             try
             {
-                    return await graphServiceClient
-                    .Me
-                    .MailFolders[folderId]
-                    .Messages
-                    .Request()
-                    .Header("Prefer", "outlook.body-content-type='text'")
-                    .Select(selectParameter)
-                    .Filter(filterParameter)
-                    .OrderBy(orderByParameter)
-                    .Expand("attachments")
-                    .Top(MessageRequestPageSize)
-                    .GetAsync();
+                return await graphServiceClient
+                .Me
+                .MailFolders[folderId]
+                .Messages
+                .Request()
+                .Header("Prefer", "outlook.body-content-type='text'")
+                .Select(selectParameter)
+                .Filter(filterParameter)
+                .OrderBy(orderByParameter)
+                .Expand("attachments")
+                .Top(MessageRequestPageSize)
+                .GetAsync();
             }
             catch (Exception e)
             {
@@ -378,7 +420,7 @@ namespace GingerCore.GeneralLib
             AppendFromFilter(filterParameter, filters);
             AppendSubjectFilter(filterParameter, filters);
             AppendHasAttachmentsFilter(filterParameter, filters);
-            AppendReadUnreadFilter(filterParameter, filters);            
+            AppendReadUnreadFilter(filterParameter, filters);
             return (filterParameter.ToString(), orderBy);
         }
 
@@ -516,7 +558,7 @@ namespace GingerCore.GeneralLib
         }
         private void AppendReadUnreadFilter(StringBuilder filterParameter, EmailReadFilters filters)
         {
-            
+
             if (filters.ReadUnread.Equals(true))
             {
                 if (filterParameter.Length > 0)
@@ -530,17 +572,17 @@ namespace GingerCore.GeneralLib
 
         private void AppendSubjectFilter(StringBuilder filterParameter, EmailReadFilters filters)
         {
-                if (string.IsNullOrEmpty(filters.Subject))
-                {
-                    return;
-                }
+            if (string.IsNullOrEmpty(filters.Subject))
+            {
+                return;
+            }
 
-                if (filterParameter.Length > 0)
-                {
-                    filterParameter.Append(" and ");
-                }
+            if (filterParameter.Length > 0)
+            {
+                filterParameter.Append(" and ");
+            }
 
-                filterParameter.Append($"contains(subject,'{filters.Subject}')");
+            filterParameter.Append($"contains(subject,'{filters.Subject}')");
         }
 
         private void AppendHasAttachmentsFilter(StringBuilder filterParameter, EmailReadFilters filters)

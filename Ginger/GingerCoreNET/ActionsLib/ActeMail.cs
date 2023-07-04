@@ -398,6 +398,18 @@ namespace GingerCore.Actions.Communication
                 OnPropertyChanged(nameof(MarkMailsAsRead));
             }
         }
+        public bool MarkMailsAsNotRead
+        {
+            get
+            {
+                return bool.Parse(GetOrCreateInputParam(nameof(MarkMailsAsNotRead), false.ToString()).Value);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(MarkMailsAsNotRead), value.ToString());
+                OnPropertyChanged(nameof(MarkMailsAsNotRead));
+            }
+        }
         public string  ReadCount
         {
             get
@@ -803,6 +815,7 @@ namespace GingerCore.Actions.Communication
             string calculatedReceivedStartDate = GetInputParamCalculatedValue(nameof(FilterReceivedStartDate));
             string readUnread = GetInputParamCalculatedValue(nameof(ReadUnreadMails));
             string markAsRead = GetInputParamCalculatedValue(nameof(MarkMailsAsRead));
+            string markAsNotRead = GetInputParamCalculatedValue(nameof(MarkMailsAsNotRead));
             int calculatedReadCount;
             if (!string.IsNullOrEmpty(GetInputParamCalculatedValue(nameof(ReadCount))))
             {
