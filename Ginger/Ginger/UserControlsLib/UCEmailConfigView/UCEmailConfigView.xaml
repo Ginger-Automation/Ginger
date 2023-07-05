@@ -262,52 +262,42 @@
                     <Label Content="Filters"/>
                 </TabItem.Header>
                 <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
-                    <Grid Margin="{StaticResource RowMargin}">
-                        <Grid.Style>
-                            <Style TargetType="Grid">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ElementName=xEmailReadMethodMSGraph, Path=IsSelected}" Value="True">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Grid.Style>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
-                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" x:Name="FolderNameLabel" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Folder:"/>
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" x:Name="FoldersStackPanel">
-                            <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderAllRadioButton" Content="All" Style="{StaticResource RadioButtonStyle}"/>
-                            <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderSpecificRadioButton" Content="Specific" Style="{StaticResource RadioButtonStyle}"/>
-                        </StackPanel>
-                    </Grid>
-                    <Grid Margin="{StaticResource RowMargin}" x:Name="FolderSpecificGrid">
-                        <Grid.Style>
-                            <Style TargetType="Grid">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ElementName=xFilterFolderSpecificRadioButton, Path=IsChecked}" Value="True">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Grid.Style>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
-                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Folder Names:"/>
-                        <Actions:UCValueExpression x:Name="xFilterFolderNameVE" Grid.Column="1" Grid.Row="0" ToolTip="Separate multiple folder names using semi-colon(;)"/>
-                        <Label Grid.Column="1" Grid.Row="1" Style="{StaticResource $LabelStyle}" FontSize="10" Content="To specify multiple folder names separate them using semi-colon(;) (e.g. Inbox;Sent Items;Archives)"/>
-                    </Grid>
-
-
+                    <StackPanel  x:Name="StackPanelOuter" Background="{StaticResource $BackgroundColor_LightGray}">
+                        <Grid Margin="{StaticResource RowMargin}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Folder:"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderAllRadioButton" Content="All" Style="{StaticResource RadioButtonStyle}" />
+                                <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderSpecificRadioButton" Content="Specific" Style="{StaticResource RadioButtonStyle}"/>
+                            </StackPanel>
+                        </Grid>
+                        <Grid Margin="{StaticResource RowMargin}">
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=xFilterFolderSpecificRadioButton, Path=IsChecked}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                                <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Folder Names:"/>
+                            <Actions:UCValueExpression x:Name="xFilterFolderNameVE" Grid.Column="1" Grid.Row="0" ToolTip="Separate multiple folder names using semi-colon(;)"/>
+                            <Label Grid.Column="1" Grid.Row="1" Style="{StaticResource $LabelStyle}" FontSize="10" Content="To specify multiple folder names separate them using semi-colon(;) (e.g. Inbox;Sent Items;Archives)"/>
+                        </Grid>
+                    </StackPanel>
                     <Grid Margin="{StaticResource RowMargin}" x:Name="xUnreadGrid">
 
                         <Grid.ColumnDefinitions>
