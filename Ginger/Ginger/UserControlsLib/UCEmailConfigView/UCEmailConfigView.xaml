@@ -279,7 +279,7 @@
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" x:Name="FolderNameLabel" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Folder:"/>
                         <StackPanel Grid.Column="1" Orientation="Horizontal" x:Name="FoldersStackPanel">
-                            <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderAllRadioButton" Content="All" Style="{StaticResource RadioButtonStyle}"/>
+                            <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderAllRadioButton" Content="All" Style="{StaticResource RadioButtonStyle}" />
                             <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderSpecificRadioButton" Content="Specific" Style="{StaticResource RadioButtonStyle}"/>
                         </StackPanel>
                     </Grid>
@@ -318,8 +318,8 @@
 
                         <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" x:Name="IncludeNameLabel" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Include:"/>
                         <StackPanel Orientation="Horizontal" Grid.Column="1" x:Name="IncludeStackPanel">
-                            <RadioButton GroupName="ReadUnreadRadioButtonGroup" x:Name="xReadAllRadioButton" Content="All" Style="{StaticResource RadioButtonStyle}" />
-                            <RadioButton GroupName="ReadUnreadRadioButtonGroup" x:Name="xReadUnreadRadioButton" Content="Unread" Style="{StaticResource RadioButtonStyle}" />                                                     
+                            <RadioButton  x:Name="xReadAllRadioButton" Content="All" Style="{StaticResource RadioButtonStyle}" />
+                            <RadioButton  x:Name="xReadUnreadRadioButton" Content="Unread" Style="{StaticResource RadioButtonStyle}" />                                                     
                         </StackPanel>
                         
                     </Grid>
@@ -333,8 +333,8 @@
 
                         <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" x:Name="MakeReadLabel" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Mark As Read:"/>
                         <StackPanel Orientation="Horizontal" Grid.Column="1" x:Name="MarkReadStackPanel">
-                            <RadioButton GroupName="MarkReadRadioButtonGroup" x:Name="xMarkAsReadYes" Content="Yes" Style="{StaticResource RadioButtonStyle}" />
-                            <RadioButton GroupName="MarkReadRadioButtonGroup" x:Name="xMarkAsReadNo"  Content="No"  Style="{StaticResource RadioButtonStyle}" />
+                            <RadioButton  x:Name="xMarkAsReadYes" Content="Yes" Style="{StaticResource RadioButtonStyle}" />
+                            <RadioButton  x:Name="xMarkAsReadNo"  Content="No"  Style="{StaticResource RadioButtonStyle}" />
                         </StackPanel>
 
                     </Grid>

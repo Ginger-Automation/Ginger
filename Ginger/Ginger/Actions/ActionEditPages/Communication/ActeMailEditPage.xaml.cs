@@ -152,8 +152,8 @@ namespace Ginger.Actions.Communication
             xEmailConfigView.xImapHost.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.IMapHost));
             xEmailConfigView.xImapPort.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.IMapPort));
 
-            xEmailConfigView.xFilterFolderAllRadioButton.IsChecked = mAct.FilterFolder == EmailReadFilters.eFolderFilter.All;
-            xEmailConfigView.xFilterFolderSpecificRadioButton.IsChecked = mAct.FilterFolder == EmailReadFilters.eFolderFilter.Specific;
+            //xEmailConfigView.xFilterFolderAllRadioButton.IsChecked = mAct.FilterFolder == EmailReadFilters.eFolderFilter.All;
+            //xEmailConfigView.xFilterFolderSpecificRadioButton.IsChecked = mAct.FilterFolder == EmailReadFilters.eFolderFilter.Specific;
             xEmailConfigView.xFilterFolderAllRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
             xEmailConfigView.xFilterFolderSpecificRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
             xEmailConfigView.xFilterFolderNameVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterFolderNames));
@@ -169,22 +169,28 @@ namespace Ginger.Actions.Communication
             xEmailConfigView.xDownloadAttachmentNoRadioButton.IsChecked = !mAct.DownloadAttachments;
             xEmailConfigView.xDownloadAttachmentYesRadioButton.Checked += (_, _) => mAct.DownloadAttachments = true;
             xEmailConfigView.xDownloadAttachmentNoRadioButton.Checked += (_, _) => mAct.DownloadAttachments = false;
-            xEmailConfigView.xReadUnreadRadioButton.Checked += (_, _) => mAct.ReadUnreadMails = true;
-            xEmailConfigView.xReadUnreadRadioButton.Checked += (_, _) => mAct.ReadAllMails = false;
-            xEmailConfigView.xReadAllRadioButton.Checked += (_, _) => mAct.ReadAllMails = true;
-            xEmailConfigView.xReadAllRadioButton.Checked += (_, _) => mAct.ReadUnreadMails = false;
+            xEmailConfigView.xReadUnreadRadioButton.IsChecked = mAct.ReadUnreadMails;
+            xEmailConfigView.xMarkAsReadYes.IsChecked = mAct.MarkMailsAsRead;
+            
+            //xEmailConfigView.xReadAllRadioButton.IsChecked = mAct.ReadAllMails;
+
+            //xEmailConfigView.xReadUnreadRadioButton.Checked += (_, _) => mAct.ReadUnreadMails = true;
+            //xEmailConfigView.xReadUnreadRadioButton.Unchecked += (_, _) => mAct.ReadUnreadMails = false;
+            //xEmailConfigView.xReadUnreadRadioButton.Checked += (_, _) => mAct.ReadAllMails = false;
+            //xEmailConfigView.xReadAllRadioButton.Checked += (_, _) => mAct.ReadAllMails = true;
+            //xEmailConfigView.xReadAllRadioButton.Checked += (_, _) => mAct.ReadUnreadMails = false;
             xEmailConfigView.xEmailReadLimit.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.ReadCount));
-            xEmailConfigView.xMarkAsReadYes.Checked += (_, _) => mAct.MarkMailsAsRead = true;
-            xEmailConfigView.xMarkAsReadYes.Checked += (_, _) => mAct.MarkMailsAsNotRead = false;
-            xEmailConfigView.xMarkAsReadNo.Checked += (_, _) => mAct.MarkMailsAsNotRead = true;
-            xEmailConfigView.xMarkAsReadNo.Checked += (_, _) => mAct.MarkMailsAsRead = false;
+            //xEmailConfigView.xMarkAsReadYes.Checked += (_, _) => mAct.MarkMailsAsRead = true;
+            //xEmailConfigView.xMarkAsReadYes.Checked += (_, _) => mAct.MarkMailsAsNotRead = false;
+            //xEmailConfigView.xMarkAsReadNo.Checked += (_, _) => mAct.MarkMailsAsNotRead = true;
+            //xEmailConfigView.xMarkAsReadNo.Checked += (_, _) => mAct.MarkMailsAsRead = false;
             
 
             xEmailConfigView.xAttachmentDownloadPathVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.AttachmentDownloadPath));
             BindingHandler.ObjFieldBinding(xEmailConfigView.xFilterReceivedStartDateTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.FilterReceivedStartDate));
             BindingHandler.ObjFieldBinding(xEmailConfigView.xFilterReceivedEndDateTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.FilterReceivedEndDate));
-            //BindingHandler.ObjFieldBinding(xEmailConfigView.xReadUnreadRadioButton,RadioButton.IsCheckedProperty, mAct, nameof(ActeMail.ReadUnreadMails));
             BindingHandler.ObjFieldBinding(xEmailConfigView.xReadUnreadRadioButton, RadioButton.IsCheckedProperty, mAct, nameof(ActeMail.ReadUnreadMails));
+            
             BindingHandler.ObjFieldBinding(xEmailConfigView.xReadAllRadioButton, RadioButton.IsCheckedProperty, mAct, nameof(ActeMail.ReadAllMails));
             BindingHandler.ObjFieldBinding(xEmailConfigView.xMarkAsReadYes, RadioButton.IsCheckedProperty, mAct, nameof(ActeMail.MarkMailsAsRead));
             BindingHandler.ObjFieldBinding(xEmailConfigView.xMarkAsReadNo, RadioButton.IsCheckedProperty, mAct, nameof(ActeMail.MarkMailsAsNotRead));

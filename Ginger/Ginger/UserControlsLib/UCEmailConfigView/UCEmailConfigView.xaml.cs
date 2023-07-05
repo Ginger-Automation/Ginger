@@ -407,6 +407,9 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
             RoutedEventHandler? handler = AddHTMLReportAttachment;
             handler?.Invoke(sender, e);
         }
+
+        //AllSpecificChecked
+       
         private void xReadEmailMethod_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ChangeReadEmailFieldVisibility();
@@ -415,7 +418,7 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
 
         private void ChangeReadEmailFieldVisibility()
         {
-            if (!mIsDisplayNameFieldEnabled)
+            if (!readEmailFieldEnabled)
             {
                 return;
             }
