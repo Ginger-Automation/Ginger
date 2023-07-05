@@ -376,7 +376,7 @@ namespace GingerCore.Actions.Communication
         {
             get
             {
-                return bool.Parse(GetOrCreateInputParam(nameof(ReadAllMails), false.ToString()).Value);
+                return bool.Parse(GetOrCreateInputParam(nameof(ReadAllMails), true.ToString()).Value);
             }
             set
             {
@@ -402,7 +402,7 @@ namespace GingerCore.Actions.Communication
         {
             get
             {
-                return bool.Parse(GetOrCreateInputParam(nameof(MarkMailsAsNotRead), false.ToString()).Value);
+                return bool.Parse(GetOrCreateInputParam(nameof(MarkMailsAsNotRead), true.ToString()).Value);
             }
             set
             {
@@ -414,7 +414,7 @@ namespace GingerCore.Actions.Communication
         {
             get
             {
-                return GetOrCreateInputParam(nameof(ReadCount), "").Value;
+                return GetOrCreateInputParam(nameof(ReadCount), "20").Value;
             }
             set
             {
