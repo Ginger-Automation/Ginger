@@ -159,8 +159,10 @@ namespace Ginger.Repository
 
         private async void PublishErrorHandlerButton_Click(object sender, RoutedEventArgs e)
         {
-            await Task.Run(() =>
+            if (mRepoItemUsages.CurrentItem != null)
             {
+                await Task.Run(() =>
+                {
                 StartProcessingIcon();
                 var errorOccured = false;
                 foreach (var repositoryItem in mRepoItemUsages)
@@ -222,6 +224,12 @@ namespace Ginger.Repository
                 }
             }
              );
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.NoPublishRepositoryInfo);
+            }
+
         }
 
         private async Task GetBusinessFlowPublishedInfo()

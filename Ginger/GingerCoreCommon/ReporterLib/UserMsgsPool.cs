@@ -167,7 +167,8 @@ namespace Amdocs.Ginger.Common
         SourceControlBranchNameEmpty, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace,
         DeleteRecoverFolderWarn,
         EnvParamNameExists,
-        EnvParamNameEmpty
+        EnvParamNameEmpty,
+        NoPublishRepositoryInfo
     }
 
     public static class UserMsgsPool
@@ -251,7 +252,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToPublishRepositoryInfo, new UserMsg(eUserMsgType.ERROR, "Failed to publish Repository Item", "Failed to publish in one or more Business flows.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.MissingErrorString, new UserMsg(eUserMsgType.ERROR, "Missing Error String details", "Error String is missing for one or more row." + Environment.NewLine + "Please add error string for missing rows", eUserMsgOption.OK, eUserMsgSelection.None));
-
+            Reporter.UserMsgsPool.Add(eUserMsgKey.NoPublishRepositoryInfo, new UserMsg(eUserMsgType.INFO, "Item Repository Publish Info", "Please Select at least One Business Flow.", eUserMsgOption.OK, eUserMsgSelection.None));
             #endregion Repository
 
             #region Analyzer
