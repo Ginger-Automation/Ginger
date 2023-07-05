@@ -127,8 +127,9 @@ namespace Ginger.Actions.Communication
         {
             xEmailConfigView.xActionTypeSendRadioButton.IsChecked = mAct.eMailActionType == ActeMail.eEmailActionType.SendEmail;
             xEmailConfigView.xActionTypeReadRadioButton.IsChecked = mAct.eMailActionType == ActeMail.eEmailActionType.ReadEmail;
+
             xEmailConfigView.xEmailReadMethodIMAP.IsSelected = mAct.readMailActionType == ActeMail.ReadEmailActionType.IMAP;
-            xEmailConfigView.xEmailReadMethodMSGraph.IsSelected = mAct.readMailActionType == ActeMail.ReadEmailActionType.MSGraphAPI;            
+            xEmailConfigView.xEmailReadMethodMSGraph.IsSelected = mAct.readMailActionType == ActeMail.ReadEmailActionType.MSGraphAPI;
             xEmailConfigView.xFromVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFrom));
             xEmailConfigView.xFromDisplayNameVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFromDisplayName));
             xEmailConfigView.xToVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Mailto));
@@ -137,68 +138,128 @@ namespace Ginger.Actions.Communication
             xEmailConfigView.xBodyFreeTextVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Body));
             xEmailConfigView.xSMTPHostVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Host));
             xEmailConfigView.xSMTPPortVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Port));
-            BindingHandler.ActInputValueBinding(xEmailConfigView.xEnableSSLOrTLS, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.EnableSSL, "true"));
-            BindingHandler.ObjFieldBinding(xEmailConfigView.xAddCustomCertificate, CheckBox.IsCheckedProperty, mAct, nameof(ActeMail.IsValidationRequired));
-            BindingHandler.ObjFieldBinding(xEmailConfigView.xCertificatePathTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.CertificatePath));
-            BindingHandler.ObjFieldBinding(xEmailConfigView.xCertificatePasswordTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.CertificatePasswordUCValueExpression));
-            BindingHandler.ActInputValueBinding(xEmailConfigView.xConfigureCredentials, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.ConfigureCredential, "false"));
             xEmailConfigView.xSMTPUserVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.User));
-            BindingHandler.ObjFieldBinding(xEmailConfigView.xSMTPPasswordTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.Pass));
-
-            xEmailConfigView.xUserEmailVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.ReadUserEmail));
-            BindingHandler.ObjFieldBinding(xEmailConfigView.xUserPasswordTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.ReadUserPassword));
             xEmailConfigView.xClientIdVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MSGraphClientId));
             xEmailConfigView.xTenantIdVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MSGraphTenantId));
             xEmailConfigView.xImapHost.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.IMapHost));
             xEmailConfigView.xImapPort.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.IMapPort));
-
-            xEmailConfigView.xFilterFolderAllRadioButton.IsChecked = mAct.FilterFolder == EmailReadFilters.eFolderFilter.All;
-            xEmailConfigView.xFilterFolderSpecificRadioButton.IsChecked = mAct.FilterFolder == EmailReadFilters.eFolderFilter.Specific;
-            xEmailConfigView.xFilterFolderAllRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
-            xEmailConfigView.xFilterFolderSpecificRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
+            xEmailConfigView.xUserEmailVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.ReadUserEmail));
             xEmailConfigView.xFilterFolderNameVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterFolderNames));
             xEmailConfigView.xFilterFromVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterFrom));
             xEmailConfigView.xFilterToVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterTo));
             xEmailConfigView.xFilterSubjectVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterSubject));
             xEmailConfigView.xFilterBodyVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterBody));
+            xEmailConfigView.xEmailReadLimit.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.ReadCount));
+            xEmailConfigView.xAttachmentDownloadPathVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.AttachmentDownloadPath));
+            xEmailConfigView.xFilterAttachmentContentTypeVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterAttachmentContentType));
+
+            xEmailConfigView.xFilterFolderAllRadioButton.IsChecked = mAct.FilterFolder == EmailReadFilters.eFolderFilter.All;
+            xEmailConfigView.xFilterFolderSpecificRadioButton.IsChecked = mAct.FilterFolder == EmailReadFilters.eFolderFilter.Specific;
+
             xEmailConfigView.xHasAttachmentsComboBox.SelectedItem = FindComboBoxItem(
                 xEmailConfigView.xHasAttachmentsComboBox,
                 item => (EmailReadFilters.eHasAttachmentsFilter)item.Value == mAct.FilterHasAttachments);
-            xEmailConfigView.xFilterAttachmentContentTypeVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.FilterAttachmentContentType));
+
             xEmailConfigView.xDownloadAttachmentYesRadioButton.IsChecked = mAct.DownloadAttachments;
             xEmailConfigView.xDownloadAttachmentNoRadioButton.IsChecked = !mAct.DownloadAttachments;
+
             xEmailConfigView.xDownloadAttachmentYesRadioButton.Checked += (_, _) => mAct.DownloadAttachments = true;
             xEmailConfigView.xDownloadAttachmentNoRadioButton.Checked += (_, _) => mAct.DownloadAttachments = false;
-            xEmailConfigView.xReadUnreadRadioButton.Checked += (_, _) => mAct.ReadUnreadMails = true;
-            xEmailConfigView.xReadUnreadRadioButton.Checked += (_, _) => mAct.ReadAllMails = false;
-            xEmailConfigView.xReadAllRadioButton.Checked += (_, _) => mAct.ReadAllMails = true;
-            xEmailConfigView.xReadAllRadioButton.Checked += (_, _) => mAct.ReadUnreadMails = false;
-            xEmailConfigView.xEmailReadLimit.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.ReadCount));
-            xEmailConfigView.xMarkAsReadYes.Checked += (_, _) => mAct.MarkMailsAsRead = true;
-            xEmailConfigView.xMarkAsReadYes.Checked += (_, _) => mAct.MarkMailsAsNotRead = false;
-            xEmailConfigView.xMarkAsReadNo.Checked += (_, _) => mAct.MarkMailsAsNotRead = true;
-            xEmailConfigView.xMarkAsReadNo.Checked += (_, _) => mAct.MarkMailsAsRead = false;
-            
 
-            xEmailConfigView.xAttachmentDownloadPathVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.AttachmentDownloadPath));
+            xEmailConfigView.xMarkAsReadYes.IsChecked = mAct.MarkMailsAsRead;
+            xEmailConfigView.xMarkAsReadYes.Checked += (_, _) =>
+            {
+                mAct.MarkMailsAsRead = true;
+                mAct.MarkMailsAsNotRead = false;
+            };
+
+            xEmailConfigView.xMarkAsReadNo.IsChecked = mAct.MarkMailsAsNotRead;
+            xEmailConfigView.xMarkAsReadNo.Checked += (_, _) =>
+            {
+                mAct.MarkMailsAsRead = false;
+                mAct.MarkMailsAsNotRead = true;
+            };
+
+            xEmailConfigView.xReadAllRadioButton.IsChecked = mAct.ReadAllMails;
+            xEmailConfigView.xReadAllRadioButton.Checked += (_, _) =>
+            {
+                mAct.ReadAllMails = true;
+                mAct.ReadUnreadMails = false;
+            };
+
+            xEmailConfigView.xReadUnreadRadioButton.IsChecked = mAct.ReadUnreadMails;
+            xEmailConfigView.xReadUnreadRadioButton.Checked += (_, _) =>
+            {
+                mAct.ReadAllMails = false;
+                mAct.ReadUnreadMails = true;
+            };
+
+            BindingHandler.ActInputValueBinding(xEmailConfigView.xEnableSSLOrTLS, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.EnableSSL, "true"));
+
+            BindingHandler.ObjFieldBinding(xEmailConfigView.xAddCustomCertificate, CheckBox.IsCheckedProperty, mAct, nameof(ActeMail.IsValidationRequired));
+            BindingHandler.ObjFieldBinding(xEmailConfigView.xCertificatePathTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.CertificatePath));
+            BindingHandler.ObjFieldBinding(xEmailConfigView.xCertificatePasswordTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.CertificatePasswordUCValueExpression));
+
+            BindingHandler.ActInputValueBinding(xEmailConfigView.xConfigureCredentials, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.ConfigureCredential, "false"));
+            BindingHandler.ObjFieldBinding(xEmailConfigView.xSMTPPasswordTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.Pass));
+            BindingHandler.ObjFieldBinding(xEmailConfigView.xUserPasswordTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.ReadUserPassword));
+
             BindingHandler.ObjFieldBinding(xEmailConfigView.xFilterReceivedStartDateTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.FilterReceivedStartDate));
             BindingHandler.ObjFieldBinding(xEmailConfigView.xFilterReceivedEndDateTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.FilterReceivedEndDate));
-            //BindingHandler.ObjFieldBinding(xEmailConfigView.xReadUnreadRadioButton,RadioButton.IsCheckedProperty, mAct, nameof(ActeMail.ReadUnreadMails));
+
             BindingHandler.ObjFieldBinding(xEmailConfigView.xReadUnreadRadioButton, RadioButton.IsCheckedProperty, mAct, nameof(ActeMail.ReadUnreadMails));
             BindingHandler.ObjFieldBinding(xEmailConfigView.xReadAllRadioButton, RadioButton.IsCheckedProperty, mAct, nameof(ActeMail.ReadAllMails));
+
             BindingHandler.ObjFieldBinding(xEmailConfigView.xMarkAsReadYes, RadioButton.IsCheckedProperty, mAct, nameof(ActeMail.MarkMailsAsRead));
             BindingHandler.ObjFieldBinding(xEmailConfigView.xMarkAsReadNo, RadioButton.IsCheckedProperty, mAct, nameof(ActeMail.MarkMailsAsNotRead));
+
             BindingHandler.ObjFieldBinding(xEmailConfigView.xEmailReadLimit, TextBox.TextProperty, mAct, nameof(ActeMail.ReadCount));
 
             xEmailConfigView.xAttachmentsGrid.DataSourceList = mAttachments;
 
+            xEmailConfigView.xEmailReadMethod.SelectionChanged += xReadEmailMethod_SelectionChanged;
+            xEmailConfigView.xFilterFolderAllRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
+            xEmailConfigView.xFilterFolderSpecificRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
             xEmailConfigView.AddFileAttachment += xSendEMailConfigView_FileAdded;
             xEmailConfigView.EmailMethodChanged += xSendEMailConfigView_EmailMethodChanged;
             xEmailConfigView.AttachmentNameVEButtonClick += xSendEMailConfigView_NameValueExpressionButtonClick;
             xEmailConfigView.ActionTypeChanged += xSendEMailConfigView_ActionTypeChanged;
             xEmailConfigView.HasAttachmentsSelectionChanged += xSendEMailConfigView_HasAttachmentsSelectionChanged;
             xEmailConfigView.ReadmailMethodChanged += xReadEmailConfigView_ReadMethodChanged;
+            ChangeReadEmailFieldVisibility();
         }
+
+        private void xReadEmailMethod_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ChangeReadEmailFieldVisibility();
+            //TriggerReadEmailMethodChangedEvent();
+        }
+
+        private void ChangeReadEmailFieldVisibility()
+        {
+            if (xEmailConfigView.xEmailReadMethodMSGraph.IsSelected)
+            {
+                xEmailConfigView.xClientIdGrid.Visibility = Visibility.Visible;
+                xEmailConfigView.xTenantIdGrid.Visibility = Visibility.Visible;
+                xEmailConfigView.xImapHostGrid.Visibility = Visibility.Collapsed;
+                xEmailConfigView.xImapPortGrid.Visibility = Visibility.Collapsed;
+                xEmailConfigView.passwdLabel.Content = "User Password:";
+            }
+            else
+            {
+                xEmailConfigView.xClientIdGrid.Visibility = Visibility.Collapsed;
+                xEmailConfigView.xTenantIdGrid.Visibility = Visibility.Collapsed;
+                xEmailConfigView.xImapHostGrid.Visibility = Visibility.Visible;
+                xEmailConfigView.xImapPortGrid.Visibility = Visibility.Visible;
+                xEmailConfigView.passwdLabel.Content = "User App Password:";
+            }
+        }
+        //private void TriggerReadEmailMethodChangedEvent()
+        //{
+        //    ComboBoxItem selectedReadmailMethodComboBoxItem = (ComboBoxItem)xEmailConfigView.xEmailReadMethod.SelectedItem;
+        //    ActeMail.ReadEmailActionType selectedReadmailMethod = Enum.Parse<ActeMail.ReadEmailActionType>((string)selectedReadmailMethodComboBoxItem.Tag);
+        //    xEmailConfigView.ReadmailMethodChanged?.Invoke(selectedReadmailMethod);
+        //}
 
         private static ComboEnumItem FindComboBoxItem(ComboBox comboBox, Predicate<ComboEnumItem> predicate)
         {
@@ -268,7 +329,7 @@ namespace Ginger.Actions.Communication
         }
         private void xReadEmailConfigView_ReadMethodChanged(ActeMail.ReadEmailActionType selectedReadMethod)
         {
-            mAct.readMailActionType = selectedReadMethod ;
+            mAct.readMailActionType = selectedReadMethod;
         }
         public sealed class Attachment : INotifyPropertyChanged
         {

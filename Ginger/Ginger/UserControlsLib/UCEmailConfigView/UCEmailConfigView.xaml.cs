@@ -407,48 +407,8 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
             RoutedEventHandler? handler = AddHTMLReportAttachment;
             handler?.Invoke(sender, e);
         }
-        private void xReadEmailMethod_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ChangeReadEmailFieldVisibility();
-            TriggerReadEmailMethodChangedEvent();
-        }
 
-        private void ChangeReadEmailFieldVisibility()
-        {
-            if (!mIsDisplayNameFieldEnabled)
-            {
-                return;
-            }
-            if (xEmailReadMethodMSGraph.IsSelected)
-            {
-                xClientIdGrid.Visibility = Visibility.Visible;
-                xTenantIdGrid.Visibility = Visibility.Visible;
-                xImapHostGrid.Visibility = Visibility.Collapsed;
-                xImapPortGrid.Visibility = Visibility.Collapsed;
-                passwdLabel.Content = "User Password:";
-                if (xFilterFolderSpecificRadioButton.IsChecked == true)
-                {
-                    FolderSpecificGrid.Visibility = Visibility.Visible;
-                }
-            }
-            else
-            {
-
-                xClientIdGrid.Visibility = Visibility.Collapsed;
-                xTenantIdGrid.Visibility = Visibility.Collapsed;
-                xImapHostGrid.Visibility = Visibility.Visible;
-                xImapPortGrid.Visibility = Visibility.Visible;
-                passwdLabel.Content = "User App Password:";
-                xFilterFolderSpecificRadioButton.IsChecked = false;
-
-            }           
-        }
-        private void TriggerReadEmailMethodChangedEvent()
-        {
-            ComboBoxItem selectedReadmailMethodComboBoxItem = (ComboBoxItem)xEmailReadMethod.SelectedItem;
-            ActeMail.ReadEmailActionType selectedReadmailMethod = Enum.Parse<ActeMail.ReadEmailActionType>((string)selectedReadmailMethodComboBoxItem.Tag);
-            ReadmailMethodChanged?.Invoke(selectedReadmailMethod);
-        }
+        //AllSpecificChecked          
 
         private void xEmailMethod_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

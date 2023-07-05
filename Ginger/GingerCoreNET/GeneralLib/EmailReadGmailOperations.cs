@@ -72,7 +72,7 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 }
                 if (!string.IsNullOrEmpty(filters.Body))
                 {
-                    queryToImap = queryToImap.And(SearchQuery.BodyContains(filters.Body));
+                    queryToImap = queryToImap.And(new TextSearchQuery(SearchTerm.BodyContains,filters.Body));
                 }              
 
                 DateTimeOffset receivedStartDateTimeToOffset = (DateTimeOffset)filters.ReceivedStartDate.ToUniversalTime();

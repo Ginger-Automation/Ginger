@@ -280,7 +280,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private bool IsUFTCapabilityExist()
         {
-            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.FirstOrDefault(x => x.Parameter == "uftm:oauthClientSecret");
+            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues?.FirstOrDefault(x => x.Parameter == "uftm:oauthClientSecret");
             if (existingCap != null)
             {
                 return true;
