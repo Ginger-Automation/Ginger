@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -43,7 +43,8 @@ namespace GingerCore
         Default,
         Testing,
         Gherkin,
-        TDM
+        TDM,
+        MBT
     }
 
     public enum eUserType
