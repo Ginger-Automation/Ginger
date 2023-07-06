@@ -414,7 +414,7 @@ namespace GingerCore.Actions.Communication
         {
             get
             {
-                return GetOrCreateInputParam(nameof(ReadCount), "20").Value;
+                return GetOrCreateInputParam(nameof(ReadCount), "50").Value;
             }
             set
             {
@@ -741,8 +741,7 @@ namespace GingerCore.Actions.Communication
         }
         private void ReadEmails()
         {
-            
-
+            // if (string.IsNullOrEmpty(GetInputParamCalculatedValue(nameof(ReadCount))) || int.TryParse(GetInputParamCalculatedValue(nameof(ReadCount)), out int cnt) == false)
             if (GetInputParamCalculatedValue(nameof(ReadCount)) != "" && int.TryParse(GetInputParamCalculatedValue(nameof(ReadCount)), out int cnt) == false)
             {
                 Error = "Error: Inavlid Input for Limit of Emails. Please provide a Numeric Value";
@@ -757,7 +756,7 @@ namespace GingerCore.Actions.Communication
                 Error = "Error: Inavlid username/password provided. Please provide valid username/password.";
                 return;
             }            
-            if (readMailActionType == ReadEmailActionType.MSGraphAPI)
+            if ( readMailActionType == ReadEmailActionType.MSGraphAPI)
             {
                 if (string.IsNullOrEmpty(config.ClientId) || string.IsNullOrEmpty(config.TenantId))
                 {
@@ -780,19 +779,22 @@ namespace GingerCore.Actions.Communication
             int index = 0;
             emailReadOperations.ReadEmails(filters, config, email =>
             {
-                index++;                           
-                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.From), email.From, index.ToString());
-                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Subject), email.Subject, index.ToString());
-                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Body), email.Body, index.ToString());
-                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.HasAttachments), email.HasAttachments.ToString(), index.ToString());
-                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.ReceivedDateTime), email.ReceivedDateTime.ToString(), index.ToString());
-                if (DownloadAttachments && FilterHasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes)
+                if (email!=null)
                 {
-                    IEnumerable<(string filename, string filepath)> fileNamesAndPaths = DownloadAttachmentFiles(email);
-                    foreach ((string filename, string filepath) in fileNamesAndPaths)
+                    index++;
+                    AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.From), email.From, index.ToString());
+                    AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Subject), email.Subject, index.ToString());
+                    AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Body), email.Body, index.ToString());
+                    AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.HasAttachments), email.HasAttachments.ToString(), index.ToString());
+                    AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.ReceivedDateTime), email.ReceivedDateTime.ToString(), index.ToString());
+                    if (DownloadAttachments && FilterHasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes)
                     {
-                        AddOrUpdateReturnParamActualWithPath(filename, filepath, index.ToString());
-                    }
+                        IEnumerable<(string filename, string filepath)> fileNamesAndPaths = DownloadAttachmentFiles(email);
+                        foreach ((string filename, string filepath) in fileNamesAndPaths)
+                        {
+                            AddOrUpdateReturnParamActualWithPath(filename, filepath, index.ToString());
+                        }
+                    } 
                 }
             }).Wait();
 

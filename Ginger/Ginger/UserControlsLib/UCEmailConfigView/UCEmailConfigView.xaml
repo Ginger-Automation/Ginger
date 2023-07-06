@@ -508,7 +508,7 @@
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Limit Emails To:"/>
-                        <Actions:UCValueExpression x:Name="xEmailReadLimit" Grid.Column="1"/>                        
+                        <Actions:UCValueExpression x:Name="xEmailReadLimit" Grid.Column="1" ToolTip="Limit will be 50 if left blank."/>                        
                     </Grid>
 
                 </StackPanel>

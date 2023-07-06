@@ -198,43 +198,51 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             IEnumerable<string> expectedContentTypes)
         {
             IEnumerable<ReadEmail.Attachment> attachments = null ;
-
-            if (message.Attachments != null && message.Attachments.Any())
+            try
             {
-                if (expectedContentTypes != null)
-                {
 
-                    attachments = message.Attachments
-                       .Where(attachment => expectedContentTypes.Contains(attachment.ContentType.MimeType))
-                       .Select(attachment => new ReadEmail.Attachment()
-                       {
-                           Name = ((MimePart)attachment).ContentType.Name,
-                           ContentType = ((MimePart)attachment).ContentType.MimeType,
-                           ContentBytes = ReadFully(((MimePart)attachment).Content)
-                       });
-                }
-                else
+                if (message.Attachments != null && message.Attachments.Any())
                 {
-                    attachments = message.Attachments
-                        .Select(attachment => new ReadEmail.Attachment()
-                        {
-                            Name = ((MimePart)attachment).ContentType.Name,
-                            ContentType = ((MimePart)attachment).ContentType.MimeType,
-                            ContentBytes = ReadFully(((MimePart)attachment).Content)
-                        });
+                    if (expectedContentTypes != null)
+                    {
+
+                        attachments = message.Attachments
+                           .Where(attachment => expectedContentTypes.Contains(attachment.ContentType.MimeType))
+                           .Select(attachment => new ReadEmail.Attachment()
+                           {
+                               Name = ((MimePart)attachment).ContentType.Name,
+                               ContentType = ((MimePart)attachment).ContentType.MimeType,
+                               ContentBytes = ReadFully(((MimePart)attachment).Content)
+                           });
+                    }
+                    else
+                    {
+                        attachments = message.Attachments
+                            .Select(attachment => new ReadEmail.Attachment()
+                            {
+                                Name = ((MimePart)attachment).ContentType.Name,
+                                ContentType = ((MimePart)attachment).ContentType.MimeType,
+                                ContentBytes = ReadFully(((MimePart)attachment).Content)
+                            });
+                    }
                 }
+
+                return new ReadEmail()
+                {
+                    From = message.From?.ToString(),
+                    Subject = message.Subject?.ToString(),
+                    Body = message.Body?.ToString(),
+                    ReceivedDateTime = message.Date == null ? DateTime.MinValue : message.Date.LocalDateTime,
+                    HasAttachments = message.Attachments == null ? false : message.Attachments.Any(),
+                    Attachments = attachments
+                };
+
             }
-
-            return new ReadEmail()
+            catch (Exception ex)
             {
-                From = message.From.ToString(),
-                Subject = message.Subject.ToString(),
-                Body = message.Body.ToString(),
-                ReceivedDateTime = message.Date.LocalDateTime,
-                HasAttachments = message.Attachments.Any(),
-                Attachments = attachments
-            };
-
+                Reporter.ToLog(eLogLevel.ERROR, "Error in ConvertMessageToReadEmail, fail to convert the message.", ex);
+                return null;
+            }
         }
         public void Dispose()
         {
