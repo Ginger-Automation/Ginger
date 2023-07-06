@@ -131,6 +131,8 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
                 InitializeAttachmentsGrid(options);
             }
             SetDefaultEmailMethod(options.DefaultEmailMethod);
+
+            xEmailReadMethod.SelectionChanged += xReadEmailMethod_SelectionChanged;
             SetDefaultReadmailMethod(options.DefaultReadEmailMethod);
             InitializeHasAttachmentsComboBoxItems();
         }
@@ -343,6 +345,40 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
                     throw new NotImplementedException($"logic for setting {defaultBodyContentType} as default body content type is not implemented");
             }
         }
+
+
+        private void xReadEmailMethod_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ChangeReadEmailFieldVisibility();
+            TriggerReadEmailMethodChangedEvent();
+        }
+
+        private void ChangeReadEmailFieldVisibility()
+        {
+            if (xEmailReadMethodMSGraph.IsSelected)
+            {
+                xClientIdGrid.Visibility = Visibility.Visible;
+                xTenantIdGrid.Visibility = Visibility.Visible;
+                xImapHostGrid.Visibility = Visibility.Collapsed;
+                xImapPortGrid.Visibility = Visibility.Collapsed;
+                passwdLabel.Content = "User Password:";
+            }
+            else
+            {
+                xClientIdGrid.Visibility = Visibility.Collapsed;
+                xTenantIdGrid.Visibility = Visibility.Collapsed;
+                xImapHostGrid.Visibility = Visibility.Visible;
+                xImapPortGrid.Visibility = Visibility.Visible;
+                passwdLabel.Content = "User App Password:";
+            }
+        }
+        private void TriggerReadEmailMethodChangedEvent()
+        {
+            ComboBoxItem selectedReadmailMethodComboBoxItem = (ComboBoxItem)xEmailReadMethod.SelectedItem;
+            ActeMail.ReadEmailActionType selectedReadmailMethod = Enum.Parse<ActeMail.ReadEmailActionType>((string)selectedReadmailMethodComboBoxItem.Tag);
+            ReadmailMethodChanged?.Invoke(selectedReadmailMethod);
+        }
+
 
         private void xActionType_Changed(object sender, RoutedEventArgs e)
         {

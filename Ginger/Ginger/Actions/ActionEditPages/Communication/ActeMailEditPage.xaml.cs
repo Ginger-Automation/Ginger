@@ -130,6 +130,8 @@ namespace Ginger.Actions.Communication
 
             xEmailConfigView.xEmailReadMethodIMAP.IsSelected = mAct.readMailActionType == ActeMail.ReadEmailActionType.IMAP;
             xEmailConfigView.xEmailReadMethodMSGraph.IsSelected = mAct.readMailActionType == ActeMail.ReadEmailActionType.MSGraphAPI;
+
+
             xEmailConfigView.xFromVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFrom));
             xEmailConfigView.xFromDisplayNameVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFromDisplayName));
             xEmailConfigView.xToVE.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Mailto));
@@ -215,9 +217,10 @@ namespace Ginger.Actions.Communication
 
             BindingHandler.ObjFieldBinding(xEmailConfigView.xEmailReadLimit, TextBox.TextProperty, mAct, nameof(ActeMail.ReadCount));
 
-            xEmailConfigView.xAttachmentsGrid.DataSourceList = mAttachments;
 
-            xEmailConfigView.xEmailReadMethod.SelectionChanged += xReadEmailMethod_SelectionChanged;
+
+            xEmailConfigView.xAttachmentsGrid.DataSourceList = mAttachments;
+            
             xEmailConfigView.xFilterFolderAllRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
             xEmailConfigView.xFilterFolderSpecificRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
             xEmailConfigView.AddFileAttachment += xSendEMailConfigView_FileAdded;
@@ -225,41 +228,8 @@ namespace Ginger.Actions.Communication
             xEmailConfigView.AttachmentNameVEButtonClick += xSendEMailConfigView_NameValueExpressionButtonClick;
             xEmailConfigView.ActionTypeChanged += xSendEMailConfigView_ActionTypeChanged;
             xEmailConfigView.HasAttachmentsSelectionChanged += xSendEMailConfigView_HasAttachmentsSelectionChanged;
-            xEmailConfigView.ReadmailMethodChanged += xReadEmailConfigView_ReadMethodChanged;
-            ChangeReadEmailFieldVisibility();
+            xEmailConfigView.ReadmailMethodChanged += xReadEmailConfigView_ReadMethodChanged;            ;
         }
-
-        private void xReadEmailMethod_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ChangeReadEmailFieldVisibility();
-            //TriggerReadEmailMethodChangedEvent();
-        }
-
-        private void ChangeReadEmailFieldVisibility()
-        {
-            if (xEmailConfigView.xEmailReadMethodMSGraph.IsSelected)
-            {
-                xEmailConfigView.xClientIdGrid.Visibility = Visibility.Visible;
-                xEmailConfigView.xTenantIdGrid.Visibility = Visibility.Visible;
-                xEmailConfigView.xImapHostGrid.Visibility = Visibility.Collapsed;
-                xEmailConfigView.xImapPortGrid.Visibility = Visibility.Collapsed;
-                xEmailConfigView.passwdLabel.Content = "User Password:";
-            }
-            else
-            {
-                xEmailConfigView.xClientIdGrid.Visibility = Visibility.Collapsed;
-                xEmailConfigView.xTenantIdGrid.Visibility = Visibility.Collapsed;
-                xEmailConfigView.xImapHostGrid.Visibility = Visibility.Visible;
-                xEmailConfigView.xImapPortGrid.Visibility = Visibility.Visible;
-                xEmailConfigView.passwdLabel.Content = "User App Password:";
-            }
-        }
-        //private void TriggerReadEmailMethodChangedEvent()
-        //{
-        //    ComboBoxItem selectedReadmailMethodComboBoxItem = (ComboBoxItem)xEmailConfigView.xEmailReadMethod.SelectedItem;
-        //    ActeMail.ReadEmailActionType selectedReadmailMethod = Enum.Parse<ActeMail.ReadEmailActionType>((string)selectedReadmailMethodComboBoxItem.Tag);
-        //    xEmailConfigView.ReadmailMethodChanged?.Invoke(selectedReadmailMethod);
-        //}
 
         private static ComboEnumItem FindComboBoxItem(ComboBox comboBox, Predicate<ComboEnumItem> predicate)
         {

@@ -25,6 +25,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
+using GingerCore.Actions.Communication;
 
 
 namespace GingerCore.GeneralLib
@@ -600,27 +601,36 @@ namespace GingerCore.GeneralLib
 
         private ReadEmail ConvertMessageToReadEmail(Message message)
         {
-            IEnumerable<ReadEmail.Attachment> attachments = null;
-            if (message.HasAttachments ?? false)
+            try
             {
-                attachments = message.Attachments
-                    .Where(attachment => attachment.GetType().Equals(typeof(FileAttachment)))
-                    .Select(attachment => new ReadEmail.Attachment()
-                    {
-                        Name = attachment.Name,
-                        ContentType = attachment.ContentType,
-                        ContentBytes = ((FileAttachment)attachment).ContentBytes
-                    });
+                IEnumerable<ReadEmail.Attachment> attachments = null;
+                if (message.HasAttachments ?? false)
+                {
+                    attachments = message.Attachments
+                        .Where(attachment => attachment.GetType().Equals(typeof(FileAttachment)))
+                        .Select(attachment => new ReadEmail.Attachment()
+                        {
+                            Name = attachment.Name,
+                            ContentType = attachment.ContentType,
+                            ContentBytes = ((FileAttachment)attachment).ContentBytes
+                        });
+                }
+                return new ReadEmail()
+                {
+                    From = message.From?.EmailAddress?.Address,
+                    Subject = message.Subject,
+                    Body = message.Body?.Content,
+                    ReceivedDateTime = message.ReceivedDateTime?.DateTime.ToLocalTime() ?? DateTime.MinValue,
+                    HasAttachments = (message.HasAttachments ?? false) && attachments != null && attachments.Any(),
+                    Attachments = attachments
+                };
             }
-            return new ReadEmail()
+            catch(Exception ex)
             {
-                From = message.From.EmailAddress.Address,
-                Subject = message.Subject,
-                Body = message.Body.Content,
-                ReceivedDateTime = message.ReceivedDateTime?.DateTime.ToLocalTime() ?? DateTime.MinValue,
-                HasAttachments = (message.HasAttachments ?? false) && attachments != null && attachments.Any(),
-                Attachments = attachments
-            };
+                Reporter.ToLog(eLogLevel.ERROR, "Error in ConvertMessageToReadEmail, fail to convert the message.", ex);
+                return null;
+            }
+           
         }
     }
 }
