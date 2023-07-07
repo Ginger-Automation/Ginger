@@ -762,7 +762,7 @@ namespace Ginger.Actions
                     dataTypeProperty: ActReturnValue.Fields.StoreTo,
                     dataValueProperty: ActReturnValue.Fields.StoreToValue)
                     {
-                        VariabelsSourceList = mStoreToVarsList
+                        _VariabelsSourceList = mStoreToVarsList
                     })
             });
 

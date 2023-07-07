@@ -133,10 +133,10 @@ namespace Ginger.Run
                         dataTypeProperty: nameof(VariableBase.MappedOutputType),
                         dataValueProperty: nameof(VariableBase.MappedOutputValue))
                         {
-                            EnableDataMappingProperty = nameof(VariableBase.SupportSetValue),
-                            VariabelsSourceProperty = nameof(VariableBase.PossibleVariables),
-                            OutputVariabelsSourceProperty = nameof(VariableBase.PossibleOutputVariables),
-                            RestrictedMappingTypes = new UCDataMapping.RestrictedMappingType[]
+                            _EnableDataMappingProperty = nameof(VariableBase.SupportSetValue),
+                            _VariabelsSourceProperty = nameof(VariableBase.PossibleVariables),
+                            _OutputVariabelsSourceProperty = nameof(VariableBase.PossibleOutputVariables),
+                            _RestrictedMappingTypes = new UCDataMapping.RestrictedMappingType[]
                                 {
                                     new(name: nameof(UCDataMapping.eDataType.Variable), reason: "Variables are deprected for Mapped Runtime Value.")
                                 }
