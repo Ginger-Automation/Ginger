@@ -635,7 +635,7 @@ namespace amdocs.ginger.GingerCoreNET
                         agent.AgentOperations = new AgentOperations(agent);
                     }
                 }
-                List<Agent> runningAgents = Agents.Where(x => ((AgentOperations)x.AgentOperations).Status == Agent.eStatus.Running).ToList();
+                List<Agent> runningAgents = Agents.Where(x => ((AgentOperations)x.AgentOperations).Status != Agent.eStatus.NotStarted).ToList();
                 if (runningAgents != null && runningAgents.Count > 0)
                 {
                     foreach (Agent agent in runningAgents)

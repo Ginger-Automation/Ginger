@@ -114,17 +114,17 @@ namespace Ginger.Run.RunSetActions
                 {
                     bfs.Add((BusinessFlow)BFR.GetBusinessFlow());
                 }
-                if (!TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig))
-                {
-                    RunSetActionPublishToQC.Errors = result;
-                    RunSetActionPublishToQC.Status = eRunSetActionStatus.Failed;
-                }
-                else
-                {
-                    RunSetActionPublishToQC.Status = eRunSetActionStatus.Completed;
-                }
             }
-           
+            if (!TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig))
+            {
+                RunSetActionPublishToQC.Errors = result;
+                RunSetActionPublishToQC.Status = eRunSetActionStatus.Failed;
+            }
+            else
+            {
+                RunSetActionPublishToQC.Status = eRunSetActionStatus.Completed;
+            }
+
         }
 
         private BusinessFlow ConvertRunSetToBF(IReportInfo reportInfo)
