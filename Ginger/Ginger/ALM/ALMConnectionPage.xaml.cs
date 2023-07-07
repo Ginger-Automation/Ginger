@@ -65,30 +65,33 @@ namespace Ginger.ALM
         public ALMConnectionPage(eALMConnectType almConnectStyle, bool isConnWin = false)
         {
             CurrentAlmConfigurations = ALMIntegration.Instance.GetDefaultAlmConfig();
-            CurrentAlmConfigurations.PropertyChanged += CurrentAlmConfigurations_PropertyChanged;
-            CurrentAlmUserConfigurations = ALMIntegration.Instance.GetCurrentAlmUserConfig(CurrentAlmConfigurations.AlmType);
-            ALMIntegration.Instance.UpdateALMType(CurrentAlmConfigurations.AlmType);
-
-            InitializeComponent();
-            this.isConnWin = isConnWin;
-            this.almConectStyle = almConnectStyle;
-
-            Bind();
-
-            if (!WorkSpace.Instance.BetaFeatures.Rally)
+            if (CurrentAlmConfigurations != null)
             {
-                RallyRadioButton.Visibility = Visibility.Hidden;
-                if (CurrentAlmConfigurations.AlmType == eALMType.RALLY)
+                CurrentAlmConfigurations.PropertyChanged += CurrentAlmConfigurations_PropertyChanged;
+                CurrentAlmUserConfigurations = ALMIntegration.Instance.GetCurrentAlmUserConfig(CurrentAlmConfigurations.AlmType);
+                ALMIntegration.Instance.UpdateALMType(CurrentAlmConfigurations.AlmType);
+
+                InitializeComponent();
+                this.isConnWin = isConnWin;
+                this.almConectStyle = almConnectStyle;
+
+                Bind();
+
+                if (!WorkSpace.Instance.BetaFeatures.Rally)
                 {
-                    CurrentAlmConfigurations.AlmType = eALMType.QC;
+                    RallyRadioButton.Visibility = Visibility.Hidden;
+                    if (CurrentAlmConfigurations.AlmType == eALMType.RALLY)
+                    {
+                        CurrentAlmConfigurations.AlmType = eALMType.QC;
+                    }
                 }
-            }
-            if (almConnectStyle != eALMConnectType.Silence)
-            {
-                if (GetProjectsDetails())
+                if (almConnectStyle != eALMConnectType.Silence)
                 {
-                    ConnectProjectButton.Content = "Save Project Mapping";
-                    ConnectProject();
+                    if (GetProjectsDetails())
+                    {
+                        ConnectProjectButton.Content = "Save Project Mapping";
+                        ConnectProject();
+                    }
                 }
             }
             StyleRadioButtons();

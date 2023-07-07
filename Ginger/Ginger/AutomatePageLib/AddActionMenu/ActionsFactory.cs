@@ -56,17 +56,21 @@ namespace Ginger.BusinessFlowPages
         public static int AddActionsHandler(object mItem, Context mContext, int targetIndex = -1)
         {
             Act instance = null;
-            ePlatformType currentActivityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
 
             if (mContext.Activity != null)
             {
                 mContext.BusinessFlow.CurrentActivity = mContext.Activity;//so new Actions will be added to correct Activity
+            }
+            else { 
+                return -1;
             }
             if (!mContext.Activity.EnableEdit && mContext.Activity.IsLinkedItem)
             {
                 Reporter.ToUser(eUserMsgKey.EditLinkSharedActivities);
                 return -1;
             }
+
+            ePlatformType currentActivityPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x=> x.AppName == mContext.Activity.TargetApplication).Platform;
             if (mItem is Act)
             {
                 Act selectedAction = mItem as Act;
@@ -190,11 +194,13 @@ namespace Ginger.BusinessFlowPages
             }
             else
             {
-                instance = (Act)selectedAction.CreateCopy();
+                //GetNewAction might change the list of InputValues, hence calling before CreateCopy
                 if (selectedAction is IObsoleteAction && (selectedAction as IObsoleteAction).IsObsoleteForPlatform(mContext.Platform))
                 {
                     eUserMsgSelection userSelection;
-                    if (((IObsoleteAction)selectedAction).GetNewAction() == null)
+                    bool hasNewAction = ((IObsoleteAction)selectedAction).GetNewAction() == null;
+                    instance = (Act)selectedAction.CreateCopy();
+                    if (hasNewAction)
                     {
                         userSelection = Reporter.ToUser(eUserMsgKey.WarnAddLegacyAction, ((IObsoleteAction)selectedAction).TargetActionTypeName());
                         if (userSelection == eUserMsgSelection.No)
@@ -220,6 +226,10 @@ namespace Ginger.BusinessFlowPages
                             return null;            //do not add any action
                         }
                     }
+                }
+                else
+                {
+                    instance = (Act)selectedAction.CreateCopy();
                 }
 
                 for (int i = 0; i < selectedAction.InputValues.Count; i++)

@@ -31,13 +31,14 @@ namespace GingerCore.ALM.RQM
             public static string CreatedBy = "CreatedBy";
             public static string CreationDate = "CreationDate";
             public static string URLPath = "URLPath";
+            public static string PreFix = "PreFix";
         }
-
+       
         public RQMTestPlan()
         {
 
         }
-        public RQMTestPlan(string name, string uRLPath, string uRLPathVersioned, string rQMID, string createdBy, DateTime creationDate)
+        public RQMTestPlan(string name, string uRLPath, string uRLPathVersioned, string rQMID, string createdBy, DateTime creationDate,string preFix)
         {
             Name = name;
             URLPath = uRLPath;
@@ -49,6 +50,7 @@ namespace GingerCore.ALM.RQM
             TestCases = new ObservableList<RQMTestCase>();
             RQMExecutionRecords = new ObservableList<RQMExecutionRecord>();
             TestSuites = new ObservableList<RQMTestSuite>();
+            PreFix = preFix;
         }
 
         public ObservableList<RQMTestCase> RQMTestCases()
@@ -59,6 +61,7 @@ namespace GingerCore.ALM.RQM
             }
             return this.TestCases;
         }
+        public string PreFix { get; set; }
         public string Seq { get; set; }
 
         public string Name { get; set; }

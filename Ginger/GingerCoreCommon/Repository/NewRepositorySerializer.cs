@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -196,7 +196,7 @@ namespace Amdocs.Ginger.Repository
                 if (isSerialziedAttr != null)
                 {
                     //Add only specific properties of linked activity
-                    if (ri.IsLinkedItem && (mi.Name != nameof(ri.Guid) && mi.Name != nameof(ri.ParentGuid) && mi.Name != "Type" && mi.Name != "ActivitiesGroupID" && mi.Name != "ActivityName"))
+                    if (ri.IsLinkedItem && (mi.Name != nameof(ri.Guid) && mi.Name != nameof(ri.ParentGuid) && mi.Name != "Type" && mi.Name != "ActivitiesGroupID" && mi.Name != "ActivityName" && mi.Name != "Active"))
                     {
                         continue;
                     }

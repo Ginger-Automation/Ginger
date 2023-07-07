@@ -259,7 +259,7 @@
                                                 </DockPanel>
                                             </DockPanel>
                                             <usercontrols:ImageMakerControl x:Name="xBusinessflowsRunnerItemsLoadingIcon" Grid.Row="1" ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" Visibility="Collapsed" />
-                                            <ListView x:Name="xBusinessflowsRunnerItemsListView" Grid.Row="1" Margin="0 0 10 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"  SelectionMode="Single" SelectionChanged="xBusinessflowListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
+                                            <ListView x:Name="xBusinessflowsRunnerItemsListView" MaxHeight="400" Grid.Row="1" Margin="0 0 10 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"  SelectionMode="Single" SelectionChanged="xBusinessflowListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
                                                 <ListView.ItemsPanel>
                                                     <ItemsPanelTemplate>
                                                         <StackPanel Orientation="Vertical"></StackPanel>
@@ -291,7 +291,7 @@
                                                 </DockPanel>
                                             </DockPanel>
                                             <usercontrols:ImageMakerControl x:Name="xActivitiesRunnerItemsLoadingIcon" Grid.Row="1" ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" Visibility="Collapsed" />
-                                            <ListView x:Name="xActivitiesRunnerItemsListView" Grid.Row="1" Margin="0 0 10 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" SelectionChanged="xActivitiesListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
+                                            <ListView x:Name="xActivitiesRunnerItemsListView" MaxHeight="400" Grid.Row="1" Margin="0 0 10 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" SelectionChanged="xActivitiesListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
                                                 <ListView.ItemsPanel>
                                                     <ItemsPanelTemplate>
                                                         <StackPanel Orientation="Vertical"></StackPanel>
@@ -315,7 +315,7 @@
                                                 </DockPanel>
                                             </DockPanel>
                                             <usercontrols:ImageMakerControl x:Name="xActionsRunnerItemsLoadingIcon" Grid.Row="1" ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" Visibility="Collapsed" />
-                                            <ListView x:Name="xActionsRunnerItemsListView" Margin="0 0 10 0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  BorderThickness="0" Background="Transparent"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" SelectionChanged="xActionsListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
+                                            <ListView x:Name="xActionsRunnerItemsListView" MaxHeight="400" Margin="0 0 10 0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  BorderThickness="0" Background="Transparent"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" SelectionChanged="xActionsListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
                                                 <ListView.ItemsPanel>
                                                     <ItemsPanelTemplate>
                                                         <StackPanel Orientation="Vertical"></StackPanel>
