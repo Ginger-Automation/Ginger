@@ -165,6 +165,9 @@ namespace Amdocs.Ginger.Common
         UploadSolutionFailed,
         SourceControlBranchNameEmpty, DataSourceSheetNameHasSpace, DataSourceColumnHasSpace,
         DeleteRecoverFolderWarn,
+        EnvParamNameExists,
+        EnvParamNameEmpty,
+        NoPublishRepositoryInfo,
         NotAllowedForMappedRuntimeValue
     }
 
