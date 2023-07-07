@@ -330,6 +330,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 if (bfToExport.Count == 1)
                 {
+                    _ = bfToExport[0].Activities;//Loading Activity for Export to ALM
                     ALMIntegration.Instance.ExportBusinessFlowToALM(bfToExport[0], true);
                 }
                 else

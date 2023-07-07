@@ -719,7 +719,11 @@ namespace GingerCore.Actions
         {
             bool isActive = true;
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActOutDataSourceConfig ADCS = (from arc in DSOutputConfigParams where arc.DSName == DSName && arc.DSTable == DSTable && arc.OutputType == OutputType select arc).FirstOrDefault();
+            ActOutDataSourceConfig ADCS = DSOutputConfigParams
+                .FirstOrDefault(param => 
+                    string.Equals(param.DSName, DSName) && 
+                    string.Equals(param.DSTable, DSTable) && 
+                    string.Equals(param.OutputType, OutputType));
 
             if (ADCS == null)
             {
@@ -748,6 +752,8 @@ namespace GingerCore.Actions
             ADCS.DSName = DSName;
             ADCS.DSTable = DSTable;
             ADCS.PossibleValues.Add(ColName);
+            ADCS.StartDirtyTracking();
+            ADCS.OnDirtyStatusChanged += this.RaiseDirtyChanged;
             DSOutputConfigParams.Add(ADCS);
             ADCS.OutputType = OutputType;
             ADCS.OutParamMap = OutDSParamType;
