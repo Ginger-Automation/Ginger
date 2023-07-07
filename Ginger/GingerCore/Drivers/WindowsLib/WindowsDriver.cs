@@ -141,8 +141,11 @@ namespace GingerCore.Drivers.WindowsLib
 
         public override void CloseDriver()
         {
-            mUIAutomationHelper.StopRecording();
-            mUIAutomationHelper = null;
+            if(mUIAutomationHelper!=null)
+            {
+                mUIAutomationHelper.StopRecording();
+                mUIAutomationHelper = null;
+            }            
         }
 
         public override Act GetCurrentElement()
@@ -311,7 +314,7 @@ namespace GingerCore.Drivers.WindowsLib
                     if (!result.Equals(""))
                     {
                         actWBE.AddOrUpdateReturnParamActual("Actual", result);
-                        actWBE.ExInfo = result;
+                        actWBE.ExInfo = "Page source added to Output values.";
                     }
                     else
                     {

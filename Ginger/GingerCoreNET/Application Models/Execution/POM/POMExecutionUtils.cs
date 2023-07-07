@@ -134,7 +134,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             var locatorPriotize = false;
             try
             {
-                var locatorIndex = GetCurrentPOMElementInfo().Locators.ToList().FindIndex(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed);
+                var locatorIndex = GetCurrentPOMElementInfo().Locators.ToList().FindIndex(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed && x.LocateBy != eLocateBy.ByXPath && x.LocateBy != eLocateBy.ByTagName);
                 if (locatorIndex > 0)
                 {
                     locatorPriotize = true;

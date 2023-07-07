@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
+using static GingerCore.ALM.PublishToALMConfig;
 //using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Run.RunSetActions
@@ -175,6 +176,7 @@ namespace Ginger.Run.RunSetActions
 
         public abstract String Type { get; }
 
+        public abstract eALMTestSetLevel GetAlMTestSetLevel();
 
 
         //public void ExecuteWithRunPageBFES()

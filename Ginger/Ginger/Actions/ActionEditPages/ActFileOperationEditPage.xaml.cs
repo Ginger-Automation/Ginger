@@ -87,7 +87,8 @@ namespace Ginger.Actions
                 }
 
                 if ((ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.CheckFolderExists
-                  || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.DeleteDirectoryFiles)
+                  || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.DeleteDirectoryFiles
+                  || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.DeleteDirectory)
                 {
                     TextFileNameTextBox.BrowserType = UCValueExpression.eBrowserType.Folder;
                 }
