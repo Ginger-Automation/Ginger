@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -180,5 +180,10 @@ namespace Ginger.Run.RunSetActions
 
 
         public override string Type { get { return "Publish Execution Results to ALM"; } }
+
+        public override eALMTestSetLevel GetAlMTestSetLevel()
+        {
+            return ALMTestSetLevel;
+        }
     }
 }

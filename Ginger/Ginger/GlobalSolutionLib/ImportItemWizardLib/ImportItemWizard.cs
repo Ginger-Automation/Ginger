@@ -66,7 +66,8 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             AddPage(Name: "Select Solution Items", Title: "Select Solution Items", SubTitle: "Select Solution Items...", Page: new SelectItemFromSolutionPage());
 
             AddPage(Name: "Solution Items Dependency Validation", Title: "Solution Items Dependency Validation", SubTitle: "Solution Items Dependency Validation...", Page: new ItemDependancyPage());
-
+            
+            DisableNavigationList(); //disable the direct navigation of pages
         }
 
         public override string Title { get { return "Import Global Cross Solution Wizard"; } }

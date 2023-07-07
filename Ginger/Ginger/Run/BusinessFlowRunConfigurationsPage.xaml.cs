@@ -429,6 +429,10 @@ namespace Ginger.Run
 
         private void okBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (mGingerRunner != null && mGingerRunner.Executor != null)
+            {
+                mGingerRunner.Executor.UpdateBusinessFlowsRunList();
+            }
             _pageGenericWin.Close();
         }
 
