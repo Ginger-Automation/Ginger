@@ -790,7 +790,6 @@ namespace GingerWPF.BusinessFlowsLib
                 xStopRunBtn.ButtonText = "Stopping...";
                 xStopRunBtn.ToolTip = "Stopping execution";
                 xStopRunBtn.IsEnabled = false;
-                xStopRunBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionStop");
             });
         }
 

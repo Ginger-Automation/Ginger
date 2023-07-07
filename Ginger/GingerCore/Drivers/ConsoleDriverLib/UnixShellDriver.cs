@@ -105,7 +105,17 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         public override void Disconnect()
         {
-            UnixClient.Disconnect();
+            try
+            {
+                if (UnixClient != null)
+                {
+                    UnixClient.Disconnect();
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Unix Agent disconnect failed.", ex);
+            }
         }
 
         public override string ConsoleWindowTitle()
@@ -182,12 +192,19 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
                 Task task = Task.Factory.StartNew(() =>
                  {
-                     UnixClient.Connect();
-
-                     if (UnixClient.IsConnected)
+                     try
                      {
-                         UnixClient.SendKeepAlive();
-                         ss = UnixClient.CreateShellStream("dumb", 240, 24, 800, 600, 1024);
+                         UnixClient.Connect();
+
+                         if (UnixClient.IsConnected)
+                         {
+                             UnixClient.SendKeepAlive();
+                             ss = UnixClient.CreateShellStream("dumb", 240, 24, 800, 600, 1024);
+                         }
+                     }
+                     catch (Exception ex)
+                     {
+                         Reporter.ToLog(eLogLevel.ERROR, "Error while connecting to Unix Client.", ex);
                      }
                  });
 

@@ -103,12 +103,15 @@ namespace Ginger.SolutionCategories
         {
             foreach (SolutionCategoryDefinition cat in mCategoriesDefinitions)
             {
-                SolutionCategory solCat = mSolutionCategories.FirstOrDefault(x => x.Category == cat.Category);
-                if (cat != null)
+                if (cat!=null)
                 {
-                    cat.CategoryName = solCat.CategoryName;
-                    cat.Description = solCat.Description;
-                    cat.CategoryOptionalValues = solCat.CategoryOptionalValues;
+                    SolutionCategory solCat = mSolutionCategories.FirstOrDefault(x => x.Category == cat.Category);
+                    if (solCat!=null)
+                    {
+                        cat.CategoryName = solCat.CategoryName;
+                        cat.Description = solCat.Description;
+                        cat.CategoryOptionalValues = solCat.CategoryOptionalValues;
+                    } 
                 }
             }
         }

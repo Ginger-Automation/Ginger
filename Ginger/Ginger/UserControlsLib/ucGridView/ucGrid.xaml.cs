@@ -112,10 +112,7 @@ namespace Ginger
                         BindingOperations.EnableCollectionSynchronization(mObjList, mObjList);//added to allow collection changes from other threads
                     }
 
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        mCollectionView = new CollectionViewSource() { Source = mObjList }.View;
-                    });
+                    mCollectionView = CollectionViewSource.GetDefaultView(mObjList);
 
                     if (mCollectionView != null)
                     {
@@ -134,7 +131,7 @@ namespace Ginger
                     }
                     this.Dispatcher.Invoke(() =>
                     {
-                        grdMain.ItemsSource = mCollectionView;
+                        grdMain.ItemsSource = mObjList;
 
                         // Make the first row selected
                         if (value != null && value.Count > 0)
@@ -143,7 +140,7 @@ namespace Ginger
                             grdMain.CurrentItem = value[0];
                             // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
                             mObjList.CurrentItem = value[0];
-                        }
+                        }                        
                     });
                     UpdateFloatingButtons();
                 }

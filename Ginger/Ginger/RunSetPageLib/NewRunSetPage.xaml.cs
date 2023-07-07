@@ -1701,7 +1701,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.CannotAddGinger);
+                Reporter.ToUser(eUserMsgKey.RunnerLimitReached);
             }
         }
 
@@ -1810,14 +1810,18 @@ namespace Ginger.Run
                 var result = await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
 
                 // handling ALM Defects Opening
-                ObservableList<ALMDefectProfile> ALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
-                if ((WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null) && (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Count > 0) &&
-                    (ALMDefectProfiles != null) && (ALMDefectProfiles.Count > 0))
+                
+                if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null && WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Count > 0)
                 {
-                    this.Dispatcher.Invoke(() =>
+                    ObservableList<ALMDefectProfile> ALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
+                    if(ALMDefectProfiles != null && ALMDefectProfiles.Count > 0)
                     {
-                        InitALMDefectsOpeningSection();
-                    });
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            InitALMDefectsOpeningSection();
+                        });
+                    }
+                   
                 }
             }
             catch (Exception ex)
@@ -1943,7 +1947,6 @@ namespace Ginger.Run
             }
             xStopRunsetBtn.ButtonText = "Stopping...";
             xStopRunsetBtn.ButtonImageType = eImageType.Running;
-            xStopRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionStop");
             xStopRunsetBtn.IsEnabled = false;
 
             WorkSpace.Instance.RunsetExecutor.StopRun();//stops only running runners  
@@ -2263,8 +2266,11 @@ namespace Ginger.Run
                     xActivitiesRunnerItemsListView.Visibility = Visibility.Collapsed;
                     General.DoEvents();//for seeing the processing icon better to do with Async
 
-                    xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ChildItemPages;
-
+                    // added if condition for the Application to throw an error if the mCurrentBusinessFlowRunnerItem is null
+                    if (mCurrentBusinessFlowRunnerItem!=null)
+                    {
+                        xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ChildItemPages;
+                    }
                 }
                 finally
                 {

@@ -712,8 +712,13 @@ namespace Ginger.Actions
                     xValueBoxPnl.Visibility = Visibility.Collapsed;
                 }
             }
+            else if(a.GetType() == typeof(ActCompareImgs))
+            {
+                xInputValuesGrid.Visibility = Visibility.Collapsed;
+                xValueBoxPnl.Visibility = Visibility.Collapsed;
+            }
             else if (a.GetType() == typeof(ActSetVariableValue) || a.GetType() == typeof(ActCreatePDFChart)
-                        || a.GetType() == typeof(ActCompareImgs) || a.GetType() == typeof(ActGenerateFileFromTemplate)
+                        || a.GetType() == typeof(ActGenerateFileFromTemplate)
                         || a.GetType() == typeof(ActPBControl) || a.GetType() == typeof(ActWindowsControl)
                         || a.GetType() == typeof(ActMenuItem) || a.GetType() == typeof(ActJavaElement))
             {

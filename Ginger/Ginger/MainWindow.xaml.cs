@@ -435,7 +435,11 @@ namespace Ginger
             eUserMsgSelection userSelection;
             if (mRestartApplication)
             {
-                if (WorkSpace.Instance.SolutionRepository != null && WorkSpace.Instance.SolutionRepository.ModifiedFiles.Any())
+                if (mLaunchInAdminMode)
+                {
+                    userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestartInAdminMode);
+                }
+                else if (WorkSpace.Instance.SolutionRepository != null && WorkSpace.Instance.SolutionRepository.ModifiedFiles.Any())
                 {
                     userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestart);
                 }
