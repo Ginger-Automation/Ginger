@@ -417,7 +417,7 @@ namespace Ginger.UserControlsLib
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory ucDataMapping = new FrameworkElementFactory(typeof(UCDataMapping));
 
-            if (string.IsNullOrEmpty(options._VariabelsSourceProperty) == false)
+            if (!string.IsNullOrEmpty(options._VariabelsSourceProperty))
             {
                 Binding variablesSourceBinding = new Binding(options._VariabelsSourceProperty);
                 variablesSourceBinding.Mode = BindingMode.OneWay;
@@ -430,7 +430,7 @@ namespace Ginger.UserControlsLib
             }
 
 
-            if (string.IsNullOrEmpty(options._OutputVariabelsSourceProperty) == false)
+            if (!string.IsNullOrEmpty(options._OutputVariabelsSourceProperty))
             {
                 Binding outputVariabelsSourceBinding = new Binding(options._OutputVariabelsSourceProperty);
                 outputVariabelsSourceBinding.Mode = BindingMode.OneWay;
@@ -448,7 +448,7 @@ namespace Ginger.UserControlsLib
             mappedValueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
             ucDataMapping.SetBinding(UCDataMapping.MappedValueProperty, mappedValueBinding);
 
-            if (string.IsNullOrEmpty(options._EnableDataMappingProperty) == false)
+            if (!string.IsNullOrEmpty(options._EnableDataMappingProperty))
             {
                 Binding allowDataMappingBinding = new Binding(options._EnableDataMappingProperty);
                 allowDataMappingBinding.Mode = BindingMode.OneWay;
