@@ -342,7 +342,7 @@ namespace Ginger.ALM
             ObservableList<ExternalItemFieldBase> solutionAlmFields = null;
             try
             {
-                solutionAlmFields = SetALMTypeAndFieldsFromSolutionToOperation(publishToALMConfig, solutionAlmFields);
+                solutionAlmFields = SetALMTypeAndFieldsFromSolutionToOperation(publishToALMConfig);
                 ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
                 if (AutoALMProjectConnect(almConnectionType, false))
                 {
@@ -464,6 +464,7 @@ namespace Ginger.ALM
 
                 foreach (BusinessFlow bf in bfToExport)
                 {
+                    _ = bf.Activities;//Loading activity for export to alm
                     if (!AlmRepo.ExportBusinessFlowToALM(bf, performSaveAfterExport, almConectStyle, testPlanUploadPath, testLabUploadPath))
                     {
                         isExportSucc = false;
@@ -732,7 +733,7 @@ namespace Ginger.ALM
             ObservableList<ExternalItemFieldBase> solutionAlmFields = null;
             try
             {
-                solutionAlmFields = SetALMTypeAndFieldsFromSolutionToOperation(publishToALMConfig, solutionAlmFields);
+                solutionAlmFields = SetALMTypeAndFieldsFromSolutionToOperation(publishToALMConfig);
                 Reporter.ToLog(eLogLevel.INFO, ("Exporting virtual " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
                 if (AutoALMProjectConnect(eALMConnectType.Silence, false))
                 {
@@ -753,14 +754,13 @@ namespace Ginger.ALM
 
         private static void ResetALMTypeAndFieldsFromOperationToSolution(PublishToALMConfig publishToALMConfig, ObservableList<ExternalItemFieldBase> solutionAlmFields)
         {
-            if (!publishToALMConfig.PublishALMType.ToString().Equals(RunSetActionPublishToQC.AlmTypeDefault)
+            if (publishToALMConfig.PublishALMType != 0 && !publishToALMConfig.PublishALMType.ToString().Equals(RunSetActionPublishToQC.AlmTypeDefault)
                                 && publishToALMConfig.ALMTestSetLevel == PublishToALMConfig.eALMTestSetLevel.RunSet)
             {
                 ALMIntegration.Instance.UpdateALMType(ALMCore.GetDefaultAlmConfig().AlmType);
-                foreach (ExternalItemFieldBase field in publishToALMConfig.AlmFields)
-                {
-                    WorkSpace.Instance.Solution.ExternalItemsFields.Remove(field);
-                }
+               
+                WorkSpace.Instance.Solution.ExternalItemsFields.ClearAll();
+                
                 foreach (ExternalItemFieldBase field in solutionAlmFields)
                 {
                     WorkSpace.Instance.Solution.ExternalItemsFields.Add(field);
@@ -769,22 +769,24 @@ namespace Ginger.ALM
             Reporter.ToLog(eLogLevel.INFO, "ALM Type and Fields change from operation to solution configuration");
         }
 
-        private static ObservableList<ExternalItemFieldBase> SetALMTypeAndFieldsFromSolutionToOperation(PublishToALMConfig publishToALMConfig, ObservableList<ExternalItemFieldBase> solutionAlmFields)
+        private static ObservableList<ExternalItemFieldBase> SetALMTypeAndFieldsFromSolutionToOperation(PublishToALMConfig publishToALMConfig)
         {
             // Set ALMType and Fields to operation publishToALMConfig selection, for Run Set only (virtual BF)
-            if (!publishToALMConfig.PublishALMType.ToString().Equals(RunSetActionPublishToQC.AlmTypeDefault)
+
+            ObservableList<ExternalItemFieldBase> solutionAlmFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
+            if (publishToALMConfig.PublishALMType != 0 && !publishToALMConfig.PublishALMType.ToString().Equals(RunSetActionPublishToQC.AlmTypeDefault)
                 && publishToALMConfig.ALMTestSetLevel == PublishToALMConfig.eALMTestSetLevel.RunSet)
             {
                 ALMIntegration.Instance.UpdateALMType(publishToALMConfig.PublishALMType, true);
                 // Set ExternalItemsFields as selected publishToALMConfig ALMFields and at 'finally' return to the solution fields.
-                solutionAlmFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
-                foreach (ExternalItemFieldBase field in solutionAlmFields)
+                if (publishToALMConfig.AlmFields != null && publishToALMConfig.AlmFields.Any())
                 {
-                    WorkSpace.Instance.Solution.ExternalItemsFields.Remove(field);
-                }
-                foreach (ExternalItemFieldBase field in publishToALMConfig.AlmFields)
-                {
-                    WorkSpace.Instance.Solution.ExternalItemsFields.Add(field);
+                    WorkSpace.Instance.Solution.ExternalItemsFields.ClearAll();
+                    
+                    foreach (ExternalItemFieldBase field in publishToALMConfig.AlmFields)
+                    {
+                        WorkSpace.Instance.Solution.ExternalItemsFields.Add(field);
+                    }
                 }
             }
             Reporter.ToLog(eLogLevel.INFO, "ALM Type and Fields change from solution to operation configuration");

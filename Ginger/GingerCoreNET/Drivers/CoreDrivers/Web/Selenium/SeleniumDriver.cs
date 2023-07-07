@@ -927,8 +927,7 @@ namespace GingerCore.Drivers
             {
                 if (Driver != null)
                 {
-                    Driver.Quit();
-                    Driver = null;
+                    Driver.Close();
                 }
                 if (StartBMP)
                 {
@@ -943,6 +942,19 @@ namespace GingerCore.Drivers
             catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Selenium Driver", e);
+            }
+
+            try
+            {
+                if (Driver != null)
+                {
+                    Driver.Quit();
+                    Driver = null;
+                }
+            }
+            catch (Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error when try to quit Selenium Driver", e);
             }
         }
 
@@ -4292,8 +4304,11 @@ namespace GingerCore.Drivers
                     {
                         try
                         {
+                        
+                            
                             Thread.Sleep(100);
-                            count = Driver.WindowHandles.ToList().Count;
+                            count = Driver.WindowHandles.Count;
+
                         }
                         catch (System.InvalidCastException ex)
                         {
@@ -7777,7 +7792,7 @@ namespace GingerCore.Drivers
         }
 
         private void OpenNewTab()
-        {
+        {            
             IJavaScriptExecutor javaScriptExecutor = (IJavaScriptExecutor)Driver;
             javaScriptExecutor.ExecuteScript("window.open();");
             Driver.SwitchTo().Window(Driver.WindowHandles[Driver.WindowHandles.Count - 1]);
