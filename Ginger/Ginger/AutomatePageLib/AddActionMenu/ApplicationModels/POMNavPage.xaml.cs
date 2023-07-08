@@ -29,6 +29,7 @@ using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Windows;
@@ -117,7 +118,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mPOMPage.xTreeView.HorizontalAlignment = HorizontalAlignment.Stretch;
             mPOMPage.xTreeView.SetAddButtonToArrow();
             mPOMPage.Width = Double.NaN;
-            xPOMFrame.Content = mPOMPage;
+            xPOMFrame.ClearAndSetContent(mPOMPage);
         }
 
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -167,7 +168,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                         ObservableList<Activity> suggestedActivities = AutoGenerateFlows.CreatePOMActivitiesFromMetadata(mPOM);
 
                         mActivitiesRepositoryViewPage = new ActivitiesRepositoryPage(suggestedActivities, mContext, true);
-                        xSharedActivitiesFrame.Content = mActivitiesRepositoryViewPage;
+                        xSharedActivitiesFrame.ClearAndSetContent(mActivitiesRepositoryViewPage);
                         xSuggestedActivitiesTabItem.Visibility = Visibility.Visible;
                     }
                     else

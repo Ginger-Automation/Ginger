@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System.Windows.Controls;
 
@@ -46,7 +47,7 @@ namespace Ginger.BusinessFlowPages
                     if (mLastActivity != mWizard.ActivityToAdd)
                     {
                         mLastActivity = mWizard.ActivityToAdd;
-                        xFrame.Content = new ActivityDetailsPage(mWizard.ActivityToAdd, mWizard.Context, General.eRIPageViewMode.Standalone);
+                        xFrame.ClearAndSetContent(new ActivityDetailsPage(mWizard.ActivityToAdd, mWizard.Context, General.eRIPageViewMode.Standalone));
                     }
                     break;
             }

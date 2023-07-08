@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Drivers;
+using GingerCore.GeneralLib;
 using System;
 using System.Reflection;
 using System.Windows;
@@ -81,7 +82,7 @@ namespace Ginger.Agents
                 if (p != null)
                 {
 
-                    DriverConfigurationFrame.Content = p;
+                    DriverConfigurationFrame.ClearAndSetContent(p);
                 }
             }
             else

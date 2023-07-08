@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages.AddActionMenu;
+using GingerCore.GeneralLib;
 using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -59,7 +60,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mItemTypeRootNode.SetTools(mAPIPage.xTreeView);
             mAPIPage.xTreeView.SetTopToolBarTools(mAPIsRoot.SaveAllTreeFolderItemsHandler, mAPIsRoot.AddAPIModelFromDocument, RefreshTreeItems, AddActionToListHandler);
 
-            xAPIFrame.Content = mAPIPage;
+            xAPIFrame.ClearAndSetContent(mAPIPage);
         }
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {

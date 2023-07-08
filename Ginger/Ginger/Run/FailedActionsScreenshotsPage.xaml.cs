@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Ginger.Actions.UserControls;
+using GingerCore.GeneralLib;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -88,7 +89,7 @@ namespace Ginger.Run
                 Grid.SetColumn(f, c);
                 f.HorizontalAlignment = HorizontalAlignment.Center;
                 f.VerticalAlignment = VerticalAlignment.Center;
-                f.Content = p;
+                f.ClearAndSetContent(p);
                 ScreenShotsGrid.Children.Add(f);
 
                 c++;

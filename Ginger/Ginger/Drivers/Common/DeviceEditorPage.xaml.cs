@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.Common.Devices;
+using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -105,7 +106,7 @@ namespace Ginger.Drivers.Common
 
             mDeviceViewPage = new DeviceViewPage(mDeviceConfigFolder);
             mDeviceConfig = mDeviceViewPage.AndroidDeviceConfig;
-            DeviceViewFrame.Content = mDeviceViewPage;
+            DeviceViewFrame.ClearAndSetContent(mDeviceViewPage);
 
             DoBindings();
         }
