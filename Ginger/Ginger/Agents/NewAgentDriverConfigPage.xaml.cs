@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using GingerCore;
+using GingerCore.GeneralLib;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -43,7 +44,7 @@ namespace Ginger.Agents
                 dynamicPanel.Children.Add(AGC);
             }
             dynamicPanel.UpdateLayout();
-            Cntent.Content = dynamicPanel;
+            Cntent.ClearAndSetContent(dynamicPanel);
         }
     }
 }

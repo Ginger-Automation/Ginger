@@ -22,6 +22,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.Android;
 using GingerCore.Actions.Common;
 using GingerCore.Drivers.Common;
+using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +53,7 @@ namespace GingerCore.Drivers.AndroidADB
             InitializeComponent();
             mAndroidADBDriver = driver;
             mDeviceViewPage = new DeviceViewPage(DeviceConfigFolder);
-            DeviceViewFrame.Content = mDeviceViewPage;
+            DeviceViewFrame.ClearAndSetContent(mDeviceViewPage);
             mDeviceViewPage.TouchXY += DeviceViewPage_TouchXY;
             mDeviceViewPage.Swipe += DeviceViewPage_Swipe;
             mDeviceViewPage.ButtonClick += DeviceViewPage_OnButtonClick;

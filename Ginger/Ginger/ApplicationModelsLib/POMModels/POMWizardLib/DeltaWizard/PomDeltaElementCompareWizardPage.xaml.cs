@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Windows;
@@ -107,7 +108,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         {
             mPomDeltaViewPage = new PomDeltaViewPage(mWizard.mPomDeltaUtils.DeltaViewElements, null, mWizard.mPomDeltaUtils.Agent);
             mPomDeltaViewPage.SetAgent(mWizard.mPomDeltaUtils.Agent);
-            xPomElementsMappingPageFrame.Content = mPomDeltaViewPage;
+            xPomElementsMappingPageFrame.ClearAndSetContent(mPomDeltaViewPage);
         }
 
 

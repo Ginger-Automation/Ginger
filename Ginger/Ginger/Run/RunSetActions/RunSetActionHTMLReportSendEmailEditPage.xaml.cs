@@ -52,7 +52,7 @@ namespace Ginger.Run.RunSetActions
                 runSetActionHTMLReportSendEmail.Email = new Email();
             }
 
-            RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionHTMLReportSendEmail.Email);
+            RunsetActionDeliveryMethodConfigPageFrame.ClearAndSetContent(new RunSetActionDeliveryMethodConfigPage(runSetActionHTMLReportSendEmail.Email));
             Context context = new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment };
             MailFromTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailFrom));
             MailToTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.MailTo));

@@ -832,7 +832,7 @@ namespace Ginger
             ControlActionsPage_New CAP = null;
             if (xActUIPageFrame.HasContent)
             {
-                xActUIPageFrame.Content = null;
+                xActUIPageFrame.ClearAndSetContent(null);
             }
 
             if (SelectedElement.Locators.CurrentItem == null && SelectedElement.Locators.Count > 0)
@@ -901,7 +901,7 @@ namespace Ginger
                 //xRunActBtn.Click += CAP.RunActionClicked;
                 //xAddActBtn.Click += CAP.AddActionClicked;
 
-                xActUIPageFrame.Content = CAP;
+                xActUIPageFrame.ClearAndSetContent(CAP);
                 xAddActionTab.Visibility = Visibility.Visible;
                 xActUIPageFrame.Visibility = Visibility.Visible;
                 xAddRunOperationPanel.Visibility = Visibility.Visible;
@@ -973,7 +973,7 @@ namespace Ginger
                 locateByPOMElementPage.POMChangedPageEvent += LocateByPOMElementPage_POMChangedPageEvent;
 
                 SelectedPOM = locateByPOMElementPage.SelectedPOM;
-                xPOMSelectionFrame.Content = locateByPOMElementPage;
+                xPOMSelectionFrame.ClearAndSetContent(locateByPOMElementPage);
 
                 POMSelectionPending = false;
             }
