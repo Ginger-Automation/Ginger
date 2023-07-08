@@ -22,6 +22,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.GeneralLib;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -138,7 +139,7 @@ namespace Ginger.Actions
             }
             // send with null bitmap will show image not found
             ScreenShotViewPage p = new ScreenShotViewPage("Baseline Image", FileName);
-            SimulatedPhotoFrame.Content = p;
+            SimulatedPhotoFrame.ClearAndSetContent(p);
             if (p.BitmapImage == null)
             {
                 return string.Empty;

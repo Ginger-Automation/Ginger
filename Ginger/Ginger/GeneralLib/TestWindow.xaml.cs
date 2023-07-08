@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore.GeneralLib;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,7 +34,7 @@ namespace Ginger.GeneralLib
         {
             InitializeComponent();
 
-            MainFrame.Content = p;
+            MainFrame.ClearAndSetContent(p);
         }
 
         public bool IsReady()

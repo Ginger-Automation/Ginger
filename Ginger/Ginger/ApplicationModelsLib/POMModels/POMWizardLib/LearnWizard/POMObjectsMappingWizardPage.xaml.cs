@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Windows;
@@ -130,7 +131,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 mPomAllElementsPage = new PomAllElementsPage(mWizard.mPomLearnUtils.POM, PomAllElementsPage.eAllElementsPageContext.AddPOMWizard, false);
                 mPomAllElementsPage.ShowTestAllElementsButton = Visibility.Collapsed;
                 mPomAllElementsPage.mappedUIElementsPage.MainElementsGrid.ValidationRules.Add(ucGrid.eUcGridValidationRules.CantBeEmpty);
-                xPomElementsMappingPageFrame.Content = mPomAllElementsPage;
+                xPomElementsMappingPageFrame.ClearAndSetContent(mPomAllElementsPage);
             }
         }
 

@@ -27,6 +27,7 @@ using Ginger.Run;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -312,7 +313,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (selectedElement.ScreenShotImage != null)
             {
                 source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(selectedElement.ScreenShotImage.ToString()));
-                xElementScreenShotFrame.Content = new ScreenShotViewPage(selectedElement?.ElementName, source, false);
+                xElementScreenShotFrame.ClearAndSetContent(new ScreenShotViewPage(selectedElement?.ElementName, source, false));
                 xElementScreenShotFrame.Visibility = Visibility.Visible;
             }
         }

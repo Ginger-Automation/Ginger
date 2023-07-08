@@ -19,6 +19,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions.UserControls;
 using Ginger.UserControls;
+using GingerCore.GeneralLib;
 using GingerCoreNET.Application_Models;
 using System.Windows;
 using System.Windows.Controls;
@@ -51,7 +52,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             {
                 source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(deletedElement.ElementInfo.ScreenShotImage.ToString()));
             }
-            xDeletedElementDetails.xElementScreenShotFrame.Content = new ScreenShotViewPage(deletedElement.ElementInfo?.ElementName, source, false);
+            xDeletedElementDetails.xElementScreenShotFrame.ClearAndSetContent(new ScreenShotViewPage(deletedElement.ElementInfo?.ElementName, source, false));
 
             //set new added element grdiview
             SetElementLocatorsGridView(new GridViewDef(GridViewDef.DefaultViewName), false);
@@ -68,7 +69,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 {
                     newAddedElementSource = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(newAddedElement.ElementInfo.ScreenShotImage.ToString()));
                 }
-                xAddedElementDetails.xElementScreenShotFrame.Content = new ScreenShotViewPage(newAddedElement.ElementInfo?.ElementName, newAddedElementSource, false);
+                xAddedElementDetails.xElementScreenShotFrame.ClearAndSetContent(new ScreenShotViewPage(newAddedElement.ElementInfo?.ElementName, newAddedElementSource, false));
             }
         }
 
