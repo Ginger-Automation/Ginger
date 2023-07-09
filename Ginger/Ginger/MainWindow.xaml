@@ -181,7 +181,7 @@
                         </Menu>
 
                         <usercontrols:ucButton x:Name="xFindAndReplaceBtn" ButtonType="ImageButton" ToolTip="Find and Replace in Solution"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Search" Click="xFindAndReplaceSolutionButton_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Menu}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,0"/>
-                        
+
                         <Grid DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
                             <usercontrols:ucButton x:Name="xSaveAllBtn" ButtonType="ImageButton" ToolTip="Save All" ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="SaveAll" Click="xSaveAllBtn_Click" MouseEnter="xSaveAllBtn_MouseEnter" MouseLeave="xSaveAllBtn_MouseLeave" ButtonStyle="{StaticResource $ImageButtonStyle_Menu}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,0"/>
                             <Label x:Name="xModifiedItemsCounter" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Top" FontFamily="OpenSans" Foreground="White" FontSize="12" FontWeight="Bold" Padding="0,0,0,0">
@@ -299,7 +299,7 @@
 
             <Grid x:Name="xSplashGrid" Width="650" Height="400" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1">
                 <usercontrols:ImageMakerControl ImageType="GingerSplash"/>
-                <Label x:Name="lblAppVersion" Content="Version x.x.x.x" Style="{StaticResource $LabelStyle}" Foreground="WhiteSmoke"  FontWeight="Bold"  HorizontalAlignment="Center" Margin="180,200,0,0" Grid.Row="1" Width="200" Height="50"/>
+                <Label x:Name="lblAppVersion" Content="Version 2023.4-Alpha 0.1" Style="{StaticResource $LabelStyle}" Foreground="WhiteSmoke"  FontWeight="Bold"  HorizontalAlignment="Center" Margin="0,348,0,24" Width="164"/>
             </Grid>
 
             <Border Grid.Row="2" Background="{StaticResource $BackgroundColor_White}" BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="1" >
@@ -314,7 +314,7 @@
                         <TextBlock x:Name="xProcessMsgTxtBlock" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Text="Showing something is running" MaxWidth="400" />
                     </StackPanel>
                     <usercontrols:ImageMakerControl x:Name="xAdminModeIcon" ImageType="NormalUser" ToolTip="Ginger Not Running In Admin Mode. Click to Launch It In Admin Mode" SetAsFontImageWithSize="12" MouseDown="xAdminModeIcon_MouseDown" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,2,0"/>
-                    
+
                     <usercontrols:ImageMakerControl x:Name="xVersionAndNewsIcon" MouseDown="XVersionAndNewsIcon_MouseDown" ImageType="Info" ToolTip="Version Info" HorizontalAlignment="Right" DockPanel.Dock="Right" SetAsFontImageWithSize="18" Margin="0,0,5,0"/>
                     <Label x:Name="lblVersion" DockPanel.Dock="Right"  Content="Version" VerticalAlignment="Center" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Right" Margin="0,-2,0,0"/>
                 </DockPanel>

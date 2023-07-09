@@ -75,7 +75,7 @@ namespace Ginger
         {
             InitializeComponent();
             mRestartApplication = false;
-            lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersion;
+            lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
             xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
 
             mHelpLayoutList.CollectionChanged += MHelpLayoutList_CollectionChanged;
