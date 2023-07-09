@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -78,13 +78,11 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 {
                     if (mFileVersionInfo.FilePrivatePart != 0)//Alpha
                     {
-                        mApplicationVersionWithInfo = string.Format("{0}.{1}.{2}.{3}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart, mFileVersionInfo.FilePrivatePart);
-                        mApplicationVersionWithInfo += "(Alpha, Build Time: " + ApplicationBuildTime.ToString("dd-MMM-yyyy hh:mm tt") + ")";
+                        mApplicationVersionWithInfo = string.Format("{0}.{1}-Alpha {2}.{3}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart, mFileVersionInfo.FilePrivatePart);
                     }
                     else if (mFileVersionInfo.FileBuildPart != 0)//Beta
                     {
-                        mApplicationVersionWithInfo = string.Format("{0}.{1}.{2}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart);
-                        mApplicationVersionWithInfo += "(Beta, Build Date: " + ApplicationBuildTime.ToString("dd-MMM-yyyy") + ")";
+                        mApplicationVersionWithInfo = string.Format("{0}.{1}-Beta {2}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart);
                     }
                     else//Official Release
                     {
